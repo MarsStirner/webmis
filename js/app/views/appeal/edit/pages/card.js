@@ -1,0 +1,144 @@
+define([
+	"text!templates/appeal/edit/pages/card-monitoring.tmpl",
+	"text!templates/appeal/edit/pages/card.tmpl",
+	"views/print",
+	"models/print/appeal"
+], function (cardMonitoringTemplate, cardTemplate) {
+
+	App.Views.Card = View.extend ({
+		events: {
+			"click .EditAppeal": "onEditAppealClick"
+		},
+
+		canPrint: true,
+
+		printOptions: function () {
+			var self = this;
+
+			return {
+				label: "Печать",
+				scope: self,
+				handler: this.printAppeal,
+				dropDownItems: [{
+					label: "Согласие на обследование ВИЧ",
+					handler: this.printConsentToExam
+				}, {
+					label: "Согласие на обследование и лечение (представитель)",
+					handler: this.printConsentToTreatmentRepresent
+				}, {
+					label: "Согласие пациента на обследование и лечение (пациент)",
+					handler: this.printConsentToTreatment
+				}, {
+					label: "Согласие субъекта на обработку персональных данных (пациент)",
+					handler: this.printConsentToProcessing
+				}, {
+					label: "Согласие субъекта на обработку персональных данных (представитель)",
+					handler: this.printConsentToProcessingRepresent
+				}]
+			}
+		},
+
+		initialize: function () {
+			this.model = this.options.appeal;
+			this.model.on("change", this.render, this);
+		},
+
+		printAppeal: function () {
+			new App.Views.Print({
+				data: this.model.toJSON(),
+				template: "f003"
+			});
+		},
+
+		printConsentToExam: function () {
+			new App.Views.Print({
+				data: this.model.get("patient").toJSON(),
+				template: "consent_to_the_examination"
+			});
+		},
+
+		printConsentToTreatmentRepresent: function () {
+			new App.Views.Print({
+				data: this.model.get("patient").toJSON(),
+				template: "consent_to_treatment_representative"
+			});
+		},
+
+		printConsentToTreatment: function () {
+			new App.Views.Print({
+				data: this.model.get("patient").toJSON(),
+				template: "consent_to_treatment"
+			});
+		},
+
+		printConsentToProcessing: function () {
+			new App.Views.Print({
+				data: this.model.get("patient").toJSON(),
+				template: "consent_to_the_processing"
+			});
+		},
+
+		printConsentToProcessingRepresent: function () {
+			new App.Views.Print({
+				data: this.model.get("patient").toJSON(),
+				template: "consent_to_the_processing_representative"
+			});
+		},
+
+		onEditAppealClick: function (event) {
+			if (!this.model.isClosed())
+				App.Router.navigate("appeals/" + this.model.id +"/edit/", {trigger: true});
+		},
+
+		/*showPrint: function (options) {
+			var printModel;
+			if (options.data === "appeal") {
+				printModel = new App.Models.PrintAppeal({id: this.model.id});
+			} else {
+				printModel = new App.Models.Patient({id: this.model.get("patient").id});
+			}
+			*//*var PrintAppeal = new App.Models.PrintAppeal({
+				id: this.model.id
+			});*//*
+			new App.Views.Print({
+				model: printModel,
+				template: options.template
+			});
+			printModel.fetch();
+		},*/
+
+		/*ready: function () {
+			this._ready = true;
+		},*/
+
+		render: function () {
+			this.initWithDictionaries([
+				{name: "hospitalizationPointTypes", id: 19, fd: true},
+				{name: "hospitalizationTypes", id: 18, fd: true}
+			], function (dicts) {
+				var template = cardTemplate;
+
+				this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
+					template = cardMonitoringTemplate
+				});
+
+				this.$el.html($.tmpl(template, _.extend({
+					closed: this.model.closed,
+					isClosed: this.model.isClosed(),
+					allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
+					dicts: dicts
+				}, this.model.toJSON())));
+
+				this.delegateEvents();
+
+				this.trigger("change:printState");
+
+				return this;
+			}, this, true);
+
+			return this;
+		}
+	});
+
+	return App.Views.Card;
+});

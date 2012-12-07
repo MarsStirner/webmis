@@ -1,0 +1,26 @@
+<div class="ContentHeader Clearfix">
+	{{if allowToMove}}
+	<div class="PageActions">
+		<div class="DDList">
+			<div class="Title">
+				<button id="new-move" class="Styled Button">
+				<i class="Icon AddIcon Tiny"></i>
+				<span>Новое мероприятие</span><i class="Icon Arrow Tiny Down">▼</i>
+				</button>
+			</div>
+			<div id="move-type-list" class="Content ButtonContent" style="top: 31px; ">
+				<ul>
+					<li data-move-type="department">
+						Направление или перевод в отделение
+					</li>
+					<li data-move-type="hospitalbed">
+						Регистрация на койке
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	{{/if}}
+</div>
+
+<div id="lab-grid"></div>

@@ -1,0 +1,72 @@
+@import "compass";
+
+$experimental-support-for-svg: true;
+
+
+
+$DEFAULT_ICON_MARGIN: 8px;
+
+$CONTENT_WIDTH: 960px;
+$SIDEBAR_WIDTH: 220px;
+
+$SPRITES_FOLDER: "images/sprites/";
+
+/*
+*	FONTS
+*/
+$MAIN_FONT: 1.3em;
+$ALTERNATE_FONT: 1.4em;
+$SMALL_FONT: 1.2em;
+
+
+// Colors
+//$MAIN_COLOR: #414142;
+$MAIN_COLOR: #000;
+$SMALL_COLOR: #747578;
+
+$LINK_COLOR: #118DDC;
+$LINK_HOVER_COLOR: #dd1111;
+$LINK_ACTIVE_COLOR: $LINK_COLOR;
+$LINK_VISITED_COLOR: $LINK_COLOR;
+
+$OUTLINE: auto #FFBA00;
+
+
+@mixin link-style ($color:$LINK_COLOR, $visited:true) {
+	$visited-color: $color;
+	@if $visited {
+		$visited-color: $LINK_VISITED_COLOR;
+	}
+	@include link-colors ($color, $LINK_HOVER_COLOR, $LINK_ACTIVE_COLOR);
+
+	/*
+		TODO: заменить верхнюю строчку в продакшне
+		@include link-colors ($color, $LINK_HOVER_COLOR, $LINK_ACTIVE_COLOR, $visited-color);
+	*/
+}
+
+@mixin unselectable {
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+@mixin clearfix {
+	zoom: 1;
+
+	&:after {
+		clear: both;
+		content: "";
+		display: block;
+		height: 0;
+		visibility: hidden;
+	}
+}
+
+@mixin filter-gradient-fix {
+	&:not([ie]) {
+		filter: progid:DXImageTransform.Microsoft.gradient(enabled='false');
+	}
+}

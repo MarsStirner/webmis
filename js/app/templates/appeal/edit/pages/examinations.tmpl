@@ -1,0 +1,39 @@
+<div class="ContentHeader Clearfix">
+	<div class="PageActions">
+		<div class="DDList">
+			<div class="Title">
+				<button id="new-exam" class="Styled Button" {{if isClosed}}disabled="disabled"{{/if}}>
+					<i class="Icon AddIcon Tiny"></i>
+					<span>Новый осмотр</span><i class="Icon Arrow Tiny Down">▼</i>
+				</button>
+			</div>
+			<div id="exam-type-list" class="Content ButtonContent" style="top: 31px; ">
+				<ul>
+					<li data-exam-type="examination-primary" data-exam-struct-id="139">
+						Первичный осмотр
+					</li>
+					<li data-exam-type="examination-primary-repeated" data-exam-struct-id="2456">
+						Первичный осмотр (повторный)
+					</li>
+					<!--<li>
+						<a href="new/first/">Совместный</a>
+					</li>
+					<li>
+						Консультация
+					</li>
+					<li>
+						Консилиум
+					</li>
+					<li>
+						Дневниковый
+					</li>-->
+				</ul>
+			</div>
+		</div>
+		<div class="CloseHistory">
+			<button class="Styled Button Actions ToggleFilters"><i class="Icon Tiny SearchIcon"></i><span>Фильтр</span></button>
+		</div>
+	</div>
+</div>
+
+<div id="lab-grid"></div>

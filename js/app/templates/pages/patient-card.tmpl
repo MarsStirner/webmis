@@ -1,0 +1,564 @@
+<script id="patient-card-page" type="text/x-jquery-tmpl">
+
+<div id="page-head">
+
+</div>
+<div class="CardHeader Clearfix">
+	<div class="CardNav">
+		<h2>
+			{{if name}}
+				{{if name.first || name.last || name.middle}}
+					{{if name.last}}
+						${name.last}
+					{{/if}}
+					{{if name.first}}
+						${name.first}
+					{{/if}}
+					{{if name.middle}}
+						${name.middle}
+					{{/if}}
+				{{else}}
+					{{if name.raw}}
+						${name.raw}
+					{{else}}
+						-
+					{{/if}}
+				{{/if}}
+			{{/if}}
+		</h2>
+		<ul class="SectionNav">
+			<li class="Selected">
+				Карточка пациента
+			</li>
+			<li>
+				<a href="./appeals/">Госпитализации</a>
+			</li>
+			<li>
+				<a href="#">Амбулаторные талоны
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div class="CardPrint">
+		<button class="Styled Button Actions Print"><span>Печать</span></button>
+	</div>
+</div>
+<section id="page" class="Clearfix OneCol WithRightSideBar">
+	<div class="ContentSide Clearfix">
+		<aside class="SideBar">
+			<h3><a href="/patients/${id}/appeals/">История госпитализаций</a></h3>
+			<div class="History">
+
+			</div>
+		</aside>
+		<div class="FormSide">
+			<div class="ContentHolder">
+				<div class="ContentHeader Clearfix">
+					<div class="PageActions">
+						{{if allowCreateAppeal}}
+						<a href="./appeals/new/" class="Styled Button NewAppeal"><i class="AddIcon Icon Tiny"></i><span>Новая госпитализация</span></a>
+						{{/if}}
+						{{if allowEditPatientCard}}
+						<div class="CloseHistory">
+							<a href="./edit/" class="Styled Button"><span>Редактировать</span></a>
+						</div>
+						{{/if}}
+					</div>
+				</div>
+				<div class="EditForm Clearfix">
+					<ul class="LineBlockHolder">
+						<li>
+							<div class="LineBlock">
+								<div class="SemiCol">
+									<p><dfn>Дата рождения:</dfn> <strong>{{formatDate birthDate}}  ({{ageString birthDate}})</strong> </p>
+								</div>
+								<div class="HalfCol">
+									<p>
+										<dfn>Пол:</dfn>
+											<strong>
+												{{if sex=="male"}}
+													Мужской
+												{{else sex=="female"}}
+													Женский
+												{{else}}
+													Не установлен
+												{{/if}}
+											</strong>
+										</p>
+								</div>
+								{{if patientCode}}
+								<div class="HalfCol">
+									<p><dfn>Код:</dfn> <strong>${patientCode}</strong></p>
+								</div>
+								{{/if}}
+							</div>
+							<div class="LineBlock">
+								<div class="HalfCol">
+									<p><dfn>СНИЛС: </dfn> <strong>{{if snils}}${snils}{{else}}&mdash;{{/if}}</strong></p>
+								</div>
+							</div>
+						</li>
+
+						<!--<li>
+							<div class="LineBlock">
+								<h4>СНИЛС</h4>
+								<div class="HalfCol">
+									<span class="Label">Номер</span>
+									<p><strong>{{if snils}}${snils}{{else}}-{{/if}}</strong></p>
+								</div>
+								&lt;!&ndash;div class="HalfCol">
+									<span class="Label">Дата выдачи</span>
+									<p>12.03.1995</p>
+								</div>
+								<div class="SemiCol">
+									<span class="Label">Примечание</span>
+								</div&ndash;&gt;
+							</div>
+						</li>-->
+
+						{{if address.residential.fullAddress || address.residential.kladr || address.registered.fullAddress || address.registered.kladr}}
+						<li>
+							{{if address.residential.fullAddress || address.residential.kladr}}
+							<div class="LineBlock">
+								<div class="WideCol">
+									<p>
+										<dfn>Адрес проживания:</dfn>
+										<strong>
+											{{if address.residential.kladr}}
+												${address.residential.kladrString}
+												<!--${address.residential.republic.socr + " " + address.residential.republic.name},
+												${address.residential.district.socr + " " + address.residential.district.name},
+												${address.residential.city.socr + " " + address.residential.city.name},
+												${address.residential.locality.socr + " " + address.residential.locality.name},
+												${address.residential.street.socr + " " + address.residential.street.name}
+												{{if address.residential.house}}
+													, дом ${address.residential.house}
+												{{/if}}
+												{{if address.residential.building}}
+													, корпус ${address.residential.building}
+												{{/if}}
+												{{if address.residential.flat}}
+													, квартира ${address.residential.flat}
+												{{/if}}-->
+											{{else}}
+												${address.residential.fullAddress}
+											{{/if}}
+										</strong>
+									</p>
+								</div>
+							</div>
+							{{/if}}
+							{{if address.registered.fullAddress || address.registered.kladr}}
+							<div class="LineBlock">
+								<div class="WideCol">
+									<p>
+										<dfn>Адрес регистрации:</dfn>
+										<strong>
+											{{if address.registered.kladr}}
+											${address.registered.kladrString}
+												<!--${address.registered.republic.socr + " " + address.registered.republic.name},
+												${address.registered.district.socr + " " + address.registered.district.name},
+												${address.registered.city.socr + " " + address.registered.city.name},
+												${address.registered.locality.socr + " " + address.registered.locality.name},
+												${address.registered.street.socr + " " + address.registered.street.name}
+												{{if address.registered.house}}
+													, дом ${address.registered.house}
+												{{/if}}
+												{{if address.registered.building}}
+													, корпус ${address.registered.building}
+												{{/if}}
+												{{if address.registered.flat}}
+													, квартира ${address.registered.flat}
+												{{/if}}-->
+											{{else}}
+												${address.registered.fullAddress}
+											{{/if}}
+										</strong>
+									</p>
+								</div>
+							</div>
+							{{/if}}
+						</li>
+						{{/if}}
+
+							{{if payments.oms && payments.oms.number}}
+							<li>
+									<h4>Полис ОМС</h4>
+									<div class="LineBlock">
+											<div class="QuartCol">
+													<span class="Label">Серия</span>
+													<p><strong>{{if payments.oms.series}}${payments.oms.series}{{else}}-{{/if}}</strong></p>
+											</div>
+											<div class="QuartCol">
+													<span class="Label">Номер</span>
+													<p><strong>{{if payments.oms.number}}${payments.oms.number}{{else}}-{{/if}}</strong></p>
+											</div>
+											<div class="HalfCol">
+													<span class="Label">Тип полиса</span>
+													<p><strong>{{if payments.oms.policyType}}${payments.oms.policyType.name}{{else}}-{{/if}}</strong></p>
+											</div>
+											<div class="HalfCol">
+													<span class="Label">
+														{{if payments.oms.rangePolicyDate && payments.oms.rangePolicyDate.start && !payments.oms.rangePolicyDate.end}}
+															Дата выдачи
+														{{else}}
+															Период действия
+														{{/if}}
+													</span>
+													<p>
+															<strong>
+																{{if payments.oms.rangePolicyDate}}
+																	{{if payments.oms.rangePolicyDate.start}}
+																		{{formatDate payments.oms.rangePolicyDate.start}}
+																	{{/if}}
+																	{{if payments.oms.rangePolicyDate.end}}
+																		- {{formatDate payments.oms.rangePolicyDate.end}}
+																	{{/if}}
+																{{else}}
+																		-
+																{{/if}}
+															</strong>
+													</p>
+											</div>
+											{{if payments.oms.comment}}
+											<div class="HalfCol">
+													<span class="Label">Примечание</span>
+													<p><strong>${payments.oms.comment}</strong></p>
+											</div>
+											{{/if}}
+									</div>
+									<div class="LineBlock">
+											<div class="LineCol">
+													<span class="Label">Название СМО</span>
+													<p><strong>{{if payments.oms.smo}}${payments.oms.smo.name}{{else}}-{{/if}}</strong></p>
+											</div>
+									</div>
+							</li>
+							{{/if}}
+
+							{{if payments.dms && payments.dms.number}}
+							<li>
+									<h4>Полис ДМС</h4>
+									<div class="LineBlock">
+											<div class="QuartCol">
+													<span class="Label">Серия</span>
+													<p><strong>{{if payments.dms.series}}${payments.dms.series}{{else}}-{{/if}}</strong></p>
+											</div>
+											<div class="QuartCol">
+													<span class="Label">Номер</span>
+													<p><strong>{{if payments.dms.number}}${payments.dms.number}{{else}}-{{/if}}</strong></p>
+											</div>
+											<div class="HalfCol">
+												<span class="Label">
+														{{if payments.dms.rangePolicyDate && payments.dms.rangePolicyDate.start && !payments.dms.rangePolicyDate.end}}
+															Дата выдачи
+														{{else}}
+															Период действия
+														{{/if}}
+													</span>
+												<p>
+													<strong>
+														{{if payments.dms.rangePolicyDate}}
+															{{if payments.dms.rangePolicyDate.start}}
+																{{formatDate payments.dms.rangePolicyDate.start}}
+															{{/if}}
+															{{if payments.dms.rangePolicyDate.end}}
+																- {{formatDate payments.dms.rangePolicyDate.end}}
+															{{/if}}
+														{{else}}
+															-
+														{{/if}}
+													</strong>
+												</p>
+											</div>
+											{{if payments.dms.comment}}
+											<div class="SemiCol">
+													<span class="Label">Примечание</span>
+													<p><strong>${payments.dms.comment}</strong></p>
+											</div>
+											{{/if}}
+									</div>
+									<div class="LineBlock">
+											<div class="LineCol">
+													<span class="Label">Название СМО</span>
+													<p><strong>{{if payments.dms.smo}}${payments.dms.smo.name}{{else}}-{{/if}}</strong></p>
+											</div>
+									</div>
+							</li>
+							{{/if}}
+
+						{{if idCards.length && idCards[0].number}}
+						<li>
+							<h4>Документ, удостоверяющий личность</h4>
+							{{each(i, idCard) idCards}}
+							<div class="LineBlock">
+								<div class="QuartCol">
+									<span class="Label">Серия</span>
+									<p><strong>{{if idCard.series}}${idCard.series}{{else}}-{{/if}}</strong></p>
+								</div>
+								<div class="QuartCol">
+									<span class="Label">Номер</span>
+									<p><strong>{{if idCard.number}}${idCard.number}{{else}}-{{/if}}</strong></p>
+								</div>
+								<div class="QuartCol">
+									<span class="Label">Тип</span>
+									<p><strong>{{if idCard.docType}}${idCard.docType.name}{{else}}-{{/if}}</strong></p>
+								</div>
+								<div class="HalfCol">
+									<span class="Label">
+										{{if idCard.rangeDocumentDate && idCard.rangeDocumentDate.start && !idCard.rangeDocumentDate.end}}
+											Дата выдачи
+										{{else}}
+											Период действия
+										{{/if}}
+									</span>
+									<p>
+										<strong>
+											{{if idCard.rangeDocumentDate}}
+												{{if idCard.rangeDocumentDate.start}}
+													{{formatDate idCard.rangeDocumentDate.start}}
+												{{/if}}
+												{{if idCard.rangeDocumentDate.end}}
+													- {{formatDate idCard.rangeDocumentDate.end}}
+												{{/if}}
+											{{/if}}
+										</strong>
+									</p>
+								</div>
+								<div class="SemiCol">
+									<span class="Label">Кем выдан</span>
+									<p><strong>{{if idCard.issued}}${idCard.issued}{{else}}-{{/if}}</strong></p>
+								</div>
+							</div>
+							{{/each}}
+						</li>
+						{{/if}}
+
+						{{if occupations.length && occupations[0].socialStatus && occupations[0].socialStatus.status || phones.count || relations.length && relations[0].relationType && relations[0].relationType.id}}
+						<li>
+							{{each(i, occupation) occupations}}
+								{{if occupation.socialStatus.id}}
+									<h4>Социальный статус</h4>
+									<div class="LineBlock">
+										<p>{{if occupation.socialStatus.status}}<strong>${occupation.socialStatus.status}</strong>{{/if}}</p>
+
+										{{if occupation.socialStatus.id == 310}}
+										<p>${occupation.works[0].position} в «${occupation.works[0].workingPlace}»</p>
+										{{/if}}
+
+										{{if occupation.socialStatus.id == 313}}
+										<p>Номер детсада, ясли: ${occupation.works[0].preschoolNumber}</p>
+										{{/if}}
+
+										{{if occupation.socialStatus.id == 314}}
+										<p>Номер школы: ${occupation.works[0].schoolNumber}, класс ${occupation.works[0].classNumber}</p>
+										{{/if}}
+
+										{{if occupation.socialStatus.id == 315}}
+										<p>Род войск: ${occupation.works[0].forceBranch.branch}</p>
+										<p>Войсковая часть: ${occupation.works[0].militaryUnit}</p>
+										<p>Звание: {{if occupation.works[0].rank}}${occupation.works[0].rank.rank}{{/if}}</p>
+										{{/if}}
+
+
+										{{if occupation.comment}}<p>Примечание: ${occupation.comment}</p>{{/if}}
+									</div>
+								{{/if}}
+
+								{{if phones.count}}
+									{{each(i, block) phones.blocks}}
+										<div class="LineBlock">
+											{{if i === 0}}
+												<h4>Контактные данные пациента</h4>
+											{{/if}}
+											{{each(j, p) block}}
+												<div class="SemiCol"><span class="Label" style="white-space: normal">{{if p.typeName === 'e-mail'}}Email{{else}}${p.typeName[0].toUpperCase() + p.typeName.substr(1, p.typeName.length)}{{/if}}{{if p.comment}}<br>(${p.comment}){{/if}}:</span><p><strong>${p.number}</strong></p></div>
+											{{/each}}
+										</div>
+									{{/each}}
+								{{/if}}
+
+
+								<!--{{if relations.length && relations[0].relationType.id}}
+								<h4>Дополнительные контакты</h4>
+									{{each(i, rel) relations}}
+										{{if rel.relationType}}
+										<div class="LineBlock">
+											<div class="HalfCol">
+												<span class="Label">Кем приходится</span>
+												<p>${rel.relationType.name}</p>
+											</div>
+											<div class="HalfCol">
+												<span class="Label">ФИО</span>
+												<p><strong>${rel.name.raw}</strong></p>
+											</div>
+											{{if rel.phones.length}}
+											<div class="HalfCol">
+												<span class="Label">Телефон</span>
+												<p><strong>${rel.phones[0].number}</strong></p>
+											</div>
+											{{/if}}
+										</div>
+										{{/if}}
+									{{/each}}
+								{{/if}}-->
+							{{/each}}
+						</li>
+						{{/if}}
+
+						{{if medicalInfo}}
+						{{if medicalInfo.allergies.length && medicalInfo.allergies[0].substance || medicalInfo.drugIntolerances.length && medicalInfo.drugIntolerances[0].substance || medicalInfo.blood.group}}
+						<li>
+							<h4>Мед. особенности</h4>
+							<div class="LineBlock">
+								{{if medicalInfo.allergies.length && medicalInfo.allergies[0].substance}}
+								<p>
+									<dfn>Аллергия:</dfn>
+									<ul>
+										{{each(i, allergy) medicalInfo.allergies}}
+										<li>
+											<p class="Warning">
+												<strong>
+													${allergy.substance}
+													{{if allergy.degree}}${allergy.degree} степень{{/if}}
+													{{if allergy.checkingDate}}
+														(установлено: {{formatDate allergy.checkingDate}})
+													{{/if}}
+												</strong>
+											</p>
+										</li>
+										{{/each}}
+									</ul>
+								</p>
+								{{/if}}
+
+								{{if medicalInfo.drugIntolerances.length && medicalInfo.drugIntolerances[0].substance}}
+								<p>
+									<dfn>Медикаментозная непереносимость:</dfn>
+									<ul>
+										{{each(i, drugIntolerance) medicalInfo.drugIntolerances}}
+											<p class="Warning">
+												<strong>
+												${drugIntolerance.substance}
+												{{if drugIntolerance.degree}}
+													${drugIntolerance.degree} степень{{/if}}
+													{{if drugIntolerance.checkingDate}}
+														(установлено: {{formatDate drugIntolerance.checkingDate}})
+												{{/if}}
+												</strong>
+												</p>
+										{{/each}}
+									</ul>
+								</p>
+								{{/if}}
+							</div>
+							{{if medicalInfo.blood.group}}
+							<div class="LineBlock">
+								<div class="HalfCol">
+									<p><dfn>Группа крови:</dfn>&nbsp;<strong>${medicalInfo.blood.group}</strong></p>
+								</div>
+								{{if medicalInfo.blood.checkingDate}}
+								<div class="HalfCol">
+									<p><dfn>Дата установления:</dfn> <strong>{{formatDate medicalInfo.blood.checkingDate}}</strong></p>
+								</div>
+								{{/if}}
+							</div>
+							{{/if}}
+						</li>
+						{{/if}}
+						{{/if}}
+
+						{{if disabilities.length && disabilities[0].disabilityType.id}}
+						<li>
+							<h4>Инвалидность</h4>
+							{{each(i, disability) disabilities}}
+								<div class="LineBlock">
+									<div class="HalfCol">
+										<span class="Label">Категория льгот</span>
+										<p>
+											<strong>
+												{{if disability.benefitsCategory && disability.benefitsCategory.name}}${disability.benefitsCategory.name}{{else}}-{{/if}}
+											</strong>
+										</p>
+									</div>
+									<div class="HalfCol">
+										<span class="Label">Тип</span>
+										<p>
+											<strong>
+												{{if disability.disabilityType && disability.disabilityType.name}}${disability.disabilityType.name}{{else}}-{{/if}}
+											</strong>
+										</p>
+									</div>
+									<div class="HalfCol">
+										<span class="Label">Период действия</span>
+										<p>
+											<strong>
+											{{if disability.rangeDisabilityDate.start}}{{formatDate disability.rangeDisabilityDate.start}}{{else}}-{{/if}}
+											{{if disability.rangeDisabilityDate.end}} - {{formatDate disability.rangeDisabilityDate.end}}{{/if}}
+											</strong>
+										</p>
+									</div>
+									<!--<div class="QuartCol">
+										<span class="Label">Дата окончания</span>
+										<p>{{if disability.rangeDisabilityDate.end}}{{formatDate disability.rangeDisabilityDate.end}}{{else}}-{{/if}}</p>
+									</div>-->
+								</div>
+								<div class="LineBlock">
+									{{if disability.document}}
+									<div class="SemiCol">
+										<span class="Label">Документ, подтверждающий инвалидность</span>
+										<p><strong>${disability.document.document}</strong></p>
+									</div>
+										{{if disability.document.series}}
+										<div class="QuartCol">
+											<span class="Label">Серия</span>
+											<p><strong>${disability.document.series}</strong></p>
+										</div>
+										{{/if}}
+										{{if disability.document.number}}
+										<div class="HalfCol">
+											<span class="Label">Номер</span>
+											<p><strong>${disability.document.number}</strong></p>
+										</div>
+										{{/if}}
+										{{if disability.document.date}}
+										<div class="SemiCol">
+											<span class="Label">Дата выдачи</span>
+											<p><strong>{{formatDate disability.document.date}}</strong></p>
+										</div>
+										{{/if}}
+									{{/if}}
+								</div>
+								{{if disability.document && disability.document.comment}}
+								<div class="LineBlock">
+									<div class="SemiCol">
+										<span class="Label">Примечание</span>
+										<p><strong>${disability.document.comment}</strong></p>
+									</div>
+								</div>
+								{{/if}}
+							{{/each}}
+						</li>
+						{{/if}}
+
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+</script>
+
+<script id="patient-card-page-history" type="text/x-jquery-tmpl">
+	<ul class="TreatmentHistory">
+
+	</ul>
+	<div class="AllTreatments">
+		<a href="/patients/${patient.id}/appeals/">История госпитализаций</a> <span class="Quant">(${quantity})</span>
+	</div>
+</script>
+
+<script id="patient-card-page-history-item" type="text/x-jquery-tmpl">
+	<h4><a href="/appeals/${id}/">№ ${number}</a></h4>
+	{{formatDate rangeAppealDateTime.start}}{{if rangeAppealDateTime.end}} — {{formatDate rangeAppealDateTime.end}}{{/if}}
+</script>

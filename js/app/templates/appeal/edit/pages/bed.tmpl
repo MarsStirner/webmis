@@ -1,0 +1,12 @@
+<td>
+	<div class="bedBox {{if busy == 'no'}} disabledBed {{/if}}">
+		<input type="checkbox" class="bedCheckbox" value="${bedId}" name="beds"/>
+		<span class="bedNumber">
+			{{if bedId}}
+				${bedId}
+			{{else}}
+						-
+			{{/if}}
+		</span>
+	</div>
+</td>

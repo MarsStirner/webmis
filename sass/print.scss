@@ -1,0 +1,123 @@
+// Не всегда работает перекрытие стилей! Будь внимателен!
+
+body * {
+	padding:0;
+	margin:0;
+	text-indent:normal;
+	list-style:none;
+	line-height:normal;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+	font-size: 14pt;
+	text-align:center;
+	font-weight:normal;
+	margin: 10pt 0 12pt;
+}
+h2  {
+	text-align:center;
+	margin-bottom:12pt;
+	font-weight:normal;
+}
+.EditLine {
+	border-bottom:0.5pt solid #000;
+	//text-decoration: underline;
+	//margin: 0 0 0 1.5em;
+	font-style:italic;
+
+	&.Empty {
+		display: block;
+		width: 80pt;
+	}
+}
+p {
+	margin-bottom:3pt;
+}
+.PrintTitle {
+	width:100%;
+	overflow:hidden;
+	margin-bottom:12pt;
+
+	table {
+		border: none;
+
+		td {
+			vertical-align: top;
+			border: none;
+
+
+			table {
+				float: right;
+				margin: 0 0 20pt;
+			}
+		}
+
+
+	}
+}
+.Logo {
+	text-align: left;
+
+	img {
+		margin-top: 10pt;
+		margin-left: 10%;
+	}
+}
+.FormCode {
+	text-align:right;
+}
+.FormCode p {
+	margin-bottom:16pt;
+}
+.Form {
+	margin: 20pt 0 0;
+	margin-bottom:12pt;
+}
+.Form li {
+	margin-bottom:3pt;
+}
+.Legend {
+	font-size:7pt;
+}
+table {
+	border:0.5pt solid #000;
+	border-collapse:collapse;
+
+	&.Styled {
+
+		th, td {
+			font-weight:normal;
+			border:0.5pt solid #000;
+			padding: 5pt;
+		}
+	}
+}
+.DateCol {
+	width:10%;
+}
+
+.Button.Print {
+	display: none;
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	padding: 5pt 10pt;
+	opacity: 0.5;
+
+	&:hover {
+		opacity: 1;
+	}
+}
+
+body {
+	font-size: 9pt;
+}
+@page {
+
+}
+#wrapper {
+	width: 100%;
+	//width: 728px;
+	font-size: 9pt;
+}

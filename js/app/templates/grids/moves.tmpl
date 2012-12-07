@@ -1,0 +1,61 @@
+<script id="moves-grid-department" type="text/x-jquery-tmpl">
+	<table class="Grid">
+		<thead>
+		<!--<tr class="EditTh">-->
+		<tr>
+			<th>
+				<a class="Actions SortCol" data-field="unit"><span>Отделение</span></a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="admission"><span>Поступление</span></a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="leave"><span>Выбытие</span></a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="days"><span>Дни</span></a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="bedDays"><span>Койко-дни</span></a>
+			</th>
+			<!--<th>
+				<a class="Actions SortCol" data-field="chamber"><span>Палата</span></a>
+			</th>-->
+			<th>
+				<a class="Actions SortCol" data-field="bed"><span>Койка</span></a>
+			</th>
+		</tr>
+		</thead>
+		<tbody>
+
+		</tbody>
+	</table>
+</script>
+
+<script id="moves-grid-row-department" type="text/x-jquery-tmpl">
+	<td>
+		${unit}
+	</td>
+	<td>
+		{{formatDateTime admission}}
+	</td>
+	<td>
+		{{formatDateTime leave}}
+	</td>
+	<td>
+		${days}
+	</td>
+	<td>
+		${bedDays}
+	</td>
+	<!--<td>
+		${chamber}
+	</td>-->
+	<td>
+		${bed}
+	</td>
+</script>
+
+<script id="moves-grid-department-default" type="text/x-jquery-tmpl">
+	<h3>Записей нет</h3>
+</script>

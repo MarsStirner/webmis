@@ -1,0 +1,28 @@
+@import "base";
+@import "compass/utilities/sprites/base";
+
+/*
+	Usage:
+ 		@include sprite-folder("<folder>");
+			element {
+				@include sprite-file("<file-without-extension>");
+
+				@include sprite-background-position($sprite, "<file-without-extension>", 100%, 0);
+			}
+*/
+
+$sprite: "";
+$sprite-file: "";
+
+@mixin sprite-folder($name, $root_path: "../") {
+	$sprite: sprite-map("sprites/_"+$name+"/*.png", $spacing: 10px, $cleanup: false);
+
+	$sprite-file: $root_path+$SPRITES_FOLDER+$name+"-sprite.png";
+
+	$rendered-sprite: sprite-url($sprite) no-repeat;
+}
+
+@mixin sprite-file($name) {
+	background: url($sprite-file) no-repeat;
+	@include sprite($sprite, $name, true);
+}

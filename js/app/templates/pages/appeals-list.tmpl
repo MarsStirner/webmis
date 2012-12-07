@@ -1,0 +1,112 @@
+<script id="appeals-list-page" type="text/x-jquery-tmpl">
+	<section id="page" class="Clearfix OneCol">
+		<div class="ContentSide Clearfix">
+			<div class="ContentHolder">
+				<div class="Container">
+
+				</div>
+			</div>
+		</div>
+	</section>
+</script>
+
+<script id="appeals-list-filters-reception" type="text/x-jquery-tmpl">
+	<form>
+	<div id="page-head">
+		<div class="FilterPage Clearfix">
+			<div class="DayScroller">
+				<a class="ScrollDay Actions Decrease" href="#">&lt;</a>
+				<div class="DateTime">
+					<div class="DatePeriod SingleDate Mandatory">
+						<div class="FromTo">
+							<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="beginDate" placeholder="дд.мм.гггг" class="SelectDate" />
+						</div>
+						<i class="DateIcon Icon"></i>
+					</div>
+					<div class="SingleTime">
+						<input type="text" id="appeal-start-time" class="HourPicker" data-relation="#appeal-start-date" value="8:00" placeholder="чч:мм"/>
+					</div>
+				</div>
+				<span class="MDash">—</span>
+				<div class="DateTime">
+					<div class="DatePeriod SingleDate Mandatory">
+						<div class="FromTo">
+							<input type="text" id="appeal-end-date" data-relation="#appeal-end-time" name="endDate" placeholder="дд.мм.гггг" class="SelectDate" />
+						</div>
+						<i class="DateIcon Icon"></i>
+					</div>
+					<div class="SingleTime">
+						<input type="text" id="appeal-end-time" class="HourPicker" data-relation="#appeal-end-date" value="7:59" placeholder="чч:мм"/>
+					</div>
+				</div>
+				<a class="ScrollDay Actions Increase" href="#">&gt;</a>
+			</div>
+			<div class="CloseHistory">
+				<button class="Styled Button Actions ToggleFilters"><i class="Icon Tiny SearchIcon"></i><span>Фильтр</span></button>
+				<button class="Styled Button"><span>Печать</span></button>
+			</div>
+		</div>
+	</div>
+	</form>
+</script>
+
+<script id="appeals-list-filters-doctor-department" type="text/x-jquery-tmpl">
+	<form>
+		<div class="SearchBlock">
+			<div class="EditForm Clearfix">
+				<ul class="LineBlockHolder">
+					<li>
+						<div class="LineBlock">
+							<div class="HalfCol">
+								<div class="DaySelect">
+									<div class="FilterLabel">Лежащие в отделениии по состоянию на</div>
+									<div class="DatePeriod SingleDate">
+										<div class="FromTo">
+											<input type="hidden" name="beginDate" value=""/>
+											<input type="text" id="appeal-start-date" name="endDate" placeholder="дд.мм.гггг" class="SelectDate" />
+										</div>
+										<i class="DateIcon Icon"></i>
+									</div>
+								</div>
+							</div>
+							<div class="HalfCol">
+								<label>Врач</label>
+								<select class="Styled" id="docs-dictionary" name="doctorId">
+									<option value="">...</option>
+								</select>
+							</div>
+							<div class="HalfCol">
+								<label>Отделение</label>
+								<select class="Styled" id="deps-dictionary" name="departmentId">
+									<option value="">...</option>
+								</select>
+							</div>
+							<div class="HalfCol">
+								<div class="CloseHistory"><button class="Styled Button"><span>Печать</span></button></div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</form>
+</script>
+
+<script id="appeals-list-filters-nurse-department" type="text/x-jquery-tmpl">
+	<form>
+		<div id="page-head">
+			<div class="FilterPage Clearfix">
+				<div class="DaySelect">
+					<div class="FilterLabel">Лежащие в отделениии по состоянию на</div>
+					<div class="DatePeriod SingleDate">
+						<div class="FromTo">
+							<input type="hidden" name="departmentId" value="18"/>
+							<input type="text" id="appeal-start-date" name="endDate" placeholder="дд.мм.гггг" class="SelectDate" />
+						</div>
+						<i class="DateIcon Icon"></i>
+					</div>
+				</div>
+			</div>
+        </div>
+	</form>
+</script>

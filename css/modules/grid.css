@@ -1,0 +1,454 @@
+@charset "UTF-8";
+/*
+*	FONTS
+*/
+/* line 6, ../../sass/modules/grid.scss */
+.Grid {
+  margin: 0 auto 0 auto;
+  color: #414142;
+  font-size: 1.3em;
+}
+/* line 12, ../../sass/modules/grid.scss */
+.Grid th {
+  padding: 0.8em 0.7em;
+  border-bottom: 1px solid #000;
+  color: #6D6D71;
+  white-space: nowrap;
+}
+/* line 17, ../../sass/modules/grid.scss */
+.Grid th a.Actions {
+  border: none;
+  color: #6D6D71;
+  text-decoration: none;
+  cursor: pointer;
+            /*
+			&:hover {
+				text-decoration: none;
+			}
+			*/
+}
+/* line 27, ../../sass/modules/grid.scss */
+.Grid th a.Actions span {
+  text-decoration: underline;
+}
+/* line 30, ../../sass/modules/grid.scss */
+.Grid th a.Actions::after {
+  content: "▼";
+  color: #000;
+  font-size: 0.5em;
+  position: relative;
+  left: 0.2em;
+  top: -0.2em;
+  vertical-align: baseline;
+  line-height: 1em;
+  visibility: hidden;
+}
+/* line 45, ../../sass/modules/grid.scss */
+.Grid th.Active a.Actions {
+  color: #000;
+}
+/* line 48, ../../sass/modules/grid.scss */
+.Grid th.Active a.Actions::after {
+  visibility: visible;
+  content: "▼";
+}
+/* line 57, ../../sass/modules/grid.scss */
+.Grid th.Active.Desc .Actions::after {
+  content: "▲";
+}
+/* line 63, ../../sass/modules/grid.scss */
+.Grid th.NumTh {
+  width: 5em;
+}
+/* line 66, ../../sass/modules/grid.scss */
+.Grid th.DateTh {
+  width: 6em;
+}
+/* line 69, ../../sass/modules/grid.scss */
+.Grid th:first-child {
+  padding-left: 0.3em;
+}
+/* line 73, ../../sass/modules/grid.scss */
+.Grid .EditTh th {
+  font-size: 0.8em;
+}
+/* line 77, ../../sass/modules/grid.scss */
+.Grid td {
+  border-bottom: 1px solid #D9D9D9;
+  padding: 0.8em 0.7em 0.9em 0.7em;
+  /*cursor: pointer;*/
+}
+/* line 82, ../../sass/modules/grid.scss */
+.Grid td a {
+  color: #414142;
+  /*text-decoration: none;*/
+}
+/* line 85, ../../sass/modules/grid.scss */
+.Grid td a:hover {
+  color: #DD1111;
+}
+/* line 89, ../../sass/modules/grid.scss */
+.Grid td:first-child {
+  padding-left: 3px;
+}
+/* line 92, ../../sass/modules/grid.scss */
+.Grid td.DoneCell {
+  color: #009F1F;
+}
+/* line 95, ../../sass/modules/grid.scss */
+.Grid td.CancelledCell {
+  color: #E00000;
+}
+/* line 98, ../../sass/modules/grid.scss */
+.Grid td.NewCell {
+  color: #CC0000;
+}
+/* line 101, ../../sass/modules/grid.scss */
+.Grid td.StartCell {
+  color: #006699;
+}
+/* line 104, ../../sass/modules/grid.scss */
+.Grid td.InWorkCell {
+  color: #404040;
+}
+/* line 107, ../../sass/modules/grid.scss */
+.Grid td.IconsCell {
+  white-space: nowrap;
+}
+/* line 110, ../../sass/modules/grid.scss */
+.Grid td.ButtonCell .Button {
+  font-size: 1em;
+}
+/* line 113, ../../sass/modules/grid.scss */
+.Grid td.WrongCell {
+  color: #E00000;
+}
+/* line 116, ../../sass/modules/grid.scss */
+.Grid td.PatientStatusCell {
+  color: #7f7f7f;
+}
+/* line 119, ../../sass/modules/grid.scss */
+.Grid td.HavePrimary {
+  font-weight: bold;
+}
+/* line 123, ../../sass/modules/grid.scss */
+.Grid.PacientIntake td {
+  min-width: 45%;
+}
+/* line 125, ../../sass/modules/grid.scss */
+.Grid.PacientIntake td:first-child {
+  color: #6c6c71;
+}
+/* line 129, ../../sass/modules/grid.scss */
+.Grid tr {
+  cursor: pointer;
+}
+/* line 132, ../../sass/modules/grid.scss */
+.Grid tr.RejectRow td {
+  color: #999999;
+}
+/* line 136, ../../sass/modules/grid.scss */
+.Grid tr:hover td {
+  background: #f5f4f4;
+}
+/* line 139, ../../sass/modules/grid.scss */
+.Grid tr:only-child .RemoveIcon {
+  display: none;
+}
+/* line 143, ../../sass/modules/grid.scss */
+.Grid.WithoutHead {
+  font-size: 1.2em;
+}
+/* line 145, ../../sass/modules/grid.scss */
+.Grid.WithoutHead tr td:first-child {
+  color: #6D6D71;
+  white-space: nowrap;
+}
+/* line 149, ../../sass/modules/grid.scss */
+.Grid.WithoutHead td dfn {
+  padding-right: 0.5em;
+}
+
+/* line 154, ../../sass/modules/grid.scss */
+.NormCell {
+  border-left: 1px solid #D9D9D9;
+}
+
+/* line 159, ../../sass/modules/grid.scss */
+.StatusText {
+  white-space: nowrap;
+}
+/* line 161, ../../sass/modules/grid.scss */
+.StatusText .Icon {
+  margin-left: -1.2em;
+  margin-right: 0.2em;
+  position: relative;
+  top: -0.1em;
+}
+
+/*DrugList*/
+/* line 172, ../../sass/modules/grid.scss */
+.DrugList {
+  border-top: 1px solid #000000;
+  border-right: 1px solid #D4D4D4;
+  border-bottom: 1px solid #000000;
+  border-left: 1px solid #D4D4D4;
+  font-size: 1.3em;
+}
+/* line 178, ../../sass/modules/grid.scss */
+.DrugList th {
+  padding: 0.6em 0.3em 0.5em 0.3em;
+  border-top: 1px solid #000000;
+  border-left: 1px solid #D4D4D4;
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #D4D4D4;
+  text-align: center;
+  min-width: 1.5em;
+}
+/* line 187, ../../sass/modules/grid.scss */
+.DrugList td {
+  padding: 0.8em 0.3em 0.9em 0.3em;
+  border: 1px solid #D4D4D4;
+}
+/* line 190, ../../sass/modules/grid.scss */
+.DrugList td.Active {
+  background: #D6EFFC;
+  padding: 0;
+  cursor: pointer;
+  vertical-align: top;
+}
+
+/* line 199, ../../sass/modules/grid.scss */
+.DrugList tr td:first-child {
+  padding: 0.8em 0.7em 0.9em 0.7em;
+}
+
+/* line 203, ../../sass/modules/grid.scss */
+.DrugInfoHolder {
+  position: relative;
+}
+
+/* line 206, ../../sass/modules/grid.scss */
+.DrugInfo {
+  padding: 0.8em 0.7em 0.9em 0.7em;
+  background: #FFFFCC;
+  position: absolute;
+  top: 1.5em;
+  left: 1.5em;
+  cursor: default;
+  border: 1px solid #D4D4D4;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 3px 5px 0;
+  -moz-box-shadow: rgba(0, 0, 0, 0.5) 0 3px 5px 0;
+  box-shadow: rgba(0, 0, 0, 0.5) 0 3px 5px 0;
+  display: none;
+  white-space: nowrap;
+}
+/* line 217, ../../sass/modules/grid.scss */
+.DrugInfo h4 {
+  font-weight: bold;
+}
+
+/* line 221, ../../sass/modules/grid.scss */
+.Selected .DrugInfo {
+  display: block;
+}
+
+/* line 226, ../../sass/modules/grid.scss */
+.MedicamentGrid {
+  margin-bottom: 4em;
+  font-size: 1em;
+}
+/* line 229, ../../sass/modules/grid.scss */
+.MedicamentGrid th {
+  font-size: 1.2em;
+}
+/* line 231, ../../sass/modules/grid.scss */
+.MedicamentGrid th:first-child {
+  padding-left: 0;
+}
+/* line 234, ../../sass/modules/grid.scss */
+.MedicamentGrid th:last-child {
+  padding-right: 0;
+  width: 2em;
+}
+/* line 239, ../../sass/modules/grid.scss */
+.MedicamentGrid .AddIcon {
+  margin-left: 0;
+}
+/* line 242, ../../sass/modules/grid.scss */
+.MedicamentGrid td {
+  vertical-align: middle;
+}
+/* line 244, ../../sass/modules/grid.scss */
+.MedicamentGrid td > input {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+/* line 249, ../../sass/modules/grid.scss */
+.MedicamentGrid .DDList .Actions {
+  font-size: 1.3em;
+}
+
+/* line 256, ../../sass/modules/grid.scss */
+.MedicamentGrid tr:hover td {
+  background: none;
+  cursor: default;
+}
+
+/* line 261, ../../sass/modules/grid.scss */
+.AnalisGrid {
+  width: auto;
+  margin: 0 0 2em 0;
+}
+/* line 264, ../../sass/modules/grid.scss */
+.AnalisGrid input[type="text"] {
+  font-size: 1em;
+}
+/* line 267, ../../sass/modules/grid.scss */
+.AnalisGrid input[type="password"] {
+  font-size: 1em;
+}
+/* line 270, ../../sass/modules/grid.scss */
+.AnalisGrid td {
+  vertical-align: middle;
+}
+/* line 273, ../../sass/modules/grid.scss */
+.AnalisGrid .EditCol {
+  width: 4em;
+}
+/* line 276, ../../sass/modules/grid.scss */
+.AnalisGrid th:first-child {
+  width: 60%;
+}
+
+/* line 282, ../../sass/modules/grid.scss */
+.EditGrid td {
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+
+/* line 288, ../../sass/modules/grid.scss */
+.Urgent, .Privilege, .Primary {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 0.2em 0.4em 0.2em 0.4em;
+  background: #CC3300;
+  text-transform: uppercase;
+  color: #fff;
+  text-align: center;
+  font-size: 0.8em;
+}
+
+/* line 300, ../../sass/modules/grid.scss */
+.Privilege {
+  background: #CC6600;
+}
+
+/* line 304, ../../sass/modules/grid.scss */
+.Primary {
+  background: #0099FF;
+}
+
+/* line 308, ../../sass/modules/grid.scss */
+.GridButtons {
+  padding-top: 2em;
+}
+
+/* line 312, ../../sass/modules/grid.scss */
+.PatientGrid {
+  font-size: 1.2em;
+  margin-bottom: 2em;
+}
+/* line 315, ../../sass/modules/grid.scss */
+.PatientGrid .MultiSelectLink {
+  text-decoration: none;
+  border-bottom: 1px dotted #118DDC;
+}
+/* line 318, ../../sass/modules/grid.scss */
+.PatientGrid .MultiSelectLink:hover {
+  border-bottom: 1px dotted #DD1111;
+}
+/* line 322, ../../sass/modules/grid.scss */
+.PatientGrid th {
+  text-align: center;
+  padding: 0.7em 0;
+  border: 1px solid #e5e5e5;
+  border-top: none;
+  min-width: 1.8em;
+}
+/* line 328, ../../sass/modules/grid.scss */
+.PatientGrid th:first-child {
+  border-left: none;
+  text-align: left;
+}
+/* line 334, ../../sass/modules/grid.scss */
+.PatientGrid tr td {
+  text-align: center;
+  padding: 0.7em 0;
+  border: 1px solid #e5e5e5;
+  font-size: 0.7em;
+  vertical-align: middle;
+}
+/* line 340, ../../sass/modules/grid.scss */
+.PatientGrid tr td.Selected {
+  background: #76c376;
+  font-size: 0.8em;
+}
+/* line 343, ../../sass/modules/grid.scss */
+.PatientGrid tr td.Selected.Blue {
+  background: #7fbce4;
+}
+/* line 346, ../../sass/modules/grid.scss */
+.PatientGrid tr td.Selected.Red {
+  background: #f67676;
+}
+/* line 350, ../../sass/modules/grid.scss */
+.PatientGrid tr td:first-child {
+  font-size: 1em;
+  text-align: left;
+  border-left: none;
+}
+/* line 355, ../../sass/modules/grid.scss */
+.PatientGrid tr td:first-child .TooltipList li {
+  font-size: 0.9em;
+}
+/* line 360, ../../sass/modules/grid.scss */
+.PatientGrid tr td:last-child {
+  border-right: none;
+}
+/* line 363, ../../sass/modules/grid.scss */
+.PatientGrid tr td.DoseCell {
+  font-size: 1em;
+}
+/* line 366, ../../sass/modules/grid.scss */
+.PatientGrid tr td .Icon {
+  display: block;
+  margin: 1em auto 0 auto;
+}
+/* line 371, ../../sass/modules/grid.scss */
+.PatientGrid tr td .TooltipList li {
+  font-size: 1.2em;
+}
+/* line 376, ../../sass/modules/grid.scss */
+.PatientGrid .HeaderRow td {
+  text-align: left;
+  font-weight: bolder;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+/* line 383, ../../sass/modules/grid.scss */
+.PatientGrid .DrugRow {
+  background: #ededed;
+}
+/* line 385, ../../sass/modules/grid.scss */
+.PatientGrid .DrugRow td:first-child {
+  border-left: 5px solid green;
+  padding-left: 0.5em;
+  text-align: left;
+}
+/* line 390, ../../sass/modules/grid.scss */
+.PatientGrid .DrugRow:hover {
+  background: #ededed;
+}

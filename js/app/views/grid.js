@@ -1,0 +1,141 @@
+define(["views/grid-row"], function() {
+	App.Views.Grid = View.extend ({
+
+		events: {
+			"click .Actions.SortCol": "sort",
+			"change .Filter select, .Filter input": "filter",
+			"keyup .Filter input": "filter"
+		},
+
+		initialize: function () {
+			checkForErrors (this.options.gridTemplateId, "gridTemplateId is mandatory");
+			checkForErrors (this.options.rowTemplateId, "rowTemplateId is mandatory");
+
+			if (this.options.template) {
+				this.queue([{event: "template:loaded", context: this}, {event: "reset", context: this.collection}], this.ready, this);
+
+				this.loadTemplate( this.options.template );
+				this.collection.on("reset", this.refresh, this);
+			}
+
+		},
+
+		sort: function ( event ) {
+			var collection = this.collection;
+
+			var $target = $ (event.currentTarget),
+				$th = $target.closest ( "th" );
+
+			if ( $th.hasClass ( "Active" ) )
+			{
+				$th.toggleClass ( "Desc" );
+			}
+			else
+			{
+				$th.siblings ().removeClass ( "Active Desc" );
+				$th.addClass ( "Active" );
+			}
+
+			this.collection.setParams({
+				sortingField: $target.data ( "field" ),
+				sortingMethod: $th.hasClass ( "Desc" ) ? "desc" : "asc"
+			});
+
+			this.collection.fetch ();
+		},
+
+		filter: function (event) {
+			var view = this;
+			var $input = $(event.currentTarget);
+
+
+			if ( this._timeout )
+			{
+				clearTimeout ( this._timeout );
+			}
+
+			var timeout,
+				DELAY = 700;
+
+			if ( $input.data("old-value") && $input.data("old-value") == $input.val() ) {
+				clearTimeout ( this._timeout );
+				return;
+			}
+			$input.data("old-value", $input.val());
+
+			this._timeout = setTimeout(function() {
+
+				var filter = Core.Forms.serializeToObject(view.$(".Filter input, .Filter select"));
+				view.collection.setParams({
+					filter: filter
+				});
+
+				if ( _.size(filter) ) {
+					view.collection.fetch();
+				}else {
+					view.collection.reset();
+				}
+			}, DELAY);
+		},
+
+		templateLoaded: function () {
+			if ( this.options.defaultTemplateId ) {
+				this.$el.html( $.tmpl($(this.options.defaultTemplateId)) );
+			}
+		},
+
+		refresh: function () {
+			var view = this,
+				$el = this.$el;
+
+			var $tbody = $el.find("tbody").empty();
+
+			if ( view.collection.length ) {
+				view.collection.forEach (function( model, i ) {
+
+					var GridRow = new App.Views.GridRow ({
+						model: model,
+						collection: view.collection,
+						rowTemplateId: view.options.rowTemplateId, // Передаём строке таблицы ID шаблона в файле шаблонов
+						triggerOnly: view.options.popUpMode,
+						_index: i
+					});
+					view.depended(GridRow);
+
+					GridRow.on("row:click", function (model) {
+						view.trigger("grid:rowClick", model);
+					}, this);
+
+					$tbody.append( GridRow.render().el );
+				});
+			}
+			else if ( view.options.errorTemplateId )
+			{
+				var GridRow = new App.Views.GridRow ({
+					collection: view.collection,
+					rowTemplateId: view.options.errorTemplateId
+				});
+				view.depended(GridRow);
+				$tbody.append( GridRow.render().el );
+			}
+
+			UIInitialize(this.el);
+		},
+		ready: function () {
+
+			var view = this,
+				$el = this.$el;
+
+			$el.html( $(view.options.gridTemplateId).tmpl(view.collection.requestData) );
+		},
+
+
+		render: function () {
+			this.$el.empty();
+
+			return this
+		}
+	});
+
+	return App.Views.Grid
+});

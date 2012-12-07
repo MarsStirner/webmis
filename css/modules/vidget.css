@@ -1,0 +1,706 @@
+@charset "IBM866";
+/*
+*	FONTS
+*/
+/*
+*	FONTS
+*/
+/* line 3, ../../sass/_buttons.scss */
+.Styled.Button {
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y3ZjdmNyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2QzZDNkMyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f7f7f7), color-stop(100%, #d3d3d3));
+  background: -webkit-linear-gradient(#f7f7f7 0%, #d3d3d3 100%);
+  background: -moz-linear-gradient(#f7f7f7 0%, #d3d3d3 100%);
+  background: -o-linear-gradient(#f7f7f7 0%, #d3d3d3 100%);
+  background: linear-gradient(#f7f7f7 0%, #d3d3d3 100%);
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 0 0.1em 0;
+  -moz-box-shadow: rgba(0, 0, 0, 0.5) 0 0 0.1em 0;
+  box-shadow: rgba(0, 0, 0, 0.5) 0 0 0.1em 0;
+  margin: 0;
+  border-top: 1px solid #B3B3B3;
+  border-right: 2px solid #bbbbbb;
+  border-bottom: 2px solid #B3B3B3;
+  border-left: 2px solid #bbbbbb;
+  cursor: pointer;
+  padding: 0.4em 1.5em;
+  min-width: 100px;
+  position: relative;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.3em;
+  line-height: 1.28em;
+  text-align: center;
+}
+/* line 22, ../../sass/_buttons.scss */
+.Styled.Button:hover, .Styled.Button.Green:hover, .Styled.Button.BlueBorder {
+  border-top: 1px solid #128EDC;
+  border-right: 2px solid #128EDC;
+  border-bottom: 2px solid #128EDC;
+  border-left: 2px solid #128EDC;
+  /*border:2px solid #128EDC;*/
+}
+/* line 32, ../../sass/_buttons.scss */
+.Styled.Button:active {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  color: rgba(0, 0, 0, 0.5);
+}
+/* line 36, ../../sass/_buttons.scss */
+.Styled.Button.AddButton {
+  padding-left: 0.5em;
+}
+/* line 38, ../../sass/_buttons.scss */
+.Styled.Button.AddButton .Icon {
+  vertical-align: middle;
+  margin-top: -0.1em;
+  margin-left: 0.5em;
+}
+/* line 46, ../../sass/_buttons.scss */
+.Styled.Button[disabled] {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+  opacity: 0.5;
+  cursor: default;
+  border: 2px solid #B3B3B3;
+}
+/* line 51, ../../sass/_buttons.scss */
+.Styled.Button.Submit {
+  cursor: pointer;
+}
+/* line 54, ../../sass/_buttons.scss */
+.Styled.Button.Hidden {
+  display: none;
+}
+/* line 57, ../../sass/_buttons.scss */
+.Styled.Button.Disabled {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+  opacity: 0.5;
+  cursor: default;
+  border: 2px solid #B3B3B3;
+}
+/* line 64, ../../sass/_buttons.scss */
+.Styled.Button.Green {
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyYzQzZCIvPjxzdG9wIG9mZnNldD0iNDElIiBzdG9wLWNvbG9yPSIjMzBhMzFhIi8+PHN0b3Agb2Zmc2V0PSI2MiUiIHN0b3AtY29sb3I9IiMzMGEzMWEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM1MmM0M2QiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #52c43d), color-stop(41%, #30a31a), color-stop(62%, #30a31a), color-stop(100%, #52c43d));
+  background: -webkit-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
+  background: -moz-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
+  background: -o-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
+  background: linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
+  border: 2px solid #31A31B;
+  color: #fff;
+}
+/* line 72, ../../sass/_buttons.scss */
+.Styled.Button.Green:active {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  color: rgba(0, 0, 0, 0.5);
+}
+/* line 77, ../../sass/_buttons.scss */
+.Styled.Button.BlueBorder {
+  border-top: 1px solid #128EDC;
+  border-right: 2px solid #128EDC;
+  border-bottom: 2px solid #128EDC;
+  border-left: 2px solid #128EDC;
+  position: relative;
+}
+/* line 86, ../../sass/_buttons.scss */
+.Styled.Button.Pushed {
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2I3YjdiNyIvPjxzdG9wIG9mZnNldD0iODIlIiBzdG9wLWNvbG9yPSIjZWZlZmVmIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZjZmNmY2Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #b7b7b7), color-stop(82%, #efefef), color-stop(100%, #f6f6f6));
+  background: -webkit-linear-gradient(#b7b7b7 0%, #efefef 82%, #f6f6f6 100%);
+  background: -moz-linear-gradient(#b7b7b7 0%, #efefef 82%, #f6f6f6 100%);
+  background: -o-linear-gradient(#b7b7b7 0%, #efefef 82%, #f6f6f6 100%);
+  background: linear-gradient(#b7b7b7 0%, #efefef 82%, #f6f6f6 100%);
+  border-top: 2px solid #a0a0a0;
+  border-right: 2px solid #d6d6d6;
+  border-left: 2px solid #d6d6d6;
+  border-bottom: 2px solid #e0e0e0;
+}
+/* line 93, ../../sass/_buttons.scss */
+.Styled.Button.Dropdown {
+  border-radius: 0;
+  margin-left: 0;
+  -webkit-border-bottom-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  -webkit-border-top-left-radius: 4px;
+  border-top-left-radius: 4px;
+  -moz-border-radius-bottomleft: 4px;
+  -moz-border-radius-topleft: 4px;
+}
+/* line 103, ../../sass/_buttons.scss */
+.Styled.Button.DropdownToggle {
+  border-radius: 0;
+  margin-left: 0;
+  -webkit-border-bottom-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  -webkit-border-top-right-radius: 4px;
+  border-top-right-radius: 4px;
+  -moz-border-radius-bottomright: 4px;
+  -moz-border-radius-topright: 4px;
+}
+/* line 113, ../../sass/_buttons.scss */
+.Styled.Button .Icon {
+  margin-left: -0.8em;
+}
+/* line 69, ../../sass/_base.scss */
+.Styled.Button:not([ie]) {
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled='false');
+}
+
+/* line 119, ../../sass/_buttons.scss */
+a.Button {
+  color: black;
+}
+/* line 122, ../../sass/_buttons.scss */
+a.Button:active i {
+  opacity: 0.5;
+}
+
+/*
+*	FONTS
+*/
+/*
+*	FONTS
+*/
+/*
+	Usage:
+ 		@include sprite-folder("<folder>");
+			element {
+				@include sprite-file("<file-without-extension>");
+
+				@include sprite-background-position($sprite, "<file-without-extension>", 100%, 0);
+			}
+*/
+/* [Nano], Tiny (up to 16px of height), Small (24px), Medium (32px), Large (64px), [Huge] */
+/* line 6, ../../sass/_icons.scss */
+.Icon {
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  zoom: 1;
+  *display: inline;
+  margin-right: 8px;
+  position: relative;
+}
+/* line 12, ../../sass/_icons.scss */
+.Icon.Tiny {
+  width: 16px;
+  height: 16px;
+}
+
+/*Иконки*/
+/* line 21, ../../sass/_icons.scss */
+.AddIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -369px;
+  height: 14px;
+  width: 14px;
+  cursor: pointer;
+  margin-left: 0.4em;
+}
+
+/* line 26, ../../sass/_icons.scss */
+.SearchIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 0;
+  height: 12px;
+  width: 13px;
+  cursor: pointer;
+}
+
+/* line 30, ../../sass/_icons.scss */
+.EditIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -174px;
+  height: 16px;
+  width: 12px;
+  vertical-align: baseline;
+  cursor: pointer;
+  margin-left: 0.4em;
+  bottom: -0.2em;
+}
+
+/* line 37, ../../sass/_icons.scss */
+.DateIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -121px;
+  height: 9px;
+  width: 17px;
+  width: 17px;
+  height: 9px;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  margin-top: -4px;
+}
+
+/* line 46, ../../sass/_icons.scss */
+.GoodSmileIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -252px;
+  height: 16px;
+  width: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* line 51, ../../sass/_icons.scss */
+.NormSmileIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -226px;
+  height: 16px;
+  width: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* line 56, ../../sass/_icons.scss */
+.BadSmileIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -200px;
+  height: 16px;
+  width: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* line 63, ../../sass/_icons.scss */
+.DoneIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -60px;
+  height: 9px;
+  width: 9px;
+}
+/* line 66, ../../sass/_icons.scss */
+.DoneIcon.Tiny {
+  width: 9px;
+  height: 9px;
+}
+
+/* line 72, ../../sass/_icons.scss */
+.DisabledIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -278px;
+  height: 9px;
+  width: 10px;
+}
+
+/* line 75, ../../sass/_icons.scss */
+.CancelIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -79px;
+  height: 9px;
+  width: 10px;
+}
+/* line 78, ../../sass/_icons.scss */
+.CancelIcon.Tiny {
+  width: 10px;
+  height: 9px;
+}
+
+/* line 83, ../../sass/_icons.scss */
+.RemoveIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -297px;
+  height: 14px;
+  width: 14px;
+  cursor: pointer;
+}
+/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.RemoveIcon:hover, .RemoveIcon.remove_tiny_hover, .RemoveIcon.remove_tiny-hover {
+  background-position: 0 -345px;
+}
+/* line 86, ../../sass/_icons.scss */
+.RemoveIcon.Tiny {
+  width: 14px;
+  height: 14px;
+}
+/* line 90, ../../sass/_icons.scss */
+.RemoveIcon:hover {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -345px;
+  height: 14px;
+  width: 14px;
+}
+
+/* line 94, ../../sass/_icons.scss */
+.DrugIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -98px;
+  height: 13px;
+  width: 11px;
+  width: 11px;
+  height: 13px;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  margin-top: -6px;
+}
+
+/* line 103, ../../sass/_icons.scss */
+.DeleteIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -297px;
+  height: 14px;
+  width: 14px;
+  cursor: pointer;
+}
+/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+.DeleteIcon:hover, .DeleteIcon.remove_tiny_hover, .DeleteIcon.remove_tiny-hover {
+  background-position: 0 -345px;
+}
+/* line 106, ../../sass/_icons.scss */
+.DeleteIcon.Tiny {
+  width: 14px;
+  height: 14px;
+  margin-right: 0.2em;
+}
+/* line 111, ../../sass/_icons.scss */
+.DeleteIcon:hover {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -345px;
+  height: 14px;
+  width: 14px;
+}
+
+/* line 115, ../../sass/_icons.scss */
+.CloseIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -321px;
+  height: 14px;
+  width: 14px;
+  cursor: pointer;
+}
+/* line 118, ../../sass/_icons.scss */
+.CloseIcon.Tiny {
+  width: 14px;
+  height: 14px;
+}
+
+/* line 123, ../../sass/_icons.scss */
+.AttentionIcon {
+  background: url("../../images/sprites/icons-sprite.png") no-repeat;
+  background-position: 0 -140px;
+  height: 24px;
+  width: 24px;
+}
+/* line 125, ../../sass/_icons.scss */
+.AttentionIcon.Tiny {
+  width: 14px;
+  height: 14px;
+}
+
+/* line 5, ../../sass/modules/vidget.scss */
+.DiagnosisVidget {
+  margin-bottom: 3em;
+  padding-top: 2em;
+}
+/* line 8, ../../sass/modules/vidget.scss */
+.DiagnosisVidget h2 {
+  margin-bottom: 0.8em;
+}
+/* line 11, ../../sass/modules/vidget.scss */
+.DiagnosisVidget .DatepickerHolder {
+  width: 23em;
+  float: right;
+  padding-bottom: 1.4em;
+}
+
+/* line 17, ../../sass/modules/vidget.scss */
+.RefDiagVidget {
+  margin-bottom: 3em;
+  padding-top: 2em;
+}
+
+/* line 22, ../../sass/modules/vidget.scss */
+.VidgetLine {
+  margin-right: 25em;
+  position: relative;
+  padding-left: 0.3em;
+}
+
+/* line 27, ../../sass/modules/vidget.scss */
+.RefDiagVidget .VidgetLine {
+  margin-right: 0;
+}
+
+/* line 31, ../../sass/modules/vidget.scss */
+.VidgetCol {
+  display: inline-block;
+  vertical-align: top;
+  height: 35em;
+  overflow: auto;
+  margin-left: -0.3em;
+  overflow: auto;
+  border: 1px solid #CCCCCC;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* line 42, ../../sass/modules/vidget.scss */
+.VidgetCol .EventList.NoCheck
+input {
+  display: none;
+}
+/* line 45, ../../sass/modules/vidget.scss */
+.VidgetCol .EventList label {
+  padding-bottom: 0.1em;
+}
+/* line 48, ../../sass/modules/vidget.scss */
+.VidgetCol .EventList .Label {
+  padding-bottom: 0.1em;
+}
+
+/* line 55, ../../sass/modules/vidget.scss */
+.DiagnosisVidget .ArrowCol {
+  border: none;
+  position: relative;
+  width: 2.9%;
+}
+
+/* line 60, ../../sass/modules/vidget.scss */
+.RefDiagVidget .ArrowCol {
+  border: none;
+  position: relative;
+  width: 2.5%;
+}
+
+/* line 66, ../../sass/modules/vidget.scss */
+.DiagnosisVidget .LeftCol {
+  width: 33%;
+}
+
+/* line 69, ../../sass/modules/vidget.scss */
+.RefDiagVidget .LeftCol {
+  width: 24%;
+}
+
+/* line 73, ../../sass/modules/vidget.scss */
+.DiagnosisVidget .RightCol {
+  width: 63.5%;
+}
+
+/* line 76, ../../sass/modules/vidget.scss */
+.RefDiagVidget .RightCol {
+  width: 47%;
+}
+
+/* line 81, ../../sass/modules/vidget.scss */
+.ArrowCol > i {
+  margin-left: -0.4em;
+}
+
+/* line 88, ../../sass/modules/vidget.scss */
+.SelectAnalysis {
+  background: url(../../images/separator.png) repeat-y 83% top;
+}
+/* line 90, ../../sass/modules/vidget.scss */
+.SelectAnalysis li {
+  padding-left: 0.5em;
+}
+/* line 92, ../../sass/modules/vidget.scss */
+.SelectAnalysis li label {
+  color: #000;
+  padding-top: 0.2em;
+  padding-bottom: 0.1em;
+  margin-bottom: 1px;
+}
+/* line 98, ../../sass/modules/vidget.scss */
+.SelectAnalysis li .Label {
+  color: #000;
+  padding-top: 0.2em;
+  padding-bottom: 0.1em;
+  margin-bottom: 1px;
+}
+/* line 105, ../../sass/modules/vidget.scss */
+.SelectAnalysis > li {
+  background: url(../../images/separator.png) repeat-y 91% top;
+}
+/* line 108, ../../sass/modules/vidget.scss */
+.SelectAnalysis .DDList {
+  margin-top: 0.1em;
+  vertical-align: top;
+}
+/* line 111, ../../sass/modules/vidget.scss */
+.SelectAnalysis .DDList .Actions {
+  font-size: 1.1em;
+  color: #000;
+  border-bottom: 1px dashed #000;
+}
+/* line 115, ../../sass/modules/vidget.scss */
+.SelectAnalysis .DDList .Actions:hover {
+  border-bottom: 1px dashed transparent;
+}
+/* line 119, ../../sass/modules/vidget.scss */
+.SelectAnalysis .DDList .Content {
+  font-size: 1.3em;
+  min-width: 5em;
+}
+
+/* line 126, ../../sass/modules/vidget.scss */
+.VidgetSummary {
+  border-top: 1px solid #D9D9D9;
+  padding-top: 1em;
+}
+/* line 129, ../../sass/modules/vidget.scss */
+.VidgetSummary h3 {
+  font-size: 1.2em;
+  margin-bottom: 0.5em;
+  color: #666666;
+}
+
+/* line 135, ../../sass/modules/vidget.scss */
+.SummaryList {
+  padding-left: 0.5em;
+  margin-bottom: 2em;
+}
+/* line 138, ../../sass/modules/vidget.scss */
+.SummaryList > li {
+  font-size: 1.3em;
+  margin-bottom: 0.4em;
+}
+
+/* line 144, ../../sass/modules/vidget.scss */
+.DatepickerHolder .Warning {
+  font-size: 1.3em;
+  padding-top: 1em;
+  min-height: 2.4em;
+}
+
+/* line 149, ../../sass/modules/vidget.scss */
+.ReferralHeader {
+  font-size: 1.3em;
+  padding-bottom: 1.4em;
+}
+
+/* line 154, ../../sass/modules/vidget.scss */
+.InlineNav li {
+  display: inline-block;
+}
+/* line 156, ../../sass/modules/vidget.scss */
+.InlineNav li a {
+  display: block;
+  border-radius: 0.3em;
+  padding: 0.4em 0.8em;
+}
+
+/* line 163, ../../sass/modules/vidget.scss */
+.InlineNav li.Active a {
+  background: none repeat scroll 0 0 #118CDA;
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+/* line 168, ../../sass/modules/vidget.scss */
+.SelectTime {
+  padding-top: 1.4em;
+}
+/* line 170, ../../sass/modules/vidget.scss */
+.SelectTime .Col {
+  float: left;
+  width: 50%;
+}
+/* line 173, ../../sass/modules/vidget.scss */
+.SelectTime .Col label {
+  margin-bottom: 0.35em;
+}
+
+/* line 178, ../../sass/modules/vidget.scss */
+.RefferalWidget {
+  border-top: 1px solid #D9D9D9;
+  padding-top: 3em;
+  margin-bottom: 3em;
+}
+/* line 182, ../../sass/modules/vidget.scss */
+.RefferalWidget .DatepickerHolder {
+  float: none;
+  width: 23em;
+  display: table-cell;
+  vertical-align: top;
+}
+
+/* line 190, ../../sass/modules/vidget.scss */
+.RefferalForm {
+  padding-left: 3em;
+  display: table-cell;
+  vertical-align: top;
+}
+/* line 194, ../../sass/modules/vidget.scss */
+.RefferalForm .Col {
+  width: auto;
+  padding-right: 5em;
+}
+/* line 198, ../../sass/modules/vidget.scss */
+.RefferalForm .SelectTime {
+  padding-top: 0;
+  padding-bottom: 1em;
+}
+
+/* line 204, ../../sass/modules/vidget.scss */
+.Urgently {
+  padding-bottom: 1em;
+}
+
+/* line 208, ../../sass/modules/vidget.scss */
+.FreeDoctors h4 {
+  font-size: 1.1em;
+  color: #6D6D71;
+  margin-bottom: 0.5em;
+}
+/* line 213, ../../sass/modules/vidget.scss */
+.FreeDoctors .InlineNav {
+  font-size: 1.3em;
+  padding-left: 1em;
+}
+
+/* line 219, ../../sass/modules/vidget.scss */
+.AnalisLine {
+  zoom: 1;
+  padding: 0.1em 0 0.1em 0.5em;
+  margin-left: -0.5em;
+}
+/* line 59, ../../sass/_base.scss */
+.AnalisLine:after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+/* line 223, ../../sass/modules/vidget.scss */
+.AnalisLine.Selected {
+  background: #DFEFFC;
+}
+/* line 226, ../../sass/modules/vidget.scss */
+.AnalisLine .AnalisName {
+  float: left;
+  padding-top: 0.2em;
+}
+/* line 230, ../../sass/modules/vidget.scss */
+.AnalisLine .AnalisQuant {
+  float: right;
+  letter-spacing: -0.3em;
+  width: 18%;
+  text-align: center;
+}
+/* line 235, ../../sass/modules/vidget.scss */
+.AnalisLine .AnalisQuant span {
+  display: inline-block;
+  vertical-align: middle;
+  width: 46%;
+  padding: 0 2%;
+}
+/* line 241, ../../sass/modules/vidget.scss */
+.AnalisLine .AnalisQuant input[type="text"] {
+  height: 1.75em;
+}
+/* line 244, ../../sass/modules/vidget.scss */
+.AnalisLine .AnalisQuant input[type="checkbox"] {
+  top: 0;
+}

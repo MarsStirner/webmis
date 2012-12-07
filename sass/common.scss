@@ -1,0 +1,262 @@
+@charset "UTF-8";
+@import "base";
+@import "compass/reset";
+@include global-reset;
+
+html {
+	height:100%;
+	min-height:100%;
+	background:#f3f3f3;
+	background-repeat: no-repeat;
+}
+
+body {
+	min-height:100%;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	font: normal 62.5%/1.5em Arial, Helvetica, sans-serif;
+	color: $MAIN_COLOR;
+	min-width: 120em;
+}
+body.NoScroll {
+	overflow: hidden;
+}
+
+
+//Этот кусок кода управляет зависимостью размера базового шрифта от ширины окна
+
+@media screen and (min-width: 800px) {
+	body {
+		font: normal 62.5%/1.5em Arial, Helvetica, sans-serif;
+	}
+}
+@media screen and (min-width: 1400px) {
+	body {
+		font: normal 72.5%/1.5em Arial, Helvetica, sans-serif;
+	}
+}
+@media screen and (min-width: 1600px) {
+	body {
+		font: normal 82.5%/1.5em Arial, Helvetica, sans-serif;
+	}
+}
+@media screen and (min-width: 1800px) {
+	body {
+		font: normal 92.5%/1.5em Arial, Helvetica, sans-serif;
+	}
+}
+
+
+
+
+
+img {
+	border: none;
+
+	&.Left {
+		float: left;
+		margin: 0 1em 1em 0;
+	}
+	&.Right {
+		float: right;
+		margin: 0 0 1em 1em;
+	}
+}
+
+
+.Clearfix {
+	@include clearfix;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    line-height: 1.4em;
+}
+
+a {
+	@include link-style($LINK_COLOR);
+
+	&.Actions {
+		@include unselectable;
+		cursor: pointer;
+		border-bottom: 1px dashed;
+
+		&.Opened {
+			border:none;
+		}
+	}
+	&.Iconed {
+		text-decoration: none;
+		border: none;
+
+		span {
+			text-decoration: underline;
+		}
+	}
+}
+
+.PageActions {
+	a.Actions {
+		font-size: 1.2em;
+	}
+}
+
+.Hidden,
+.Template,
+.More {
+	display:none;
+}
+.Visible {
+	display:block;
+}
+
+
+h1 {
+	
+}
+h2 {
+	font-size: 2em;
+}
+h3 {
+	font-size: 1.6em;
+}
+h4 {
+	font-size: 1.4em;
+}
+
+p {
+	
+}
+.Small {
+	color: $SMALL_COLOR;
+}
+small {
+	@extend .Small;
+}
+strong {
+	font-weight:bold;
+}
+
+/* Common elements */
+
+table {
+	width: 100%;
+	border: none;
+	border-collapse: collapse;
+
+	td,
+	th {
+		padding: 0;
+		vertical-align: baseline;
+	}
+}
+
+/* Buttons */
+a.Styled {
+	text-decoration: none;
+}
+a.Styled,
+button.Styled {
+	padding: 0;
+	margin: 0;
+	border: none;
+	white-space: nowrap;
+	@include inline-block;
+}
+
+time {
+	@extend .Small;
+}
+b {
+	font-weight: bold;
+}
+
+#body {
+	width: $CONTENT_WIDTH;
+	margin: auto;
+}
+
+
+#content {
+
+}
+
+
+.Rouble {
+	font-weight:normal;
+	position:relative;
+
+	&:after {
+		content: "-";
+		position: absolute;
+		left: 0;
+		top: 0.15em;
+		font-size: 1em;
+	}
+}
+
+.HighestDepth {
+	z-index: 999999 !important;
+}
+
+// FuckinFox
+button::-moz-focus-inner {
+    border:0;
+    padding:0;
+}
+
+.ServiceLogin {
+	width:42em;
+	margin:0 auto;
+	padding-top:12em;
+	background: url(../images/logo-mis.png) no-repeat center 2em;
+	text-align:center;
+
+}
+.ServiceLogin  h1 {
+	font-size:2.2em;
+	margin-bottom:1.2em;
+}
+.ServiceLogin  h2 {
+	font-size:1.6em;
+	line-height:1.2em;
+	margin-bottom:1.2em;
+}
+.LoginForm {
+	background:#fff;
+	padding:3.8em 9.4em;
+	border-radius:6px;
+	text-align:left;
+}
+.LoginForm input {
+	font-size: 1.7em;
+}
+.LoginForm li {
+	margin-bottom:1.2em;
+}
+
+.LoginForm label, .LoginForm .Label {
+	margin-left:-1em;
+}
+.SubmitLine {
+	padding:0.5em 0 2em 0;
+}
+.RecoveryLink {
+	color:#6D6D71;
+	font-size:1.2em;
+}
+.LoginForm button {
+	width:100%;
+}
+.LoginForm h3 {
+	margin-bottom:1em;
+	font-size:1.4em;
+	text-align:center;
+}

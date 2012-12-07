@@ -1,0 +1,25 @@
+@import "base";
+
+input[type="checkbox"] {
+	margin: 0;
+	vertical-align: bottom;
+}
+
+select,
+textarea {
+	
+
+	&.Focused {
+		
+	}
+}
+select,
+input[type="text"],
+textarea {
+	font: $MAIN_FONT;
+	@include box-sizing(border-box);
+}
+.Disabled,
+[disabled] {
+	
+}

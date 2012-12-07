@@ -1,0 +1,139 @@
+@charset "UTF-8";
+@import "base";
+
+.TreatmentBlock {
+	padding-top:0.7em;
+	color:#000;
+	& > h2 {
+		margin-bottom:0.8em;
+	}
+	& h3 {
+		font-size:1.3em;
+		font-weight:bold;
+		margin-bottom:0.5em;
+		a {
+			color:#383838;
+		}
+	}
+	& dl {
+		font-size:1.3em;
+		padding-left:1.5em;
+		margin-bottom:1.2em;
+		&:last-child {
+			margin-bottom:0.8em;
+		}
+	}
+	& dt {
+		margin-bottom:0.3em
+	}
+	& dd {
+		margin-bottom:1.2em;
+	}
+	& p {
+		font-size:1.3em;
+		padding-left:1.5em;
+		margin-bottom:1.2em;
+	}
+	.LineBlock {
+		margin-bottom: 3em;
+	}
+	.LineCol {
+		display: inline-block;
+		vertical-align: top;
+		width: 46%;
+		margin-left:3%;
+		&:first-child {
+			margin-left:0;
+			margin-right:3%;
+		}
+	}
+	.DiagLink {
+        font-size: 1.3em;
+        padding-top:0.5em;
+        .AddLink {
+        	float:left;
+        }
+        .MoreLink {
+        	float: right;
+        }
+	}
+}
+
+.MainCol {
+	float:left;
+	width:65%;
+	padding-right:1.5em;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.AsideCol {
+	float:right;
+	vertical-align:top;
+	width:35%;
+	padding-left:1.5em;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.Diagnosis  {
+	border:1px solid #FFCC99;
+	border-radius:6px;
+	padding:1em 1.1em;
+	background:#FFFFCC;
+	/*margin-left:-1em;*/
+	margin-bottom:2em;
+	& dd:last-child {
+		margin-bottom:0;
+	}
+}
+
+.TreatmentPeriod {
+	font-size:1.3em;
+	color:#6C6C71;
+	margin-bottom:1.2em;
+	& li > .Date {
+		color:#000;
+		line-height:1.2em;
+	}
+}
+.Retrying {
+	font-size:1.3em;
+	margin-bottom:1.2em;
+	& .Actions {
+		color:#000;
+		border-bottom:none;
+		color:#000;
+        & > span {
+        	text-decoration:underline;
+        }
+		&::after {
+			content: "▼";
+			font-size: 0.5em;
+			left: 0.2em;
+			line-height: 1em;
+			position: relative;
+			top: -0.2em;
+			vertical-align: baseline;
+		}
+	}
+}
+
+.NoContent {
+	font-size:1.3em;
+	padding-left:1.5em;
+	margin-bottom:1.2em;
+	color:#D4D4D4;
+}
+
+.FinanceList {
+	font-size:1.3em;
+	padding-left:1.5em;
+	margin-bottom:1.2em;
+	& > li {
+	margin-bottom:0.2em;
+	}
+}
+
+

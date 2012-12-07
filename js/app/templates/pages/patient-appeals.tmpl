@@ -1,0 +1,39 @@
+<script id="patient-appeals" type="text/x-jquery-tmpl">
+
+<div id="page-head">
+
+</div>
+<div class="CardHeader Clearfix">
+	<div class="CardNav">
+		<h2>${name.last} ${name.first} ${name.middle}</h2>
+		<ul class="SectionNav">
+			<li>
+				<a href="../">Карточка пациента</a>
+			</li>
+			<li class="Selected">
+				<a href="/patients/${id}/appeals/">Госпитализации</a>
+			</li>
+			<li>
+				<a href="#">Амбулаторные талоны
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div class="CardPrint">
+		<button class="Styled Button"><span>Печать</span></button>
+	</div>
+</div>
+<section id="page" class="Clearfix OneCol">
+	<div class="ContentSide Clearfix">
+		<div class="ContentHolder">
+			<div class="ContentHeader Clearfix">
+				<div class="PageActions">
+					{{if allowCreateAppeal}}
+					<a href="./new/" class="Styled Button NewAppeal"><i class="AddIcon Icon Tiny"></i><span>Новая госпитализация</span></a>
+					{{/if}}
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+</script>

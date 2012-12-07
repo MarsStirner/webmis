@@ -1,0 +1,565 @@
+@charset "UTF-8";
+@import "base";
+
+
+#wrapper {
+	height: auto !important;
+	min-height:100%;
+	height: 100%;
+	width: 100%;
+}
+
+
+#main {
+	width: 116em;
+	margin: 0 auto;
+	padding-bottom:5em;
+}
+header {
+	/*padding-top:1.1em;*/
+	text-align:left;
+	/*padding-bottom:0.8em;*/
+	background:#cccccc;
+	padding:0.5em 0;
+}
+.Header {
+	width: 116em;
+	margin: 0 auto;
+}
+.SectionNav {
+	float:left;
+	li {
+		display: inline-block;
+		font-size: 1.3em;
+		font-weight: bold;
+		padding:0.5em 1em;
+        @include border-radius (4px);
+        cursor: pointer;
+		&.Selected {
+			background:#0099ff;
+			color:#fff;
+			cursor: default;
+
+			a {
+				text-decoration: none;
+				color:#fff;
+			}
+		}
+		a {
+			color: #000;
+		}
+	}
+}
+.SearchBlock {
+    border-bottom:1px solid #b6b6b6;
+    padding:1.5em 0;
+    margin-bottom:2em;
+    .LineBlockHolder > li:last-child {
+    	margin-bottom: 0;
+    	padding-bottom: 0;
+    }
+}
+
+/*Табы
+.Tabs {
+	float:left;
+	max-width: 50%;
+
+	li {
+		@include inline-block;
+		a {
+			text-decoration: none;
+			@include inline-block;
+			font-size: 1.4em;
+			border:1px solid #B3B3B3;
+			border-bottom:none;
+			padding:0.78em 1.8em;
+			@include border-radius(6px 6px 0 0);
+			@include background(linear-gradient(#fff, #f3f0f0));
+			color:#6D6E71;
+			@include box-shadow ( rgba(179, 179, 179, 0.8) 0 0 3px 0);
+			cursor:pointer;
+			&:hover  {
+				color:#fff;
+				border:1px solid #118EDC;
+				border-bottom:none;
+				@include background(linear-gradient(#48c6fb, #118edc));
+			}
+		}
+	}
+}
+.Tabs li.Active a {
+	@include background(linear-gradient(#48c6fb, #118edc));
+	border:1px solid #118EDC;
+	border-bottom:none;
+	color:#fff;
+}
+*/
+/*Логин/Логаут*/
+.UserSide {
+	float:right;
+	/*padding-right:1em;*/
+	padding-top: 0.5em;
+	max-width:50%;
+	white-space:nowrap;
+	font-size:$MAIN_FONT;
+	a.LinkToProfile {
+		text-decoration:none;
+		color:#000;
+	}
+	a.Logout {
+		border-bottom:none;
+		text-decoration:underline;
+		margin-left:2em;
+	}
+}
+
+.SelectRole {
+	.Actions {
+		color:#000;
+		border-bottom:none;
+		span {
+			border-bottom:1px dashed #000;
+		}
+		&::after {
+			content:"▼";
+			font-size: 0.5em;
+			position:relative;
+			left:0.2em;
+			top:-0.2em;
+			vertical-align:baseline;
+			line-height: 1em;
+		}
+		&:hover {
+			span {
+				color:#DD1111;
+				border-bottom:1px dashed #DD1111;
+			}
+			&::after {
+				color:#DD1111;
+			}
+		}
+	}
+}
+
+#page {
+	/*background: #fff;
+	border:1px solid #A0A0A0;
+	border-top:3px solid #118EDC;
+	@include box-shadow ( rgba(179, 179, 179, 0.8) 0 0 3px 0);*/
+}
+#page-head {
+	border-bottom: 1px solid #d4d4d4;
+	padding: 1em;
+	margin-bottom: 1em;
+}
+.BreadCrumb {
+	li {
+		display: inline-block;
+		font-size: 1.2em;
+		margin-right: 0.5em;
+		color:#999999;
+		&::after {
+			content:"→";
+		}
+		a {
+		color:#999999;
+			&:hover {
+					  text-decoration: none;
+			}
+		}
+		&:last-child {
+			color:#000;
+		&::after
+			{
+			content:"";
+			}
+		}
+	}
+
+}
+.DaySelect {
+	float: left;
+}
+.DayScroller {
+	float:left;
+	margin-left:-1em;
+}
+.FilterLabel {
+	display: inline-block;
+	vertical-align: middle;
+	text-align: right;
+	width: 12em;
+	color:#6D6D71;
+	margin-right: 0.5em;
+}
+
+.PageActions {
+	float:left;
+	.DDList .ButtonContent {
+		max-height: none;
+		overflow-y: auto;
+	}
+	.Styled.Button {
+		margin-right: 1em;
+		&:last-child{
+			margin-right:0;
+		}
+	}
+	.DDList {
+		margin-right: 1.5em;
+	}
+}
+ /*Закрыть ИБ*/
+.CloseHistory {
+	float: right;
+    .Styled.Button {
+    	margin-left: 1em;
+    }
+    .DDList{
+        margin-left: 1em;
+    }
+}
+.NotFilled {
+	font-size: $SMALL_FONT;
+	.Actions {
+		border-bottom:none;
+		span {
+			border-bottom:1px dashed #118DDC;
+		}
+		&::after {
+			content:"▼";
+			font-size: 0.5em;
+			position:relative;
+			left:0.2em;
+			top:-0.2em;
+			vertical-align:baseline;
+			line-height: 1em;
+			color:#118DDC;
+		}
+		&:hover {
+			span {
+				border-bottom:1px dashed #DD1111;
+			}
+			&::after {
+				color:#DD1111;
+			}
+		}
+	}
+}
+.CardHeader {
+	border-bottom: 1px solid #B6B6B6;
+	padding-bottom: 1em;
+	margin-bottom: 2em;
+
+}
+
+.CardNav {
+	float:left;
+    h2 {
+    	display: inline-block;
+    	margin-right: 0.3em;
+    	vertical-align: middle;
+    }
+    .SectionNav {
+    	float: none;
+    	display: inline-block;
+    	vertical-align: middle;
+    	li {
+			font-size: 1.2em;
+			font-weight:normal;
+    	}
+    }
+}
+.CardPrint {
+	float: right;
+}
+
+/*Основная  часть*/
+.SideBar {
+	float: right;
+	width: 19em;
+	padding:0 0 4.5em 3em;
+}
+.LeftSideBar {
+	float: left;
+	width: 18em;
+	padding:2.7em 3em 4.5em 0em;
+}
+.ContentSide {
+	@include border-radius  (6px);
+	margin-right: 25em;
+	padding:2em 2em 3em 2em;
+	background: #fff;
+}
+.ContentHolder {
+	width:100%;
+	float:left;
+}
+.ContentHeader {
+	margin-bottom: 2em;
+
+	.PageActions {
+		width: 100%;
+	}
+}
+.FormSide {
+	margin-right: 25em;
+
+}
+.ThreeCol {
+	.ContentSide {
+		border-right: 1px solid #d4d4d4;
+		border-left: 1px solid #d4d4d4;
+		margin-right: 25em;
+		margin-left: 21em;
+	}
+}
+.TwoCol {
+	.ContentSide {
+		border-right: none;
+		margin-left: 20em;
+		margin-right: 0;
+	}
+}
+.OneCol {
+    &.WithRightSideBar {
+    	.ContentSide {
+			background: url(../../images/separator.png) repeat-y 91em top #fff;
+		}
+    }
+    .ContentSide {
+		margin:0;
+		//padding-bottom:0;
+	}
+ 	.SinglePaginator{
+		margin-bottom:0;
+	}
+	.SingleContentHolder {
+		margin:0 -1em;
+	}
+}
+
+
+
+.PaginatorHolder {
+	overflow-x: hidden;
+	padding:3em 0 0 0;
+}
+.PaginatorHolder > .Paginator {
+	float:left;
+	white-space: nowrap;
+}
+
+.FindResult {
+	font-size:$SMALL_FONT;
+	line-height:2.3em;
+	float:right;
+}
+
+
+.SinglePaginator {
+	background:#F5F4F4;
+	color:#6C6C71;
+	border-top:1px solid #fff;
+	border-bottom:1px solid #E4E4E4;
+	margin:-2em -4em 2em -4em;
+	padding:1em 1.5em;
+	.PrevPage {
+		float:left;
+		font-size:1.3em;
+	}
+	.NextPage {
+		float:right;
+		font-size:1.3em;
+	}
+	.Disabled {
+		color:#B2B2B2;
+	}
+}
+.InspectionPaginator {
+     font-size:1.3em;
+     color:#118DDC;
+     padding-top:0.5em;
+     .AllPage {
+     	margin-right: 2em;
+     }
+     .PrevPage {
+		display: inline-block;
+        margin-right: 0.5em;
+	}
+	.NextPage {
+		display: inline-block;
+	}
+	.Disabled {
+		color:#B2B2B2;
+	}
+
+}
+.SingleHeader {
+	margin-bottom:2.7em;
+	border-bottom:1px solid #D4D4D4;
+	padding-bottom:0.5em;
+	h2 {
+		float:left;
+	}
+	.SingleInfo {
+		font-size:$MAIN_FONT;
+		float:right;
+		color:#999999;
+		line-height:2em;
+       .Date {
+        	font-weight:bold;
+        }
+        .Time {
+        	font-weight:bold;
+        }
+
+	}
+}
+
+/*Анализы*/
+
+.SingleContentHolder {
+	margin-top:-2.7em;
+	margin-bottom:-3em;
+}
+.SingleAside {
+	padding-top:2.7em;
+	float:right;
+	width:16em;
+}
+.SingleContentSide {
+	padding-top:2.7em;
+	padding-right:4em;
+	margin-right:19em;
+	border-right:1px solid #D4D4D4;
+}
+.SingleContentSide {
+	padding-bottom:4em;
+}
+.BelowNorm, .Grid tr:hover .BelowNorm {
+	background:#D2F0FD;
+}
+.AboveNorm, .Grid tr:hover .AboveNorm {
+	background:#FFB2B2;
+}
+.Legend > li {
+	font-size:1.3em;
+	padding:0.8em 1em 0.7em 1em;
+	margin-bottom:0.1em;
+}
+.PagingList {
+	li {
+		display: inline-block;
+		color:#118DDC;
+		margin-right: 1em;
+	}
+	.AllList {
+		padding-right: 2em;
+	}
+	.PrevPage:before {
+		content: "←";
+		display: inline-block;
+		padding-right: 0.2em;
+		font-size: 1.2em;
+	}
+	.NextPage:after {
+		content: "→";
+		display: inline-block;
+		padding-left: 0.2em;
+		font-size: 1.2em;
+	}
+
+}
+.PatientInfo {
+	font-size: 1.2em;
+	margin-bottom:3em;
+	ul {
+		display: table-cell;
+		vertical-align: top;
+		width:30em;
+		padding-right:2em;
+		&:last-child {
+			padding-right: 0;
+		}
+		li {
+			padding-left:12em;
+			margin-bottom:0.5em;
+			dfn {
+				display: inline-block;
+				width: 11.7em;
+				margin-left: -12em;
+			}
+		}
+	}
+}
+.PatientHeader {
+	margin-bottom:2em;
+	.PatientDayPaginator {
+		display: inline-block;
+		margin-left: 7em;
+		.Arrow{
+			display:inline-block;
+			vertical-align:middle;
+			cursor:pointer;
+			padding: 0 0.2em 0.2em 0.2em;
+			color:#0099FF;
+		}
+		.LeftArrow {
+			margin-right: 3em;
+		}
+		.RightArrow {
+			margin-left: 3em;
+		}
+	}
+}
+
+
+
+footer {
+	width: 100%;
+	height:3.1em;
+	margin:-3.1em auto 0;
+	text-align:center;
+	font-size: $SMALL_FONT;
+	color:#6D6D71;
+
+	a {
+		color: #6D6D71;
+	}
+
+}
+.Separator {
+	padding: 0 0.4em;
+}
+
+.AlertBlock {
+	margin-right:-4em;
+	margin-left:-4em;
+	position:relative;
+	top:-2em;
+	color:#fff;
+	padding:0.5em 4em;
+	border-bottom:1px solid #D4D4D4;
+	& > .CloseIcon {
+		position: absolute;
+		top:50%;
+		right: 0.5em;
+		margin-right: 0;
+		margin-top: -7px;
+	}
+}
+.AlertTxt {
+	font-size:1.3em;
+}
+
+.Positive {
+	background:#339900;
+}
+.Negative {
+	background:#CC0000;
+}
+.Neutral {
+	background:#FF9900;
+}

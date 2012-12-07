@@ -1,0 +1,16 @@
+@import "base";
+@import "sprites";
+
+
+@include sprite-folder("controls");
+
+
+.Icon {
+	&.Nano {
+		
+	}
+	&.Tiny {
+		
+	}
+
+}
