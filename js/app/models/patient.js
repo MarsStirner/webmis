@@ -179,6 +179,7 @@ define([
 		},
 
 		parse: function ( data ) {
+			//костыль злостный
 			var newPatient = new App.Models.Patient;
 
 			data = data.data ? data.data : data;
@@ -219,7 +220,7 @@ define([
 					reg.set(level, null);
 			});*/
 
-			if (this.get("address").addressesEqual) {
+			if (this.get("address").getAddressesEqual()) {
 				this.get("address").get("registered").set(this.get("address").get("residential").toJSON());
 			}
 
