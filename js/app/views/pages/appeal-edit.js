@@ -20,85 +20,6 @@ define([
 			"click .AddRepresentative": "onAddRepresentativeClick"
 		},
 
-		addRepresentative: function (patient) {
-			var alreadyAdded = this.model.get("hospitalizationWith").find(function (p) {
-				return p.get("id") === patient.get("id");
-			});
-
-			if (!alreadyAdded) {
-				if (Core.Date.getAge(patient.get("birthDate")) < 18) {
-					//alert("Нельзя добавить несовершеннолетнего представителя.");
-					this.$nonAdultAlert.dialog("open");
-				} else {
-					if (patient.collection) {
-						patient.collection = undefined;
-					}
-
-					this.model.get("hospitalizationWith").add(patient);
-
-					/*this.model.get("hospitalizationWith").add({
-					 id: patient.get("id"),
-					 name: new App.Models.Name(patient.get("name").toJSON())
-					 });*/
-				}
-			}
-		},
-
-		onAddRepresentativeClick: function () {
-			this.appealRepresentativeWindow.open();
-		},
-
-		onRepresentativeEditClick: function (model) {
-			this.appealRepresentativeWindow.openWithEdit(model);
-		},
-
-		createDiagnosis: function (model) {
-			var DiagnosisView = new DiagnosisLine({
-				model: model//,
-				//collection: diagnoses
-			});
-
-			this.depended(DiagnosisView);
-
-			var selectors = {
-				assignment : "#diagnosis-assignments",
-				aftereffect: "#diagnosis-aftereffects",
-				attendant  : "#diagnosis-attendants"
-			};
-
-			this.$el.find(selectors[model.get("diagnosisKind")]).append(DiagnosisView.render().el);
-		},
-
-		/*createAssignment: function ( model, Diagnoses ) {
-			var DiagnosisView = new DiagnosisLine( {
-				model: model,
-				collection: Diagnoses
-			} );
-			this.depended(DiagnosisView);
-
-			this.$el.find( "#diagnosis-assignments" ).append( DiagnosisView.render().el );
-		},
-
-		createAftereffect: function ( model, Diagnoses ) {
-			var DiagnosisView = new DiagnosisLine( {
-				model: model,
-				collection: Diagnoses
-			} );
-			this.depended(DiagnosisView);
-
-			this.$el.find( "#diagnosis-aftereffects" ).append( DiagnosisView.render().el );
-		},
-
-		createAttendant: function ( model, Diagnoses ) {
-			var DiagnosisView = new DiagnosisLine( {
-				model: model,
-				collection: Diagnoses
-			} );
-			this.depended(DiagnosisView);
-
-			this.$el.find( "#diagnosis-attendants" ).append( DiagnosisView.render().el );
-		},*/
-
 		initialize: function () {
 			this.clearAll();
 
@@ -127,7 +48,8 @@ define([
 					{name: "injuryTypes", pathPart: "valueDomain&filter[typeIs]=hospitalization&filter[capId]=23"},
 					{name: "deliveredAfterTypes", pathPart: "valueDomain&filter[typeIs]=hospitalization&filter[capId]=5"},
 					{name: "financeTypes", pathPart: "finance"},
-					{name: "requestTypes", pathPart: "requestTypes"}
+					{name: "requestTypes", pathPart: "requestTypes"},
+					{name: "relationTypes", pathPart: "relationships"}
 				];
 
 				this.initWithDictionaries(appealDicts, this.ready, this, true);
@@ -139,8 +61,94 @@ define([
 				App.Router.navigate("/appeals/"+ this.model.id +"/", {trigger: true});
 			}, this);
 
+			/*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
+			 this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);*/
+		},
+
+
+
+		onAddRepresentativeClick: function () {
+			this.openRepresentativeWindow();
+			/*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
+			this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);
+			this.appealRepresentativeWindow.open();*/
+		},
+
+		onEditRepresentativeClick: function (model) {
+			var self = this;
+			var relativePatient = new App.Models.Patient({id: model.get("relativeId")});
+			relativePatient.fetch({success: function () {
+				self.openRepresentativeWindow(relativePatient);
+			}});
+
+			/*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
+			this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);
+			this.appealRepresentativeWindow.openWithEdit(model);*/
+		},
+
+		openRepresentativeWindow: function (model) {
 			this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
 			this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);
+			this.appealRepresentativeWindow.on("close", this.onRepresentativeWindowClose, this);
+
+			if (model) {
+				this.appealRepresentativeWindow.openWithEdit(model);
+			} else {
+				this.appealRepresentativeWindow.open();
+			}
+		},
+
+		onRepresentativeWindowClose: function () {
+			this.appealRepresentativeWindow.off(null, null, this);
+		},
+
+		addRepresentative: function (patient) {
+			this.appealRepresentativeWindow.off(null, null, this);
+
+			var alreadyAdded = this.model.get("hospitalizationWith").find(function (p) {
+				return p.get("relativeId") === patient.get("id");
+			});
+
+			if (!alreadyAdded) {
+				if (Core.Date.getAge(patient.get("birthDate")) < 18) {
+					//alert("Нельзя добавить несовершеннолетнего представителя.");
+					this.$nonAdultAlert.dialog("open");
+				} else {
+					this.model.get("hospitalizationWith").add({
+						relativeId: patient.get("id"),
+						name: patient.get("name").toJSON(),
+						birthDate: patient.get("birthDate")
+					});
+
+					/*this.model.get("hospitalizationWith").add({
+					 id: patient.get("id"),
+					 name: new App.Models.Name(patient.get("name").toJSON())
+					 });*/
+				}
+			}
+		},
+
+		createDiagnosis: function (model) {
+			var DiagnosisView = new DiagnosisLine({
+				model: model//,
+				//collection: diagnoses
+			});
+
+			this.depended(DiagnosisView);
+
+			var selectors = {
+				assignment : "#diagnosis-assignments",
+				aftereffect: "#diagnosis-aftereffects",
+				attendant  : "#diagnosis-attendants"
+			};
+
+			this.$el.find(selectors[model.get("diagnosisKind")]).append(DiagnosisView.render().el);
+		},
+
+		toggleInputs: function (enable) {
+			var view = this;
+
+			view.$(":input:not(.NotEditable),.DDSelect,.RichText").attr("disabled", !Boolean(enable)).toggleClass("Disabled", !Boolean(enable));
 		},
 
 		ready: function (dicts) {
@@ -181,23 +189,23 @@ define([
 				view.$el.find(".History").html( History.render().el );
 
 				if (view.model.isNew()) {
-					var haveUnclosedAppeals = Appeals.find(function (a) {
+					/*var haveUnclosedAppeals = Appeals.find(function (a) {
 						return !a.get("rangeAppealDateTime").get("end");
 					});
 
 					if (haveUnclosedAppeals && !Core.Url.extractUrlParameters().ignored) {
 						view.toggleInputs(false);
 
-						/*view.$(":input").attr("disabled", "disabled").addClass("Disabled");
+						*//*view.$(":input").attr("disabled", "disabled").addClass("Disabled");
 						view.$(".DDSelect").addClass("Disabled");
 
 						_(view._dependedViews).each(function (v) {
 							v.$(":input").attr("disabled", "disabled").addClass("Disabled");
 							v.$(".DDSelect").addClass("Disabled");
-						});*/
+						});*//*
 
 						alert("Создание госпитализации невозможно, имеется незакрытая история болезни.");
-					} else {
+					} else {*/
 						view.toggleInputs(true);
 
 						/*view.$(":input").removeAttr("disabled", "disabled").removeClass("Disabled");
@@ -209,7 +217,7 @@ define([
 						});*/
 
 						view.$(".Save").removeAttr("disabled");
-					}
+					//}
 				} else {
 					var isClosed = Appeals.find(function (a) {
 						return a.get("id") === view.model.get("id");
@@ -258,8 +266,11 @@ define([
 			}
 
 
-			var representativeList = new RepresentativeList({collection: this.model.get("hospitalizationWith")});
-			representativeList.on("representative:edit", this.onRepresentativeEditClick, this);
+			var representativeList = new RepresentativeList({
+				collection: this.model.get("hospitalizationWith"),
+				relationTypes: dicts.relationTypes
+			});
+			representativeList.on("representative:edit", this.onEditRepresentativeClick, this);
 			representativeList.render();
 
 			this.$nonAdultAlert = this.$(".NonAdultAlert").dialog({
@@ -435,30 +446,6 @@ define([
 			//nicEditors.allTextAreas({iconsPath: "/images/nicEditorIcons.gif", buttonList: ['bold','italic','underline','strikeThrough','subscript','superscript']});
 		},
 
-		toggleInputs: function (enable) {
-			var view = this;
-
-			view.$(":input:not(.NotEditable),.DDSelect,.RichText").attr("disabled", !Boolean(enable)).toggleClass("Disabled", !Boolean(enable));
-
-			/*if (enable) {
-				view.$(":input,.DDSelect").removeAttr("disabled", "disabled").removeClass("Disabled");
-				//view.$(".DDSelect").removeClass("Disabled");
-
-				_(view._dependedViews).each(function (v) {
-					v.$(":input,.DDSelect").removeAttr("disabled", "disabled").removeClass("Disabled");
-					//v.$(".DDSelect").removeClass("Disabled");
-				});
-			} else {
-				view.$(":input,.DDSelect").attr("disabled", "disabled").addClass("Disabled");
-				//view.$(".DDSelect").addClass("Disabled");
-
-				_(view._dependedViews).each(function (v) {
-					v.$(":input,.DDSelect").attr("disabled", "disabled").addClass("Disabled");
-					//v.$(".DDSelect").addClass("Disabled");
-				});
-			}*/
-		},
-
 		render: function () {
 			$("body").append(this.errorToolTip.render().el);
 
@@ -472,12 +459,15 @@ define([
 		events: {
 			"click .RemoveIcon": "removeModel",
 			"click .EditIcon": "editModel"
+			/*,
+			"change [name='relation_type']": "onRelationTypeChange",
+			"change [name='relation_note']": "onRelationNoteChange"*/
 		},
 
 		template: representativeTmpl,
 
 		initialize: function () {
-			this.model.on("change", this.render, this);
+			//this.model.on("change", this.render, this);
 			this.model.on("sync", this.onRepresentativeSync, this);
 		},
 
@@ -491,13 +481,29 @@ define([
 			}
 		},
 
+		/*onRelationTypeChange: function (event) {
+
+		},
+
+		onRelationNoteChange: function (event) {
+
+		},*/
+
 		render: function () {
 			if (this.model.get("name")) {
 				this.$el.html($.tmpl(this.template, {
 					name: this.model.toJSON().name,
-					yearBorn: Core.Date.getYear(this.model.get("birthDate"))
+					yearBorn: Core.Date.getYear(this.model.get("birthDate")),
+					relationTypes: this.options.relationTypes
 				}));
 				this.delegateEvents();
+
+				if (!this.model.get("relativeType")) this.model.set("relativeType", {});
+
+				this.model.get("relativeType").connect("id", "relative_type", this.$el);
+				this.model.connect("note", "relative_note", this.$el);
+
+				UIInitialize(this.el);
 			}
 
 			return this;
@@ -505,6 +511,8 @@ define([
 
 		removeModel: function () {
 			this.model.collection.remove(this.model);
+			this.model.off(null, null, this);
+			this.off(null, null, this);
 			this.remove();
 		},
 
@@ -524,7 +532,10 @@ define([
 		addOne: function (model) {
 			this.$el.parent().removeClass("Hidden");
 
-			var rep = new Representative({model: model});
+			var rep = new Representative({
+				model: model,
+				relationTypes: this.options.relationTypes
+			});
 
 			rep.on("representative:edit", function () {
 				this.trigger("representative:edit", rep.model);
@@ -539,6 +550,11 @@ define([
 		},
 
 		render: function () {
+			this.collection.each(function (model) {
+				console.log(model);
+				this.addOne(model);
+			}, this);
+
 			return this;
 		}
 	});

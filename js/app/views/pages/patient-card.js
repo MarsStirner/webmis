@@ -71,7 +71,8 @@ define(["models/patient",
 					width: '50em',
 					buttons: {
 						"Игнорировать": function () {
-							App.Router.navigate("patients/" + self.model.get("id") + "/appeals/new/?ignored=true", {trigger: true});
+							App.Router.navigate("patients/" + self.model.get("id") + "/appeals/new/", {trigger: true});
+							//App.Router.navigate("patients/" + self.model.get("id") + "/appeals/new/?ignored=true", {trigger: true});
 							$(this).dialog("close");
 						},
 						"Отмена": function () {

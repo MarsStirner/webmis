@@ -190,7 +190,33 @@ define([
 		}
 	});
 
-	var Representative = Model.extend({});
+	var RelativeType = Model.extend({
+		defaults: {
+			name: ""
+		}
+	});
+
+	var Representative = Model.extend({
+		defaults: {
+			relativeId: "",
+			name: {},
+			relativeType: {},
+			note: ""
+		},
+
+		relations: [
+			{
+				type: Backbone.HasOne,
+				key: "name",
+				relatedModel: "App.Models.Name"
+			},
+			{
+				type: Backbone.HasOne,
+				key: "relativeType",
+				relatedModel: RelativeType
+			}
+		]
+	});
 
 	var Representatives = Collection.extend({
 		model: Representative
