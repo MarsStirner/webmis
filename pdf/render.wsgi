@@ -150,7 +150,7 @@ def application(environ, start_response):
             fullAddress += "дом "+address['house'] + ', '
 
         if address.has_key('building') and address['building'] != None and len(str(address['building'])) > 0:
-            fullAddress += "здание "+ address['building'] + ', '
+            fullAddress += "корпус "+ address['building'] + ', '
 
         if address.has_key('flat') and address['flat'] != None and len(str(address['flat'])) > 0:
             fullAddress += "кв. "+address['flat'] + ', '
