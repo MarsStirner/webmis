@@ -76,10 +76,17 @@ define([
 
 		onEditRepresentativeClick: function (model) {
 			var self = this;
-			var relativePatient = new App.Models.Patient({id: model.get("relativeId")});
+			var relativePatient = new App.Models.Patient({id: model.get("relative").get("id")});
 			relativePatient.fetch({success: function () {
 				self.openRepresentativeWindow(relativePatient);
 			}});
+			relativePatient.on("sync", function () {
+				model.set("relative", {
+					id: relativePatient.get("id"),
+					name: relativePatient.get("name").get("raw"),
+					birthDate: relativePatient.get("birthDate")
+				});
+			});
 
 			/*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
 			this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);
@@ -106,7 +113,7 @@ define([
 			this.appealRepresentativeWindow.off(null, null, this);
 
 			var alreadyAdded = this.model.get("hospitalizationWith").find(function (p) {
-				return p.get("relativeId") === patient.get("id");
+				return p.get("relative").get("id") === patient.get("id");
 			});
 
 			if (!alreadyAdded) {
@@ -115,9 +122,11 @@ define([
 					this.$nonAdultAlert.dialog("open");
 				} else {
 					this.model.get("hospitalizationWith").add({
-						relativeId: patient.get("id"),
-						name: patient.get("name").toJSON(),
-						birthDate: patient.get("birthDate")
+						relative: {
+							id: patient.get("id"),
+							name: patient.get("name").get("raw"),
+							birthDate: patient.get("birthDate")
+						}
 					});
 
 					/*this.model.get("hospitalizationWith").add({
@@ -467,11 +476,11 @@ define([
 		template: representativeTmpl,
 
 		initialize: function () {
-			//this.model.on("change", this.render, this);
-			this.model.on("sync", this.onRepresentativeSync, this);
+			this.model.on("change", this.onRepresentativeChange, this);
+			//this.model.on("sync", this.onRepresentativeSync, this);
 		},
 
-		onRepresentativeSync: function (event) {
+		onRepresentativeChange: function (event) {
 			if (Core.Date.getAge(this.model.get("birthDate")) < 18) {
 				//alert("Нельзя добавить несовершеннолетнего представителя.");
 				this.$nonAdultAlert.dialog("open");
@@ -490,10 +499,9 @@ define([
 		},*/
 
 		render: function () {
-			if (this.model.get("name")) {
+			if (this.model.get("relative")) {
 				this.$el.html($.tmpl(this.template, {
-					name: this.model.toJSON().name,
-					yearBorn: Core.Date.getYear(this.model.get("birthDate")),
+					model: this.model.toJSON(),
 					relationTypes: this.options.relationTypes
 				}));
 				this.delegateEvents();

@@ -190,16 +190,24 @@ define([
 		}
 	});
 
+	var Relative = Model.extend({
+		defaults: {
+			id: "",
+			name: "",
+			birthDate: ""
+		}
+	});
+
 	var RelativeType = Model.extend({
 		defaults: {
+			id: "",
 			name: ""
 		}
 	});
 
 	var Representative = Model.extend({
 		defaults: {
-			relativeId: "",
-			name: {},
+			relative: {},
 			relativeType: {},
 			note: ""
 		},
@@ -207,8 +215,8 @@ define([
 		relations: [
 			{
 				type: Backbone.HasOne,
-				key: "name",
-				relatedModel: "App.Models.Name"
+				key: "relative",
+				relatedModel: Relative
 			},
 			{
 				type: Backbone.HasOne,
@@ -299,7 +307,7 @@ define([
 			appealWithDeseaseThisYear: "",
 			patient: {},
 			appealType: {},
-			relations: [{}],
+			//relations: [{}],
 			assignment: {},
 			hospitalizationType: {},
 			hospitalizationPointType: {},
@@ -387,12 +395,12 @@ define([
 				key: "rangeAppealDateTime",
 				relatedModel: "App.Models.Date"
 			},
-			{
+			/*{
 				type: Backbone.HasMany,
 				key: "relations",
 				relatedModel: "App.Models.Relation",
 				collectionType: "App.Collections.Relations"
-			},
+			},*/
 			{
 				type: Backbone.HasMany,
 				key: "diagnoses",
