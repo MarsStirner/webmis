@@ -1109,7 +1109,7 @@ define([
 		addressesEqual: false,
 
 		events: {
-			"change #addressesEqual": "onAddressesEqualChange"
+			"change #addresses-equal": "onAddressesEqualChange"
 		},
 
 		initialize: function () {
@@ -1129,6 +1129,8 @@ define([
 
 			this.addressesEqual = this.model.isNew() ? false : this.model.get("address").getIsEqual();
 
+			this.model.get("address").setAddressesEqual(this.addressesEqual);
+
 			/*this.residentialAddress.on("addressChange", function (e) {
 				residential.set(e.key, e.value);
 				if (this.addressesEqual) {
@@ -1145,9 +1147,9 @@ define([
 		},
 
 		onAddressesEqualChange: function (event) {
-			var addressesEqual = $(event.currentTarget).is(":checked");
+			var addressesEqual = Boolean($(event.currentTarget).is(":checked"));
 
-			this.model.get("address").addressesEqual = addressesEqual;
+			this.model.get("address").setAddressesEqual(addressesEqual);
 
 			this.addressesEqual = addressesEqual;
 
