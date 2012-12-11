@@ -67,10 +67,10 @@ define([
 		},
 
 		newHospitalBed: function () {
-			var hospitalBed = new App.Views.HospitalBed({appeal: this.options.appeal});
+			/*var hospitalBed = new App.Views.HospitalBed({appeal: this.options.appeal});
 			hospitalBed.setElement(this.el).render();
 
-			App.Router.updateUrl("appeals/" + this.options.appealId + "/hospitalbed/");
+			App.Router.updateUrl("appeals/" + this.options.appealId + "/hospitalbed/");*/
 		},
 
 		render: function () {
