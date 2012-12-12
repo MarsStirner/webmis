@@ -44,10 +44,21 @@ define([
 		},
 
 		printAppeal: function () {
+			var PrintAppeal = new App.Models.PrintAppeal({
+				id: this.model.get("id")
+			});
+
 			new App.Views.Print({
-				data: this.model.toJSON(),
+				model: PrintAppeal,
 				template: "f003"
 			});
+
+			PrintAppeal.fetch();
+
+			/*new App.Views.Print({
+				data: this.model.toJSON(),
+				template: "f003"
+			});*/
 		},
 
 		printConsentToExam: function () {
