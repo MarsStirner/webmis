@@ -40,7 +40,7 @@ define(["models/smo", "models/date"], function () {
 				var errors = [];
 
 				var conditionallyRequired = [
-					//self.get("series"),
+					self.get("series"),
 					self.get("number"),
 					self.get("smo").get("id"),
 					self.get("rangePolicyDate").get("start"),
