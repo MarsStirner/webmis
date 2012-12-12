@@ -1532,7 +1532,7 @@ define([
 
 			if ($sel.val() != this.model.get("occupations").first().get("socialStatus").get("id")) {
 				// Обнулим все остальные значения инпутов, чтобы их данные не попали в модель
-				this.$(".Occupation").hide().find(":input").val("");
+				this.$(".Occupation").hide().find(":input").val("").change();
 			}
 
 			this.$(relation).show();
