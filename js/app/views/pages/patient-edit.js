@@ -10,14 +10,17 @@ define([
 	"text!templates/patient-edit/other.tmpl",
 	"text!templates/patient-edit/address.tmpl",
 	"text!templates/patient-edit/contact.tmpl",
-	"text!templates/patient-edit/quotas.tmpl",
+	"text!templates/patient-edit/quotes.tmpl",
 	"models/patient",
 	"collections/flat-directories",
 	"collections/dictionary-values",
 	"collections/departments",
+	"collections/quotes",
 	"views/form/abstract-line",
 	"views/form/kladr-new",
 	"views/menu",
+	"views/grid",
+	"views/paginator",
 	"views/breadcrumbs"
 ], function (tmplMain,
 						 tmplGeneral,
@@ -30,7 +33,7 @@ define([
 						 tmplOther,
 						 tmplAddress,
 						 tmplContact,
-						 tmplQuotas) {
+						 tmplQuotes) {
 
 	/**
 	 * //////////////////////////////////
@@ -95,7 +98,7 @@ define([
 			this.steps.address     = new AddressView({model: self.model});
 			this.steps.medicalInfo = new MedicalInfoView({model: self.model.get("medicalInfo")});
 			this.steps.other       = new OtherView({model: self.model});
-			this.steps.quotas      = new QuotasView({model: self.model});
+			this.steps.quotes      = new QuotesView({patient: self.model});
 
 			this.menuStructure = self.getMenuStructure();
 
@@ -457,7 +460,7 @@ define([
 					{name: "address", title: "Адреса", uri: "/patients/new/address/"},
 					{name: "medicalInfo", title: "Мед. особенности", uri: "/patients/new/medicalInfo/"},
 					{name: "other", title: "Прочее", uri: "/patients/new/other/"},
-					{name: "quotas", title: "Квоты", uri: "/patients/new/quotas/"}
+					{name: "quotes", title: "Квоты", uri: "/patients/new/quotes/"}
 				];
 			} else {
 				menuStructure = [
@@ -466,7 +469,7 @@ define([
 					App.Router.compile({name: "address", title: "Адреса", uri: "/patients/:id/edit/address/"}, this.model.toJSON()),
 					App.Router.compile({name: "medicalInfo", title: "Мед. особенности", uri: "/patients/:id/edit/medicalInfo/"}, this.model.toJSON()),
 					App.Router.compile({name: "other", title: "Прочее", uri: "/patients/:id/edit/other/"}, this.model.toJSON()),
-					App.Router.compile({name: "quotas", title: "Квоты", uri: "/patients/:id/edit/quotas/"}, this.model.toJSON())
+					App.Router.compile({name: "quotes", title: "Квоты", uri: "/patients/:id/edit/quotes/"}, this.model.toJSON())
 				];
 			}
 
@@ -1586,8 +1589,107 @@ define([
 	});
 
 
+
+
+
+
+
 	// Шаг 6. Квоты
-	var QuotasView = View.extend({
+	var QuotesView = View.extend({
+		events: {
+			"click #new-quota": "onNewQuotaClick"
+		},
+
+		template:
+		'<li>' +
+			'<div class="ContentHeader Clearfix">' +
+				'<div class="PageActions">' +
+					'<button id="new-quota" class="Styled Button">' +
+						'<i class="Icon AddIcon Tiny"></i>' +
+						'<span>Добавить талон</span>' +
+					'</button>' +
+				'</div>' +
+			'</div>' +
+			'<div id="quotes-grid"></div>' +
+		'</li>',
+
+		initialize: function (options) {
+			this.collection = new App.Collections.Quotes();
+			this.collection.patientId = this.options.patient.get("id");
+			this.collection.appealId = 13290;
+
+			this.grid = new App.Views.Grid({
+				collection: this.collection,
+				template: "grids/quotes",
+				gridTemplateId: "#quotes-grid-department",
+				rowTemplateId: "#quotes-grid-row-department",
+				defaultTemplateId: "#quotes-grid-department-default"
+			});
+
+			this.collection.on("reset", function () {
+				if (!this.collection.length) {
+					this.grid.$(".Grid").after("<h4>Не найдено талонов</h4>");
+				}
+			}, this);
+
+			this.collection.fetch();
+		},
+
+		onNewQuotaClick: function () {
+			console.log("new quota");
+		},
+
+		openQuota: function (quotaId) {
+			console.log(quotaId);
+		},
+
+		render: function () {
+			var self = this;
+
+			this.$el.html($.tmpl(this.template));
+
+			this.$("#quotes-grid").empty().append(this.grid.el);
+
+			this.grid.$(".EditQuota").live("click", function (event) {
+				event.preventDefault();
+				event.stopPropagation();
+
+				if (!self.options.appeal.isClosed()) {
+					var quotaId = $(this).parent().siblings(".QuotaIdHolder").data("exam-id");
+					self.openQuota(quotaId);
+				}
+			});
+
+			// Пэйджинатор
+			this.paginator = new App.Views.Paginator({
+				collection: self.collection
+			});
+			this.depended(this.paginator);
+
+			this.$el.append(this.paginator.render().el);
+
+			this.delegateEvents();
+			this.grid.delegateEvents();
+			this.paginator.delegateEvents();
+
+			return this;
+		}
+	});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/*var QuotasView = View.extend({
 		template: tmplQuotas,
 
 		events: {
@@ -1658,7 +1760,7 @@ define([
 		render: function () {
 			return this;
 		}
-	});
+	});*/
 
 
 	var MenuView = View.extend({
