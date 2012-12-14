@@ -10,9 +10,11 @@ define([
 	"text!templates/patient-edit/other.tmpl",
 	"text!templates/patient-edit/address.tmpl",
 	"text!templates/patient-edit/contact.tmpl",
+	"text!templates/patient-edit/quotas.tmpl",
 	"models/patient",
 	"collections/flat-directories",
 	"collections/dictionary-values",
+	"collections/departments",
 	"views/form/abstract-line",
 	"views/form/kladr-new",
 	"views/menu",
@@ -27,7 +29,8 @@ define([
 						 tmplAllergy,
 						 tmplOther,
 						 tmplAddress,
-						 tmplContact) {
+						 tmplContact,
+						 tmplQuotas) {
 
 	/**
 	 * //////////////////////////////////
@@ -92,6 +95,7 @@ define([
 			this.steps.address     = new AddressView({model: self.model});
 			this.steps.medicalInfo = new MedicalInfoView({model: self.model.get("medicalInfo")});
 			this.steps.other       = new OtherView({model: self.model});
+			this.steps.quotas      = new QuotasView({model: self.model});
 
 			this.menuStructure = self.getMenuStructure();
 
@@ -349,10 +353,12 @@ define([
 			if (this.currentView) {
 				this.currentView.remove();
 				this.currentView.unbind();
+				this.currentView.off(null, null, this);
 				this.currentView.el = null;
 			}
 
 			this.currentView = this.steps[this.currentStep];
+			this.on("rendered", this.render);
 
 			this.assign({
 				".LeftSideBar": this.menu,
@@ -450,7 +456,8 @@ define([
 					{name: "documents", title: "Документы", uri: "/patients/new/documents/"},
 					{name: "address", title: "Адреса", uri: "/patients/new/address/"},
 					{name: "medicalInfo", title: "Мед. особенности", uri: "/patients/new/medicalInfo/"},
-					{name: "other", title: "Прочее", uri: "/patients/new/other/"}
+					{name: "other", title: "Прочее", uri: "/patients/new/other/"},
+					{name: "quotas", title: "Квоты", uri: "/patients/new/quotas/"}
 				];
 			} else {
 				menuStructure = [
@@ -458,7 +465,8 @@ define([
 					App.Router.compile({name: "documents", title: "Документы", uri: "/patients/:id/edit/documents/"}, this.model.toJSON()),
 					App.Router.compile({name: "address", title: "Адреса", uri: "/patients/:id/edit/address/"}, this.model.toJSON()),
 					App.Router.compile({name: "medicalInfo", title: "Мед. особенности", uri: "/patients/:id/edit/medicalInfo/"}, this.model.toJSON()),
-					App.Router.compile({name: "other", title: "Прочее", uri: "/patients/:id/edit/other/"}, this.model.toJSON())
+					App.Router.compile({name: "other", title: "Прочее", uri: "/patients/:id/edit/other/"}, this.model.toJSON()),
+					App.Router.compile({name: "quotas", title: "Квоты", uri: "/patients/:id/edit/quotas/"}, this.model.toJSON())
 				];
 			}
 
@@ -1573,6 +1581,81 @@ define([
 				//"#occupations": this.occupations
 			});*/
 
+			return this;
+		}
+	});
+
+
+	// Шаг 6. Квоты
+	var QuotasView = View.extend({
+		template: tmplQuotas,
+
+		events: {
+
+		},
+
+		dictionaries: null,
+
+		initialize: function (options) {
+			this.initWithDictionaries([{name: "stages", fd: true, id: 32}], this.onDictionariesLoaded, this, true);
+
+			this.departments = new App.Collections.Departments();
+			this.departments.on("reset", this.onDepartmentsReset, this);
+			this.departments.fetch();
+		},
+
+		onDictionariesLoaded: function (dictionaries) {
+			this.dictionaries = dictionaries;
+			console.log(dictionaries);
+			this.render();
+			UIInitialize(this.el);
+		},
+
+		onDepartmentsReset: function () {
+			console.log(this.departments.toJSON());
+			this.render();
+			UIInitialize(this.el);
+		},
+
+		render: function () {
+			this.$el.html($.tmpl(this.template, {model: this.model.toJSON(), dicts: this.dictionaries || {}, departments: this.departments.toJSON()}));
+
+			this.$(".select2").width("100%").select2();
+
+			return this;
+		}
+	});
+
+	var QuotasListView = View.extend({
+		tagName: "",
+		className: "",
+
+		events: {
+
+		},
+
+		initialize: function (options) {
+
+		},
+
+		render: function () {
+			return this;
+		}
+	});
+
+	var QuotasItemView = View.extend({
+		tagName: "",
+		className: "",
+
+		events: {
+
+		},
+
+		initialize: function (options) {
+
+		},
+
+		render: function () {
 			return this;
 		}
 	});

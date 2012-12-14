@@ -46,6 +46,7 @@ define([
 				raw: ""
 			},
 			address: {},
+			phones: [],
 			payments: [{}],
 			relations: [{}],
 			idCards: [{}],
@@ -230,11 +231,11 @@ define([
 				}
 			});
 
-			this.get("relations").each(function (relation) {
+			/*this.get("relations").each(function (relation) {
 				if (!relation.get("relationType").get("id")) {
 					relation.unset("id");
 				}
-			});
+			});*/
 
 			this.get("phones").remove(this.get("phones").filter(function (phone) {
 				return !phone.get("typeId");
