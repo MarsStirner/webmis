@@ -34,6 +34,9 @@ define([
 				}, {
 					label: "Согласие субъекта на обработку персональных данных (представитель)",
 					handler: this.printConsentToProcessingRepresent
+				}, {
+					label: "Статкарта",
+					handler: this.printStatisticCard
 				}]
 			}
 		},
@@ -94,6 +97,19 @@ define([
 				data: this.model.get("patient").toJSON(),
 				template: "consent_to_the_processing_representative"
 			});
+		},
+
+		printStatisticCard: function () {
+			var PrintAppeal = new App.Models.PrintAppeal({
+				id: this.model.get("id")
+			});
+
+			new App.Views.Print({
+				model: PrintAppeal,
+				template: "f066"
+			});
+
+			PrintAppeal.fetch();
 		},
 
 		onEditAppealClick: function (event) {
