@@ -20,6 +20,9 @@ define([
 				scope: self,
 				handler: this.printAppeal,
 				dropDownItems: [{
+					label: "Статкарта",
+					handler: this.printStatisticCard
+				}, {
 					label: "Согласие на обследование ВИЧ",
 					handler: this.printConsentToExam
 				}, {
@@ -34,9 +37,6 @@ define([
 				}, {
 					label: "Согласие субъекта на обработку персональных данных (представитель)",
 					handler: this.printConsentToProcessingRepresent
-				}, {
-					label: "Статкарта",
-					handler: this.printStatisticCard
 				}]
 			}
 		},

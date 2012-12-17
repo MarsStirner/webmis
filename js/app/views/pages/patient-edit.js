@@ -16,8 +16,10 @@ define([
 	"collections/dictionary-values",
 	"collections/departments",
 	"collections/quotes",
+	"collections/patient-appeals",
 	"views/form/abstract-line",
 	"views/form/kladr-new",
+	"views/mkb-directory",
 	"views/menu",
 	"views/grid",
 	"views/paginator",
@@ -1633,10 +1635,61 @@ define([
 			}, this);
 
 			this.collection.fetch();
+
+			this.initWithDictionaries([
+				{name: "stages", fd: true, id: 32},
+				{name: "statuses", pathPart: "quotaStatus"}
+			], this.onDictionariesLoaded, this, true);
+
+			this.departments = new App.Collections.Departments();
+			this.departments.on("reset", this.onDepartmentsReset, this);
+			this.departments.fetch();
+
+			this.patientAppeals = new App.Collections.PatientAppeals();
+			this.patientAppeals.patient = this.options.patient;
+			this.patientAppeals.fetch();
+
+			var QuotaType = Model.extend({});
+
+			var QuotaTypes = Collection.extend({
+				model: QuotaType,
+				
+				url: function () {
+					return DATA_PATH + "quotaTypes";
+				}
+			});
+			
+			this.quotaTypes = new QuotaTypes();
+			this.quotaTypes.fetch();
+
+			Cache.Patient = this.options.patient;
+		},
+
+		onDictionariesLoaded: function (dictionaries) {
+			this.dictionaries = dictionaries;
+			console.log(dictionaries);
+			this.render();
+			UIInitialize(this.el);
+		},
+
+		onDepartmentsReset: function () {
+			console.log(this.departments.toJSON());
+			this.render();
+			UIInitialize(this.el);
 		},
 
 		onNewQuotaClick: function () {
 			console.log("new quota");
+			var addQuotaDialog = new AddQuotaView({
+				dicts: this.dictionaries,
+				patientAppeals: this.patientAppeals.toJSON(),
+				departments: this.departments.toJSON(),
+				quotaTypes: this.quotaTypes.toJSON()
+			}).render();
+
+			addQuotaDialog.on("create", function (options) {
+				this.collection.create(options.quota);
+			}, this);
 		},
 
 		openQuota: function (quotaId) {
@@ -1676,17 +1729,104 @@ define([
 		}
 	});
 
+	var AddQuotaView = View.extend({
+		className: "popup",
 
+		events: {
+			"click .MKBLauncher": "launchMKB"
+		},
 
+		template: tmplQuotes,
 
+		initialize: function (options) {
+			_.bindAll(this);
 
+			this.mkbDir = new App.Views.MkbDirectory();
+			this.mkbDir.on("selectionConfirmed", function (event) {
+			}, this);
+		},
 
+		launchMKB: function () {
+			this.mkbDir.open();
+		},
 
+		render: function () {
+			var self = this;
+			this.$el.html($.tmpl(this.template, {
+				dicts: this.options.dicts || {},
+				departments: this.options.departments,
+				patientAppeals: this.options.patientAppeals,
+				quotaTypes: this.options.quotaTypes
+			}));
 
+			this.$el.dialog({
+				//autoOpen: false,
+				width: "86em",
+				title: "Добавление талона",
+				resizable: false,
+				dialogClass: "webmis",
+				modal: true,
+				buttons: [
+					{
+						text: "Добавить",
+						//class: "Styled Button buttonOK",
+						//id: "confirmSelection",
+						click: self.onAddClick
+					}, {
+						text: "Отмена",
+						click: self.close
+					}
+				]
+			});
 
+			this.$("a").click(function (event) {
+				event.preventDefault();
+			});
 
+			UIInitialize(this.el);
 
+			this.$(".select2").width("100%").select2();
 
+			this.mkbDir.render();
+
+			return this;
+		},
+
+		onAddClick: function () {
+			console.log(this);
+
+			this.trigger("create", {
+				quota: {
+					"appealNumber": this.$("#quota-appealNumber").val(),
+					"talonNumber": this.$("#quota-talonNumber").val(),
+					"stage": this.$("#quota-stage").val(),
+					"request": this.$("#quota-request").val(),
+					"mkb": {
+						code: this.$().val() || ""
+					},
+					"quotaType": {
+						id: this.$("#quota-quotaType").val()
+					},
+					"department": {
+						id: this.$("#quota-department").val()
+					},
+					"status": {
+						id: this.$("#quota-status").val()
+					}
+				}
+			});
+
+			this.close();
+		},
+
+		open: function () {
+			this.$el.dialog("open");
+		},
+
+		close: function () {
+			this.unbind().remove();
+		}
+	});
 
 
 	/*var QuotasView = View.extend({
@@ -1744,23 +1884,7 @@ define([
 			return this;
 		}
 	});
-
-	var QuotasItemView = View.extend({
-		tagName: "",
-		className: "",
-
-		events: {
-
-		},
-
-		initialize: function (options) {
-
-		},
-
-		render: function () {
-			return this;
-		}
-	});*/
+	*/
 
 
 	var MenuView = View.extend({

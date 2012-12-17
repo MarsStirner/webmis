@@ -155,6 +155,12 @@ define(["models/patient",
 					if (json.address[addressType].kladr) {
 						var a = json.address[addressType];
 
+						_.forEach(["street", "republic", "district", "city", "locality", "street"], function (part) {
+							if (!a[part]) {
+								a[part] = {socr: "", name: ""};
+							}
+						});
+
 						var kladrString = _([
 							a.street.index || a.locality.index || a.city.index || a.district.index || a.republic.index,
 							a.republic.socr + " " + a.republic.name,

@@ -168,8 +168,10 @@ define([
 			result.dicts = dicts;
 			result.isNew = this.model.isNew();
 
+			console.log("типы", result.dicts.requestTypes);
+
 			result.dicts.requestTypes = _(result.dicts.requestTypes).filter(function (rType) {
-				return rType.id !== 3;
+				return rType.code === "clinic" || rType.code === "hospital";
 			});
 
 			//console.log("MODEL", dicts);
@@ -476,7 +478,7 @@ define([
 		template: representativeTmpl,
 
 		initialize: function () {
-			this.model.on("change", this.onRepresentativeChange, this);
+			//this.model.on("change", this.onRepresentativeChange, this);
 			//this.model.on("sync", this.onRepresentativeSync, this);
 		},
 

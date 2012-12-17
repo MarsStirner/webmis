@@ -3,7 +3,7 @@
  * Date: 13.12.12
  */
 define(["models/mkb", "models/department"], function () {
-	var QuotaType = Model.extend({
+	/*var QuotaType = Model.extend({
 		defaults: {
 			"name": ""
 		}
@@ -13,10 +13,10 @@ define(["models/mkb", "models/department"], function () {
 		defaults: {
 			"name": ""
 		}
-	});
+	});*/
 
-	App.Models.Quota = Model.extend({
-		defaults: {
+	App.Models.Quota = Backbone.Model.extend({
+		/*defaults: {
 			"version": "",
 			"appealNumber": "",
 			"talonNumber": "",
@@ -49,7 +49,7 @@ define(["models/mkb", "models/department"], function () {
 				key: "status",
 				relatedModel: QuotaStatus
 			}
-		]
+		]*/
 	});
 
 	return App.Models.Quota;

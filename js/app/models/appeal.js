@@ -145,14 +145,14 @@ define([
 				key: "bloodPressure",
 				relatedModel: PhysicalParametersBloodPressure
 			}
-		],
+		]/*,
 		clean: function () {
 			this.set({
 				//temperature: this.get("temperature").toString().replace(/\D/, ""),
 				weight: this.get("weight").toString().replace(/\D/, ""),
 				height: this.get("height").toString().replace(/\D/, "")
 			});
-		}
+		}*/
 	});
 
 

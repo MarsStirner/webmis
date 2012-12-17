@@ -1,114 +1,133 @@
-<!--<li>-->
-	<div class="LineBlock">
-		<div class="HalfCol">
-			<label>
-				Идентификатор
-			</label>
-			<input type="text" name="" placeholder="" />
-		</div>
-		<div class="QuartCol">
-			<label>
-				Этап
-			</label>
-			<select class="Styled" name="">
-				<option value="">...</option>
-				{{each(i, stage) dicts.stages}}
-					<option value="${stage.id}">${stage[75]}</option>
-				{{/each}}
-			</select>
-		</div>
-		<div class="QuartCol">
-			<label>
-				Номер талона
-			</label>
-			<input type="text" name="" placeholder="" />
-		</div>
-		<div class="QuartCol">
-			<label>
-				Количество
-			</label>
-			<input type="text" name="" placeholder="" />
-		</div>
-		<div class="HalfCol">
-			<label>
-				Обращение
-			</label>
-			<select class="Styled" name="">
-				<option value="">...</option>
-			</select>
-		</div>
-	</div>
-	<div class="LineBlock">
-		<div class="QuartCol">
-			<span class="Label"> Диагноз </span>
-			<input name="" type="text" placeholder="" value=""/>
-			<span class="FieldInfo">Код по МКБ</span>
-		</div>
-		<div class="HugeCol WithoutName">
-			<input name="" class="Disabled NotEditable" disabled="disabled" type="text" placeholder="" value=""/>
-			<span class="FieldInfo">Описание</span>
-		</div>
-		<div class="QuartCol">
-			<button class="Styled Button MKBLauncher"><span>МКБ-10</span></button>
-		</div>
-	</div>
-	<div class="LineBlock">
-		<div class="HalfCol">
-			<label>
-				Код ВМП
-			</label>
-			<select class="select2" name="">
-				<!--<option value="">...</option>-->
-			</select>
-		</div>
-		<div class="HalfCol">
-			<label>
-				Статус
-			</label>
-			<select class="select2" name="">
-				<!--<option value="">...</option>-->
-			</select>
-		</div>
-		<div class="SemiCol">
-			<label>
-				Отделение
-			</label>
-			<select class="select2 departments" name="">
-				{{each(i, d) departments}}
-					<option value="${d.id}">${d.name}</option>
-				{{/each}}
-			</select>
-		</div>
-	</div>
-	<div class="LineBlock">
-		<div class="WideCol">
-			<span class="Label">Квоты использовавшиеся ранее:</span>
-			<table class="Grid">
-				<thead>
-					<tr>
-						<th>Номер талона</th>
-						<th>Обращение</th>
-						<th>Количество этапов</th>
-						<th>Код диагноза</th>
-						<th>Код ВМП</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>123</td>
-						<td>123</td>
-						<td>123</td>
-						<td>123</td>
-						<td>123</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div class="LineBlock">
-		<p class="ShowHistory ShowHidePopup">
-			<a href="#">Показать всю историю</a> (3)
-		</p>
-	</div>
-<!--
-</li>-->
+<div class="EditForm">
+	<ul class="LineBlockHolder">
+		<li>
+			<div class="LineBlock">
+				<div class="ThirdCol">
+					<label>
+						Номер ИБ
+					</label>
+					<!--<input type="text" name="" placeholder="" />-->
+					<select class="Styled" id="quota-appealNumber">
+						{{each(i, a) patientAppeals}}
+						<option value="${a.number}">${a.number}</option>
+						{{/each}}
+					</select>
+				</div>
+				<div class="ThirdCol">
+					<label>
+						Этап
+					</label>
+					<select class="Styled" id="quota-stage">
+						<option value="">...</option>
+						{{each(i, stage) dicts.stages}}
+							<option value="${stage.id}">${stage[75]}</option>
+						{{/each}}
+					</select>
+				</div>
+			</div>
+			<div class="LineBlock">
+				<div class="ThirdCol">
+					<label>
+						Номер талона
+					</label>
+					<input type="text" id="quota-talonNumber" placeholder="" />
+				</div>
+				<div class="ThirdCol">
+					<label>
+						Обращение
+					</label>
+					<select class="Styled" id="quota-request">
+						<option value="">...</option>
+						<option value="0">Первичный</option>
+						<option value="1">Повтроный</option>
+					</select>
+				</div>
+			</div>
+			<div class="LineBlock">
+				<div class="QuartCol">
+					<span class="Label"> Диагноз </span>
+					<input id="quota-diagnosis-code" type="text" placeholder="" value=""/>
+					<span class="FieldInfo">Код по МКБ</span>
+				</div>
+				<div class="HugeCol WithoutName">
+					<input id="quota-diagnosis-desc" class="Disabled NotEditable" disabled="disabled" type="text" placeholder="" value=""/>
+					<span class="FieldInfo">Описание</span>
+				</div>
+				<div class="QuartCol">
+					<button class="Styled Button MKBLauncher"><span>МКБ-10</span></button>
+				</div>
+			</div>
+			<div class="LineBlock">
+				<div class="HugeCol">
+					<label>
+						Код ВМП
+					</label>
+					<select class="select2" id="quota-quotaType">
+						<option value="">...</option>
+						{{each(i, qt) quotaTypes}}
+						<optgroup label="${qt.code}">
+							{{each(j, t) qt.types}}
+							<option value="${t.id}">${t.code} ${t.name}</option>
+							{{/each}}
+						</optgroup>
+						{{/each}}
+					</select>
+				</div>
+			</div>
+			<div class="LineBlock">
+				<div class="ThirdCol">
+					<label>
+						Статус
+					</label>
+					<select class="select2" id="quota-status">
+						<option value="">...</option>
+						{{each(i, d) dicts.statuses}}
+							<option value="${d.id}">${d.value}</option>
+						{{/each}}
+					</select>
+				</div>
+				<div class="ThirdCol">
+					<label>
+						Отделение
+					</label>
+					<select class="select2 departments" id="quota-department">
+						<option value="">...</option>
+						{{each(i, d) departments}}
+							<option value="${d.id}">${d.name}</option>
+						{{/each}}
+					</select>
+				</div>
+			</div>
+			<!--<div class="LineBlock">
+				<div class="WideCol">
+					<span class="Label">Квоты использовавшиеся ранее:</span>
+					<table class="Grid">
+						<thead>
+						<tr>
+							<th>Номер талона</th>
+							<th>Обращение</th>
+							<th>Количество этапов</th>
+							<th>Код диагноза</th>
+							<th>Код ВМП</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td>123</td>
+							<td>123</td>
+							<td>123</td>
+							<td>123</td>
+							<td>123</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="LineBlock">
+				<p class="ShowHistory ShowHidePopup">
+					<a href="#">Показать всю историю</a> (3)
+				</p>
+			</div>-->
+		</li>
+	</ul>
+</div>
