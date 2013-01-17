@@ -118,41 +118,47 @@ aside h4 {
   font-weight: bold;
 }
 
+/* line 96, ../../sass/modules/aside.scss */
+.AsideNav li.Disabled > a > span {
+  text-decoration: none;
+  color: #F5F4F4;
+}
+
 /*История обращений*/
-/* line 98, ../../sass/modules/aside.scss */
+/* line 104, ../../sass/modules/aside.scss */
 .TreatmentHistory > li {
   margin-bottom: 1.5em;
   font-size: 1.3em;
   line-height: 1.2em;
 }
 
-/* line 103, ../../sass/modules/aside.scss */
+/* line 109, ../../sass/modules/aside.scss */
 .AllTreatments {
   font-size: 1.3em;
 }
 
 /*Фильтр диагностики*/
-/* line 108, ../../sass/modules/aside.scss */
+/* line 114, ../../sass/modules/aside.scss */
 .Type a.Actions {
   color: #000;
   cursor: pointer;
 }
-/* line 111, ../../sass/modules/aside.scss */
+/* line 117, ../../sass/modules/aside.scss */
 .Type a.Actions:hover {
   color: #DD1111;
   border-bottom: 1px dashed #DD1111;
 }
 
-/* line 117, ../../sass/modules/aside.scss */
+/* line 123, ../../sass/modules/aside.scss */
 .TypeList {
   font-size: 1.2em;
   white-space: nowrap;
 }
-/* line 120, ../../sass/modules/aside.scss */
+/* line 126, ../../sass/modules/aside.scss */
 .TypeList li {
   margin-bottom: 0.3em;
 }
-/* line 122, ../../sass/modules/aside.scss */
+/* line 128, ../../sass/modules/aside.scss */
 .TypeList li .Num {
   color: #6C6C71;
 }

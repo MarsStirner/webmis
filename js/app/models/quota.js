@@ -3,25 +3,48 @@
  * Date: 13.12.12
  */
 define(["models/mkb", "models/department"], function () {
-	/*var QuotaType = Model.extend({
+	App.Models.QuotaType = Model.extend({
+		defaults: {
+			"name": "",
+			"code": ""
+		}
+	});
+
+	App.Models.QuotaStatus = Model.extend({
 		defaults: {
 			"name": ""
 		}
 	});
 
-	var QuotaStatus = Model.extend({
+	App.Models.QuotaStage = Model.extend({
 		defaults: {
 			"name": ""
 		}
-	});*/
+	});
 
-	App.Models.Quota = Backbone.Model.extend({
-		/*defaults: {
+	App.Models.QuotaRequest = Model.extend({
+		defaults: {
+			"name": ""
+		}
+	});
+
+	App.Collections.QuotaTypes = Collection.extend({
+		model: App.Models.QuotaType,
+
+		url: function () {
+			return DATA_PATH + "quotaTypes";
+		}
+	});
+
+	App.Models.Quota = Model.extend({
+		idAttribute: "id",
+
+		defaults: {
 			"version": "",
 			"appealNumber": "",
 			"talonNumber": "",
-			"stage": "",
-			"request": "",
+			"stage": {},
+			"request": {},
 			"mkb": {},
 			"quotaType": {},
 			"department": {},
@@ -37,7 +60,7 @@ define(["models/mkb", "models/department"], function () {
 			{
 				type: Backbone.HasOne,
 				key: "quotaType",
-				relatedModel: QuotaType
+				relatedModel: App.Models.QuotaType
 			},
 			{
 				type: Backbone.HasOne,
@@ -47,9 +70,23 @@ define(["models/mkb", "models/department"], function () {
 			{
 				type: Backbone.HasOne,
 				key: "status",
-				relatedModel: QuotaStatus
+				relatedModel: App.Models.QuotaStatus
+			},
+			{
+				type: Backbone.HasOne,
+				key: "stage",
+				relatedModel: App.Models.QuotaStage
+			},
+			{
+				type: Backbone.HasOne,
+				key: "request",
+				relatedModel: App.Models.QuotaRequest
 			}
-		]*/
+		],
+
+		url: function () {
+			return DATA_PATH + "appeals/" + this.get("appealNumber") + "/quotes";
+		}
 	});
 
 	return App.Models.Quota;

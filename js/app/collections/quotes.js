@@ -2,7 +2,7 @@
  * User: FKurilov
  * Date: 13.12.12
  */
-define(function () {
+define(["models/quota"], function () {
 	App.Collections.Quotes = Collection.extend({
 		model: App.Models.Quota,
 
