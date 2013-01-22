@@ -3,6 +3,7 @@ define([
 	"text!templates/patient-edit/general.tmpl",
 	"text!templates/patient-edit/relation.tmpl",
 	"text!templates/patient-edit/documents.tmpl",
+	"text!templates/patient-edit/policy.tmpl",
 	"text!templates/patient-edit/id-card.tmpl",
 	"text!templates/patient-edit/medical-info.tmpl",
 	"text!templates/patient-edit/drug-intolerance.tmpl",
@@ -28,6 +29,7 @@ define([
 						 tmplGeneral,
 						 tmplRelation,
 						 tmplDocuments,
+						 tmplPolicy,
 						 tmplIdCard,
 						 tmplMedInfo,
 						 tmplDrugIntolerance,
@@ -881,6 +883,7 @@ define([
 
 		initialize: function (options) {
 			var self = this;
+
 			this.idCardsView = new IdCardsView({collection: self.model.get("idCards")});
 
 			var docDicts = [
@@ -890,7 +893,9 @@ define([
 				{name: "docTypes", pathPart: "clientDocument&filter[groupId]=1"}
 			];
 
-			if (!this.model.get("payments").getOms().length) {
+			//TODO: HEREHEREHERE
+
+			/*if (!this.model.get("payments").getOms().length) {
 				this.model.get("payments").add({});
 			}
 
@@ -898,13 +903,19 @@ define([
 				var payment = new App.Models.Payment();
 				payment.get("policyType").set("id", 3);
 				this.model.get("payments").add(payment);
-			}
+			}*/
+
+			this.policiesOmsView = new PoliciesView({type: "oms", collection: self.model.get("payments")});
+			this.policiesDmsView = new PoliciesView({type: "dms", collection: self.model.get("payments")});
 
 			this.initWithDictionaries(docDicts, this.onDictionariesLoaded, this, true);
 		},
 
 		onDictionariesLoaded: function (dictionaries) {
 			this.dictionaries = dictionaries;
+
+			this.policiesOmsView.dictionaries = this.dictionaries;
+			this.policiesDmsView.dictionaries = this.dictionaries;
 
 			this.render();
 		},
@@ -949,7 +960,7 @@ define([
 					this.selectedTfoms = ic.headId;
 			}
 
-			var beautyPatientJSON = this.model.toJSON();
+			/*var beautyPatientJSON = this.model.toJSON();
 
 			var oms = this.model.get("payments").getOms()[0];
 			var dms = this.model.get("payments").getDms()[0];
@@ -960,10 +971,10 @@ define([
 			omsJSON.cid = oms.cid;
 			dmsJSON.cid = dms.cid;
 
-			beautyPatientJSON.payments = {oms: omsJSON, dms: dmsJSON};
+			beautyPatientJSON.payments = {oms: omsJSON, dms: dmsJSON};*/
 
 			this.$el.html($.tmpl(this.template, {
-				patient: beautyPatientJSON,
+				patient: this.model.toJSON(),
 				selectedTfoms: this.selectedTfoms || "",
 				dictionaries: this.dictionaries || {}
 			}));
@@ -974,7 +985,130 @@ define([
 
 			this.toggleSmo();
 
-			this.assign("#id-cards", this.idCardsView);
+			this.assign({
+				"#id-cards": this.idCardsView,
+				"#policiesOms": this.policiesOmsView,
+				"#policiesDms": this.policiesDmsView
+			});
+
+			return this;
+		}
+	});
+
+	var PoliciesView = View.extend({
+		initialize: function (options) {
+			this.collection.on("add", this.addOne, this);
+
+			if (this.options.type === "oms") {
+				if (!this.collection.getOms().length) {
+					this.collection.add({});
+				}
+			} else {
+				if (!this.collection.getDms().length) {
+					var payment = new App.Models.Payment();
+					payment.get("policyType").set("id", 3);
+					this.collection.add(payment);
+				}
+			}
+		},
+
+		onModelAdd: function (view) {
+			this.triggerView = view;
+			var NewModel = new App.Models.Payment();
+			if (this.options.type === "dms") {
+				NewModel.get("policyType").set("id", 3);
+			}
+			this.collection.add(NewModel, {at: this.collection.indexOf(this.triggerView.model) + 1});
+		},
+
+		addOne: function (model) {
+			if (this.options.type == "dms" && model.get("policyType").get("id") == 3 ||
+				  this.options.type == "oms" && model.get("policyType").get("id") != 3) {
+				var view = new PolicyView({model: model, type: this.options.type, dictionaries: this.dictionaries || {}});
+
+				view
+					.on("model:add", this.onModelAdd, this)
+					.render();
+
+				if (this.triggerView) {
+					this.triggerView.$el.after(view.el);
+				} else {
+					this.$el.append(view.el);
+				}
+			}
+		},
+
+		render: function () {
+			this.$el.empty();
+			this.triggerView = undefined;
+
+			this.collection.each(this.addOne, this);
+
+			return this;
+		}
+	});
+
+	var PolicyView = View.extend({
+		className: "DoubleLineBlock",
+
+		template: tmplPolicy,
+
+		events: {
+			"click .AddIcon"   : "onAddIconClick",
+			"click .RemoveIcon": "onRemoveIconClick"
+		},
+
+		initialize: function (options) {
+			this.model.collection.on("add", this.toggleRemoveIcon, this);
+			this.model.collection.on("remove", this.toggleRemoveIcon, this);
+		},
+
+		toggleRemoveIcon: function (event) {
+			if (this.model.collection) {
+				var vis = false;
+				if (this.options.type == "dms") {
+					vis = this.model.collection.getDms().length > 1;
+				} else {
+					vis = this.model.collection.getOms().length > 1;
+				}
+				this.$(".RemoveIcon").css("display", (vis ? "inline-block" : "none"));
+			}
+		},
+
+		onAddIconClick: function (event) {
+			this.trigger("model:add", this);
+		},
+
+		onRemoveIconClick: function (event) {
+			var self = this;
+
+			this.model.collection.remove(this.model);
+
+			this.$el.hide("fast", function () {
+				self.remove();
+				self.unbind();
+			});
+		},
+
+		render: function () {
+			var json = {};
+
+			json.model = this.model.toJSON();
+			json.model.cid = this.model.cid;
+
+			json.dictionaries = this.options.dictionaries;
+
+			json.type = this.options.type;
+
+			this.$el.hide();
+
+			this.$el.html($.tmpl(this.template, json));
+
+			UIInitialize(this.el);
+
+			this.toggleRemoveIcon();
+
+			this.$el.fadeIn("fast");
 
 			return this;
 		}

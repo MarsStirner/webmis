@@ -5,7 +5,28 @@
 </div>
 <div class="CardHeader Clearfix">
 	<div class="CardNav">
-		<h2>${name.last} ${name.first} ${name.middle}</h2>
+		<h2>
+			{{if name}}
+			{{if name.first || name.last || name.middle}}
+			{{if name.last}}
+			${name.last}
+			{{/if}}
+			{{if name.first}}
+			${name.first}
+			{{/if}}
+			{{if name.middle}}
+			${name.middle}
+			{{/if}}
+			{{else}}
+			{{if name.raw}}
+			${name.raw}
+			{{/if}}
+			{{/if}}
+			{{/if}}
+			{{if birthDate}}
+			({{getYear birthDate}} г.р.)
+			{{/if}}
+		</h2>
 		<ul class="SectionNav">
 			<li>
 				<a href="../">Карточка пациента</a>

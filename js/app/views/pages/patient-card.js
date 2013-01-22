@@ -98,10 +98,13 @@ define(["models/patient",
 			view.model.on("change", function() {
 				var json = view.model.toJSON();
 
-				json.payments = {};
+				json.payments = {
+					dms: (new Collection(view.model.get("payments").getDms())).toJSON(),
+					oms: (new Collection(view.model.get("payments").getOms())).toJSON()
+				};
 
-				var dms = view.model.get("payments").getDms()[0];
-				var oms = view.model.get("payments").getOms()[0];
+				/*var dms = view.model.get("payments").getDms();
+				var oms = view.model.get("payments").getOms();*/
 
 				json.phones = {blocks: [[]], count: view.model.get("phones").length};
 
@@ -112,8 +115,8 @@ define(["models/patient",
 					}
 				});
 
-				if (dms) json.payments.dms = dms.toJSON();
-				if (oms) json.payments.oms = oms.toJSON();
+				/*if (dms) json.payments.dms = dms.toJSON();
+				if (oms) json.payments.oms = oms.toJSON();*/
 
 				var snilsStr = json.snils.toString();
 				if (snilsStr.length) {
