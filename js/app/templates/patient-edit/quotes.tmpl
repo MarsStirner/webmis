@@ -7,9 +7,9 @@
 						Номер ИБ
 					</label>
 					<!--<input type="text" name="" placeholder="" />-->
-					<select class="Styled" id="quota-appealNumber">
+					<select class="Styled Mandatory" id="quota-appealNumber">
 						{{each(i, a) patientAppeals}}
-						<option value="${a.number}">${a.number}</option>
+							<option value="${a.id}" {{if model.appealNumber == a.id}}selected{{/if}}>${a.number}</option>
 						{{/each}}
 					</select>
 				</div>
@@ -17,10 +17,10 @@
 					<label>
 						Этап
 					</label>
-					<select class="Styled" id="quota-stage">
+					<select class="Styled Mandatory" id="quota-stage">
 						<option value="">...</option>
 						{{each(i, stage) dicts.stages}}
-							<option value="${stage.id}">${stage[75]}</option>
+							<option value="${stage.id}" {{if model.stage.id == stage.id}}selected{{/if}}>${stage[75]}</option>
 						{{/each}}
 					</select>
 				</div>
@@ -30,27 +30,27 @@
 					<label>
 						Номер талона
 					</label>
-					<input type="text" id="quota-talonNumber" placeholder="" />
+					<input type="text" id="quota-talonNumber" placeholder=""  value="${model.talonNumber}"/>
 				</div>
 				<div class="ThirdCol">
 					<label>
 						Обращение
 					</label>
-					<select class="Styled" id="quota-request">
+					<select class="Styled Mandatory" id="quota-request">
 						<option value="">...</option>
-						<option value="0">Первичный</option>
-						<option value="1">Повтроный</option>
+						<option value="0" {{if model.request.id == 0}}selected{{/if}}>Первичный</option>
+						<option value="1" {{if model.request.id == 1}}selected{{/if}}>Повтроный</option>
 					</select>
 				</div>
 			</div>
 			<div class="LineBlock">
 				<div class="QuartCol">
 					<span class="Label"> Диагноз </span>
-					<input id="quota-diagnosis-code" type="text" placeholder="" value=""/>
+					<input id="quota-diagnosis-code" type="text" placeholder="" value="${model.mkb.code}" class="Mandatory"/>
 					<span class="FieldInfo">Код по МКБ</span>
 				</div>
 				<div class="HugeCol WithoutName">
-					<input id="quota-diagnosis-desc" class="Disabled NotEditable" disabled="disabled" type="text" placeholder="" value=""/>
+					<input id="quota-diagnosis-desc" class="Disabled NotEditable Mandatory" disabled="disabled" type="text" placeholder="" value="${model.mkb.diagnosis}"/>
 					<span class="FieldInfo">Описание</span>
 				</div>
 				<div class="QuartCol">
@@ -62,12 +62,12 @@
 					<label>
 						Код ВМП
 					</label>
-					<select class="select2" id="quota-quotaType">
+					<select class="select2 Mandatory" id="quota-quotaType">
 						<option value="">...</option>
 						{{each(i, qt) quotaTypes}}
 						<optgroup label="${qt.code}">
 							{{each(j, t) qt.types}}
-							<option value="${t.id}">${t.code} ${t.name}</option>
+							<option value="${t.id}" {{if model.quotaType.id == t.id}}selected{{/if}}>${t.code} ${t.name}</option>
 							{{/each}}
 						</optgroup>
 						{{/each}}
@@ -79,10 +79,10 @@
 					<label>
 						Статус
 					</label>
-					<select class="select2" id="quota-status">
+					<select class="select2 Mandatory" id="quota-status">
 						<option value="">...</option>
 						{{each(i, d) dicts.statuses}}
-							<option value="${d.id}">${d.value}</option>
+							<option value="${d.id}" {{if model.status.id == d.id}}selected{{/if}}>${d.value}</option>
 						{{/each}}
 					</select>
 				</div>
@@ -90,44 +90,14 @@
 					<label>
 						Отделение
 					</label>
-					<select class="select2 departments" id="quota-department">
+					<select class="select2 departments Mandatory" id="quota-department">
 						<option value="">...</option>
 						{{each(i, d) departments}}
-							<option value="${d.id}">${d.name}</option>
+							<option value="${d.id}" {{if model.department.id == d.id}}selected{{/if}}>${d.name}</option>
 						{{/each}}
 					</select>
 				</div>
 			</div>
-			<!--<div class="LineBlock">
-				<div class="WideCol">
-					<span class="Label">Квоты использовавшиеся ранее:</span>
-					<table class="Grid">
-						<thead>
-						<tr>
-							<th>Номер талона</th>
-							<th>Обращение</th>
-							<th>Количество этапов</th>
-							<th>Код диагноза</th>
-							<th>Код ВМП</th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr>
-							<td>123</td>
-							<td>123</td>
-							<td>123</td>
-							<td>123</td>
-							<td>123</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div class="LineBlock">
-				<p class="ShowHistory ShowHidePopup">
-					<a href="#">Показать всю историю</a> (3)
-				</p>
-			</div>-->
 		</li>
 	</ul>
 </div>

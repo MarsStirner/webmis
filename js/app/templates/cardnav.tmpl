@@ -17,6 +17,9 @@
 		{{/if}}
 		{{/if}}
 		{{/if}}
+		{{if patient && patient.birthDate}}
+		({{getYear patient.birthDate}} г.р.)
+		{{/if}}
 	</h2>
 	<ul class="SectionNav">
 		<li>

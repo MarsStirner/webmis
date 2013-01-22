@@ -7,23 +7,24 @@
 	<div class="CardNav">
 		<h2>
 			{{if name}}
-				{{if name.first || name.last || name.middle}}
-					{{if name.last}}
-						${name.last}
-					{{/if}}
-					{{if name.first}}
-						${name.first}
-					{{/if}}
-					{{if name.middle}}
-						${name.middle}
-					{{/if}}
-				{{else}}
-					{{if name.raw}}
-						${name.raw}
-					{{else}}
-						-
-					{{/if}}
-				{{/if}}
+			{{if name.first || name.last || name.middle}}
+			{{if name.last}}
+			${name.last}
+			{{/if}}
+			{{if name.first}}
+			${name.first}
+			{{/if}}
+			{{if name.middle}}
+			${name.middle}
+			{{/if}}
+			{{else}}
+			{{if name.raw}}
+			${name.raw}
+			{{/if}}
+			{{/if}}
+			{{/if}}
+			{{if birthDate}}
+			({{getYear birthDate}} г.р.)
 			{{/if}}
 		</h2>
 		<ul class="SectionNav">
@@ -181,25 +182,26 @@
 						</li>
 						{{/if}}
 
-							{{if payments.oms && payments.oms.number}}
-							<li>
+						{{if payments.oms && payments.oms.length}}
+							{{each(i, poms) payments.oms}}
+								<li>
 									<h4>Полис ОМС</h4>
 									<div class="LineBlock">
 											<div class="HalfCol">
 													<span class="Label">Серия</span>
-													<p><strong>{{if payments.oms.series}}${payments.oms.series}{{else}}-{{/if}}</strong></p>
+													<p><strong>{{if poms.series}}${poms.series}{{else}}-{{/if}}</strong></p>
 											</div>
 											<div class="HalfCol">
 													<span class="Label">Номер</span>
-													<p><strong>{{if payments.oms.number}}${payments.oms.number}{{else}}-{{/if}}</strong></p>
+													<p><strong>{{if poms.number}}${poms.number}{{else}}-{{/if}}</strong></p>
 											</div>
 											<div class="HalfCol">
 													<span class="Label">Тип полиса</span>
-													<p><strong>{{if payments.oms.policyType}}${payments.oms.policyType.name}{{else}}-{{/if}}</strong></p>
+													<p><strong>{{if poms.policyType}}${poms.policyType.name}{{else}}-{{/if}}</strong></p>
 											</div>
 											<div class="HalfCol">
 													<span class="Label">
-														{{if payments.oms.rangePolicyDate && payments.oms.rangePolicyDate.start && !payments.oms.rangePolicyDate.end}}
+														{{if poms.rangePolicyDate && poms.rangePolicyDate.start && !poms.rangePolicyDate.end}}
 															Дата выдачи
 														{{else}}
 															Период действия
@@ -207,12 +209,12 @@
 													</span>
 													<p>
 															<strong>
-																{{if payments.oms.rangePolicyDate}}
-																	{{if payments.oms.rangePolicyDate.start}}
-																		{{formatDate payments.oms.rangePolicyDate.start}}
+																{{if poms.rangePolicyDate}}
+																	{{if poms.rangePolicyDate.start}}
+																		{{formatDate poms.rangePolicyDate.start}}
 																	{{/if}}
-																	{{if payments.oms.rangePolicyDate.end}}
-																		- {{formatDate payments.oms.rangePolicyDate.end}}
+																	{{if poms.rangePolicyDate.end}}
+																		- {{formatDate poms.rangePolicyDate.end}}
 																	{{/if}}
 																{{else}}
 																		-
@@ -222,35 +224,37 @@
 											</div>
 									</div>
 									<div class="LineBlock">
-											<div class="SemiCol">
-													<span class="Label">Название СМО</span>
-													<p><strong>{{if payments.oms.smo}}${payments.oms.smo.name}{{else}}-{{/if}}</strong></p>
-											</div>
-											{{if payments.oms.comment}}
-											<div class="LineCol">
-												<span class="Label">Примечание</span>
-												<p><strong>${payments.oms.comment}</strong></p>
-											</div>
-											{{/if}}
+										<div class="SemiCol">
+												<span class="Label">Название СМО</span>
+												<p><strong>{{if poms.smo}}${poms.smo.name}{{else}}-{{/if}}</strong></p>
+										</div>
+										{{if poms.comment}}
+										<div class="LineCol">
+											<span class="Label">Примечание</span>
+											<p><strong>${poms.comment}</strong></p>
+										</div>
+										{{/if}}
 									</div>
-							</li>
-							{{/if}}
+								</li>
+							{{/each}}
+						{{/if}}
 
-							{{if payments.dms && payments.dms.number}}
-							<li>
+						{{if payments.dms && payments.dms.length}}
+							{{each(i, pdms) payments.dms}}
+								<li>
 									<h4>Полис ДМС</h4>
 									<div class="LineBlock">
 											<div class="HalfCol">
 													<span class="Label">Серия</span>
-													<p><strong>{{if payments.dms.series}}${payments.dms.series}{{else}}-{{/if}}</strong></p>
+													<p><strong>{{if pdms.series}}${pdms.series}{{else}}-{{/if}}</strong></p>
 											</div>
 											<div class="HalfCol">
 													<span class="Label">Номер</span>
-													<p><strong>{{if payments.dms.number}}${payments.dms.number}{{else}}-{{/if}}</strong></p>
+													<p><strong>{{if pdms.number}}${pdms.number}{{else}}-{{/if}}</strong></p>
 											</div>
 											<div class="HalfCol">
 												<span class="Label">
-														{{if payments.dms.rangePolicyDate && payments.dms.rangePolicyDate.start && !payments.dms.rangePolicyDate.end}}
+														{{if pdms.rangePolicyDate && pdms.rangePolicyDate.start && !pdms.rangePolicyDate.end}}
 															Дата выдачи
 														{{else}}
 															Период действия
@@ -258,12 +262,12 @@
 													</span>
 												<p>
 													<strong>
-														{{if payments.dms.rangePolicyDate}}
-															{{if payments.dms.rangePolicyDate.start}}
-																{{formatDate payments.dms.rangePolicyDate.start}}
+														{{if pdms.rangePolicyDate}}
+															{{if pdms.rangePolicyDate.start}}
+																{{formatDate pdms.rangePolicyDate.start}}
 															{{/if}}
-															{{if payments.dms.rangePolicyDate.end}}
-																- {{formatDate payments.dms.rangePolicyDate.end}}
+															{{if pdms.rangePolicyDate.end}}
+																- {{formatDate pdms.rangePolicyDate.end}}
 															{{/if}}
 														{{else}}
 															-
@@ -271,21 +275,22 @@
 													</strong>
 												</p>
 											</div>
-											{{if payments.dms.comment}}
+											{{if pdms.comment}}
 											<div class="HalfCol">
 													<span class="Label">Примечание</span>
-													<p><strong>${payments.dms.comment}</strong></p>
+													<p><strong>${pdms.comment}</strong></p>
 											</div>
 											{{/if}}
 									</div>
 									<div class="LineBlock">
 											<div class="LineCol">
 													<span class="Label">Название СМО</span>
-													<p><strong>{{if payments.dms.smo}}${payments.dms.smo.name}{{else}}-{{/if}}</strong></p>
+													<p><strong>{{if pdms.smo}}${pdms.smo.name}{{else}}-{{/if}}</strong></p>
 											</div>
 									</div>
 							</li>
-							{{/if}}
+							{{/each}}
+						{{/if}}
 
 						{{if idCards.length && idCards[0].number}}
 						<li>

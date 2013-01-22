@@ -92,6 +92,12 @@ aside {
 .AsideNav li.Active {
 	font-weight: bold;
 }
+.AsideNav li.Disabled {
+	> a > span {
+		text-decoration: none;
+		color: #F5F4F4;
+	}
+}
 
 /*История обращений*/
 
