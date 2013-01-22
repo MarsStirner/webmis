@@ -893,8 +893,6 @@ define([
 				{name: "docTypes", pathPart: "clientDocument&filter[groupId]=1"}
 			];
 
-			//TODO: HEREHEREHERE
-
 			/*if (!this.model.get("payments").getOms().length) {
 				this.model.get("payments").add({});
 			}
@@ -981,7 +979,7 @@ define([
 
 			UIInitialize(this.el);
 
-			//this.$("select[name='tfoms']").select2();
+			this.$(".select2").width("100%").select2();
 
 			this.toggleSmo();
 
@@ -1105,6 +1103,8 @@ define([
 			this.$el.html($.tmpl(this.template, json));
 
 			UIInitialize(this.el);
+
+			this.$(".select2").width("100%").select2();
 
 			this.toggleRemoveIcon();
 

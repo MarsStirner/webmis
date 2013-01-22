@@ -23,11 +23,14 @@
 		</label>
 		<input type="text" name="payments-${model.cid}-number" placeholder="Номер" data-maxlength="16"/>
 	</div>
+	{{if type == 'dms'}}
+		<div class="QuartCol"></div>
+	{{/if}}
 	<div class="LineCol">
 		<label>
 			Страховая компания
 		</label>
-		<select class="Styled SMO" name="payments-${model.cid}-smo-id">
+		<select class="select2 SMO" name="payments-${model.cid}-smo-id">
 			<option value="" selected="selected">...</option>
 			{{each dictionaries.insuranceCompanies}}
 			<option value="${id}" class="insuranceCompany tfomsid-${headId}">${value}</option>

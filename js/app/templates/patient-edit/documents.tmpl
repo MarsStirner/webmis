@@ -4,7 +4,7 @@
 			<label>
 				ТФОМС
 			</label>
-			<select class="Styled" name="tfoms" data-subbind="true">
+			<select class="select2" name="tfoms" data-subbind="true">
 				<option value="">...</option>
 				{{each dictionaries.tfomses}}
 					<option value="${id}" {{if selectedTfoms == id}}selected="selected"{{/if}}>${value}</option>
