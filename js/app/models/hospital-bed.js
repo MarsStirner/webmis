@@ -2,34 +2,38 @@
  * User: FKurilov
  * Date: 28.05.12
  */
-define(["models/department"], function () {
+define(function () {
 	App.Models.HospitalBed = Model.extend({
-		urlRoot: function () {
-			return DATA_PATH + "appeals/" + this.appeal.id + "/hospitalbed/";
+        initialize: function () {
+            //this.moveId = this.options.moveId;
+            this.moveId = 142336;
+        },
+
+		url: function () {
+			return DATA_PATH + "hospitalbed/" + this.moveId;
 		},
 
 		defaults: {
-			department: {},
 			clientId: "",
 			bedId: "",
 			moveDatatime: "",
 			moveFromUnitId: "",
-			patronage: ""
+			patronage: "",
+            chamberList: []
 		},
 
 		relations: [
 			{
-				type: Backbone.HasOne,
-				key: "department",
-				relatedModel: "App.Models.Department"
+				type: Backbone.HasMany,
+				key: "chamberList",
+				relatedModel: "App.Models.Bed",
+                collectionType: "App.Collections.Beds"
 			}
 		],
 
-		parse: function ( data ) {
-			var bed = new App.Models.HospitalBed;
-			data = data.data ? data.data : data;
-
-			return Core.Objects.mergeAll( bed.toJSON(), data )
+		parse: function (raw) {
+            console.log(raw)
+            return raw.data.registrationForm;
 		}
 	});
 

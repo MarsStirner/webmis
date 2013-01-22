@@ -16,6 +16,7 @@ define([
 		},
 
 		initialize: function (options) {
+            console.log('chamber init')
 			 this.bedList = options.bedList || [];
 		},
 
@@ -33,7 +34,7 @@ define([
 
 		render: function () {
 			this.$el.html($.tmpl(this.template));
-			var chamber = this.$el.find(".chamber");
+			var chamber = this.$el.find(".Chamber");
 
 			_.each(this.bedList, function (bed) {
 				chamber.append($.tmpl(bedTemplate, bed));

@@ -15,13 +15,25 @@ define([
 		template: template,
 
 		events: {
+            'change .Departments':'onSelectDepartment'
 		},
 
 		initialize: function () {
 			this.model = new App.Models.HospitalBed();
-			this.model.appeal = this.options.appeal;
+//            this.model.save({
+//                "clientId": 4433,
+//                "movedFromUnitId": 17,
+//                "patronage": "Нет"
+//            }, {
+//                success: function (a, b, c) {
+//                    console.log(a, b, c);
+//                }
+//            });
+            this.model.fetch();
 
-			this.model.on("change", this.onHospitalBedChange, this);
+			//this.model.appeal = this.options.appeal;
+
+			//this.model.on("change", this.onHospitalBedChange, this);
 
 			this.departments = new App.Collections.Departments();
 			this.departments.setParams({
@@ -45,23 +57,44 @@ define([
 				 }));
 			}, this);
 		},
+        onSelectDepartment: function(event){
+        console.log($('.Departments option:selected').val());
+
+
+
+        },
 
 		onBedsLoaded: function (chambers) {
+            console.log('onbedsloaded');
+            var that = this;
 			var chamberView;
 			_.each(chambers, function (ch) {
+                //console.log(ch.bedList)
 				chamberView = new App.Views.Chamber({
 					bedList: ch.bedList
 				});
-				this.$(".bedsTable tbody").append(chamberView.render().el);
+
+				that.$(".bedsTable tbody").append(chamberView.render().el);
 			});
 		},
 
 		render: function () {
 			this.$el.html($.tmpl(this.template));
 
-			this.chambers = [
+			/*this.chambers = [{
+                "chamberId": 1,
+                "chamber": null,
+                "bedList": [{
+                    "bedId": 12121,
+                    "busy": "yes"
+                },
+                    {
+                        "bedId": 453496,
+                        "busy": "yes"
+                    }
+                ]},
 				{
-					"chamberId": 0,
+					"chamberId": 2,
 					"chamber": null,
 					"bedList": [
 						{
@@ -198,11 +231,14 @@ define([
 						}
 					]
 				}
-			];
-			this.onBedsLoaded(this.chambers);
-			UIInitialize(this.el);
-			this.$(".Departments").width("100%").select2();
-			this.delegateEvents();
+			];*/
+			//this.onBedsLoaded(this.chambers);
+
+            UIInitialize(this.el);
+
+            this.$(".Departments").width("100%").select2();
+
+            this.delegateEvents();
 
 			return this;
 		}
