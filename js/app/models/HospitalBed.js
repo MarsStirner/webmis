@@ -2,38 +2,80 @@
  * User: FKurilov
  * Date: 28.05.12
  */
-define(function () {
+define(["collections/beds"], function () {
 	App.Models.HospitalBed = Model.extend({
-        initialize: function () {
-            //this.moveId = this.options.moveId;
-            //this.moveId = 224235;
-        },
+		idAttribute: "bedId",
 
-		url: function () {
-			return DATA_PATH + "hospitalbed/" + this.moveId;
+		initialize: function () {
+			//this.moveId = this.options.moveId;
+			//this.moveId = 224235;
+		},
+
+		url: function (isSave) {
+			return DATA_PATH + (isSave ?
+				("appeals/" + this.appealId + "/hospitalbed/") :
+				("hospitalbed/" + this.moveId));
+		},
+
+		sync: function (method, model, options) {
+			options.dataType = "jsonp";
+			options.contentType = 'application/json';
+			options.url = model.url(method === "create");
+
+			if (method == "create" || method == "update") {
+				options.data = {
+					"bedRegistration": {
+						"clientId": 57,
+						"bedId": null,
+						"moveDatetime": 1333310400000,
+						"movedFromUnitId": null,
+						"patronage": "Нет",
+						"curativeDiagnosticBool": false,
+						"curativeDiagnostic": ""
+					}
+				}; /*JSON.stringify({
+					requestData: {},
+					data: model.toJSON()
+				});*/
+			}
+
+			return Backbone.sync(method, model, options);
+		},
+
+		save: function () {
+			this.unset("chamberList");
+			Model.prototype.save.call(this);
+		},
+
+		toJSON: function () {
+			return {
+				"bedRegistration": Model.prototype.toJSON.call(this)
+			}
 		},
 
 		defaults: {
-			clientId: "",
-			bedId: "",
-			moveDatatime: "",
-			moveFromUnitId: "",
-			patronage: "",
-            chamberList: []
-		},
+			/*"clientId": "",
+			//"bedId": null,
+			"moveDatetime": "",
+			"movedFromUnitId": "",
+			"patronage": "Нет",
+			"curativeDiagnosticBool": false,
+			"curativeDiagnostic": ""//,
+			//chamberList:[]*/
+		}/*,
 
 		relations: [
 			{
-				type: Backbone.HasMany,
-				key: "chamberList",
-				relatedModel: "App.Models.Bed",
-                collectionType: "App.Collections.Beds"
+				type:Backbone.HasMany,
+				key:"chamberList",
+				relatedModel:"App.Models.Bed",
+				collectionType:"App.Collections.Beds"
 			}
-		],
+		]*/,
 
 		parse: function (raw) {
-            console.log(raw)
-            return raw.data.registrationForm;
+			console.log(raw);
+			return raw.data.registrationForm;
 		}
 	});
 

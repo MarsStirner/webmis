@@ -15,38 +15,26 @@ define([
 		template: template,
 
 		events: {
-            'change .Departments':'onSelectDepartment'
+			'change select.Departments':'onSelectDepartment',
+			'click #mytest':'onClickTest'
 		},
 
 		initialize: function () {
-            this.model = new App.Models.HospitalBed();
+			this.model = new App.Models.HospitalBed();
+			this.model.appealId = this.options.appeal.get("id");
 
-            this.moves = new App.Collections.Moves();
-            this.moves.appealId = this.options.appeal.get("id");
-            this.moves.on("reset", function () {
-                this.model.moveId = this.moves.find(function (move) {
-                    return !move.get("admission");
-                }).get("id");
+			this.moves = new App.Collections.Moves();
+			this.moves.appealId = this.options.appeal.get("id");
 
-                this.model.fetch();
-            }, this);
+			/*this.moves.on("reset", function () {
+					this.model.moveId = this.moves.find(function (move) {
+							return !move.get("admission");
+					}).get("id");
 
-            this.moves.fetch();
+					this.model.fetch();
+			}, this);
 
-//            this.model.save({
-//                "clientId": 4433,
-//                "movedFromUnitId": 17,
-//                "patronage": "Нет"
-//            }, {
-//                success: function (a, b, c) {
-//                    console.log(a, b, c);
-//                }
-//            });
-            //this.model.fetch();
-
-			//this.model.appeal = this.options.appeal;
-
-			//this.model.on("change", this.onHospitalBedChange, this);
+			this.moves.fetch();*/
 
 			this.departments = new App.Collections.Departments();
 			this.departments.setParams({
@@ -59,6 +47,7 @@ define([
 		},
 
 		onHospitalBedChange: function () {
+
 		},
 
 		onDepartmentsLoaded : function (departments) {
@@ -70,12 +59,12 @@ define([
 				 }));
 			}, this);
 		},
-        onSelectDepartment: function(event){
-        console.log($('.Departments option:selected').val());
-            this.model.fetch();
 
-
-        },
+		onSelectDepartment: function(event){
+			/*console.log($('.Departments option:selected').val());
+			this.model.fetch();*/
+			//this.selectedDepartment = this.$("select.Department").val();
+		},
 
 		onBedsLoaded: function (chambers) {
             console.log('onbedsloaded');
@@ -89,6 +78,24 @@ define([
 
 				that.$(".bedsTable tbody").append(chamberView.render().el);
 			});
+		},
+
+		onClickTest: function () {
+			console.log('test');
+
+			this.model.save(
+			/*{
+				clientId: this.options.appeal.get("patient").get("id"),
+				moveDatatime: (new Date()).getTime(),
+				moveFromUnitId: this.$("select.Department").val()
+			}*/
+				null, {
+				success: this.onHospitalBedRegistrationCreated
+			});
+		},
+
+		onHospitalBedRegistrationCreated: function () {
+			console.log(arguments, this.model);
 		},
 
 		render: function () {
