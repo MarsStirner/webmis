@@ -2,7 +2,7 @@
  * User: FKurilov
  * Date: 25.05.12
  */
-define(["models/name", "models/hospital-bed", "models/doctor", "models/condition"], function () {
+define(["models/name", "models/HospitalBed", "models/doctor", "models/condition"], function () {
 	App.Models.DepartmentPatient = Model.extend({
 		defaults: {
 			number: "",
