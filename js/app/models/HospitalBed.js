@@ -6,7 +6,7 @@ define(function () {
 	App.Models.HospitalBed = Model.extend({
         initialize: function () {
             //this.moveId = this.options.moveId;
-            this.moveId = 142336;
+            //this.moveId = 224235;
         },
 
 		url: function () {

@@ -4,7 +4,7 @@ define([
 	"views/grid",
 	"views/paginator",
 	"views/appeal/edit/popups/send-to-department",
-	"views/appeal/edit/pages/hospital-bed"
+	"views/appeal/edit/pages/HospitalBedView"
 ], function (template) {
 
 	App.Views.Moves = View.extend({

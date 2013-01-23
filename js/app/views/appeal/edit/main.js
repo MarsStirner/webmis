@@ -20,7 +20,7 @@ define([
 	"views/appeal/edit/pages/examination-primary",
 	"views/appeal/edit/pages/card",
 	"views/appeal/edit/pages/moves",
-	"views/appeal/edit/pages/hospital-bed"
+	"views/appeal/edit/pages/HospitalBedView"
 ], function (
 	template
 	//, cardnavTemplate
