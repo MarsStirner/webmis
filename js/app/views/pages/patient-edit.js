@@ -1720,6 +1720,8 @@ define([
 
 			UIInitialize(this.el);
 
+			this.$(".select2").width("100%").select2();
+
 			/*this.assign({
 				"#disabilities": this.disabilities//,
 				//"#occupations": this.occupations

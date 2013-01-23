@@ -91,14 +91,19 @@ define(["views/grid-row"], function() {
 			var $tbody = $el.find("tbody").empty();
 
 			if ( view.collection.length ) {
+				console.log(view.collection);
 				view.collection.forEach (function( model, i ) {
+					var _index = i;
+					if (view.collection.requestData && view.collection.requestData.page > 1) {
+						_index += view.collection.requestData.page * view.collection.requestData.limit;
+					}
 
 					var GridRow = new App.Views.GridRow ({
 						model: model,
 						collection: view.collection,
 						rowTemplateId: view.options.rowTemplateId, // Передаём строке таблицы ID шаблона в файле шаблонов
 						triggerOnly: view.options.popUpMode,
-						_index: i
+						_index: _index
 					});
 					view.depended(GridRow);
 
