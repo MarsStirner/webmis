@@ -24,7 +24,8 @@ define(["models/name", "models/HospitalBed", "models/doctor", "models/condition"
 			{
 				type: Backbone.HasOne,
 				key: "hospitalBed",
-				relatedModel: "App.Models.HospitalBed"
+				//relatedModel: "App.Models.HospitalBed",
+				relatedModel: "App.Models.Bed"
 			},
 			{
 				type: Backbone.HasOne,

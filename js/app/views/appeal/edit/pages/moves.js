@@ -59,6 +59,7 @@ define([
 			}
 		},
 
+		//Новое мероприятие/направление или перевод в отделение
 		newSendToDepartment: function (event) {
 			var sendPopUp = new App.Views.SendToDepartment({appeal: this.options.appeal}).render().open();
 			sendPopUp.on("closed", function () {
@@ -66,6 +67,7 @@ define([
 			}, this);
 		},
 
+		//Новое мероприятие/регистрация на койку
 		newHospitalBed: function () {
 			var hospitalBed = new App.Views.HospitalBed({appeal: this.options.appeal});
 			hospitalBed.setElement(this.el).render();

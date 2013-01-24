@@ -55,9 +55,10 @@ define([
 		onClickTest: function () {
 			this.model.set({
 				clientId: this.options.appeal.get("patient").get("id"),
-				moveDatetime: (new Date()).getTime(),
-				movedFromUnitId: parseInt(this.$("select.Departments").val())
+				moveDatetime: (new Date()).getTime()
 			});
+
+			//parseInt(this.$("select.Departments").val())
 
 			this.model.save(null, {
 				success: this.onHospitalBedRegistrationCreated
@@ -66,11 +67,20 @@ define([
 
 		onHospitalBedRegistrationCreated: function () {
 			this.moves.on("reset", function () {
+				this.moves.off(null, null, this);
+
 				this.model.moveId = this.moves.last().get("id");
+				this.model.on("change", this.onBedsListReceived, this);
 				this.model.fetch();
 			}, this);
 
 			this.moves.fetch();
+		},
+
+		onBedsListReceived: function () {
+			this.model.off("change", this.onBedsListReceived);
+
+			console.log("BedsListReceived", this.model);
 		},
 
 		render: function () {

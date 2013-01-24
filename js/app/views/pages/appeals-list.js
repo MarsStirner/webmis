@@ -56,8 +56,8 @@ define([
 			var startDate = $startDateTime.datepicker("getDate");
 			var endDate = $endDateTime.datepicker("getDate");
 
-			startDate.setDate(startDate.getDate() + increment);
-			endDate.setDate(endDate.getDate() + increment);
+			if (_.isDate(startDate)) startDate.setDate(startDate.getDate() + increment);
+			if (_.isDate(endDate)) endDate.setDate(endDate.getDate() + increment);
 
 			$startDateTime.datepicker("setDate", startDate);
 			$endDateTime.datepicker("setDate", endDate);

@@ -7,7 +7,7 @@ define(function () {
 	var BreathingRate = Model.extend({});
 	var State = Model.extend({
 		defaults: {
-			name: ""
+			name: "неизвестно"
 		}
 	});
 

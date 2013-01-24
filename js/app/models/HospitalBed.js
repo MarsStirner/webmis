@@ -42,7 +42,7 @@ define(["collections/beds"], function () {
 			"clientId": "",
 			"bedId": null,
 			"moveDatetime": "",
-			"movedFromUnitId": "",
+			"movedFromUnitId": null,
 			"patronage": "Нет",
 			"curativeDiagnosticBool": false,
 			"curativeDiagnostic": "",
