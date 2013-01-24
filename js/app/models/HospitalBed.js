@@ -6,11 +6,6 @@ define(["collections/beds"], function () {
 	App.Models.HospitalBed = Model.extend({
 		idAttribute: "bedId",
 
-		initialize: function () {
-			//this.moveId = this.options.moveId;
-			//this.moveId = 224235;
-		},
-
 		url: function (isSave) {
 			return DATA_PATH + (isSave ?
 				("appeals/" + this.appealId + "/hospitalbed/") :
@@ -23,29 +18,19 @@ define(["collections/beds"], function () {
 			options.url = model.url(method === "create");
 
 			if (method == "create" || method == "update") {
-				options.data = {
-					"bedRegistration": {
-						"clientId": 57,
-						"bedId": null,
-						"moveDatetime": 1333310400000,
-						"movedFromUnitId": null,
-						"patronage": "Нет",
-						"curativeDiagnosticBool": false,
-						"curativeDiagnostic": ""
-					}
-				}; /*JSON.stringify({
+				options.data = JSON.stringify({
 					requestData: {},
 					data: model.toJSON()
-				});*/
+				});
 			}
 
 			return Backbone.sync(method, model, options);
 		},
 
-		save: function () {
+		/*save: function () {
 			this.unset("chamberList");
 			Model.prototype.save.call(this);
-		},
+		},*/
 
 		toJSON: function () {
 			return {
@@ -54,15 +39,15 @@ define(["collections/beds"], function () {
 		},
 
 		defaults: {
-			/*"clientId": "",
-			//"bedId": null,
+			"clientId": "",
+			"bedId": null,
 			"moveDatetime": "",
 			"movedFromUnitId": "",
 			"patronage": "Нет",
 			"curativeDiagnosticBool": false,
-			"curativeDiagnostic": ""//,
-			//chamberList:[]*/
-		}/*,
+			"curativeDiagnostic": "",
+			chamberList:[]
+		},
 
 		relations: [
 			{
@@ -71,11 +56,12 @@ define(["collections/beds"], function () {
 				relatedModel:"App.Models.Bed",
 				collectionType:"App.Collections.Beds"
 			}
-		]*/,
+		],
 
 		parse: function (raw) {
 			console.log(raw);
-			return raw.data.registrationForm;
+
+			return raw.data.registrationForm ? raw.data.registrationForm : raw.data;
 		}
 	});
 

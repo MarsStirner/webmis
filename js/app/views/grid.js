@@ -91,7 +91,6 @@ define(["views/grid-row"], function() {
 			var $tbody = $el.find("tbody").empty();
 
 			if ( view.collection.length ) {
-				console.log(view.collection);
 				view.collection.forEach (function( model, i ) {
 					var _index = i;
 					if (view.collection.requestData && view.collection.requestData.page > 1) {
