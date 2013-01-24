@@ -551,12 +551,18 @@
 		</td>
 		<td>
 			${condition.state.name}
+
+
+
 		</td>
 		<td>
-			<!-- breathingRate.???-->
-		</td>
+			ЧСС ${condition.breathingRate} уд.м
 		<td>
-			<!-- ArterialBloodPressure.??? -->
+{{if condition.arterialBloodPressure.low && condition.arterialBloodPressure.high}}
+				АДД ${condition.arterialBloodPressure.low}-${condition.arterialBloodPressure.high}
+	{{/if}}
+
+
 		</td>
 		<td>
             {{if doctor.name.first || doctor.name.last || doctor.name.middle}}
