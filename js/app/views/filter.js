@@ -1,29 +1,41 @@
-App.Views.Filter = View.extend ({
-	events: {
-		"keyup input, textarea": "refresh",
-		"change select": "refresh",
-		"submit form": "submit"
+App.Views.Filter = View.extend({
+	events:{
+		"keyup :input":"onInputKeyup",
+		"change :input":"onInputChange",
+		"submit form":"submit"
 	},
 
-	submit: function () {
+	submit:function () {
 		return false;
 	},
 
-	updateUrl: function () {
+	updateUrl:function () {
 		App.Router.updateUrl(this.options.path, this.collection.getParams());
 	},
 
-	refresh: function (event) {
+	onInputKeyup: function (event) {
+		var onEnterOnly = $(event.currentTarget).hasClass("NewLineAllowed");
+
+		if ((onEnterOnly && event.keyCode == 13) || !onEnterOnly) {
+			this.refresh(event);
+		}
+	},
+
+	onInputChange: function (event) {
+		this.refresh(event);
+	},
+
+	refresh:function (event) {
 		var view = this;
 		var $input = $(event.currentTarget);
 
-		if (event.keyCode == 13 && (_.isUndefined($input.data("old-value")) || $input.data("old-value") != $input.val())) {
+		if (_.isUndefined($input.data("old-value")) || ($input.data("old-value") != $input.val())) {
 			$input.data("old-value", $input.val());
 
 			var filter = Core.Forms.serializeToObject($input.closest("form"));
 
 			view.collection.setParams({
-				filter: filter
+				filter:filter
 			});
 
 			if (_.size(filter)) {
@@ -34,7 +46,7 @@ App.Views.Filter = View.extend ({
 		}
 	},
 
-	initialize: function () {
+	initialize:function () {
 		var params = Core.Url.extractUrlParameters();
 
 		this.collection.on("reset", this.updateUrl, this);
@@ -45,22 +57,22 @@ App.Views.Filter = View.extend ({
 		}
 
 		if (this.options.template) {
-			this.on ("template:loaded", this.ready, this);
+			this.on("template:loaded", this.ready, this);
 			this.loadTemplate(this.options.template);
 		} else {
 			this.ready();
 		}
 	},
 
-	ready: function () {
+	ready:function () {
 		var resultObject = {
-			requestData: this.collection.getParams() || {}
+			requestData:this.collection.getParams() || {}
 		};
 
 		this.$el.html($(this.options.templateId).tmpl(resultObject));
 	},
 
-	render: function () {
+	render:function () {
 		return this;
 	}
 });
