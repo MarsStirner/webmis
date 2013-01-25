@@ -196,6 +196,7 @@ define([
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function () {
 				Collection = new App.Collections.DepartmentPatients( {role: "nurse"} );
+				/*Collection.setParams({'filter[date]':1334300400000})*/
 				Collection.reset();
 
 				Filter = new App.Views.Filter(

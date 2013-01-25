@@ -478,6 +478,7 @@
 </script>
 
 <script id="appeals-grid-nurse-department" type="text/x-jquery-tmpl">
+
 	<table class="Grid">
 		<thead>
 			<!--<tr class="EditTh">-->
@@ -511,6 +512,7 @@
 <script id="appeals-grid-nurse-department-row" type="text/x-jquery-tmpl">
 		<td>
 			<a href="/appeals/${id}/"></a>
+			<!--<b>в приёмном</b>-->
 			{{if hospitalBed.room || hospitalBed.bed}}
 				{{if hospitalBed.room && hospitalBed.bed}}
 					${hospitalBed.room} / ${hospitalBed.bed}
@@ -550,22 +552,22 @@
 			{{/if}}
 		</td>
 		<td>
-			${condition.state.name}
-
-
-
+			${condition.state}
+			<!--<span class="condition satisfactory">Удов.</span>-->
+			<!--<span class="condition good">Хор.</span>-->
+			<!--<span class="condition serious">Тяж.</span>-->
 		</td>
 		<td>
-			ЧСС ${condition.breathingRate} уд.м
+			{{if condition.breathingRate}}
+				ЧСС ${condition.breathingRate} уд.м
+			{{/if}}
 		<td>
-{{if condition.arterialBloodPressure.low && condition.arterialBloodPressure.high}}
-				АДД ${condition.arterialBloodPressure.low}-${condition.arterialBloodPressure.high}
-	{{/if}}
-
-
+			{{if condition.arterialBloodPressure.low && condition.arterialBloodPressure.high}}
+					АДД ${condition.arterialBloodPressure.low}-${condition.arterialBloodPressure.high}
+			{{/if}}
 		</td>
 		<td>
-            {{if doctor.name.first || doctor.name.last || doctor.name.middle}}
+			{{if doctor.name.first || doctor.name.last || doctor.name.middle}}
 				{{if doctor.name.last}}
 					{{decorate(doctor.name.last, requestData.filter.fullName)}}
 				{{/if}}
@@ -584,12 +586,12 @@
 			{{/if}}
         </td>
 		<td>
-            {{if createDateTime !== 0}}
-                {{formatDateTime createDateTime}}
-            {{else}}
-                -
-            {{/if}}
-        </td>
+			{{if createDateTime !== 0}}
+					{{formatDate createDateTime}}
+			{{else}}
+					-
+			{{/if}}
+		</td>
 </script>
 
 

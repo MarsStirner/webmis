@@ -452,3 +452,13 @@
 .PatientGrid .DrugRow:hover {
   background: #ededed;
 }
+
+/* line 396, ../../sass/modules/grid.scss */
+.good {
+  color: #57B43E;
+}
+
+/* line 400, ../../sass/modules/grid.scss */
+.serious {
+  color: red;
+}

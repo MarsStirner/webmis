@@ -9,19 +9,10 @@ define(["models/department-patient"], function () {
 		initialize: function (options) {
 			Collection.prototype.initialize.call(this);
 
-			switch (options.role) {
-				case "doctor":
-					this.rolePath = "patients/";
-					break;
-				case "nurse":
-					this.rolePath = "patients/nurse/";
-					break;
-				default:
-					this.rolePath = "patients/";
-			}
+
 		},
 		url: function (){
-			return DATA_PATH + "departments/" + this.rolePath;
+			return DATA_PATH + "departments/patients/";
 		}
 	});
 });
