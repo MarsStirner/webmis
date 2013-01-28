@@ -4,6 +4,9 @@
  */
 define(["models/Bed"], function () {
 	App.Collections.Beds = Collection.extend({
-		model: App.Models.Bed
+		model: App.Models.Bed,
+		url: function () {
+			return DATA_PATH + "hospitalbed/vacant?filter[departmentId]=25";
+		}
 	});
 });
