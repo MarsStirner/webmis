@@ -1,5 +1,5 @@
 define([
-		"models/name",
+		"models/Name",
 		"models/address",
 		"models/citizenship",
 		"models/medical-info/medical-info",
@@ -9,9 +9,9 @@ define([
 		"collections/phones",
 		"collections/occupations",
 		"collections/disabilities"
-	], function () {
+	], function (Name0) {
 
-	var Name = App.Models.Name.extend({
+	var Name = Name0.extend({
 		validate: function (attrs) {
 			var errors = [];
 			//attrs = attrs || this.toJSON();

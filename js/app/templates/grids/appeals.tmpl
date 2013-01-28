@@ -513,18 +513,8 @@
 		<td>
 			<a href="/appeals/${id}/"></a>
 			<!--<b>в приёмном</b>-->
-			{{if hospitalBed.room || hospitalBed.bed}}
-				{{if hospitalBed.room && hospitalBed.bed}}
-					${hospitalBed.room} / ${hospitalBed.bed}
-				{{/if}}
-
-				{{if hospitalBed.room}}
-					${hospitalBed.room}
-				{{/if}}
-
-				{{if hospitalBed.bed}}
-					${hospitalBed.bed}
-				{{/if}}
+			{{if hospitalBed.code}}
+				${hospitalBed.code}
 			{{else}}
 				-
 			{{/if}}
@@ -533,16 +523,10 @@
 			${number}
 		</td>
 		<td>
-			{{if name.first || name.last || name.middle}}
-				{{if name.last}}
-					{{decorate(name.last, requestData.filter.fullName)}}
-				{{/if}}
-				{{if name.first}}
-					{{decorate(name.first, requestData.filter.fullName)}}
-				{{/if}}
-				{{if name.middle}}
-					{{decorate(name.middle, requestData.filter.fullName)}}
-				{{/if}}
+
+
+			{{if name.full}}
+				${name.full}
 			{{else}}
 				{{if name.raw}}
 					{{decorate(name.raw, requestData.filter.fullName)}}
@@ -552,7 +536,9 @@
 			{{/if}}
 		</td>
 		<td>
-			${condition.state}
+			<!--берём первое слово из состояния-->
+			${condition.state.split(' ')[0]}
+
 			<!--<span class="condition satisfactory">Удов.</span>-->
 			<!--<span class="condition good">Хор.</span>-->
 			<!--<span class="condition serious">Тяж.</span>-->
@@ -567,22 +553,10 @@
 			{{/if}}
 		</td>
 		<td>
-			{{if doctor.name.first || doctor.name.last || doctor.name.middle}}
-				{{if doctor.name.last}}
-					{{decorate(doctor.name.last, requestData.filter.fullName)}}
-				{{/if}}
-				{{if name.first}}
-					{{decorate(doctor.name.first, requestData.filter.fullName)}}
-				{{/if}}
-				{{if name.middle}}
-					{{decorate(doctor.name.middle, requestData.filter.fullName)}}
-				{{/if}}
+			{{if doctor.name.fio}}
+				${doctor.name.fio}
 			{{else}}
-				{{if name.raw}}
-					{{decorate(doctor.name.raw, requestData.filter.fullName)}}
-				{{else}}
 					-
-				{{/if}}
 			{{/if}}
         </td>
 		<td>

@@ -2,7 +2,7 @@
  * User: FKurilov
  * Date: 25.05.12
  */
-define(["models/name", "models/HospitalBed", "models/doctor", "models/condition"], function () {
+define(["models/Name", "models/HospitalBed", "models/doctor", "models/condition"], function (Name) {
 	App.Models.DepartmentPatient = Model.extend({
 		defaults: {
 			number: "",
@@ -19,7 +19,7 @@ define(["models/name", "models/HospitalBed", "models/doctor", "models/condition"
 			{
 				type: Backbone.HasOne,
 				key: "name",
-				relatedModel: "App.Models.Name"
+				relatedModel: Name
 			},
 			{
 				type: Backbone.HasOne,
