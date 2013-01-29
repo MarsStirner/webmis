@@ -19,18 +19,13 @@ define(["collections/Beds"], function () {
 
 			if (method == "create" || method == "update") {
 				options.data = JSON.stringify({
-					requestData: {},
+					//requestData: {},
 					data: model.toJSON()
 				});
 			}
 
 			return Backbone.sync(method, model, options);
 		},
-
-		/*save: function () {
-			this.unset("chamberList");
-			Model.prototype.save.call(this);
-		},*/
 
 		toJSON: function () {
 			return {
@@ -45,18 +40,17 @@ define(["collections/Beds"], function () {
 			"movedFromUnitId": null,
 			"patronage": "Нет",
 			"curativeDiagnosticBool": false,
-			"curativeDiagnostic": "",
-			chamberList:[]
+			"curativeDiagnostic": ""
 		},
 
-		relations: [
-			{
-				type:Backbone.HasMany,
-				key:"chamberList",
-				relatedModel:"App.Models.Bed",
-				collectionType:"App.Collections.Beds"
-			}
-		],
+//		relations: [
+//			{
+//				type:Backbone.HasMany,
+//				key:"chamberList",
+//				relatedModel:"App.Models.Bed",
+//				collectionType:"App.Collections.Beds"
+//			}
+//		],
 
 		parse: function (raw) {
 			console.log(raw);

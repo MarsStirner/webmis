@@ -5,8 +5,15 @@
 define(["models/Bed"], function () {
 	App.Collections.Beds = Collection.extend({
 		model: App.Models.Bed,
+		initialize: function (models, options) {
+			this.departmentId = options.departmentId;
+		},
 		url: function () {
-			return DATA_PATH + "hospitalbed/vacant?filter[departmentId]=17";
+			if (this.departmentId) {
+				return DATA_PATH + "hospitalbed/vacant?filter[departmentId]=" + this.departmentId;
+			} else {
+				throw new Error("No departmentId for bed collection");
+			}
 		}
 	});
 });

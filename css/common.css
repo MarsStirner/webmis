@@ -197,11 +197,11 @@ img.Right {
 }
 
 /* line 69, ../sass/common.scss */
-.Clearfix {
+.Clearfix, .clearfix {
   zoom: 1;
 }
 /* line 59, ../sass/_base.scss */
-.Clearfix:after {
+.Clearfix:after, .clearfix:after {
   clear: both;
   content: "";
   display: block;

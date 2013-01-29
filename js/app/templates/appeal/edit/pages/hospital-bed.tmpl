@@ -1,6 +1,6 @@
 <div class="ContentHeader Clearfix">
 	<div class="PageActions">
-		<button class="Styled Button"><span>Сохранить</span></button>
+		<button class="Styled Button actions save"><span>Сохранить</span></button>
 		<a href="#">Отмена</a>
 	</div>
 </div>
@@ -39,14 +39,14 @@
 			</div>
 		</div>
 		<div class="HalfCol">
-			<span class="Label">Патронаж</span>
+			<span class="Label">Патронаж ${bedRegistration.patronage}</span>
 			<div class="InlineForm">
 				<label>
-					<input type="radio" name="patronage" class="patronage" value="1">
+					<input type="radio" name="patronage" class="patronage" {{if bedRegistration.patronage == 'Да'}} checked {{/if}} value="1">
 					Да
 				</label>
 				<label>
-					<input type="radio" name="patronage" class="patronage" value="0">
+					<input type="radio" name="patronage" class="patronage" {{if bedRegistration.patronage == 'Нет'}} checked {{/if}} value="0">
 					Нет
 				</label>
 			</div>
@@ -54,21 +54,18 @@
 	</div>
 </li>
 <li>
-	<button id="mytest">TECT</button>
 
 
 <div class="BedListHeader">
-	<span class="WardLabel">№ палаты</span><span class="BedLabel">Койки</span>
+	<!--<span class="WardLabel">№ палаты</span><span class="BedLabel">Койки</span>-->
 </div>
-<table class="bedsTable">
-<tbody>
+<div class="beds clearfix">
 
-</tbody>
-</table>
+</div>
 </li>
 </ul>
 <div class="FormButtons">
-	<button class="Styled Button"><span>Сохранить</span></button>
+	<button class="Styled Button actions save"><span>Сохранить</span></button>
 	<a href="#">Отмена</a>
 </div>
 </div>
