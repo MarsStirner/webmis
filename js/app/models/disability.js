@@ -62,7 +62,10 @@ define(["models/date"], function () {
 					self.get("disabilityType").get("id"),
 					self.get("document").get("id"),
 					self.get("rangeDisabilityDate").get("start"),
-					self.get("rangeDisabilityDate").get("end")
+					self.get("rangeDisabilityDate").get("end"),
+					self.get("document").get("series"),
+					self.get("document").get("number"),
+					self.get("document").get("date")
 				];
 
 				if (_(conditionallyRequired).any()) {
