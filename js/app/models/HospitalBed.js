@@ -2,7 +2,7 @@
  * User: FKurilov
  * Date: 28.05.12
  */
-define(["collections/beds"], function () {
+define(["collections/Beds"], function () {
 	App.Models.HospitalBed = Model.extend({
 		idAttribute: "bedId",
 
