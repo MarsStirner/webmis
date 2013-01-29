@@ -27,13 +27,13 @@ define([
 			Cache.Patient = this.model.get("patient");
 			Cache.Patient.fetch({
 				success: function () {
-					view.loadTemplate( "pages/appeal-edit" );
+					view.loadTemplate("pages/appeal-edit");
 				}
 			});
 
 			this.errorToolTip = new UI.ErrorTooltip();
 
-			this.on( "template:loaded", function () {
+			this.on("template:loaded", function () {
 				var appealDicts = [
 					{name: "appealTypes", id: 25, fd: true},
 					{name: "agreedTypes", id: 26, fd: true},
@@ -55,10 +55,10 @@ define([
 				this.initWithDictionaries(appealDicts, this.ready, this, true);
 				//this.ready();
 
-			}, this );
+			}, this);
 
 			this.model.on("sync", function () {
-				App.Router.navigate("/appeals/"+ this.model.id +"/", {trigger: true});
+				App.Router.navigate("/appeals/" + this.model.id + "/", {trigger: true});
 			}, this);
 
 			/*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
@@ -66,12 +66,11 @@ define([
 		},
 
 
-
 		onAddRepresentativeClick: function () {
 			this.openRepresentativeWindow();
 			/*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
-			this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);
-			this.appealRepresentativeWindow.open();*/
+			 this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);
+			 this.appealRepresentativeWindow.open();*/
 		},
 
 		onEditRepresentativeClick: function (model) {
@@ -89,8 +88,8 @@ define([
 			});
 
 			/*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
-			this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);
-			this.appealRepresentativeWindow.openWithEdit(model);*/
+			 this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);
+			 this.appealRepresentativeWindow.openWithEdit(model);*/
 		},
 
 		openRepresentativeWindow: function (model) {
@@ -146,9 +145,9 @@ define([
 			this.depended(DiagnosisView);
 
 			var selectors = {
-				assignment : "#diagnosis-assignments",
+				assignment: "#diagnosis-assignments",
 				aftereffect: "#diagnosis-aftereffects",
-				attendant  : "#diagnosis-attendants"
+				attendant: "#diagnosis-attendants"
 			};
 
 			this.$el.find(selectors[model.get("diagnosisKind")]).append(DiagnosisView.render().el);
@@ -176,90 +175,61 @@ define([
 
 			//console.log("MODEL", dicts);
 
-			this.$el.html( $( "#appeal-edit-common" ).tmpl( result ) );
+			this.$el.html($("#appeal-edit-common").tmpl(result))
+
+			view.model.on("change:appealWithDeseaseThisYear", function () {
+				console.log("change:appealWithDeseaseThisYear", view.model.get("appealWithDeseaseThisYear"));
+			}, view);
 
 			/*var Appeals = new App.Collections.PatientAppeals;
-			Appeals.patient = this.model.get("patient");
-			Appeals.fetch();*/
+			 Appeals.patient = this.model.get("patient");
+			 Appeals.fetch();*/
 
 			var Patient = this.model.get("patient");
 
-			var Appeals = new App.Collections.PatientAppeals;
-			Appeals.patient = Patient;
-			Appeals.setParams({
+			var patientAppeals = new App.Collections.PatientAppeals;
+			patientAppeals.patient = Patient;
+			patientAppeals.setParams({
 				//limit: 5,
 				sortingField: "beginDate",
 				sortingMethod: "desc"
 			});
-			Appeals.on("reset", function () {
+			patientAppeals.on("reset", function () {
 				// Список последних обращений
 				var History = new App.Views.AppealsHistory({
-					appeals: Appeals
+					appeals: patientAppeals
 				});
 				view.depended(History);
-				view.$el.find(".History").html( History.render().el );
+				view.$el.find(".History").html(History.render().el);
 
 				if (view.model.isNew()) {
-					/*var haveUnclosedAppeals = Appeals.find(function (a) {
-						return !a.get("rangeAppealDateTime").get("end");
-					});
+					view.toggleInputs(true);
+					view.$(".Save").removeAttr("disabled");
 
-					if (haveUnclosedAppeals && !Core.Url.extractUrlParameters().ignored) {
-						view.toggleInputs(false);
+					if (patientAppeals.length > 0) {
+						var thisYearAppeal = patientAppeals.find(function (appeal) {
+							return ((new Date(appeal.get("rangeAppealDateTime").get("start"))).getYear() == (new Date()).getYear());
+						});
 
-						*//*view.$(":input").attr("disabled", "disabled").addClass("Disabled");
-						view.$(".DDSelect").addClass("Disabled");
-
-						_(view._dependedViews).each(function (v) {
-							v.$(":input").attr("disabled", "disabled").addClass("Disabled");
-							v.$(".DDSelect").addClass("Disabled");
-						});*//*
-
-						alert("Создание госпитализации невозможно, имеется незакрытая история болезни.");
-					} else {*/
-						view.toggleInputs(true);
-
-						/*view.$(":input").removeAttr("disabled", "disabled").removeClass("Disabled");
-						view.$(".DDSelect").removeClass("Disabled");
-
-						_(view._dependedViews).each(function (v) {
-							v.$(":input").removeAttr("disabled", "disabled").removeClass("Disabled");
-							v.$(".DDSelect").removeClass("Disabled");
-						});*/
-
-						view.$(".Save").removeAttr("disabled");
-					//}
+						if (thisYearAppeal) {
+							view.model.set("appealWithDeseaseThisYear", "повторно");
+						}
+					}
 				} else {
-					var isClosed = Appeals.find(function (a) {
+					var isClosed = patientAppeals.find(function (a) {
 						return a.get("id") === view.model.get("id");
 					}).get("rangeAppealDateTime").get("end");
 
 					if (!isClosed) {
 						view.toggleInputs(true);
-
-						/*view.$(":input").removeAttr("disabled", "disabled").removeClass("Disabled");
-						view.$(".DDSelect").removeClass("Disabled");
-
-						_(view._dependedViews).each(function (v) {
-							v.$(":input").removeAttr("disabled", "disabled").removeClass("Disabled");
-							v.$(".DDSelect").removeClass("Disabled");
-						});*/
 					}
 				}
 			});
-			Appeals.fetch();
+
+			patientAppeals.fetch();
 
 			var Breadcrumbs = new App.Views.Breadcrumbs;
-			this.$("#page-head" ).append( Breadcrumbs.render().el );
-
-			/*Breadcrumbs.on("template:loaded", function () {
-
-				Breadcrumbs.setStructure([
-					App.Router.cachedBreadcrumbs.PATIENTS,
-					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, Patient.toJSON()),
-					App.Router.cachedBreadcrumbs.APPEALS_NEW
-				]);
-			});*/
+			this.$("#page-head").append(Breadcrumbs.render().el);
 
 			var onBreadcrumbsReady = function () {
 				Breadcrumbs.setStructure([
@@ -306,10 +276,10 @@ define([
 				if (this.eventTypes.length) {
 					this.$("[name='event_type[id]']").val(this.eventTypes.first().get("id").toString()).change();
 					this.$("[name='event_type[name]']").val(this.eventTypes.first().get("value").toString());
-						/*.append(this.eventTypes.map(function (eventType) {
-							return $("<option value='" + eventType.get("id") + "'>" + eventType.get("value") + "</option>");
-						}))*/
-						//.prop("disabled", this.eventTypes.length === 1);
+					/*.append(this.eventTypes.map(function (eventType) {
+					 return $("<option value='" + eventType.get("id") + "'>" + eventType.get("value") + "</option>");
+					 }))*/
+					//.prop("disabled", this.eventTypes.length === 1);
 				} else {
 					this.errorToolTip.showAt(this.$("[name='event_type[name]']").get(0));
 				}
@@ -339,71 +309,71 @@ define([
 
 			this.model.get("appealType").get("finance").on("change", onAppealTypeChange, this);
 
-			this.model.get("rangeAppealDateTime").connect("start", "appeal[date][start]", this.$el );
-			this.model.get("rangeAppealDateTime").connect("start", "appeal[time][start]", this.$el );
+			this.model.get("rangeAppealDateTime").connect("start", "appeal[date][start]", this.$el);
+			this.model.get("rangeAppealDateTime").connect("start", "appeal[time][start]", this.$el);
 
 			if (!this.model.get("rangeAppealDateTime").get("start")) {
 				this.model.get("rangeAppealDateTime").set("start", new Date().getTime());
 			}
 
-			this.model.get("rangeAppealDateTime").connect("end", "appeal[date][end]", this.$el );
-			this.model.get("rangeAppealDateTime").connect("end", "appeal[time][end]", this.$el );
+			this.model.get("rangeAppealDateTime").connect("end", "appeal[date][end]", this.$el);
+			this.model.get("rangeAppealDateTime").connect("end", "appeal[time][end]", this.$el);
 
 
-			this.model.connect("number", "number", this.$el );
+			this.model.connect("number", "number", this.$el);
 			//this.model.get("appealType").connect("id", "appeal_type[id]", this.$el );
 
-			this.model.get("appealType").get("requestType").connect("id", "request_type[id]", this.$el );
-			this.model.get("appealType").get("finance").connect("id", "finance[id]", this.$el );
-			this.model.get("appealType").get("eventType").connect("id", "event_type[id]", this.$el );
+			this.model.get("appealType").get("requestType").connect("id", "request_type[id]", this.$el);
+			this.model.get("appealType").get("finance").connect("id", "finance[id]", this.$el);
+			this.model.get("appealType").get("eventType").connect("id", "event_type[id]", this.$el);
 
-			this.model.connect("urgent", "urgent", this.$el );
+			this.model.connect("urgent", "urgent", this.$el);
 
-			this.model.connect("appealWithDeseaseThisYear", "appealWithDeseaseThisYear", this.$el );
-			this.model.connect("refuseAppealReason", "refuse_appeal_reason", this.$el );
+			this.model.connect("appealWithDeseaseThisYear", "appealWithDeseaseThisYear", this.$el);
+			this.model.connect("refuseAppealReason", "refuse_appeal_reason", this.$el);
 
-			this.model.connect("agreedDoctor", "agreed_doctor[name]", this.$el );
-			this.model.get("agreedType").connect("id", "agreed_type[id]", this.$el );
+			this.model.connect("agreedDoctor", "agreed_doctor[name]", this.$el);
+			this.model.get("agreedType").connect("id", "agreed_type[id]", this.$el);
 			/*this.model.get("agreedDoctor" ).get("name").connect("raw", "agreed_doctor[name]", this.$el );*/
 
-			this.model.get("assignment").connect("directed", "assignment[directed]", this.$el );
-			this.model.get("assignment").connect("doctor", "assignment[doctor][name]", this.$el );
+			this.model.get("assignment").connect("directed", "assignment[directed]", this.$el);
+			this.model.get("assignment").connect("doctor", "assignment[doctor][name]", this.$el);
 
-			this.model.get("assignment").connect("number", "assignment[number]", this.$el );
-			this.model.get("assignment").connect("assignmentDate", "assignment[assignment_date]", this.$el );
+			this.model.get("assignment").connect("number", "assignment[number]", this.$el);
+			this.model.get("assignment").connect("assignmentDate", "assignment[assignment_date]", this.$el);
 
-			this.model.get( "hospitalizationType" ).connect("id", "hospitalization_type[id]", this.$el );
-			this.model.get( "hospitalizationPointType" ).connect("id", "hospitalization_point_type[id]", this.$el );
+			this.model.get("hospitalizationType").connect("id", "hospitalization_type[id]", this.$el);
+			this.model.get("hospitalizationPointType").connect("id", "hospitalization_point_type[id]", this.$el);
 			//this.model.get( "hospitalizationChannelType" ).connect("id", "hospitalization_channel_type[id]", this.$el );
 
-			this.model.connect("movingType", "moving_type", this.$el );
+			this.model.connect("movingType", "moving_type", this.$el);
 
-			this.model.connect("deliveredType", "delivered_type[id]", this.$el );
-			this.model.connect("deliveredAfterType", "delivered_after_type[id]", this.$el );
-			this.model.connect("stateType", "state_type", this.$el );
+			this.model.connect("deliveredType", "delivered_type[id]", this.$el);
+			this.model.connect("deliveredAfterType", "delivered_after_type[id]", this.$el);
+			this.model.connect("stateType", "state_type", this.$el);
 			//this.model.get( "drugsType" ).connect("id", "drugs_type[id]", this.$el );
-			this.model.connect("ambulanceNumber", "ambulance_number", this.$el );
+			this.model.connect("ambulanceNumber", "ambulance_number", this.$el);
 
 			/*this.model.get( "physicalParameters" ).get("bloodPressure").connect("left", "physical_parameters[blood_pressure][left]", this.$el );
-			this.model.get( "physicalParameters" ).get("bloodPressure").connect("right", "physical_parameters[blood_pressure][right]", this.$el );*/
-			this.model.get( "physicalParameters" ).get("bloodPressure").get("left").connect("syst", "physical_parameters[blood_pressure][left][syst]", this.$el );
-			this.model.get( "physicalParameters" ).get("bloodPressure").get("left").connect("diast", "physical_parameters[blood_pressure][left][diast]", this.$el );
-			this.model.get( "physicalParameters" ).get("bloodPressure").get("right").connect("syst", "physical_parameters[blood_pressure][right][syst]", this.$el );
-			this.model.get( "physicalParameters" ).get("bloodPressure").get("right").connect("diast", "physical_parameters[blood_pressure][right][diast]", this.$el );
-			this.model.get( "physicalParameters" ).connect("temperature", "physical_parameters[temperature]", this.$el );
-			this.model.get( "physicalParameters" ).connect("weight", "physical_parameters[weight]", this.$el );
-			this.model.get( "physicalParameters" ).connect("height", "physical_parameters[height]", this.$el );
+			 this.model.get( "physicalParameters" ).get("bloodPressure").connect("right", "physical_parameters[blood_pressure][right]", this.$el );*/
+			this.model.get("physicalParameters").get("bloodPressure").get("left").connect("syst", "physical_parameters[blood_pressure][left][syst]", this.$el);
+			this.model.get("physicalParameters").get("bloodPressure").get("left").connect("diast", "physical_parameters[blood_pressure][left][diast]", this.$el);
+			this.model.get("physicalParameters").get("bloodPressure").get("right").connect("syst", "physical_parameters[blood_pressure][right][syst]", this.$el);
+			this.model.get("physicalParameters").get("bloodPressure").get("right").connect("diast", "physical_parameters[blood_pressure][right][diast]", this.$el);
+			this.model.get("physicalParameters").connect("temperature", "physical_parameters[temperature]", this.$el);
+			this.model.get("physicalParameters").connect("weight", "physical_parameters[weight]", this.$el);
+			this.model.get("physicalParameters").connect("height", "physical_parameters[height]", this.$el);
 
-			this.model.connect("injury", "injury", this.$el );
+			this.model.connect("injury", "injury", this.$el);
 
 			// Ограничение ввода для полей формата Double
-			this.$('.RestrictFloat').keypress(function(eve) {
-				if ((eve.which != 46 || $(this).val().indexOf('.') != -1) && (eve.which < 48 || eve.which > 57) || (eve.which == 46 && $(this).caret().start == 0) ) {
+			this.$('.RestrictFloat').keypress(function (eve) {
+				if ((eve.which != 46 || $(this).val().indexOf('.') != -1) && (eve.which < 48 || eve.which > 57) || (eve.which == 46 && $(this).caret().start == 0)) {
 					eve.preventDefault();
 				}
 				// this part is when left part of number is deleted and leaves a . in the leftmost position. For example, 33.25, then 33 is deleted
-				view.$('.RestrictFloat').keyup(function(eve) {
-					if($(this).val().indexOf('.') == 0) {
+				view.$('.RestrictFloat').keyup(function (eve) {
+					if ($(this).val().indexOf('.') == 0) {
 						$(this).val($(this).val().substring(1));
 					}
 				});
@@ -438,7 +408,7 @@ define([
 			Diagnoses.getAssignments().forEach(function (model) {
 				view.createDiagnosis(model);
 			});
-			Diagnoses.getAftereffects().forEach( function (model) {
+			Diagnoses.getAftereffects().forEach(function (model) {
 				view.createDiagnosis(model);
 			});
 			Diagnoses.getAttendants().forEach(function (model) {
@@ -471,8 +441,8 @@ define([
 			"click .RemoveIcon": "removeModel",
 			"click .EditIcon": "editModel"
 			/*,
-			"change [name='relation_type']": "onRelationTypeChange",
-			"change [name='relation_note']": "onRelationNoteChange"*/
+			 "change [name='relation_type']": "onRelationTypeChange",
+			 "change [name='relation_note']": "onRelationNoteChange"*/
 		},
 
 		template: representativeTmpl,
@@ -494,11 +464,11 @@ define([
 
 		/*onRelationTypeChange: function (event) {
 
-		},
+		 },
 
-		onRelationNoteChange: function (event) {
+		 onRelationNoteChange: function (event) {
 
-		},*/
+		 },*/
 
 		render: function () {
 			if (this.model.get("relative")) {
@@ -569,7 +539,7 @@ define([
 		}
 	});
 
-	var DiagnosisLine = View.extend( {
+	var DiagnosisLine = View.extend({
 		events: {
 			"click .MKBLauncher": "launchMKB",
 			"keyup input[name='diagnosis[mkb][code]']": "onMKBCodeKeyUp"
@@ -605,12 +575,12 @@ define([
 			$(event.currentTarget).val(str);
 
 			/*if ($(event.currentTarget).val().length >= 3) {
-				if (!this.manualMKBChecker) {
-					this.manualMKBChecker = new App.Collections.Mkbs();
-				}
+			 if (!this.manualMKBChecker) {
+			 this.manualMKBChecker = new App.Collections.Mkbs();
+			 }
 
-				this.manualMKBChecker.code = $(event.currentTarget).val();
-			}*/
+			 this.manualMKBChecker.code = $(event.currentTarget).val();
+			 }*/
 		},
 
 		render: function () {
@@ -663,18 +633,18 @@ define([
 						"Nothing selected, input was " + this.value);
 				}
 			}).on("keyup", function () {
-				if (!$(this).val().length) {
-					self.model.get("mkb").set({
-						id: "",
-						code: "",
-						diagnosis: ""
-					}, {silent: true});
+					if (!$(this).val().length) {
+						self.model.get("mkb").set({
+							id: "",
+							code: "",
+							diagnosis: ""
+						}, {silent: true});
 
-					self.$("input[name='diagnosis[mkb][diagnosis]']").val("");
-				}
-			});
+						self.$("input[name='diagnosis[mkb][diagnosis]']").val("");
+					}
+				});
 
 			return this;
 		}
-	} );
+	});
 });

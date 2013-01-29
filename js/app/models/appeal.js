@@ -304,7 +304,7 @@ define([
 			ambulanceNumber: "",
 			rangeAppealDateTime: {},
 			refuseAppealReason: "",
-			appealWithDeseaseThisYear: "",
+			appealWithDeseaseThisYear: "первично",
 			patient: {},
 			appealType: {},
 			//relations: [{}],

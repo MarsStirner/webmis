@@ -17,31 +17,34 @@ App.Views.Filter = View.extend({
 		var onEnterOnly = $(event.currentTarget).hasClass("NewLineAllowed");
 
 		if ((onEnterOnly && event.keyCode == 13) || !onEnterOnly) {
-			this.refresh(event);
+			this.refresh($(event.currentTarget));
 		}
 	},
 
 	onInputChange: function (event) {
-		this.refresh(event);
+		this.lastChangedInput = $(event.currentTarget);
+
+		if (!$(event.currentTarget).hasClass("NewLineAllowed"))
+			this.refresh($(event.currentTarget));
 	},
 
-	refresh:function (event) {
-		var view = this;
-		var $input = $(event.currentTarget);
+	refresh:function ($target) {
+		$target = $target || this.lastChangedInput;
 
-		if (_.isUndefined($input.data("old-value")) || ($input.data("old-value") != $input.val())) {
-			$input.data("old-value", $input.val());
+		if (_.isUndefined($target.data("old-value")) || ($target.data("old-value") != $target.val())) {
+			$target.data("old-value", $target.val());
 
-			var filter = Core.Forms.serializeToObject($input.closest("form"));
+			var filter = Core.Forms.serializeToObject($target.closest("form"));
 
-			view.collection.setParams({
+			this.collection.setParams({
 				filter:filter
 			});
 
 			if (_.size(filter)) {
-				view.collection.fetch();
+				this.collection.fetch();
 			} else {
-				view.collection.reset();
+				this.collection.requestData = {};
+				this.collection.reset();
 			}
 		}
 	},
