@@ -5,6 +5,7 @@
 
 define([
 	"text!templates/appeal/edit/pages/hospital-bed.tmpl",
+	"collections/Beds",
 	"models/HospitalBed",
 	"collections/departments",
 	"views/appeal/edit/pages/ChamberView"

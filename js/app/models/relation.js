@@ -1,4 +1,4 @@
-define(["collections/phones", "models/name"], function () {
+define(["models/Name", "collections/phones"], function (Name) {
 
 	var RelationType = Model.extend ({
 		defaults: {
@@ -56,7 +56,7 @@ define(["collections/phones", "models/name"], function () {
 			{
 				type: Backbone.HasOne,
 				key: "name",
-				relatedModel: "App.Models.Name"
+				relatedModel: Name
 			},
 			{
 				type: Backbone.HasMany,
