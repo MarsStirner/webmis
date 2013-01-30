@@ -9,9 +9,9 @@ define([
 		"collections/phones",
 		"collections/occupations",
 		"collections/disabilities"
-	], function (Name0) {
+	], function (Name) {
 
-	var Name = Name0.extend({
+	var NameExtendet = Name.extend({
 		validate: function (attrs) {
 			var errors = [];
 			//attrs = attrs || this.toJSON();
@@ -67,7 +67,7 @@ define([
 			{
 				type: Backbone.HasOne,
 				key: "name",
-				relatedModel: Name
+				relatedModel: NameExtendet
 			},
 			{
 				type: Backbone.HasOne,
