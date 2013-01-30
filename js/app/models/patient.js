@@ -11,7 +11,7 @@ define([
 		"collections/disabilities"
 	], function (Name) {
 
-	var NameExtendet = Name.extend({
+	var PatientName = Name.extend({
 		validate: function (attrs) {
 			var errors = [];
 			//attrs = attrs || this.toJSON();
@@ -67,7 +67,7 @@ define([
 			{
 				type: Backbone.HasOne,
 				key: "name",
-				relatedModel: NameExtendet
+				relatedModel: PatientName
 			},
 			{
 				type: Backbone.HasOne,
