@@ -231,14 +231,17 @@
 		}
 	}
 
+	.item{
+		float: left;
+	}
 	.bedBox {
 		border-radius: 3px;
 		background: rgb(223, 244, 253);
 		border: 1px solid rgb(134, 202, 224);
-		width: 60px;
+		//width: 60px;
 		height: 30px;
 		cursor: pointer;
-		float: left;
+
 		margin-right: 10px;
 		margin-bottom: 10px;
 
@@ -259,7 +262,7 @@
 			vertical-align: middle;
 			line-height: 2.9;
 			font-size: 1.1em;
-			margin-left: 0.8em;
+			padding: 0 5px 0 2px;
 			color: rgb(108, 108, 113);
 		}
 	}

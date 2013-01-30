@@ -4,7 +4,7 @@
  */
 define(["collections/Beds"], function () {
 	App.Models.HospitalBed = Model.extend({
-		idAttribute: "bedId",
+		///idAttribute: "bedId",
 
 		url: function (isSave) {
 			return DATA_PATH + (isSave ?
@@ -13,6 +13,7 @@ define(["collections/Beds"], function () {
 		},
 
 		sync: function (method, model, options) {
+			console.log('sync hospitalbed',method);
 			options.dataType = "jsonp";
 			options.contentType = 'application/json';
 			options.url = model.url(method === "create");
@@ -43,18 +44,7 @@ define(["collections/Beds"], function () {
 			"curativeDiagnostic": ""
 		},
 
-//		relations: [
-//			{
-//				type:Backbone.HasMany,
-//				key:"chamberList",
-//				relatedModel:"App.Models.Bed",
-//				collectionType:"App.Collections.Beds"
-//			}
-//		],
-
 		parse: function (raw) {
-			console.log(raw);
-
 			return raw.data.registrationForm ? raw.data.registrationForm : raw.data;
 		}
 	});

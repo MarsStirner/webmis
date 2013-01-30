@@ -12,7 +12,7 @@
 			<label for="department">
 				Поступил в отделение
 			</label>
-			<select class="Departments select2">
+			<select class="Departments select2"  name="departments">
 				<option value="">...</option>
 			</select>
 		</div>
@@ -24,29 +24,32 @@
 			<div class="DateTime">
 				<div class="DatePeriod SingleDate">
 					<div class="FromTo">
-						<input type="text" name="begDate" id="begDate" placeholder="дд.мм.гггг"
-									 class="SelectDate"/>
+						<input type="text" name="move-date" id="move-date" placeholder="дд.мм.гггг" class="SelectDate"
+									 data-relation="#move-time"/>
 					</div>
 					<i class="DateIcon Icon"></i>
 				</div>
-				<select class="Styled HourPicker" name="ward">
-					<option value="1" selected="selected">11:00</option>
-					<option value="2">12:00</option>
-					<option value="3">13:00</option>
-					<option value="4">14:00</option>
-					<option value="5">15:00</option>
-				</select>
+				<div class="SemiCol">
+					<input type="text" class="Styled HourPicker" id="move-time" data-relation="#move-date" placeholder="чч:мм"/>
+				</div>
+				<!--<select class="Styled HourPicker" name="ward">-->
+				<!--<option value="1" selected="selected">11:00</option>-->
+				<!--<option value="2">12:00</option>-->
+				<!--<option value="3">13:00</option>-->
+				<!--<option value="4">14:00</option>-->
+				<!--<option value="5">15:00</option>-->
+				<!--</select>-->
 			</div>
 		</div>
 		<div class="HalfCol">
 			<span class="Label">Патронаж ${bedRegistration.patronage}</span>
 			<div class="InlineForm">
 				<label>
-					<input type="radio" name="patronage" class="patronage" {{if bedRegistration.patronage == 'Да'}} checked {{/if}} value="1">
+					<input type="radio" name="patronage" class="patronage" {{if bedRegistration.patronage == 'Да'}} checked {{/if}} value="Да">
 					Да
 				</label>
 				<label>
-					<input type="radio" name="patronage" class="patronage" {{if bedRegistration.patronage == 'Нет'}} checked {{/if}} value="0">
+					<input type="radio" name="patronage" class="patronage" {{if bedRegistration.patronage == 'Нет'}} checked {{/if}} value="Нет">
 					Нет
 				</label>
 			</div>

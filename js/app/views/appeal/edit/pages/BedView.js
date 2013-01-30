@@ -3,6 +3,7 @@ define([
 ], function (bedTemplate) {
 
 	App.Views.Bed = View.extend({
+		className: "item",
 		template: bedTemplate,
 
 		events: {
@@ -20,9 +21,14 @@ define([
 
 			beds.removeClass('checkedBed');
 			beds.find(".bedCheckbox").removeClass("DoneIcon").removeAttr("checked");
+			if(bed.hasClass('disabledBed')){
+				return false;
+			}
 
 			bed.addClass('checkedBed');
-			bed.find(".bedCheckbox").addClass("DoneIcon").attr("checked", "checked");
+			var checkbox = bed.find(".bedCheckbox");
+			checkbox.addClass("DoneIcon").attr("checked", "checked");
+			this.trigger('bedChecked', checkbox.val());
 
 		},
 
