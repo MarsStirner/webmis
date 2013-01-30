@@ -417,14 +417,7 @@ define([
 
 			UIInitialize(this.el);
 
-			//this.$('#eventTypeSel').WMSelect();
-
 			view.toggleInputs(false);
-
-
-			//var nice = new nicEditor({iconsPath: "/images/nicEditorIcons.gif"}).panelInstance(this.$('textarea')[0]);
-
-			//nicEditors.allTextAreas({iconsPath: "/images/nicEditorIcons.gif", buttonList: ['bold','italic','underline','strikeThrough','subscript','superscript']});
 		},
 
 		render: function () {
@@ -573,14 +566,6 @@ define([
 
 			str = Core.Strings.toLatin(str);
 			$(event.currentTarget).val(str);
-
-			/*if ($(event.currentTarget).val().length >= 3) {
-			 if (!this.manualMKBChecker) {
-			 this.manualMKBChecker = new App.Collections.Mkbs();
-			 }
-
-			 this.manualMKBChecker.code = $(event.currentTarget).val();
-			 }*/
 		},
 
 		render: function () {
