@@ -137,12 +137,17 @@ define([
 		},
 
 		createDiagnosis: function (model) {
-			var DiagnosisView = new DiagnosisLine({
+			var diagnosisView = new DiagnosisLine({
 				model: model//,
 				//collection: diagnoses
 			});
 
-			this.depended(DiagnosisView);
+			diagnosisView.on("diagnosis:change", function (event) {
+				this.$("input[name='injury']").toggleClass("Mandatory", event.isInjury);
+				this.$("input[name='injury']").parents().find(".ComboWrapper").toggleClass("Mandatory", event.isInjury);
+			}, this);
+
+			this.depended(diagnosisView);
 
 			var selectors = {
 				assignment: "#diagnosis-assignments",
@@ -150,7 +155,7 @@ define([
 				attendant: "#diagnosis-attendants"
 			};
 
-			this.$el.find(selectors[model.get("diagnosisKind")]).append(DiagnosisView.render().el);
+			this.$el.find(selectors[model.get("diagnosisKind")]).append(diagnosisView.render().el);
 		},
 
 		toggleInputs: function (enable) {
@@ -553,6 +558,14 @@ define([
 			mkb.on("change", function () {
 				this.$("input[name='diagnosis[mkb][code]']").val(mkb.get("code"));
 				this.$("input[name='diagnosis[mkb][diagnosis]']").val(mkb.get("diagnosis"));
+
+				this.onDiagnosisChange();
+
+				//this.trigger("diagnosis:change", {isInjury: mkb.get("code") && mkb.get("code")[0].toUpperCase() === "S"});
+
+
+				//this.$("input[name='injury']").toggleClass("Mandatory", mkb.get("code") && mkb.get("code")[0].toUpperCase() === "S");
+
 			}, this);
 		},
 
@@ -561,11 +574,16 @@ define([
 		},
 
 		onMKBCodeKeyUp: function (event) {
-
 			var str = $(event.currentTarget).val();
 
 			str = Core.Strings.toLatin(str);
 			$(event.currentTarget).val(str);
+		},
+
+		onDiagnosisChange: function () {
+			this.trigger("diagnosis:change", {
+				isInjury: this.model.get("mkb").get("code") && this.model.get("mkb").get("code")[0].toUpperCase() === "S"
+			});
 		},
 
 		render: function () {
@@ -611,6 +629,8 @@ define([
 						diagnosis: ui.item.diagnosis
 					}, {silent: true});
 
+					self.onDiagnosisChange();
+
 					self.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
 
 					console.log(ui.item ?
@@ -624,6 +644,8 @@ define([
 							code: "",
 							diagnosis: ""
 						}, {silent: true});
+
+						self.onDiagnosisChange();
 
 						self.$("input[name='diagnosis[mkb][diagnosis]']").val("");
 					}
