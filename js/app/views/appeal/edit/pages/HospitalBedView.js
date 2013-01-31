@@ -29,8 +29,6 @@ define([
 			this.model.appealId = this.options.appeal.get("id");
 			this.model.set({"clientId": this.options.appeal.get("patient").get("id")},{silent: true});
 
-
-
 			//Получаем список отделений со свободными койками
 			this.departments = new App.Collections.Departments();
 			this.departments.setParams({
@@ -40,17 +38,44 @@ define([
 			});
 			this.departments.on("reset", this.onDepartmentsLoaded, this);
 			this.departments.fetch();
+
+			this.model.on("change:movedFromUnitId", this.onSelectDepartment, this);
+
+			//Список движений для госпитализации
+			this.moves = new App.Collections.Moves();
+			this.moves.appealId = this.options.appeal.get("id");
+			this.moves.on("reset", function () {
+				this.moves.off(null, null, this);
+
+				this.model.set('movedFromUnitId', this.moves.last().get("unitId"));
+
+			}, this);
+
+			this.moves.fetch();
+
+
+
+
 		},
 
 		//рисуем выпадающий список отделений
 		onDepartmentsLoaded: function (departments) {
 			this.departmentsJSON = departments.toJSON();
+			var that = this;
 			_(this.departmentsJSON).each(function (d, index) {
+
+
 				this.$(".Departments").append($("<option/>", {
 					"text": d.name,
 					"value": d.id
 				}));
+
 			}, this);
+
+			console.log('load department',that.model.get('movedFromUnitId'));
+
+			this.$(".Departments").select2('val', that.model.get('movedFromUnitId'));
+
 
 		},
 
@@ -60,11 +85,11 @@ define([
 			return id;
 		},
 		onSelectDepartment: function (event) {
-			var departmentId = this.getDepartmentId();
 			var that = this;
+			var departmentId = that.model.get('movedFromUnitId');
+
 
 			if (departmentId) {
-				//this.model.set('movedFromUnitId', departmentId);
 				var bedsView = new App.Views.Beds({el: this.$('.beds'), departmentId: departmentId});
 				bedsView.collection.on("reset", function () {
 					$('.beds').empty();
@@ -74,7 +99,6 @@ define([
 						bedView.on('bedChecked',function(bedId){
 							this.model.set('bedId',bedId);
 
-							console.log(bedId);
 						}, that);
 
 					});
@@ -85,11 +109,6 @@ define([
 
 
 			}
-		},
-		setBed:function(bedId){
-			this.model.set('bedId',bedId);
-
-			console.log(bedId);
 		},
 		onSave:function(){
 			//this.model.set({"bedId": 237});
