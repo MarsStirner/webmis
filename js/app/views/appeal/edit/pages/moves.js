@@ -77,8 +77,7 @@ define([
 
 		render: function () {
 			var self = this;
-
-			var allowToMove = Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST;
+			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
 
 			this.$el.html($.tmpl(this.template, {allowToMove: allowToMove, isClosed: self.options.appeal.isClosed()}));
 			this.$("#lab-grid").html(this.grid.el);

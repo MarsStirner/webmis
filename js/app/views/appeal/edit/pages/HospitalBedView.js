@@ -70,7 +70,6 @@ define([
 
 			}, this);
 
-			console.log('load department', that.model.get('movedFromUnitId'));
 
 			this.$(".Departments").select2('val', that.model.get('movedFromUnitId'));
 
@@ -123,10 +122,21 @@ define([
 			if (!this.model.get("moveDatetime")) {
 				this.model.set("moveDatetime", new Date().getTime());
 			}
-			this.model.save();
-			console.log('save', this.model.isNew());
-		},
+			this.model.on('sync',function(){
+			console.log('sync');
 
+				var ai = this.model.appealId;
+			console.log(ai);
+//			var moves = new App.Views.Moves({appealId: ai});
+//
+//			moves.setElement(this.el).render();
+//
+//			App.Router.updateUrl("appeals/" + ai + "/moves/");
+			});
+			this.model.save();
+//			console.log('save', this.model.isNew());
+
+		},
 
 		render: function () {
 
