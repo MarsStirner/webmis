@@ -48,6 +48,9 @@ define([
 				this.moves.off(null, null, this);
 
 				this.model.set('movedFromUnitId', this.moves.last().get("unitId"));
+				this.model.set('moveDatetime', this.moves.at(this.moves.length - 2).get('leave'));
+
+				console.log('moveDatetime',this.moves.at(this.moves.length - 2).get('leave'))
 
 			}, this);
 
