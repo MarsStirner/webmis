@@ -10,9 +10,6 @@ define([
 			"click .bedBox": "onBedClick"
 		},
 
-//		initialize: function (options) {
-//
-//		},
 
 		onBedClick: function (event) {
 
@@ -33,7 +30,9 @@ define([
 		},
 
 		render: function () {
+
 			this.$el.html($.tmpl(this.template, this.model.toJSON()));
+
 			return this;
 		}
 	});

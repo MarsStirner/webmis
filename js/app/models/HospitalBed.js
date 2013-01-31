@@ -4,7 +4,15 @@
  */
 define(["collections/Beds"], function () {
 	App.Models.HospitalBed = Model.extend({
-		///idAttribute: "bedId",
+		defaults: {
+			"clientId": "",
+			"bedId": null,
+			"moveDatetime": "",
+			"movedFromUnitId": null,
+			"patronage": "Нет"//,
+//			"curativeDiagnosticBool": false,
+//			"curativeDiagnostic": ""
+		},
 
 		url: function (isSave) {
 			return DATA_PATH + (isSave ?
@@ -32,16 +40,6 @@ define(["collections/Beds"], function () {
 			return {
 				"bedRegistration": Model.prototype.toJSON.call(this)
 			}
-		},
-
-		defaults: {
-			"clientId": "",
-			"bedId": null,
-			"moveDatetime": "",
-			"movedFromUnitId": null,
-			"patronage": "Нет",
-			"curativeDiagnosticBool": false,
-			"curativeDiagnostic": ""
 		},
 
 		parse: function (raw) {

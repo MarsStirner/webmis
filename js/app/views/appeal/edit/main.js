@@ -65,7 +65,8 @@ define([
 			"first-examination-edit": App.Router.cachedBreadcrumbs.EXAMS,
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
 			"card": App.Router.cachedBreadcrumbs.APPEAL,
-			"moves": App.Router.cachedBreadcrumbs.MOVES
+			"moves": App.Router.cachedBreadcrumbs.MOVES,
+			"hospitalbed": App.Router.cachedBreadcrumbs.HOSPITALBED
 		},
 
 		initialize: function () {
@@ -335,7 +336,9 @@ define([
 							{name: "medical-info", title: "Оперативное"},
 							{name: "medical-info", title: "Восстановительное"}
 						]},
-						{name: "beds", title: "Коечный фонд"}
+						{name: "beds", title: "Коечный фонд"},
+						App.Router.compile({name: "moves", title: "Движение по отделениям", uri: "/appeals/:id/moves"}, appealJSON)
+
 					]
 				}
 			}, this);
@@ -396,7 +399,11 @@ define([
 							{name: "medical-info", title: "Восстановительное"}
 						]},
 						//App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)
-						App.Router.compile({name: "moves", title: "Движение по отделениям", uri: "/appeals/:id/moves"}, appealJSON)
+						App.Router.compile({
+							name: "moves",
+							title: "Движение по отделениям",
+							uri: "/appeals/:id/moves"
+						}, appealJSON)
 					]
 				}
 			}, this);
