@@ -263,6 +263,9 @@ define([
 				modal: true,
 				autoOpen: false,
 				dialogClass: "webmis",
+				resizable: false,
+				width: "500px",
+
 				buttons: {
 					"Принять": function () {
 						$(this).dialog("close");
