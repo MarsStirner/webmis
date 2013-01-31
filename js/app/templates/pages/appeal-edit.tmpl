@@ -98,22 +98,6 @@
 										</div>
 									</div>
 								</div>
-								<!--<div class="HalfCol">
-									<span class="Label">Тип обращения</span>
-									{{if isNew}}
-										<select class="Styled Mandatory" name="appeal_type[id]">
-											<option value="" selected="selected">...</option>
-											{{each(i, type) dicts.appealTypes}}
-											<option value="${type['id']}">${type['61']}</option>
-											{{/each}}
-											&lt;!&ndash;<option value="1">Первичный</option>
-											<option value="2">Вторичный</option>
-											<option value="3">Срочный</option>&ndash;&gt;
-										</select>
-									{{else}}
-										<input type="text" class="Disabled NotEditable" disabled="disabled" value="{{each(i, type) dicts.appealTypes}}{{if type['id'] == appealType.id}}${type['61']}{{/if}}{{/each}}">
-									{{/if}}
-								</div>-->
 								<div class="HalfCol WithoutName">
 									<div class="InlineForm">
 										<label>
@@ -146,20 +130,15 @@
 							<div class="LineBlock">
 								<div class="HalfCol">
 									<span class="Label">Тип обращения</span>
-									{{if isNew}}
 									<select class="Styled Mandatory" name="request_type[id]">
 										<option value="" selected="selected">...</option>
 										{{each(i, type) dicts.requestTypes}}
 										<option value="${type['id']}">${type['value']}</option>
 										{{/each}}
 									</select>
-									{{else}}
-									<input type="text" class="Disabled NotEditable" disabled="disabled" value="${appealType.requestType.name}">
-									{{/if}}
 								</div>
 								<div class="HalfCol">
 									<span class="Label">Тип финансирования</span>
-									{{if isNew}}
 									<select class="Styled Mandatory" name="finance[id]">
 										<option value="" selected="selected">...</option>
 										{{each(i, type) dicts.financeTypes}}
@@ -168,9 +147,6 @@
 											{{/if}}
 										{{/each}}
 									</select>
-									{{else}}
-									<input type="text" class="Disabled NotEditable" disabled="disabled" value="${appealType.finance.name}">
-									{{/if}}
 								</div>
 								<div class="SemiCol">
 									<span class="Label">Тип события</span>

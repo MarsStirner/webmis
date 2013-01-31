@@ -253,9 +253,9 @@ define([
 	App.Models.Appeal = Model.extend({
 		idAttribute: "id",
 
-		initialize: function () {
+		/*initialize: function () {
 
-		},
+		},*/
 
 		isClosed: function () {
 			//return Boolean(this.get("rangeAppealDateTime").get("end"));

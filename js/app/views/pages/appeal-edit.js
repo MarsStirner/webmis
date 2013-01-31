@@ -180,7 +180,7 @@ define([
 
 			//console.log("MODEL", dicts);
 
-			this.$el.html($("#appeal-edit-common").tmpl(result))
+			this.$el.html($("#appeal-edit-common").tmpl(result));
 
 			view.model.on("change:appealWithDeseaseThisYear", function () {
 				console.log("change:appealWithDeseaseThisYear", view.model.get("appealWithDeseaseThisYear"));
