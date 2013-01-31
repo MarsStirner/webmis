@@ -117,6 +117,16 @@ define([
 				$(this).width(maxWidth);
 			})
 		},
+		redirectToMoves: function(){
+			var appealId = this.model.appealId;
+			console.log('redirecrtToMoves',this.options.appeal);
+			var moves = new App.Views.Moves({'appealId': appealId,'appeal':this.options.appeal});
+//
+			moves.setElement(this.el).render();
+//
+			App.Router.updateUrl("appeals/" + appealId + "/moves");
+
+		},
 		onSave: function () {
 			//this.model.set({"bedId": 237});
 			if (!this.model.get("moveDatetime")) {
@@ -124,15 +134,8 @@ define([
 			}
 			this.model.on('sync',function(){
 			console.log('sync');
-
-				var ai = this.model.appealId;
-			console.log(ai);
-//			var moves = new App.Views.Moves({appealId: ai});
-//
-//			moves.setElement(this.el).render();
-//
-//			App.Router.updateUrl("appeals/" + ai + "/moves/");
 			});
+			this.model.on('sync',this.redirectToMoves(),this);
 			this.model.save();
 //			console.log('save', this.model.isNew());
 

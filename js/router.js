@@ -535,7 +535,7 @@ require.config({
 			title: "Движение по отделениям",
 			uri: "/appeals/:id/moves"
 		},
-		BEDS: {
+		HOSPITALBED: {
 			title: "Регистрация на койке",
 			uri: "/appeals/:id/hospitalbed/"
 		},
