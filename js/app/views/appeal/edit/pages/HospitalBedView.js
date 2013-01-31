@@ -18,7 +18,7 @@ define([
 
 		events: {
 			'change select.Departments': 'onSelectDepartment',
-			'click .actions.save':'onSave'
+			'click .actions.save': 'onSave'
 		},
 
 		initialize: function () {
@@ -27,7 +27,7 @@ define([
 
 			this.model = new App.Models.HospitalBed();
 			this.model.appealId = this.options.appeal.get("id");
-			this.model.set({"clientId": this.options.appeal.get("patient").get("id")},{silent: true});
+			this.model.set({"clientId": this.options.appeal.get("patient").get("id")}, {silent: true});
 
 			//Получаем список отделений со свободными койками
 			this.departments = new App.Collections.Departments();
@@ -54,8 +54,6 @@ define([
 			this.moves.fetch();
 
 
-
-
 		},
 
 		//рисуем выпадающий список отделений
@@ -72,7 +70,7 @@ define([
 
 			}, this);
 
-			console.log('load department',that.model.get('movedFromUnitId'));
+			console.log('load department', that.model.get('movedFromUnitId'));
 
 			this.$(".Departments").select2('val', that.model.get('movedFromUnitId'));
 
@@ -93,30 +91,40 @@ define([
 				var bedsView = new App.Views.Beds({el: this.$('.beds'), departmentId: departmentId});
 				bedsView.collection.on("reset", function () {
 					$('.beds').empty();
+
 					_.each(bedsView.collection.models, function (model) {
 						var bedView = new App.Views.Bed({ model: model });
 						$('.beds').append(bedView.render().el);
-						bedView.on('bedChecked',function(bedId){
-							this.model.set('bedId',bedId);
+						bedView.on('bedChecked', function (bedId) {
+							this.model.set('bedId', bedId);
 
 						}, that);
 
 					});
 
+					that.justifyBeds();
+
 
 				});
 
 
-
 			}
 		},
-		onSave:function(){
+		justifyBeds: function () {
+			var maxWidth = Math.max.apply(Math, this.$('.bedBox').map(function () {
+				return $(this).width();
+			}).get());
+			this.$('.bedBox').each(function () {
+				$(this).width(maxWidth);
+			})
+		},
+		onSave: function () {
 			//this.model.set({"bedId": 237});
 			if (!this.model.get("moveDatetime")) {
 				this.model.set("moveDatetime", new Date().getTime());
 			}
 			this.model.save();
-			console.log('save',this.model.isNew());
+			console.log('save', this.model.isNew());
 		},
 
 
