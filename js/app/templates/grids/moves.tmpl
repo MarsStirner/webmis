@@ -24,6 +24,7 @@
 			<th>
 				<a class="Actions SortCol" data-field="bed"><span>Койка</span></a>
 			</th>
+			<th></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -54,7 +55,36 @@
 	<td>
 		${bed}
 	</td>
+	<td></td>
 </script>
+
+
+<script id="moves-grid-last-row-department" type="text/x-jquery-tmpl">
+	<td>
+		${unit}
+	</td>
+	<td>
+		{{formatDateTime admission}}
+	</td>
+	<td>
+		{{formatDateTime leave}}
+	</td>
+	<td>
+		${days}
+	</td>
+	<td>
+		${bedDays}
+	</td>
+	<!--<td>
+		${chamber}
+	</td>-->
+	<td>${bed}</td>
+	<td>
+		<a href="#">Отменить</a>
+	</td>
+</script>
+
+
 
 <script id="moves-grid-department-default" type="text/x-jquery-tmpl">
 	<h3>Записей нет</h3>
