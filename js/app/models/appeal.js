@@ -327,7 +327,10 @@ define([
 			hospitalizationWith: [],
 			//bold
 			havePrimary: false,
-			setPerson: {}
+			setPerson: {},
+			nextHospDate: null,
+			nextHospDepartment: null,
+			nextHospFinanceType: null
 		},
 		relations: [
 			{

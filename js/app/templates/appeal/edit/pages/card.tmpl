@@ -225,5 +225,29 @@
 				</tr>
 			{{/each}}
 		{{/if}}
+		{{if nextHospDate || nextHospDepartment || nextHospFinanceType}}
+			<tr>
+				<td><b style="color: black">Информация о следующей госпитализации</b></td>
+				<td>&nbsp;</td>
+			</tr>
+			{{if nextHospDate}}
+				<tr>
+					<td>Дата следующей госпитализации</td>
+					<td>${nextHospDate}</td>
+				</tr>
+			{{/if}}
+			{{if nextHospDepartment}}
+				<tr>
+					<td>Отделение госпитализации</td>
+					<td>${nextHospDepartment}</td>
+				</tr>
+			{{/if}}
+			{{if nextHospFinanceType}}
+				<tr>
+					<td>Тип финансирования</td>
+					<td>${nextHospFinanceType}</td>
+				</tr>
+			{{/if}}
+		{{/if}}
 	</tbody>
 </table>
