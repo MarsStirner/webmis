@@ -73,7 +73,7 @@
 									<div class="DateTime">
 										<div class="DatePeriod SingleDate Mandatory">
 											<div class="FromTo">
-												<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="appeal[date][start]" placeholder="дд.мм.гггг" class="SelectDate" required="required" />
+												<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="appeal[date][start]" placeholder="дд.мм.гггг" class="SelectDate" required="required" data-mindate="${-Math.floor((new Date().getTime() - new Date(patient.birthDate).getTime())/(1000*60*60*24))}"/>
 											</div>
 											<i class="DateIcon Icon"></i>
 										</div>
