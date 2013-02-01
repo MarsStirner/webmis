@@ -213,5 +213,17 @@
 				{{if deliveredAfterType && deliveredAfterType != "-1"}}${deliveredAfterType}{{else}}-{{/if}}
 			</td>
 		</tr>
+		{{if hospitalizationWith && hospitalizationWith.length}}
+			{{each(i, hw) hospitalizationWith}}
+				<tr>
+					<td>Законный представитель</td>
+					<td>
+						<a href="/patients/${hw.relative.id}/">
+							<span>${hw.relative.name}, {{getYear hw.relative.birthDate}} г.р.{{if hw.note}} (${hw.note}){{/if}}</span>
+						</a>
+					</td>
+				</tr>
+			{{/each}}
+		{{/if}}
 	</tbody>
 </table>
