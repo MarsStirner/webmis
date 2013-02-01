@@ -53,7 +53,12 @@
 		${chamber}
 	</td>-->
 	<td>
+		{{if bed == "Положить на койку"}}
+		<a href="#">Положить на койку</a>
+		{{else}}
 		${bed}
+		{{/if}}
+
 	</td>
 	<td></td>
 </script>
@@ -78,9 +83,15 @@
 	<!--<td>
 		${chamber}
 	</td>-->
-	<td>${bed}</td>
 	<td>
-		<a href="#">Отменить</a>
+		{{if bed == "Положить на койку"}}
+		<a href="#" class="bed-registration">Положить на койку</a>
+		{{else}}
+		${bed}
+		{{/if}}
+	</td>
+	<td>
+		<a href="#" class="cancel-bed-registration">Отменить</a>
 	</td>
 </script>
 

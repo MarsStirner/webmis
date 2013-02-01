@@ -34,14 +34,7 @@ define([
 				defaultTemplateId: "#moves-grid-department-default"
 			});
 
-			this.grid.on('grid:rowClick', function (move, event) {
-				event.preventDefault();
 
-				if (event.target.localName == 'a') {
-					this.cancelMove(move);
-				}
-
-			},this);
 
 			this.moveTypeConstrs = {
 				department: this.newSendToDepartment,
@@ -106,7 +99,21 @@ define([
 		},
 
 		render: function () {
-			console.log('render')
+			console.log('render');
+			this.grid.on('grid:rowClick', function (move, event) {
+				event.preventDefault();
+
+				console.log(event.target.className)
+				if (event.target.className == 'cancel-bed-registration') {
+					this.cancelMove(move);
+				}
+				if (event.target.className == 'bed-registration') {
+					this.newHospitalBed(move);
+				}
+
+
+			},this);
+
 			var self = this;
 			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
 
