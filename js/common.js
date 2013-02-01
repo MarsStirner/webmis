@@ -537,7 +537,7 @@ Form = View.extend({
 			var $this = $(this);
 
 			if ($this.hasClass("Combo")) {
-				$this.parents().find(".ComboWrapper").removeClass("WrongField");
+				$this.closest(".ComboWrapper").removeClass("WrongField");
 			} else {
 				$this.removeClass("WrongField");
 			}
@@ -554,7 +554,7 @@ Form = View.extend({
 
 			if (!$input.val().length || $input.hasClass("invalid")) {
 				if ($this.hasClass("Combo")) {
-					$this.parents().find(".ComboWrapper").addClass("WrongField");
+					$this.closest(".ComboWrapper").addClass("WrongField");
 				} else {
 					$this.addClass("WrongField");
 				}

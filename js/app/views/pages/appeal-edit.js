@@ -143,8 +143,7 @@ define([
 			});
 
 			diagnosisView.on("diagnosis:change", function (event) {
-				this.$("input[name='injury']").toggleClass("Mandatory", event.isInjury);
-				this.$("input[name='injury']").parents().find(".ComboWrapper").toggleClass("Mandatory", event.isInjury);
+				this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
 			}, this);
 
 			this.depended(diagnosisView);
