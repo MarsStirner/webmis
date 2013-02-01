@@ -106,8 +106,8 @@ define(["views/grid-row"], function() {
 					});
 					view.depended(GridRow);
 
-					GridRow.on("row:click", function (model) {
-						view.trigger("grid:rowClick", model);
+					GridRow.on("row:click", function (model,event) {
+						view.trigger("grid:rowClick", model,event);
 					}, this);
 
 					$tbody.append( GridRow.render().el );

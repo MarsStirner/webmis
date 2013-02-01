@@ -8,7 +8,7 @@ define ([], function () {
 
 		updateUrl: function ( event ) {
 			if (this.options.triggerOnly) {
-				this.trigger("row:click", this.model);
+				this.trigger("row:click", this.model,event);
 			} else {
 				var $target = $(event.currentTarget ),
 					href = $target.closest("tr").find("a").attr("href");
