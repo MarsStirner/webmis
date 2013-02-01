@@ -6,7 +6,8 @@ define([
 	"views/filter",
 	"views/filter-dictionaries",
 	"views/paginator",
-	"collections/department-patients"
+	"collections/department-patients",
+	"views/appeal/edit/popups/send-to-department",
 ], function () {
 	App.Views.AppealsList = View.extend({
 		id: "main",
@@ -78,6 +79,14 @@ define([
 			this.$(".Grid thead tr").toggleClass("EditTh");
 			this.$(".Grid .Filter").toggle();
 		},
+		//Новое мероприятие/направление или перевод в отделение
+		newSendToDepartment: function (appeal) {
+			console.log('newSendToDepartment');
+			var sendPopUp = new App.Views.SendToDepartment({appeal: appeal}).render().open();
+			sendPopUp.on("closed", function () {
+				this.collection.fetch();
+			}, this);
+		},
 
 		ready: function () {
 			var view = this;
@@ -145,11 +154,19 @@ define([
 				});
 				AppealsGrid = new App.Views.Grid({
 					collection: Collection,
+					popUpMode: true,
 					template: "grids/appeals",
 					gridTemplateId: "#appeals-grid-nurse",
 					rowTemplateId: "#appeals-grid-nurse-row",
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
+				AppealsGrid.on('grid:rowClick', function(model,event){
+					if(event.target.localName != 'a'){
+						App.Router.navigate ( '/appeals/'+model.get('id')+'/', {trigger:true} );
+					}else{
+						view.newSendToDepartment(model);
+					}
+				})
 			}, this);
 
 			this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {

@@ -279,7 +279,12 @@
 			{{if moving}}
 				${moving.department.name}
 			{{else}}
-				-
+			{{if status=='Госпитализирован'}}
+				<a href="#">Направить в отделение</a>
+			{{else}}
+			  -
+			{{/if}}
+
 			{{/if}}
 		</td>
 </script>
