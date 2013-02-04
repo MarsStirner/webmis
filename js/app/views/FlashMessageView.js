@@ -20,7 +20,7 @@
 				'width':300,
 				'z-index':10500,
 				'right': 0,
-				'top': 0
+				'top': 38
 			});
 
 			$('body').append(noty);
