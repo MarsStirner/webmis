@@ -3,9 +3,18 @@ require.config({
 	baseUrl: "/js/app"
 });
 
+
+
+require(["views/FlashMessageView"], function (FlashMessage){
+
+	var messenger = new FlashMessage();
+});
+
 (function(){
 /*	Backbone.emulateHTTP = true;
 	Backbone.emulateJSON = true;*/
+
+
 
 	var ExtendedRouter = Backbone.Router.extend({
 		navigate: function (fragment, options) {
