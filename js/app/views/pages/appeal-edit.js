@@ -15,7 +15,7 @@ define([
 		model: App.Models.Appeal,
 
 		events: {
-			"click .Actions.Save": "save",
+			"click .Actions.Save": "onSave",
 			"click .Actions.Cancel": "cancel",
 			"click .AddRepresentative": "onAddRepresentativeClick"
 		},
@@ -65,6 +65,15 @@ define([
 			 this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);*/
 		},
 
+		onSave: function (event) {
+			var self = this;
+
+			var readyToSave = this.save(event, {error: function () {
+				self.$(".Save").attr("disabled", false);
+			}});
+
+			this.$(".Save").attr("disabled", readyToSave);
+		},
 
 		onAddRepresentativeClick: function () {
 			this.openRepresentativeWindow();
