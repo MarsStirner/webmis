@@ -20,13 +20,21 @@ define([
 			this.collection = new App.Collections.Moves();
 			this.collection.appealId = this.options.appealId;
 
+			this.collection.bind('remove', function(){
+				this.render();
+			}, this);
+
 			this.grid = new App.Views.Grid({
+				popUpMode: true,
 				collection: this.collection,
 				template: "grids/moves",
 				gridTemplateId: "#moves-grid-department",
 				rowTemplateId: "#moves-grid-row-department",
+				lastRowTemplateId: "#moves-grid-last-row-department",
 				defaultTemplateId: "#moves-grid-department-default"
 			});
+
+
 
 			this.moveTypeConstrs = {
 				department: this.newSendToDepartment,
@@ -35,11 +43,11 @@ define([
 
 			this.depended(this.grid);
 
-			this.collection.on("reset", function () {
-				if (this.options.appeal.isClosed()) {
-					//this.grid.$(".EditExam").attr("disabled", true);
-				}
-			}, this);
+//			this.collection.on("reset", function () {
+//				if (this.options.appeal.isClosed()) {
+//					//this.grid.$(".EditExam").attr("disabled", true);
+//				}
+//			}, this);
 
 			this.collection.fetch();
 		},
@@ -57,6 +65,21 @@ define([
 			if ($.isFunction(this.moveTypeConstrs[moveType])) {
 				this.moveTypeConstrs[moveType].call(this, event);
 			}
+		},
+		cancelMove: function(move){
+			var view = this;
+			console.log(view)
+			var url = DATA_PATH + 'hospitalbed/'+move.get('id')+'/calloff';
+
+			$.ajax({
+				method:'get',
+				url:url,
+				success:function(){
+					console.log('trigger remove');
+					view.collection.trigger('remove');
+			}});
+
+
 		},
 
 		//Новое мероприятие/направление или перевод в отделение
@@ -76,6 +99,21 @@ define([
 		},
 
 		render: function () {
+			console.log('render');
+			this.grid.on('grid:rowClick', function (move, event) {
+				event.preventDefault();
+
+				console.log(event.target.className)
+				if (event.target.className == 'cancel-bed-registration') {
+					this.cancelMove(move);
+				}
+				if (event.target.className == 'bed-registration') {
+					this.newHospitalBed(move);
+				}
+
+
+			},this);
+
 			var self = this;
 			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
 

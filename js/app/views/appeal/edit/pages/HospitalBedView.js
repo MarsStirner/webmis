@@ -18,7 +18,8 @@ define([
 
 		events: {
 			'change select.Departments': 'onSelectDepartment',
-			'click .actions.save': 'onSave'
+			'click .actions.save': 'onSave',
+			'click .actions.cansel': 'onCansel'
 		},
 
 		initialize: function () {
@@ -50,7 +51,7 @@ define([
 				this.model.set('movedFromUnitId', this.moves.last().get("unitId"));
 				this.model.set('moveDatetime', this.moves.at(this.moves.length - 2).get('leave'));
 
-				console.log('moveDatetime',this.moves.at(this.moves.length - 2).get('leave'))
+				console.log('moveDatetime', this.moves.at(this.moves.length - 2).get('leave'))
 
 			}, this);
 
@@ -120,28 +121,28 @@ define([
 				$(this).width(maxWidth);
 			})
 		},
-		redirectToMoves: function(){
+		redirectToMoves: function () {
 			var appealId = this.model.appealId;
-			console.log('redirecrtToMoves',this.options.appeal);
-			var moves = new App.Views.Moves({'appealId': appealId,'appeal':this.options.appeal});
-//
+			var moves = new App.Views.Moves({'appealId': appealId, 'appeal': this.options.appeal});
 			moves.setElement(this.el).render();
-//
-			App.Router.updateUrl("appeals/" + appealId + "/moves");
+			App.Router.updateUrl("appeals/" + appealId + "/moves/");
 
 		},
 		onSave: function () {
-			//this.model.set({"bedId": 237});
+			var view = this;
+
 			if (!this.model.get("moveDatetime")) {
 				this.model.set("moveDatetime", new Date().getTime());
 			}
-			this.model.on('sync',function(){
-			console.log('sync');
-			});
-			this.model.on('sync',this.redirectToMoves(),this);
-			this.model.save();
-//			console.log('save', this.model.isNew());
 
+			this.model.save({}, {success: function () {
+				view.redirectToMoves();
+			}});
+
+		},
+		onCansel: function (e) {
+			e.preventDefault();
+			this.redirectToMoves();
 		},
 
 		render: function () {
