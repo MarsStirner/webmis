@@ -174,7 +174,7 @@ define([
 			console.log("типы", result.dicts.requestTypes);
 
 			result.dicts.requestTypes = _(result.dicts.requestTypes).filter(function (rType) {
-				return rType.code === "clinic" || rType.code === "hospital";
+				return ["clinic" , "hospital", "1", "2"].indexOf(rType.code) !== -1;
 			});
 
 			//console.log("MODEL", dicts);
