@@ -532,7 +532,7 @@ require.config({
 			uri: "/appeals/:id/"
 		},
 		MOVES: {
-			title: "Движение по отделениям",
+			title: "Движение пациента",
 			uri: "/appeals/:id/moves"
 		},
 		HOSPITALBED: {

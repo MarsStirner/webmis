@@ -66,18 +66,23 @@ define([
 				this.moveTypeConstrs[moveType].call(this, event);
 			}
 		},
-		cancelMove: function(move){
+		cancelMove: function (move) {
 			var view = this;
-			console.log(view)
-			var url = DATA_PATH + 'hospitalbed/'+move.get('id')+'/calloff';
+			var url = DATA_PATH + 'hospitalbed/' + move.get('id') + '/calloff';
 
 			$.ajax({
-				method:'get',
-				url:url,
-				success:function(){
-					console.log('trigger remove');
+				method: 'get',
+				url: url,
+				success: function (data) {
+					console.log('success cansel remove');
+					console.log(data);
 					view.collection.trigger('remove');
-			}});
+				}, error: function (data) {
+					console.log('error cancel remove');
+					console.log(data);
+					view.collection.trigger('remove');
+				}
+			});
 
 
 		},
@@ -92,18 +97,18 @@ define([
 
 		//Новое мероприятие/регистрация на койку
 		newHospitalBed: function () {
-			var hospitalBed = new App.Views.HospitalBed({appeal: this.options.appeal});
-			hospitalBed.setElement(this.el).render();
+			this.trigger("change:viewState", {type: 'hospitalbed', options: {}});
+			//var hospitalBed = new App.Views.HospitalBed({appeal: this.options.appeal});
+			//hospitalBed.setElement(this.el).render();
 
 			App.Router.updateUrl("appeals/" + this.options.appealId + "/hospitalbed/");
 		},
 
 		render: function () {
-			console.log('render');
+			console.log('moves view render');
 			this.grid.on('grid:rowClick', function (move, event) {
 				event.preventDefault();
 
-				console.log(event.target.className)
 				if (event.target.className == 'cancel-bed-registration') {
 					this.cancelMove(move);
 				}
