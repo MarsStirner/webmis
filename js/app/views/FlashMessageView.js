@@ -10,7 +10,14 @@
 	var FlashMessage = Backbone.View.extend({
 		initialize: function() {
 			pubsub.bind('noty', this.showMessage);
+			pubsub.bind('noty_save', this.saveMessage);
 			this.render();
+
+			var previousMessage = this.readMessage();
+			if(previousMessage){
+				this.showMessage(previousMessage);
+				Core.Cookies.set('noty',null, new Date(0));
+			}
 
 		},
 
@@ -48,6 +55,21 @@
 
 			$('#noty').noty(noty_optyons);
 
+		},
+		cookie_name: 'noty',
+		saveMessage: function(options){
+			var message = JSON.stringify(options)
+			Core.Cookies.set('noty',message);
+
+		},
+		readMessage: function(){
+
+			var cookie = Core.Cookies.get('noty');
+			if(cookie){
+				return JSON.parse(cookie);
+			}else{
+				return false;
+			}
 		}
 
 	});
