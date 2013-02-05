@@ -1780,6 +1780,11 @@ define([
 						this.collection.fetch();
 
 						this.departments = new App.Collections.Departments();
+						this.departments.setParams({
+							filter: {
+								hasBeds: true
+							}
+						});
 						this.departments.on("reset", this.onDepartmentsReset, this);
 						this.departments.fetch();
 
