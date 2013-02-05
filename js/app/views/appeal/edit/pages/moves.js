@@ -21,7 +21,7 @@ define([
 			this.collection.appealId = this.options.appealId;
 
 			this.collection.bind('remove', function(){
-				this.render();
+				this.collection.fetch();
 			}, this);
 
 			this.grid = new App.Views.Grid({
@@ -76,6 +76,8 @@ define([
 				success: function (data) {
 					console.log('success cansel remove');
 					console.log(data);
+
+					//pubsub.trigger('noty', {text:'Регистрация отменена'});
 					view.collection.trigger('remove');
 				}, error: function (data) {
 					console.log('error cancel remove');
@@ -98,9 +100,6 @@ define([
 		//Новое мероприятие/регистрация на койку
 		newHospitalBed: function () {
 			this.trigger("change:viewState", {type: 'hospitalbed', options: {}});
-			//var hospitalBed = new App.Views.HospitalBed({appeal: this.options.appeal});
-			//hospitalBed.setElement(this.el).render();
-
 			App.Router.updateUrl("appeals/" + this.options.appealId + "/hospitalbed/");
 		},
 
