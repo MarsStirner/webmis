@@ -20,12 +20,12 @@ define([
 		events: {
 			'change select.Departments': 'onSelectDepartment',
 			'click .actions.save': 'onSave',
-			'click .actions.cansel': 'onCansel'
+			'click .actions.cancel': 'onCancel'
 		},
 
 		initialize: function () {
 			_.bindAll(this);
-			this.trigger("change:viewState", {type: "hospitalbed", options: {}});
+			//this.trigger("change:viewState", {type: "hospitalbed", options: {}});
 
 
 			this.model = new App.Models.HospitalBed();
@@ -57,8 +57,11 @@ define([
 				this.model.set('movedFromUnitIdBackup', movedFromUnitId);
 
 				//время предпоследнего движения
-				var leave = this.moves.at(this.moves.length - 2).get('leave');
-				this.model.set('moveDatetime', leave ? leave : '' );
+				var previousDepartmentLeave = this.moves.at(this.moves.length - 2).get('leave');
+				var previousDepartment = this.moves.at(this.moves.length - 2).get('unit');
+				console.log(previousDepartment);
+				this.model.set('moveDatetime', previousDepartmentLeave ? previousDepartmentLeave : '');
+				this.model.previousDepartment = previousDepartment ? previousDepartment : '';
 
 			}, this);
 
@@ -128,14 +131,14 @@ define([
 
 			//если мы выберем другое отделени в выпадающем списке,
 			// для которого не созданно направление, то это направление надо будет создать наверно....
-			if (this.model.get('movedFromUnitIdBackup') != this.model.get('movedFromUnitId') ){
+			if (this.model.get('movedFromUnitIdBackup') != this.model.get('movedFromUnitId')) {
 
 				console.log('надо создать движение');
 				var new_move = new App.Models.Move();
 				new_move.appealId = view.options.appeal.get("id");
 				new_move.set("clientId", view.options.appeal.get("patient").get("id"));
-				new_move.set("moveDatetime",view.model.get("moveDatetime"));
-				new_move.set("unitId",view.model.get("movedFromUnitId"));
+				new_move.set("moveDatetime", view.model.get("moveDatetime"));
+				new_move.set("unitId", view.model.get("movedFromUnitId"));
 
 				new_move.on("sync", function () {
 					view.model.save({}, {success: function () {
@@ -145,18 +148,18 @@ define([
 				}, this);
 				new_move.save();
 
-			}else{
+			} else {
 
-				view.model.save({}, {success: function () {
-					view.redirectToMoves();
-				}});
+				view.model.save({}, {
+					success: function () {
+						view.redirectToMoves();
+					}});
 
 			}
 
 
-
 		},
-		onCansel: function (e) {
+		onCancel: function (e) {
 			var view = this;
 			e.preventDefault();
 			view.redirectToMoves();
@@ -164,8 +167,10 @@ define([
 
 		render: function () {
 			var view = this;
+			var modelJSON = _.extend({previousDepartment: view.model.previousDepartment}, view.model.toJSON());
 
-			view.$el.html($.tmpl(view.template, view.model.toJSON()));
+			console.log(modelJSON);
+			view.$el.html($.tmpl(view.template, modelJSON));
 
 			UIInitialize(view.el);
 
