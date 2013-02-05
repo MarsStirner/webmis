@@ -8,6 +8,7 @@ define([
 	"collections/Beds",
 	"collections/moves",
 	"models/HospitalBed",
+	"models/move",
 	"collections/departments",
 	"views/appeal/edit/pages/BedsView"
 ], function (template) {
@@ -50,7 +51,10 @@ define([
 				this.moves.off(null, null, this);
 
 				//ид последнего движения
-				this.model.set('movedFromUnitId', this.moves.last().get("unitId"));
+				var movedFromUnitId = this.moves.last().get("unitId");
+				this.model.set('movedFromUnitId', movedFromUnitId);
+
+				this.model.set('movedFromUnitIdBackup', movedFromUnitId);
 
 				//время предпоследнего движения
 				var leave = this.moves.at(this.moves.length - 2).get('leave');
@@ -68,8 +72,6 @@ define([
 			this.departmentsJSON = departments.toJSON();
 			var that = this;
 			_(this.departmentsJSON).each(function (d, index) {
-
-
 				this.$(".Departments").append($("<option/>", {
 					"text": d.name,
 					"value": d.id
@@ -77,9 +79,7 @@ define([
 
 			}, this);
 
-
 			this.$(".Departments").select2('val', that.model.get('movedFromUnitId'));
-
 
 		},
 		onSelectDepartment: function (event) {
@@ -126,9 +126,34 @@ define([
 				view.model.set("moveDatetime", new Date().getTime());
 			}
 
-			view.model.save({}, {success: function () {
-				view.redirectToMoves();
-			}});
+			//если мы выберем другое отделени в выпадающем списке,
+			// для которого не созданно направление, то это направление надо будет создать наверно....
+			if (this.model.get('movedFromUnitIdBackup') != this.model.get('movedFromUnitId') ){
+
+				console.log('надо создать движение');
+				var new_move = new App.Models.Move();
+				new_move.appealId = view.options.appeal.get("id");
+				new_move.set("clientId", view.options.appeal.get("patient").get("id"));
+				new_move.set("moveDatetime",view.model.get("moveDatetime"));
+				new_move.set("unitId",view.model.get("movedFromUnitId"));
+
+				new_move.on("sync", function () {
+					view.model.save({}, {success: function () {
+						view.redirectToMoves();
+					}});
+
+				}, this);
+				new_move.save();
+
+			}else{
+
+				view.model.save({}, {success: function () {
+					view.redirectToMoves();
+				}});
+
+			}
+
+
 
 		},
 		onCansel: function (e) {
