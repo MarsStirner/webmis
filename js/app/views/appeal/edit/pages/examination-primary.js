@@ -200,6 +200,21 @@ define([
 			$toggleTargets.toggle();
 		},
 
+		save: function (event) {
+			var datesValid = (this.examBeginDate && this.examEndDate) ?
+				parseInt(this.examBeginDate.get("value")) < parseInt(this.examEndDate.get("value")) :
+				true;
+			var otherValid = Form.prototype.save.apply(this, event);
+
+			this.$("#exam-begin-date, #exam-end-date").closest(".DateTime").find(".DatePeriod, .HourPicker").toggleClass("WrongField", !datesValid);
+
+			if (!datesValid) {
+				$('html, body').animate({ scrollTop: this.$("#exam-begin-date").offset().top - 30 }, 'fast');
+			}
+
+			return datesValid && Form.prototype.save.apply(this, event);
+		},
+
 		onSaveExamClick: function (event) {
 			if (this.model.isValid()) {
 				if (this.examBeginDate) this.examBeginDate.off(null);
