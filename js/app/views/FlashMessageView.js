@@ -5,7 +5,7 @@
  * pubsub.trigger('noty', {text:'текст сообщения',type:'error'});
  *
  */
-	define([], function () {
+define([], function () {
 
 	var FlashMessage = Backbone.View.extend({
 		initialize: function() {

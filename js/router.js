@@ -541,7 +541,7 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			uri: "/appeals/:id/"
 		},
 		MOVES: {
-			title: "Движение по отделениям",
+			title: "Движение пациента",
 			uri: "/appeals/:id/moves"
 		},
 		HOSPITALBED: {
