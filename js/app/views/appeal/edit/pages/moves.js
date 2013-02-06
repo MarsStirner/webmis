@@ -13,27 +13,39 @@ define([
 
 		events: {
 			"click #new-move": "toggleMoveTypes",
-			"click #move-type-list li":"createNewMove"
+			"click #move-type-list li": "createNewMove"
 		},
 
 		initialize: function () {
 			this.collection = new App.Collections.Moves();
 			this.collection.appealId = this.options.appealId;
 
-			this.collection.bind('remove', function(){
-				this.render();
+			this.collection.bind('remove', function () {
+				this.collection.fetch();
 			}, this);
+
+			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
+
+			var gridTemplateId = "#moves-grid-department",
+				rowTemplateId = "#moves-grid-row-department",
+				lastRowTemplateId = "#moves-grid-last-row-department",
+				defaultTemplateId = "#moves-grid-department-default";
+
+			if (allowToMove) {
+				gridTemplateId = "#moves-grid-department-with-move";
+				rowTemplateId = "#moves-grid-row-department-with-move";
+				lastRowTemplateId = "#moves-grid-last-row-department-with-move";
+			}
 
 			this.grid = new App.Views.Grid({
 				popUpMode: true,
 				collection: this.collection,
 				template: "grids/moves",
-				gridTemplateId: "#moves-grid-department",
-				rowTemplateId: "#moves-grid-row-department",
-				lastRowTemplateId: "#moves-grid-last-row-department",
-				defaultTemplateId: "#moves-grid-department-default"
+				gridTemplateId: gridTemplateId,
+				rowTemplateId: rowTemplateId,
+				lastRowTemplateId: lastRowTemplateId,
+				defaultTemplateId: defaultTemplateId
 			});
-
 
 
 			this.moveTypeConstrs = {
@@ -66,18 +78,25 @@ define([
 				this.moveTypeConstrs[moveType].call(this, event);
 			}
 		},
-		cancelMove: function(move){
+		cancelMove: function (move) {
 			var view = this;
-			console.log(view)
-			var url = DATA_PATH + 'hospitalbed/'+move.get('id')+'/calloff';
+			var url = DATA_PATH + 'hospitalbed/' + move.get('id') + '/calloff';
 
 			$.ajax({
-				method:'get',
-				url:url,
-				success:function(){
-					console.log('trigger remove');
+				method: 'get',
+				url: url,
+				success: function (data) {
+					console.log('success cansel remove');
+					console.log(data);
+
+					//pubsub.trigger('noty', {text:'Регистрация отменена'});
 					view.collection.trigger('remove');
-			}});
+				}, error: function (data) {
+					console.log('error cancel remove');
+					console.log(data);
+					view.collection.trigger('remove');
+				}
+			});
 
 
 		},
@@ -92,18 +111,15 @@ define([
 
 		//Новое мероприятие/регистрация на койку
 		newHospitalBed: function () {
-			var hospitalBed = new App.Views.HospitalBed({appeal: this.options.appeal});
-			hospitalBed.setElement(this.el).render();
-
+			this.trigger("change:viewState", {type: 'hospitalbed', options: {}});
 			App.Router.updateUrl("appeals/" + this.options.appealId + "/hospitalbed/");
 		},
 
 		render: function () {
-			console.log('render');
+			console.log('moves view render');
 			this.grid.on('grid:rowClick', function (move, event) {
 				event.preventDefault();
 
-				console.log(event.target.className)
 				if (event.target.className == 'cancel-bed-registration') {
 					this.cancelMove(move);
 				}
@@ -112,7 +128,7 @@ define([
 				}
 
 
-			},this);
+			}, this);
 
 			var self = this;
 			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
@@ -122,11 +138,11 @@ define([
 
 			// Пэйджинатор
 			/*this.paginator = new App.Views.Paginator({
-					collection: self.collection
-			});
-			this.depended(this.paginator);
+			 collection: self.collection
+			 });
+			 this.depended(this.paginator);
 
-			this.$el.append(this.paginator.render().el);*/
+			 this.$el.append(this.paginator.render().el);*/
 
 			//this.sendToDep.render();
 

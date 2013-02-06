@@ -133,6 +133,7 @@ define([
 		},
 
 		onViewStateChange: function (event) {
+			console.log('onViewStateChange',event);
 			this.setContentView(event.type, event.options);
 		},
 
@@ -336,8 +337,8 @@ define([
 							{name: "medical-info", title: "Оперативное"},
 							{name: "medical-info", title: "Восстановительное"}
 						]},
-						{name: "beds", title: "Коечный фонд"},
-						App.Router.compile({name: "moves", title: "Движение по отделениям", uri: "/appeals/:id/moves"}, appealJSON)
+						//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
+						App.Router.compile({name: "moves", title: "Движение пациента", uri: "/appeals/:id/moves"}, appealJSON)
 
 					]
 				}
@@ -378,7 +379,9 @@ define([
 							{name: "medical-info", title: "Восстановительное"}
 						]},
 						/*App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)*/
-						App.Router.compile({name: "moves", title: "Движение по отделениям", uri: "/appeals/:id/moves"}, appealJSON)
+
+						App.Router.compile({name: "moves", title: "Движение пациента", uri: "/appeals/:id/moves"}, appealJSON)
+
 					]
 				}
 			}, this);
@@ -399,6 +402,8 @@ define([
 							{name: "medical-info", title: "Восстановительное"}
 						]},
 						//App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)
+						//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
+
 						App.Router.compile({
 							name: "moves",
 							title: "Движение по отделениям",
