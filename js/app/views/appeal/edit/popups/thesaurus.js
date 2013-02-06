@@ -179,7 +179,7 @@ define([
 				});
 				this.termTree.collection.parentGroupId = undefined;
 
-				this.termTree.collection.fetch();
+				this.termTree.collection.reset().fetch();
 			}
 		},
 
