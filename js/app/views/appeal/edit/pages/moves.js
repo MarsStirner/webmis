@@ -13,27 +13,39 @@ define([
 
 		events: {
 			"click #new-move": "toggleMoveTypes",
-			"click #move-type-list li":"createNewMove"
+			"click #move-type-list li": "createNewMove"
 		},
 
 		initialize: function () {
 			this.collection = new App.Collections.Moves();
 			this.collection.appealId = this.options.appealId;
 
-			this.collection.bind('remove', function(){
+			this.collection.bind('remove', function () {
 				this.collection.fetch();
 			}, this);
+
+			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
+
+			var gridTemplateId = "#moves-grid-department",
+				rowTemplateId = "#moves-grid-row-department",
+				lastRowTemplateId = "#moves-grid-last-row-department",
+				defaultTemplateId = "#moves-grid-department-default";
+
+			if (allowToMove) {
+				gridTemplateId = "#moves-grid-department-with-move";
+				rowTemplateId = "#moves-grid-row-department-with-move";
+				lastRowTemplateId = "#moves-grid-last-row-department-with-move";
+			}
 
 			this.grid = new App.Views.Grid({
 				popUpMode: true,
 				collection: this.collection,
 				template: "grids/moves",
-				gridTemplateId: "#moves-grid-department",
-				rowTemplateId: "#moves-grid-row-department",
-				lastRowTemplateId: "#moves-grid-last-row-department",
-				defaultTemplateId: "#moves-grid-department-default"
+				gridTemplateId: gridTemplateId,
+				rowTemplateId: rowTemplateId,
+				lastRowTemplateId: lastRowTemplateId,
+				defaultTemplateId: defaultTemplateId
 			});
-
 
 
 			this.moveTypeConstrs = {
@@ -116,7 +128,7 @@ define([
 				}
 
 
-			},this);
+			}, this);
 
 			var self = this;
 			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
@@ -126,11 +138,11 @@ define([
 
 			// Пэйджинатор
 			/*this.paginator = new App.Views.Paginator({
-					collection: self.collection
-			});
-			this.depended(this.paginator);
+			 collection: self.collection
+			 });
+			 this.depended(this.paginator);
 
-			this.$el.append(this.paginator.render().el);*/
+			 this.$el.append(this.paginator.render().el);*/
 
 			//this.sendToDep.render();
 
