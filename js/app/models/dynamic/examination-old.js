@@ -107,6 +107,8 @@ define(function () {
 			/*if (options.editId) {
 				this.editId = options.editId;
 			}*/
+
+			Model.prototype.initialize.apply(this);
 		},
 
 		url: function () {

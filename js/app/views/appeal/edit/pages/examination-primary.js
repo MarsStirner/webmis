@@ -62,6 +62,8 @@ define([
 				this.trigger("change:viewState", {type: "examination-primary-preview", options: {model: this.model}});
 			}, this);
 
+			this.model.on("error", this.onSaveError, this);
+
 			this.thesaurus = new App.Views.Thesaurus();
 			this.thesaurus.on("thesaurus:confirmed", this.onThesaurusConfirmed, this);
 
@@ -200,18 +202,28 @@ define([
 
 		onSaveExamClick: function (event) {
 			if (this.model.isValid()) {
+				if (this.examBeginDate) this.examBeginDate.off(null);
+				if (this.examBeginDate) this.examBeginDate.off(null);
+				if (this.examEndDate) this.examEndDate.off(null);
+				if (this.examEndDate) this.examEndDate.off(null);
+
 				var readyToSave = this.save(event);
 				if (readyToSave) {
-					if (!this.examEndDate.get("value")) {
+					/*if (!this.examEndDate.get("value")) {
 						this.examEndDate.set("value", new Date().getTime());
-					}
-					this.$(".SaveBtn").attr("disabled", true).addClass("Disabled");
+					}*/
+					this.toggleSaveBtn(false);
 				} else {
 					this.showInputs();
 				}
 			} else {
 				// show error, highlight invalid fields
 			}
+		},
+
+		onSaveError: function () {
+			this.connectDates();
+			this.toggleSaveBtn(true);
 		},
 
 		onCancelClick: function (event) {
@@ -264,6 +276,17 @@ define([
 			});
 		},
 
+		connectDates: function () {
+			if (this.examBeginDate) this.examBeginDate.connect("value", this.$("#exam-begin-date"), this.$el);
+			if (this.examBeginDate) this.examBeginDate.connect("value", this.$("#exam-begin-time"), this.$el);
+			if (this.examEndDate) this.examEndDate.connect("value", this.$("#exam-end-date"), this.$el);
+			if (this.examEndDate) this.examEndDate.connect("value", this.$("#exam-end-time"), this.$el);
+		},
+
+		toggleSaveBtn: function (enabled) {
+			this.$(".SaveBtn").attr("disabled", !enabled).toggleClass("Disabled", !enabled);
+		},
+
 		render: function() {
 			var self = this;
 
@@ -277,11 +300,7 @@ define([
 			UIInitialize(this.$el);
 
 			this.showInputs();
-
-			if (this.examBeginDate) this.examBeginDate.connect("value", this.$("#exam-begin-date"), this.$el);
-			if (this.examBeginDate) this.examBeginDate.connect("value", this.$("#exam-begin-time"), this.$el);
-			if (this.examEndDate) this.examEndDate.connect("value", this.$("#exam-end-date"), this.$el);
-			if (this.examEndDate) this.examEndDate.connect("value", this.$("#exam-end-time"), this.$el);
+			this.connectDates();
 
 			// Ограничение ввода для полей формата Double
 			self.$('.RestrictFloat').keypress(function(eve) {
