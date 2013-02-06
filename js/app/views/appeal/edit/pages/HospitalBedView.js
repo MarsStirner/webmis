@@ -136,6 +136,8 @@ define([
 			}
 
 			this.model.save({}, {success: function () {
+				console.log(view.model);
+				pubsub.trigger('noty', {text:'Пациент успешно зарегистрированн на койке '});
 				view.redirectToMoves();
 			}});
 
