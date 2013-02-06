@@ -201,10 +201,9 @@ define([
 		},
 
 		save: function (event) {
-			var datesValid = (this.examBeginDate && this.examEndDate) ?
+			var datesValid = (this.examBeginDate && this.examEndDate && this.examEndDate.get("value")) ?
 				parseInt(this.examBeginDate.get("value")) < parseInt(this.examEndDate.get("value")) :
 				true;
-			var otherValid = Form.prototype.save.apply(this, event);
 
 			this.$("#exam-begin-date, #exam-end-date").closest(".DateTime").find(".DatePeriod, .HourPicker").toggleClass("WrongField", !datesValid);
 
