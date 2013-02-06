@@ -131,31 +131,31 @@ define([
 
 			//если мы выберем другое отделени в выпадающем списке,
 			// для которого не созданно направление, то это направление надо будет создать наверно....
-			if (this.model.get('movedFromUnitIdBackup') != this.model.get('movedFromUnitId')) {
-
-				//console.log('надо создать движение');
-				var new_move = new App.Models.Move();
-				new_move.appealId = view.options.appeal.get("id");
-				new_move.set("clientId", view.options.appeal.get("patient").get("id"));
-				new_move.set("moveDatetime", view.model.get("moveDatetime"));
-				new_move.set("unitId", view.model.get("movedFromUnitId"));
-
-				new_move.on("sync", function () {
-					view.model.save({}, {success: function () {
-						view.redirectToMoves();
-					}});
-
-				}, this);
-				new_move.save();
-
-			} else {
+//			if (this.model.get('movedFromUnitIdBackup') != this.model.get('movedFromUnitId')) {
+//
+//				//console.log('надо создать движение');
+//				var new_move = new App.Models.Move();
+//				new_move.appealId = view.options.appeal.get("id");
+//				new_move.set("clientId", view.options.appeal.get("patient").get("id"));
+//				new_move.set("moveDatetime", view.model.get("moveDatetime"));
+//				new_move.set("unitId", view.model.get("movedFromUnitId"));
+//
+//				new_move.on("sync", function () {
+//					view.model.save({}, {success: function () {
+//						view.redirectToMoves();
+//					}});
+//
+//				}, this);
+//				new_move.save();
+//
+//			} else {
 
 				view.model.save({}, {
 					success: function () {
 						view.redirectToMoves();
 					}});
 
-			}
+//			}
 
 
 		},

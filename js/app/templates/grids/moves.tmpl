@@ -103,11 +103,7 @@
 		${bedDays}
 	</td>
 	<td>
-			{{if bed == "Положить на койку"}}
-				<a href="#">Положить на койку</a>
-			{{else}}
 				${bed}
-			{{/if}}
 	</td>
 	<td>
 	</td>
@@ -155,14 +151,15 @@
 	</td>
 	<td>
 		{{if bed == "Положить на койку"}}
-		<a href="#" class="bed-registration">Положить на койку</a>
+		<a href="#" class="bed-registration" >Положить на койку</a>
 		{{else}}
 		${bed}
 		{{/if}}
 	</td>
 	<td>
 		{{if bed != "Положить на койку"}}
-		<i class="RemoveIcon Icon Tiny cancel-bed-registration"></i>
+		<i class="RemoveIcon Icon Tiny  HasToolTip cancel-bed-registration" data-tooltip-content="#tooltip_${id}"></i>
+		<div id="tooltip_${id}" class="ToolTip TopTail">Отмена прописки</div>
 		{{/if}}
 	</td>
 </script>
