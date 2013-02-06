@@ -6,7 +6,7 @@
 define(["text!templates/mkb-directory.tmpl", "models/mkb-directory"], function (tmpl) {
 	var MkbTreeNode = View.extend({
 		tagName: "li",
-		template: "<span>${title}</span>",
+		template: "<span>{{decorate(title, searchString)}}</span>",
 
 		childrenLoaded: false,
 		isSelectedDiagnosis: false,
@@ -78,8 +78,8 @@ define(["text!templates/mkb-directory.tmpl", "models/mkb-directory"], function (
 			});
 		},
 
-		render: function () {
-			this.$el.html($.tmpl(this.template, {title: this.model.getTitle()}));
+		render: function (searchString) {
+			this.$el.html($.tmpl(this.template, {title: this.model.getTitle(), searchString: searchString || ""}));
 
 			return this;
 		}
@@ -102,12 +102,7 @@ define(["text!templates/mkb-directory.tmpl", "models/mkb-directory"], function (
 						holder: view.options.holder
 					});
 
-					// Проверка на подсвечивание искомых слов
-					var nodeRender = $(node.render().el);
-					if (view.marked) {
-						nodeRender = nodeRender.html(Core.Strings.decorate(nodeRender.html(), view.marked)).get(0);
-					}
-					view.$el.append(nodeRender);
+					view.$el.append(node.render(view.marked).el);
 				});
 				this.marked = null;
 			} else {
