@@ -56,10 +56,11 @@ define([
 				this.model.set('movedFromUnitIdBackup', movedFromUnitId);
 
 				//время предпоследнего движения
-				var previousDepartmentLeave = this.moves.at(this.moves.length - 2).get('leave');
-				var previousDepartment = this.moves.at(this.moves.length - 2).get('unit');
-				console.log(previousDepartment);
-				this.model.set('moveDatetime', previousDepartmentLeave ? previousDepartmentLeave : '');
+				var previousMove = this.moves.at(this.moves.length - 2);
+				var lastMove = this.moves.at(this.moves.length - 1);
+				var moveDatetime = lastMove.get('admission') || previousMove.get('leave') || previousMove.get('admission');
+				var previousDepartment = previousMove.get('unit');
+				this.model.set('moveDatetime', moveDatetime);
 				this.model.previousDepartment = previousDepartment ? previousDepartment : '';
 
 			}, this);
@@ -132,7 +133,7 @@ define([
 			// для которого не созданно направление, то это направление надо будет создать наверно....
 			if (this.model.get('movedFromUnitIdBackup') != this.model.get('movedFromUnitId')) {
 
-				console.log('надо создать движение');
+				//console.log('надо создать движение');
 				var new_move = new App.Models.Move();
 				new_move.appealId = view.options.appeal.get("id");
 				new_move.set("clientId", view.options.appeal.get("patient").get("id"));

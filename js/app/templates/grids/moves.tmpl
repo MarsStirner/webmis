@@ -161,7 +161,9 @@
 		{{/if}}
 	</td>
 	<td>
-		<a href="#" class="cancel-bed-registration"><i class="CancelIcon Icon Tiny"></i></a>
+		{{if bed != "Положить на койку"}}
+		<i class="RemoveIcon Icon Tiny cancel-bed-registration"></i>
+		{{/if}}
 	</td>
 </script>
 
