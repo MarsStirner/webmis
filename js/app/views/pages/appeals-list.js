@@ -82,7 +82,13 @@ define([
 		//Новое мероприятие/направление или перевод в отделение
 		newSendToDepartment: function (appeal) {
 			console.log('newSendToDepartment');
-			var sendPopUp = new App.Views.SendToDepartment({appeal: appeal}).render().open();
+			var sendPopUp = new App.Views.SendToDepartment({
+				appealId: appeal.get("id"),
+				clientId: appeal.get("patient").get("id"),
+				moveDatetime: appeal.get("createDatetime"),
+				popupTitle: "Направление в отделение"
+			}).render().open();
+
 			sendPopUp.on("closed", function () {
 				this.collection.fetch();
 			}, this);
@@ -129,7 +135,7 @@ define([
 				 });*/
 
 				var DepCollection = new App.Collections.Departments();
-				Collection.on("reset", function resetHandler () {
+				Collection.on("reset", function resetHandler() {
 					Collection.off("reset", resetHandler);
 
 					DepCollection.fetch();
@@ -160,10 +166,10 @@ define([
 					rowTemplateId: "#appeals-grid-nurse-row",
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
-				AppealsGrid.on('grid:rowClick', function(model,event){
-					if(event.target.localName != 'a'){
-						App.Router.navigate ( '/appeals/'+model.get('id')+'/', {trigger:true} );
-					}else{
+				AppealsGrid.on('grid:rowClick', function (model, event) {
+					if (event.target.localName != 'a') {
+						App.Router.navigate('/appeals/' + model.get('id') + '/', {trigger: true});
+					} else {
 						view.newSendToDepartment(model);
 					}
 				})
