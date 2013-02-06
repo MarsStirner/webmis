@@ -21,9 +21,11 @@ define([
 
 		initialize: function (options) {
 			this.model = new App.Models.Move();
+			console.log(this.options.appeal);
 			this.model.appealId = this.options.appeal.get("id");
 			this.model.set("clientId", this.options.appeal.get("patient").get("id"));
-			this.model.set("moveDatetime", this.options.appeal.get("rangeAppealDateTime").get("start"));
+			this.model.set("moveDatetime", this.options.appeal.get("rangeAppealDateTime").get("start")||this.options.appeal.get("createDatetime"));
+			//this.model.set("moveDatetime", this.options.appeal.get("createDatetime"));
 			this.model.on("sync", function () {
 				this.close();
 			}, this);
