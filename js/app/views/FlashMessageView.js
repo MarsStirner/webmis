@@ -41,13 +41,21 @@
 		 */
 		showMessage: function(options){
 
-			var default_options = {
+		 var default_options = {
 				text: '',
 				type: 'success',
 				dismissQueue: true,
 				force: true,
 				theme: 'defaultTheme',
 				modal: false,
+				callback: {
+					afterShow: function() {
+						var noty = this;
+						setTimeout(function() {
+							noty.close();
+						}, 15000);
+					}
+				},
 				closeWith: ['click'] // ['click', 'button', 'hover']
 			};
 
