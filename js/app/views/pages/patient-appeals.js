@@ -63,18 +63,21 @@ define(["collections/patient-appeals", "models/patient", "views/breadcrumbs", "v
 						]);
 					});
 
-					var AppealsCollection = new App.Collections.PatientAppeals;
-					AppealsCollection.patient = Patient;
+					var patientAppeals = new App.Collections.PatientAppeals;
+					patientAppeals.patient = Patient;
+					patientAppeals.setParams({
+						sortingMethod: "asc"
+					});
 
 					var AppealsGrid = new App.Views.Grid ({
-						collection: AppealsCollection,
+						collection: patientAppeals,
 						template: "grids/appeals",
 						gridTemplateId: "#patient-appeals-grid",
 						rowTemplateId: "#patient-appeals-grid-row"
 					});
-					AppealsCollection.fetch();
-					AppealsCollection.on("reset", function () {
-						view.haveUnclosedAppeals = Boolean(AppealsCollection.find(function (a) {
+					patientAppeals.fetch();
+					patientAppeals.on("reset", function () {
+						view.haveUnclosedAppeals = Boolean(patientAppeals.find(function (a) {
 							return !a.get("rangeAppealDateTime").get("end");
 						}));
 					});
@@ -86,7 +89,7 @@ define(["collections/patient-appeals", "models/patient", "views/breadcrumbs", "v
 
 					// Пэйджинатор
 					var Paginator = new App.Views.Paginator ({
-						collection: AppealsCollection
+						collection: patientAppeals
 					});
 
 					view.$el.find(".ContentHolder").append( Paginator.render().el );
