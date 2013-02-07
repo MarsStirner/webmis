@@ -3,9 +3,18 @@ require.config({
 	baseUrl: "/js/app"
 });
 
+
+
+require(["views/FlashMessageView"], function (FlashMessage){
+
+	var messenger = new FlashMessage();
+});
+
 (function(){
 /*	Backbone.emulateHTTP = true;
 	Backbone.emulateJSON = true;*/
+
+
 
 	var ExtendedRouter = Backbone.Router.extend({
 		navigate: function (fragment, options) {
@@ -532,7 +541,7 @@ require.config({
 			uri: "/appeals/:id/"
 		},
 		MOVES: {
-			title: "Движение по отделениям",
+			title: "Движение пациента",
 			uri: "/appeals/:id/moves"
 		},
 		HOSPITALBED: {
