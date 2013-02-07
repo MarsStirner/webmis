@@ -98,7 +98,7 @@
 			<td> Тип финансирования </td>
 			<td>
 				{{if appealType && appealType.finance && appealType.finance.name}}
-				${appealType.finance.name}
+				${appealType.finance.name}{{if contract && contract.number}} (Договор: ${contract.number}){{/if}}
 				{{else}}
 				-
 				{{/if}}
@@ -219,16 +219,16 @@
 					<td>Законный представитель</td>
 					<td>
 						<a href="/patients/${hw.relative.id}/">
-							<span>${hw.relative.name}, {{getYear hw.relative.birthDate}} г.р.{{if hw.note}} (${hw.note}){{/if}}</span>
+							<span>${hw.relative.name}</span>
 						</a>
+						, {{getYear hw.relative.birthDate}} г.р.{{if hw.note}} (${hw.note}){{/if}}
 					</td>
 				</tr>
 			{{/each}}
 		{{/if}}
 		{{if nextHospDate || nextHospDepartment || nextHospFinanceType}}
 			<tr>
-				<td><b style="color: black">Информация о следующей госпитализации</b></td>
-				<td>&nbsp;</td>
+				<td colspan="2" style="padding-top: 2em;"><b style="color: black;">Информация о следующей госпитализации</b></td>
 			</tr>
 			{{if nextHospDate}}
 				<tr>
