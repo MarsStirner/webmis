@@ -77,6 +77,8 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			"appeals/:id/:page/:subpage/": "appeal",
 			"appeals/:id/:page/:subpage/:query": "appeal",
 
+			"biomaterials/": "biomaterials",
+
 
 			"prints/": "prints"
 		},
@@ -101,6 +103,27 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			}else {
 				this.appeals();
 			}
+		},
+
+		biomaterials: function(){
+			this.currentPage = "biomaterials";
+			console.log('biomaterials');
+
+			require(["views/app",  "views/pages/BiomaterialsView"], function (AppView,BiomaterialsView){
+				var view = new BiomaterialsView ();
+
+				if (!this.appView) {
+					this.appView = new AppView({
+						renderView: view
+					});
+					this.appView.render();
+				} else {
+					var newMain = $('<div id="main">eww</div>').append(view.render().el);
+					this.appView.$("#main").remove();
+					this.appView.$el.append(newMain);
+					//this.appView.changeRenderView(view);
+				}
+			});
 		},
 
 		patients: function (){

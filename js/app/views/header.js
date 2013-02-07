@@ -103,6 +103,11 @@ define( function ()
 								title: "Госпитализации"
 							},
 							{
+								name: "biomaterials",
+								uri: "/biomaterials/",
+								title: "Забор биоматериала"
+							},
+							{
 								title: "Амбулаторные талоны"
 							}
 						]
