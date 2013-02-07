@@ -98,7 +98,7 @@
 			<td> Тип финансирования </td>
 			<td>
 				{{if appealType && appealType.finance && appealType.finance.name}}
-				${appealType.finance.name}
+				${appealType.finance.name}{{if contract && contract.number}} (Договор: ${contract.number}){{/if}}
 				{{else}}
 				-
 				{{/if}}
