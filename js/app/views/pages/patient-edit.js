@@ -1743,7 +1743,7 @@ define([
 			"click #new-quota": "onNewQuotaClick"
 		},
 
-		noSaveBtn: true,
+		//noSaveBtn: true,
 
 		template:
 			'<li>' +
