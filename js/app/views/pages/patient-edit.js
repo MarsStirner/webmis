@@ -492,6 +492,7 @@ define([
 				if (this.options.popUpMode) {
 					this.trigger("patient:created", this.model);
 				} else {
+					pubsub.trigger('noty', {text:'Карточка пациента успешно сохранена.'});
 					App.Router.navigate("/patients/"+ this.model.id +"/", {trigger: true});
 				}
 			}, this);

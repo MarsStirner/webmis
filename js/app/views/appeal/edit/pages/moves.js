@@ -7,33 +7,75 @@ define([
 	"views/appeal/edit/pages/HospitalBedView"
 ], function (template) {
 
+	function days_between(date1, date2) {
+
+		// The number of milliseconds in one day
+		var ONE_DAY = 1000 * 60 * 60 * 24
+
+
+		// Calculate the difference in milliseconds
+		var difference_ms = Math.abs(date1 - date2)
+
+		// Convert back to days and return
+		return Math.round(difference_ms/ONE_DAY)
+
+	}
+
+
 	App.Views.Moves = View.extend({
 		className: "ContentHolder",
 		template: template,
 
 		events: {
 			"click #new-move": "toggleMoveTypes",
-			"click #move-type-list li":"createNewMove"
+			"click #move-type-list li": "createNewMove"
 		},
 
 		initialize: function () {
 			this.collection = new App.Collections.Moves();
 			this.collection.appealId = this.options.appealId;
 
-			this.collection.bind('remove', function(){
-				this.render();
+			this.collection.bind('remove', function () {
+				this.collection.fetch();
 			}, this);
+
+			this.collection.bind('reset', function () {
+				var lastMove = this.collection.last();
+				var days = days_between( new Date().getTime(),lastMove.get('admission'));
+				var bedDays = days - 1;
+				if(bedDays < 0){
+					bedDays = 0;
+				}
+
+				if((lastMove.get('bed') != 'Положить на койку')&&(lastMove.get('bed') != null)){
+					lastMove.set('days',days);
+					lastMove.set('bedDays',bedDays);
+				}
+			}, this);
+
+
+			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
+
+			var gridTemplateId = "#moves-grid-department",
+				rowTemplateId = "#moves-grid-row-department",
+				lastRowTemplateId = "#moves-grid-last-row-department",
+				defaultTemplateId = "#moves-grid-department-default";
+
+			if (allowToMove) {
+				gridTemplateId = "#moves-grid-department-with-move";
+				rowTemplateId = "#moves-grid-row-department-with-move";
+				lastRowTemplateId = "#moves-grid-last-row-department-with-move";
+			}
 
 			this.grid = new App.Views.Grid({
 				popUpMode: true,
 				collection: this.collection,
 				template: "grids/moves",
-				gridTemplateId: "#moves-grid-department",
-				rowTemplateId: "#moves-grid-row-department",
-				lastRowTemplateId: "#moves-grid-last-row-department",
-				defaultTemplateId: "#moves-grid-department-default"
+				gridTemplateId: gridTemplateId,
+				rowTemplateId: rowTemplateId,
+				lastRowTemplateId: lastRowTemplateId,
+				defaultTemplateId: defaultTemplateId
 			});
-
 
 
 			this.moveTypeConstrs = {
@@ -42,12 +84,6 @@ define([
 			};
 
 			this.depended(this.grid);
-
-//			this.collection.on("reset", function () {
-//				if (this.options.appeal.isClosed()) {
-//					//this.grid.$(".EditExam").attr("disabled", true);
-//				}
-//			}, this);
 
 			this.collection.fetch();
 		},
@@ -66,25 +102,50 @@ define([
 				this.moveTypeConstrs[moveType].call(this, event);
 			}
 		},
-		cancelMove: function(move){
+		cancelMove: function (move) {
 			var view = this;
-			console.log(view)
-			var url = DATA_PATH + 'hospitalbed/'+move.get('id')+'/calloff';
+			var url = DATA_PATH + 'hospitalbed/' + move.get('id') + '/calloff';
 
 			$.ajax({
-				method:'get',
-				url:url,
-				success:function(){
-					console.log('trigger remove');
+				method: 'get',
+				url: url,
+				success: function (data) {
+					console.log('success cansel remove');
+					console.log(data);
+
+					//pubsub.trigger('noty', {text:'Регистрация отменена'});
 					view.collection.trigger('remove');
-			}});
+				}, error: function (data) {
+					console.log('error cancel remove');
+					console.log(data);
+					view.collection.trigger('remove');
+				}
+			});
 
 
 		},
 
 		//Новое мероприятие/направление или перевод в отделение
 		newSendToDepartment: function (event) {
-			var sendPopUp = new App.Views.SendToDepartment({appeal: this.options.appeal}).render().open();
+
+			var popupTitle = "Направление в отделение";
+			var collectionLength = this.collection.length;
+			var previousMove = this.collection.models[collectionLength - 2];
+			var lastMove = this.collection.models[collectionLength - 1];
+
+			var moveDatetime = lastMove.get('leave') || lastMove.get('admission') || previousMove.get('leave') || previousMove.get('admission');
+
+			if (!lastMove.get('leave') && lastMove.get('admission')) {
+				moveDatetime = new Date().getTime();
+			}
+
+
+			var sendPopUp = new App.Views.SendToDepartment({
+				appealId: this.options.appeal.get("id"),
+				clientId: this.options.appeal.get("patient").get("id"),
+				moveDatetime: moveDatetime,
+				popupTitle: popupTitle
+			}).render().open();
 			sendPopUp.on("closed", function () {
 				this.collection.fetch();
 			}, this);
@@ -92,27 +153,22 @@ define([
 
 		//Новое мероприятие/регистрация на койку
 		newHospitalBed: function () {
-			var hospitalBed = new App.Views.HospitalBed({appeal: this.options.appeal});
-			hospitalBed.setElement(this.el).render();
-
+			this.trigger("change:viewState", {type: 'hospitalbed', options: {}});
 			App.Router.updateUrl("appeals/" + this.options.appealId + "/hospitalbed/");
 		},
 
 		render: function () {
-			console.log('render');
+
 			this.grid.on('grid:rowClick', function (move, event) {
 				event.preventDefault();
 
-				console.log(event.target.className)
-				if (event.target.className == 'cancel-bed-registration') {
+				if (_.indexOf(event.target.classList, 'cancel-bed-registration') >= 0) {
 					this.cancelMove(move);
 				}
-				if (event.target.className == 'bed-registration') {
+				if (_.indexOf(event.target.classList, 'bed-registration') >= 0) {
 					this.newHospitalBed(move);
 				}
-
-
-			},this);
+			}, this);
 
 			var self = this;
 			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
@@ -120,20 +176,8 @@ define([
 			this.$el.html($.tmpl(this.template, {allowToMove: allowToMove, isClosed: self.options.appeal.isClosed()}));
 			this.$("#lab-grid").html(this.grid.el);
 
-			// Пэйджинатор
-			/*this.paginator = new App.Views.Paginator({
-					collection: self.collection
-			});
-			this.depended(this.paginator);
-
-			this.$el.append(this.paginator.render().el);*/
-
-			//this.sendToDep.render();
-
 			this.delegateEvents();
 			this.grid.delegateEvents();
-			//this.paginator.delegateEvents();
-			//this.sendToDep.delegateEvents();
 
 			return this;
 		}

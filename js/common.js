@@ -22,6 +22,10 @@ App.Dynamic = {};
 App.Collections = {};
 App.Views = {};
 
+//глобальный pub sub
+pubsub = _.extend({}, Backbone.Events);
+
+
 
 // Загруженная информация
 Data = {};

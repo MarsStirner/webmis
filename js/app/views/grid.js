@@ -91,7 +91,7 @@ define(["views/grid-row"], function () {
 			var $tbody = $el.find("tbody").empty();
 
 			var total = view.collection.length;
-			console.log(total);
+			//console.log(total);
 
 			if (total) {
 
@@ -99,7 +99,8 @@ define(["views/grid-row"], function () {
 					var _index = i;
 					var rowTemplateId = view.options.rowTemplateId;
 
-					if(view.options.lastRowTemplateId && (i == total-1)){
+					//console.log(i);
+					if(view.options.lastRowTemplateId && (i == total-1) && (i > 0)){
 						rowTemplateId = view.options.lastRowTemplateId;
 					}
 
