@@ -17,7 +17,7 @@ define([
 		var difference_ms = Math.abs(date1 - date2)
 
 		// Convert back to days and return
-		return Math.round(difference_ms/ONE_DAY)
+		return Math.round(difference_ms / ONE_DAY)
 
 	}
 
@@ -41,15 +41,15 @@ define([
 
 			this.collection.bind('reset', function () {
 				var lastMove = this.collection.last();
-				var days = days_between( new Date().getTime(),lastMove.get('admission'));
+				var days = days_between(new Date().getTime(), lastMove.get('admission'));
 				var bedDays = days - 1;
-				if(bedDays < 0){
+				if (bedDays < 0) {
 					bedDays = 0;
 				}
 
-				if((lastMove.get('bed') != 'Положить на койку')&&(lastMove.get('bed') != null)){
-					lastMove.set('days',days);
-					lastMove.set('bedDays',bedDays);
+				if ((lastMove.get('bed') != 'Положить на койку') && (lastMove.get('bed') != null)) {
+					lastMove.set('days', days);
+					lastMove.set('bedDays', bedDays);
 				}
 			}, this);
 
@@ -102,6 +102,10 @@ define([
 				this.moveTypeConstrs[moveType].call(this, event);
 			}
 		},
+		/***
+		 * Отмена прописки на койке
+		 * @param move
+		 */
 		cancelMove: function (move) {
 			var view = this;
 			var url = DATA_PATH + 'hospitalbed/' + move.get('id') + '/calloff';
@@ -109,16 +113,16 @@ define([
 			$.ajax({
 				method: 'get',
 				url: url,
+				dataType: 'jsonp',
+				//beforeSend: function(jqXHR, settings){
+				//	console.log('jqXHR',jqXHR);
+				//	console.log('settings',settings);
+				//},
 				success: function (data) {
-					console.log('success cansel remove');
-					console.log(data);
-
-					//pubsub.trigger('noty', {text:'Регистрация отменена'});
 					view.collection.trigger('remove');
+					pubsub.trigger('noty', {text: 'Регистрация отменена', type: 'warning'});
 				}, error: function (data) {
-					console.log('error cancel remove');
-					console.log(data);
-					view.collection.trigger('remove');
+					pubsub.trigger('noty', {text: 'Ошибка при попытке отменены регистрации', type: 'error'});
 				}
 			});
 
