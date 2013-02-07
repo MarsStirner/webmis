@@ -26,12 +26,12 @@ define([
 			this.model.set("clientId", this.options.clientId);
 			this.model.set("moveDatetime", this.options.moveDatetime);
 			this.model.on("sync", function () {
-				pubsub.trigger('noty', {text:'направление в отделение успешно создано'});
+				pubsub.trigger('noty', {text:'Направление в отделение создано'});
 				this.close();
 			}, this);
 
 			this.model.on("error", function(){
-				pubsub.trigger('noty', {text:'ошибка при создании нового движения',type: 'error'});
+				pubsub.trigger('noty', {text:'Ошибка при создании нового движения',type: 'error'});
 			},this);
 
 			this.departments = new App.Collections.Departments();

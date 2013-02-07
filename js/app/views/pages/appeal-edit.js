@@ -58,7 +58,7 @@ define([
 			}, this);
 
 			this.model.on("sync", function () {
-				pubsub.trigger('noty', {text:'Обращение успешно сохранено.'});
+				pubsub.trigger('noty', {text:'Обращение создано'});
 				App.Router.navigate("/appeals/" + this.model.id + "/", {trigger: true});
 			}, this);
 

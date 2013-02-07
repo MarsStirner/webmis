@@ -28,8 +28,11 @@ define([
 
 
 			this.model = new App.Models.HospitalBed();
+			this.model.on('invalid',function(model, error, options){
+				console.log('invalid',model, error, options);
+			});
 			this.model.appealId = this.options.appeal.get("id");
-			this.model.set({"clientId": this.options.appeal.get("patient").get("id")}, {silent: true});
+			this.model.set({"clientId": this.options.appeal.get("patient").get("id")}, {silent: true,validate:false});
 
 			//Получаем список отделений со свободными койками
 			this.departments = new App.Collections.Departments();
@@ -51,17 +54,17 @@ define([
 
 				//ид последнего движения
 				var movedFromUnitId = this.moves.last().get("unitId");
-				this.model.set('movedFromUnitId', movedFromUnitId);
+				this.model.set({'movedFromUnitId': movedFromUnitId},{silent: true,validate:false});
 
-				this.model.set('movedFromUnitIdBackup', movedFromUnitId);
+				this.model.set({'movedFromUnitIdBackup': movedFromUnitId},{silent: true,validate:false});
 
 				//время предпоследнего движения
 				var previousMove = this.moves.at(this.moves.length - 2);
 				var lastMove = this.moves.at(this.moves.length - 1);
 				var moveDatetime = lastMove.get('admission') || previousMove.get('leave') || previousMove.get('admission');
-				var previousDepartment = previousMove.get('unit');
-				this.model.set('moveDatetime', moveDatetime);
-				this.model.previousDepartment = previousDepartment ? previousDepartment : '';
+				//var previousDepartment = previousMove.get('unit');
+				this.model.set({'moveDatetime': moveDatetime},{silent: true,validate:false});
+				//this.model.previousDepartment = previousDepartment ? previousDepartment : '';
 
 			}, this);
 
@@ -99,7 +102,7 @@ define([
 						$('.beds').append(bedView.render().el);
 
 						bedView.on('bedChecked', function (bedId) {
-							this.model.set('bedId', bedId);
+							this.model.set({'bedId': bedId},{silent: true,validate:false});
 						}, view);
 
 					});
@@ -126,7 +129,7 @@ define([
 			var view = this;
 
 			if (!view.model.get("moveDatetime")) {
-				view.model.set("moveDatetime", new Date().getTime());
+				view.model.set({"moveDatetime": new Date().getTime()},{silent: true,validate:false});
 			}
 
 			//если мы выберем другое отделени в выпадающем списке,
@@ -150,16 +153,36 @@ define([
 //
 //			} else {
 
+			//if(view.validate()){
 				view.model.save({}, {
 					success: function () {
-						pubsub.trigger('noty', {text:'Пациент успешно зарегистрирован на койке'});
+						pubsub.trigger('noty', {text:'Пациент зарегистрирован на койке'});
 						view.redirectToMoves();
 					}});
+			//}
+
 
 //			}
 
 
 		},
+//		validate:function () {
+//			var validity = true,$firstFoundedError;
+//			this.$("select.Mandatory").removeClass("WrongField").each(function () {
+//				if (!$(this).val()) {
+//					$(this).addClass("WrongField");
+//					$firstFoundedError = $firstFoundedError || $(this);
+//					validity = false;
+//				}
+//			});
+//
+//			if ($firstFoundedError) {
+//				//$firstFoundedError.focus();
+//				$('html, body').animate({ scrollTop:$($firstFoundedError).offset().top - 30 }, 'fast');
+//			}
+//
+//			return validity
+//		},
 		onCancel: function (e) {
 			var view = this;
 			e.preventDefault();
@@ -168,8 +191,8 @@ define([
 
 		render: function () {
 			var view = this;
-			var modelJSON = _.extend({previousDepartment: view.model.previousDepartment}, view.model.toJSON());
-
+			//var modelJSON = _.extend({previousDepartment: view.model.previousDepartment}, view.model.toJSON());
+			var modelJSON = view.model.toJSON();
 			console.log(modelJSON);
 			view.$el.html($.tmpl(view.template, modelJSON));
 
