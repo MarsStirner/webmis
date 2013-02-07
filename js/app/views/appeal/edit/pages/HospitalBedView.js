@@ -152,6 +152,7 @@ define([
 
 				view.model.save({}, {
 					success: function () {
+						pubsub.trigger('noty', {text:'Пациент успешно зарегистрирован на койке'});
 						view.redirectToMoves();
 					}});
 

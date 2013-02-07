@@ -102,6 +102,10 @@ define([
 				this.moveTypeConstrs[moveType].call(this, event);
 			}
 		},
+		/***
+		 * Отмена прописки на койке
+		 * @param move
+		 */
 		cancelMove: function (move) {
 			var view = this;
 			var url = DATA_PATH + 'hospitalbed/' + move.get('id') + '/calloff';
@@ -109,16 +113,16 @@ define([
 			$.ajax({
 				method: 'get',
 				url: url,
+				dataType: 'jsonp',
+				//beforeSend: function(jqXHR, settings){
+				//	console.log('jqXHR',jqXHR);
+				//	console.log('settings',settings);
+				//},
 				success: function (data) {
-					console.log('success cansel remove');
-					console.log(data);
-
-					//pubsub.trigger('noty', {text:'Регистрация отменена'});
 					view.collection.trigger('remove');
+					pubsub.trigger('noty', {text:'Регистрация успешно отменена'});
 				}, error: function (data) {
-					console.log('error cancel remove');
-					console.log(data);
-					view.collection.trigger('remove');
+					pubsub.trigger('noty', {text:'Ошибка при попытке отменены регистрации'});
 				}
 			});
 
