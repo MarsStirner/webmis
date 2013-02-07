@@ -81,7 +81,11 @@
 		${bedDays}
 	</td>
 	<td>
+		{{if bed != "Положить на койку"}}
 		${bed}
+		{{else}}
+		{{/if}}
+
 	</td>
 </script>
 
@@ -127,7 +131,9 @@
 		${bedDays}
 	</td>
 	<td>
+		{{if bed != "Положить на койку"}}
 		${bed}
+		{{/if}}
 	</td>
 </script>
 
