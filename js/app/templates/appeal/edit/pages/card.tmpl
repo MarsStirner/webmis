@@ -219,8 +219,9 @@
 					<td>Законный представитель</td>
 					<td>
 						<a href="/patients/${hw.relative.id}/">
-							<span>${hw.relative.name}, {{getYear hw.relative.birthDate}} г.р.{{if hw.note}} (${hw.note}){{/if}}</span>
+							<span>${hw.relative.name}</span>
 						</a>
+						, {{getYear hw.relative.birthDate}} г.р.{{if hw.note}} (${hw.note}){{/if}}
 					</td>
 				</tr>
 			{{/each}}
