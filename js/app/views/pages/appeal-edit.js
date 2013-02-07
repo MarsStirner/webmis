@@ -154,9 +154,11 @@ define([
 				//collection: diagnoses
 			});
 
-			diagnosisView.on("diagnosis:change", function (event) {
-				this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
-			}, this);
+			if (model.get("diagnosisKind") == "assignment") {
+				diagnosisView.on("diagnosis:change", function (event) {
+					this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
+				}, this);
+			}
 
 			this.depended(diagnosisView);
 
