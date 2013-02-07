@@ -31,6 +31,8 @@ define([
 				}
 			});
 
+			this.modelIsNew = this.model.isNew();
+
 			this.errorToolTip = new UI.ErrorTooltip();
 
 			this.on("template:loaded", function () {
@@ -58,7 +60,7 @@ define([
 			}, this);
 
 			this.model.on("sync", function () {
-				pubsub.trigger('noty', {text:'Обращение создано'});
+				pubsub.trigger('noty', {text:'Обращение ' + (view.modelIsNew ? 'создано' : 'изменено')});
 				App.Router.navigate("/appeals/" + this.model.id + "/", {trigger: true});
 			}, this);
 

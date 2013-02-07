@@ -55,9 +55,13 @@ define([
 				});
 			}
 
+			this.modelIsNew = this.model.isNew();
+
 			this.model.on("change:id", this.onStructLoaded, this);
 			this.model.on("sync", function () {
 				this.model.initializeRelations();
+
+				pubsub.trigger('noty', {text:'Документ ' + (this.modelIsNew ? 'создан' : 'изменен')});
 
 				this.trigger("change:viewState", {type: "examination-primary-preview", options: {model: this.model}});
 			}, this);

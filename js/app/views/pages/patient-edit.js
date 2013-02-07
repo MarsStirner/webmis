@@ -91,6 +91,8 @@ define([
 
 			if (!this.options.model) this.model = new App.Models.Patient();
 
+			this.modelIsNew = this.model.isNew();
+
 			this.attachModelHandlers();
 
 			console.log(this.model.toJSON());
@@ -486,13 +488,15 @@ define([
 		},
 
 		attachModelHandlers: function () {
+			var self = this;
+
 			this.model.on("sync", function(data){
 				//console.log("synced", data);
 
 				if (this.options.popUpMode) {
 					this.trigger("patient:created", this.model);
 				} else {
-					pubsub.trigger('noty', {text:'Карточка пациента создана'});
+					pubsub.trigger('noty', {text:'Карточка пациента ' + (self.modelIsNew ? 'создана' : 'изменена')});
 					App.Router.navigate("/patients/"+ this.model.id +"/", {trigger: true});
 				}
 			}, this);
