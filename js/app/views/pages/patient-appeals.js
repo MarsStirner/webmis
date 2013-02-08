@@ -66,7 +66,8 @@ define(["collections/patient-appeals", "models/patient", "views/breadcrumbs", "v
 					var patientAppeals = new App.Collections.PatientAppeals;
 					patientAppeals.patient = Patient;
 					patientAppeals.setParams({
-						sortingMethod: "asc"
+						sortingField: "number",
+						sortingMethod: "desc"
 					});
 
 					var AppealsGrid = new App.Views.Grid ({
