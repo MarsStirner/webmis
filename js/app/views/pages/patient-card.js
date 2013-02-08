@@ -109,9 +109,12 @@ define(["models/patient",
 				json.phones = {blocks: [[]], count: view.model.get("phones").length};
 
 				view.model.get("phones").each(function (p, i) {
-					json.phones.blocks[json.phones.blocks.length - 1].push(p.toJSON());
-					if ((i + 1) % 3 === 0 && i < view.model.get("phones").length) {
-						json.phones.blocks.push([]);
+					//Игнорим контакты с typeId = 0, это неверные записи из нтк
+					if (p.get("typeId") != 0) {
+						json.phones.blocks[json.phones.blocks.length - 1].push(p.toJSON());
+						if ((i + 1) % 3 === 0 && i < view.model.get("phones").length) {
+							json.phones.blocks.push([]);
+						}
 					}
 				});
 
