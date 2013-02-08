@@ -3,7 +3,7 @@
 		<thead>
 		<tr>
 			<th>
-				<a class="Actions SortCol" data-field="checkbox">Номер</a>
+				<input type="checkbox" name="all">
 			</th>
 
 			<th>
@@ -16,13 +16,14 @@
 				<a class="Actions SortCol" data-field="birthDate">День рожд.</a>
 			</th>
 			<th>
-				Тип действия
+				<a class="Actions SortCol" data-field="actionType">Тип действия</a>
 			</th>
 			<th>
-				Пробирка
+				<a class="Actions SortCol" data-field="testTube">Пробирка</a>
 			</th>
 			<th>
-				Статус
+				<a class="Actions SortCol" data-field="status">Статус</a>
+
 			</th>
 		</tr>
 		</thead>
@@ -34,27 +35,27 @@
 
 <script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
 	<td>
-		1
+		<input type="checkbox" name="bio">
 	</td>
 
 	<td>
-		2
+		${fullName}
 	</td>
 	<td>
-		3
+	${sex}
 	</td>
 	<td>
-		4
-	</td>
+		{{formatDate birthDate}}
 
-	<td>
-		5
 	</td>
 	<td>
-		6
+	${actionType}
 	</td>
 	<td>
-		7
+		${testTube.name} ${testTube.color}
+	</td>
+	<td>
+		${status}
 	</td>
 </script>
 
