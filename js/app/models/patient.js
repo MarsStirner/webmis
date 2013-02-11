@@ -262,6 +262,22 @@ define([
 
 			}
 
+			var allergies = this.get("medicalInfo").get("allergies");
+
+			if (allergies.length) {
+				allergies.remove(allergies.filter(function (a) {
+					return !_.any([a.get("substance"), a.get("degree"), a.get("checkingDate"), a.get("comment")]);
+				}));
+			}
+
+			var drugIntolerances = this.get("medicalInfo").get("drugIntolerances");
+
+			if (drugIntolerances.length) {
+				drugIntolerances.remove(drugIntolerances.filter(function (di) {
+					return !_.any([di.get("substance"), di.get("degree"), di.get("checkingDate"), di.get("comment")]);
+				}));
+			}
+
 			Model.prototype.save.call(this);
 		},
 

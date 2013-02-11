@@ -44,6 +44,10 @@ define([
 				}
 			}, this);
 
+			exams.setParams({
+				sortingField: "id",
+				sortingMethod: "desc"
+			});
 			exams.fetch();
 		},
 

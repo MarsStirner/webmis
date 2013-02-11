@@ -72,7 +72,7 @@ define(["text!templates/card-header.tmpl", "models/appeal"], function (template)
 				if (options.dropDownItems && options.dropDownItems.length) {
 					var $dropDown = $(
 						'<div class="DDList" style="display: block;">' +
-							'<div class="Content ButtonContent" style="top: 0; max-height: 25em; width: 200px;">' +
+							'<div class="Content ButtonContent" style="top: 0; max-height: 30em; width: 200px;">' +
 							'<ul></ul>' +
 						'</div>'
 					);
