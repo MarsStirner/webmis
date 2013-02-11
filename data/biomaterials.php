@@ -8,5 +8,8 @@ if ( !empty($_GET["callback"]) ) {
 }
 
 echo $callback_name ?>({"requestData":{"filter":{"fullName":""}},"data":[
-{id: '1',fullName: 'Фамилия И.О.',sex: 'М',birthDate: '829512000000',actionType: 'Биохимия крови "МИКРО"',testTube: {name:'MONOVETTE 4',color:'#3399cc'},status: 'ожидается'},
-{id: '2',fullName: 'Фамилия И.О.',sex: 'М',birthDate: '829512000000',actionType: 'Биохимия крови "МИКРО"',testTube: {name:'MONOVETTE 2',color:'#9999cc'},status: 'ожидается'}]});
+{id: '1',fullName: 'Фамилия И.О.',sex: 'М',birthDate: '829512000000',actionType: {name: 'Биохимия крови "МИКРО"',isUrgent:true},testTube: {name:'MONOVETTE 4',color:'#3399cc'},status: {name:'ожидается',code:0}},
+{id: '2',fullName: 'Фамилия И.О.',sex: 'М',birthDate: '829512000000',actionType: {name: 'Биохимия крови "МИКРО"',isUrgent:false},testTube: {name:'MONOVETTE 2',color:'#9999cc'},status: {name:'ожидается',code:0}},
+{id: '3',fullName: 'Фамилия И.О.',sex: 'М',birthDate: '829512000000',actionType: {name:'Биохимия крови "МИКРО"',isUrgent:false},testTube: {name:'MONOVETTE 2',color:'#9999cc'},status: {name:'ожидается',code:0}},
+{id: '4',fullName: 'Фамилия И.О.',sex: 'М',birthDate: '829512000000',actionType: {name: 'Биохимия крови "МИКРО"',isUrgent:true},testTube: {name:'MONOVETTE 2',color:'#9999cc'},status: {name:'выполняется',code:1}},
+{id: '5',fullName: 'Фамилия И.О.',sex: 'М',birthDate: '829512000000',actionType: {name:'Биохимия крови "МИКРО"',isUrgent:false},testTube: {name:'MONOVETTE 2',color:'#9999cc'},status: {name:'закончено',code:2}}]});

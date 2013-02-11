@@ -1,13 +1,145 @@
+<section id="page" class="OneCol Clearfix">
+	<div id="page-head">
+		<ul class="LineBlockHolder">
+			<li>
+				<div class="EditForm">
+<div class="LineBlock">
+					<div class="ColHalf">
+						<span class="Label">Период дат</span>
+						<div class="DayScroller">
+							<a class="ScrollDay Actions Decrease" href="#">&lt;</a>
+
+							<div class="DateTime">
+								<div class="DatePeriod SingleDate Mandatory">
+									<div class="FromTo">
+										<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="beginDate"
+													 placeholder="дд.мм.гггг" class="SelectDate"/>
+									</div>
+									<i class="DateIcon Icon"></i>
+								</div>
+								<div class="SingleTime">
+									<input type="text" id="appeal-start-time" class="HourPicker" data-relation="#appeal-start-date"
+												 value="8:00" placeholder="чч:мм"/>
+								</div>
+							</div>
+							<span class="MDash">—</span>
+
+							<div class="DateTime">
+								<div class="DatePeriod SingleDate Mandatory">
+									<div class="FromTo">
+										<input type="text" id="appeal-end-date" data-relation="#appeal-end-time" name="endDate"
+													 placeholder="дд.мм.гггг" class="SelectDate"/>
+									</div>
+									<i class="DateIcon Icon"></i>
+								</div>
+								<div class="SingleTime">
+									<input type="text" id="appeal-end-time" class="HourPicker" data-relation="#appeal-end-date"
+												 value="7:59" placeholder="чч:мм"/>
+								</div>
+							</div>
+							<a class="ScrollDay Actions Increase" href="#">&gt;</a>
+						</div>
+					</div>
+
+					<div class="HalfCol">
+						<label>Отделение</label>
+						<select class="Styled" name="ward">
+							<option value="" selected="selected">Все отделения</option>
+							<option value="1">Отделение №1</option>
+							<option value="2">Отделение №2</option>
+							<option value="3">Отделение №3</option>
+							<option value="4">Отделение №4</option>
+							<option value="5">Отделение №5</option>
+						</select>
+					</div>
 
 
-<div class="ContentSide Clearfix1">
+					<button class="Styled Button"><span>Печать</span></button>
+				</div>
+				</div>
+			</li>
 
-		<div  id="biomaterial-grid">
+		</ul>
+	</div>
+
+
+	<div class="ContentSide Clearfix">
+		<div class="ContentHolder">
+
+			<ul class="LineBlockHolder">
+				<li>
+					<div class="EditForm">
+						<!--<div class="LineBlock">-->
+						<div class="HalfCol">
+							<label for="ward">Тип исследования</label>
+
+							<select class="Styled" name="ward">
+								<option value="" selected="selected">Все типы исследования</option>
+								<option value="1">Кровь венозная</option>
+								<option value="2">Плазма крови</option>
+								<option value="3">Моча</option>
+								<option value="4">Костный мозг</option>
+								<option value="5">Мазок</option>
+							</select>
+						</div>
+
+						<div class="SemiCol">
+							<label>Статус</label>
+							<ul class="horizontal">
+								<li class="active"><a href="#">Все</a></li>
+								<li><a href="#">Ожидается</a></li>
+								<li><a href="#">Выполненно</a></li>
+								<li><a href="#">Закончено</a></li>
+							</ul>
+						</div>
+
+						<div class="ThirdCol">
+							<button class="Styled Button"><span>Выполнено</span></button>
+
+							<button class="Styled Button"><span>Отправить в лабораторию</span></button>
+						</div>
+						<!--</div>-->
+					</div>
+
+				</li>
+			</ul>
+
+
+			<div id="biomaterial-grid"></div>
+
+			<div>
+
+				<table class="tubes Grid">
+					<thead>
+					<tr>
+						<th>
+							Пробирки
+						</th>
+					</tr>
+
+					</thead>
+					<tbody>
+					<tr>
+						<td>
+							MONOVETTE 4.0 <span class="color-label" style="background-color:#57cc81;"></span> 3шт.
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							MONOVETTE 2.0 <span class="color-label" style=""></span> 2шт.
+						</td>
+					</tr>
+
+					<tr>
+						<td>MONOVETTE 1.0 <span class="color-label" style="background-color:#5d9bcc;"></span> 1шт.
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
 
 		</div>
-
-
-</div>
-
-
+	</div>
+</section>
 

@@ -34,28 +34,30 @@
 </script>
 
 <script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
-	<td>
+	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
+		{{if status.code!=2}}
 		<input type="checkbox" name="bio">
+		{{/if}}
 	</td>
 
-	<td>
+	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
 		${fullName}
 	</td>
-	<td>
+	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
 	${sex}
 	</td>
-	<td>
+	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
 		{{formatDate birthDate}}
 
 	</td>
-	<td>
-	${actionType}
+	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}} ">
+	<b>${actionType.name}</b>  <span class="Warning">срочно</span>
 	</td>
-	<td>
-		${testTube.name} ${testTube.color}
+	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
+		${testTube.name} <span class="color-label" style="background-color:${testTube.color};"></span>
 	</td>
-	<td>
-		${status}
+	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
+		<span class="status-name">${status.name}</span>
 	</td>
 </script>
 

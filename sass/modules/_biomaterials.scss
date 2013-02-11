@@ -1,0 +1,72 @@
+@import "compass/css3/border-radius";
+
+.color-label {
+	display: inline-block;
+	height: 15px;
+	width: 45px;
+	padding: 2px 4px;
+	background-color: #fff;
+	margin-bottom: -4px;
+	border: 1px solid #bbb;
+}
+
+.tubes.Grid{
+	width: auto;
+	margin: 0;
+}
+
+.horizontal {
+	li {
+		display: inline-block;
+		font-size: 1.3em;
+		//font-weight: bold;
+		padding: 0.5em 1em;
+		@include border-radius(4px);
+		cursor: pointer;
+		&.active {
+			background: #0099ff;
+
+			cursor: default;
+			a {
+				color: #fff;
+				text-decoration: none;
+			}
+		}
+	}
+}
+
+
+
+td.status-code-0.urgent{
+	background-color: red;
+	color: #fff;
+	.status-name,.Warning{
+		color: #fff;
+	}
+
+}
+tr:hover td.status-code-0.urgent{
+	background-color: red;
+}
+
+td.status-code-2,td.status-code-2 .Warning{
+	color: #bbb;
+}
+
+.status-code-0{
+	.status-name{
+		color: red;
+	}
+}
+
+.status-code-1{
+	.status-name{
+		color: #000000;
+	}
+}
+
+.status-code-2{
+	.status-name{
+		color: green;
+	}
+}

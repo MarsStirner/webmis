@@ -3,7 +3,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 	'views/grid'], function (biomaterialsTemplate, BiomaterialsCollection,GridView) {
 
 	var BiomaterialsView = View.extend({
-		className: "ContentHolder",
+		///className: "ContentHolder",
 		template: biomaterialsTemplate,
 		initialize: function () {
 
@@ -33,9 +33,12 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 		},
 		render: function () {
+			console.log('render biomaterial ')
 			this.$el.html($.tmpl(this.template));
 			this.$("#biomaterial-grid").html(this.grid.el);
 
+
+			UIInitialize(this.el);
 //			this.delegateEvents();
 //			this.grid.delegateEvents();
 

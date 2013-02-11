@@ -118,7 +118,7 @@ require(["views/FlashMessageView"], function (FlashMessage){
 					});
 					this.appView.render();
 				} else {
-					var newMain = $('<div id="main">eww</div>').append(view.render().el);
+					var newMain = $('<div id="main"></div>').append(view.render().el);
 					this.appView.$("#main").remove();
 					this.appView.$el.append(newMain);
 					//this.appView.changeRenderView(view);
