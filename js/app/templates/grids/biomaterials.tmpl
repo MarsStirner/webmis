@@ -5,7 +5,9 @@
 			<th>
 				<input type="checkbox" name="all">
 			</th>
-
+			<th>
+				<a class="Actions SortCol" data-field="time">Дата и время</a>
+			</th>
 			<th>
 				<a class="Actions SortCol" data-field="fullName">ФИО</a>
 			</th>
@@ -16,7 +18,11 @@
 				<a class="Actions SortCol" data-field="birthDate">День рожд.</a>
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="actionType">Тип действия</a>
+				<a class="Actions SortCol" data-field="actionType.name">Тип действия</a>
+			</th>
+			<!---->
+			<th>
+				<a class="Actions SortCol" data-field="actionType.status">Срочность</a>
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="testTube">Пробирка</a>
@@ -34,29 +40,37 @@
 </script>
 
 <script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
-	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
+	<td class="status-code-${status.code}">
 		{{if status.code!=2}}
 		<input type="checkbox" name="bio">
 		{{/if}}
 	</td>
 
-	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
+	<td class="status-code-${status.code}">
+		{{formatDateTime datetime}}
+	</td>
+
+	<td class="status-code-${status.code}">
 		${fullName}
 	</td>
-	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
+	<td class="status-code-${status.code}">
 	${sex}
 	</td>
-	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
+	<td class="status-code-${status.code}">
 		{{formatDate birthDate}}
 
 	</td>
-	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}} ">
-	<b>${actionType.name}</b>  <span class="Warning">срочно</span>
+	<td class="status-code-${status.code}">
+	<b>${actionType.name}</b>
 	</td>
-	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
+
+	<td class="status-code-${status.code}">
+ {{if actionType.isUrgent}}<span class="Urgent">срочно</span>{{/if}}
+	</td>
+	<td class="status-code-${status.code}">
 		${testTube.name} <span class="color-label" style="background-color:${testTube.color};"></span>
 	</td>
-	<td class="status-code-${status.code}{{if actionType.isUrgent}} urgent{{/if}}">
+	<td class="status-code-${status.code}">
 		<span class="status-name">${status.name}</span>
 	</td>
 </script>
