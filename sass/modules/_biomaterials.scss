@@ -10,7 +10,7 @@
 	border: 1px solid #bbb;
 }
 
-.tubes.Grid{
+.tubes.Grid {
 	width: auto;
 	margin: 0;
 }
@@ -35,38 +35,85 @@
 	}
 }
 
-
-
-td.status-code-0.urgent{
+td.status-code-0.urgent {
 	background-color: red;
 	color: #fff;
-	.status-name,.Warning{
+	.status-name, .Warning {
 		color: #fff;
 	}
 
 }
-tr:hover td.status-code-0.urgent{
+
+tr:hover td.status-code-0.urgent {
 	background-color: red;
 }
 
-td.status-code-2,td.status-code-2 .Warning{
+td.status-code-2, td.status-code-2 .Warning {
 	color: #bbb;
 }
 
-.status-code-0{
-	.status-name{
+.status-code-0 {
+	.status-name {
 		color: red;
 	}
 }
 
-.status-code-1{
-	.status-name{
+.status-code-1 {
+	.status-name {
 		color: #000000;
 	}
 }
 
-.status-code-2{
-	.status-name{
+.status-code-2 {
+	.status-name {
 		color: green;
 	}
+}
+
+.biomaterials-head-filter{
+	margin-bottom: 15px;
+	padding: 1em 1em 2em;
+	border-bottom: 1px solid #d4d4d4;
+}
+
+.biomaterials-datatime {
+	width: 475px;
+	float: left;
+	.DayScroller {
+		float: none;
+	}
+}
+
+.biomaterials-department {
+
+	width: 355px;
+	float: left;
+
+}
+
+.biomaterials-print {
+
+	float: right;
+	margin-top: 19px;
+}
+
+
+.biomaterials-table-filter{
+	margin-bottom: 25px;
+}
+
+.biomaterials-action-type{
+	float: left;
+	width: 300px;
+	padding-right: 25px;
+}
+
+.biomaterials-status{
+	float: left;
+	width: 450px;
+}
+
+.biomaterials-send-to-lab{
+	float: right;
+	margin-top: 18px;
 }

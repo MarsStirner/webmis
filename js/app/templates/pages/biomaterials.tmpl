@@ -1,77 +1,73 @@
 <section id="page" class="OneCol Clearfix">
-	<div id="page-head">
-		<ul class="LineBlockHolder">
-			<li>
-				<div class="EditForm">
-<div class="LineBlock">
-					<div class="ColHalf">
-						<span class="Label">Период дат</span>
-						<div class="DayScroller">
-							<a class="ScrollDay Actions Decrease" href="#">&lt;</a>
+	<div  class="biomaterials-head-filter clearfix">
 
-							<div class="DateTime">
-								<div class="DatePeriod SingleDate Mandatory">
-									<div class="FromTo">
-										<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="beginDate"
-													 placeholder="дд.мм.гггг" class="SelectDate"/>
-									</div>
-									<i class="DateIcon Icon"></i>
-								</div>
-								<div class="SingleTime">
-									<input type="text" id="appeal-start-time" class="HourPicker" data-relation="#appeal-start-date"
-												 value="8:00" placeholder="чч:мм"/>
-								</div>
-							</div>
-							<span class="MDash">—</span>
 
-							<div class="DateTime">
-								<div class="DatePeriod SingleDate Mandatory">
-									<div class="FromTo">
-										<input type="text" id="appeal-end-date" data-relation="#appeal-end-time" name="endDate"
-													 placeholder="дд.мм.гггг" class="SelectDate"/>
-									</div>
-									<i class="DateIcon Icon"></i>
-								</div>
-								<div class="SingleTime">
-									<input type="text" id="appeal-end-time" class="HourPicker" data-relation="#appeal-end-date"
-												 value="7:59" placeholder="чч:мм"/>
-								</div>
-							</div>
-							<a class="ScrollDay Actions Increase" href="#">&gt;</a>
+		<div class="biomaterials-datatime">
+			<span class="Label">Период дат</span>
+
+			<div class="DayScroller">
+				<a class="ScrollDay Actions Decrease" href="#">&lt;</a>
+
+				<div class="DateTime">
+					<div class="DatePeriod SingleDate Mandatory">
+						<div class="FromTo">
+							<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="beginDate"
+										 placeholder="дд.мм.гггг" class="SelectDate"/>
 						</div>
+						<i class="DateIcon Icon"></i>
 					</div>
-
-					<div class="HalfCol">
-						<label>Отделение</label>
-						<select class="Styled" name="ward">
-							<option value="" selected="selected">Все отделения</option>
-							<option value="1">Отделение №1</option>
-							<option value="2">Отделение №2</option>
-							<option value="3">Отделение №3</option>
-							<option value="4">Отделение №4</option>
-							<option value="5">Отделение №5</option>
-						</select>
+					<div class="SingleTime">
+						<input type="text" id="appeal-start-time" class="HourPicker" data-relation="#appeal-start-date"
+									 value="8:00" placeholder="чч:мм"/>
 					</div>
-
-
-					<button class="Styled Button"><span>Печать</span></button>
 				</div>
-				</div>
-			</li>
+				<span class="MDash">—</span>
 
-		</ul>
+				<div class="DateTime">
+					<div class="DatePeriod SingleDate Mandatory">
+						<div class="FromTo">
+							<input type="text" id="appeal-end-date" data-relation="#appeal-end-time" name="endDate"
+										 placeholder="дд.мм.гггг" class="SelectDate"/>
+						</div>
+						<i class="DateIcon Icon"></i>
+					</div>
+					<div class="SingleTime">
+						<input type="text" id="appeal-end-time" class="HourPicker" data-relation="#appeal-end-date"
+									 value="7:59" placeholder="чч:мм"/>
+					</div>
+				</div>
+				<a class="ScrollDay Actions Increase" href="#">&gt;</a>
+			</div>
+		</div>
+
+		<div class="biomaterials-department">
+			<label>Отделение</label>
+			<select class="Styled" name="ward">
+				<option value="" selected="selected">Все отделения</option>
+				<option value="1">Отделение №1</option>
+				<option value="2">Отделение №2</option>
+				<option value="3">Отделение №3</option>
+				<option value="4">Отделение №4</option>
+				<option value="5">Отделение №5</option>
+			</select>
+		</div>
+
+
+		<div class="biomaterials-print">
+			<button class="Styled Button"><span>Печать</span></button>
+		</div>
+
+
 	</div>
 
 
 	<div class="ContentSide Clearfix">
 		<div class="ContentHolder">
 
-			<ul class="LineBlockHolder">
-				<li>
-					<div class="EditForm">
-						<!--<div class="LineBlock">-->
-						<div class="HalfCol">
-							<label for="ward">Тип исследования</label>
+
+					<div class="biomaterials-table-filter clearfix">
+						<div class="biomaterials-action-type">
+							<label for="ward90">Тип исследования</label>
 
 							<select class="Styled" name="ward">
 								<option value="" selected="selected">Все типы исследования</option>
@@ -83,7 +79,7 @@
 							</select>
 						</div>
 
-						<div class="SemiCol">
+						<div class="biomaterials-status">
 							<label>Статус</label>
 							<ul class="horizontal">
 								<li class="active"><a href="#">Все</a></li>
@@ -93,16 +89,15 @@
 							</ul>
 						</div>
 
-						<div class="ThirdCol">
+						<div class="biomaterials-send-to-lab">
 							<!--<button class="Styled Button"><span>Выполнено</span></button>-->
 
 							<button class="Styled Button"><span>Отправить в лабораторию</span></button>
 						</div>
-						<!--</div>-->
+
 					</div>
 
-				</li>
-			</ul>
+
 
 
 			<div id="biomaterial-grid"></div>
