@@ -28,9 +28,7 @@ define([
 
 
 			this.model = new App.Models.HospitalBed();
-			this.model.on('invalid', function (model, error, options) {
-				console.log('invalid', model, error, options);
-			});
+
 			this.model.appealId = this.options.appeal.get("id");
 			this.model.set({"clientId": this.options.appeal.get("patient").get("id")});
 
