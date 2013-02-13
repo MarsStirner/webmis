@@ -5,23 +5,24 @@
     	<div class="CardNav">
 			<h2>
 				{{if patient && patient.name}}
-					{{if patient.name.first || patient.name.last || patient.name.middle}}
-						{{if patient.name.last}}
-							${patient.name.last}
-						{{/if}}
-						{{if patient.name.first}}
-							${patient.name.first}
-						{{/if}}
-						{{if patient.name.middle}}
-							${patient.name.middle}
-						{{/if}}
-					{{else}}
-						{{if patient.name.raw}}
-							${patient.name.raw}
-						{{else}}
-							-
-						{{/if}}
-					{{/if}}
+				{{if patient.name.first || patient.name.last || patient.name.middle}}
+				{{if patient.name.last}}
+				${patient.name.last}
+				{{/if}}
+				{{if patient.name.first}}
+				${patient.name.first}
+				{{/if}}
+				{{if patient.name.middle}}
+				${patient.name.middle}
+				{{/if}}
+				{{else}}
+				{{if patient.name.raw}}
+				${patient.name.raw}
+				{{/if}}
+				{{/if}}
+				{{/if}}
+				{{if patient && patient.birthDate}}
+				({{ageString patient.birthDate}})
 				{{/if}}
 			</h2>
 			<ul class="SectionNav">

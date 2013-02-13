@@ -215,7 +215,7 @@
 	<div class="LineBlock">
 		<div class="SemiCol">
 			<span class="Label">Гражданство</span>
-			<select class="Styled" name="citizenship-first-socStatusType-id">
+			<select class="select2" name="citizenship-first-socStatusType-id">
 				<option value="" selected="selected">...</option>
 				{{each dicts.citizenships}}
 				<option value="${id}">${value}</option>
@@ -224,7 +224,7 @@
 		</div>
 		<div class="SemiCol">
 			<span class="Label">Второе гражданство</span>
-			<select class="Styled" name="citizenship-second-socStatusType-id">
+			<select class="select2" name="citizenship-second-socStatusType-id">
 				<option value="" selected="selected">...</option>
 				{{each dicts.citizenships}}
 				<option value="${id}">${value}</option>

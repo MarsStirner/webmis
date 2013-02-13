@@ -2,7 +2,7 @@
  * User: FKurilov
  * Date: 25.05.12
  */
-define(["models/name", "models/hospital-bed", "models/doctor", "models/condition"], function () {
+define(["models/Name", "models/Bed", "models/doctor", "models/condition"], function (Name) {
 	App.Models.DepartmentPatient = Model.extend({
 		defaults: {
 			number: "",
@@ -19,12 +19,13 @@ define(["models/name", "models/hospital-bed", "models/doctor", "models/condition
 			{
 				type: Backbone.HasOne,
 				key: "name",
-				relatedModel: "App.Models.Name"
+				relatedModel: Name
 			},
 			{
 				type: Backbone.HasOne,
 				key: "hospitalBed",
-				relatedModel: "App.Models.HospitalBed"
+				//relatedModel: "App.Models.HospitalBed",
+				relatedModel: "App.Models.Bed"
 			},
 			{
 				type: Backbone.HasOne,
@@ -38,11 +39,18 @@ define(["models/name", "models/hospital-bed", "models/doctor", "models/condition
 			}
 		],
 
-		parse: function ( data ) {
+		parse: function ( raw ) {
 			var depPatient = new App.Models.DepartmentPatient;
-			data = data.data ? data.data : data;
+			var data = raw.data ? raw.data : raw;
+			console.log('data',data);
 
-			return Core.Objects.mergeAll( depPatient.toJSON(), data )
+			console.log('depPatient',depPatient);
+			console.log('depPatient.toJSON',depPatient.toJSON());
+			var val = Core.Objects.mergeAll( depPatient.toJSON(), data );
+
+			console.log('return data',val);
+
+			return val;
 		}
 	});
 

@@ -66,7 +66,7 @@ img {
 }
 
 
-.Clearfix {
+.Clearfix,.clearfix {
 	@include clearfix;
 }
 
@@ -104,6 +104,7 @@ a {
 
 .PageActions {
 	a.Actions {
+		text-decoration: none;
 		font-size: 1.2em;
 	}
 }

@@ -21,7 +21,7 @@ define(["text!templates/pages/prints.tmpl",
 
 			new App.Views.Print({
 				model: Form,
-				template: "processing-agreement"
+				template: "007"
 			});
 			Form.fetch();
 		},

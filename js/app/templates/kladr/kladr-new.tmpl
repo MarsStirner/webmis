@@ -2,7 +2,7 @@
     <label>Город, село</label>
     <select name="address-${addressType}-localityType" data-key="localityType" class="Styled">
 			<option value="0">...</option>
-			<option value="1" selected="selected">Город</option>
+			<option value="1">Город</option>
 			<option value="2">Село</option>
     </select>
 </li>
@@ -26,7 +26,7 @@
 {{/if}}
 <!-- here goes kladr -->
 <li class="kladrPartLine">
-    <label>Республика, край, область</label>
+    <label>Регион</label>
     <select class="select2 kladrPart kladrEntries" name="address-${addressType}-republic-code" data-entries-name="republics" data-subbind="true">
         <option value="" selected>...</option>
     </select>
@@ -38,7 +38,7 @@
     </select>
 </li>
 <li class="kladrPartLine">
-    <label>Города, сельсоветы</label>
+    <label>Город</label>
     <select class="select2 kladrPart kladrEntries" name="address-${addressType}-city-code" data-entries-name="cities" data-subbind="true">
         <option value="" selected>...</option>
     </select>
@@ -50,7 +50,7 @@
     </select>
 </li>
 <li class="kladrPartLine">
-    <label>Улица, площадь, проспект и т.д.</label>
+    <label>Улица</label>
     <select class="select2 kladrPart kladrEntries" name="address-${addressType}-street-code" data-entries-name="streets" data-subbind="true">
         <option value="" selected>...</option>
     </select>
@@ -75,6 +75,6 @@
     </div>
 </li>
 <li>
-    <label>Адрес</label>
+    <label>Полный адрес</label>
     <textarea type="text" name="address-${addressType}-fullAddress" rows="4" data-maxlength="200" style="resize: none;"></textarea>
 </li>

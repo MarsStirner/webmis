@@ -5,7 +5,7 @@
 	@include border-radius(6px);
     @include box-shadow(rgba(0, 0, 0, 0.5) 0 0 0.1em 0);
 	margin:0;
-	border-top:1px solid #B3B3B3;
+	border-top:2px solid #B3B3B3;
 	border-right:2px solid #bbbbbb;
 	border-bottom:2px solid #B3B3B3;
 	border-left:2px solid #bbbbbb;
@@ -21,7 +21,7 @@
 
 	&:hover {
 
-		border-top:1px solid #128EDC;
+		border-top:2px solid #128EDC;
 		border-right:2px solid #128EDC;
 		border-bottom:2px solid #128EDC;
 		border-left:2px solid #128EDC;
@@ -76,7 +76,7 @@
 	}
 	&.BlueBorder {
 		@extend .Styled.Button:hover;
-		border-top:1px solid #128EDC;
+		border-top:2px solid #128EDC;
 		border-right:2px solid #128EDC;
 		border-bottom:2px solid #128EDC;
 		border-left:2px solid #128EDC;

@@ -26,19 +26,18 @@
 						<div class="LineBlock">
 							<div class="QuartCol">
 								<label>Код</label>
-								<input type="text" class="Clearable" name="patientCode" placeholder="Код" value="{{if requestData.filter && requestData.filter.patientCode}}${requestData.filter.patientCode}{{/if}}" />
+								<input type="text" class="Clearable NewLineAllowed" name="patientCode" placeholder="Код" value="{{if requestData.filter && requestData.filter.patientCode}}${requestData.filter.patientCode}{{/if}}" />
 								<span class="ClearButton DeleteIcon"></span>
 							</div>
 							<div class="HalfCol">
 								<label>ФИО</label>
-								<input type="text" class="Clearable" name="fullName" placeholder="ФИО" value="{{if requestData.filter && requestData.filter.fullName}}${requestData.filter.fullName}{{/if}}" />
+								<input type="text" class="Clearable NewLineAllowed" name="fullName" placeholder="ФИО" value="{{if requestData.filter && requestData.filter.fullName}}${requestData.filter.fullName}{{/if}}" />
 								<span class="ClearButton DeleteIcon"></span>
 							</div>
 							<div class="QuartCol">
-													<span class="Label">
-														Дата рождения
-													</span>
-
+								<span class="Label">
+									Дата рождения
+								</span>
 								<div class="DatePeriod SingleDate">
 									<div class="FromTo">
 										<input type="text" name="birthDate" placeholder="дд.мм.гггг" class="SelectDate" value="{{if requestData.filter && requestData.filter.birthDate}}${requestData.filter.birthDate}{{/if}}" />
@@ -48,11 +47,11 @@
 							</div>
 							<div class="SemiCol">
 								<label>Документ</label>
-								<input type="text" class="Clearable" name="document" placeholder="Документ" value="{{if requestData.filter && requestData.filter.document}}${requestData.filter.document}{{/if}}" />
+								<input type="text" class="Clearable NewLineAllowed" name="document" placeholder="Документ" value="{{if requestData.filter && requestData.filter.document}}${requestData.filter.document}{{/if}}" />
 								<span class="ClearButton DeleteIcon"></span>
 							</div>
 							<div class="QuartCol">
-								<button class="Styled Button"><span>Штрих код</span></button>
+								<button class="Styled Button SearchButton"><span>Поиск</span></button>
 							</div>
 						</div>
 					</li>

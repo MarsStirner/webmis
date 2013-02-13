@@ -7,7 +7,7 @@
 				{{/if}}
 			</div>
 			<div>
-				<h3 style="float: left">История болезни №${number}</h3>
+				<h3 style="float: left">История болезни № ${number}</h3>
 				{{if urgent}}<span class="Privilege" style="margin-left: 1em; font-size: 100%;">Срочно</span>{{/if}}
 				{{if isClosed}}<span class="Primary" style="margin-left: 1em; font-size: 100%;">Закрыта</span>{{/if}}
 			</div>
@@ -98,7 +98,7 @@
 			<td> Тип финансирования </td>
 			<td>
 				{{if appealType && appealType.finance && appealType.finance.name}}
-				${appealType.finance.name}
+				${appealType.finance.name}{{if contract && contract.number}} (Договор: ${contract.number}){{/if}}
 				{{else}}
 				-
 				{{/if}}
@@ -213,5 +213,41 @@
 				{{if deliveredAfterType && deliveredAfterType != "-1"}}${deliveredAfterType}{{else}}-{{/if}}
 			</td>
 		</tr>
+		{{if hospitalizationWith && hospitalizationWith.length}}
+			{{each(i, hw) hospitalizationWith}}
+				<tr>
+					<td>Законный представитель</td>
+					<td>
+						<a href="/patients/${hw.relative.id}/">
+							<span>${hw.relative.name}</span>
+						</a>
+						, {{getYear hw.relative.birthDate}} г.р.{{if hw.note}} (${hw.note}){{/if}}
+					</td>
+				</tr>
+			{{/each}}
+		{{/if}}
+		{{if nextHospDate || nextHospDepartment || nextHospFinanceType}}
+			<tr>
+				<td colspan="2" style="padding-top: 2em;"><b style="color: black;">Информация о следующей госпитализации</b></td>
+			</tr>
+			{{if nextHospDate}}
+				<tr>
+					<td>Дата следующей госпитализации</td>
+					<td>${nextHospDate}</td>
+				</tr>
+			{{/if}}
+			{{if nextHospDepartment}}
+				<tr>
+					<td>Отделение госпитализации</td>
+					<td>${nextHospDepartment}</td>
+				</tr>
+			{{/if}}
+			{{if nextHospFinanceType}}
+				<tr>
+					<td>Тип финансирования</td>
+					<td>${nextHospFinanceType}</td>
+				</tr>
+			{{/if}}
+		{{/if}}
 	</tbody>
 </table>

@@ -20,6 +20,12 @@ define([
 				scope: self,
 				handler: this.printAppeal,
 				dropDownItems: [{
+					label: "Титульный лист формы 003\\у",
+					handler: this.printAppeal
+				}, {
+					label: "Статкарта",
+					handler: this.printStatisticCard
+				}, {
 					label: "Согласие на обследование ВИЧ",
 					handler: this.printConsentToExam
 				}, {
@@ -44,10 +50,21 @@ define([
 		},
 
 		printAppeal: function () {
+			var PrintAppeal = new App.Models.PrintAppeal({
+				id: this.model.get("id")
+			});
+
 			new App.Views.Print({
-				data: this.model.toJSON(),
+				model: PrintAppeal,
 				template: "f003"
 			});
+
+			PrintAppeal.fetch();
+
+			/*new App.Views.Print({
+				data: this.model.toJSON(),
+				template: "f003"
+			});*/
 		},
 
 		printConsentToExam: function () {
@@ -83,6 +100,19 @@ define([
 				data: this.model.get("patient").toJSON(),
 				template: "consent_to_the_processing_representative"
 			});
+		},
+
+		printStatisticCard: function () {
+			var PrintAppeal = new App.Models.PrintAppeal({
+				id: this.model.get("id")
+			});
+
+			new App.Views.Print({
+				model: PrintAppeal,
+				template: "f066"
+			});
+
+			PrintAppeal.fetch();
 		},
 
 		onEditAppealClick: function (event) {

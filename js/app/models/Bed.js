@@ -6,7 +6,10 @@ define(function () {
 	App.Models.Bed = Model.extend({
 		defaults: {
 			bedId: "",
-			busy: ""
+			busy: "",
+			bed:"",
+			room: "",
+			code: ""
 		}
 	});
 });

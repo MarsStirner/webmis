@@ -145,14 +145,14 @@ define([
 				key: "bloodPressure",
 				relatedModel: PhysicalParametersBloodPressure
 			}
-		],
+		]/*,
 		clean: function () {
 			this.set({
 				//temperature: this.get("temperature").toString().replace(/\D/, ""),
 				weight: this.get("weight").toString().replace(/\D/, ""),
 				height: this.get("height").toString().replace(/\D/, "")
 			});
-		}
+		}*/
 	});
 
 
@@ -190,7 +190,41 @@ define([
 		}
 	});
 
-	var Representative = Model.extend({});
+	var Relative = Model.extend({
+		defaults: {
+			id: "",
+			name: "",
+			birthDate: ""
+		}
+	});
+
+	var RelativeType = Model.extend({
+		defaults: {
+			id: "",
+			name: ""
+		}
+	});
+
+	var Representative = Model.extend({
+		defaults: {
+			relative: {},
+			relativeType: {},
+			note: ""
+		},
+
+		relations: [
+			{
+				type: Backbone.HasOne,
+				key: "relative",
+				relatedModel: Relative
+			},
+			{
+				type: Backbone.HasOne,
+				key: "relativeType",
+				relatedModel: RelativeType
+			}
+		]
+	});
 
 	var Representatives = Collection.extend({
 		model: Representative
@@ -216,12 +250,34 @@ define([
 		]
 	});
 
+	var ContractFinance = Model.extend({
+		defaults: {
+			name: ""
+		}
+	});
+
+	var Contract = Model.extend({
+		defaults: {
+			number: "",
+			begDate: "",
+			finance:{}
+		},
+
+		relations: [
+			{
+				type: Backbone.HasOne,
+				key: "finance",
+				relatedModel: ContractFinance
+			}
+		]
+	});
+
 	App.Models.Appeal = Model.extend({
 		idAttribute: "id",
 
-		initialize: function () {
+		/*initialize: function () {
 
-		},
+		},*/
 
 		isClosed: function () {
 			//return Boolean(this.get("rangeAppealDateTime").get("end"));
@@ -270,10 +326,10 @@ define([
 			ambulanceNumber: "",
 			rangeAppealDateTime: {},
 			refuseAppealReason: "",
-			appealWithDeseaseThisYear: "",
+			appealWithDeseaseThisYear: "первично",
 			patient: {},
 			appealType: {},
-			relations: [{}],
+			//relations: [{}],
 			assignment: {},
 			hospitalizationType: {},
 			hospitalizationPointType: {},
@@ -293,7 +349,11 @@ define([
 			hospitalizationWith: [],
 			//bold
 			havePrimary: false,
-			setPerson: {}
+			setPerson: {},
+			contract: {},
+			nextHospDate: null,
+			nextHospDepartment: null,
+			nextHospFinanceType: null
 		},
 		relations: [
 			{
@@ -361,12 +421,12 @@ define([
 				key: "rangeAppealDateTime",
 				relatedModel: "App.Models.Date"
 			},
-			{
+			/*{
 				type: Backbone.HasMany,
 				key: "relations",
 				relatedModel: "App.Models.Relation",
 				collectionType: "App.Collections.Relations"
-			},
+			},*/
 			{
 				type: Backbone.HasMany,
 				key: "diagnoses",
@@ -397,8 +457,12 @@ define([
 			{
 				type: Backbone.HasOne,
 				key: "setPerson",
-				relatedModel: SetPerson,
-				collectionType: SetPerson
+				relatedModel: SetPerson
+			},
+			{
+				type: Backbone.HasOne,
+				key: "contract",
+				relatedModel: Contract
 			}
 		],
 

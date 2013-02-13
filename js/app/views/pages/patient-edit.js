@@ -3,6 +3,7 @@ define([
 	"text!templates/patient-edit/general.tmpl",
 	"text!templates/patient-edit/relation.tmpl",
 	"text!templates/patient-edit/documents.tmpl",
+	"text!templates/patient-edit/policy.tmpl",
 	"text!templates/patient-edit/id-card.tmpl",
 	"text!templates/patient-edit/medical-info.tmpl",
 	"text!templates/patient-edit/drug-intolerance.tmpl",
@@ -10,24 +11,33 @@ define([
 	"text!templates/patient-edit/other.tmpl",
 	"text!templates/patient-edit/address.tmpl",
 	"text!templates/patient-edit/contact.tmpl",
+	"text!templates/patient-edit/quotes.tmpl",
 	"models/patient",
 	"collections/flat-directories",
 	"collections/dictionary-values",
+	"collections/departments",
+	"collections/quotes",
+	"collections/patient-appeals",
 	"views/form/abstract-line",
 	"views/form/kladr-new",
+	"views/mkb-directory",
 	"views/menu",
+	"views/grid",
+	"views/paginator",
 	"views/breadcrumbs"
 ], function (tmplMain,
 						 tmplGeneral,
 						 tmplRelation,
 						 tmplDocuments,
+						 tmplPolicy,
 						 tmplIdCard,
 						 tmplMedInfo,
 						 tmplDrugIntolerance,
 						 tmplAllergy,
 						 tmplOther,
 						 tmplAddress,
-						 tmplContact) {
+						 tmplContact,
+						 tmplQuotes) {
 
 	/**
 	 * //////////////////////////////////
@@ -81,6 +91,8 @@ define([
 
 			if (!this.options.model) this.model = new App.Models.Patient();
 
+			this.modelIsNew = this.model.isNew();
+
 			this.attachModelHandlers();
 
 			console.log(this.model.toJSON());
@@ -92,6 +104,11 @@ define([
 			this.steps.address     = new AddressView({model: self.model});
 			this.steps.medicalInfo = new MedicalInfoView({model: self.model.get("medicalInfo")});
 			this.steps.other       = new OtherView({model: self.model});
+			this.steps.quotes      = new QuotesView({patient: self.model});
+
+			/////////////////////////////////
+			/// var newMenu = new NewMenuView({items: self.getMenuStructure()});
+			/////////////////////////////////
 
 			this.menuStructure = self.getMenuStructure();
 
@@ -349,10 +366,13 @@ define([
 			if (this.currentView) {
 				this.currentView.remove();
 				this.currentView.unbind();
+				this.currentView.off(null, null, this);
 				this.currentView.el = null;
 			}
 
 			this.currentView = this.steps[this.currentStep];
+
+			this.$(".ContentHeader").toggle(!this.currentView.noSaveBtn);
 
 			this.assign({
 				".LeftSideBar": this.menu,
@@ -450,7 +470,8 @@ define([
 					{name: "documents", title: "Документы", uri: "/patients/new/documents/"},
 					{name: "address", title: "Адреса", uri: "/patients/new/address/"},
 					{name: "medicalInfo", title: "Мед. особенности", uri: "/patients/new/medicalInfo/"},
-					{name: "other", title: "Прочее", uri: "/patients/new/other/"}
+					{name: "other", title: "Прочее", uri: "/patients/new/other/"},
+					{name: "quotes", title: "Квоты", uri: "/patients/new/quotes/"}
 				];
 			} else {
 				menuStructure = [
@@ -458,7 +479,8 @@ define([
 					App.Router.compile({name: "documents", title: "Документы", uri: "/patients/:id/edit/documents/"}, this.model.toJSON()),
 					App.Router.compile({name: "address", title: "Адреса", uri: "/patients/:id/edit/address/"}, this.model.toJSON()),
 					App.Router.compile({name: "medicalInfo", title: "Мед. особенности", uri: "/patients/:id/edit/medicalInfo/"}, this.model.toJSON()),
-					App.Router.compile({name: "other", title: "Прочее", uri: "/patients/:id/edit/other/"}, this.model.toJSON())
+					App.Router.compile({name: "other", title: "Прочее", uri: "/patients/:id/edit/other/"}, this.model.toJSON()),
+					App.Router.compile({name: "quotes", title: "Квоты", uri: "/patients/:id/edit/quotes/"}, this.model.toJSON())
 				];
 			}
 
@@ -466,12 +488,15 @@ define([
 		},
 
 		attachModelHandlers: function () {
+			var self = this;
+
 			this.model.on("sync", function(data){
 				//console.log("synced", data);
 
 				if (this.options.popUpMode) {
 					this.trigger("patient:created", this.model);
 				} else {
+					pubsub.trigger('noty', {text:'Карточка пациента ' + (self.modelIsNew ? 'создана' : 'изменена')});
 					App.Router.navigate("/patients/"+ this.model.id +"/", {trigger: true});
 				}
 			}, this);
@@ -863,6 +888,7 @@ define([
 
 		initialize: function (options) {
 			var self = this;
+
 			this.idCardsView = new IdCardsView({collection: self.model.get("idCards")});
 
 			var docDicts = [
@@ -872,7 +898,7 @@ define([
 				{name: "docTypes", pathPart: "clientDocument&filter[groupId]=1"}
 			];
 
-			if (!this.model.get("payments").getOms().length) {
+			/*if (!this.model.get("payments").getOms().length) {
 				this.model.get("payments").add({});
 			}
 
@@ -880,13 +906,19 @@ define([
 				var payment = new App.Models.Payment();
 				payment.get("policyType").set("id", 3);
 				this.model.get("payments").add(payment);
-			}
+			}*/
+
+			this.policiesOmsView = new PoliciesView({type: "oms", collection: self.model.get("payments")});
+			this.policiesDmsView = new PoliciesView({type: "dms", collection: self.model.get("payments")});
 
 			this.initWithDictionaries(docDicts, this.onDictionariesLoaded, this, true);
 		},
 
 		onDictionariesLoaded: function (dictionaries) {
 			this.dictionaries = dictionaries;
+
+			this.policiesOmsView.dictionaries = this.dictionaries;
+			this.policiesDmsView.dictionaries = this.dictionaries;
 
 			this.render();
 		},
@@ -931,7 +963,7 @@ define([
 					this.selectedTfoms = ic.headId;
 			}
 
-			var beautyPatientJSON = this.model.toJSON();
+			/*var beautyPatientJSON = this.model.toJSON();
 
 			var oms = this.model.get("payments").getOms()[0];
 			var dms = this.model.get("payments").getDms()[0];
@@ -942,21 +974,146 @@ define([
 			omsJSON.cid = oms.cid;
 			dmsJSON.cid = dms.cid;
 
-			beautyPatientJSON.payments = {oms: omsJSON, dms: dmsJSON};
+			beautyPatientJSON.payments = {oms: omsJSON, dms: dmsJSON};*/
 
 			this.$el.html($.tmpl(this.template, {
-				patient: beautyPatientJSON,
+				patient: this.model.toJSON(),
 				selectedTfoms: this.selectedTfoms || "",
 				dictionaries: this.dictionaries || {}
 			}));
 
 			UIInitialize(this.el);
 
-			//this.$("select[name='tfoms']").select2();
+			this.$(".select2").width("100%").select2();
 
 			this.toggleSmo();
 
-			this.assign("#id-cards", this.idCardsView);
+			this.assign({
+				"#id-cards": this.idCardsView,
+				"#policiesOms": this.policiesOmsView,
+				"#policiesDms": this.policiesDmsView
+			});
+
+			return this;
+		}
+	});
+
+	var PoliciesView = View.extend({
+		initialize: function (options) {
+			this.collection.on("add", this.addOne, this);
+
+			if (this.options.type === "oms") {
+				if (!this.collection.getOms().length) {
+					this.collection.add({});
+				}
+			} else {
+				if (!this.collection.getDms().length) {
+					var payment = new App.Models.Payment();
+					payment.get("policyType").set("id", 3);
+					this.collection.add(payment);
+				}
+			}
+		},
+
+		onModelAdd: function (view) {
+			this.triggerView = view;
+			var NewModel = new App.Models.Payment();
+			if (this.options.type === "dms") {
+				NewModel.get("policyType").set("id", 3);
+			}
+			this.collection.add(NewModel, {at: this.collection.indexOf(this.triggerView.model) + 1});
+		},
+
+		addOne: function (model) {
+			if (this.options.type == "dms" && model.get("policyType").get("id") == 3 ||
+				  this.options.type == "oms" && model.get("policyType").get("id") != 3) {
+				var view = new PolicyView({model: model, type: this.options.type, dictionaries: this.dictionaries || {}});
+
+				view
+					.on("model:add", this.onModelAdd, this)
+					.render();
+
+				if (this.triggerView) {
+					this.triggerView.$el.after(view.el);
+				} else {
+					this.$el.append(view.el);
+				}
+			}
+		},
+
+		render: function () {
+			this.$el.empty();
+			this.triggerView = undefined;
+
+			this.collection.each(this.addOne, this);
+
+			return this;
+		}
+	});
+
+	var PolicyView = View.extend({
+		className: "DoubleLineBlock",
+
+		template: tmplPolicy,
+
+		events: {
+			"click .AddIcon"   : "onAddIconClick",
+			"click .RemoveIcon": "onRemoveIconClick"
+		},
+
+		initialize: function (options) {
+			this.model.collection.on("add", this.toggleRemoveIcon, this);
+			this.model.collection.on("remove", this.toggleRemoveIcon, this);
+		},
+
+		toggleRemoveIcon: function (event) {
+			if (this.model.collection) {
+				var vis = false;
+				if (this.options.type == "dms") {
+					vis = this.model.collection.getDms().length > 1;
+				} else {
+					vis = this.model.collection.getOms().length > 1;
+				}
+				this.$(".RemoveIcon").css("display", (vis ? "inline-block" : "none"));
+			}
+		},
+
+		onAddIconClick: function (event) {
+			this.trigger("model:add", this);
+		},
+
+		onRemoveIconClick: function (event) {
+			var self = this;
+
+			this.model.collection.remove(this.model);
+
+			this.$el.hide("fast", function () {
+				self.remove();
+				self.unbind();
+			});
+		},
+
+		render: function () {
+			var json = {};
+
+			json.model = this.model.toJSON();
+			json.model.cid = this.model.cid;
+
+			json.dictionaries = this.options.dictionaries;
+
+			json.type = this.options.type;
+
+			this.$el.hide();
+
+			this.$el.html($.tmpl(this.template, json));
+
+			UIInitialize(this.el);
+
+			this.$(".select2").width("100%").select2();
+
+			this.toggleRemoveIcon();
+
+			this.$el.fadeIn("fast");
 
 			return this;
 		}
@@ -1109,7 +1266,7 @@ define([
 		addressesEqual: false,
 
 		events: {
-			"change #addressesEqual": "onAddressesEqualChange"
+			"change #addresses-equal": "onAddressesEqualChange"
 		},
 
 		initialize: function () {
@@ -1129,6 +1286,8 @@ define([
 
 			this.addressesEqual = this.model.isNew() ? false : this.model.get("address").getIsEqual();
 
+			this.model.get("address").setAddressesEqual(this.addressesEqual);
+
 			/*this.residentialAddress.on("addressChange", function (e) {
 				residential.set(e.key, e.value);
 				if (this.addressesEqual) {
@@ -1145,9 +1304,9 @@ define([
 		},
 
 		onAddressesEqualChange: function (event) {
-			var addressesEqual = $(event.currentTarget).is(":checked");
+			var addressesEqual = Boolean($(event.currentTarget).is(":checked"));
 
-			this.model.get("address").addressesEqual = addressesEqual;
+			this.model.get("address").setAddressesEqual(addressesEqual);
 
 			this.addressesEqual = addressesEqual;
 
@@ -1530,7 +1689,7 @@ define([
 
 			if ($sel.val() != this.model.get("occupations").first().get("socialStatus").get("id")) {
 				// Обнулим все остальные значения инпутов, чтобы их данные не попали в модель
-				this.$(".Occupation").hide().find(":input").val("");
+				this.$(".Occupation").hide().find(":input").val("").change();
 			}
 
 			this.$(relation).show();
@@ -1566,12 +1725,381 @@ define([
 
 			UIInitialize(this.el);
 
+			this.$(".select2").width("100%").select2();
+
 			/*this.assign({
 				"#disabilities": this.disabilities//,
 				//"#occupations": this.occupations
 			});*/
 
 			return this;
+		}
+	});
+
+
+	// Шаг 6. Квоты
+	var QuotesView = View.extend({
+		events: {
+			"click #new-quota": "onNewQuotaClick"
+		},
+
+		//noSaveBtn: true,
+
+		template:
+			'<li>' +
+				'<div class="ContentHeader Clearfix">' +
+					'<div class="PageActions">' +
+						'<button id="new-quota" class="Styled Button">' +
+							'<i class="Icon AddIcon Tiny"></i>' +
+							'<span>Добавить талон</span>' +
+						'</button>' +
+					'</div>' +
+				'</div>' +
+				'<div id="quotes-grid"></div>' +
+				'<div id="empty-alert" class="Hidden"><h4>Не найдено талонов</h4></div>' +
+			'</li>',
+
+		initialize: function (options) {
+			this.collection = new App.Collections.Quotes();
+			this.grid = new App.Views.Grid({
+				collection: this.collection,
+				template: "grids/quotes",
+				gridTemplateId: "#quotes-grid-department",
+				rowTemplateId: "#quotes-grid-row-department",
+				defaultTemplateId: "#quotes-grid-department-default"
+			});
+
+			if (!this.options.patient.isNew()) {
+				this.patientAppeals = new App.Collections.PatientAppeals();
+				this.patientAppeals.patient = this.options.patient;
+
+				this.patientAppeals.on("reset", function () {
+					if (this.patientAppeals.length) {
+						this.collection.patientId = this.options.patient.get("id");
+						this.collection.appealId = this.patientAppeals.first().get("id");
+
+						this.collection.on("reset", function () {
+							this.$("#empty-alert").toggle(!this.collection.length);
+						}, this);
+
+						this.collection.fetch();
+
+						this.departments = new App.Collections.Departments();
+						this.departments.setParams({
+							filter: {
+								hasBeds: true
+							}
+						});
+						this.departments.on("reset", this.onDepartmentsReset, this);
+						this.departments.fetch();
+
+						this.quotaTypes = new App.Collections.QuotaTypes();
+						this.quotaTypes.fetch();
+
+						this.initWithDictionaries([
+							{name: "stages", fd: true, id: 32},
+							{name: "statuses", pathPart: "quotaStatus"}
+						], this.onDictionariesLoaded, this, true);
+
+						Cache.Patient = this.options.patient;
+					}
+				}, this);
+
+				this.patientAppeals.fetch();
+			}
+		},
+
+		onDictionariesLoaded: function (dictionaries) {
+			this.dictionaries = dictionaries;
+			this.dictionaries.stages = _(this.dictionaries.stages).filter(function (stage) {
+				return (["1", "3", "4"].indexOf(stage["74"]) !== -1);
+			});
+			console.log(dictionaries);
+			/*this.render();
+			UIInitialize(this.el);*/
+		},
+
+		onDepartmentsReset: function () {
+			console.log(this.departments.toJSON());
+			/*this.render();
+			UIInitialize(this.el);*/
+		},
+
+		onNewQuotaClick: function () {
+			console.log("new quota");
+			var addQuotaDialog = new AddQuotaView({
+				dicts: this.dictionaries,
+				patientAppeals: this.patientAppeals.toJSON(),
+				departments: this.departments.toJSON(),
+				quotaTypes: this.quotaTypes.toJSON(),
+				patientSex: this.options.patient.get("sex")
+			}).render();
+
+			addQuotaDialog.on("save", function (options) {
+				this.collection.fetch();
+			}, this);
+		},
+
+		openQuota: function (quotaId) {
+			console.log(quotaId);
+
+			var addQuotaDialog = new AddQuotaView({
+				dicts: this.dictionaries,
+				patientAppeals: this.patientAppeals.toJSON(),
+				departments: this.departments.toJSON(),
+				quotaTypes: this.quotaTypes.toJSON(),
+				patientSex: this.options.patient.get("sex"),
+				model: this.collection.get(quotaId)
+			}).render();
+
+			addQuotaDialog.on("save", function (options) {
+				this.collection.fetch();
+			}, this);
+		},
+
+		render: function () {
+			var self = this;
+
+			if (!this.options.patient.isNew()) {
+				this.$el.html($.tmpl(this.template));
+
+				this.$("#quotes-grid").empty().append(this.grid.el);
+
+				this.grid.$(".EditQuota").live("click", function (event) {
+					event.preventDefault();
+					event.stopPropagation();
+
+					var quotaId = $(this).parent().siblings(".QuotaIdHolder").data("quota-id");
+					self.openQuota(quotaId);
+				});
+
+				// Пэйджинатор
+				this.paginator = new App.Views.Paginator({
+					collection: self.collection
+				});
+				this.depended(this.paginator);
+
+				this.$("li").append(this.paginator.render().el);
+
+				if (self.collection.length) {
+					this.paginator.ready();
+				}
+
+				this.delegateEvents();
+				this.grid.delegateEvents();
+				this.paginator.delegateEvents();
+			} else {
+				this.$el.html($.tmpl("<li><h4>Для добавления талона необходимо создать обращение.</h2></li>"));
+			}
+
+			return this;
+		}
+	});
+
+	var AddQuotaView = Form.extend({
+		className: "popup",
+
+		events: {
+			"click .MKBLauncher": "launchMKB",
+			"keyup #quota-diagnosis-code": "onMKBCodeKeyUp",
+			"change #quota-talonNumber": "onTalonNumberChange"
+		},
+
+		template: tmplQuotes,
+
+		initialize: function (options) {
+			_.bindAll(this);
+
+			if (!this.model) this.model = new App.Models.Quota();
+
+			var mkb = this.model.get("mkb");
+
+			this.mkbDir = new App.Views.MkbDirectory();
+			/*this.mkbDir.on("selectionConfirmed", function (event) {
+				this.selectedMkb = event.selectedDiagnosis;
+			}, this);*/
+
+			this.mkbDir.on("selectionConfirmed", function (event) {
+				mkb.set({
+					code: event.selectedDiagnosis.get("code") || event.selectedDiagnosis.get("id"),
+					diagnosis: event.selectedDiagnosis.get("diagnosis")
+				});
+			}, this);
+
+			mkb.on("change", function () {
+				this.$("#quota-diagnosis-code").val(mkb.get("code"));
+				this.$("#quota-diagnosis-desc").val(mkb.get("diagnosis"));
+			}, this);
+		},
+
+		launchMKB: function () {
+			this.mkbDir.open();
+		},
+
+		onTalonNumberChange: function (event) {
+			var talonNumber = $(event.currentTarget).val().replace(/[^\d.]/g, "");
+
+			console.log(talonNumber.length);
+
+			$(event.currentTarget).removeClass("WrongField");
+
+			if (talonNumber.length > 3) {
+				if (talonNumber.length != 17) $(event.currentTarget).addClass("WrongField");
+			} else {
+				$(event.currentTarget).val("");
+			}
+		},
+
+		render: function () {
+			var self = this;
+			this.$el.html($.tmpl(this.template, {
+				model: this.model.toJSON(),
+				dicts: this.options.dicts || {},
+				departments: this.options.departments,
+				patientAppeals: this.options.patientAppeals,
+				quotaTypes: this.options.quotaTypes
+			}));
+
+			this.$el.dialog({
+				//autoOpen: false,
+				width: "86em",
+				title: "Добавление талона",
+				resizable: false,
+				dialogClass: "webmis",
+				modal: true,
+				buttons: [
+					{
+						text: self.model.isNew() ? "Добавить" : "Сохранить",
+						//class: "Styled Button buttonOK",
+						//id: "confirmSelection",
+						click: self.onAddClick
+					}, {
+						text: "Отмена",
+						click: self.close
+					}
+				]
+			});
+
+			this.$("a").click(function (event) {
+				event.preventDefault();
+			});
+
+			UIInitialize(this.el);
+
+			this.$(".select2").width("100%").select2();
+			this.$("#quota-talonNumber").mask("99.9999.99999.999");
+
+			this.mkbDir.render();
+
+			var patientSex = self.options.patientSex.length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
+
+			this.$("#quota-diagnosis-code").autocomplete({
+				source: function (request, response) {
+					$.ajax({
+						url: "/data/mkbs/",
+						dataType: "jsonp",
+						data: {
+							filter: {
+								view: "mkb",
+								code: request.term,
+								sex: patientSex
+							}
+						},
+						success: function (raw) {
+							response($.map(raw.data, function (item) {
+								return {
+									label: item.code + " " + item.diagnosis,
+									value: item.code,
+									id: item.id,
+									diagnosis: item.diagnosis
+								}
+							}));
+						}
+					});
+				},
+				minLength: 2,
+				select: function (event, ui) {
+					self.model.get("mkb").set({
+						id: ui.item.id,
+						code: ui.item.value,
+						diagnosis: ui.item.diagnosis
+					}, {silent: true});
+
+					self.$("#quota-diagnosis-desc").val(ui.item.diagnosis);
+
+					console.log(ui.item ?
+						"Selected: " + ui.item.label :
+						"Nothing selected, input was " + this.value);
+				}
+			}).on("keyup", function () {
+					if (!$(this).val().length) {
+						self.model.get("mkb").set({
+							id: "",
+							code: "",
+							diagnosis: ""
+						}, {silent: true});
+
+						self.$("#quota-diagnosis-desc").val("");
+					}
+				});
+
+			return this;
+		},
+
+		onAddClick: function () {
+			if (this.validate()) {
+				this.model.set({
+					"appealNumber": this.$("#quota-appealNumber").val(),
+					"talonNumber": this.$("#quota-talonNumber").val(),
+					//"stage": this.$("#quota-stage").val(),
+					"stage": {
+						id: this.$("#quota-stage").val()
+					},
+					//"request": this.$("#quota-request").val(),
+					"request": {
+						id: this.$("#quota-request").val()
+					},
+					/*"mkb": {
+						id: this.selectedMkb.get("id") || this.selectedMkb.get("code")
+					},*/
+					"quotaType": {
+						id: this.$("#quota-quotaType").val()
+					},
+					"department": {
+						id: this.$("#quota-department").val()
+					},
+					"status": {
+						id: this.$("#quota-status").val()
+					}
+				});
+
+				var self = this;
+
+				self.model.save(null, {success: function () {
+					console.log("quota saved");
+					self.trigger("save");
+					self.close();
+				}});
+			}
+		},
+
+		validate: function () {
+			var talonNumberLength = this.$("#quota-talonNumber").val().replace(/[^\d.]/g, "").length;
+			var talonNumberValid = (talonNumberLength == 17) || (talonNumberLength == 0);
+
+			return Form.prototype.validate.apply(this) && talonNumberValid;
+		},
+
+		onMKBCodeKeyUp: function (event) {
+			$(event.currentTarget).val(Core.Strings.toLatin($(event.currentTarget).val()));
+		},
+
+		open: function () {
+			this.$el.dialog("open");
+		},
+
+		close: function () {
+			this.unbind().remove();
 		}
 	});
 
@@ -1607,6 +2135,47 @@ define([
 			return this;
 		}
 	});
+
+	/*var NewMenuView = View.extend({
+		template: "<ul class='AsideNav'></ul>",
+		events: {
+			"click li": "onMenuItemClick"
+		},
+
+		initialize: function (options) {
+			this.collection = new Backbone.Collection(options.items);
+		},
+
+		onMenuItemClick: function (event) {
+
+		},
+
+		render: function () {
+			this.$el.empty().append(this.template);
+			this.$(".AsideNav");
+
+			return this;
+		}
+	});*/
+
+	/*var MenuItemView = View.extend({
+		tagName: "li",
+		template: "<a href=''><span><%= item.title %></span></a>",
+
+		events: {
+			"click": "onClick"
+		},
+
+		initialize: function (options) {
+			this.model.on("change", this.render, this);
+		},
+
+		render: function () {
+			this.$el.empty().append(_.template(this.template, this.model.toJSON()));
+
+			return this;
+		}
+	});*/
 
 	/*var ErrorTooltip = View.extend({
 		className: "ToolTip",

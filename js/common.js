@@ -1,15 +1,15 @@
 // Глобальные константы
-var GUI_VERSION = "1.0.0.552";
+var GUI_VERSION = "RELEASE-1.0.1";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
 
 ROLES = {
-	DEFAULT: "default",
-	NURSE_RECEPTIONIST: "nurse-receptionist",
-	DOCTOR_RECEPTIONIST: "doctor-receptionist",
-	NURSE_DEPARTMENT: "nurse-department",
-	DOCTOR_DEPARTMENT: "doctor-department"
+	DEFAULT:"default",
+	NURSE_RECEPTIONIST:"nurse-receptionist",
+	DOCTOR_RECEPTIONIST:"doctor-receptionist",
+	NURSE_DEPARTMENT:"nurse-department",
+	DOCTOR_DEPARTMENT:"doctor-department"
 };
 
 DEFAULT_ANIMATION_TIME = 300;
@@ -22,22 +22,26 @@ App.Dynamic = {};
 App.Collections = {};
 App.Views = {};
 
+//глобальный pub sub
+pubsub = _.extend({}, Backbone.Events);
+
+
 
 // Загруженная информация
 Data = {};
 Cache = {};
 
 Model = Backbone.RelationalModel.extend({
-	idAttribute: "_id",
+	idAttribute:"_id",
 
-	connect: function (key, $inputs, context) {
+	connect:function (key, $inputs, context) {
 		var model = this;
 
-		if ( typeof $inputs == "string" ) {
-			$inputs = $(":input[name='"+ $inputs +"']", context);
+		if (typeof $inputs == "string") {
+			$inputs = $(":input[name='" + $inputs + "']", context);
 		}
 
-		checkForWarnings($inputs.length ? 1 : null, $inputs.selector + " was not found" + (context ? " in "+context.toArray() : ""));
+		checkForWarnings($inputs.length ? 1 : null, $inputs.selector + " was not found" + (context ? " in " + context.toArray() : ""));
 
 		function setValue ($input) {
 			if (model.clean) {
@@ -48,29 +52,29 @@ Model = Backbone.RelationalModel.extend({
 			if ($input.is(".SelectDate")) {
 				// Если помимо даты есть ещё и время
 				var relation = $input.data("relation");
-				if ( relation ) {
+				if (relation) {
 					var $relation = $(relation, context);
 
 					var value = $relation.val();
-					if ( Core.Date.toInt( $input.val() + " " + value ) == parseInt(model.get(key), 10) ) {
+					if (Core.Date.toInt($input.val() + " " + value) == parseInt(model.get(key), 10)) {
 						return false;
 					}
 				} else {
-					if ( Core.Date.toInt( $input.val() )  == parseInt(model.get(key), 10) ) {
+					if (Core.Date.toInt($input.val()) == parseInt(model.get(key), 10)) {
 						return false;
 					}
 				}
-				$input.val( model.get( key ) ? Core.Date.format( model.get( key ) ) : "" );
+				$input.val(model.get(key) ? Core.Date.format(model.get(key)) : "");
 
 				return true;
 			}
 
 			// Если время
 			if ($input.is(".HourPicker") && model.get(key)) {
-				var DateTime = new Date( model.get( key ) );
+				var DateTime = new Date(model.get(key));
 				var formattedTime = Core.Date.zeroFirst(DateTime.getHours()) + ":" + Core.Date.zeroFirst(DateTime.getMinutes());
 
-				if ( formattedTime != $input.val() ) {
+				if (formattedTime != $input.val()) {
 					$input.val(formattedTime);
 				}
 
@@ -84,8 +88,8 @@ Model = Backbone.RelationalModel.extend({
 					$radio.removeAttr("checked").each(function () {
 						var $this = $(this);
 
-						if ( $this.val() == model.get(key) ) {
-							$this.attr ( "checked", "checked" );
+						if ($this.val() == model.get(key)) {
+							$this.attr("checked", "checked");
 							$this.change();
 						}
 					});
@@ -95,31 +99,31 @@ Model = Backbone.RelationalModel.extend({
 			}
 
 			/*if ($input.is("select")) {
-				var founded = false;
+			 var founded = false;
 
-				$input.find("option").each(function () {
-					var $option = $(this);
+			 $input.find("option").each(function () {
+			 var $option = $(this);
 
-					if ($option.val() == model.get(key)) {
-						$option
-							.attr ("selected", "selected")
-							.change()
-							.siblings()
-							.removeAttr("selected");
-						$input.change();
+			 if ($option.val() == model.get(key)) {
+			 $option
+			 .attr ("selected", "selected")
+			 .change()
+			 .siblings()
+			 .removeAttr("selected");
+			 $input.change();
 
-						founded = true;
+			 founded = true;
 
-						return false;
-					}
-				});
-				if (!founded) {
-					$input.find("option").eq(0).attr("selected", "selected").change().siblings().removeAttr ("selected");
-					$input.change();
-				}
+			 return false;
+			 }
+			 });
+			 if (!founded) {
+			 $input.find("option").eq(0).attr("selected", "selected").change().siblings().removeAttr ("selected");
+			 $input.change();
+			 }
 
-				return true;
-			}*/
+			 return true;
+			 }*/
 
 			if ($input.is(":checkbox")) {
 				$input.prop("checked", !!model.get(key));
@@ -139,7 +143,7 @@ Model = Backbone.RelationalModel.extend({
 
 			$input.data("connect:disconnected", false);
 
-			if ( $input.data("connect:model") == model && $input.data("connect:key") == key) {
+			if ($input.data("connect:model") == model && $input.data("connect:key") == key) {
 				return true
 			}
 
@@ -147,33 +151,33 @@ Model = Backbone.RelationalModel.extend({
 			$input.data("connect:key", key);
 
 			var relation = $input.data("relation");
-			if ( relation ) {
+			if (relation) {
 				var $relation = $(relation, context);
 			}
 
 			$input.on("change keyup click _update", function (event) {
 				// Это проще, чем удалять и навешивать события каждый раз
-				if ( $input.data("connect:disconnected") ) {
+				if ($input.data("connect:disconnected")) {
 					return;
 				}
 
 				var object = {};
 
-				if ( $input.is( ".SelectDate" ) ) {
-					if ( relation ) {
+				if ($input.is(".SelectDate")) {
+					if (relation) {
 						var value = $relation.val();
 
-						object[key] = Core.Date.toInt( $input.val() + " " + value ) || "";
+						object[key] = Core.Date.toInt($input.val() + " " + value) || "";
 					} else {
-						object[key] = Core.Date.toInt( $input.val() ) || "";
+						object[key] = Core.Date.toInt($input.val()) || "";
 					}
-				} else if ( $input.is(".HourPicker") ) {
+				} else if ($input.is(".HourPicker")) {
 
-					if ( relation ) {
+					if (relation) {
 						// Если модель (а соответственно и поле) пустые — выставляем текущую дату
-						if ( !model.get(key) ) {
+						if (!model.get(key)) {
 							var currentDate = new Date();
-							$relation.val( Core.Date.format(currentDate.getTime()) );
+							$relation.val(Core.Date.format(currentDate.getTime()));
 						}
 
 						$relation.trigger("_update");
@@ -186,29 +190,29 @@ Model = Backbone.RelationalModel.extend({
 					object[key] = $input.val();
 				}
 
-				if ( !_.isEmpty(object) ) {
+				if (!_.isEmpty(object)) {
 					model.set(object);
 				}
 			});
 
 
-			model.on("change", function(){
-				if ( $input.data("connect:disconnected") ) {
+			model.on("change", function () {
+				if ($input.data("connect:disconnected")) {
 					return;
 				}
 
-				setValue ($input);
+				setValue($input);
 			});
-			setValue ($input);
+			setValue($input);
 		});
 	},
 
 	// Отключение привязки. Не удаляет сами обработчики, но выключает реакцию в них.
-	disconnect: function (model, key, $inputs, context) {
-		if ( typeof $inputs == "string" ) {
-			$inputs = $(":input[name='"+ $inputs +"']", context);
+	disconnect:function (model, key, $inputs, context) {
+		if (typeof $inputs == "string") {
+			$inputs = $(":input[name='" + $inputs + "']", context);
 		}
-		$inputs.each(function(){
+		$inputs.each(function () {
 			var $input = $(this);
 
 			$input.data("connect:disconnected", true);
@@ -216,48 +220,45 @@ Model = Backbone.RelationalModel.extend({
 	},
 
 
-	parse: function ( data ) {
-		if ( data.requestData && data.requestData.coreVersion ) {
+	parse:function (data) {
+		if (data.requestData && data.requestData.coreVersion) {
 			CORE_VERSION = data.requestData.coreVersion;
 			VersionInfo.show();
 		}
 		return data.data ? data.data : data
 	},
 
-	fetch: function( options )
-	{
+	fetch:function (options) {
 		options = options || {};
 		var self = this;
 
-		return Backbone.Model.prototype.fetch.call( this, options );
+		return Backbone.Model.prototype.fetch.call(this, options);
 	},
 
 	// Переопределяем стандартный метод, чтобы JSON не содержал ссылок на другие модели, а парсил вообще всё.
-	toJSON: function ()
-	{
-		return JSON.parse ( JSON.stringify( _.clone(this.attributes) ) )
+	toJSON:function () {
+		return JSON.parse(JSON.stringify(_.clone(this.attributes)))
 	},
 
-	sync: function(method, model, options) {
+	sync:function (method, model, options) {
 		options.dataType = "jsonp";
 		options.url = model.url();
 		options.contentType = 'application/json';
 
-		if ( method == "create" || method == "update" ) {
-			options.data = JSON.stringify( {
-				requestData: {},
-				data: model.toJSON()
-			} );
+		if (method == "create" || method == "update") {
+			options.data = JSON.stringify({
+				requestData:{},
+				data:model.toJSON()
+			});
 		}
 		return Backbone.sync(method, model, options);
 	},
-	errorHandler: function (model, xhr) {
-		if ( xhr.responseText && xhr.responseText.length )
-		{
+	errorHandler:function (model, xhr) {
+		if (xhr.responseText && xhr.responseText.length) {
 			try {
 				var json = JSON.parse(xhr.responseText);
 
-				if ( json.errorCode == 3 ) {
+				if (json.errorCode == 3) {
 					Core.Cookies.clear();
 					//window.location.href = "/auth/";
 					return;
@@ -265,56 +266,56 @@ Model = Backbone.RelationalModel.extend({
 					json.errorMessage += ", обновите страницу."
 				}
 
-				if ( json && json.errorMessage ) {
+				if (json && json.errorMessage) {
 
-					showError( json.errorMessage );
+					showError(json.errorMessage);
 					return true;
 				}
-			}catch(e){}
+			} catch (e) {
+			}
 
-			showError( xhr.responseText );
+			showError(xhr.responseText);
 		}
 	},
-	initialize: function () {
+	initialize:function () {
 		this.on("error", this.errorHandler, this);
 	}
 });
 
 Collection = Backbone.Collection.extend({
-	initialize: function(){
+	initialize:function () {
 		this._params = {
-			filter: {},
-			sortingField: "id",
-			sortingMethod: "asc",
-			limit: 10,
-			page: 1,
-			recordsCount: 0
+			filter:{},
+			sortingField:"id",
+			sortingMethod:"asc",
+			limit:10,
+			page:1,
+			recordsCount:0
 		};
 	},
 
-	sync: function(method, model, options) {
+	sync:function (method, model, options) {
 		options.dataType = "jsonp";
 
 		return Backbone.sync(method, model, options);
 	},
 
-	getParams: function () {
+	getParams:function () {
 		return this._params
 	},
-	setParams: function ( obj ) {
+	setParams:function (obj) {
 		this._params = $.extend(this._params, obj);
 
 		return this._params
 	},
 
 
-	parse: function ( data )
-	{
+	parse:function (data) {
 		checkForWarnings(data.requestData, "requestData was not found in the JSON");
 		this.requestData = data.requestData || {};
 		this.requestData.filter = this.requestData.filter || {};
 
-		if ( data.requestData && this.requestData.coreVersion ) {
+		if (data.requestData && this.requestData.coreVersion) {
 			CORE_VERSION = data.requestData.coreVersion;
 			VersionInfo.show();
 		}
@@ -322,84 +323,85 @@ Collection = Backbone.Collection.extend({
 		return data.data
 	},
 
-	fetch: function ( options )
-	{
+	fetch:function (options) {
 		options = options || {};
 
-		var data = $.extend (this.getParams(), options.data );
+		var data = $.extend(this.getParams(), options.data);
 
-		var errorHandler = $.extend ( function (model, xhr)
-		{
+		var errorHandler = $.extend(function (model, xhr) {
 			// TODO Отрабатывать ошибки
-			if ( xhr.responseText.length ) {
+			if (xhr.responseText.length) {
 				var json = JSON.parse(xhr.responseText);
-				if ( json && json.errorCode == 3 ) {
+				if (json && json.errorCode == 3) {
 					Core.Cookies.clear();
 					window.location.href = "/auth/";
 					return;
 				}
 				showError(xhr.responseText);
 			}
-		}, options.error );
+		}, options.error);
 
 
-		return Backbone.Collection.prototype.fetch.call ( this, $.extend ( options, {
-			data: data,
-			error: errorHandler
+		return Backbone.Collection.prototype.fetch.call(this, $.extend(options, {
+			data:data,
+			error:errorHandler
 		}));
 	}
 });
 View = Backbone.View.extend({
-	collectionLoaded: function() {},
-	modelLoaded: function() {},
-	templateLoaded: function() {},
+	collectionLoaded:function () {
+	},
+	modelLoaded:function () {
+	},
+	templateLoaded:function () {
+	},
 
-	_dataLoaded: function () {
+	_dataLoaded:function () {
 		this._loadingQueue--;
-		if ( this.collection ) {
-			this.collection.off ("reset", this._dataLoaded);
+		if (this.collection) {
+			this.collection.off("reset", this._dataLoaded);
 			this.collectionLoaded();
-		}else if ( this.model ) {
-			this.off ("model:loaded", this._dataLoaded);
+		} else if (this.model) {
+			this.off("model:loaded", this._dataLoaded);
 			this.modelLoaded();
 		}
 
 
-		if ( this._loadingQueue < 1 ) {
+		if (this._loadingQueue < 1) {
 			this.ready();
 		}
 	},
-	_templateLoaded: function () {
+	_templateLoaded:function () {
 		this._loadingQueue--;
-		this.off ("template:loaded", this._templateLoaded);
+		this.off("template:loaded", this._templateLoaded);
 		this.templateLoaded();
 
-		if ( this._loadingQueue < 1 ) {
+		if (this._loadingQueue < 1) {
 			this.ready();
 		}
 	},
 	// Дожидаемся загрузки и шаблона и коллекции
-	autoLoadHandler: function() {
+	autoLoadHandler:function () {
 		this._loadingQueue = 1;
-		if ( this.collection ) {
+		if (this.collection) {
 			this._loadingQueue = 2;
-			this.collection.on ("reset", this._dataLoaded, this);
-		}else if ( this.model ) {
+			this.collection.on("reset", this._dataLoaded, this);
+		} else if (this.model) {
 			this._loadingQueue = 2;
-			this.on ("model:loaded", this._dataLoaded, this);
+			this.on("model:loaded", this._dataLoaded, this);
 		}
 
-		this.on ("template:loaded", this._templateLoaded, this);
+		this.on("template:loaded", this._templateLoaded, this);
 	},
-	queue: function ( queue, callback, context ) {
+	queue:function (queue, callback, context) {
 		var queueLength = queue.length;
 		var loaded = 0;
 
-		for ( var i=0; i < queueLength; i++ ) {
+		for (var i = 0; i < queueLength; i++) {
 			queue[i].context.on(queue[i].event, function handler () {
-				loaded ++;
+				loaded++;
 
-				if ( loaded >= queueLength ){
+				if (loaded >= queueLength) {
 					this.context.off(this.event, handler);
 					callback.call(context);
 				}
@@ -407,18 +409,18 @@ View = Backbone.View.extend({
 		}
 	},
 
-	loadTemplate: function ( templateName ) {
+	loadTemplate:function (templateName) {
 		var $body = $(document.body),
 			view = this;
 
-		Core.Templates.load (templateName, function ( template ) {
+		Core.Templates.load(templateName, function (template) {
 			view.trigger("template:loaded", template);
 		});
 	},
-	init: function () {
+	init:function () {
 
 	},
-	separateRoles: function ( role, callback, scope ) {
+	separateRoles:function (role, callback, scope) {
 		var userInRole = false;
 
 		if (role instanceof Array) {
@@ -427,41 +429,41 @@ View = Backbone.View.extend({
 			userInRole = Core.Data.currentRole() === role;
 		}
 
-		if ( userInRole || role == Core.Data.DEFAULT ) {
+		if (userInRole || role == Core.Data.DEFAULT) {
 			scope ? callback.call(scope) : callback();
 		}
 	},
-	depended: function ( view ) {
-		if ( !this._dependedViews ) {
+	depended:function (view) {
+		if (!this._dependedViews) {
 			this._dependedViews = [];
 		}
-		this._dependedViews.push( view );
+		this._dependedViews.push(view);
 	},
-	destroy: function () {
+	destroy:function () {
 		this.undelegateEvents();
 		this.$el.remove();
 		this.clear();
 
 		delete this
 	},
-	clearAll: function () {
-		_( Data ).each(function(view){
+	clearAll:function () {
+		_(Data).each(function (view) {
 			view.destroy();
 		});
 		Data = {};
 	},
-	clear: function () {
+	clear:function () {
 
-		_( this._dependedViews ).each(function( view ){
+		_(this._dependedViews).each(function (view) {
 			view.destroy();
 		});
 		this._dependedViews = [];
 
 	},
-	render: function () {
+	render:function () {
 		return this
 	},
-	assign : function (selector, view) {
+	assign:function (selector, view) {
 		var selectors;
 		if (_.isObject(selector)) {
 			selectors = selector;
@@ -475,7 +477,7 @@ View = Backbone.View.extend({
 			view.setElement(this.$(selector)).render();
 		}, this);
 	},
-	initWithDictionaries: function (dicts, callback, scope, returnAsJSON) {
+	initWithDictionaries:function (dicts, callback, scope, returnAsJSON) {
 		if (!dicts || !dicts.length) callback.call(scope);
 
 		var promises = [];
@@ -490,7 +492,7 @@ View = Backbone.View.extend({
 				dictionary = new App.Collections.ThesaurusTerms();
 				dictionary.parentGroupId = dict.id;
 			} else {
-				dictionary = new App.Collections.DictionaryValues([], {name: dict.pathPart});
+				dictionary = new App.Collections.DictionaryValues([], {name:dict.pathPart});
 			}
 
 			promises.push(dictionary.fetch());
@@ -514,12 +516,12 @@ View = Backbone.View.extend({
 });
 
 Form = View.extend({
-	cancel: function (event) {
+	cancel:function (event) {
 		event.preventDefault();
-		App.Router.navigate( this.options.referrer, {trigger:true} );
+		App.Router.navigate(this.options.referrer, {trigger:true});
 	},
 
-	save: function (event, options) {
+	save:function (event, options) {
 		if (event) event.preventDefault();
 
 		var readyToSave = this.validate();
@@ -531,14 +533,18 @@ Form = View.extend({
 		return readyToSave;
 	},
 
-	validate: function () {
+	validate:function () {
 		var validity = true,
 			$firstFoundedError;
 
-		this.$(".Mandatory:not(select,.ComboWrapper)" ).each(function(){
+		this.$(".Mandatory:not(select,.ComboWrapper)").each(function () {
 			var $this = $(this);
 
-			$this.removeClass("WrongField");
+			if ($this.hasClass("Combo")) {
+				$this.closest(".ComboWrapper").removeClass("WrongField");
+			} else {
+				$this.removeClass("WrongField");
+			}
 
 			var $input;
 			if ($this.is(":input"))
@@ -548,10 +554,14 @@ Form = View.extend({
 			else if ($this.hasClass("select2") || $this.hasClass("RichTextWrapper"))
 				$input = $this.next();
 			else
-				$input = $this.find(":input" ).eq(0);
+				$input = $this.find(":input").eq(0);
 
-			if ( !$input.val().length || $input.hasClass("invalid")) {
-				$this.addClass("WrongField");
+			if (!$input.val().length || $input.hasClass("invalid")) {
+				if ($this.hasClass("Combo")) {
+					$this.closest(".ComboWrapper").addClass("WrongField");
+				} else {
+					$this.addClass("WrongField");
+				}
 
 				$firstFoundedError = $firstFoundedError || $this;
 				if ($firstFoundedError.hasClass("DDSelect"))
@@ -570,9 +580,9 @@ Form = View.extend({
 			}
 		});
 
-		if ( $firstFoundedError ) {
+		if ($firstFoundedError) {
 			//$firstFoundedError.focus();
-			$('html, body').animate({ scrollTop: $($firstFoundedError).offset().top - 30 }, 'fast');
+			$('html, body').animate({ scrollTop:$($firstFoundedError).offset().top - 30 }, 'fast');
 		}
 
 		return validity
@@ -581,30 +591,30 @@ Form = View.extend({
 
 // НЕ ДУМАЙ ПРО СОХРАНЕНИЕ!
 DynamicView = View.extend({
-	renderStructure: function ( structure ) {
+	renderStructure:function (structure) {
 		var view = this;
 
 		_.each(structure.group, function (block) {
 			var Block = new DynamicViewBlock({
-				structure: block
+				structure:block
 			});
 
 			view.$el.append(Block.render().el);
 		});
 	},
-	initialize: function () {
+	initialize:function () {
 		this.loadStructure();
 		this.on("structure:loaded", this.renderStructure, this);
 	},
 
 
-	loadStructure: function () {
+	loadStructure:function () {
 		var view = this;
 
 		$.ajax({
-			url: this.url(),
-			dataType: "jsonp",
-			success: function (json) {
+			url:this.url(),
+			dataType:"jsonp",
+			success:function (json) {
 				var data = json.data;
 
 				view.trigger("structure:loaded", data);
@@ -614,12 +624,12 @@ DynamicView = View.extend({
 	}
 });
 DynamicViewBlock = View.extend({
-	render: function () {
+	render:function () {
 		var view = this;
 
 		_.each(this.options.structure.attribute, function (attribute) {
 			var Item = new DynamicViewBlockItem({
-				structure: attribute
+				structure:attribute
 			});
 
 			view.$el.append(Item.render().el);
@@ -628,13 +638,13 @@ DynamicViewBlock = View.extend({
 	}
 });
 DynamicViewBlockItem = View.extend({
-	render: function () {
+	render:function () {
 		var view = this;
 
-		view.$el.html("<b>"+ this.options.structure.name + "</b>: ");
+		view.$el.html("<b>" + this.options.structure.name + "</b>: ");
 
-		_.each(this.options.structure.properties, function(property){
-			if ( property.name == "value" ) {
+		_.each(this.options.structure.properties, function (property) {
+			if (property.name == "value") {
 				view.$el.append(property.value);
 			}
 		});
@@ -647,55 +657,52 @@ DynamicViewBlockItem = View.extend({
 //	Ошибки и предупреждения
 //
 function showError (message) {
-	var $message = $( "<div/>" );
-	var $iframe = $("<iframe/>" ).css({
-		width: "100%",
-		height: "100%"
+	var $message = $("<div/>");
+	var $iframe = $("<iframe/>").css({
+		width:"100%",
+		height:"100%"
 	}).appendTo($message);
 
-	setTimeout( function ()
-	{
+	setTimeout(function () {
 		var doc = $iframe.get(0).contentWindow.document;
-		doc.write( message );
-	}, 1 );
+		doc.write(message);
+	}, 1);
 
-	$message.dialog( {
-		title: "Ошибка!",
-		width: 400,
-		modal: true
-	} );
+	$message.dialog({
+		title:"Ошибка!",
+		width:400,
+		modal:true
+	});
 }
 
-function checkForErrors ( variables, errorText ) {
-	if ( variables instanceof Array ) {
-		for ( var i = 0; i < variables.length; i++ ) {
+function checkForErrors (variables, errorText) {
+	if (variables instanceof Array) {
+		for (var i = 0; i < variables.length; i++) {
 
 			var variable = variables [i];
-			if ( variable == undefined || variable == null ) {
+			if (variable == undefined || variable == null) {
 				throw new Error(errorText);
 			}
 		}
 	}
-	else
-	{
-		if ( variables == undefined || variables == null ) {
+	else {
+		if (variables == undefined || variables == null) {
 			throw new Error(errorText);
 		}
 	}
 }
-function checkForWarnings ( variables, warningText ) {
-	if ( variables instanceof Array ) {
-		for ( var i = 0; i < variables.length; i++ ) {
+function checkForWarnings (variables, warningText) {
+	if (variables instanceof Array) {
+		for (var i = 0; i < variables.length; i++) {
 
 			var variable = variables [i];
-			if ( variable == undefined || variable == null ) {
+			if (variable == undefined || variable == null) {
 				console.warn(warningText);
 			}
 		}
 	}
-	else
-	{
-		if ( variables == undefined || variables == null ) {
+	else {
+		if (variables == undefined || variables == null) {
 			console.warn(warningText);
 		}
 	}
@@ -705,145 +712,138 @@ function checkForWarnings ( variables, warningText ) {
 //
 //  Расширение тегов jQuery templates
 //
-$.extend( $.tmpl.tag, {
-	"phone": {
-		_default: { $1: "$data" },
-		open: "if($notnull_1){__.push(Core.Numbers.makePhone($.encode($1a)));}"
+$.extend($.tmpl.tag, {
+	"phone":{
+		_default:{ $1:"$data" },
+		open:"if($notnull_1){__.push(Core.Numbers.makePhone($.encode($1a)));}"
 	},
-	"formatDate": {
-		_default: { $1: "$data" },
-		open: "if($notnull_1){__.push(Core.Date.format($.encode($1a)));}"
+	"formatDate":{
+		_default:{ $1:"$data" },
+		open:"if($notnull_1){__.push(Core.Date.format($.encode($1a)));}"
 	},
-	"formatDateTime": {
-		_default: { $1: "$data" },
-		open: "if($notnull_1){__.push(Core.Date.formatDateTime($.encode($1a)));}"
+	"formatDateTime":{
+		_default:{ $1:"$data" },
+		open:"if($notnull_1){__.push(Core.Date.formatDateTime($.encode($1a)));}"
 	},
-	"countDays": {
-		open: "if($notnull_1){__.push(Core.Date.countDays($.encode($1a)));}"
+	"countDays":{
+		open:"if($notnull_1){__.push(Core.Date.countDays($.encode($1a)));}"
 	},
-	"getYear": {
-		_default: { $1: "$data" },
-		open: "if($notnull_1){__.push(Core.Date.getYear($.encode($1a)));}"
+	"getYear":{
+		_default:{ $1:"$data" },
+		open:"if($notnull_1){__.push(Core.Date.getYear($.encode($1a)));}"
 	},
-	"age": {
-		_default: { $1: "$data" },
-		open: "if($notnull_1){__.push(Core.Date.getAge($.encode($1a)));}"
+	"age":{
+		_default:{ $1:"$data" },
+		open:"if($notnull_1){__.push(Core.Date.getAge($.encode($1a)));}"
 	},
-	"ageString": {
-		_default: { $1: "$data" },
-		open: "if($notnull_1){__.push(Core.Date.getAgeString($.encode($1a)));}"
+	"ageString":{
+		_default:{ $1:"$data" },
+		open:"if($notnull_1){__.push(Core.Date.getAgeString($.encode($1a)));}"
 	},
-	"decorate": {
-		open: "if($notnull_1){__.push(Core.Strings.decorate($2));}"
+	"decorate":{
+		open:"if($notnull_1){__.push(Core.Strings.decorate($2));}"
 	},
-	"plural": {
-		open: "if($notnull_1){__.push(Core.Language.plural($2));}"
+	"plural":{
+		open:"if($notnull_1){__.push(Core.Language.plural($2));}"
 	}
 });
 
 
-
-
-function showThrobber()
-{
+function showThrobber () {
 	var $throbber = $('.Throbber');
 	$throbber = $throbber.length ? $throbber : $('<div class="Throbber">Загружается</div>').appendTo('body');
 	$throbber.fadeIn();
 }
 
-function hideThrobber()
-{
+function hideThrobber () {
 	$(".Throbber").fadeOut();
 }
 
 var throbberHideTimeout, showErrorTimeout, requestQueue = [];
 
 jQuery.ajaxSetup(
-{
-	showThrobberTimeout: null,
-	beforeSend: function()
 	{
-		clearTimeout( throbberHideTimeout );
-		clearTimeout( showErrorTimeout );
-		this.showThrobberTimeout = setTimeout( showThrobber, 700 );
-		showErrorTimeout = setTimeout( function() {
-			hideThrobber();
-			showError("Произошла критическая ошибка. Работа интерфейса может быть ограничена.<br/> Попробуйте перезагрузить страницу.");
-		}, 30000 );
-		requestQueue.push( 1 );
-	},
-	complete: function ()
-	{
-		requestQueue.pop();
-		if ( !requestQueue.length ) {
-			throbberHideTimeout = setTimeout( hideThrobber, 200 );
-		}
-		clearTimeout( showErrorTimeout );
-		clearTimeout( this.showThrobberTimeout );
+		showThrobberTimeout:null,
+		beforeSend:function () {
+			clearTimeout(throbberHideTimeout);
+			clearTimeout(showErrorTimeout);
+			this.showThrobberTimeout = setTimeout(showThrobber, 700);
+			showErrorTimeout = setTimeout(function () {
+				hideThrobber();
+				showError("Произошла критическая ошибка. Работа интерфейса может быть ограничена.<br/> Попробуйте перезагрузить страницу.");
+			}, 30000);
+			requestQueue.push(1);
+		},
+		complete:function () {
+			requestQueue.pop();
+			if (!requestQueue.length) {
+				throbberHideTimeout = setTimeout(hideThrobber, 200);
+			}
+			clearTimeout(showErrorTimeout);
+			clearTimeout(this.showThrobberTimeout);
 
-	},
-	error: function()
-	{
-		requestQueue.pop();
-		throbberHideTimeout = setTimeout( hideThrobber, 200 );
-		clearTimeout( showErrorTimeout );
-		clearTimeout( this.showThrobberTimeout );
-	}
-} );
+		},
+		error:function () {
+			requestQueue.pop();
+			throbberHideTimeout = setTimeout(hideThrobber, 200);
+			clearTimeout(showErrorTimeout);
+			clearTimeout(this.showThrobberTimeout);
+		}
+	});
 
 VersionInfo = {
-	_getElement: function(){
-		if ( !this._element ) {
+	_getElement:function () {
+		if (!this._element) {
 			this._element = $("<div/>").css({
-				position: "fixed",
-				bottom: 8,
-				right: 8,
-				padding: 10,
-				opacity: "0",
-				fontSize: "10px",
-				border: "1px solid #81B5C1",
-				background: "#DEEDF2"
-			} );
-			$(document.body ).append(this._element);
+				position:"fixed",
+				bottom:8,
+				right:8,
+				padding:10,
+				opacity:"0",
+				fontSize:"10px",
+				border:"1px solid #81B5C1",
+				background:"#DEEDF2"
+			});
+			$(document.body).append(this._element);
 
 			var toggler = false;
 
 			this._element
 				.hover(
-					function(){
-						$(this ).stop(true, true ).animate({
-							opacity: 1
+				function () {
+					$(this).stop(true, true).animate({
+						opacity:1
+					}, DEFAULT_ANIMATION_TIME);
+				},
+				function () {
+					if (!toggler) {
+						$(this).stop(true, true).animate({
+							opacity:"0"
 						}, DEFAULT_ANIMATION_TIME);
-					},
-					function(){
-						if (!toggler) {
-							$(this ).stop(true, true ).animate({
-								opacity: "0"
-							}, DEFAULT_ANIMATION_TIME);
-						}
-					} )
-				.click(function(){
+					}
+				})
+				.click(function () {
 					toggler = !toggler;
 				});
 		}
 		return this._element
 	},
 
-	show: function () {
-		if ( DEBUG_MODE ) {
+	show:function () {
+		if (DEBUG_MODE) {
 			var html = "Версия GUI: <b>" + GUI_VERSION + "</b>";
 
-			if ( CORE_VERSION ) {
+			if (CORE_VERSION) {
 				html += "<br/>Версия ядра: " + "<b>" + CORE_VERSION + "</b>";
 			}
 			this._getElement().html(html);
 		}
 	},
-	hide: function () {
+	hide:function () {
 		this._getElement().fadeOut(DEFAULT_ANIMATION_TIME);
 	}
 };
 
-$(function(){
+$(function () {
 	VersionInfo.show();
 });

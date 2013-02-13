@@ -5,7 +5,28 @@
 	</div>
 	<div class="CardHeader Clearfix">
 		<div class="CardNav">
-			<h2>${patient.name.last} ${patient.name.first} ${patient.name.middle}</h2>
+			<h2>
+				{{if patient && patient.name}}
+				{{if patient.name.first || patient.name.last || patient.name.middle}}
+				{{if patient.name.last}}
+				${patient.name.last}
+				{{/if}}
+				{{if patient.name.first}}
+				${patient.name.first}
+				{{/if}}
+				{{if patient.name.middle}}
+				${patient.name.middle}
+				{{/if}}
+				{{else}}
+				{{if patient.name.raw}}
+				${patient.name.raw}
+				{{/if}}
+				{{/if}}
+				{{/if}}
+				{{if patient && patient.birthDate}}
+				({{ageString patient.birthDate}})
+				{{/if}}
+			</h2>
 			<ul class="SectionNav">
 				<li>
 					<a href="/patients/${patient.id}/">Карточка пациента</a>
@@ -32,8 +53,8 @@
 			<div class="ContentHolder">
 				<div class="ContentHeader Clearfix">
 					<div class="PageActions">
-						<button class="Styled Button Actions Save"><span>{{if isNew}}Создать{{else}}Сохранить{{/if}}</span></button>
-						<a href="#" class="Actions Cancel">Отмена</a>
+						<button class="Styled Button Green Actions Save"><span>{{if isNew}}Создать{{else}}Сохранить{{/if}}</span></button>
+						<a class="Actions Cancel"><span>Отмена</span></a>
 					</div>
 				</div>
 				<div class="EditForm Clearfix">
@@ -52,7 +73,7 @@
 									<div class="DateTime">
 										<div class="DatePeriod SingleDate Mandatory">
 											<div class="FromTo">
-												<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="appeal[date][start]" placeholder="дд.мм.гггг" class="SelectDate" required="required" />
+												<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="appeal[date][start]" placeholder="дд.мм.гггг" class="SelectDate" required="required" data-mindate="${-Math.floor((new Date().getTime() - new Date(patient.birthDate).getTime())/(1000*60*60*24))}"/>
 											</div>
 											<i class="DateIcon Icon"></i>
 										</div>
@@ -77,22 +98,6 @@
 										</div>
 									</div>
 								</div>
-								<!--<div class="HalfCol">
-									<span class="Label">Тип обращения</span>
-									{{if isNew}}
-										<select class="Styled Mandatory" name="appeal_type[id]">
-											<option value="" selected="selected">...</option>
-											{{each(i, type) dicts.appealTypes}}
-											<option value="${type['id']}">${type['61']}</option>
-											{{/each}}
-											&lt;!&ndash;<option value="1">Первичный</option>
-											<option value="2">Вторичный</option>
-											<option value="3">Срочный</option>&ndash;&gt;
-										</select>
-									{{else}}
-										<input type="text" class="Disabled NotEditable" disabled="disabled" value="{{each(i, type) dicts.appealTypes}}{{if type['id'] == appealType.id}}${type['61']}{{/if}}{{/each}}">
-									{{/if}}
-								</div>-->
 								<div class="HalfCol WithoutName">
 									<div class="InlineForm">
 										<label>
@@ -125,20 +130,15 @@
 							<div class="LineBlock">
 								<div class="HalfCol">
 									<span class="Label">Тип обращения</span>
-									{{if isNew}}
 									<select class="Styled Mandatory" name="request_type[id]">
 										<option value="" selected="selected">...</option>
 										{{each(i, type) dicts.requestTypes}}
 										<option value="${type['id']}">${type['value']}</option>
 										{{/each}}
 									</select>
-									{{else}}
-									<input type="text" class="Disabled NotEditable" disabled="disabled" value="${appealType.requestType.name}">
-									{{/if}}
 								</div>
 								<div class="HalfCol">
 									<span class="Label">Тип финансирования</span>
-									{{if isNew}}
 									<select class="Styled Mandatory" name="finance[id]">
 										<option value="" selected="selected">...</option>
 										{{each(i, type) dicts.financeTypes}}
@@ -147,9 +147,6 @@
 											{{/if}}
 										{{/each}}
 									</select>
-									{{else}}
-									<input type="text" class="Disabled NotEditable" disabled="disabled" value="${appealType.finance.name}">
-									{{/if}}
 								</div>
 								<div class="SemiCol">
 									<span class="Label">Тип события</span>
@@ -174,7 +171,7 @@
 								</div>
 							</div>
 						</li>
-						<!--<li>
+						<li>
 							<div class="LineBlock">
 								<div class="HalfCol">
 									<span class="Label">С кем госпитализируется</span>
@@ -188,7 +185,7 @@
 									<span>Добавить законного представителя</span>
 								</button>
 							</div>
-						</li>-->
+						</li>
 						<li>
 							<div class="LineBlock">
 								<div class="HalfCol">
@@ -315,12 +312,12 @@
 								</div>
 								<div class="HalfCol">
 									<label> Вес при поступлении (кг) </label>
-									<input type="text" name="physical_parameters[weight]" class="ShortInput" placeholder="" />
+									<input type="text" name="physical_parameters[weight]" class="ShortInput RestrictFloat" placeholder="" />
 									<span class="FieldInfo">Для пациентов младше 1 мес. в гр</span>
 								</div>
 								<div class="HalfCol">
 									<label> Рост (см) </label>
-									<input type="text" name="physical_parameters[height]" class="ShortInput" placeholder="" />
+									<input type="text" name="physical_parameters[height]" class="ShortInput RestrictFloat" placeholder="" />
 								</div>
 							</div>
 						</li>
@@ -350,14 +347,17 @@
 						</li>-->
 						</ul>
 						<div class="FormButtons">
-							<button class="Styled Button Actions Save"><span>{{if isNew}}Создать{{else}}Сохранить{{/if}}</span></button>
+							<div class="PageActions">
+								<button class="Styled Button Green Actions Save"><span>{{if isNew}}Создать{{else}}Сохранить{{/if}}</span></button>
+								<a class="Actions Cancel"><span>Отмена</span></a>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
-	<div class="NonAdultAlert"><span>Нельзя добавить несовершеннолетнего представителя.</span></div>
+	<div title="Ошибка" class="NonAdultAlert"><span style="font-size: 1.2em;">Нельзя добавить несовершеннолетнего представителя.</span></div>
 </script>
 
 <script id="appeal-edit-diagnosis" type="text/x-jquery-tmpl">

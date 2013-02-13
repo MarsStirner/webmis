@@ -6,7 +6,17 @@ define(["models/base-address"], function () {
 			residential: {}
 		},
 
-		addressesEqual: false,
+		initialize: function () {
+			this.addressesEqual = false;
+		},
+
+		getAddressesEqual: function () {
+			return this.addressesEqual;
+		},
+
+		setAddressesEqual: function (value) {
+			this.addressesEqual = Boolean(value);
+		},
 
 		getIsEqual: function () {
 			var reg = this.get("registered").toJSON();

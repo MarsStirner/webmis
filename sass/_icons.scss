@@ -9,10 +9,10 @@
 	position: relative;
 
 
-	&.Tiny {
+/*	&.Tiny {
 		width: 16px;
 		height: 16px;
-	}
+	}*/
 }
 /*Иконки*/
 
@@ -20,8 +20,8 @@
 
 .AddIcon {
 	@include sprite-file("add_tiny");
-	cursor: pointer;
-	margin-left: 0.4em;
+/*	cursor: pointer;
+	margin-left: 0.4em;*/
 }
 .SearchIcon {
 	@include sprite-file("search_tiny");
@@ -29,10 +29,10 @@
 }
 .EditIcon {
 	@include sprite-file("edit_tiny");
-	vertical-align: baseline;
+/*	vertical-align: baseline;
 	cursor: pointer;
 	margin-left: 0.4em;
-	bottom: -0.2em;
+	bottom: -0.2em;*/
 }
 .DateIcon {
 	@include sprite-file("calendar_tiny");
@@ -82,11 +82,12 @@
 }
 .RemoveIcon {
     @include sprite-file("remove_tiny");
-    cursor:pointer;
+/*    cursor:pointer;
+	vertical-align: baseline;
     &.Tiny {
 		width:14px;
 		height:14px;
-	}
+	}*/
 	&:hover {
 		 @include sprite-file("remove_tiny_hover");
 	}
@@ -102,12 +103,12 @@
 }
 .DeleteIcon {
 	@include sprite-file("remove_tiny");
-	cursor:pointer;
+/*	cursor:pointer;
     &.Tiny {
 		width:14px;
 		height:14px;
 		margin-right:0.2em;
-	}
+	}*/
 	&:hover {
 		 @include sprite-file("remove_tiny_hover");
 	}
@@ -126,4 +127,14 @@
 		width:14px;
 		height:14px;
 	}
+}
+.AddIcon, .RemoveIcon, .EditIcon {
+	cursor: pointer;
+	vertical-align: middle;
+	width: 16px;
+	height: 16px;
+}
+.AddIcon:hover, .RemoveIcon:hover, .EditIcon:hover {
+	width: 16px;
+	height: 16px;
 }

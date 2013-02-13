@@ -5,7 +5,28 @@
 	</div>
 	<div class="CardHeader Clearfix">
 		<div class="CardNav">
-			<h2>${patient.name.last} ${patient.name.first} ${patient.name.middle}</h2>
+			<h2>
+				{{if patient && patient.name}}
+				{{if patient.name.first || patient.name.last || patient.name.middle}}
+				{{if patient.name.last}}
+				${patient.name.last}
+				{{/if}}
+				{{if patient.name.first}}
+				${patient.name.first}
+				{{/if}}
+				{{if patient.name.middle}}
+				${patient.name.middle}
+				{{/if}}
+				{{else}}
+				{{if patient.name.raw}}
+				${patient.name.raw}
+				{{/if}}
+				{{/if}}
+				{{/if}}
+				{{if patient && patient.birthDate}}
+				({{ageString patient.birthDate}})
+				{{/if}}
+			</h2>
 			<ul class="SectionNav">
 				<li>
 					<a href="/patients/${patient.id}/">Карточка пациента</a>
@@ -124,7 +145,28 @@
 	<div id="page-head"></div>
 	<div class="CardHeader Clearfix">
 		<div class="CardNav">
-			<h2>${patient.name.last} ${patient.name.first} ${patient.name.middle}</h2>
+			<h2>
+				{{if patient && patient.name}}
+				{{if patient.name.first || patient.name.last || patient.name.middle}}
+				{{if patient.name.last}}
+				${patient.name.last}
+				{{/if}}
+				{{if patient.name.first}}
+				${patient.name.first}
+				{{/if}}
+				{{if patient.name.middle}}
+				${patient.name.middle}
+				{{/if}}
+				{{else}}
+				{{if patient.name.raw}}
+				${patient.name.raw}
+				{{/if}}
+				{{/if}}
+				{{/if}}
+				{{if patient && patient.birthDate}}
+				({{ageString patient.birthDate}})
+				{{/if}}
+			</h2>
 			<ul class="SectionNav">
 				<li>
 					<a href="/patients/${patient.id}/">Карточка пациента</a>

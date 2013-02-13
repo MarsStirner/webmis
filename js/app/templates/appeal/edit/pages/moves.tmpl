@@ -1,5 +1,5 @@
 <div class="ContentHeader Clearfix">
-	{{if allowToMove}}
+	{{if allowToMove && !isClosed}}
 	<div class="PageActions">
 		<div class="DDList">
 			<div class="Title">
@@ -13,9 +13,9 @@
 					<li data-move-type="department">
 						Направление или перевод в отделение
 					</li>
-					<li data-move-type="hospitalbed">
-						Регистрация на койке
-					</li>
+					<!--<li data-move-type="hospitalbed">-->
+						<!--Регистрация на койке-->
+					<!--</li>-->
 				</ul>
 			</div>
 		</div>

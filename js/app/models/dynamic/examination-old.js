@@ -8,7 +8,7 @@ define(function () {
 		validate: function (attrs) {
 			switch (this.collection.attrType) {
 				case "Double":
-					if (attrs && !parseFloat(attrs.value)) {
+					if (attrs && attrs.value && !parseFloat(attrs.value)) {
 						return "Введены недопустимые символы";
 					}
 					break;
@@ -107,6 +107,8 @@ define(function () {
 			/*if (options.editId) {
 				this.editId = options.editId;
 			}*/
+
+			Model.prototype.initialize.apply(this);
 		},
 
 		url: function () {

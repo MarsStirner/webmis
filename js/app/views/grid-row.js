@@ -1,20 +1,20 @@
-define ([], function () {
-	App.Views.GridRow = View.extend ({
+define([], function () {
+	App.Views.GridRow = View.extend({
 		tagName: "tr",
 
 		events: {
 			"click": "updateUrl"
 		},
 
-		updateUrl: function ( event ) {
+		updateUrl: function (event) {
 			if (this.options.triggerOnly) {
-				this.trigger("row:click", this.model);
+				this.trigger("row:click", this.model, event);
 			} else {
-				var $target = $(event.currentTarget ),
+				var $target = $(event.currentTarget),
 					href = $target.closest("tr").find("a").attr("href");
 
-				if ( href ) {
-					App.Router.navigate ( href, {trigger:true} );
+				if (href) {
+					App.Router.navigate(href, {trigger: true});
 				}
 			}
 		},
@@ -25,12 +25,12 @@ define ([], function () {
 				_index: this.options._index
 			};
 
-			if ( this.model ) {
-				resultObject = $.extend (this.model.toJSON(), resultObject);
+			if (this.model) {
+				resultObject = $.extend(this.model.toJSON(), resultObject);
 			}
 
 
-			this.$el.html( $(this.options.rowTemplateId).tmpl ( resultObject ) );
+			this.$el.html($(this.options.rowTemplateId).tmpl(resultObject));
 
 			return this
 		}

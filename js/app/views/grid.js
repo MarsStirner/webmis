@@ -1,5 +1,5 @@
-define(["views/grid-row"], function() {
-	App.Views.Grid = View.extend ({
+define(["views/grid-row"], function () {
+	App.Views.Grid = View.extend({
 
 		events: {
 			"click .Actions.SortCol": "sort",
@@ -8,40 +8,41 @@ define(["views/grid-row"], function() {
 		},
 
 		initialize: function () {
-			checkForErrors (this.options.gridTemplateId, "gridTemplateId is mandatory");
-			checkForErrors (this.options.rowTemplateId, "rowTemplateId is mandatory");
+			checkForErrors(this.options.gridTemplateId, "gridTemplateId is mandatory");
+			checkForErrors(this.options.rowTemplateId, "rowTemplateId is mandatory");
 
 			if (this.options.template) {
-				this.queue([{event: "template:loaded", context: this}, {event: "reset", context: this.collection}], this.ready, this);
+				this.queue([
+					{event: "template:loaded", context: this},
+					{event: "reset", context: this.collection}
+				], this.ready, this);
 
-				this.loadTemplate( this.options.template );
+				this.loadTemplate(this.options.template);
 				this.collection.on("reset", this.refresh, this);
 			}
 
 		},
 
-		sort: function ( event ) {
+		sort: function (event) {
 			var collection = this.collection;
 
-			var $target = $ (event.currentTarget),
-				$th = $target.closest ( "th" );
+			var $target = $(event.currentTarget),
+				$th = $target.closest("th");
 
-			if ( $th.hasClass ( "Active" ) )
-			{
-				$th.toggleClass ( "Desc" );
+			if ($th.hasClass("Active")) {
+				$th.toggleClass("Desc");
 			}
-			else
-			{
-				$th.siblings ().removeClass ( "Active Desc" );
-				$th.addClass ( "Active" );
+			else {
+				$th.siblings().removeClass("Active Desc");
+				$th.addClass("Active");
 			}
 
 			this.collection.setParams({
-				sortingField: $target.data ( "field" ),
-				sortingMethod: $th.hasClass ( "Desc" ) ? "desc" : "asc"
+				sortingField: $target.data("field"),
+				sortingMethod: $th.hasClass("Desc") ? "desc" : "asc"
 			});
 
-			this.collection.fetch ();
+			this.collection.fetch();
 		},
 
 		filter: function (event) {
@@ -49,38 +50,37 @@ define(["views/grid-row"], function() {
 			var $input = $(event.currentTarget);
 
 
-			if ( this._timeout )
-			{
-				clearTimeout ( this._timeout );
+			if (this._timeout) {
+				clearTimeout(this._timeout);
 			}
 
 			var timeout,
 				DELAY = 700;
 
-			if ( $input.data("old-value") && $input.data("old-value") == $input.val() ) {
-				clearTimeout ( this._timeout );
+			if ($input.data("old-value") && $input.data("old-value") == $input.val()) {
+				clearTimeout(this._timeout);
 				return;
 			}
 			$input.data("old-value", $input.val());
 
-			this._timeout = setTimeout(function() {
+			this._timeout = setTimeout(function () {
 
 				var filter = Core.Forms.serializeToObject(view.$(".Filter input, .Filter select"));
 				view.collection.setParams({
 					filter: filter
 				});
 
-				if ( _.size(filter) ) {
+				if (_.size(filter)) {
 					view.collection.fetch();
-				}else {
+				} else {
 					view.collection.reset();
 				}
 			}, DELAY);
 		},
 
 		templateLoaded: function () {
-			if ( this.options.defaultTemplateId ) {
-				this.$el.html( $.tmpl($(this.options.defaultTemplateId)) );
+			if (this.options.defaultTemplateId) {
+				this.$el.html($.tmpl($(this.options.defaultTemplateId)));
 			}
 		},
 
@@ -90,33 +90,47 @@ define(["views/grid-row"], function() {
 
 			var $tbody = $el.find("tbody").empty();
 
-			if ( view.collection.length ) {
-				view.collection.forEach (function( model, i ) {
+			var total = view.collection.length;
+			//console.log(total);
 
-					var GridRow = new App.Views.GridRow ({
+			if (total) {
+
+				view.collection.forEach(function (model, i) {
+					var _index = i;
+					var rowTemplateId = view.options.rowTemplateId;
+
+					//console.log(i);
+					if(view.options.lastRowTemplateId && (i == total-1) && (i > 0)){
+						rowTemplateId = view.options.lastRowTemplateId;
+					}
+
+					if (view.collection.requestData && view.collection.requestData.page > 1) {
+						_index += view.collection.requestData.page * view.collection.requestData.limit;
+					}
+
+					var GridRow = new App.Views.GridRow({
 						model: model,
 						collection: view.collection,
-						rowTemplateId: view.options.rowTemplateId, // Передаём строке таблицы ID шаблона в файле шаблонов
+						rowTemplateId: rowTemplateId, // Передаём строке таблицы ID шаблона в файле шаблонов
 						triggerOnly: view.options.popUpMode,
-						_index: i
+						_index: _index
 					});
 					view.depended(GridRow);
 
-					GridRow.on("row:click", function (model) {
-						view.trigger("grid:rowClick", model);
+					GridRow.on("row:click", function (model, event) {
+						view.trigger("grid:rowClick", model, event);
 					}, this);
 
-					$tbody.append( GridRow.render().el );
+					$tbody.append(GridRow.render().el);
 				});
 			}
-			else if ( view.options.errorTemplateId )
-			{
-				var GridRow = new App.Views.GridRow ({
+			else if (view.options.errorTemplateId) {
+				var GridRow = new App.Views.GridRow({
 					collection: view.collection,
 					rowTemplateId: view.options.errorTemplateId
 				});
 				view.depended(GridRow);
-				$tbody.append( GridRow.render().el );
+				$tbody.append(GridRow.render().el);
 			}
 
 			UIInitialize(this.el);
@@ -126,7 +140,7 @@ define(["views/grid-row"], function() {
 			var view = this,
 				$el = this.$el;
 
-			$el.html( $(view.options.gridTemplateId).tmpl(view.collection.requestData) );
+			$el.html($(view.options.gridTemplateId).tmpl(view.collection.requestData));
 		},
 
 

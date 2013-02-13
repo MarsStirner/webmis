@@ -1,82 +1,81 @@
-App.Views.Filter = View.extend ({
-	events: {
-		"keyup input": "refresh",
-		"change input, select, textarea": "refresh",
-		"submit form": "submit"
+App.Views.Filter = View.extend({
+	events:{
+		"keyup :input":"onInputKeyup",
+		"change :input":"onInputChange",
+		"submit form":"submit"
 	},
 
-	submit: function () {
-		return false
+	submit:function () {
+		return false;
 	},
 
-	updateUrl: function () {
-		App.Router.updateUrl ( this.options.path, this.collection.getParams());
+	updateUrl:function () {
+		App.Router.updateUrl(this.options.path, this.collection.getParams());
 	},
 
-	refresh: function ( event ) {
-		var view = this;
-		var $input = $(event.currentTarget);
+	onInputKeyup: function (event) {
+		var onEnterOnly = $(event.currentTarget).hasClass("NewLineAllowed");
 
-
-		if ( this._timeout )
-		{
-			clearTimeout ( this._timeout );
+		if ((onEnterOnly && event.keyCode == 13) || !onEnterOnly) {
+			this.refresh($(event.currentTarget));
 		}
+	},
 
-		var timeout,
-			DELAY = 300;
+	onInputChange: function (event) {
+		this.lastChangedInput = $(event.currentTarget);
 
-		if ( $input.data("old-value") && $input.data("old-value") == $input.val() ) {
-			clearTimeout ( this._timeout );
-			return;
-		}
-		$input.data("old-value", $input.val());
+		if (!$(event.currentTarget).hasClass("NewLineAllowed"))
+			this.refresh($(event.currentTarget));
+	},
 
-		this._timeout = setTimeout(function() {
-			var filter = Core.Forms.serializeToObject( $input.closest("form") );
-			view.collection.setParams({
-				filter: filter
+	refresh:function ($target) {
+		$target = $target || this.lastChangedInput;
+
+		if (_.isUndefined($target.data("old-value")) || ($target.data("old-value") != $target.val())) {
+			$target.data("old-value", $target.val());
+
+			var filter = Core.Forms.serializeToObject($target.closest("form"));
+
+			this.collection.setParams({
+				filter:filter
 			});
 
-			if ( _.size(filter) ) {
-				view.collection.fetch();
-			}else {
-				view.collection.reset();
+			if (_.size(filter)) {
+				this.collection.fetch();
+			} else {
+				this.collection.requestData = {};
+				this.collection.reset();
 			}
-		}, DELAY);
+		}
 	},
 
-	initialize: function () {
+	initialize:function () {
+		var params = Core.Url.extractUrlParameters();
 
-		var params = Core.Url.extractUrlParameters ();
+		this.collection.on("reset", this.updateUrl, this);
 
-		this.collection.on ( "reset", this.updateUrl, this );
-
-		if ( !_.isEmpty(params) ) {
-			this.collection.setParams( params );
+		if (!_.isEmpty(params)) {
+			this.collection.setParams(params);
 			this.collection.fetch();
 		}
 
-		if ( this.options.template ) {
-			this.on ( "template:loaded", this.ready, this );
-
-			this.loadTemplate( this.options.template );
-		}
-		else
-		{
+		if (this.options.template) {
+			this.on("template:loaded", this.ready, this);
+			this.loadTemplate(this.options.template);
+		} else {
 			this.ready();
 		}
 	},
 
-	ready: function () {
+	ready:function () {
 		var resultObject = {
-			requestData: this.collection.getParams() || {}
+			requestData:this.collection.getParams() || {}
 		};
 
-		this.$el.html ( $(this.options.templateId).tmpl ( resultObject ) );
+		this.$el.html($(this.options.templateId).tmpl(resultObject));
 	},
 
-	render: function () {
-		return this
+	render:function () {
+		return this;
 	}
 });

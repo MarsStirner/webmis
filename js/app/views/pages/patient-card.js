@@ -71,7 +71,8 @@ define(["models/patient",
 					width: '50em',
 					buttons: {
 						"Игнорировать": function () {
-							App.Router.navigate("patients/" + self.model.get("id") + "/appeals/new/?ignored=true", {trigger: true});
+							App.Router.navigate("patients/" + self.model.get("id") + "/appeals/new/", {trigger: true});
+							//App.Router.navigate("patients/" + self.model.get("id") + "/appeals/new/?ignored=true", {trigger: true});
 							$(this).dialog("close");
 						},
 						"Отмена": function () {
@@ -97,22 +98,28 @@ define(["models/patient",
 			view.model.on("change", function() {
 				var json = view.model.toJSON();
 
-				json.payments = {};
+				json.payments = {
+					dms: (new Collection(view.model.get("payments").getDms())).toJSON(),
+					oms: (new Collection(view.model.get("payments").getOms())).toJSON()
+				};
 
-				var dms = view.model.get("payments").getDms()[0];
-				var oms = view.model.get("payments").getOms()[0];
+				/*var dms = view.model.get("payments").getDms();
+				var oms = view.model.get("payments").getOms();*/
 
 				json.phones = {blocks: [[]], count: view.model.get("phones").length};
 
 				view.model.get("phones").each(function (p, i) {
-					json.phones.blocks[json.phones.blocks.length - 1].push(p.toJSON());
-					if ((i + 1) % 3 === 0 && i < view.model.get("phones").length) {
-						json.phones.blocks.push([]);
+					//Игнорим контакты с typeId = 0, это неверные записи из нтк
+					if (p.get("typeId") != 0) {
+						json.phones.blocks[json.phones.blocks.length - 1].push(p.toJSON());
+						if ((i + 1) % 3 === 0 && i < view.model.get("phones").length) {
+							json.phones.blocks.push([]);
+						}
 					}
 				});
 
-				if (dms) json.payments.dms = dms.toJSON();
-				if (oms) json.payments.oms = oms.toJSON();
+				/*if (dms) json.payments.dms = dms.toJSON();
+				if (oms) json.payments.oms = oms.toJSON();*/
 
 				var snilsStr = json.snils.toString();
 				if (snilsStr.length) {
@@ -153,6 +160,12 @@ define(["models/patient",
 				_(["residential", "registered"]).each(function (addressType) {
 					if (json.address[addressType].kladr) {
 						var a = json.address[addressType];
+
+						_.forEach(["street", "republic", "district", "city", "locality", "street"], function (part) {
+							if (!a[part]) {
+								a[part] = {socr: "", name: ""};
+							}
+						});
 
 						var kladrString = _([
 							a.street.index || a.locality.index || a.city.index || a.district.index || a.republic.index,

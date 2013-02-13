@@ -8,7 +8,7 @@
 		font-size: 100%;
 		//border: none;
 
-		a {
+		div > a.Actions {
 			color: #118DDC;
 		}
 
@@ -17,7 +17,8 @@
           font-size: 1.2em;
         }
 		.popup {
-			padding: 0;
+			overflow: hidden;
+			//padding: 0;
 		}
 		.ui-dialog-title {
 			font-size: 1.4em;

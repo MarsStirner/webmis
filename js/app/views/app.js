@@ -6,7 +6,7 @@ define(["text!templates/app.tmpl", "views/header"], function (tmpl, Header) {
 	App.Views.App = Backbone.View.extend({
 		el: $("#wrapper"),
 		events: {
-			"keydown input, select, textarea:not(.NewLineAllowed)": "keyHandler"
+			"keydown input:not(.NewLineAllowed), select, textarea:not(.NewLineAllowed)": "keyHandler"
 		},
 
 		initialize: function () {

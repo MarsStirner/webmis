@@ -279,7 +279,12 @@
 			{{if moving}}
 				${moving.department.name}
 			{{else}}
-				-
+			{{if status=='Госпитализирован'}}
+				<a href="#">Направить в отделение</a>
+			{{else}}
+			  -
+			{{/if}}
+
 			{{/if}}
 		</td>
 </script>
@@ -478,6 +483,7 @@
 </script>
 
 <script id="appeals-grid-nurse-department" type="text/x-jquery-tmpl">
+
 	<table class="Grid">
 		<thead>
 			<!--<tr class="EditTh">-->
@@ -511,16 +517,9 @@
 <script id="appeals-grid-nurse-department-row" type="text/x-jquery-tmpl">
 		<td>
 			<a href="/appeals/${id}/"></a>
-			{{if hospitalBed.room || hospitalBed.bed}}
-				{{if hospitalBed.room && hospitalBed.bed}}
-					${hospitalBed.room} / ${hospitalBed.bed}
-				{{/if}}
-				{{if hospitalBed.room}}
-					${hospitalBed.room}
-				{{/if}}
-				{{if hospitalBed.bed}}
-					${hospitalBed.bed}
-				{{/if}}
+			<!--<b>в приёмном</b>-->
+			{{if hospitalBed.code}}
+				${hospitalBed.code}
 			{{else}}
 				-
 			{{/if}}
@@ -529,16 +528,10 @@
 			${number}
 		</td>
 		<td>
-			{{if name.first || name.last || name.middle}}
-				{{if name.last}}
-					{{decorate(name.last, requestData.filter.fullName)}}
-				{{/if}}
-				{{if name.first}}
-					{{decorate(name.first, requestData.filter.fullName)}}
-				{{/if}}
-				{{if name.middle}}
-					{{decorate(name.middle, requestData.filter.fullName)}}
-				{{/if}}
+
+
+			{{if name.full}}
+				${name.full}
 			{{else}}
 				{{if name.raw}}
 					{{decorate(name.raw, requestData.filter.fullName)}}
@@ -548,40 +541,36 @@
 			{{/if}}
 		</td>
 		<td>
-			${condition.state.name}
+			<!--берём первое слово из состояния-->
+			${condition.state.split(' ')[0]}
+
+			<!--<span class="condition satisfactory">Удов.</span>-->
+			<!--<span class="condition good">Хор.</span>-->
+			<!--<span class="condition serious">Тяж.</span>-->
 		</td>
 		<td>
-			<!-- breathingRate.???-->
+			{{if condition.breathingRate}}
+				ЧСС ${condition.breathingRate} уд.м
+			{{/if}}
+		<td>
+			{{if condition.arterialBloodPressure.low && condition.arterialBloodPressure.high}}
+					АДД ${condition.arterialBloodPressure.low}-${condition.arterialBloodPressure.high}
+			{{/if}}
 		</td>
 		<td>
-			<!-- ArterialBloodPressure.??? -->
-		</td>
-		<td>
-            {{if doctor.name.first || doctor.name.last || doctor.name.middle}}
-				{{if doctor.name.last}}
-					{{decorate(doctor.name.last, requestData.filter.fullName)}}
-				{{/if}}
-				{{if name.first}}
-					{{decorate(doctor.name.first, requestData.filter.fullName)}}
-				{{/if}}
-				{{if name.middle}}
-					{{decorate(doctor.name.middle, requestData.filter.fullName)}}
-				{{/if}}
+			{{if doctor.name.fio}}
+				${doctor.name.fio}
 			{{else}}
-				{{if name.raw}}
-					{{decorate(doctor.name.raw, requestData.filter.fullName)}}
-				{{else}}
 					-
-				{{/if}}
 			{{/if}}
         </td>
 		<td>
-            {{if createDateTime !== 0}}
-                {{formatDateTime createDateTime}}
-            {{else}}
-                -
-            {{/if}}
-        </td>
+			{{if createDateTime !== 0}}
+					{{formatDate createDateTime}}
+			{{else}}
+					-
+			{{/if}}
+		</td>
 </script>
 
 

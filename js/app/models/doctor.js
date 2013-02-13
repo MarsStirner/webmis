@@ -1,7 +1,7 @@
-define(["models/name", "models/department"], function (){
+define(["models/Name", "models/department"], function (Name){
 	var Specs = Model.extend({
 		defaults: {
-			name: ""
+			name: {}
 		}
 	});
 
@@ -17,7 +17,7 @@ define(["models/name", "models/department"], function (){
 			{
 				type: Backbone.HasOne,
 				key: "name",
-				relatedModel: "App.Models.Name"
+				relatedModel: Name
 			},
 			{
 				type: Backbone.HasOne,

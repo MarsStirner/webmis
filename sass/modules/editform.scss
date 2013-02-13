@@ -63,6 +63,9 @@
 			}
 
 		}
+		.FieldInfo {
+			display: block;
+		}
 	}
 
 
@@ -101,6 +104,25 @@
 
 	.HugeCol {
 		width:75%;
+		display: inline-block;
+		padding-right:3em;
+		vertical-align: top;
+		@include box-sizing(border-box);
+		margin-right:-0.3em;
+		> * {
+			white-space:normal;
+			word-spacing:normal;
+		}
+		> input {
+			@include box-sizing(content-box);
+		}
+		> .Styled.Button {
+			white-space:nowrap;
+		}
+	}
+
+	.ColHalf {
+		width:50%;
 		display: inline-block;
 		padding-right:3em;
 		vertical-align: top;
@@ -174,6 +196,24 @@
 			white-space:nowrap;
 		}
 	}
+	.ThirdCol {
+		width: 33.3%;
+		display: inline-block;
+		padding-right:3em;
+		vertical-align: top;
+		@include box-sizing(border-box);
+		margin-right:-0.3em;
+		> * {
+			white-space:normal;
+			word-spacing:normal;
+		}
+		> input {
+			@include box-sizing(content-box);
+		}
+		> .Styled.Button {
+			white-space:nowrap;
+		}
+	}
     .DecCol {
         display:inline-block;
         width:10%;
@@ -213,13 +253,19 @@
 		}
 	}
 
+	.item{
+		float: left;
+	}
 	.bedBox {
 		border-radius: 3px;
 		background: rgb(223, 244, 253);
 		border: 1px solid rgb(134, 202, 224);
-		width: 60px;
+		//width: 60px;
 		height: 30px;
 		cursor: pointer;
+
+		margin-right: 10px;
+		margin-bottom: 10px;
 
 		.bedCheckbox {
 			width: 15px;
@@ -238,7 +284,7 @@
 			vertical-align: middle;
 			line-height: 2.9;
 			font-size: 1.1em;
-			margin-left: 0.8em;
+			padding: 0 5px 0 2px;
 			color: rgb(108, 108, 113);
 		}
 	}

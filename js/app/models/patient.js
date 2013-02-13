@@ -1,17 +1,17 @@
 define([
-		"models/name",
-		"models/address",
-		"models/citizenship",
-		"models/medical-info/medical-info",
-		"collections/id-cards",
-		"collections/relations",
-		"collections/payments",
-		"collections/phones",
-		"collections/occupations",
-		"collections/disabilities"
-	], function () {
+	"models/Name",
+	"models/address",
+	"models/citizenship",
+	"models/medical-info/medical-info",
+	"collections/id-cards",
+	"collections/relations",
+	"collections/payments",
+	"collections/phones",
+	"collections/occupations",
+	"collections/disabilities"
+], function (Name) {
 
-	var Name = App.Models.Name.extend({
+	var PatientName = Name.extend({
 		validate: function (attrs) {
 			var errors = [];
 			//attrs = attrs || this.toJSON();
@@ -20,7 +20,7 @@ define([
 					errors.push({property: "name-last", msg: "Фамилия"});
 				}
 				if (!this.get("first").length) {
-					errors.push({property: "name-first", msg:"Имя"});
+					errors.push({property: "name-first", msg: "Имя"});
 				}
 
 				if (errors.length)
@@ -29,7 +29,7 @@ define([
 		}
 	});
 
-	App.Models.Patient = Model.extend ({
+	App.Models.Patient = Model.extend({
 		idAttribute: "id",
 
 		defaults: {
@@ -46,16 +46,27 @@ define([
 				raw: ""
 			},
 			address: {},
-			payments: [{}],
-			relations: [{}],
-			idCards: [{}],
-			disabilities: [{}],
-			occupations: [{}],
+			phones: [],
+			payments: [
+				{}
+			],
+			relations: [
+				{}
+			],
+			idCards: [
+				{}
+			],
+			disabilities: [
+				{}
+			],
+			occupations: [
+				{}
+			],
 			medicalInfo: {},
 			citizenship: {}
 		},
 
-		urlRoot: DATA_PATH+"patients/",
+		urlRoot: DATA_PATH + "patients/",
 
 		url: function () {
 			return DATA_PATH + "patients/" + (this.isNew() ? "" : (this.get("id") + "/"));
@@ -66,7 +77,7 @@ define([
 			{
 				type: Backbone.HasOne,
 				key: "name",
-				relatedModel: Name
+				relatedModel: PatientName
 			},
 			{
 				type: Backbone.HasOne,
@@ -160,9 +171,9 @@ define([
 			return json;
 		},
 
-		getIdCardsShortString: function() {
+		getIdCardsShortString: function () {
 			var idCardsShortString = "";
-			this.get("idCards").each(function (idCard){
+			this.get("idCards").each(function (idCard) {
 				if (idCard.get("docType").get('name'))
 					idCardsShortString += idCard.get("docType").get("name") + ":" + idCard.get("series") + "-" + idCard.get("number") + " ";
 			});
@@ -178,48 +189,49 @@ define([
 			return idCardsShortString;
 		},
 
-		parse: function ( data ) {
+		parse: function (data) {
+			//костыль злостный
 			var newPatient = new App.Models.Patient;
 
 			data = data.data ? data.data : data;
 
-			return Core.Objects.mergeAll( newPatient.toJSON(), data )
+			return Core.Objects.mergeAll(newPatient.toJSON(), data)
 		},
 
 		save: function () {
 			/*var res = this.get("address").get("residential");
-			if (res.get("street").get("code") && !res.get("city").get("code")) {
-				if (res.get("district").get("code")) {
-					res.get("city").set("code", res.get("district").get("code"));
-					res.get("district").set("code", "");
-				} else if (res.get("republic").get("code")) {
-					res.get("city").set("code", res.get("republic").get("code"));
-					res.get("republic").set("code", "");
-				}
-			}
+			 if (res.get("street").get("code") && !res.get("city").get("code")) {
+			 if (res.get("district").get("code")) {
+			 res.get("city").set("code", res.get("district").get("code"));
+			 res.get("district").set("code", "");
+			 } else if (res.get("republic").get("code")) {
+			 res.get("city").set("code", res.get("republic").get("code"));
+			 res.get("republic").set("code", "");
+			 }
+			 }
 
-			_(["street", "city", "district", "locality", "republic"]).each(function (level) {
-				if (!res.get(level).get("code"))
-					res.set(level, null);
-			});
+			 _(["street", "city", "district", "locality", "republic"]).each(function (level) {
+			 if (!res.get(level).get("code"))
+			 res.set(level, null);
+			 });
 
-			var reg = this.get("address").get("registered");
-			if (reg.get("street").get("code") && !reg.get("city").get("code")) {
-				if (reg.get("district").get("code")) {
-					reg.get("city").set("code", reg.get("district").get("code"));
-					reg.get("district").set("code", "");
-				} else if (reg.get("republic").get("code")) {
-					reg.get("city").set("code", reg.get("republic").get("code"));
-					reg.get("republic").set("code", "");
-				}
-			}
+			 var reg = this.get("address").get("registered");
+			 if (reg.get("street").get("code") && !reg.get("city").get("code")) {
+			 if (reg.get("district").get("code")) {
+			 reg.get("city").set("code", reg.get("district").get("code"));
+			 reg.get("district").set("code", "");
+			 } else if (reg.get("republic").get("code")) {
+			 reg.get("city").set("code", reg.get("republic").get("code"));
+			 reg.get("republic").set("code", "");
+			 }
+			 }
 
-			_(["street", "city", "district", "locality", "republic"]).each(function (level) {
-				if (!reg.get(level).get("code"))
-					reg.set(level, null);
-			});*/
+			 _(["street", "city", "district", "locality", "republic"]).each(function (level) {
+			 if (!reg.get(level).get("code"))
+			 reg.set(level, null);
+			 });*/
 
-			if (this.get("address").addressesEqual) {
+			if (this.get("address").getAddressesEqual()) {
 				this.get("address").get("registered").set(this.get("address").get("residential").toJSON());
 			}
 
@@ -229,11 +241,11 @@ define([
 				}
 			});
 
-			this.get("relations").each(function (relation) {
-				if (!relation.get("relationType").get("id")) {
-					relation.unset("id");
-				}
-			});
+			/*this.get("relations").each(function (relation) {
+			 if (!relation.get("relationType").get("id")) {
+			 relation.unset("id");
+			 }
+			 });*/
 
 			this.get("phones").remove(this.get("phones").filter(function (phone) {
 				return !phone.get("typeId");
@@ -250,6 +262,22 @@ define([
 
 			}
 
+			var allergies = this.get("medicalInfo").get("allergies");
+
+			if (allergies.length) {
+				allergies.remove(allergies.filter(function (a) {
+					return !_.any([a.get("substance"), a.get("degree"), a.get("checkingDate"), a.get("comment")]);
+				}));
+			}
+
+			var drugIntolerances = this.get("medicalInfo").get("drugIntolerances");
+
+			if (drugIntolerances.length) {
+				drugIntolerances.remove(drugIntolerances.filter(function (di) {
+					return !_.any([di.get("substance"), di.get("degree"), di.get("checkingDate"), di.get("comment")]);
+				}));
+			}
+
 			Model.prototype.save.call(this);
 		},
 
@@ -257,19 +285,19 @@ define([
 			var errors = [];
 			if (!attrs) {
 				if (!this.get("birthDate") || isNaN(new Date(parseInt(this.get("birthDate"))).getTime()) || new Date(parseInt(this.get("birthDate"))) > new Date()) {
-					errors.push({property: "birthDate", msg:"Дата рождения"});
+					errors.push({property: "birthDate", msg: "Дата рождения"});
 				}
 				if (!this.isSnilsChecksumValid()) {
-					errors.push({property: "snils", msg:"СНИЛС"});
+					errors.push({property: "snils", msg: "СНИЛС"});
 				}
 
 				var nameErrors = this.get("name").validate() || [];
 
 				/*var relationsErrors = [];
 
-				this.get("relations").each(function (rel) {
-					relationsErrors = _(relationsErrors).union(rel.validate() || []);
-				}, this);*/
+				 this.get("relations").each(function (rel) {
+				 relationsErrors = _(relationsErrors).union(rel.validate() || []);
+				 }, this);*/
 
 				var phonesErrors = [];
 
@@ -288,6 +316,36 @@ define([
 				this.get("idCards").each(function (idc) {
 					idCardsErrors = _(idCardsErrors).union(idc.validate() || []);
 				}, this);
+
+				var res = this.get("address").get("residential");
+
+				var anyResCode = _(_([
+					res.get("street"),
+					res.get("city"),
+					res.get("district"),
+					res.get("locality"),
+					res.get("republic")
+				]).pluck("code")).any();
+
+				if ((res.get("fullAddress") || anyResCode) && (!res.get("localityType") || res.get("localityType") == "0")) {
+					errors.push({property: "address-residential-localityType", msg: "Тип населенного пункта адреса проживания"});
+				}
+
+				if (!this.get("address").getAddressesEqual()) {
+					var reg = this.get("address").get("registered");
+
+					var anyRegCode = _(_([
+						reg.get("street"),
+						reg.get("city"),
+						reg.get("district"),
+						reg.get("locality"),
+						reg.get("republic")
+					]).pluck("code")).any();
+
+					if ((reg.get("fullAddress") || anyRegCode) && (!reg.get("localityType") || reg.get("localityType") == "0")) {
+						errors.push({property: "address-registered-localityType", msg: "Тип населенного пункта адреса регистрации"});
+					}
+				}
 
 				var disabilitiesErrors = [];
 
