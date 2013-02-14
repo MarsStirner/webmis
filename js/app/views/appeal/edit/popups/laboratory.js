@@ -3,7 +3,8 @@
  * Date: 25.06.12
  */
 define(["text!templates/appeal/edit/popups/laboratory.tmpl",
-	"collections/diagnostics/Labs"], function (tmpl, Labs) {
+	"collections/diagnostics/Labs",
+	"views/appeal/edit/popups/LabsListView"], function (tmpl, Labs, LabsListView) {
 
 	App.Views.LaboratoryPopup = View.extend({
 		template: tmpl,
@@ -13,21 +14,41 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 			"click .ShowHidePopup": "close"
 		},
 		initialize: function () {
-			console.log('init labs')
-			var labsCollection = new Labs();
+			var popup = this;
+
+
+
+
+		},
+		renderNested: function (view, selector) {
+			var $element = ( selector instanceof $ ) ? selector : this.$el.find(selector);
+			view.setElement($element).render();
 		},
 		render: function () {
-			if ($(this.$el.parent().length).length === 0) {
-				this.$el.html($.tmpl(this.template, {}));
+			var popup = this;
+
+			if ($(popup.$el.parent().length).length === 0) {
+
+				popup.$el.html($.tmpl(this.template, {}));
+
+				var labs = new Labs();
+				labs.fetch({success: function(){
+					popup.labsListView = new LabsListView({collection: labs});
+					popup.renderNested(popup.labsListView, ".labs-list-el");
+
+				}});
+
+
+
 				$("body").append(this.el);
-				$(this.el).dialog({
+				$(popup.el).dialog({
 					autoOpen: false,
 					width: "116em",
 					modal: true,
 					dialogClass: "webmis"
 				});
-				this.$(".popup #dp").datepicker();
-				this.$("a").click(function (event) {
+				//popup.$(".popup #dp").datepicker();
+				popup.$("a").click(function (event) {
 					event.preventDefault();
 				});
 			}

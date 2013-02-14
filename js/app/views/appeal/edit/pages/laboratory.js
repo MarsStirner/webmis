@@ -50,12 +50,12 @@ define([
 			this.$el.empty().html($.tmpl(this.template));
 			this.$("#lab-grid").html(this.grid.el);
 
-			this.newAssignPopup.render();
-
 			return this;
 		},
 
 		onNewDiagnosticClick: function () {
+
+			this.newAssignPopup.render();
 			this.newAssignPopup.open();
 		}
 	});
