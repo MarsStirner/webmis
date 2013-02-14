@@ -339,7 +339,7 @@
 						</li>
 						{{/if}}
 
-						{{if occupations.length && occupations[0].socialStatus && occupations[0].socialStatus.status || phones.count || relations.length && relations[0].relationType && relations[0].relationType.id}}
+						{{if occupations.length && occupations[0].socialStatus && occupations[0].socialStatus.status || phones.count}}
 						<li>
 							{{each(i, occupation) occupations}}
 								{{if occupation.socialStatus.id}}
@@ -382,31 +382,6 @@
 										</div>
 									{{/each}}
 								{{/if}}
-
-
-								<!--{{if relations.length && relations[0].relationType.id}}
-								<h4>Дополнительные контакты</h4>
-									{{each(i, rel) relations}}
-										{{if rel.relationType}}
-										<div class="LineBlock">
-											<div class="HalfCol">
-												<span class="Label">Кем приходится</span>
-												<p>${rel.relationType.name}</p>
-											</div>
-											<div class="HalfCol">
-												<span class="Label">ФИО</span>
-												<p><strong>${rel.name.raw}</strong></p>
-											</div>
-											{{if rel.phones.length}}
-											<div class="HalfCol">
-												<span class="Label">Телефон</span>
-												<p><strong>${rel.phones[0].number}</strong></p>
-											</div>
-											{{/if}}
-										</div>
-										{{/if}}
-									{{/each}}
-								{{/if}}-->
 							{{/each}}
 						</li>
 						{{/if}}
