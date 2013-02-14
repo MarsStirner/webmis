@@ -98,9 +98,14 @@
 			<td> Тип финансирования </td>
 			<td>
 				{{if appealType && appealType.finance && appealType.finance.name}}
-				${appealType.finance.name}{{if contract && contract.number}} (Договор: ${contract.number}){{/if}}
+					${appealType.finance.name}
+					{{if contract && contract.number}}
+						(Договор: ${contract.number + contract.begDate + contract.finance.id})
+					{{else}}
+						(Договор: Не определено)
+					{{/if}}
 				{{else}}
-				-
+					-
 				{{/if}}
 			</td>
 		</tr>
