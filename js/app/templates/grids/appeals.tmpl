@@ -70,7 +70,7 @@
 
 <script id="appeals-grid-doctor-row" type="text/x-jquery-tmpl">
 		<td {{if !havePrimary}} class="HavePrimary"{{/if}}>
-			<a href="/appeals/${id}/"></a>
+			<a href="/appeals/${id}/"  class="open-appeal"></a>
 			${_index+1}
 		</td>
 		<td {{if !havePrimary}} class="HavePrimary"{{/if}}>
@@ -218,7 +218,7 @@
 
 <script id="appeals-grid-nurse-row" type="text/x-jquery-tmpl">
 		<td>
-			<a href="/appeals/${id}/"></a>
+			<a href="/appeals/${id}/"  class="open-appeal"></a>
 			${_index+1}
 		</td>
 		<td>
@@ -323,7 +323,7 @@
 
 <script id="patient-appeals-grid-row" type="text/x-jquery-tmpl">
 		<td>
-			<a href="/appeals/${id}/"></a>
+			<a href="/appeals/${id}/"  class="open-appeal"></a>
 			{{if number}}
 				${number}
 			{{else}}
@@ -405,7 +405,7 @@
 
 <script id="appeals-grid-doctor-department-row" type="text/x-jquery-tmpl">
 		<td>
-			<a href="/appeals/${id}/"></a>${number}
+			<a href="/appeals/${id}/" class="open-appeal"></a>${number}
 		</td>
 		<td>
 			{{if name.first || name.last || name.middle}}
@@ -497,8 +497,8 @@
 				<th>
 					<a class="Actions SortCol" data-field="fullName"><span>ФИО</span></a>
 				</th>
-				<th colspan="3">
-					<a class="Actions SortCol" data-field="condition"><span>Состояние</span></a>
+				<th colspan="2">
+						<span>Состояние</span>
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="doctor"><span>Лечащий врач</span></a>
@@ -516,12 +516,12 @@
 
 <script id="appeals-grid-nurse-department-row" type="text/x-jquery-tmpl">
 		<td>
-			<a href="/appeals/${id}/"></a>
+			<!--<a href="/appeals/${id}/" class="open-appeal"></a>-->
 			<!--<b>в приёмном</b>-->
 			{{if hospitalBed.code}}
 				${hospitalBed.code}
 			{{else}}
-				-
+			<a href="#" class="bed-registration" >Положить на койку</a>
 			{{/if}}
 		</td>
 		<td>
@@ -540,21 +540,21 @@
 				{{/if}}
 			{{/if}}
 		</td>
-		<td>
+		<!--<td>-->
 			<!--берём первое слово из состояния-->
-			${condition.state.split(' ')[0]}
+			<!--condition.state-->
 
 			<!--<span class="condition satisfactory">Удов.</span>-->
 			<!--<span class="condition good">Хор.</span>-->
 			<!--<span class="condition serious">Тяж.</span>-->
-		</td>
+		<!--</td>-->
 		<td>
 			{{if condition.breathingRate}}
 				ЧСС ${condition.breathingRate} уд.м
 			{{/if}}
 		<td>
 			{{if condition.arterialBloodPressure.low && condition.arterialBloodPressure.high}}
-					АДД ${condition.arterialBloodPressure.low}-${condition.arterialBloodPressure.high}
+					АДД ${condition.arterialBloodPressure.low} - ${condition.arterialBloodPressure.high}
 			{{/if}}
 		</td>
 		<td>
