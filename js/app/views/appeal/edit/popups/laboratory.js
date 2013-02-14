@@ -2,7 +2,8 @@
  * User: FKurilov
  * Date: 25.06.12
  */
-define(["text!templates/appeal/edit/popups/laboratory.tmpl"], function (tmpl) {
+define(["text!templates/appeal/edit/popups/laboratory.tmpl",
+	"collections/diagnostics/Labs"], function (tmpl, Labs) {
 
 	App.Views.LaboratoryPopup = View.extend({
 		template: tmpl,
@@ -11,7 +12,10 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl"], function (tmpl) {
 		events: {
 			"click .ShowHidePopup": "close"
 		},
-
+		initialize: function () {
+			console.log('init labs')
+			var labsCollection = new Labs();
+		},
 		render: function () {
 			if ($(this.$el.parent().length).length === 0) {
 				this.$el.html($.tmpl(this.template, {}));
