@@ -4,6 +4,10 @@
  * pubsub.trigger('noty', {text:'текст сообщения',type:'alert'});
  * pubsub.trigger('noty', {text:'текст сообщения',type:'error'});
  *
+ * pubsub.trigger('noty_save', {text:'текст сообщения',type:'error'}); - сохранить сообщение в куки и показать после перезагрузки страницы
+ *
+ * pubsub.trigger('noty_clear'); - очистить все сообщения
+ *
  */
 define([], function () {
 
@@ -11,6 +15,7 @@ define([], function () {
 		initialize: function() {
 			pubsub.bind('noty', this.showMessage);
 			pubsub.bind('noty_save', this.saveMessage);
+			pubsub.bind('noty_clear', this.clear);
 			this.render();
 
 			var previousMessage = this.readMessage();
@@ -78,6 +83,9 @@ define([], function () {
 			}else{
 				return false;
 			}
+		},
+		clear: function(){
+			$('#noty').html('');
 		}
 
 	});

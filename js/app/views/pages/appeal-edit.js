@@ -23,6 +23,8 @@ define([
 		initialize: function () {
 			this.clearAll();
 
+			pubsub.trigger('noty_clear');
+
 			var view = this;
 			Cache.Patient = this.model.get("patient");
 			Cache.Patient.fetch({
