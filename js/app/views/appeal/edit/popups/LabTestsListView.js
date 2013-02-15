@@ -10,7 +10,7 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 
 			initialize: function () {
 				var view = this;
-				view.collection = new LabsTests();
+				view.collection = new LabsTests({patientId: 6010});
 
 				console.log('init LabTestsListView');
 
