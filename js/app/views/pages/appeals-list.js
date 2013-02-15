@@ -93,6 +93,10 @@ define([
 				this.collection.fetch();
 			}, this);
 		},
+		newHospitalBed: function (appealId) {
+			this.trigger("change:viewState", {type: 'hospitalbed', options: {}});
+			App.Router.updateUrl("appeals/" + appealId + "/hospitalbed/");
+		},
 
 		ready: function () {
 			var view = this;
@@ -158,6 +162,7 @@ define([
 						}
 					}
 				});
+
 				AppealsGrid = new App.Views.Grid({
 					collection: Collection,
 					popUpMode: true,
@@ -166,13 +171,15 @@ define([
 					rowTemplateId: "#appeals-grid-nurse-row",
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
+
 				AppealsGrid.on('grid:rowClick', function (model, event) {
 					if (event.target.localName != 'a') {
 						App.Router.navigate('/appeals/' + model.get('id') + '/', {trigger: true});
 					} else {
 						view.newSendToDepartment(model);
 					}
-				})
+				});
+
 			}, this);
 
 			this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
@@ -209,6 +216,7 @@ define([
 						}
 					}
 				});
+
 				AppealsGrid = new App.Views.Grid({
 					collection: Collection,
 					template: "grids/appeals",
@@ -228,13 +236,30 @@ define([
 					templateId: "#appeals-list-filters-nurse-department",
 					path: this.options.path
 				});
+
 				AppealsGrid = new App.Views.Grid({
 					collection: Collection,
+					popUpMode: true,
 					template: "grids/appeals",
 					gridTemplateId: "#appeals-grid-nurse-department",
 					rowTemplateId: "#appeals-grid-nurse-department-row",
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
+
+				AppealsGrid.on('grid:rowClick', function (model, event) {
+					var target = $(event.target);
+
+					if (target.hasClass('bed-registration')) {
+						console.log(model);
+						console.log('bed-registration', model.get('id'));
+						view.newHospitalBed(model.get('id'));
+					} else {
+						App.Router.navigate('/appeals/' + model.get('id') + '/', {trigger: true});
+					}
+
+				});
+
+
 			}, this);
 
 			this.collection = Collection;

@@ -13,19 +13,7 @@ define(["collections/Beds"], function () {
 //			"curativeDiagnosticBool": false,
 //			"curativeDiagnostic": ""
 		},
-//		validate: function (attrs) {
-//			var errors = [];
-//			if (!attrs.movedFromUnitId) {
-//				errors.push({property: "departments", msg: "Отделение"});
-//			}
-//			if (!attrs.bedId) {
-//				errors.push({property: "beds", msg: "Койка"});
-//			}
-//
-//			if (errors.length) {
-//				return errors;
-//			}
-//		},
+
 
 		url: function (isSave) {
 			return DATA_PATH + (isSave ?

@@ -16,21 +16,16 @@ define([
 			var beds = $('.bedBox');
 			var bed = this.$(event.currentTarget);
 
-
-
-
 			if(bed.hasClass('disabledBed')){
 				return false;
 			}
 
-
 			var checkbox = bed.find(".bedCheckbox");
 
-			console.log(checkbox.prop('checked'));
 			if(!checkbox.prop('checked')){
 				bed.removeClass('checkedBed');
 				checkbox.removeClass("DoneIcon").removeAttr("checked");
-
+				this.trigger('bedChecked', '');
 			}else{
 				beds.removeClass('checkedBed');
 				beds.find(".bedCheckbox").removeClass("DoneIcon").removeAttr("checked");
@@ -38,7 +33,6 @@ define([
 				checkbox.addClass("DoneIcon").attr("checked", "checked");
 				this.trigger('bedChecked', checkbox.val());
 			}
-
 
 		},
 
