@@ -2,18 +2,32 @@
 	<table class="Grid">
 		<thead>
 		<!--<tr class="EditTh">-->
+		<!--Дата и время выполнения-->
 		<tr>
 			<th>
-				<a class="Actions SortCol" data-field="directionDate"><span>Дата и время направления</span></a>
+			<a class="Actions SortCol" data-field="directionDate"><span>Направлен</span></a>
+			<div class="Filter Hidden">
+				<div class="DatePeriod SingleDate">
+					<div class="FromTo">
+						<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="directionDate">
+					</div>
+					<i class="DateIcon Icon"></i>
+				</div>
+			</div>
+		</th>
+
+			<th>
+				<a class="Actions SortCol" data-field="diagnosticDate"><span>Выполнен</span></a>
 				<div class="Filter Hidden">
 					<div class="DatePeriod SingleDate">
 						<div class="FromTo">
-							<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="directionDate">
+							<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="diagnosticDate">
 						</div>
 						<i class="DateIcon Icon"></i>
 					</div>
 				</div>
 			</th>
+
 			<th>
 				<a class="Actions SortCol" data-field="diagnosticName"><span>Вид исследований</span></a>
 				<div class="Filter Hidden">
@@ -21,9 +35,9 @@
 				</div>
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="urgent"><span>Cito</span></a>
+				<a class="Actions SortCol" data-field="cito"><span>Cito</span></a>
 				<div class="Filter Hidden">
-					<select class="Styled" name="urgent">
+					<select class="Styled" name="cito">
 						<option selected>...</option>
 						<option value="true">Да</option>
 						<option value="false">Нет</option>
@@ -45,7 +59,7 @@
 			<th>
 				<a class="Actions SortCol" data-field="status"><span>Статус</span></a>
 				<div class="Filter Hidden">
-					<select class="Styled" name="status">
+					<select class="Styled" name="statusId">
 						<option selected>...</option>
 						<option value="0">Начато</option>
 						<option value="1">Ожидание</option>
@@ -54,6 +68,9 @@
 						<option value="4">Без&nbsp;результата</option>
 					</select>
 				</div>
+			</th>
+			<th colspan="3">
+				Действия
 			</th>
 		</tr>
 		</thead>
@@ -65,11 +82,19 @@
 
 <script id="lab-diagnostic-grid-row" type="text/x-jquery-tmpl">
 	<td>
-		{{if directionDate}}
-			{{formatDate directionDate}}
+		{{if diagnosticDate}}
+			{{formatDateTime diagnosticDate}}
 		{{else}}
 			-
 		{{/if}}
+	</td>
+	<td>
+		{{if directionDate}}
+		{{formatDateTime directionDate}}
+		{{else}}
+		-
+		{{/if}}
+
 	</td>
 	<td>
 		${diagnosticName.name}
@@ -92,6 +117,9 @@
 			-
 		{{/if}}
 	</td>
+	<td>удалить</td>
+	<td>редактировать</td>
+	<td>печать</td>
 </script>
 
 <script id="lab-diagnostic-grid-default" type="text/x-jquery-tmpl">
