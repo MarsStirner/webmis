@@ -46,11 +46,11 @@
 			<div class="LineBlock">
 				<div class="QuartCol">
 					<span class="Label"> Диагноз </span>
-					<input id="quota-diagnosis-code" type="text" placeholder="" value="${model.mkb.code}" class="Mandatory"/>
+					<input id="quota-diagnosis-code" type="text" placeholder="" value="{{if model.mkb && model.mkb.code}}${model.mkb.code}{{/if}}" class="Mandatory"/>
 					<span class="FieldInfo">Код по МКБ</span>
 				</div>
 				<div class="HugeCol WithoutName">
-					<input id="quota-diagnosis-desc" class="Disabled NotEditable Mandatory" disabled="disabled" type="text" placeholder="" value="${model.mkb.diagnosis}"/>
+					<input id="quota-diagnosis-desc" class="Disabled NotEditable Mandatory" disabled="disabled" type="text" placeholder="" value="{{if model.mkb && model.mkb.diagnosis}}${model.mkb.diagnosis}{{/if}}"/>
 					<span class="FieldInfo">Описание</span>
 				</div>
 				<div class="QuartCol">
