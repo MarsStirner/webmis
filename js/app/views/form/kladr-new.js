@@ -6,6 +6,28 @@ define([
 	"models/kladr",
 	"text!templates/kladr/kladr-new.tmpl"
 ], function (KLADRModel, tmpl) {
+	/*var kladrBackboneless = _.extend({
+		levels: {
+			"republic": _.extend({
+				fetch: function () {
+					$.ajax({
+						dataType: "jsonp",
+						url: DATA_PATH + "dictionary?dictName=KLADR&filter[level]=" + this.getLevel() + "&filter[parent]=" + this.getParentCode(),
+						success: function () {
+							console.log("success!");
+						}
+					});
+				}
+			}, Backbone.Events),
+			"district": {},
+			"city": {},
+			"locality": {},
+			"street": {}
+		}
+
+
+	}, Backbone.Events);*/
+
 	App.Views.KLADR = View.extend({
 		template: tmpl,
 
@@ -81,10 +103,18 @@ define([
 
 			var propertyChain = $sel.attr("name").split("-");
 
+			var socr = "";
+			var name = "";
+
+			if (entrySocrAndName.length > 1) {
+				socr = entrySocrAndName.shift();
+			}
+			name = entrySocrAndName.join(" ");
+
 			this.address.get(propertyChain[propertyChain.length-2]).set({
 				code: selectedCode,
-				socr: entrySocrAndName[0] || "",
-				name: entrySocrAndName[1] || "",
+				socr: socr || "",
+				name: name || "",
 				index: $selectedOption.data("index").toString()
 			});
 
@@ -212,11 +242,12 @@ define([
 					$sel.select2("enable");
 				}
 
-				var entries = collection.toJSON();
+				//var entries = collection.toJSON();
 				var options = "";
 
-				_(entries).each(function (entry) {
-					options += "<option value='" + entry.code + "' data-index='" + entry.index + "'>" + entry.sock + " " + entry.value + "</option>";
+				//_(entries).each(function (entry) {
+				collection.each(function (entry) {
+					options += "<option value='" + entry.get("code") + "' data-index='" + entry.get("index") + "'>" + entry.get("sock") + " " + entry.get("value") + "</option>";
 				});
 
 				$sel.append(options);
