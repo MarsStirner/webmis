@@ -3,7 +3,7 @@
  * Date: 26.07.12
  */
 define(function () {
-	App.Models.KLADREntry = Model.extend({
+	/*App.Models.KLADREntry = Model.extend({
 		defaults: {
 			code: "",
 			sock: "",
@@ -13,10 +13,10 @@ define(function () {
 		getTitle: function () {
 			return this.get("sock") + " " + this.get("value");
 		}
-	});
+	});*/
 
 	App.Collections.KLADREntries = Collection.extend({
-		model: App.Models.KLADREntry,
+		//model: App.Models.KLADREntry,
 
 		initialize: function (models, options) {
 			this.cachedEntries = {};
@@ -26,7 +26,9 @@ define(function () {
 
 			this.childName = options.childName;
 
-			this.on("reset", this.cacheEntrySet, this);
+			this.name = options.name;
+
+			//this.on("reset", this.cacheEntrySet, this);
 		},
 
 		setLevel: function (level) {
@@ -53,15 +55,9 @@ define(function () {
 		fetch: function () {
 			this.trigger("fetch:start");
 
-			if (this.cachedEntries[this.getLevel() + "_" + this.getParentCode()]) {
-				/*console.log(
-					"calling from cache",
-					this.getLevel() + "_" + this.getParentCode(),
-					this.cachedEntries,
-					this.cachedEntries[this.getLevel() + "_" + this.getParentCode()]
-				);*/
+			/*if (this.cachedEntries[this.getLevel() + "_" + this.getParentCode()]) {
 				this.reset(this.cachedEntries[this.getLevel() + "_" + this.getParentCode()]);
-			} else if (this.getParentCode() || this.getLevel() === "republic") {
+			} else*/ if (this.getParentCode() || this.getLevel() === "republic") {
 				return Collection.prototype.fetch.call(this);
 			} else {
 				return this.reset([]);
@@ -85,7 +81,28 @@ define(function () {
 			streets: []
 		},
 
-		relations: [
+		initialize: function () {
+			this.set({
+				republics:  new App.Collections.KLADREntries([], {level: "republic", name: "republics", childName: "districts"}),
+				districts:  new App.Collections.KLADREntries([], {level: "district", name: "districts", childName: "cities"}),
+				cities:     new App.Collections.KLADREntries([], {level: "city", name: "cities", childName: "localities"}),
+				localities: new App.Collections.KLADREntries([], {level: "locality", name: "localities", childName: "streets"}),
+				streets:    new App.Collections.KLADREntries([], {level: "street", name: "streets"})
+			});
+
+			this.get("republics").on("reset", this.bubbleReset, this);
+			this.get("districts").on("reset", this.bubbleReset, this);
+			this.get("cities").on("reset", this.bubbleReset, this);
+			this.get("localities").on("reset", this.bubbleReset, this);
+			this.get("streets").on("reset", this.bubbleReset, this);
+		},
+
+		bubbleReset: function (levelColl) {
+			this.trigger("reset:" + levelColl.name, levelColl);
+		}
+
+
+		/*relations: [
 			{
 				type: Backbone.HasMany,
 				key: "republics",
@@ -121,7 +138,7 @@ define(function () {
 				relatedModel: App.Models.KLADREntry,
 				collectionType: App.Collections.KLADREntries
 			}
-		]
+		]*/
 	});
 
 	App.Models.KLADR.LEVELS_ORDER = [
