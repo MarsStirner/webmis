@@ -3,8 +3,10 @@
  * Date: 25.06.12
  */
 define(["text!templates/appeal/edit/popups/laboratory.tmpl",
-	"collections/diagnostics/Labs",
-	"views/appeal/edit/popups/LabsListView"], function (tmpl, Labs, LabsListView) {
+				"collections/diagnostics/Labs",
+				"views/appeal/edit/popups/LabsListView",
+				"views/appeal/edit/popups/LabTestsListView"],
+	function (tmpl, Labs, LabsListView, LabTestsListView) {
 
 	App.Views.LaboratoryPopup = View.extend({
 		template: tmpl,
@@ -15,7 +17,6 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 		},
 		initialize: function () {
 			var popup = this;
-
 
 
 
@@ -32,12 +33,15 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				popup.$el.html($.tmpl(this.template, {}));
 
 				var labs = new Labs();
-				labs.fetch({success: function(){
+				labs.fetch({success: function () {
 					popup.labsListView = new LabsListView({collection: labs});
 					popup.renderNested(popup.labsListView, ".labs-list-el");
 
 				}});
+				var code = 17;
 
+				popup.labTestListView = new LabTestsListView({code: code});
+				popup.renderNested(popup.labTestListView, ".lab-test-list-el");
 
 
 				$("body").append(this.el);
