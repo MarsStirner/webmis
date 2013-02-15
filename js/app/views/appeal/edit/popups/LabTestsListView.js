@@ -1,6 +1,7 @@
 define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
-'collections/diagnostics/LabsTests'],
-	function (labTestsListTemplate,LabsTests) {
+	'collections/diagnostics/LabsTests',
+	'views/appeal/edit/popups/LabTestsListItemView'],
+	function (labTestsListTemplate, LabsTests, LabTestsListItemView) {
 
 		LabTestsListView = View.extend({
 			template: labTestsListTemplate,
@@ -15,9 +16,24 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 
 				pubsub.on('lab-selected', function (labCode) {
 
+					view.render();
 					view.collection.fetch({data: {'filter[code]': labCode}});
 
-					console.log('labCode', labCode)
+				});
+
+				view.collection.on('reset', function () {
+
+					view.collection.each(function (labTestModel) {
+
+						var labTestsListItemView = new LabTestsListItemView({
+							model : labTestModel//,
+							//el:'li'
+						});
+
+						view.$('.lab-tests-list').append(labTestsListItemView.render().el);
+						//lab-tests-list
+
+					});
 
 				});
 
@@ -33,6 +49,7 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 //				});
 
 			},
+
 
 			render: function () {
 				var view = this;
