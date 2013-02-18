@@ -178,12 +178,17 @@ define([
 			var self = this;
 			var $field = $(event.currentTarget);
 
-			if ($field.is("select"))
-				$field.next().removeClass("WrongField");
-			else if ($field.hasClass("hasDatepicker"))
+			if ($field.is("select")) {
+				if ($field.is(".select2")) {
+					$field.prev().removeClass("WrongField");
+				} else {
+					$field.next().removeClass("WrongField");
+				}
+			} else if ($field.hasClass("hasDatepicker")) {
 				$field.parents(".DatePeriod").removeClass("WrongField");
-			else
+			} else {
 				$field.removeClass("WrongField");
+			}
 
 			this.errorToolTip.hide();
 
@@ -308,13 +313,17 @@ define([
 				var wrongFieldsSelector = _(this.validationErrors).map(function (e) {
 					return "[name='" + e.property + "']";
 				}).join(",");
-
+				console.log(wrongFieldsSelector);
 				this.$(wrongFieldsSelector).each(function () {
 					if (!$(this).data("subbind")) {
 						if ($(this).hasClass("hasDatepicker")) {
 							$(this).parents(".DatePeriod").addClass("WrongField");
 						} else if ($(this).is("select")) {
-							$(this).next().addClass("WrongField");
+							if ($(this).is(".select2")) {
+								$(this).prev().addClass("WrongField");
+							} else {
+								$(this).next().addClass("WrongField");
+							}
 						} else {
 							$(this).addClass("WrongField");
 						}
