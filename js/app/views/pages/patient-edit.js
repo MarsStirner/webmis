@@ -143,6 +143,8 @@ define([
 				this.render(true);
 			} else {
 				if (this.currentStep != step.name) {
+					App.Router.navigate($(event.currentTarget).data("uri"));
+
 					this.currentStep = step.name;
 					this.stepTitle = step.title;
 					this.stepUri = step.uri;
@@ -2143,7 +2145,6 @@ define([
 		onMenuItemClick: function (event) {
 			event.preventDefault();
 			//if ($(event.currentTarget).data("step") != "address") {
-				App.Router.navigate($(event.currentTarget).data("uri"));
 				this.trigger("step:change", {
 					name: $(event.currentTarget).data("step"),
 					uri: $(event.currentTarget).data("uri"),
