@@ -1670,6 +1670,14 @@ define([
 						//Военнослужащий
 						socialStatus.dataRelation = ".Occupation.Military";
 						break;
+					case 316:
+						//Член семьи военнослужащего
+						socialStatus.dataRelation = ".Occupation.CommentOnly";
+						break;
+					case 317:
+						//БОМЖ
+						socialStatus.dataRelation = ".Occupation.CommentOnly";
+						break;
 				}
 			});
 
