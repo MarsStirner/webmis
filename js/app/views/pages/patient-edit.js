@@ -138,11 +138,16 @@ define([
 		},*/
 
 		changeCurrentStep: function (step) {
-			if (this.currentStep != step.name) {
-				this.currentStep = step.name;
-				this.stepTitle = step.title;
-				this.stepUri = step.uri;
-				this.render();
+			this.validationErrors = this.checkModelValid(this.currentStep);
+			if (this.validationErrors) {
+				this.render(true);
+			} else {
+				if (this.currentStep != step.name) {
+					this.currentStep = step.name;
+					this.stepTitle = step.title;
+					this.stepUri = step.uri;
+					this.render();
+				}
 			}
 		},
 
@@ -290,8 +295,8 @@ define([
 			}
 		},
 
-		checkModelValid: function () {
-			return this.model.validate();
+		checkModelValid: function (section) {
+			return this.model.validate({section: section});
 		},
 
 		toggleValidState: function () {
@@ -327,19 +332,29 @@ define([
 		},
 
 		onNextStepClick: function (event) {
-			var index = this.getCurrentMenuStructureItemIndex();
-			if (index < this.menuStructure.length - 1)
-				this.changeCurrentStep(this.menuStructure[this.getCurrentMenuStructureItemIndex() + 1]);
-			else
-				this.changeCurrentStep(this.menuStructure[0]);
+			this.validationErrors = this.checkModelValid(this.currentStep);
+			if (this.validationErrors) {
+				this.render(true);
+			} else {
+				var index = this.getCurrentMenuStructureItemIndex();
+				if (index < this.menuStructure.length - 1)
+					this.changeCurrentStep(this.menuStructure[this.getCurrentMenuStructureItemIndex() + 1]);
+				else
+					this.changeCurrentStep(this.menuStructure[0]);
+			}
 		},
 
 		onPrevStepClick: function (event) {
-			var index = this.getCurrentMenuStructureItemIndex();
-			if (index > 0)
-				this.changeCurrentStep(this.menuStructure[this.getCurrentMenuStructureItemIndex() - 1]);
-			else
-				this.changeCurrentStep(this.menuStructure[this.menuStructure.length - 1]);
+			this.validationErrors = this.checkModelValid(this.currentStep);
+			if (this.validationErrors) {
+				this.render(true);
+			} else {
+				var index = this.getCurrentMenuStructureItemIndex();
+				if (index > 0)
+					this.changeCurrentStep(this.menuStructure[this.getCurrentMenuStructureItemIndex() - 1]);
+				else
+					this.changeCurrentStep(this.menuStructure[this.menuStructure.length - 1]);
+			}
 		},
 
 		getCurrentMenuStructureItemIndex: function () {

@@ -283,12 +283,16 @@ define([
 
 		validate: function (attrs) {
 			var errors = [];
-			if (!attrs) {
+			if (!attrs || (attrs && attrs.section)) {
+				var birthDateErrors = [];
+
 				if (!this.get("birthDate") || isNaN(new Date(parseInt(this.get("birthDate"))).getTime()) || new Date(parseInt(this.get("birthDate"))) > new Date()) {
-					errors.push({property: "birthDate", msg: "Дата рождения"});
+					birthDateErrors.push({property: "birthDate", msg: "Дата рождения"});
 				}
+				var snilsErrors = [];
+
 				if (!this.isSnilsChecksumValid()) {
-					errors.push({property: "snils", msg: "СНИЛС"});
+					snilsErrors.push({property: "snils", msg: "СНИЛС"});
 				}
 
 				var nameErrors = this.get("name").validate() || [];
@@ -317,6 +321,8 @@ define([
 					idCardsErrors = _(idCardsErrors).union(idc.validate() || []);
 				}, this);
 
+				var addressErrors = [];
+
 				var res = this.get("address").get("residential");
 
 				var anyResCode = _(_([
@@ -328,7 +334,7 @@ define([
 				]).pluck("code")).any();
 
 				if ((res.get("fullAddress") || anyResCode) && (!res.get("localityType") || res.get("localityType") == "0")) {
-					errors.push({property: "address-residential-localityType", msg: "Тип населенного пункта адреса проживания"});
+					addressErrors.push({property: "address-residential-localityType", msg: "Тип населенного пункта адреса проживания"});
 				}
 
 				if (!this.get("address").getAddressesEqual()) {
@@ -343,7 +349,7 @@ define([
 					]).pluck("code")).any();
 
 					if ((reg.get("fullAddress") || anyRegCode) && (!reg.get("localityType") || reg.get("localityType") == "0")) {
-						errors.push({property: "address-registered-localityType", msg: "Тип населенного пункта адреса регистрации"});
+						addressErrors.push({property: "address-registered-localityType", msg: "Тип населенного пункта адреса регистрации"});
 					}
 				}
 
@@ -355,7 +361,63 @@ define([
 
 				var medicalInfoErrors = this.get("medicalInfo").validate() || [];
 
-				errors = _(errors).union(nameErrors, phonesErrors, paymentsErrors, idCardsErrors, medicalInfoErrors, disabilitiesErrors);
+				if (attrs && attrs.section) {
+					switch (attrs.section) {
+						case "general":
+							errors = _(errors).union(
+								nameErrors,
+								birthDateErrors,
+								snilsErrors,
+								phonesErrors
+							);
+							break;
+						case "documents":
+							errors = _(errors).union(
+								paymentsErrors,
+								idCardsErrors
+							);
+							break;
+						case "address":
+							errors = _(errors).union(
+								addressErrors
+							);
+							break;
+						case "medicalInfo":
+							errors = _(errors).union(
+								medicalInfoErrors
+							);
+							break;
+						case "other":
+							errors = _(errors).union(
+								disabilitiesErrors
+							);
+							break;
+						default:
+							errors = _(errors).union(
+								birthDateErrors,
+								snilsErrors,
+								nameErrors,
+								phonesErrors,
+								paymentsErrors,
+								idCardsErrors,
+								addressErrors,
+								medicalInfoErrors,
+								disabilitiesErrors
+							);
+					}
+				} else {
+					errors = _(errors).union(
+						birthDateErrors,
+						snilsErrors,
+						nameErrors,
+						phonesErrors,
+						paymentsErrors,
+						idCardsErrors,
+						addressErrors,
+						medicalInfoErrors,
+						disabilitiesErrors
+					);
+				}
 
 				if (errors.length) return errors;
 			}
