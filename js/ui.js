@@ -406,7 +406,7 @@ function UIInitialize (context) {
 
 		$richtext.html($input.val() || "<br>");
 
-		$richtext.on("keyup", function () {
+		$richtext.on("input", function () {
 			$input.val((($(this).html() === "<br>" || $(this).html() === "<br/>") ? "" : $(this).html().replace("<br>", ""))).change();
 		});
 
