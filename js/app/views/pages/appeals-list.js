@@ -7,7 +7,7 @@ define([
 	"views/filter-dictionaries",
 	"views/paginator",
 	"collections/department-patients",
-	"views/appeal/edit/popups/send-to-department",
+	"views/appeal/edit/popups/send-to-department"
 ], function () {
 	App.Views.AppealsList = View.extend({
 		id: "main",
