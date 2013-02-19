@@ -392,6 +392,9 @@ define([
 								disabilitiesErrors
 							);
 							break;
+						case "quotes":
+							errors = [];
+							break;
 						default:
 							errors = _(errors).union(
 								birthDateErrors,

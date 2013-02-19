@@ -143,7 +143,7 @@ define([
 				this.render(true);
 			} else {
 				if (this.currentStep != step.name) {
-					App.Router.navigate($(event.currentTarget).data("uri"));
+					App.Router.navigate(step.uri);
 
 					this.currentStep = step.name;
 					this.stepTitle = step.title;
@@ -908,15 +908,22 @@ define([
 		template: tmplDocuments,
 
 		events: {
-			"change select[name='tfoms']": "onTfomsChange",
-			"mousedown .TFOMScol .DDSelect": "onTfomsClick"
+			"change select[name='tfoms']": "onTfomsChange"
 		},
 
 		initialize: function (options) {
-			var self = this;
+			// Коллекции используемые в дочерних вью
+			this.paymentsCollection = this.model.get("payments");
+			this.idCardsCollection = this.model.get("idCards");
 
-			this.idCardsView = new IdCardsView({collection: self.model.get("idCards")});
+			this.paymentsCollection.on("dictionaries-change", this.onPaymentsDictionariesChange, this);
 
+			// Дочерние вью
+			this.idCardsView = new IdCardsView({collection: this.idCardsCollection});
+			this.policiesOmsView = new PoliciesView({type: "oms", collection: this.paymentsCollection});
+			this.policiesDmsView = new PoliciesView({type: "dms", collection: this.paymentsCollection});
+
+			// Загрузка справочников
 			var docDicts = [
 				{name: "tfomses", pathPart: "TFOMS"},
 				{name: "insuranceCompanies", pathPart: "insurance"},
@@ -924,95 +931,93 @@ define([
 				{name: "docTypes", pathPart: "clientDocument&filter[groupId]=1"}
 			];
 
-			/*if (!this.model.get("payments").getOms().length) {
-				this.model.get("payments").add({});
-			}
-
-			if (!this.model.get("payments").getDms().length) {
-				var payment = new App.Models.Payment();
-				payment.get("policyType").set("id", 3);
-				this.model.get("payments").add(payment);
-			}*/
-
-			this.policiesOmsView = new PoliciesView({type: "oms", collection: self.model.get("payments")});
-			this.policiesDmsView = new PoliciesView({type: "dms", collection: self.model.get("payments")});
-
 			this.initWithDictionaries(docDicts, this.onDictionariesLoaded, this, true);
 		},
 
-		onDictionariesLoaded: function (dictionaries) {
-			this.dictionaries = dictionaries;
-
-			this.policiesOmsView.dictionaries = this.dictionaries;
-			this.policiesDmsView.dictionaries = this.dictionaries;
-
-			this.render();
-		},
-
-		onTfomsClick: function (event) {
-			this.selectedTfoms = this.$("select[name='tfoms']").val();
-		},
-
 		onTfomsChange: function (event) {
-			/*if (this.$("select[name='tfoms']").val() && this.$("select[name='tfoms']").val() !== this.selectedTfoms) {
-				if (confirm("При изменении ТФОМС выбранная страховая компания будет сброшена. Продолжить?")) {*/
-					this.selectedTfoms = this.$("select[name='tfoms']").val();
-					this.$(".SMO").val("").change();
-					this.toggleSmo();
-				/*} else {
-					this.$("select[name='tfoms']").val(this.selectedTfoms).change();
-				}
-			}*/
+			this.paymentsCollection.setSelectedTfoms($(event.currentTarget).val());
 		},
 
-		toggleSmo: function () {
-			var tfomsId = this.$("select[name='tfoms']").val();
+		onDictionariesLoaded: function (dictionaries) {
+			this.paymentsCollection.setDictionaries({
+				insuranceCompanies: dictionaries.insuranceCompanies,
+				tfomses: dictionaries.tfomses,
+				policyTypes: dictionaries.policyTypes
+			});
 
-			this.$(".SMO").next().toggleClass("Disabled", !tfomsId);
+			this.idCardsCollection.setDictionaries({
+				docTypes: dictionaries.docTypes
+			});
 
-			if (tfomsId) {
-				this.$("li.insuranceCompany").each(function () {
-					$(this).hasClass("tfomsid-"+tfomsId) ? $(this).show() : $(this).hide();
-				});
+			var $tfoms = this.$("select[name='tfoms']");
+			var guessedTfomsId = this.guessTfoms(dictionaries.insuranceCompanies);
+
+			$tfoms.find("option:not(:first)").remove();
+
+
+			$tfoms.append(_.map(dictionaries.tfomses, function (tfoms) {
+				return $("<option></option>", {text: tfoms.value, value: tfoms.id});
+			}));
+
+			this.paymentsCollection.setSelectedTfoms(guessedTfomsId);
+
+			$tfoms.select2("val", guessedTfomsId);
+		},
+
+		guessTfoms: function (insuranceCompanies) {
+			var ic;
+			var someSmo = this.paymentsCollection.find(function (payment) { return payment.get("smo").get("id"); });
+
+			if (someSmo) {
+				var smoId = someSmo.get("smo").get("id");
+				ic = _.find(insuranceCompanies, function (ic) {
+					return ic.id == smoId;
+				}, this);
+			}
+
+			if (ic && ic.headId) {
+				return ic.headId;
+			} else {
+				return "";
 			}
 		},
+
+		/*onPaymentsDictionariesChange: function (dictionaries) {
+			this.$("select[name='tfoms']").empty().append(_.map(dictionaries, function () {
+
+			}));
+		},*/
 
 		render: function () {
-			//this.selectedTfoms = "";
+			//////////////
+			/*var ic;
+			var tfomsId;
+			var someSmo = this.paymentsCollection.find(function (payment) { return payment.get("smo").get("id"); });
 
-			if (!this.model.get("payments").isEmpty() && this.dictionaries && !this.selectedTfoms) {
-				var ic = _(this.dictionaries.insuranceCompanies).find(function (ic) {
-					return ic.id == this.model.get("payments").first().get("smo").get("id");
+			console.log(this.paymentsCollection.toJSON());
+
+			if (someSmo) {
+				var smoId = someSmo.get("smo").get("id");
+				ic = _.find(this.paymentsCollection.getDictionaries().insuranceCompanies, function (ic) {
+					return ic.headId == smoId;
 				}, this);
-
-				if (ic && ic.headId)
-					this.selectedTfoms = ic.headId;
 			}
 
-			/*var beautyPatientJSON = this.model.toJSON();
-
-			var oms = this.model.get("payments").getOms()[0];
-			var dms = this.model.get("payments").getDms()[0];
-
-			var omsJSON = oms.toJSON();
-			var dmsJSON = dms.toJSON();
-
-			omsJSON.cid = oms.cid;
-			dmsJSON.cid = dms.cid;
-
-			beautyPatientJSON.payments = {oms: omsJSON, dms: dmsJSON};*/
-
+			if (ic && ic.id) {
+				tfomsId = ic.id;
+			} else {
+				tfomsId = "";
+			}*/
+			//////////////
 			this.$el.html($.tmpl(this.template, {
 				patient: this.model.toJSON(),
-				selectedTfoms: this.selectedTfoms || "",
-				dictionaries: this.dictionaries || {}
+				selectedTfoms: "",
+				dictionaries: this.paymentsCollection.getDictionaries()
 			}));
 
 			UIInitialize(this.el);
 
 			this.$(".select2").width("100%").select2();
-
-			this.toggleSmo();
 
 			this.assign({
 				"#id-cards": this.idCardsView,
@@ -1090,18 +1095,11 @@ define([
 		initialize: function (options) {
 			this.model.collection.on("add", this.toggleRemoveIcon, this);
 			this.model.collection.on("remove", this.toggleRemoveIcon, this);
-		},
 
-		toggleRemoveIcon: function (event) {
-			if (this.model.collection) {
-				var vis = false;
-				if (this.options.type == "dms") {
-					vis = this.model.collection.getDms().length > 1;
-				} else {
-					vis = this.model.collection.getOms().length > 1;
-				}
-				this.$(".RemoveIcon").css("display", (vis ? "inline-block" : "none"));
-			}
+			this.model.collection.on("dictionaries-change", this.onDictionariesChange, this);
+			this.model.collection.on("selected-tfoms-change", this.onSelectedTfomsChange, this);
+
+			console.log(this.model.toJSON())
 		},
 
 		onAddIconClick: function (event) {
@@ -1119,13 +1117,49 @@ define([
 			});
 		},
 
+		onDictionariesChange: function () {
+			/*var $smo = this.$(".SMO");
+
+			$smo.find("option:not(:first)").remove();
+
+			$smo.append(_.map(this.model.collection.getDictionaries().insuranceCompanies, function (ic) {
+				return $("<option></option>", {text: ic.value, value: ic.id});
+			}));*/
+
+			//$smo.select2("val", this.model.get("smo").get("id"));
+		},
+
+		onSelectedTfomsChange: function () {
+			var $smo = this.$(".SMO");
+
+			$smo.find("option:not(:first)").remove();
+
+			$smo.append(_.map(this.model.collection.getDictionaries().insuranceCompanies, function (ic) {
+				return $("<option></option>", {text: ic.value, value: ic.id});
+			}));
+
+			$smo.select2("val", this.model.get("smo").get("id")).change();
+		},
+
+		toggleRemoveIcon: function (event) {
+			if (this.model.collection) {
+				var vis = false;
+				if (this.options.type == "dms") {
+					vis = this.model.collection.getDms().length > 1;
+				} else {
+					vis = this.model.collection.getOms().length > 1;
+				}
+				this.$(".RemoveIcon").css("display", (vis ? "inline-block" : "none"));
+			}
+		},
+
 		render: function () {
 			var json = {};
 
 			json.model = this.model.toJSON();
 			json.model.cid = this.model.cid;
 
-			json.dictionaries = this.options.dictionaries;
+			json.dictionaries = this.model.collection.getDictionaries();
 
 			json.type = this.options.type;
 
@@ -1285,6 +1319,7 @@ define([
 			return this;
 		}
 	});
+
 
 	// Шаг 3. Адреса
 	var AddressView = View.extend({
