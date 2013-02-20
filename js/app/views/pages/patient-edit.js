@@ -296,7 +296,10 @@ define([
 			if (this.validationErrors) {
 				this.render(true);
 			} else {
+				$(event.currentTarget).prop("disabled", true);
+
 				this.model.save({error: function () {
+					$(event.currentTarget).prop("disabled", false);
 					console.log(arguments);
 				}});
 			}
