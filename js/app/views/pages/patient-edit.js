@@ -292,7 +292,7 @@ define([
 		},
 
 		onSaveClick: function (event) {
-			this.validationErrors = this.checkModelValid();
+			this.validationErrors = this.checkModelValid("all");
 			if (this.validationErrors) {
 				this.render(true);
 			} else {
@@ -315,7 +315,7 @@ define([
 				}).join(",");
 				console.log(wrongFieldsSelector);
 				this.$(wrongFieldsSelector).each(function () {
-					if (!$(this).data("subbind")) {
+					//if (!$(this).data("subbind")) {
 						if ($(this).hasClass("hasDatepicker")) {
 							$(this).parents(".DatePeriod").addClass("WrongField");
 						} else if ($(this).is("select")) {
@@ -327,7 +327,7 @@ define([
 						} else {
 							$(this).addClass("WrongField");
 						}
-					}
+					//}
 				});
 
 				this.$("#errors").fadeIn().find(".WrongFields").text(_(this.validationErrors).pluck("msg").join(", "));
@@ -1011,7 +1011,7 @@ define([
 			//////////////
 			this.$el.html($.tmpl(this.template, {
 				patient: this.model.toJSON(),
-				selectedTfoms: "",
+				selectedTfoms: this.paymentsCollection.getSelectedTfoms(),
 				dictionaries: this.paymentsCollection.getDictionaries()
 			}));
 
@@ -1024,6 +1024,8 @@ define([
 				"#policiesOms": this.policiesOmsView,
 				"#policiesDms": this.policiesDmsView
 			});
+
+			this.paymentsCollection.setSelectedTfoms(this.$("select[name='tfoms']").select2("val"));
 
 			return this;
 		}
@@ -1089,7 +1091,8 @@ define([
 
 		events: {
 			"click .AddIcon"   : "onAddIconClick",
-			"click .RemoveIcon": "onRemoveIconClick"
+			"click .RemoveIcon": "onRemoveIconClick",
+			"change .SMO": "onSMOChange"
 		},
 
 		initialize: function (options) {
@@ -1115,6 +1118,10 @@ define([
 				self.remove();
 				self.unbind();
 			});
+		},
+
+		onSMOChange: function (event) {
+			this.model.get("smo").set({id: $(event.currentTarget).select2("val")});
 		},
 
 		onDictionariesChange: function () {

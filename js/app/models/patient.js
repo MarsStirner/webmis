@@ -325,13 +325,13 @@ define([
 
 				var res = this.get("address").get("residential");
 
-				var anyResCode = _(_([
-					res.get("street"),
-					res.get("city"),
-					res.get("district"),
-					res.get("locality"),
-					res.get("republic")
-				]).pluck("code")).any();
+				var anyResCode = _([
+					res.get("street").get("code"),
+					res.get("city").get("code"),
+					res.get("district").get("code"),
+					res.get("locality").get("code"),
+					res.get("republic").get("code")
+				]).any();
 
 				if ((res.get("fullAddress") || anyResCode) && (!res.get("localityType") || res.get("localityType") == "0")) {
 					addressErrors.push({property: "address-residential-localityType", msg: "Тип населенного пункта адреса проживания"});
@@ -340,13 +340,13 @@ define([
 				if (!this.get("address").getAddressesEqual()) {
 					var reg = this.get("address").get("registered");
 
-					var anyRegCode = _(_([
-						reg.get("street"),
-						reg.get("city"),
-						reg.get("district"),
-						reg.get("locality"),
-						reg.get("republic")
-					]).pluck("code")).any();
+					var anyRegCode = _([
+						reg.get("street").get("code"),
+						reg.get("city").get("code"),
+						reg.get("district").get("code"),
+						reg.get("locality").get("code"),
+						reg.get("republic").get("code")
+					]).any();
 
 					if ((reg.get("fullAddress") || anyRegCode) && (!reg.get("localityType") || reg.get("localityType") == "0")) {
 						addressErrors.push({property: "address-registered-localityType", msg: "Тип населенного пункта адреса регистрации"});
