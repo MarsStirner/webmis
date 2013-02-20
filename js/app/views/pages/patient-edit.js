@@ -935,7 +935,12 @@ define([
 		},
 
 		onTfomsChange: function (event) {
-			this.paymentsCollection.setSelectedTfoms($(event.currentTarget).val());
+			var unsetConfirmed = confirm("Страховые компании будут сброшены, продолжить?");
+			if (unsetConfirmed) {
+				this.paymentsCollection.setSelectedTfoms({tfomsId: $(event.currentTarget).val(), unsetSmo: true});
+			} else {
+				$(event.currentTarget).select2("val", this.paymentsCollection.getSelectedTfoms());
+			}
 		},
 
 		onDictionariesLoaded: function (dictionaries) {
@@ -959,7 +964,7 @@ define([
 				return $("<option></option>", {text: tfoms.value, value: tfoms.id});
 			}));
 
-			this.paymentsCollection.setSelectedTfoms(guessedTfomsId);
+			this.paymentsCollection.setSelectedTfoms({tfomsId: guessedTfomsId, unsetSmo: false});
 
 			$tfoms.select2("val", guessedTfomsId);
 		},
@@ -1025,7 +1030,7 @@ define([
 				"#policiesDms": this.policiesDmsView
 			});
 
-			this.paymentsCollection.setSelectedTfoms(this.$("select[name='tfoms']").select2("val"));
+			this.paymentsCollection.setSelectedTfoms({tfomsId: this.$("select[name='tfoms']").select2("val"), unsetSmo: false});
 
 			return this;
 		}
@@ -1136,7 +1141,7 @@ define([
 			//$smo.select2("val", this.model.get("smo").get("id"));
 		},
 
-		onSelectedTfomsChange: function () {
+		onSelectedTfomsChange: function (event) {
 			var $smo = this.$(".SMO");
 
 			$smo.find("option:not(:first)").remove();
@@ -1145,7 +1150,11 @@ define([
 				return $("<option></option>", {text: ic.value, value: ic.id});
 			}));
 
-			$smo.select2("val", this.model.get("smo").get("id")).change();
+			if (event.unsetSmo) {
+				$smo.select2("val", "").change();
+			} else {
+				$smo.select2("val", this.model.get("smo").get("id")).change();
+			}
 		},
 
 		toggleRemoveIcon: function (event) {

@@ -41,9 +41,9 @@ define(["models/payment"], function () {
 		},
 
 		setSelectedTfoms: function (selectedTfoms) {
-			this.selectedTfoms = selectedTfoms;
+			this.selectedTfoms = selectedTfoms.tfomsId;
 
-			this.trigger("selected-tfoms-change", {selectedTfoms: this.selectedTfoms});
+			this.trigger("selected-tfoms-change", {selectedTfoms: this.selectedTfoms, unsetSmo: selectedTfoms.unsetSmo});
 
 			return this;
 		},
