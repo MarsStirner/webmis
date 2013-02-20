@@ -1,6 +1,7 @@
 define(['text!templates/pages/biomaterials.tmpl',
 	'collections/Biomaterials',
-	'views/grid'], function (biomaterialsTemplate, BiomaterialsCollection,GridView) {
+	'views/grid',
+	'views/pages/BiomaterialsCountsView'], function (biomaterialsTemplate, BiomaterialsCollection, GridView, CountView) {
 
 	var BiomaterialsView = View.extend({
 		///className: "ContentHolder",
@@ -20,29 +21,26 @@ define(['text!templates/pages/biomaterials.tmpl',
 			});
 			this.depended(this.grid);
 
-			this.collection.bind('reset', function () {
-
-				console.log('reset',this.collection);
-			},this);
-
+			this.counts = new CountView({ collection: this.collection});
 
 			this.collection.fetch();
 
 
-
-
 		},
 		render: function () {
-			console.log('render biomaterial ')
-			this.$el.html($.tmpl(this.template));
-			this.$("#biomaterial-grid").html(this.grid.el);
+			var view = this;
 
+			view.$el.html($.tmpl(view.template));
+			view.$("#biomaterial-grid").html(view.grid.el);
+			view.$("#biomaterial-count table").append(view.counts.el);
 
-			UIInitialize(this.el);
+			//view.counts.render();
+
+			UIInitialize(view.el);
 //			this.delegateEvents();
 //			this.grid.delegateEvents();
 
-			return this;
+			return view;
 		}
 
 	});
