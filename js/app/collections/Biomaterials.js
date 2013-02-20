@@ -2,7 +2,7 @@ define(["models/Biomaterial"], function (Biomaterial) {
 	var Biomaterials = Collection.extend({
 		model: Biomaterial,
 		url: function () {
-			return DATA_PATH + "biomaterial/info?filter[beginDate]=1354305600000&filter[endDate]=1354478400000"
+			return DATA_PATH + "biomaterial/info?" ;//filter[beginDate]=1354305600000&filter[endDate]=1354478400000"
 		},
 		parse: function (response) {
 			checkForWarnings(response.requestData, "requestData was not found in the JSON");
@@ -13,6 +13,8 @@ define(["models/Biomaterial"], function (Biomaterial) {
 				CORE_VERSION = response.requestData.coreVersion;
 				VersionInfo.show();
 			}
+			this.departmentId = response.requestData.filter.departmentId;
+
 
 			return this.normilize(response.data);
 		},

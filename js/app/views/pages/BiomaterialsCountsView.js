@@ -41,7 +41,6 @@ define(['text!templates/pages/biomaterials-count.tmpl'], function (countTmpl) {
 			var view = this;
 
 			var countItems = view.countItems();
-			console.log('countItems',countItems);
 
 			view.$el.html('');
 

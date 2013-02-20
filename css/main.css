@@ -6,7 +6,7 @@
   padding: 2px 4px;
   background-color: #fff;
   margin-bottom: -4px;
-  border: 1px solid #bbbbbb;
+  border: 1px solid #bbb;
 }
 
 /* line 13, ../sass/modules/_biomaterials.scss */
@@ -74,53 +74,66 @@ td.status-code-2, td.status-code-2 .Warning {
 }
 
 /* line 73, ../sass/modules/_biomaterials.scss */
+#biomaterial-grid {
+  margin-bottom: 20px;
+}
+
+/* line 76, ../sass/modules/_biomaterials.scss */
 .biomaterials-head-filter {
   margin-bottom: 15px;
   padding: 1em 1em 2em;
   border-bottom: 1px solid #d4d4d4;
 }
 
-/* line 79, ../sass/modules/_biomaterials.scss */
+/* line 82, ../sass/modules/_biomaterials.scss */
 .biomaterials-datatime {
   width: 475px;
   float: left;
 }
-/* line 82, ../sass/modules/_biomaterials.scss */
+/* line 85, ../sass/modules/_biomaterials.scss */
 .biomaterials-datatime .DayScroller {
   float: none;
 }
 
-/* line 87, ../sass/modules/_biomaterials.scss */
+/* line 90, ../sass/modules/_biomaterials.scss */
 .biomaterials-department {
   width: 355px;
   float: left;
 }
-
 /* line 94, ../sass/modules/_biomaterials.scss */
+.biomaterials-department .departments {
+  width: 450px;
+}
+
+/* line 100, ../sass/modules/_biomaterials.scss */
 .biomaterials-print {
   float: right;
   margin-top: 19px;
 }
 
-/* line 101, ../sass/modules/_biomaterials.scss */
+/* line 107, ../sass/modules/_biomaterials.scss */
 .biomaterials-table-filter {
   margin-bottom: 25px;
 }
 
-/* line 105, ../sass/modules/_biomaterials.scss */
+/* line 111, ../sass/modules/_biomaterials.scss */
 .biomaterials-action-type {
   float: left;
   width: 300px;
   padding-right: 25px;
 }
+/* line 115, ../sass/modules/_biomaterials.scss */
+.biomaterials-action-type .biomaterial {
+  width: 299px;
+}
 
-/* line 111, ../sass/modules/_biomaterials.scss */
+/* line 121, ../sass/modules/_biomaterials.scss */
 .biomaterials-status {
   float: left;
   width: 450px;
 }
 
-/* line 116, ../sass/modules/_biomaterials.scss */
+/* line 126, ../sass/modules/_biomaterials.scss */
 .biomaterials-send-to-lab {
   float: right;
   margin-top: 18px;

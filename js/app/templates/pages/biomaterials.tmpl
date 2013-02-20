@@ -1,7 +1,9 @@
 <section id="page" class="OneCol Clearfix">
-	<div  class="biomaterials-head-filter clearfix">
+
+	<div class="biomaterials-head-filter clearfix">
 
 
+		<form action="" id="biomaterials-head-filter">
 		<div class="biomaterials-datatime">
 			<span class="Label">Период дат</span>
 
@@ -11,13 +13,13 @@
 				<div class="DateTime">
 					<div class="DatePeriod SingleDate Mandatory">
 						<div class="FromTo">
-							<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="beginDate"
+							<input type="text" id="start-date" data-relation="#start-time" name="beginDate"
 										 placeholder="дд.мм.гггг" class="SelectDate"/>
 						</div>
 						<i class="DateIcon Icon"></i>
 					</div>
 					<div class="SingleTime">
-						<input type="text" id="appeal-start-time" class="HourPicker" data-relation="#appeal-start-date"
+						<input type="text" id="start-time" class="HourPicker" data-relation="#start-date"
 									 value="8:00" placeholder="чч:мм"/>
 					</div>
 				</div>
@@ -26,13 +28,13 @@
 				<div class="DateTime">
 					<div class="DatePeriod SingleDate Mandatory">
 						<div class="FromTo">
-							<input type="text" id="appeal-end-date" data-relation="#appeal-end-time" name="endDate"
+							<input type="text" id="end-date" data-relation="#end-time" name="endDate"
 										 placeholder="дд.мм.гггг" class="SelectDate"/>
 						</div>
 						<i class="DateIcon Icon"></i>
 					</div>
 					<div class="SingleTime">
-						<input type="text" id="appeal-end-time" class="HourPicker" data-relation="#appeal-end-date"
+						<input type="text" id="end-time" class="HourPicker" data-relation="#end-date"
 									 value="7:59" placeholder="чч:мм"/>
 					</div>
 				</div>
@@ -42,15 +44,11 @@
 
 		<div class="biomaterials-department">
 			<label>Отделение</label>
-			<select class="Styled" name="ward">
-				<option value="" selected="selected">Все отделения</option>
-				<option value="1">Отделение №1</option>
-				<option value="2">Отделение №2</option>
-				<option value="3">Отделение №3</option>
-				<option value="4">Отделение №4</option>
-				<option value="5">Отделение №5</option>
+			<select class="Styled22 departments" name="departmentId">
+
 			</select>
 		</div>
+		</form>
 
 
 		<div class="biomaterials-print">
@@ -64,35 +62,36 @@
 	<div class="ContentSide Clearfix">
 		<div class="ContentHolder">
 
+			<div class="biomaterials-table-filter clearfix">
+				<form action="" id="biomaterials-table-filter">
+					<div class="biomaterials-action-type">
+						<label for="biomaterial">Тип исследования</label>
 
-					<div class="biomaterials-table-filter clearfix">
-						<div class="biomaterials-action-type">
-							<label for="tissues">Тип исследования</label>
-
-							<select class="Styled tissues select2" name="tissues" id="tissues">
-								<option value="" selected="selected">Все типы исследования</option>
-							</select>
-						</div>
-
-						<div class="biomaterials-status">
-							<label>Статус</label>
-							<ul class="horizontal">
-								<li class="active"><a href="#">Все</a></li>
-								<li><a href="#">Ожидается</a></li>
-								<li><a href="#">Выполняется</a></li>
-								<li><a href="#">Закончено</a></li>
-							</ul>
-						</div>
-
-						<div class="biomaterials-send-to-lab">
-							<!--<button class="Styled Button"><span>Выполнено</span></button>-->
-
-							<button class="Styled Button"><span>Отправить в лабораторию</span></button>
-						</div>
-
+						<select class="Styled2 biomaterial select2" name="biomaterial" id="biomaterial">
+							<option value="0" selected="selected">Все типы исследования</option>
+						</select>
 					</div>
 
+					<div class="biomaterials-status">
 
+						<label>Статус</label>
+
+						<div id="status_buttonset">
+							<input type="radio" id="status-all" name="status" value="" checked="checked"/><label
+							for="status-all">Все</label>
+							<input type="radio" id="status-0" name="status" value="0"/><label for="status-0">Ожидается</label>
+							<input type="radio" id="status-1" name="status" value="1"/><label for="status-1">Выполняется</label>
+							<input type="radio" id="status-2" name="status" value="2"/><label for="status-2">Закончено</label>
+						</div>
+					</div>
+				</form>
+
+
+				<div class="biomaterials-send-to-lab">
+					<button class="Styled Button"><span>Отправить в лабораторию</span></button>
+				</div>
+
+			</div>
 
 
 			<div id="biomaterial-grid"></div>

@@ -1,6 +1,15 @@
 	<tr>
-		<td> ${name} ${volume} </td>
-		<td><span class="color-label" style="background-color:${color};"></span></td>
+		<td>
+			${name}
+			{{if volume}}
+				${volume}
+			{{/if}}
+		</td>
+		<td>
+			{{if color}}
+				<span class="color-label" style="background-color:${color};"></span>
+			{{/if}}
+		</td>
 		<td> ${count}шт.</td>
 	</tr>
 

@@ -70,6 +70,9 @@ td.status-code-2, td.status-code-2 .Warning {
 	}
 }
 
+#biomaterial-grid{
+	margin-bottom: 20px;
+}
 .biomaterials-head-filter{
 	margin-bottom: 15px;
 	padding: 1em 1em 2em;
@@ -88,6 +91,9 @@ td.status-code-2, td.status-code-2 .Warning {
 
 	width: 355px;
 	float: left;
+	.departments{
+		width:450px;
+	}
 
 }
 
@@ -106,7 +112,11 @@ td.status-code-2, td.status-code-2 .Warning {
 	float: left;
 	width: 300px;
 	padding-right: 25px;
+	.biomaterial{
+		width: 299px;
+	}
 }
+
 
 .biomaterials-status{
 	float: left;

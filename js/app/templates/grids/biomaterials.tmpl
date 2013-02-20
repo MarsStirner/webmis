@@ -71,12 +71,16 @@
 		${tubeType.shortName}
 	</td>
 	<td class="status-code-${status.code}">
-		${tubeType.volume}
+		{{if tubeType.volume}}
+			${tubeType.volume}
+		{{/if}}
 	</td>
 
 
 	<td class="status-code-${status.code}">
+		{{if tubeType.color}}
    <span class="color-label" style="background-color:${tubeType.color};"></span>
+		{{/if}}
 	</td>
 
 	<td class="status-code-${status.code}">
