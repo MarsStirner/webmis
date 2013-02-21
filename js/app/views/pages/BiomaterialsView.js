@@ -13,10 +13,10 @@ define(['text!templates/pages/biomaterials.tmpl',
 			"click .Actions.Decrease": "decreaseDate",
 			"click .Actions.Increase": "increaseDate",
 			"click #select-all": "selectAll",
-			"click #execute": "executeJobTikets",
-			"click #send-to-lab": "sendToLab",
+			//"click #execute": "executeJobTikets",
+			//"click #send-to-lab": "sendToLab",
 			"click #print": "print",
-			"change .biomaterial_id": "biomaterialSelected"
+			"change .id": "biomaterialSelected"
 		},
 
 		initialize: function () {
@@ -70,80 +70,111 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 		onGridRowClick: function (bio, event) {
 			var view = this;
+			var checkbox = view.$(event.target).parent('tr').find('.id');
 
-			if ($(event.target).hasClass('biomaterial_id')) {
-				var $select = $(event.target);
+			checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
 
-				if ($select.is(':checked')) {
-					console.log('bio checked', bio, event);
-					view.selectedJobTickets.add({
-						id: bio.get('jobTicket').id,
-						status: bio.get('jobTicket').status
-					}, {silent: true})
 
-				} else {
-					console.log('bio unchecked', bio, event);
-					view.selectedJobTickets.remove(bio.get('jobTicket').id, {silent: true});
-				}
-
-				console.log('selectedJobTickets', view.selectedJobTickets);
-			}
+//			if ($(event.target).hasClass('biomaterial_id')) {
+//				var $select = $(event.target);
+//
+//				if ($select.is(':checked')) {
+//					console.log('bio checked', bio, event);
+//					view.selectedJobTickets.add({
+//						id: bio.get('jobTicket').id,
+//						status: bio.get('jobTicket').status
+//					}, {silent: true})
+//
+//				} else {
+//					console.log('bio unchecked', bio, event);
+//					view.selectedJobTickets.remove(bio.get('jobTicket').id, {silent: true});
+//				}
+//
+//				console.log('selectedJobTickets', view.selectedJobTickets);
+//			}
 
 		},
 
 
 		biomaterialSelected: function () {
-			console.log('change .biomaterial_id');
+			console.log('change .id');
 			var view = this;
 
-			console.log('selected', view.$('.biomaterial_id:checkbox:checked').length);
+			view.updateExecuteButton();
 
-
-
-
+			view.updateSendToLabButton();
 		},
 
 		selectAll: function (event) {
 			var view = this;
 			var $select_all_button = $(event.target);
 
-			view.$('.biomaterial_id').attr('checked', $select_all_button.prop("checked")).trigger('change')
+			view.$('.id').attr('checked', $select_all_button.prop("checked")).trigger('change')
+
+
+			view.updateExecuteButton();
+
+			view.updateSendToLabButton();
+
 
 		},
+
+		getSelectedCheckboxes: function () {
+			var view = this;
+
+			return view.$('.id:checked');
+		},
+
 		executeJobTikets: function () {
-			console.log('executeJobTikets');
+			var view = this;
+
+
+			console.log('executeJobTikets', view.getSelectedCheckboxes());
+
+		},
+		updateExecuteButton: function () {
+			var view = this;
+
+			view.$('#execute').button({ disabled: !view.getSelectedCheckboxes().length });
+		},
+
+		updateSendToLabButton: function () {
+			var view = this;
+
+			view.$('#send-to-lab').button({ disabled: !view.getSelectedCheckboxes().length });
 		},
 
 		sendToLab: function () {
+			var view = this;
+
 			console.log('sendToLab');
+
 		},
 
 		print: function () {
 			console.log('print');
 		},
 
-		initJobTickets: function(){
+		initJobTickets: function () {
 			var view = this;
 
 			view.selectedJobTickets = new JobTicketsCollection;
 
-			view.selectedJobTickets.on('remove', function () {
-				console.log('selectedJobTickets remove');
-			}, view);
-
-			view.selectedJobTickets.on('relational:add relational:remove', function () {
-				console.log('selectedJobTickets add remove');
-				//if(view.selectedJobTickets.length){
-				view.$('#execute, #send-to-lab').button({ disabled: !view.selectedJobTickets.length });
-				//}
-			}, view);
+//			view.selectedJobTickets.on('remove', function () {
+//				console.log('selectedJobTickets remove');
+//			}, view);
+//
+//			view.selectedJobTickets.on('relational:add relational:remove', function () {
+//				console.log('selectedJobTickets add remove');
+//
+//			}, view);
 
 			view.selectedJobTickets.on("all", function (eventName) {
 				console.log('view.selectedJobTickets', eventName);
 			});
 		},
 
-		initCounts: function(){
+		initCounts: function () {
 			var view = this;
 
 			view.counts = new CountView({ collection: view.collection});
@@ -156,7 +187,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 		},
 
-		initTissues: function(){
+		initTissues: function () {
 			var view = this;
 
 			//Получаем список типов биоматериалов
@@ -184,7 +215,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 		},
 
-		initDepartments: function(){
+		initDepartments: function () {
 			var view = this;
 
 			//Получаем список отделений
@@ -215,18 +246,76 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			}, this);
 
-
 			this.$(".departments").select2();
 			this.$(".departments").select2('val', this.collection.departmentId);
 
 		},
 
 
-		initStatusButtonset: function () {
+		initStatusFilterButtonset: function () {
 			var view = this;
 
 			view.$("#status_buttonset").buttonset();
-			//view.$("#status_buttonset :radio").click(function(e) {});
+		},
+		initExecuteButton: function () {
+			var view = this,
+				$executeButton = view.$('#execute');
+
+			$executeButton
+				.button()
+				.on('click', function () {
+					view.executeJobTikets();
+				});
+
+			view.updateExecuteButton();
+
+		},
+
+		initSendToLabButton: function () {
+			var view = this,
+				$sendToLabButton = view.$('#send-to-lab');
+
+			$sendToLabButton
+				.button()
+				.on('click', function () {
+					view.sendToLab();
+				});
+
+			view.updateSendToLabButton();
+
+		},
+
+		initPrintButton: function () {
+			var view = this;
+
+			view.$('#print').button()
+				.click(function () {
+					alert("печать");
+				})
+				.next()
+				.button({
+					text: false,
+					icons: {
+						primary: "ui-icon-triangle-1-s"
+					}
+				})
+				.click(function () {
+					var menu = $(this).parent().next().show().position({
+						my: "left top",
+						at: "left bottom",
+						of: this
+					});
+					$(document).one("click", function () {
+						menu.hide();
+					});
+					return false;
+				})
+				.parent()
+				.buttonset()
+				.next()
+				.hide()
+				.menu();
+
 		},
 
 		initFilters: function () {
@@ -297,11 +386,12 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.$el.html($.tmpl(view.template));
 
-
-			view.initStatusButtonset();
 			view.initFilters();
+			view.initStatusFilterButtonset();
+			view.initSendToLabButton();
+			view.initExecuteButton();
 
-			view.$('#execute,#send-to-lab, #print').button({ disabled: true });
+			view.initPrintButton();
 
 			view.$("#biomaterial-grid").html(view.grid.el);
 			view.$("#biomaterial-count table").append(view.counts.el);

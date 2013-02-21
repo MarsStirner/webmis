@@ -42,8 +42,9 @@
 <script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
 	<td class="status-code-${status.code}">
 		{{if jobTicket.status!=2}}
-			<input type="checkbox" class="biomaterial_id" name="biomaterial_id" value="${id}" data-job-ticket="${jobTicket.id}">
+			<input type="checkbox" class="id" name="id" value="${id}" data-job-ticket="${jobTicket.id}">
 		{{/if}}
+		${id}
 		jobTicket.id = ${jobTicket.id}
 	</td>
 
