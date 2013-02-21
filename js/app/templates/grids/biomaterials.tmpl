@@ -3,7 +3,7 @@
 		<thead>
 		<tr>
 			<th>
-				<input type="checkbox" name="all">
+				<input type="checkbox" name="all" id="select-all">
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="time">Дата и время</a>
@@ -18,7 +18,7 @@
 				<a class="Actions SortCol" data-field="birthDate">Дата рожд.</a>
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="actionType.name">Тип действия</a>
+				<a class="Actions SortCol" data-field="actionType.name">Название исследования</a>
 			</th>
 			<!---->
 			<th>
@@ -42,8 +42,9 @@
 <script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
 	<td class="status-code-${status.code}">
 		{{if jobTicket.status!=2}}
-		<input type="checkbox" name="bio">
+			<input type="checkbox" class="biomaterial_id" name="biomaterial_id" value="${id}" data-job-ticket="${jobTicket.id}">
 		{{/if}}
+		jobTicket.id = ${jobTicket.id}
 	</td>
 
 	<td class="status-code-${status.code}">

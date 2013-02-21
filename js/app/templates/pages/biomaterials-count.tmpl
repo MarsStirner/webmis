@@ -1,6 +1,11 @@
 	<tr>
 		<td>
-			${name}
+			{{if name}}
+				${name}
+			{{else}}
+				Нет названия пробирки
+			{{/if}}
+
 			{{if volume}}
 				${volume}
 			{{/if}}

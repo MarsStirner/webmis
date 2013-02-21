@@ -42,6 +42,7 @@ define(["models/Biomaterial"], function (Biomaterial) {
 				obj.tubeType.color = obj.tubeType.covCol;
 
 				obj.tubeTypeName = obj.tubeType.name;
+				obj.selected = false;
 
 				return obj;
 			});

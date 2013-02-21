@@ -7,7 +7,8 @@ define([], function () {
 			birthDate: '',
 			actionType: '',
 			testTube: '',
-			status: ''
+			status: '',
+			selected: ''
 		}
 
 	});

@@ -2,60 +2,173 @@ define(['text!templates/pages/biomaterials.tmpl',
 	'collections/Biomaterials',
 	'views/grid',
 	'views/pages/BiomaterialsCountsView',
-  'collections/dictionary-values',
-  'collections/departments'], function (biomaterialsTemplate, BiomaterialsCollection, GridView, CountView) {
+	'collections/JobTickets',
+	'collections/dictionary-values',
+	'collections/departments'], function (biomaterialsTemplate, BiomaterialsCollection, GridView, CountView, JobTicketsCollection) {
 
 	var BiomaterialsView = View.extend({
 		///className: "ContentHolder",
 		template: biomaterialsTemplate,
 		events: {
 			"click .Actions.Decrease": "decreaseDate",
-			"click .Actions.Increase": "increaseDate"
+			"click .Actions.Increase": "increaseDate",
+			"click #select-all": "selectAll",
+			"click #execute": "executeJobTikets",
+			"click #send-to-lab": "sendToLab",
+			"click #print": "print",
+			"change .biomaterial_id": "biomaterialSelected"
 		},
 
 		initialize: function () {
 			var view = this;
 
-			var biomaterialsCollection = new BiomaterialsCollection;
-			this.collection = biomaterialsCollection;
+			view.on("all", function (eventName) {
+				console.log('view', eventName);
+			});
 
-			this.grid = new GridView({
-				collection: this.collection,
+			view.collection = new BiomaterialsCollection;
+
+			view.collection.on("all", function (eventName) {
+				console.log('view.collection', eventName);
+			});
+
+			view.initGrid();
+
+			view.initCounts();
+
+			view.collection.fetch();
+
+			view.initJobTickets();
+
+			view.initTissues();
+
+			view.initDepartments();
+
+		},
+
+		initGrid: function () {
+			var view = this;
+
+			view.grid = new GridView({
+				popUpMode: true,
+				collection: view.collection,
 				template: "grids/biomaterials",
 				gridTemplateId: "#biomaterials-grid",
 				rowTemplateId: "#biomaterials-grid-row",
 				defaultTemplateId: "#biomaterials-grid-row-default",
 				errorTemplateId: "#biomaterials-grid-row-error"
 			});
-			this.depended(this.grid);
 
-			this.counts = new CountView({ collection: this.collection});
+			view.depended(view.grid);
 
-//			this.collection.once('reset', function(){
-//				console.log('reset', view.collection);
-//			});
+			view.grid.on('grid:rowClick', view.onGridRowClick, view);
 
-			this.collection.fetch();
+			view.grid.on("all", function (eventName) {
+				console.log('view.grid', eventName);
+			});
+		},
+
+		onGridRowClick: function (bio, event) {
+			var view = this;
+
+			if ($(event.target).hasClass('biomaterial_id')) {
+				var $select = $(event.target);
+
+				if ($select.is(':checked')) {
+					console.log('bio checked', bio, event);
+					view.selectedJobTickets.add({
+						id: bio.get('jobTicket').id,
+						status: bio.get('jobTicket').status
+					}, {silent: true})
+
+				} else {
+					console.log('bio unchecked', bio, event);
+					view.selectedJobTickets.remove(bio.get('jobTicket').id, {silent: true});
+				}
+
+				console.log('selectedJobTickets', view.selectedJobTickets);
+			}
+
+		},
+
+
+		biomaterialSelected: function () {
+			console.log('change .biomaterial_id');
+			var view = this;
+
+			console.log('selected', view.$('.biomaterial_id:checkbox:checked').length);
+
+
+
+
+		},
+
+		selectAll: function (event) {
+			var view = this;
+			var $select_all_button = $(event.target);
+
+			view.$('.biomaterial_id').attr('checked', $select_all_button.prop("checked")).trigger('change')
+
+		},
+		executeJobTikets: function () {
+			console.log('executeJobTikets');
+		},
+
+		sendToLab: function () {
+			console.log('sendToLab');
+		},
+
+		print: function () {
+			console.log('print');
+		},
+
+		initJobTickets: function(){
+			var view = this;
+
+			view.selectedJobTickets = new JobTicketsCollection;
+
+			view.selectedJobTickets.on('remove', function () {
+				console.log('selectedJobTickets remove');
+			}, view);
+
+			view.selectedJobTickets.on('relational:add relational:remove', function () {
+				console.log('selectedJobTickets add remove');
+				//if(view.selectedJobTickets.length){
+				view.$('#execute, #send-to-lab').button({ disabled: !view.selectedJobTickets.length });
+				//}
+			}, view);
+
+			view.selectedJobTickets.on("all", function (eventName) {
+				console.log('view.selectedJobTickets', eventName);
+			});
+		},
+
+		initCounts: function(){
+			var view = this;
+
+			view.counts = new CountView({ collection: view.collection});
+
+			view.depended(view.counts);
+
+			view.counts.on("all", function (eventName) {
+				console.log('view.counts', eventName);
+			});
+
+		},
+
+		initTissues: function(){
+			var view = this;
 
 			//Получаем список типов биоматериалов
-			this.tissues = new App.Collections.DictionaryValues("", {
+			view.tissues = new App.Collections.DictionaryValues("", {
 				name: "tissueTypes"
 			});
-			this.tissues.on("reset", this.onTissuesLoaded, this);
-			this.tissues.fetch();
+			view.tissues.on("reset", this.onTissuesLoaded, this);
+			view.tissues.fetch();
 
-
-			//Получаем список отделений
-			this.departments = new App.Collections.Departments();
-//			this.departments.setParams({
-//				filter: {
-//					hasBeds: true
-//				}
-//			});
-			this.departments.on("reset", this.onDepartmentsLoaded, this);
-			this.departments.fetch();
-
-
+			view.tissues.on("all", function (eventName) {
+				console.log('view.tissues', eventName);
+			});
 		},
 
 		onTissuesLoaded: function (coll) {
@@ -68,6 +181,25 @@ define(['text!templates/pages/biomaterials.tmpl',
 			}, this);
 
 			this.$(".biomaterial").select2();
+
+		},
+
+		initDepartments: function(){
+			var view = this;
+
+			//Получаем список отделений
+			view.departments = new App.Collections.Departments();
+			view.departments.setParams({
+				filter: {
+					hasBeds: true
+				}
+			});
+			view.departments.on("reset", view.onDepartmentsLoaded, view);
+			view.departments.fetch();
+
+			view.departments.on("all", function (eventName) {
+				console.log('view.departments', eventName);
+			});
 
 		},
 
@@ -89,39 +221,36 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 		},
 
-		setDepartment: function(){
 
-		},
-
-		initStatusButtonset: function(){
+		initStatusButtonset: function () {
 			var view = this;
 
-			view.$( "#status_buttonset").buttonset();
+			view.$("#status_buttonset").buttonset();
 			//view.$("#status_buttonset :radio").click(function(e) {});
 		},
 
-		initFilters: function(){
+		initFilters: function () {
 			var view = this;
 
-			view.$('#biomaterials-table-filter').on('change', function(event){
+			view.$('#biomaterials-table-filter').on('change', function () {
 				view.filterCollection();
 			});
 
-			view.$('#biomaterials-head-filter').on('change', function(event){
+			view.$('#biomaterials-head-filter').on('change', function () {
 				view.filterCollection();
 			});
 		},
 
-		filterCollection: function(){
+		filterCollection: function () {
 			var view = this;
 
 			var filter1 = Core.Forms.serializeToObject($('#biomaterials-table-filter'));
 			var filter2 = Core.Forms.serializeToObject($('#biomaterials-head-filter'));
 
-			var filter = _.extend(filter1,filter2);
+			var filter = _.extend(filter1, filter2);
 
 			view.collection.setParams({
-				filter:filter
+				filter: filter
 			});
 
 			if (_.size(filter)) {
@@ -172,6 +301,8 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.initStatusButtonset();
 			view.initFilters();
 
+			view.$('#execute,#send-to-lab, #print').button({ disabled: true });
+
 			view.$("#biomaterial-grid").html(view.grid.el);
 			view.$("#biomaterial-count table").append(view.counts.el);
 
@@ -196,7 +327,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			//UIInitialize(view.el);
 //			this.delegateEvents();
-//			this.grid.delegateEvents();
+			this.grid.delegateEvents();
 
 			return view;
 		}
