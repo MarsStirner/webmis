@@ -39,7 +39,7 @@ define(["models/Biomaterial"], function (Biomaterial) {
 				if(obj.tubeType.name){
 					obj.tubeType.shortName =obj.tubeType.name.split(' ')[0];
 				}
-				obj.tubeType.color = obj.tubeType.covCol;
+				//obj.tubeType.color = obj.tubeType.covCol;
 
 				obj.tubeTypeName = obj.tubeType.name;
 				obj.selected = false;
