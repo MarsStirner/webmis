@@ -92,7 +92,7 @@ define([
 		},
 
 		onKLADREntryChange: function (event) {
-			//console.warn("entry selected");
+			console.warn("entry selected");
 
 			var $sel = $(event.currentTarget);
 			var $selectedOption = $sel.find("option:selected");
@@ -130,20 +130,24 @@ define([
 				var childLevel = this.model.get(childLevelName);
 
 				if (childLevel) {
-					childLevel.setParentCode(selectedCode).fetch();
+					var promise = childLevel.setParentCode(selectedCode).fetch();
 
-					while (childLevelName) {
-						//console.log("child found, setting parent code and fetching");
+					if (promise) {
+						while (childLevelName) {
+							//console.log("child found, setting parent code and fetching");
 
-						this.address.get(childLevel.level).set({code: "", name: "", socr: ""});
+							this.address.get(childLevel.level).set({code: "", name: "", socr: ""});
 
-						var $childSel = this.$("[data-entries-name=" + childLevelName + "]");
-						$childSel.select2("val", "").select2("disable");
+							var $childSel = this.$("[data-entries-name=" + childLevelName + "]");
 
-						childLevel.setParentCode(selectedCode);//.fetch();
+							$childSel.select2("val", "").select2("disable");
 
-						childLevelName = childLevel.childName;
-						childLevel = this.model.get(childLevelName);
+
+							childLevel.setParentCode(selectedCode);//.fetch();
+
+							childLevelName = childLevel.childName;
+							childLevel = this.model.get(childLevelName);
+						}
 					}
 
 					/*if (childLevelName) {
@@ -281,7 +285,7 @@ define([
 
 				var childColl = this.model.get(collection.childName);
 
-				if (!childColl.getParentCode()) {
+				if (!childColl.getParentCode() || childColl.getParentCode().substr(0, 2) != collection.getParentCode().substr(0, 2)) {
 					childColl.setParentCode(collection.getParentCode());
 				}
 
