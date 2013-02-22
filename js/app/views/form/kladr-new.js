@@ -92,7 +92,7 @@ define([
 		},
 
 		onKLADREntryChange: function (event) {
-			console.warn("entry selected");
+			//console.warn("entry selected");
 
 			var $sel = $(event.currentTarget);
 			var $selectedOption = $sel.find("option:selected");

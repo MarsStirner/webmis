@@ -57,7 +57,7 @@ define(function () {
 		fetch: function () {
 			this.trigger("fetch:start");
 
-			console.log(cachedEntries, this.getLevel() + "_" + this.getParentCode());
+			//console.log(cachedEntries, this.getLevel() + "_" + this.getParentCode());
 
 			if (cachedEntries[this.getLevel() + "_" + this.getParentCode()]) {
 				//console.log("from Cache");
