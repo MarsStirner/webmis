@@ -1,0 +1,116 @@
+<section id="page" class="OneCol Clearfix">
+
+	<div class="biomaterials-head-filter clearfix">
+
+
+		<form action="" id="biomaterials-head-filter">
+		<div class="biomaterials-datatime">
+			<span class="Label">Период дат</span>
+
+			<div class="DayScroller">
+				<a class="ScrollDay Actions Decrease" href="#">&lt;</a>
+
+				<div class="DateTime">
+					<div class="DatePeriod SingleDate Mandatory">
+						<div class="FromTo">
+							<input type="text" id="start-date" data-relation="#start-time" name="beginDate"
+										 placeholder="дд.мм.гггг" class="SelectDate"/>
+						</div>
+						<i class="DateIcon Icon"></i>
+					</div>
+					<div class="SingleTime">
+						<input type="text" id="start-time" class="HourPicker" data-relation="#start-date"
+									 value="8:00" placeholder="чч:мм"/>
+					</div>
+				</div>
+				<span class="MDash">—</span>
+
+				<div class="DateTime">
+					<div class="DatePeriod SingleDate Mandatory">
+						<div class="FromTo">
+							<input type="text" id="end-date" data-relation="#end-time" name="endDate"
+										 placeholder="дд.мм.гггг" class="SelectDate"/>
+						</div>
+						<i class="DateIcon Icon"></i>
+					</div>
+					<div class="SingleTime">
+						<input type="text" id="end-time" class="HourPicker" data-relation="#end-date"
+									 value="7:59" placeholder="чч:мм"/>
+					</div>
+				</div>
+				<a class="ScrollDay Actions Increase" href="#">&gt;</a>
+			</div>
+		</div>
+
+		<div class="biomaterials-department">
+			<label>Отделение</label>
+			<select class="Styled22 departments" name="departmentId">
+
+
+			</select>
+		</div>
+		</form>
+
+
+		<div class="biomaterials-print">
+			<button id="print" class="Styled3 Button33"><span>Печать</span></button>
+		</div>
+
+
+	</div>
+
+
+	<div class="ContentSide Clearfix">
+		<div class="ContentHolder">
+
+			<div class="biomaterials-table-filter clearfix">
+				<form action="" id="biomaterials-table-filter">
+					<div class="biomaterials-action-type">
+						<label for="biomaterial">Тип исследования</label>
+
+						<select class="Styled2 biomaterial select2" name="biomaterial" id="biomaterial">
+							<option value="0" selected="selected">Все типы исследования</option>
+						</select>
+					</div>
+
+					<div class="biomaterials-status">
+
+						<label>Статус</label>
+
+						<div id="status_buttonset">
+							<input type="radio" id="status-all" name="status" value="" checked="checked"/><label
+							for="status-all">Все</label>
+							<input type="radio" id="status-0" name="status" value="0"/><label for="status-0">Ожидается</label>
+							<input type="radio" id="status-1" name="status" value="1"/><label for="status-1">Выполняется</label>
+							<input type="radio" id="status-2" name="status" value="2"/><label for="status-2">Закончено</label>
+						</div>
+					</div>
+				</form>
+
+
+				<div class="biomaterials-send-to-lab">
+					<button id="execute" class="Styled33 Button33"><span>Выполнить</span></button>
+					<button id="send-to-lab" class="Styled33 Button33"><span>Отправить в лабораторию</span></button>
+				</div>
+
+			</div>
+
+
+			<div id="biomaterial-grid"></div>
+
+			<div id="biomaterial-count">
+				<table class="tubes Grid">
+					<thead>
+					<tr>
+						<th colspan="3"> Пробирки</th>
+					</tr>
+					</thead>
+
+				</table>
+			</div>
+
+
+		</div>
+	</div>
+</section>
+

@@ -38,6 +38,7 @@ RewriteEngine on
 #RewriteRule   ^data/flatdirectory/?$				data/flatdirectory.php [QSA,L]
 #RewriteRule   ^data/actiontypes/instrumental/?$		data/instrumental.php [QSA,L]
 #RewriteRule   ^data/actionTypes/instrumental/?$		data/instrumental.php [QSA,L]
+RewriteRule   ^data/biomaterials/?$					data/biomaterials.php [QSA,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule   ^data/(.*)$	proxy.php [QSA,L]
