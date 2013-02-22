@@ -14,21 +14,11 @@ define([
 
 		initialize: function (options) {
 			this.collection = new App.Collections.Beds({},{departmentId: options.departmentId});
-			this.collection.fetch();
-		},
-		addOne: function(model){
-			//var bedView = new App.Views.Beds({model: model});
-			//bedView.render();
-//			this.$el.append('bedView.el');
+			//this.collection.fetch();
 		},
 
 		render: function () {
-			//this.$el.html($.tmpl(this.template));
 
-//			this.collection.each(function(model){
-//
-//				console.log(model.get('bedId'));
-//			});
 			return this;
 		}
 	});

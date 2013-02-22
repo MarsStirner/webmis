@@ -91,6 +91,8 @@ define([
 
 			if (!this.options.model) this.model = new App.Models.Patient();
 
+			this.modelIsNew = this.model.isNew();
+
 			this.attachModelHandlers();
 
 			console.log(this.model.toJSON());
@@ -486,12 +488,15 @@ define([
 		},
 
 		attachModelHandlers: function () {
+			var self = this;
+
 			this.model.on("sync", function(data){
 				//console.log("synced", data);
 
 				if (this.options.popUpMode) {
 					this.trigger("patient:created", this.model);
 				} else {
+					pubsub.trigger('noty', {text:'Карточка пациента ' + (self.modelIsNew ? 'создана' : 'изменена')});
 					App.Router.navigate("/patients/"+ this.model.id +"/", {trigger: true});
 				}
 			}, this);
@@ -1738,7 +1743,7 @@ define([
 			"click #new-quota": "onNewQuotaClick"
 		},
 
-		noSaveBtn: true,
+		//noSaveBtn: true,
 
 		template:
 			'<li>' +
@@ -1780,6 +1785,11 @@ define([
 						this.collection.fetch();
 
 						this.departments = new App.Collections.Departments();
+						this.departments.setParams({
+							filter: {
+								hasBeds: true
+							}
+						});
 						this.departments.on("reset", this.onDepartmentsReset, this);
 						this.departments.fetch();
 
@@ -1891,7 +1901,8 @@ define([
 
 		events: {
 			"click .MKBLauncher": "launchMKB",
-			"keyup #quota-diagnosis-code": "onMKBCodeKeyUp"
+			"keyup #quota-diagnosis-code": "onMKBCodeKeyUp",
+			"change #quota-talonNumber": "onTalonNumberChange"
 		},
 
 		template: tmplQuotes,
@@ -1923,6 +1934,20 @@ define([
 
 		launchMKB: function () {
 			this.mkbDir.open();
+		},
+
+		onTalonNumberChange: function (event) {
+			var talonNumber = $(event.currentTarget).val().replace(/[^\d.]/g, "");
+
+			console.log(talonNumber.length);
+
+			$(event.currentTarget).removeClass("WrongField");
+
+			if (talonNumber.length > 3) {
+				if (talonNumber.length != 17) $(event.currentTarget).addClass("WrongField");
+			} else {
+				$(event.currentTarget).val("");
+			}
 		},
 
 		render: function () {
@@ -1962,6 +1987,7 @@ define([
 			UIInitialize(this.el);
 
 			this.$(".select2").width("100%").select2();
+			this.$("#quota-talonNumber").mask("99.9999.99999.999");
 
 			this.mkbDir.render();
 
@@ -2055,6 +2081,13 @@ define([
 					self.close();
 				}});
 			}
+		},
+
+		validate: function () {
+			var talonNumberLength = this.$("#quota-talonNumber").val().replace(/[^\d.]/g, "").length;
+			var talonNumberValid = (talonNumberLength == 17) || (talonNumberLength == 0);
+
+			return Form.prototype.validate.apply(this) && talonNumberValid;
 		},
 
 		onMKBCodeKeyUp: function (event) {

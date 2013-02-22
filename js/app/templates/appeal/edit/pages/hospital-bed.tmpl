@@ -1,11 +1,21 @@
 <div class="ContentHeader Clearfix">
 	<div class="PageActions">
-		<button class="Styled Button Green actions save"><span>Сохранить</span></button>
-		<a class="actions cansel" href="#">Отмена</a>
+		<button class="Styled Button Green Disabled actions save" disabled="disabled"><span>Сохранить</span></button>
+		<a class="actions cancel" href="#">Отмена</a>
 	</div>
 </div>
 <div class="EditForm Clearfix">
 <ul class="LineBlockHolder">
+	<!--<li>-->
+		<!--<div class="LineBlock">-->
+			<!--<div class="ColHalf">-->
+				<!--<span class="Label">Переведён из отделения</span>-->
+				<!--<b>${previousDepartment}</b>-->
+			<!--</div>-->
+
+		<!--</div>-->
+
+	<!--</li>-->
 <li>
 	<div class="LineBlock">
 		<div class="ColHalf">
@@ -32,13 +42,7 @@
 				<div class="SemiCol">
 					<input type="text" class="Styled HourPicker" id="move-time" data-relation="#move-date" placeholder="чч:мм"/>
 				</div>
-				<!--<select class="Styled HourPicker" name="ward">-->
-				<!--<option value="1" selected="selected">11:00</option>-->
-				<!--<option value="2">12:00</option>-->
-				<!--<option value="3">13:00</option>-->
-				<!--<option value="4">14:00</option>-->
-				<!--<option value="5">15:00</option>-->
-				<!--</select>-->
+
 			</div>
 		</div>
 		<div class="HalfCol">
@@ -68,7 +72,7 @@
 </li>
 </ul>
 <div class="FormButtons">
-	<button class="Styled Button Green actions save"><span>Сохранить</span></button>
-	<a class="actions cansel" href="#">Отмена</a>
+	<button class="Styled Button Green Disabled actions save" disabled="disabled"><span>Сохранить</span></button>
+	<a class="actions cancel" href="#">Отмена</a>
 </div>
 </div>

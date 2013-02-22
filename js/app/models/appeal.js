@@ -250,6 +250,28 @@ define([
 		]
 	});
 
+	var ContractFinance = Model.extend({
+		defaults: {
+			name: ""
+		}
+	});
+
+	var Contract = Model.extend({
+		defaults: {
+			number: "",
+			begDate: "",
+			finance:{}
+		},
+
+		relations: [
+			{
+				type: Backbone.HasOne,
+				key: "finance",
+				relatedModel: ContractFinance
+			}
+		]
+	});
+
 	App.Models.Appeal = Model.extend({
 		idAttribute: "id",
 
@@ -328,6 +350,7 @@ define([
 			//bold
 			havePrimary: false,
 			setPerson: {},
+			contract: {},
 			nextHospDate: null,
 			nextHospDepartment: null,
 			nextHospFinanceType: null
@@ -434,8 +457,12 @@ define([
 			{
 				type: Backbone.HasOne,
 				key: "setPerson",
-				relatedModel: SetPerson,
-				collectionType: SetPerson
+				relatedModel: SetPerson
+			},
+			{
+				type: Backbone.HasOne,
+				key: "contract",
+				relatedModel: Contract
 			}
 		],
 

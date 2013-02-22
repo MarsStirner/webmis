@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "1.0.0.552 (patch 17.12.2012)";
+var GUI_VERSION = "develop";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
@@ -21,6 +21,10 @@ App.Models = {};
 App.Dynamic = {};
 App.Collections = {};
 App.Views = {};
+
+//глобальный pub sub
+pubsub = _.extend({}, Backbone.Events);
+
 
 
 // Загруженная информация

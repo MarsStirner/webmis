@@ -15,13 +15,15 @@ define([
 		model: App.Models.Appeal,
 
 		events: {
-			"click .Actions.Save": "save",
+			"click .Actions.Save": "onSave",
 			"click .Actions.Cancel": "cancel",
 			"click .AddRepresentative": "onAddRepresentativeClick"
 		},
 
 		initialize: function () {
 			this.clearAll();
+
+			pubsub.trigger('noty_clear');
 
 			var view = this;
 			Cache.Patient = this.model.get("patient");
@@ -30,6 +32,8 @@ define([
 					view.loadTemplate("pages/appeal-edit");
 				}
 			});
+
+			this.modelIsNew = this.model.isNew();
 
 			this.errorToolTip = new UI.ErrorTooltip();
 
@@ -58,6 +62,7 @@ define([
 			}, this);
 
 			this.model.on("sync", function () {
+				pubsub.trigger('noty', {text:'Обращение ' + (view.modelIsNew ? 'создано' : 'изменено')});
 				App.Router.navigate("/appeals/" + this.model.id + "/", {trigger: true});
 			}, this);
 
@@ -65,6 +70,15 @@ define([
 			 this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);*/
 		},
 
+		onSave: function (event) {
+			var self = this;
+
+			var readyToSave = this.save(event, {error: function () {
+				self.$(".Save").attr("disabled", false);
+			}});
+
+			this.$(".Save").attr("disabled", readyToSave);
+		},
 
 		onAddRepresentativeClick: function () {
 			this.openRepresentativeWindow();
@@ -142,9 +156,11 @@ define([
 				//collection: diagnoses
 			});
 
-			diagnosisView.on("diagnosis:change", function (event) {
-				this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
-			}, this);
+			if (model.get("diagnosisKind") == "assignment") {
+				diagnosisView.on("diagnosis:change", function (event) {
+					this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
+				}, this);
+			}
 
 			this.depended(diagnosisView);
 
@@ -174,7 +190,7 @@ define([
 			console.log("типы", result.dicts.requestTypes);
 
 			result.dicts.requestTypes = _(result.dicts.requestTypes).filter(function (rType) {
-				return rType.code === "clinic" || rType.code === "hospital";
+				return ["clinic" , "hospital", "1", "2"].indexOf(rType.code) !== -1;
 			});
 
 			//console.log("MODEL", dicts);

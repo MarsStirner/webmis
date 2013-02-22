@@ -107,6 +107,8 @@ define(function () {
 			/*if (options.editId) {
 				this.editId = options.editId;
 			}*/
+
+			Model.prototype.initialize.apply(this);
 		},
 
 		url: function () {
@@ -233,5 +235,13 @@ define(function () {
 		}
 	});
 
-	return App.Dynamic.ExaminationOld;
+	return {
+		Property: Property,
+		Properties: Properties,
+		Attribute: Attribute,
+		Attributes: Attributes,
+		Group: Group,
+		Groups: Groups,
+		ExaminationOld: App.Dynamic.ExaminationOld
+	};
 });

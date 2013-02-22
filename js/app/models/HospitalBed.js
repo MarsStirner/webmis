@@ -14,6 +14,7 @@ define(["collections/Beds"], function () {
 //			"curativeDiagnostic": ""
 		},
 
+
 		url: function (isSave) {
 			return DATA_PATH + (isSave ?
 				("appeals/" + this.appealId + "/hospitalbed/") :

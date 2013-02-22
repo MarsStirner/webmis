@@ -1,7 +1,7 @@
+<!--заголовок таблицы для роли которая не может создавать движения-->
 <script id="moves-grid-department" type="text/x-jquery-tmpl">
 	<table class="Grid">
 		<thead>
-		<!--<tr class="EditTh">-->
 		<tr>
 			<th>
 				<a class="Actions SortCol" data-field="unit"><span>Отделение</span></a>
@@ -18,13 +18,9 @@
 			<th>
 				<a class="Actions SortCol" data-field="bedDays"><span>Койко-дни</span></a>
 			</th>
-			<!--<th>
-				<a class="Actions SortCol" data-field="chamber"><span>Палата</span></a>
-			</th>-->
 			<th>
 				<a class="Actions SortCol" data-field="bed"><span>Койка</span></a>
 			</th>
-			<th></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -33,6 +29,41 @@
 	</table>
 </script>
 
+	<!--заголовок таблицы для роли которая может создавать движения-->
+<script id="moves-grid-department-with-move" type="text/x-jquery-tmpl">
+	<table class="Grid">
+		<thead>
+		<tr>
+			<th>
+				<a class="Actions SortCol" data-field="unit"><span>Отделение</span></a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="admission"><span>Поступление</span></a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="leave"><span>Выбытие</span></a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="days"><span>Дни</span></a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="bedDays"><span>Койко-дни</span></a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="bed"><span>Койка</span></a>
+			</th>
+			<th>
+
+			</th>
+		</tr>
+		</thead>
+		<tbody>
+
+		</tbody>
+	</table>
+</script>
+
+<!--строка таблицы для роли которая не может создавать движения, 6 ячеек-->
 <script id="moves-grid-row-department" type="text/x-jquery-tmpl">
 	<td>
 		${unit}
@@ -49,21 +80,40 @@
 	<td>
 		${bedDays}
 	</td>
-	<!--<td>
-		${chamber}
-	</td>-->
 	<td>
-		{{if bed == "Положить на койку"}}
-		<a href="#">Положить на койку</a>
-		{{else}}
+		{{if bed != "Положить на койку"}}
 		${bed}
+		{{else}}
 		{{/if}}
 
 	</td>
-	<td></td>
 </script>
 
+<!--строка таблицы для роли которая может создавать движения, 7 ячеек-->
+<script id="moves-grid-row-department-with-move" type="text/x-jquery-tmpl">
+	<td>
+		${unit}
+	</td>
+	<td>
+		{{formatDateTime admission}}
+	</td>
+	<td>
+		{{formatDateTime leave}}
+	</td>
+	<td>
+		${days}
+	</td>
+	<td>
+		${bedDays}
+	</td>
+	<td>
+				${bed}
+	</td>
+	<td>
+	</td>
+</script>
 
+<!--последняя строка таблицы для роли которая не может создавать движения, 6 ячеек-->
 <script id="moves-grid-last-row-department" type="text/x-jquery-tmpl">
 	<td>
 		${unit}
@@ -80,21 +130,45 @@
 	<td>
 		${bedDays}
 	</td>
-	<!--<td>
-		${chamber}
-	</td>-->
+	<td>
+		{{if bed != "Положить на койку"}}
+		${bed}
+		{{/if}}
+	</td>
+</script>
+
+
+<!--последняя строка таблицы для роли которая может создавать движения, 7 ячеек-->
+<script id="moves-grid-last-row-department-with-move" type="text/x-jquery-tmpl">
+	<td>
+		${unit}
+	</td>
+	<td>
+		{{formatDateTime admission}}
+	</td>
+	<td>
+		{{formatDateTime leave}}
+	</td>
+	<td>
+		${days}
+	</td>
+	<td>
+		${bedDays}
+	</td>
 	<td>
 		{{if bed == "Положить на койку"}}
-		<a href="#" class="bed-registration">Положить на койку</a>
+		<a href="#" class="bed-registration" >Положить на койку</a>
 		{{else}}
 		${bed}
 		{{/if}}
 	</td>
 	<td>
-		<a href="#" class="cancel-bed-registration">Отменить</a>
+		{{if bed != "Положить на койку"}}
+		<i class="RemoveIcon Icon Tiny  HasToolTip cancel-bed-registration" data-tooltip-content="#tooltip_${id}"></i>
+		<div id="tooltip_${id}" class="ToolTip TopTail">Отмена прописки</div>
+		{{/if}}
 	</td>
 </script>
-
 
 
 <script id="moves-grid-department-default" type="text/x-jquery-tmpl">
