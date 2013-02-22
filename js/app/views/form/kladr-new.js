@@ -279,7 +279,14 @@ define([
 
 				//$sel.select2("disable");
 
-				this.model.get(collection.childName).setParentCode(collection.getParentCode()).fetch();
+				var childColl = this.model.get(collection.childName);
+
+				if (!childColl.getParentCode()) {
+					childColl.setParentCode(collection.getParentCode());
+				}
+
+				childColl.fetch();
+
 				//this.model.get(collection.childName).fetch();
 			} else {
 				//console.log("no entries found, child name undefined");
