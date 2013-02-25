@@ -41,7 +41,7 @@
 		</ul>
 	</div>
 	<div class="CardPrint">
-		<button class="Styled Button Actions Print"><span>Печать</span></button>
+		<!--<button class="Styled Button Actions Print"><span>Печать</span></button>-->
 	</div>
 </div>
 <section id="page" class="Clearfix OneCol WithRightSideBar">
@@ -339,7 +339,7 @@
 						</li>
 						{{/if}}
 
-						{{if occupations.length && occupations[0].socialStatus && occupations[0].socialStatus.status || phones.count || relations.length && relations[0].relationType && relations[0].relationType.id}}
+						{{if occupations.length && occupations[0].socialStatus && occupations[0].socialStatus.status || phones.count}}
 						<li>
 							{{each(i, occupation) occupations}}
 								{{if occupation.socialStatus.id}}
@@ -382,41 +382,16 @@
 										</div>
 									{{/each}}
 								{{/if}}
-
-
-								<!--{{if relations.length && relations[0].relationType.id}}
-								<h4>Дополнительные контакты</h4>
-									{{each(i, rel) relations}}
-										{{if rel.relationType}}
-										<div class="LineBlock">
-											<div class="HalfCol">
-												<span class="Label">Кем приходится</span>
-												<p>${rel.relationType.name}</p>
-											</div>
-											<div class="HalfCol">
-												<span class="Label">ФИО</span>
-												<p><strong>${rel.name.raw}</strong></p>
-											</div>
-											{{if rel.phones.length}}
-											<div class="HalfCol">
-												<span class="Label">Телефон</span>
-												<p><strong>${rel.phones[0].number}</strong></p>
-											</div>
-											{{/if}}
-										</div>
-										{{/if}}
-									{{/each}}
-								{{/if}}-->
 							{{/each}}
 						</li>
 						{{/if}}
 
 						{{if medicalInfo}}
-						{{if medicalInfo.allergies.length && medicalInfo.allergies[0].substance || medicalInfo.drugIntolerances.length && medicalInfo.drugIntolerances[0].substance || medicalInfo.blood.group}}
+						{{if medicalInfo.allergies.length && (medicalInfo.allergies[0].substance || medicalInfo.allergies[0].comment) || medicalInfo.drugIntolerances.length && (medicalInfo.drugIntolerances[0].substance || medicalInfo.drugIntolerances[0].comment)|| medicalInfo.blood.group}}
 						<li>
 							<h4>Мед. особенности</h4>
 							<div class="LineBlock">
-								{{if medicalInfo.allergies.length && medicalInfo.allergies[0].substance}}
+								{{if medicalInfo.allergies.length && (medicalInfo.allergies[0].substance || medicalInfo.allergies[0].comment)}}
 								<p>
 									<dfn>Аллергия:</dfn>
 									<ul>
@@ -429,6 +404,9 @@
 													{{if allergy.checkingDate}}
 														(установлено: {{formatDate allergy.checkingDate}})
 													{{/if}}
+													{{if allergy.comment}}
+														${allergy.comment}
+													{{/if}}
 												</strong>
 											</p>
 										</li>
@@ -437,7 +415,7 @@
 								</p>
 								{{/if}}
 
-								{{if medicalInfo.drugIntolerances.length && medicalInfo.drugIntolerances[0].substance}}
+								{{if medicalInfo.drugIntolerances.length && (medicalInfo.drugIntolerances[0].substance || medicalInfo.drugIntolerances[0].comment)}}
 								<p>
 									<dfn>Медикаментозная непереносимость:</dfn>
 									<ul>
@@ -449,6 +427,9 @@
 													${drugIntolerance.degree} степень{{/if}}
 													{{if drugIntolerance.checkingDate}}
 														(установлено: {{formatDate drugIntolerance.checkingDate}})
+												{{/if}}
+												{{if drugIntolerance.comment}}
+													${drugIntolerance.comment}
 												{{/if}}
 												</strong>
 												</p>

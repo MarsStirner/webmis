@@ -23,6 +23,8 @@ define([
 		initialize: function () {
 			this.clearAll();
 
+			pubsub.trigger('noty_clear');
+
 			var view = this;
 			Cache.Patient = this.model.get("patient");
 			Cache.Patient.fetch({
@@ -30,6 +32,8 @@ define([
 					view.loadTemplate("pages/appeal-edit");
 				}
 			});
+
+			this.modelIsNew = this.model.isNew();
 
 			this.errorToolTip = new UI.ErrorTooltip();
 
@@ -58,7 +62,7 @@ define([
 			}, this);
 
 			this.model.on("sync", function () {
-				pubsub.trigger('noty', {text:'Обращение создано'});
+				pubsub.trigger('noty', {text:'Обращение ' + (view.modelIsNew ? 'создано' : 'изменено')});
 				App.Router.navigate("/appeals/" + this.model.id + "/", {trigger: true});
 			}, this);
 
@@ -152,9 +156,11 @@ define([
 				//collection: diagnoses
 			});
 
-			diagnosisView.on("diagnosis:change", function (event) {
-				this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
-			}, this);
+			if (model.get("diagnosisKind") == "assignment") {
+				diagnosisView.on("diagnosis:change", function (event) {
+					this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
+				}, this);
+			}
 
 			this.depended(diagnosisView);
 

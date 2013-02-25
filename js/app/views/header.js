@@ -5,6 +5,7 @@ define( function ()
 		events: {
 			"click .Actions.Logout": "logOut"
 		},
+
 		className: "Header Clearfix",
 
 		logOut: function (event) {
@@ -18,6 +19,7 @@ define( function ()
 			this.on("template:loaded", this.ready, this);
 			this.loadTemplate( "header" );
 		},
+
 		ready: function () {
 			var view = this;
 
@@ -103,11 +105,6 @@ define( function ()
 								title: "Госпитализации"
 							},
 							{
-								name: "biomaterials",
-								uri: "/biomaterials/",
-								title: "Забор биоматериала"
-							},
-							{
 								title: "Амбулаторные талоны"
 							}
 						]
@@ -149,8 +146,11 @@ define( function ()
 			if ( href ) {
 				App.Router.navigate ( href, {trigger:true} );
 			}
+
+			pubsub.trigger('noty_clear');
 		}
 	});
+
 	var NavigationItem = View.extend({
 		tagName: "li",
 		events: {
@@ -228,4 +228,4 @@ define( function ()
 	});
 
 	return Header;
-} );
+});

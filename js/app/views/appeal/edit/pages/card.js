@@ -20,6 +20,9 @@ define([
 				scope: self,
 				handler: this.printAppeal,
 				dropDownItems: [{
+					label: "Титульный лист формы 003\\у",
+					handler: this.printAppeal
+				}, {
 					label: "Статкарта",
 					handler: this.printStatisticCard
 				}, {

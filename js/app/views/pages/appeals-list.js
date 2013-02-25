@@ -8,6 +8,8 @@ define([
 	"views/paginator",
 	"collections/department-patients",
 	"views/appeal/edit/popups/send-to-department",
+	"models/print/form007",
+	"views/print"
 ], function () {
 	App.Views.AppealsList = View.extend({
 		id: "main",
@@ -17,6 +19,8 @@ define([
 
 			this.on("template:loaded", this.ready, this);
 			this.loadTemplate("pages/appeals-list");
+
+			_.bindAll(this, 'printForm007')
 		},
 
 		events: {
@@ -93,6 +97,32 @@ define([
 				this.collection.fetch();
 			}, this);
 		},
+		newHospitalBed: function (appealId) {
+			this.trigger("change:viewState", {type: 'hospitalbed', options: {}});
+			App.Router.updateUrl("appeals/" + appealId + "/hospitalbed/");
+		},
+
+		printForm007: function () {
+			console.log('printForm007', this)
+			var endDate = $("#appeal-start-date").datepicker("getDate").getTime() + (7 * 60 + 59) * 60 * 1000;
+			var beginDate = endDate - (24 * 60 - 1) * 60 * 1000;
+
+			var form007 = new App.Models.PrintForm007({
+				departmentId: 18,
+				beginDate: beginDate,
+				endDate: endDate
+			});
+
+			new App.Views.Print({
+				model: form007,
+				template: "007"
+			});
+
+			form007.fetch();
+
+			console.log('007 from to', beginDate, endDate);
+
+		},
 
 		ready: function () {
 			var view = this;
@@ -158,6 +188,7 @@ define([
 						}
 					}
 				});
+
 				AppealsGrid = new App.Views.Grid({
 					collection: Collection,
 					popUpMode: true,
@@ -166,13 +197,15 @@ define([
 					rowTemplateId: "#appeals-grid-nurse-row",
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
+
 				AppealsGrid.on('grid:rowClick', function (model, event) {
 					if (event.target.localName != 'a') {
 						App.Router.navigate('/appeals/' + model.get('id') + '/', {trigger: true});
 					} else {
 						view.newSendToDepartment(model);
 					}
-				})
+				});
+
 			}, this);
 
 			this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
@@ -209,6 +242,7 @@ define([
 						}
 					}
 				});
+
 				AppealsGrid = new App.Views.Grid({
 					collection: Collection,
 					template: "grids/appeals",
@@ -223,18 +257,37 @@ define([
 				/*Collection.setParams({'filter[date]':1334300400000})*/
 				Collection.reset();
 
+				this.printButton = $('<button style="float: right;">Печать формы 007</button>').button().click(this.printForm007);
+
 				Filter = new App.Views.Filter({
 					collection: Collection,
 					templateId: "#appeals-list-filters-nurse-department",
 					path: this.options.path
 				});
+
 				AppealsGrid = new App.Views.Grid({
 					collection: Collection,
+					popUpMode: true,
 					template: "grids/appeals",
 					gridTemplateId: "#appeals-grid-nurse-department",
 					rowTemplateId: "#appeals-grid-nurse-department-row",
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
+
+				AppealsGrid.on('grid:rowClick', function (model, event) {
+					var target = $(event.target);
+
+					if (target.hasClass('bed-registration')) {
+						console.log(model);
+						console.log('bed-registration', model.get('id'));
+						view.newHospitalBed(model.get('id'));
+					} else {
+						App.Router.navigate('/appeals/' + model.get('id') + '/', {trigger: true});
+					}
+
+				});
+
+
 			}, this);
 
 			this.collection = Collection;
@@ -246,6 +299,10 @@ define([
 			this.depended(AppealsGrid);
 
 			this.$el.find(".Container").html(AppealsGrid.render().el);
+
+			if (this.printButton) {
+				this.$el.find(".FilterPage").append(this.printButton);
+			}
 
 
 			// Пэйджинатор
