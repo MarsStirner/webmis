@@ -1,0 +1,20 @@
+	<tr>
+		<td>
+			{{if name}}
+				${name}
+			{{else}}
+				Нет названия пробирки
+			{{/if}}
+
+			{{if volume}}
+				${volume}
+			{{/if}}
+		</td>
+		<td>
+			{{if color}}
+				<span class="color-label" style="background-color:${color};"></span>
+			{{/if}}
+		</td>
+		<td> ${count}шт.</td>
+	</tr>
+

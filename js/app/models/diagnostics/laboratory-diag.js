@@ -15,7 +15,7 @@ define(["models/doctor"], function () {
 			directionDate: 0,
 			diagnosticDate: 0,
 			diagnosticName: {},
-			urgent: false,
+			cito: false,
 			assignPerson: {},
 			execPerson: {},
 			status: {}

@@ -1,4 +1,5 @@
-define(function () {
+define( function ()
+{
 	var Header = View.extend({
 		//tagName: "header",
 		events: {
@@ -16,16 +17,16 @@ define(function () {
 
 		initialize: function () {
 			this.on("template:loaded", this.ready, this);
-			this.loadTemplate("header");
+			this.loadTemplate( "header" );
 		},
 
 		ready: function () {
 			var view = this;
 
-			view.$el.html($("#header").tmpl(view.options.structure));
+			view.$el.html( $("#header" ).tmpl(view.options.structure) );
 
 			this.separateRoles(ROLES.NURSE_RECEPTIONIST, function () {
-				var NavigationView = new Navigation(
+				var NavigationView = new Navigation (
 					{
 						structure: [
 							{
@@ -50,7 +51,7 @@ define(function () {
 
 
 			this.separateRoles(ROLES.DOCTOR_RECEPTIONIST, function () {
-				var NavigationView = new Navigation(
+				var NavigationView = new Navigation (
 					{
 						structure: [
 							{
@@ -69,28 +70,28 @@ define(function () {
 				NavigationView.render();
 			});
 
-			this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
-				var NavigationView = new Navigation(
-					{
-						structure: [
-							{
-								name: "appeals",
-								uri: "/appeals/",
-								title: "Госпитализации"
-							},
-							{
-								name: "patients",
-								uri: "/patients/",
-								title: "Пациенты"
-							}
-						]
-					}
-				);
-				NavigationView.render();
-			});
+            this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
+                var NavigationView = new Navigation (
+                    {
+                        structure: [
+                            {
+                                name: "appeals",
+                                uri: "/appeals/",
+                                title: "Госпитализации"
+                            },
+                            {
+                                name: "patients",
+                                uri: "/patients/",
+                                title: "Пациенты"
+                            }
+                        ]
+                    }
+                );
+                NavigationView.render();
+            });
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function () {
-				var NavigationView = new Navigation(
+				var NavigationView = new Navigation (
 					{
 						structure: [
 							{
@@ -128,22 +129,22 @@ define(function () {
 			_.each(this.options.structure, function (element) {
 				var NavigationItemView = new NavigationItem(element);
 				NavigationItemView.on("navSelected", view.updateUrl, view);
-				view.$el.append(NavigationItemView.render().el);
+				view.$el.append( NavigationItemView.render().el );
 			});
 
-			return this;
+			return this
 		},
 
-		updateUrl: function (event) {
+		updateUrl: function ( event ) {
 			var $target = $(event.currentTarget),
 				href = $target.find("a").attr("href");
 
-			this.$("li").removeClass("Selected");
+			this.$("li").removeClass("Selected")
 
 			$target.addClass("Selected");
 
-			if (href) {
-				App.Router.navigate(href, {trigger: true});
+			if ( href ) {
+				App.Router.navigate ( href, {trigger:true} );
 			}
 
 			pubsub.trigger('noty_clear');
@@ -153,7 +154,7 @@ define(function () {
 	var NavigationItem = View.extend({
 		tagName: "li",
 		events: {
-			"click": "onClick"
+			"click" : "onClick"
 		},
 
 		onClick: function (event) {
@@ -163,13 +164,13 @@ define(function () {
 		},
 
 		render: function () {
-			if (App.Router.currentPage == this.options.name) {
+			if ( App.Router.currentPage == this.options.name ) {
 				this.$el.addClass("Selected");
 			}
 
-			this.$el.html($("#navigation-item").tmpl(this.options));
+			this.$el.html($("#navigation-item" ).tmpl(this.options));
 
-			return this;
+			return this
 		}
 	});
 
@@ -179,50 +180,50 @@ define(function () {
 		events: {
 			"click li": "changeRole"
 		},
-		initialize: function () {
-			if (!Core.Data.currentRole()) {
-				Core.Data.currentRole(this.options.structure.roles[0].role);
+		initialize: function() {
+			if ( !Core.Data.currentRole() ) {
+				Core.Data.currentRole( this.options.structure.roles[0].role );
 			}
 			this._currentRole = Core.Data.currentRole();
 		},
 		changeRole: function (event) {
-			Core.Data.currentRole($(event.currentTarget).data("role"));
+			Core.Data.currentRole( $(event.currentTarget ).data("role") );
 			window.location.reload();
 		},
-		render: function () {
+		render: function() {
 			var view = this;
-			this.$el.html($("#role-selector").tmpl(this.options.structure));
+			this.$el.html ( $("#role-selector" ).tmpl(this.options.structure) );
 
 			var availableRoles = JSON.parse(Core.Cookies.get("roles"));
 
-			if (this.options.structure.roles) {
+			if ( this.options.structure.roles ) {
 				_(this.options.structure.roles).each(function (element) {
 					if (availableRoles.indexOf(element.id) !== -1) {
-						if (view._currentRole == element.role) {
-							view.$(".Title span").html(element.title);
+						if ( view._currentRole == element.role ) {
+							view.$(".Title span" ).html(element.title);
 						}
 
 						var RoleSelectorItemView = new RoleSelectorItem(element);
-						view.$("ul").append(RoleSelectorItemView.render().el);
+						view.$("ul" ).append( RoleSelectorItemView.render().el );
 					}
 				});
 			}
 			UIInitialize(this.el);
 
-			return this;
+			return this
 		}
 	});
 	var RoleSelectorItem = View.extend({
 		tagName: "li",
 		initialize: function () {
-			if (this.options.role) {
+			if ( this.options.role ) {
 				this.$el.data("role", this.options.role)
 			}
 		},
 		render: function () {
 			this.$el.html(this.options.title);
 
-			return this;
+			return this
 		}
 	});
 

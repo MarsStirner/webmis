@@ -21,6 +21,10 @@ define([
 		initialize: function () {
 			this.collection = new App.Collections.LaboratoryDiags;
 			this.collection.appealId = this.options.appealId;
+			this.collection.setParams({
+				sortingField: "directionDate",
+				sortingMethod: "desc"
+			});
 
 			this.grid = new App.Views.Grid({
 				collection: this.collection,
@@ -47,15 +51,28 @@ define([
 		},
 
 		render: function () {
-			this.$el.empty().html($.tmpl(this.template));
-			this.$("#lab-grid").html(this.grid.el);
+			var view = this;
 
-			this.newAssignPopup.render();
+			view.$el.empty().html($.tmpl(view.template));
+			view.$("#lab-grid").html(view.grid.el);
 
-			return this;
+			view.paginator = new App.Views.Paginator({
+				collection: view.collection
+			});
+			view.depended(view.paginator);
+
+			view.$el.append(view.paginator.render().el);
+
+			view.delegateEvents();
+			view.grid.delegateEvents();
+			view.paginator.delegateEvents();
+
+			return view;
 		},
 
 		onNewDiagnosticClick: function () {
+
+			this.newAssignPopup.render();
 			this.newAssignPopup.open();
 		}
 	});

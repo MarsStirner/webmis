@@ -29,13 +29,16 @@ define([], function (){
 			var json = object ? (object.toJSON ? object.toJSON() : object) : {};
 			var view = this;
 
+			//создаём новую форму
 			var form = new PDFForm({
 				data: JSON.stringify(json),
 				template: this.options.template
 			});
 
 			view.window.document.charset = "utf-8";
+			//вставляем форму в страницу
 			view.window.document.write(form.render().$el.html());
+			//вставляем скрипт который отправит форму...................
 			view.window.document.write('<script>document.getElementsByTagName("form")[0].submit();</script>');
 
 		}
@@ -45,12 +48,17 @@ define([], function (){
 	var PDFForm = View.extend({
 		render: function(){
 
+			//создаём форму
 			var form = this.make("form", {"action": "/pdf/", method: "post", style: "visibility: hidden"});
+			//создаём текстовую область для данных
 			var textarea = this.make("textarea", {name: "data"});
+			//создаём поле ввода для имени шаблона
 			var input = this.make("input", {name: "template", value: this.options.template});
 
+			//вставляем данные в текстовую область
 			textarea.innerHTML = this.options.data;
 
+			//вставляем форму, а в форму текстовую область с данными для печати и инпут с именем шаблона
 			this.$el.append($(form).append(textarea ).append(input));
 
 			return this
