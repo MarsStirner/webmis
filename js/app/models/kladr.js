@@ -94,9 +94,9 @@ define(function () {
 		initialize: function () {
 			this.set({
 				republics:  new App.Collections.KLADREntries([], {level: "republic", name: "republics", childName: "districts"}),
-				districts:  new App.Collections.KLADREntries([], {level: "district", name: "districts", childName: "cities"}),
-				cities:     new App.Collections.KLADREntries([], {level: "city", name: "cities", childName: "localities"}),
-				localities: new App.Collections.KLADREntries([], {level: "locality", name: "localities", childName: "streets"}),
+				districts:  new App.Collections.KLADREntries([], {level: "district", name: "districts", childName: "localities"}),
+				localities: new App.Collections.KLADREntries([], {level: "locality", name: "localities", childName: "cities"}),
+				cities:     new App.Collections.KLADREntries([], {level: "city", name: "cities", childName: "streets"}),
 				streets:    new App.Collections.KLADREntries([], {level: "street", name: "streets"})
 			});
 

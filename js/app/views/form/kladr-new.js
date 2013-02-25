@@ -60,9 +60,9 @@ define([
 
 		loadKladr: function () {
 			this.model.get("districts").setParentCode(this.address.get("republic").get("code"));
-			this.model.get("cities").setParentCode(this.address.get("district").get("code"));
-			this.model.get("localities").setParentCode(this.address.get("city").get("code"));
-			this.model.get("streets").setParentCode(this.address.get("locality").get("code"));
+			this.model.get("localities").setParentCode(this.address.get("district").get("code"));
+			this.model.get("cities").setParentCode(this.address.get("locality").get("code"));
+			this.model.get("streets").setParentCode(this.address.get("city").get("code"));
 
 			/*if (!this.address.get("republic").get("code") && this.address.get("city").get("code")) {
 				this.address.get("republic").set("code", this.address.get("city").get("code"), {silent: true});
