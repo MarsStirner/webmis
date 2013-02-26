@@ -12,8 +12,35 @@
 
 <script id="appeals-list-filters-reception" type="text/x-jquery-tmpl">
 	<form>
-	<div id="page-head">
-		<div class="FilterPage Clearfix">
+	<div id="page-head" class="Clearfix">
+		<div class="date-range-scroller pull-left">
+			<button type="button" class="shift-btn shift-back" title="Назад">&sp;</button>
+
+			<div class="date-range">
+				<div class="datetime">
+					<input type="text" placeholder="ДД.ММ.ГГ ЧЧ:мм" class="datetime-input date-range-start"/>
+					<i class="icon-calendar datetime-icon"></i>
+				</div>
+
+				<i class="icon-resize-horizontal"></i>
+
+				<div class="datetime">
+					<input type="text" placeholder="ДД.ММ.ГГ ЧЧ:мм" class="datetime-input date-range-end"/>
+					<i class="icon-calendar datetime-icon"></i>
+				</div>
+			</div>
+
+			<button type="button" class="shift-btn shift-forward" title="Вперед">&sp;</button>
+		</div>
+
+		<div class="pull-right">
+			<button class="toggle-filters-btn" type="button">
+				<!--<i class="icon-search"></i>--><span> Фильтр</span>
+			</button>
+			<button class="print-btn"><span>Печать</span></button>
+		</div>
+
+		<!--<div class="FilterPage Clearfix">
 			<div class="DayScroller">
 				<a class="ScrollDay Actions Decrease" href="#">&lt;</a>
 				<div class="DateTime">
@@ -45,7 +72,7 @@
 				<button class="Styled Button Actions ToggleFilters"><i class="Icon Tiny SearchIcon"></i><span>Фильтр</span></button>
 				<button class="Styled Button"><span>Печать</span></button>
 			</div>
-		</div>
+		</div>-->
 	</div>
 	</form>
 </script>

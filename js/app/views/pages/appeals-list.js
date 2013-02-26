@@ -285,6 +285,23 @@ define([
 
 			UIInitialize(this.el);
 
+			this.$(".print-btn").button();
+			this.$(".shift-back").button({
+				icons: {
+					primary: "ui-icon-carat-1-w"
+				},
+				text: false
+			});
+			this.$(".shift-forward").button({
+				icons: {
+					primary: "ui-icon-carat-1-e"
+				},
+				text: false
+			});
+			this.$(".toggle-filters-btn").button({icons: {
+				primary: "ui-icon-search"
+			}});
+
 			var now = new Date();
 			var startDate = new Date();
 			var endDate = new Date();

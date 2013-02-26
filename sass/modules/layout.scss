@@ -21,6 +21,8 @@ header {
 	/*padding-bottom:0.8em;*/
 	background:#cccccc;
 	padding:0.5em 0;
+	background: -webkit-linear-gradient(top, #ededed 0%,#c4c4c4 100%);
+	border-bottom: 1px #aaaaaa solid;;
 }
 .Header {
 	width: 116em;
@@ -563,3 +565,55 @@ footer {
 .Neutral {
 	background:#FF9900;
 }
+
+// TESTING
+.date-range-scroller {
+	color: rgb(49, 49, 49);
+
+	.date-range {
+		display: inline-block;
+		padding: 5px;
+		background-color: #fbfbfb;
+		background: -webkit-linear-gradient(top, #ededed 0%,#c4c4c4 100%);
+		border: 1px #aaaaaa solid;
+		border-radius: 3px;
+	}
+
+	.datetime-input {
+		width: 12em;
+
+		//border: 1px #737477 solid;
+
+		line-height: normal;
+
+		-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+		box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+
+		&:focus {
+			-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+			box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+		}
+	}
+
+	.datetime {
+		display: inline-block;
+		position: relative;
+
+		.datetime-input {
+			padding-right: 25px;
+		}
+
+		.datetime-icon {
+			position: absolute;
+			right: .3em;
+			top: .3em;
+			//cursor: pointer;
+			color: #777;
+		}
+	}
+}
+
+/*
+#page-head .date-range {
+	float: left;
+}*/
