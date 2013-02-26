@@ -76,7 +76,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			var view = this,
 				$eventTarget = $(event.target);
 
-			if (!$eventTarget.hasClass('id')) {
+			if (!$eventTarget.hasClass('id') && (bio.get('jobTicket').status == 0)) {
 				view.openBiomaterialPopup(bio);
 			}
 
@@ -86,7 +86,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			console.log('openBiomaterialPopup', biomaterial);
 
-			var biomaterialPopupView = new BiomaterialPopupView;
+			var biomaterialPopupView = new BiomaterialPopupView({biomaterial: biomaterial});
 			biomaterialPopupView.render();
 			biomaterialPopupView.open();
 		},

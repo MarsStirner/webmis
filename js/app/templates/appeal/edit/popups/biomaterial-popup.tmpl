@@ -8,11 +8,19 @@
 </header>
 <section class="PopUpLine">
 
+	<h3>ФИО пациента: ${patient.name.raw}  №ИБ 2012/4762  Возраст {{formatDate patient.birthDate}}  Пол ${patient.sex} Код 2039</h3>
+
+	<h3>Тип биоматериала: Кровь венозная   Количество:  40 мл</h3>
+
+
 	<table class="Grid">
 		<thead>
 		<tr>
 			<th><input type="checkbox" name="all" id="select-all"></th>
-			<th>Лабораторное исследование</th>
+			<th>Название</th>
+			<th>Объём</th>
+			<th>Тип пробирки</th>
+			<th>Цвет пробирки</th>
 
 		</tr>
 		</thead>
@@ -21,18 +29,25 @@
 			<td><input type="checkbox" class="id" name="id" value="${id}"></td>
 			<td>Автоматический анализ крови (СВС- лейкоциты, гемоглобин, гематокрит, эритроциты, тромбоциты)</td>
 
+			<td>3</td>
+			<td>MONOVETTE</td>
+			<td><span class="color-label" style="background-color:green;"></span></td>
 		</tr>
 
 		<tr>
 			<td><input type="checkbox" class="id" name="id" value="${id}"></td>
 			<td>Автоматический анализ крови (СВС- лейкоциты, гемоглобин, гематокрит, эритроциты, тромбоциты)</td>
-
+			<td>4</td>
+			<td>MONOVETTE</td>
+			<td><span class="color-label" style="background-color:green;"></span></td>
 		</tr>
 
 		<tr>
 			<td><input type="checkbox" class="id" name="id" value="${id}"></td>
 			<td>Определение групповой принадлежности по системе АВО, определение фенотипа Резус фактора</td>
-
+			<td>6</td>
+			<td>MONOVETTE</td>
+			<td><span class="color-label" style="background-color:green;"></span></td>
 		</tr>
 		</tbody>
 	</table>
