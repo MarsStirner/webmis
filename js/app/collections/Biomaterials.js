@@ -21,27 +21,40 @@ define(["models/Biomaterial"], function (Biomaterial) {
 		normilize: function(response){
 			return _.map(response, function(obj) {
 
-				if(obj.patient.sex == 'male') {obj.patient.sex = 'М';}
-				if(obj.patient.sex == 'female'){obj.patient.sex = 'Ж';}
+				obj.patient = obj.actions[0].patient;
+				obj.urgent = obj.actions[0].urgent;
+				obj.assigner = obj.actions[0].assigner;
+				obj.biomaterial = obj.actions[0].biomaterial;
 
-				obj.status = {};
-				obj.status.code = obj.jobTicket.status;
-				if(obj.jobTicket.status == 0){
-					obj.status.name = 'ожидание';
+
+				var biomaterials = _.pluck(obj.actions, 'biomaterial');
+				var volume = 0;
+
+				_.each(obj.actions, function(action, key, list){
+
+
+					volume = volume + action.biomaterial.amount;
+
+				});
+
+
+
+				obj.volume = volume;
+				if(obj.actions[0].patient.sex == 'male') {obj.patient.sex = 'М';}
+				if(obj.actions[0].patient.sex == 'female'){obj.patient.sex = 'Ж';}
+
+
+
+				if(obj.status == 0){
+					obj.statusName = 'ожидание';
 				}
-				if(obj.jobTicket.status == 1){
-					obj.status.name = 'выполнение';
+				if(obj.status == 1){
+					obj.statusName = 'выполнение';
 				}
-				if(obj.jobTicket.status == 2){
-					obj.status.name = 'закончено';
+				if(obj.status == 2){
+					obj.statusName = 'закончено';
 				}
 
-				if(obj.tubeType.name){
-					obj.tubeType.shortName =obj.tubeType.name.split(' ')[0];
-				}
-				//obj.tubeType.color = obj.tubeType.covCol;
-
-				obj.tubeTypeName = obj.tubeType.name;
 				obj.selected = false;
 
 				return obj;

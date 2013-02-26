@@ -43,56 +43,60 @@
 </script>
 
 <script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
-	<td class="status-code-${status.code}">
-		{{if jobTicket.status!=2}}
-		<input type="checkbox" class="id" name="id" value="${id}" data-job-ticket="${jobTicket.id}">
+	<td class="status-code-${status}">
+		{{if status!=2}}
+		<input type="checkbox" class="id" name="id" value="${id}"/>
 		{{/if}}
 		<!-- ${id} -->
-		<!--jobTicket.id = ${jobTicket.id}-->
+
 	</td>
 
-	<td class="status-code-${status.code}">
-		{{formatDateTime jobTicket.date}}
+	<td class="status-code-${status}">
+		{{formatDateTime date}}
 	</td>
 
-	<td class="status-code-${status.code}">
+	<td class="status-code-${status}">
 		${patient.name.raw}
 	</td>
-	<td class="status-code-${status.code}">
+	<td class="status-code-${status}">
 		${patient.sex}
 	</td>
-	<td class="status-code-${status.code}">
+	<td class="status-code-${status}">
 		{{formatDate patient.birthDate}}
 
 	</td>
-	<td class="status-code-${status.code} HasToolTip" data-tooltip-content="#tooltip_${id}">
-		{{if jobTicket.status == 0}}
-		<b><u>Кровь венозная (3)</u></b>
+	<td class="status-code-${status} HasToolTip" data-tooltip-content="#tooltip_${id}">
+
+		{{if status == 0}}
+		<b><u>${biomaterial.tissueType.name} (${actions.length})</u></b>
 		{{else}}
-		Кровь венозная (3)
+		${biomaterial.tissueType.name} (${actions.length})
 		{{/if}}
 
 		<div id="tooltip_${id}" class="ToolTip TopTail">
 			<ul style="margin-bottom: 10px;">
-				{{if assigner.name.raw}}
-				<li>Назначил: ${assigner.name.raw}</li>
+				{{if assigner}}
+					${assigner.name.raw}
 				{{/if}}
-				{{if jobTicket.laboratory.name}}
-				<li>Лаборатория: ${jobTicket.laboratory.name}</li>
+
+				{{if laboratory.name}}
+				<li>Лаборатория: ${laboratory.name}</li>
 				{{/if}}
-				{{if jobTicket.label}}
-				<li>Пометка: ${jobTicket.label}</li>
+				{{if label}}
+				<li>Пометка: ${label}</li>
 				{{/if}}
-				{{if jobTicket.note}}
-				<li>Примечание: ${jobTicket.note}</li>
+				{{if note}}
+				<li>Примечание: ${note}</li>
 				{{/if}}
 			</ul>
 
+
 				<b>Лабораторные исследования:</b>
 			<ol>
-				<li>Автоматический анализ крови (СВС- лейкоциты, гемоглобин, гематокрит, эритроциты, тромбоциты)</li>
-				<li>Автоматический анализ крови (СВС- лейкоциты, гемоглобин, гематокрит, эритроциты, тромбоциты)</li>
-				<li>Определение групповой принадлежности по системе АВО, определение фенотипа Резус фактора</li>
+				{{each actions}}
+				<li>${actionType.name}</li>
+				{{/each}}
+
 			</ol>
 
 
@@ -100,27 +104,21 @@
 		</div>
 	</td>
 
-	<td class="status-code-${status.code}">
+	<td class="status-code-${status}">
 		{{if urgent}}<span class="Urgent">срочно</span>{{/if}}
 	</td>
-	<!--<td class="status-code-${status.code}">-->
-		<!--${tubeType.shortName}-->
-	<!--</td>-->
-	<td class="status-code-${status.code}">
-		{{if tubeType.volume}}
-		${tubeType.volume}
+
+	<td class="status-code-${status}">
+		{{if volume}}
+		${volume}
 		{{/if}}
 	</td>
 
 
-	<!--<td class="status-code-${status.code}">-->
-		<!--{{if tubeType.color}}-->
-		<!--<span class="color-label" style="background-color:${tubeType.color};"></span>-->
-		<!--{{/if}}-->
-	<!--</td>-->
 
-	<td class="status-code-${status.code}">
-		<span class="status-name">${status.name}</span>
+
+	<td class="status-code-${status}">
+		<span class="status-name">${statusName}</span>
 	</td>
 </script>
 

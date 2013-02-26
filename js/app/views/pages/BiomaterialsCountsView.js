@@ -15,17 +15,29 @@ define(['text!templates/pages/biomaterials-count.tmpl'], function (countTmpl) {
 			var view = this;
 			var counts = [];
 
-			var groupedItems = _.groupBy(view.collection.models, function (model) {
-				return model.get('tubeTypeName')
+			var actions = [];
+
+			_.each(view.collection.models, function(model){
+				console.log('each',model)
+				actions.push(model.get('actions'));
 			});
+
+			actions = _.flatten(actions, true);
+			var groupedItems = _.groupBy(actions, function (action) {
+				console.log('action',action.tubeType.name)
+				return action.tubeType.name;
+			});
+
+			console.log('actions', actions)
+			console.log('groupedItems',groupedItems)
 
 			_.each(groupedItems, function (element, index, list) {
 				var item = {};
 
 				var first = _.first(element)
-				item.name = first.get('tubeType').shortName;
-				item.volume = first.get('tubeType').volume;
-				item.color = first.get('tubeType').color;
+				item.name = first.tubeType.name;
+				item.volume = first.tubeType.volume;
+				item.color = first.tubeType.color;
 				item.count = element.length;
 
 				counts.push(item);

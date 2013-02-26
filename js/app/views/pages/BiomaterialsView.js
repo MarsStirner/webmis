@@ -23,15 +23,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 		initialize: function () {
 			var view = this;
 
-			view.on("all", function (eventName) {
-				console.log('view', eventName);
-			});
-
 			view.collection = new BiomaterialsCollection;
-
-			view.collection.on("all", function (eventName) {
-				console.log('view.collection', eventName);
-			});
 
 			view.collection.on('reset', function () {
 				view.countSelectedBiomaterials();
@@ -76,7 +68,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			var view = this,
 				$eventTarget = $(event.target);
 
-			if (!$eventTarget.hasClass('id') && (bio.get('jobTicket').status == 0)) {
+			if (!$eventTarget.hasClass('id') && (bio.get('status') == 0)) {
 				view.openBiomaterialPopup(bio);
 			}
 
@@ -114,15 +106,16 @@ define(['text!templates/pages/biomaterials.tmpl',
 			var view = this;
 
 			var status0 = view.collection.filter(function (biomaterial) {
-				return ((biomaterial.get("selected") == true) && (biomaterial.get("jobTicket").status == 0));
+				console.log(biomaterial)
+				return ((biomaterial.get("selected") == true) && (biomaterial.get('status') == 0));
 			});
 
 			var status1 = view.collection.filter(function (biomaterial) {
-				return ((biomaterial.get("selected") == true) && (biomaterial.get("jobTicket").status == 1));
+				return ((biomaterial.get("selected") == true) && (biomaterial.get('status') == 1));
 			});
 
 			var status2 = view.collection.filter(function (biomaterial) {
-				return ((biomaterial.get("selected") == true) && (biomaterial.get("jobTicket").status == 2));
+				return ((biomaterial.get("selected") == true) && (biomaterial.get('status') == 2));
 			});
 
 			view.selectedBiomaterialsCount = {
@@ -130,6 +123,9 @@ define(['text!templates/pages/biomaterials.tmpl',
 				'status1': status1,
 				'status2': status2
 			}
+
+			console.log('view.collection',view.collection,view.selectedBiomaterialsCount)
+
 		},
 
 		selectAll: function (event) {
@@ -153,7 +149,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.collection.each(function(biomaterial) {
 				if(biomaterial.get('selected')){
-					view.jobTicketsCollection.add({'id': biomaterial.get('jobTicket').id , 'status': 1});
+					view.jobTicketsCollection.add({'id': biomaterial.get('id') , 'status': 1});
 				}
 			});
 
@@ -167,7 +163,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.jobTicketsCollection.reset();
 
 			view.collection.each(function(biomaterial) {
-				view.jobTicketsCollection.add({'id': biomaterial.get('jobTicket').id , 'status': 0});
+				view.jobTicketsCollection.add({'id': biomaterial.get('id') , 'status': 0});
 			});
 
 			view.jobTicketsCollection.updateAll();
@@ -214,7 +210,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.collection.each(function(biomaterial) {
 				if(biomaterial.get('selected')){
-					view.jobTicketsCollection.add({'id': biomaterial.get('jobTicket').id , 'status': 2});
+					view.jobTicketsCollection.add({'id': biomaterial.get('id') , 'status': 2});
 				}
 			});
 
