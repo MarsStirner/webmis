@@ -9,7 +9,8 @@ define([], function () {
 			testTube: '',
 			status: '',
 			selected: ''
-		}
+		},
+		idAttribute: 'id'
 
 	});
 

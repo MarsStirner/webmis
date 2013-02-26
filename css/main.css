@@ -60,7 +60,7 @@ td.status-code-2, td.status-code-2 .Warning {
 
 /* line 56, ../sass/modules/_biomaterials.scss */
 .status-code-0 .status-name {
-  color: red;
+  color: blue;
 }
 
 /* line 62, ../sass/modules/_biomaterials.scss */
@@ -130,7 +130,7 @@ td.status-code-2, td.status-code-2 .Warning {
 /* line 121, ../sass/modules/_biomaterials.scss */
 .biomaterials-status {
   float: left;
-  width: 450px;
+  width: 405px;
 }
 
 /* line 126, ../sass/modules/_biomaterials.scss */

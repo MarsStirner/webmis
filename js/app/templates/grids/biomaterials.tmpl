@@ -3,7 +3,7 @@
 		<thead>
 		<tr>
 			<th>
-				<input type="checkbox" name="all" id="select-all">
+				<input type="checkbox" name="all" id="select-all" title="Отметить все">
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="time">Дата и время</a>
@@ -18,14 +18,17 @@
 				<a class="Actions SortCol" data-field="birthDate">Дата рожд.</a>
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="actionType.name">Название исследования</a>
+				<a class="Actions SortCol" data-field="actionType.name">Биоматериал</a>
 			</th>
 			<!---->
 			<th>
 				<a class="Actions SortCol" data-field="actionType.status">Срочность</a>
 			</th>
-			<th colspan="3">
-				<a class="Actions SortCol" data-field="testTube">Пробирка</a>
+			<!--<th>-->
+				<!--<a class="Actions SortCol" data-field="testTube">Пробирка</a>-->
+			<!--</th>-->
+			<th >
+				Объём
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="status">Статус</a>
@@ -42,10 +45,10 @@
 <script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
 	<td class="status-code-${status.code}">
 		{{if jobTicket.status!=2}}
-			<input type="checkbox" class="id" name="id" value="${id}" data-job-ticket="${jobTicket.id}">
+		<input type="checkbox" class="id" name="id" value="${id}" data-job-ticket="${jobTicket.id}">
 		{{/if}}
-		${id}
-		jobTicket.id = ${jobTicket.id}
+		<!-- ${id} -->
+		<!--jobTicket.id = ${jobTicket.id}-->
 	</td>
 
 	<td class="status-code-${status.code}">
@@ -62,28 +65,59 @@
 		{{formatDate patient.birthDate}}
 
 	</td>
-	<td class="status-code-${status.code}">
-	<b>${actionType.name}</b>
+	<td class="status-code-${status.code} HasToolTip" data-tooltip-content="#tooltip_${id}">
+		{{if jobTicket.status == 0}}
+		<b><u>Кровь венозная (3)</u></b>
+		{{else}}
+		<u>Кровь венозная (3)</u>
+		{{/if}}
+
+		<div id="tooltip_${id}" class="ToolTip TopTail">
+			<ul style="margin-bottom: 10px;">
+				{{if assigner.name.raw}}
+				<li>Назначил: ${assigner.name.raw}</li>
+				{{/if}}
+				{{if jobTicket.laboratory.name}}
+				<li>Лаборатория: ${jobTicket.laboratory.name}</li>
+				{{/if}}
+				{{if jobTicket.label}}
+				<li>Пометка: ${jobTicket.label}</li>
+				{{/if}}
+				{{if jobTicket.note}}
+				<li>Примечание: ${jobTicket.note}</li>
+				{{/if}}
+			</ul>
+
+				<b>Лабораторные исследования:</b>
+			<ol>
+				<li>Автоматический анализ крови (СВС- лейкоциты, гемоглобин, гематокрит, эритроциты, тромбоциты)</li>
+				<li>Автоматический анализ крови (СВС- лейкоциты, гемоглобин, гематокрит, эритроциты, тромбоциты)</li>
+				<li>Определение групповой принадлежности по системе АВО, определение фенотипа Резус фактора</li>
+			</ol>
+
+
+
+		</div>
 	</td>
 
 	<td class="status-code-${status.code}">
- {{if urgent}}<span class="Urgent">срочно</span>{{/if}}
+		{{if urgent}}<span class="Urgent">срочно</span>{{/if}}
 	</td>
-	<td class="status-code-${status.code}">
-		${tubeType.shortName}
-	</td>
+	<!--<td class="status-code-${status.code}">-->
+		<!--${tubeType.shortName}-->
+	<!--</td>-->
 	<td class="status-code-${status.code}">
 		{{if tubeType.volume}}
-			${tubeType.volume}
+		${tubeType.volume}
 		{{/if}}
 	</td>
 
 
-	<td class="status-code-${status.code}">
-		{{if tubeType.color}}
-   <span class="color-label" style="background-color:${tubeType.color};"></span>
-		{{/if}}
-	</td>
+	<!--<td class="status-code-${status.code}">-->
+		<!--{{if tubeType.color}}-->
+		<!--<span class="color-label" style="background-color:${tubeType.color};"></span>-->
+		<!--{{/if}}-->
+	<!--</td>-->
 
 	<td class="status-code-${status.code}">
 		<span class="status-name">${status.name}</span>
