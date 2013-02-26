@@ -10,14 +10,15 @@ define(["text!templates/appeal/edit/popups/biomaterial-popup.tmpl"],
 			},
 			initialize: function () {
 				var popup = this;
+				popup.biomaterial = popup.options.biomaterial;
 
 
 			},
 			render: function () {
 				var popup = this;
-				console.log('render biomaterial popup');
+				console.log('render biomaterial popup', popup.biomaterial,popup.options);
 
-				this.$el.html($.tmpl(this.template, {}));
+				this.$el.html($.tmpl(this.template, popup.biomaterial.toJSON()));
 
 				$("body").append(popup.$el);
 
