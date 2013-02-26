@@ -23,6 +23,8 @@ define([
 		initialize: function () {
 			this.clearAll();
 
+			pubsub.trigger('noty_clear');
+
 			var view = this;
 			Cache.Patient = this.model.get("patient");
 			Cache.Patient.fetch({
@@ -250,11 +252,19 @@ define([
 			this.$("#page-head").append(Breadcrumbs.render().el);
 
 			var onBreadcrumbsReady = function () {
-				Breadcrumbs.setStructure([
-					App.Router.cachedBreadcrumbs.PATIENTS,
-					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, Patient.toJSON()),
-					App.Router.cachedBreadcrumbs.APPEALS_NEW
-				]);
+				if (view.model.isNew()) {
+					Breadcrumbs.setStructure([
+						App.Router.cachedBreadcrumbs.PATIENTS,
+						App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, Patient.toJSON()),
+						App.Router.cachedBreadcrumbs.APPEALS_NEW
+					]);
+				} else {
+					Breadcrumbs.setStructure([
+						App.Router.cachedBreadcrumbs.PATIENTS,
+						App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, Patient.toJSON()),
+						App.Router.compile(App.Router.cachedBreadcrumbs.APPEALS_EDIT, {id: view.model.id})
+					]);
+				}
 			};
 
 			if (!Breadcrumbs.templateLoadComplete) {

@@ -1,0 +1,100 @@
+<script id="biomaterials-grid" type="text/x-jquery-tmpl">
+	<table class="Grid">
+		<thead>
+		<tr>
+			<th>
+				<input type="checkbox" name="all" id="select-all">
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="time">Дата и время</a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="fullName">ФИО</a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="sex">Пол</a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="birthDate">Дата рожд.</a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="actionType.name">Название исследования</a>
+			</th>
+			<!---->
+			<th>
+				<a class="Actions SortCol" data-field="actionType.status">Срочность</a>
+			</th>
+			<th colspan="3">
+				<a class="Actions SortCol" data-field="testTube">Пробирка</a>
+			</th>
+			<th>
+				<a class="Actions SortCol" data-field="status">Статус</a>
+
+			</th>
+		</tr>
+		</thead>
+		<tbody>
+
+		</tbody>
+	</table>
+</script>
+
+<script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
+	<td class="status-code-${status.code}">
+		{{if jobTicket.status!=2}}
+			<input type="checkbox" class="biomaterial_id" name="biomaterial_id" value="${id}" data-job-ticket="${jobTicket.id}">
+		{{/if}}
+		jobTicket.id = ${jobTicket.id}
+	</td>
+
+	<td class="status-code-${status.code}">
+		{{formatDateTime jobTicket.date}}
+	</td>
+
+	<td class="status-code-${status.code}">
+		${patient.name.raw}
+	</td>
+	<td class="status-code-${status.code}">
+		${patient.sex}
+	</td>
+	<td class="status-code-${status.code}">
+		{{formatDate patient.birthDate}}
+
+	</td>
+	<td class="status-code-${status.code}">
+	<b>${actionType.name}</b>
+	</td>
+
+	<td class="status-code-${status.code}">
+ {{if urgent}}<span class="Urgent">срочно</span>{{/if}}
+	</td>
+	<td class="status-code-${status.code}">
+		${tubeType.shortName}
+	</td>
+	<td class="status-code-${status.code}">
+		{{if tubeType.volume}}
+			${tubeType.volume}
+		{{/if}}
+	</td>
+
+
+	<td class="status-code-${status.code}">
+		{{if tubeType.color}}
+   <span class="color-label" style="background-color:${tubeType.color};"></span>
+		{{/if}}
+	</td>
+
+	<td class="status-code-${status.code}">
+		<span class="status-name">${status.name}</span>
+	</td>
+</script>
+
+<script id="biomaterials-grid-row-error" type="text/x-jquery-tmpl">
+	<td colspan="7">
+		Ничего не найдено
+	</td>
+</script>
+
+<script id="biomaterials-grid-row-default" type="text/x-jquery-tmpl">
+	<h3>Введите необходимые данные в поля фильтров</h3>
+</script>

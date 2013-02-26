@@ -7,7 +7,7 @@ define([
 	"views/appeal/edit/popups/thesaurus",
 	"views/mkb-directory",
 	"views/appeal/edit/pages/examination-primary-preview"
-], function (primaryTmpl, primaryRepeatedTmpl) {
+], function (primaryTmpl, primaryRepeatedTmpl, ExaminationOldModule) {
 
 	var thesaurus = require("views/appeal/edit/popups/thesaurus");
 
@@ -135,6 +135,11 @@ define([
 				var valueProperty = examAttr.get("properties").find(function (p) {
 					return p.get("name") == opts.propertyType;
 				});
+
+				if (!valueProperty) {
+					valueProperty = new ExaminationOldModule.Property({name: opts.propertyType, value: ""});
+					examAttr.get("properties").add(valueProperty);
+				}
 
 				var $input = this.$("[data-examattr-id="+opts.attrId+"]");
 
@@ -334,6 +339,11 @@ define([
 			});
 
 			this.$(".HourPicker").mask("99:99");
+
+			var i = 0;
+			this.$("input[type=text],select,.RichText").each(function () {
+				$(this).prop("tabindex", ++i);
+			});
 
 			var patientSex = Cache.Patient.get("sex").length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
 

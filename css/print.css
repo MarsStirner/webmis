@@ -25,7 +25,7 @@ h2 {
 
 /* line 23, ../sass/print.scss */
 .EditLine {
-  border-bottom: 0.5pt solid #000;
+  border-bottom: 0.5pt solid black;
   font-style: italic;
 }
 /* line 29, ../sass/print.scss */
@@ -98,13 +98,13 @@ p {
 
 /* line 83, ../sass/print.scss */
 table {
-  border: 0.5pt solid #000;
+  border: 0.5pt solid black;
   border-collapse: collapse;
 }
 /* line 89, ../sass/print.scss */
 table.Styled th, table.Styled td {
   font-weight: normal;
-  border: 0.5pt solid #000;
+  border: 0.5pt solid black;
   padding: 5pt;
 }
 
