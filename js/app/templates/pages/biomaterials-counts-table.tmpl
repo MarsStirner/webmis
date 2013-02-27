@@ -1,3 +1,11 @@
+<table class="tubes Grid">
+	<thead>
+	<tr>
+		<th colspan="3"> Пробирки</th>
+	</tr>
+	</thead>
+	<tbody>
+	{{each items}}
 	<tr>
 		<td>
 			{{if name}}
@@ -12,9 +20,11 @@
 		</td>
 		<td>
 			{{if color}}
-				<span class="color-label" style="background-color:${color};"></span>
+			<span class="color-label" style="background-color:${color};"></span>
 			{{/if}}
 		</td>
 		<td> ${count}шт.</td>
 	</tr>
-
+	{{/each}}
+	</tbody>
+</table>

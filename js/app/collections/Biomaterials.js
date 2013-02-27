@@ -31,13 +31,16 @@ define(["models/Biomaterial"], function (Biomaterial) {
 				var volume = 0;
 
 				_.each(obj.actions, function(action, key, list){
-
+					action.jobTicket = {
+						'id': obj.id,
+						'date': obj.date,
+						'label': obj.label,
+						'note': obj.note
+					}
 
 					volume = volume + action.biomaterial.amount;
 
 				});
-
-
 
 				obj.volume = volume;
 				if(obj.actions[0].patient.sex == 'male') {obj.patient.sex = 'М';}

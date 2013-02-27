@@ -6,13 +6,13 @@ define(['models/JobTicket'], function (JobTicket) {
 		url: function () {
 			return DATA_PATH + "jobTickets/status";
 		},
+
 		updateAll: function () {
 			var collection = this;
 			options = {
 				dataType: "jsonp",
 				contentType: 'application/json',
 				success: function (status) {
-					console.log('success',arguments)
 					if(status){
 						collection.trigger('updateAll:success');
 					}else{

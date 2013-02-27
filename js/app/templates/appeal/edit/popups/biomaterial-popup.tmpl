@@ -1,9 +1,9 @@
 <header class="Clearfix">
-	<h2 class="PopupHeader">Попап биоматериалалалла</h2>
+	<h2 class="PopupHeader">Перечень лабораторных исследований</h2>
 
 	<div class="PopupActions">
-		<button class="Styled Button Disabled BlueBorder"><span>Сохранить</span></button>
-		<a href="#" class="ShowHidePopup">Отмена</a>
+		<!--<button class="Styled Button Disabled BlueBorder"><span>Сохранить</span></button>-->
+		<a href="#" class="ShowHidePopup">Закрыть</a>
 	</div>
 </header>
 <section class="PopUpLine">
@@ -15,33 +15,31 @@
 	<h3> Код </h3>
 
 	<h3>Тип биоматериала: ${biomaterial.tissueType.name}</h3>
-	<h3> Количество: </h3>
+	<h3> Количество: ${volume} ${biomaterial.unit.name}</h3>
 
 
 	<table class="Grid">
 		<thead>
 		<tr>
-			<th><input type="checkbox" name="all" id="select-all"></th>
-			<th>Название</th>
+			<!--<th>-->
+				<!--<input type="checkbox" name="all" id="select-all">-->
+			<!--</th>-->
+			<th>Лабораторное исследование</th>
 			<th>Объём</th>
 			<th>Тип пробирки</th>
 			<th>Цвет пробирки</th>
-
 		</tr>
 		</thead>
 		<tbody>
 		{{each actions}}
-		<tr>
-			<td><input type="checkbox" class="id" name="id" value="${id}" checked/></td>
-			<td>${actionType.name}</td>
-
-			<td>${biomaterial.amount} ${biomaterial.unit.name}</td>
-			<td>${tubeType.name}</td>
-			<td><span class="color-label" style="background-color:${tubeType.color};" title="${tubeType.color}"></span></td>
+			<tr>
+				<!--<td><input type="checkbox" class="lab_test_id" name="lab_test_id" value="${id}" checked/></td>-->
+				<td>${actionType.name}</td>
+				<td>${biomaterial.amount} ${biomaterial.unit.name}</td>
+				<td>${tubeType.name}</td>
+				<td><span class="color-label" style="background-color:${tubeType.color};" title="${tubeType.color}"></span></td>
 		</tr>
 		{{/each}}
-
-
 		</tbody>
 	</table>
 </section>

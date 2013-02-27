@@ -1,37 +1,31 @@
-define(['text!templates/pages/biomaterials-count.tmpl'], function (countTmpl) {
+define(['text!templates/pages/biomaterials-counts-table.tmpl'], function (countsTableTmpl) {
 
 	var BiomaterialsCountView = View.extend({
-		template: countTmpl,
+		template: countsTableTmpl,
 
 		initialize: function () {
 
 			this.collection.bind('reset', function () {
 				this.render();
-
 			}, this);
 
 		},
 		countItems: function () {
 			var view = this;
 			var counts = [];
-
 			var actions = [];
 
+			//в модели есть actions, внутри  actions есть тип пробирки, надо сосчитать все типы пробирок...
 			_.each(view.collection.models, function(model){
-				console.log('each',model)
 				actions.push(model.get('actions'));
 			});
-
 			actions = _.flatten(actions, true);
+
 			var groupedItems = _.groupBy(actions, function (action) {
-				console.log('action',action.tubeType.name)
 				return action.tubeType.name;
 			});
 
-			console.log('actions', actions)
-			console.log('groupedItems',groupedItems)
-
-			_.each(groupedItems, function (element, index, list) {
+			_.each(groupedItems, function (element) {
 				var item = {};
 
 				var first = _.first(element)
@@ -43,20 +37,18 @@ define(['text!templates/pages/biomaterials-count.tmpl'], function (countTmpl) {
 				counts.push(item);
 			});
 
-
-
 			return counts;
 		},
 
 		render: function () {
-
 			var view = this;
-
 			var countItems = view.countItems();
 
 			view.$el.html('');
 
-			view.$el.html($.tmpl(view.template, countItems));
+			if(countItems.length > 0){
+				view.$el.html($.tmpl(view.template, {items: countItems}));
+			}
 
 			return view;
 		}

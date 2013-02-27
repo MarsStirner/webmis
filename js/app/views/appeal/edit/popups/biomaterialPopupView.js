@@ -6,19 +6,24 @@ define(["text!templates/appeal/edit/popups/biomaterial-popup.tmpl"],
 			className: "popup",
 
 			events: {
-				"click .ShowHidePopup": "close"
+				"click .ShowHidePopup": "close",
+				'change .lab_test_id':'recalculateAmount'
 			},
+
 			initialize: function () {
 				var popup = this;
 				popup.biomaterial = popup.options.biomaterial;
-
-
 			},
+
+			recalculateAmount: function(){
+				var popup = this;
+				console.log('recalculateAmount', popup.biomaterial);
+			},
+
 			render: function () {
 				var popup = this;
-				console.log('render biomaterial popup', popup.biomaterial,popup.options);
 
-				this.$el.html($.tmpl(this.template, popup.biomaterial.toJSON()));
+				popup.$el.html($.tmpl(popup.template, popup.biomaterial.toJSON()));
 
 				$("body").append(popup.$el);
 
@@ -26,8 +31,7 @@ define(["text!templates/appeal/edit/popups/biomaterial-popup.tmpl"],
 					autoOpen: false,
 					width: "116em",
 					modal: true,
-					dialogClass: "webmis"//,
-					//title: "Исследования"
+					dialogClass: "webmis"
 				});
 
 				return popup;

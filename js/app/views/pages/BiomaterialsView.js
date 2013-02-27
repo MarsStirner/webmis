@@ -4,8 +4,10 @@ define(['text!templates/pages/biomaterials.tmpl',
 	'views/appeal/edit/popups/BiomaterialPopupView',
 	'views/pages/BiomaterialsCountsView',
 	'collections/JobTickets',
+	'collections/Barcodes',
 	'collections/dictionary-values',
-	'collections/departments'], function (biomaterialsTemplate, BiomaterialsCollection, GridView, BiomaterialPopupView, CountView, JobTicketsCollection) {
+	'collections/departments',
+	"views/print"], function (biomaterialsTemplate, BiomaterialsCollection, GridView, JobTicketPopupView, CountView, JobTicketsCollection, BarcodesCollection) {
 
 	var BiomaterialsView = View.extend({
 		///className: "ContentHolder",
@@ -17,7 +19,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			//"click #execute": "executeJobTikets",
 			//"click #send-to-lab": "sendToLab",
 			"click #print": "print",
-			"change .id": "onBiomaterialCheckboxChange"
+			"change .id": "jobTicketonCheckboxChange"
 		},
 
 		initialize: function () {
@@ -26,7 +28,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.collection = new BiomaterialsCollection;
 
 			view.collection.on('reset', function () {
-				view.countSelectedBiomaterials();
+				view.countSelectedJobTickets();
 				view.updateButtons();
 				view.resetSelectAllCheckbox();
 			})
@@ -69,21 +71,19 @@ define(['text!templates/pages/biomaterials.tmpl',
 				$eventTarget = $(event.target);
 
 			if (!$eventTarget.hasClass('id') && (bio.get('status') == 0)) {
-				view.openBiomaterialPopup(bio);
+				view.openJobTicketPopup(bio);
 			}
 
 		},
 
-		openBiomaterialPopup: function (biomaterial) {
+		openJobTicketPopup: function (biomaterial) {
+			var jobTicketPopupView = new JobTicketPopupView({biomaterial: biomaterial});
 
-			console.log('openBiomaterialPopup', biomaterial);
-
-			var biomaterialPopupView = new BiomaterialPopupView({biomaterial: biomaterial});
-			biomaterialPopupView.render();
-			biomaterialPopupView.open();
+			jobTicketPopupView.render();
+			jobTicketPopupView.open();
 		},
 
-		onBiomaterialCheckboxChange: function (event) {
+		jobTicketonCheckboxChange: function (event) {
 
 			var view = this;
 			var selected = false;
@@ -96,35 +96,32 @@ define(['text!templates/pages/biomaterials.tmpl',
 			var model = view.collection.get($checkbox.val());
 			model.set({'selected': selected}, {silent: true});
 
-			view.countSelectedBiomaterials();
+			view.countSelectedJobTickets();
 
 			view.updateButtons();
 
 		},
 
-		countSelectedBiomaterials: function () {
+		countSelectedJobTickets: function () {
 			var view = this;
 
-			var status0 = view.collection.filter(function (biomaterial) {
-				console.log(biomaterial)
-				return ((biomaterial.get("selected") == true) && (biomaterial.get('status') == 0));
+			var status0 = view.collection.filter(function (jobTicket) {
+				return ((jobTicket.get("selected") == true) && (jobTicket.get('status') == 0));
 			});
 
-			var status1 = view.collection.filter(function (biomaterial) {
-				return ((biomaterial.get("selected") == true) && (biomaterial.get('status') == 1));
+			var status1 = view.collection.filter(function (jobTicket) {
+				return ((jobTicket.get("selected") == true) && (jobTicket.get('status') == 1));
 			});
 
-			var status2 = view.collection.filter(function (biomaterial) {
-				return ((biomaterial.get("selected") == true) && (biomaterial.get('status') == 2));
+			var status2 = view.collection.filter(function (jobTicket) {
+				return ((jobTicket.get("selected") == true) && (jobTicket.get('status') == 2));
 			});
 
-			view.selectedBiomaterialsCount = {
+			view.selectedJobTicketCount = {
 				'status0': status0,
 				'status1': status1,
 				'status2': status2
 			}
-
-			console.log('view.collection',view.collection,view.selectedBiomaterialsCount)
 
 		},
 
@@ -147,9 +144,9 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.jobTicketsCollection.reset();
 
-			view.collection.each(function(biomaterial) {
-				if(biomaterial.get('selected')){
-					view.jobTicketsCollection.add({'id': biomaterial.get('id') , 'status': 1});
+			view.collection.each(function (jobTicket) {
+				if (jobTicket.get('selected')) {
+					view.jobTicketsCollection.add({'id': jobTicket.get('id'), 'status': 1});
 				}
 			});
 
@@ -157,13 +154,13 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 		},
 
-		resetAllStatuses: function(){
+		resetAllStatuses: function () {
 			var view = this;
 
 			view.jobTicketsCollection.reset();
 
-			view.collection.each(function(biomaterial) {
-				view.jobTicketsCollection.add({'id': biomaterial.get('id') , 'status': 0});
+			view.collection.each(function (jobTicket) {
+				view.jobTicketsCollection.add({'id': jobTicket.get('id'), 'status': 0});
 			});
 
 			view.jobTicketsCollection.updateAll();
@@ -178,10 +175,11 @@ define(['text!templates/pages/biomaterials.tmpl',
 		updateExecuteButton: function () {
 			var view = this;
 			var disabled = true;
+			var jtc = view.selectedJobTicketCount;
 
-			if (view.selectedBiomaterialsCount.status0.length > 0
-				&& view.selectedBiomaterialsCount.status1.length == 0
-				&& view.selectedBiomaterialsCount.status2.length == 0) {
+			if (jtc.status0.length > 0
+				&& jtc.status1.length == 0
+				&& jtc.status2.length == 0) {
 
 				disabled = false;
 			}
@@ -192,10 +190,11 @@ define(['text!templates/pages/biomaterials.tmpl',
 		updateSendToLabButton: function () {
 			var view = this;
 			var disabled = true;
+			var jtc = view.selectedJobTicketCount;
 
-			if (view.selectedBiomaterialsCount.status1.length > 0
-				&& view.selectedBiomaterialsCount.status0.length == 0
-				&& view.selectedBiomaterialsCount.status2.length == 0) {
+			if (jtc.status0.length == 0
+				&& jtc.status1.length > 0
+				&& jtc.status2.length == 0) {
 
 				disabled = false;
 			}
@@ -203,14 +202,132 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.$('#send-to-lab').button({ disabled: disabled });
 		},
 
+		/***
+		 * Возвращает отфильтрованный список лаб.исследований
+		 *
+		 * @param {Function} filterFunction - получает jobTicket, если возвращает true,
+		 * то лаб.исследования из этого тикета попадают в возвращаемый массив
+		 * @returns {Array} - массив лаб.исследований
+		 */
+		getLabTests: function (filterFunction) {
+			var view = this;
+			var labTests = [];
+
+			view.collection.each(function (jobTicket) {
+
+				if (filterFunction(jobTicket)) {
+					_.each(jobTicket.get('actions'), function (labTest) {
+						labTests.push(labTest);
+					});
+				}
+
+			});
+
+			return labTests;
+		},
+
+		selectedAndStatus10: function (jobTicket) {
+			if (jobTicket.get('selected') && (jobTicket.get('status') < 2)) {
+				return true;
+			}
+		},
+
+		/***
+		 * Готовит данные для печати журнала выполнения работ
+		 * @returns {Array}
+		 */
+		makeWorkList: function () {
+			var view = this;
+			var labTests = view.getLabTests(view.selectedAndStatus10);
+			var workList = [];
+
+			_.each(labTests, function (labTest, index) {
+
+				workList.push({
+					'index': index + 1,
+					'jobTicketDate': labTest.jobTicket.date,
+					'orgStructure': 'где это брать??',
+					'patientFio': labTest.patient.name.raw,
+					'patientSex': labTest.patient.sex,
+					'patientBirthDate': labTest.patient.birthDate,
+					'labTestName': labTest.actionType.name,
+					'tissueTypeName': labTest.biomaterial.tissueType.name,
+					'tubeTypeName': labTest.tubeType.name,
+					'jobTicketLabel': labTest.jobTicket.label,
+					'jobTicketNote': labTest.jobTicket.note,
+					'takenTissueJournalId': labTest.id
+				});
+			});
+
+			return workList;
+		},
+
+		/***
+		 * Запускает печать журнала выполнения работ
+		 */
+		printWorkList: function () {
+			var view = this;
+			var workList = view.makeWorkList();
+
+			if (workList.length) {
+				console.log('workList', workList);
+				new App.Views.Print({
+					data: workList,
+					template: "WorkList"
+				});
+
+			} else {
+
+			}
+
+		},
+
+		makeBarcodes: function (labTests) {
+			var view = this;
+			var barcodes = [];
+
+			_.each(labTests, function (labTest) {
+
+				barcodes.push({
+					datetime: labTest.jobTicket.date,
+					barcode: labTest.id,
+					fio: labTest.patient.name.raw
+				});
+
+			});
+
+			return barcodes;
+		},
+
+		printBarcodes: function () {
+			var view = this;
+			var labTests = view.getLabTests(view.selectedAndStatus10);
+			var barcodes = view.makeBarcodes(labTests);
+
+			if (barcodes.length) {
+				//статус заборов биоматериала для которых начали печатать штрихкод меняется на "Выполняется"
+				view.executeJobTikets();
+
+				console.log('print barcodes', barcodes);
+				new App.Views.Print({
+					data: barcodes,
+					template: "WorkListBCode"
+				});
+			} else {
+				pubsub.trigger('noty', {text: 'Выберите хотя бы один забор биоматериала!', type: 'alert'});
+			}
+
+
+		},
+
 		sendToLab: function () {
 			var view = this;
 
 			view.jobTicketsCollection.reset();
 
-			view.collection.each(function(biomaterial) {
-				if(biomaterial.get('selected')){
-					view.jobTicketsCollection.add({'id': biomaterial.get('id') , 'status': 2});
+			view.collection.each(function (biomaterial) {
+				if (biomaterial.get('selected')) {
+					view.jobTicketsCollection.add({'id': biomaterial.get('id'), 'status': 2});
 				}
 			});
 
@@ -218,7 +335,9 @@ define(['text!templates/pages/biomaterials.tmpl',
 		},
 
 		print: function () {
-			console.log('print');
+
+			//this.printBarcodes();
+			this.printWorkList();
 		},
 
 		initJobTickets: function () {
@@ -227,7 +346,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.jobTicketsCollection = new JobTicketsCollection;
 
 			view.jobTicketsCollection.on('updateAll:success', function () {
-				pubsub.trigger('noty', {text: 'Статус обновлён', type: 'success'});
+				//pubsub.trigger('noty', {text: 'Статус обновлён', type: 'success'});
 				view.collection.fetch();
 			});
 
@@ -236,6 +355,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			});
 
 		},
+
 
 		initCounts: function () {
 			var view = this;
@@ -319,7 +439,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.updateExecuteButton();
 		},
 
-		initResetAllButton: function(){
+		initResetAllButton: function () {
 			var view = this,
 				$resetAllButton = view.$('#reset-all');
 
@@ -349,7 +469,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.$('#print').button()
 				.click(function () {
-					alert("печать");
+
 				})
 				.next()
 				.button({
@@ -359,7 +479,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 					}
 				})
 				.click(function () {
-					var menu = $(this).parent().next().show().position({
+					var menu = $(this).parent().next().children().show().position({
 						my: "left top",
 						at: "left bottom",
 						of: this
@@ -447,7 +567,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.initFilters();
 			view.initStatusFilterButtonset();
-			view.countSelectedBiomaterials();
+			view.countSelectedJobTickets();
 			view.initSendToLabButton();
 			view.initExecuteButton();
 			view.initResetAllButton();
@@ -455,7 +575,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.initPrintButton();
 
 			view.$("#biomaterial-grid").html(view.grid.el);
-			view.$("#biomaterial-count table").append(view.counts.el);
+			view.$("#biomaterial-count").append(view.counts.el);
 
 
 			UIInitialize(view.el);
