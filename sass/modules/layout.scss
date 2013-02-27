@@ -591,16 +591,16 @@ footer {
 				position: relative;
 
 				input {
-					line-height: normal;
+					//line-height: normal;
 					padding-right: 1.5em;
 
-					-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+/*					-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
 					box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
 
 					&:focus {
 						-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
 						box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
-					}
+					}*/
 				}
 			}
 

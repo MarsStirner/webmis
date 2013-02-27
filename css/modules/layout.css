@@ -713,15 +713,14 @@ footer a {
 }
 /* line 593, ../../sass/modules/layout.scss */
 .date-range-scroller .date-range .datetime .date input, .date-range-scroller .date-range .datetime .time input {
-  line-height: normal;
   padding-right: 1.5em;
-  -webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
-  box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
-}
-/* line 600, ../../sass/modules/layout.scss */
-.date-range-scroller .date-range .datetime .date input:focus, .date-range-scroller .date-range .datetime .time input:focus {
-  -webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
-  box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+  /*					-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+  					box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+  
+  					&:focus {
+  						-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+  						box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+  					}*/
 }
 /* line 607, ../../sass/modules/layout.scss */
 .date-range-scroller .date-range .datetime .date {

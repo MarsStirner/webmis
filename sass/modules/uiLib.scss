@@ -149,10 +149,22 @@ input[type="text"], input[type="password"] {
 		color:#000;
 		font-size:$SMALL_FONT;
 		display:inline-block;
-		line-height:100%;
+		//line-height:100%;
 		font-family:Arial, Tahoma, sans-serif;
 		width:100%;
  		@include box-sizing(border-box);
+
+
+		line-height: normal;
+		padding-right: 1.5em;
+
+		-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+		box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+
+		&:focus {
+			-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+			box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+		}
 }
 div.RichText {
 	padding: .6em;
