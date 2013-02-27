@@ -1763,26 +1763,30 @@ body.NoScroll {
   overflow: hidden;
 }
 
-/*@media screen and (min-width: 800px) {
-	body {
-		font: normal 62.5%/1.5em Arial, Helvetica, sans-serif;
-	}
+@media screen and (min-width: 800px) {
+  /* line 32, ../sass/common.scss */
+  body {
+    font: normal 62.5%/1.5em Arial, Helvetica, sans-serif;
+  }
 }
 @media screen and (min-width: 1400px) {
-	body {
-		font: normal 72.5%/1.5em Arial, Helvetica, sans-serif;
-	}
+  /* line 37, ../sass/common.scss */
+  body {
+    font: normal 72.5%/1.5em Arial, Helvetica, sans-serif;
+  }
 }
 @media screen and (min-width: 1600px) {
-	body {
-		font: normal 82.5%/1.5em Arial, Helvetica, sans-serif;
-	}
+  /* line 42, ../sass/common.scss */
+  body {
+    font: normal 82.5%/1.5em Arial, Helvetica, sans-serif;
+  }
 }
 @media screen and (min-width: 1800px) {
-	body {
-		font: normal 92.5%/1.5em Arial, Helvetica, sans-serif;
-	}
-}*/
+  /* line 47, ../sass/common.scss */
+  body {
+    font: normal 92.5%/1.5em Arial, Helvetica, sans-serif;
+  }
+}
 /* line 56, ../sass/common.scss */
 img {
   border: none;

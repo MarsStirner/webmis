@@ -22,9 +22,9 @@ define([
 		},
 
 		events: {
-			"click .Actions.Decrease": "decreaseDate",
-			"click .Actions.Increase": "increaseDate",
-			"click .Actions.ToggleFilters": "toggleFilters"
+			"click .shift-back": "decreaseDate",
+			"click .shift-forward": "increaseDate",
+			"click .toggle-filters": "toggleFilters"
 		},
 
 		increaseDate: function (event) {
@@ -42,8 +42,8 @@ define([
 		setDate: function (increment) {
 			increment = increment || 0;
 
-			var $startDateTime = this.$("#appeal-start-date");
-			var $endDateTime = this.$("#appeal-end-date");
+			var $startDateTime = this.$(".date-range-start");
+			var $endDateTime = this.$(".date-range-end");
 
 			/*var date = new Date;
 
@@ -77,7 +77,7 @@ define([
 		},
 
 		toggleFilters: function (event) {
-			$(event.currentTarget).toggleClass("Pushed");
+			//$(event.currentTarget).toggleClass("Pushed");
 			this.$(".Grid thead tr").toggleClass("EditTh");
 			this.$(".Grid .Filter").toggle();
 		},
@@ -283,7 +283,18 @@ define([
 
 			this.$el.find(".Container").append(Paginator.render().el);
 
-			UIInitialize(this.el);
+			//UIInitialize(this.el);
+
+			this.$(".date-input").datepicker();
+
+			this.$("#appeal-start-time").timepicker({
+				showPeriodLabels: false,
+				defaultTime: "08:00"
+			});
+			this.$("#appeal-end-time").timepicker({
+				showPeriodLabels: false,
+				defaultTime: "07:59"
+			});
 
 			this.$(".print-btn").button();
 			this.$(".shift-back").button({
@@ -298,7 +309,7 @@ define([
 				},
 				text: false
 			});
-			this.$(".toggle-filters-btn").button({icons: {
+			this.$(".toggle-filters").button({icons: {
 				primary: "ui-icon-search"
 			}});
 
@@ -312,8 +323,8 @@ define([
 
 			endDate.setDate(startDate.getDate() + 1);
 
-			this.$("#appeal-start-date").datepicker("setDate", startDate);
-			this.$("#appeal-end-date").datepicker("setDate", endDate);
+			this.$(".date-range-start").datepicker("setDate", startDate);
+			this.$(".date-range-end").datepicker("setDate", endDate);
 
 			this.setDate();
 		}

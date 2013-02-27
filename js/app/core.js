@@ -263,7 +263,7 @@ Core = {
 			}
 
 			// Отдельные условия для дэйтпикеров
-			$clone.find(".SelectDate").each(function () {
+			$clone.find(".SelectDate, .date-input").each(function () {
 				var $this = $(this);
 				var relation = $this.data("relation");
 				var duplicate = $this.data("duplicate");

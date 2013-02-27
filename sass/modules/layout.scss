@@ -566,49 +566,59 @@ footer {
 	background:#FF9900;
 }
 
+.ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title {
+	font-size: 1.2em;
+}
+
 // TESTING
 .date-range-scroller {
 	color: rgb(49, 49, 49);
 
 	.date-range {
 		display: inline-block;
-		padding: 5px;
+
+/*		padding: 5px;
 		background-color: #fbfbfb;
 		background: -webkit-linear-gradient(top, #ededed 0%,#c4c4c4 100%);
 		border: 1px #aaaaaa solid;
-		border-radius: 3px;
-	}
+		border-radius: 3px;*/
 
-	.datetime-input {
-		width: 12em;
+		.datetime {
+			display: inline-block;
 
-		//border: 1px #737477 solid;
+			.date, .time {
+				display: inline-block;
+				position: relative;
 
-		line-height: normal;
+				input {
+					line-height: normal;
+					padding-right: 1.5em;
 
-		-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
-		box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+					-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+					box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
 
-		&:focus {
-			-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
-			box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
-		}
-	}
+					&:focus {
+						-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+						box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+					}
+				}
+			}
 
-	.datetime {
-		display: inline-block;
-		position: relative;
+			.date {
+				width: 10em;
+			}
 
-		.datetime-input {
-			padding-right: 25px;
-		}
+			.time {
+				width: 6.5em;
+			}
 
-		.datetime-icon {
-			position: absolute;
-			right: .3em;
-			top: .3em;
-			//cursor: pointer;
-			color: #777;
+			.date-icon, .time-icon {
+				position: absolute;
+				right: .3em;
+				top: .3em;
+				//cursor: pointer;
+				color: #777;
+			}
 		}
 	}
 }

@@ -28,7 +28,7 @@ body.NoScroll {
 
 //Этот кусок кода управляет зависимостью размера базового шрифта от ширины окна
 
-/*@media screen and (min-width: 800px) {
+@media screen and (min-width: 800px) {
 	body {
 		font: normal 62.5%/1.5em Arial, Helvetica, sans-serif;
 	}
@@ -47,7 +47,7 @@ body.NoScroll {
 	body {
 		font: normal 92.5%/1.5em Arial, Helvetica, sans-serif;
 	}
-}*/
+}
 
 
 

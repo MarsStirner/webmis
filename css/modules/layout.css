@@ -684,42 +684,55 @@ footer a {
   background: #FF9900;
 }
 
-/* line 570, ../../sass/modules/layout.scss */
+/* line 569, ../../sass/modules/layout.scss */
+.ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title {
+  font-size: 1.2em;
+}
+
+/* line 574, ../../sass/modules/layout.scss */
 .date-range-scroller {
   color: #313131;
 }
-/* line 573, ../../sass/modules/layout.scss */
+/* line 577, ../../sass/modules/layout.scss */
 .date-range-scroller .date-range {
   display: inline-block;
-  padding: 5px;
-  background-color: #fbfbfb;
-  background: -webkit-linear-gradient(top, #ededed 0%, #c4c4c4 100%);
-  border: 1px #aaaaaa solid;
-  border-radius: 3px;
+  /*		padding: 5px;
+  		background-color: #fbfbfb;
+  		background: -webkit-linear-gradient(top, #ededed 0%,#c4c4c4 100%);
+  		border: 1px #aaaaaa solid;
+  		border-radius: 3px;*/
 }
-/* line 582, ../../sass/modules/layout.scss */
-.date-range-scroller .datetime-input {
-  width: 12em;
-  line-height: normal;
-  -webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
-  box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+/* line 586, ../../sass/modules/layout.scss */
+.date-range-scroller .date-range .datetime {
+  display: inline-block;
 }
-/* line 592, ../../sass/modules/layout.scss */
-.date-range-scroller .datetime-input:focus {
-  -webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
-  box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
-}
-/* line 598, ../../sass/modules/layout.scss */
-.date-range-scroller .datetime {
+/* line 589, ../../sass/modules/layout.scss */
+.date-range-scroller .date-range .datetime .date, .date-range-scroller .date-range .datetime .time {
   display: inline-block;
   position: relative;
 }
-/* line 602, ../../sass/modules/layout.scss */
-.date-range-scroller .datetime .datetime-input {
-  padding-right: 25px;
+/* line 593, ../../sass/modules/layout.scss */
+.date-range-scroller .date-range .datetime .date input, .date-range-scroller .date-range .datetime .time input {
+  line-height: normal;
+  padding-right: 1.5em;
+  -webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+  box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
 }
-/* line 606, ../../sass/modules/layout.scss */
-.date-range-scroller .datetime .datetime-icon {
+/* line 600, ../../sass/modules/layout.scss */
+.date-range-scroller .date-range .datetime .date input:focus, .date-range-scroller .date-range .datetime .time input:focus {
+  -webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+  box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+}
+/* line 607, ../../sass/modules/layout.scss */
+.date-range-scroller .date-range .datetime .date {
+  width: 10em;
+}
+/* line 611, ../../sass/modules/layout.scss */
+.date-range-scroller .date-range .datetime .time {
+  width: 6.5em;
+}
+/* line 615, ../../sass/modules/layout.scss */
+.date-range-scroller .date-range .datetime .date-icon, .date-range-scroller .date-range .datetime .time-icon {
   position: absolute;
   right: .3em;
   top: .3em;
