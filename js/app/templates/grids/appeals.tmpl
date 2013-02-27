@@ -8,14 +8,14 @@
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="beginDate"><span>Дата и время</span></a>
-					<div class="Filter Hidden">
+					<!--<div class="Filter Hidden">
 						<div class="DatePeriod SingleDate">
 							<div class="FromTo">
 								<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="beginDate">
 							</div>
 							<i class="DateIcon Icon"></i>
 						</div>
-					</div>
+					</div>-->
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="externalId"><span>№ истории болезни</span></a>
@@ -31,29 +31,29 @@
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="birthDate"><span>Дата рожд.</span></a>
-					<div class="Filter Hidden">
+					<!--<div class="Filter Hidden">
 						<div class="DatePeriod SingleDate">
 							<div class="FromTo">
 								<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="birthDate">
 							</div>
 							<i class="DateIcon Icon"></i>
 						</div>
-					</div>
+					</div>-->
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="birthDate"><span>Пол</span></a>
-					<div class="Filter Hidden">
+					<!--<div class="Filter Hidden">
 						<select class="Styled" name="sex">
 							<option value="1" selected="selected">М</option>
 							<option value="2">Ж</option>
 						</select>
-					</div>
+					</div>-->
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="diagnosis"><span>Диагноз</span></a>
-					<div class="Filter Hidden">
+					<!--<div class="Filter Hidden">
 						<input type="text" name="diagnosis" placeholder="Название или номер МКБ" />
-					</div>
+					</div>-->
 				</th>
 				<th>
 					<a class="Actions SortCol"  data-field="phone"><span>Телефон</span></a>
@@ -66,7 +66,6 @@
 		</tbody>
 	</table>
 </script>
-
 
 <script id="appeals-grid-doctor-row" type="text/x-jquery-tmpl">
 		<td {{if !havePrimary}} class="HavePrimary"{{/if}}>
@@ -148,6 +147,7 @@
 		</td>
 </script>
 
+
 <script id="appeals-grid-nurse" type="text/x-jquery-tmpl">
 	<table class="Grid">
 		<thead>
@@ -155,20 +155,20 @@
 		<tr>
 			<th>
 				<a class="Actions SortCol" data-field="eventId"><span>№</span></a>
-				<div class="Filter Hidden">
+				<!--<div class="Filter Hidden">
 					<input type="text" name="eventId" placeholder="№" />
-				</div>
+				</div>-->
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="beginDate"><span>Дата</span></a>
-				<div class="Filter Hidden">
+				<!--<div class="Filter Hidden">
 					<div class="DatePeriod SingleDate">
 						<div class="FromTo">
 							<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="beginDate">
 						</div>
 						<i class="DateIcon Icon"></i>
 					</div>
-				</div>
+				</div>-->
 
 			</th>
 			<th>
@@ -185,28 +185,28 @@
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="birthDate"><span>Дата рожд.</span></a>
-				<div class="Filter Hidden">
+				<!--<div class="Filter Hidden">
 					<div class="DatePeriod SingleDate">
 						<div class="FromTo">
 							<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="birthDate">
 						</div>
 						<i class="DateIcon Icon"></i>
 					</div>
-				</div>
+				</div>-->
 			</th>
 			<th>
-				<a class="Actions SortCol"  data-field="status"><span>Статус</span></a>
-				<div class="Filter Hidden">
+				<a class="Actions SortCol" data-field="status"><span>Статус</span></a>
+				<!--<div class="Filter Hidden">
 					<input type="text" name="status" placeholder="Статус" />
-				</div>
+				</div>-->
 			</th>
 			<th>
-				<a class="Actions SortCol"  data-field="actions"><span>Действия / отделение</span></a>
-				<div class="Hidden Filter">
+				<a class="Actions SortCol" data-field="actions"><span>Действия / отделение</span></a>
+				<!--<div class="Hidden Filter">
 					<select class="Styled" id="deps-dictionary" name="departmentId">
 						<option value="">...</option>
 					</select>
-				</div>
+				</div>-->
 			</th>
 		</tr>
 		</thead>
@@ -367,6 +367,7 @@
 		</td>
 </script>
 
+
 <script id="appeals-grid-doctor-department" type="text/x-jquery-tmpl">
 	<table class="Grid">
 		<thead>
@@ -481,6 +482,7 @@
             ${checkOut}
         </td>
 </script>
+
 
 <script id="appeals-grid-nurse-department" type="text/x-jquery-tmpl">
 
