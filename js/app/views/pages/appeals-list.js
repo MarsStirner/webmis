@@ -285,16 +285,16 @@ define([
 
 			//UIInitialize(this.el);
 
-			this.$(".date-input").datepicker();
+			this.$(".date-input").datepicker().mask("99.99.9999");
 
 			this.$("#appeal-start-time").timepicker({
 				showPeriodLabels: false,
 				defaultTime: "08:00"
-			});
+			}).mask("99.99");
 			this.$("#appeal-end-time").timepicker({
 				showPeriodLabels: false,
 				defaultTime: "07:59"
-			});
+			}).mask("99.99");
 
 			this.$(".print-btn").button();
 			this.$(".shift-back").button({
