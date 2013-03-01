@@ -70,8 +70,8 @@ define([
 		events: {
 			"click  .Actions.Save"  : "onSaveClick",
 			"click  .Actions.Cancel": "onCancelClick",
-			"click  .Actions.Next"  : "onNextStepClick",
-			"click  .Actions.Prev"  : "onPrevStepClick",
+			"click  .Next"  : "onNextStepClick",
+			"click  .Prev"  : "onPrevStepClick",
 			"keyup  :input"         : "onFieldChange",
 			"change :input"         : "onFieldChange",
 			"change select"         : "onFieldChange"
@@ -426,6 +426,8 @@ define([
 
 			this.$(".ToolTip").hide();
 
+			this.$(".Prev,.Next,.Save").button();
+			this.$(".Update").hide();
 			this.$(".Prev").toggle(!this.isOnFirstPage());
 			this.$(".Next").toggle(!this.isOnLastPage());
 
@@ -568,6 +570,8 @@ define([
 			var beautyJSON = this.model.toJSON();
 
 			this.$el.html($.tmpl(this.template, beautyJSON));
+
+			//this.$("select").width("100%").select2({minimumResultsForSearch: 10});
 
 			this.assign({
 				//"#relations": this.relationsView,

@@ -11,7 +11,8 @@ define(["models/patient",
 
 		events: {
 			"click .Actions.Print": "showPrint",
-			"click .NewAppeal": "onNewAppealClick"
+			"click .NewAppeal": "onNewAppealClick",
+			"click .EditAppeal": "onEditAppealClick"
 		},
 
 		initialize: function () {
@@ -82,7 +83,14 @@ define(["models/patient",
 					title: "Новая госпитализация"
 				});
 				notClosedAlert.dialog("open");
+			} else {
+				App.Router.navigate("patients/" + self.model.get("id") + "/appeals/new/", {trigger: true});
 			}
+		},
+
+		onEditAppealClick: function (event) {
+			//if (!this.model.isClosed())
+			App.Router.navigate("/patients/" + this.model.get("id") + "/edit/", {trigger: true});
 		},
 
 		// Загрузился шаблон карточки пациента
@@ -251,6 +259,9 @@ define(["models/patient",
 					}
 
 					this.$("#page-head").html(Breadcrumbs.render().el);
+
+					this.$(".NewAppeal").button({icons: {primary: "icon-plus icon-color-green"}});
+					this.$(".EditAppeal").button();
 				}
 			});
 		},

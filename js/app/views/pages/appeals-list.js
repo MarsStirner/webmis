@@ -290,27 +290,27 @@ define([
 			this.$("#appeal-start-time").timepicker({
 				showPeriodLabels: false,
 				defaultTime: "08:00"
-			}).mask("99.99");
+			}).mask("99:99");
 			this.$("#appeal-end-time").timepicker({
 				showPeriodLabels: false,
 				defaultTime: "07:59"
-			}).mask("99.99");
+			}).mask("99:99");
 
-			this.$(".print-btn").button();
+			this.$(".print-btn").button({icons: {primary: "icon-print"}});
 			this.$(".shift-back").button({
 				icons: {
-					primary: "ui-icon-carat-1-w"
+					primary: "icon-angle-left"
 				},
 				text: false
 			});
 			this.$(".shift-forward").button({
 				icons: {
-					primary: "ui-icon-carat-1-e"
+					primary: "icon-angle-right"
 				},
 				text: false
 			});
 			this.$(".toggle-filters").button({icons: {
-				primary: "ui-icon-search"
+				primary: "icon-filter"
 			}});
 
 			var now = new Date();

@@ -75,10 +75,10 @@
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
-		> textarea {
+		textarea {
 			@include box-sizing(content-box);
 		}
 		&.HasValidationToolTip {
@@ -94,7 +94,7 @@
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
         .LineBlock {
@@ -113,7 +113,7 @@
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> .Styled.Button {
@@ -132,7 +132,7 @@
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> .Styled.Button {
@@ -151,7 +151,7 @@
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> .Styled.Button {
@@ -168,7 +168,7 @@
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> select {
@@ -189,7 +189,7 @@
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> .Styled.Button {
@@ -207,7 +207,7 @@
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> .Styled.Button {
@@ -224,7 +224,7 @@
           white-space:normal;
           word-spacing:normal;
         }
-        > input {
+        input {
           @include box-sizing(content-box);
         }
         > select {
