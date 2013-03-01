@@ -467,22 +467,27 @@ define(['text!templates/pages/biomaterials.tmpl',
 		initPrintButton: function () {
 			var view = this;
 
-			view.$('#print').button()
+			view.$('#print').button({
+				label: 'Печать'
+			})
 				.click(function () {
 
 				})
-				.next()
-				.button({
+				.next().button({
 					text: false,
 					icons: {
 						primary: "ui-icon-triangle-1-s"
 					}
 				})
 				.click(function () {
-					var menu = $(this).parent().next().children().show().position({
-						my: "left top",
-						at: "left bottom",
-						of: this
+					var menu = $(this)
+						.parent().next('.split-button-dropdown')
+						.show()
+						.position({
+						my: "right top",
+						at: "right bottom",
+						of: $(this).parent(),
+							collision: "fit"
 					});
 					$(document).one("click", function () {
 						menu.hide();
