@@ -272,12 +272,13 @@ define(['text!templates/pages/biomaterials.tmpl',
 			if (workList.length) {
 				console.log('workList', workList);
 				new App.Views.Print({
-					data: workList,
+					data: {'jobs': workList},
 					template: "WorkList"
 				});
 
 			} else {
 
+				pubsub.trigger('noty', {text: 'Выберите хотя бы один забор биоматериала!', type: 'alert'});
 			}
 
 		},
@@ -310,7 +311,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 				console.log('print barcodes', barcodes);
 				new App.Views.Print({
-					data: barcodes,
+					data: {'barcodes': barcodes},
 					template: "WorkListBCode"
 				});
 			} else {
@@ -337,7 +338,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 		print: function () {
 
 			//this.printBarcodes();
-			this.printWorkList();
+			//this.printWorkList();
 		},
 
 		initJobTickets: function () {
@@ -372,6 +373,11 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.tissues = new App.Collections.DictionaryValues("", {
 				name: "tissueTypes"
 			});
+			view.tissues.setParams({
+				sortingField: 'name',
+				sortingMethod: 'asc'
+			});
+
 			view.tissues.on("reset", this.onTissuesLoaded, this);
 			view.tissues.fetch();
 
@@ -398,7 +404,9 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.departments.setParams({
 				filter: {
 					hasBeds: true
-				}
+				},
+				sortingField: 'name',
+				sortingMethod: 'asc'
 			});
 			view.departments.on("reset", view.onDepartmentsLoaded, view);
 			view.departments.fetch();
@@ -467,11 +475,36 @@ define(['text!templates/pages/biomaterials.tmpl',
 		initPrintButton: function () {
 			var view = this;
 
+			var options = {
+				label: 'Печать',
+				handler: view.printBarcodes,
+				scope: view,
+				dropDownItems: [{
+					label: 'Печать штрихкодов',
+					handler: view.printBarcodes
+				},{
+					label: 'Печать журнала выполнений работ',
+					handler: view.printWorkList
+				}]
+			}
+
+			var $list = view.$('.split-button-dropdown');
+
+			_(options.dropDownItems).each(function (ddi) {
+				$list.append($("<li><a href='#' class='SubPrint'>" + ddi.label + "</a></li>").click(function () {
+					console.log('пятница!!!!')
+					event.preventDefault();
+					ddi.handler.apply(options.scope);
+				}));
+			});
+
+
+
 			view.$('#print').button({
-				label: 'Печать'
+				label: options.label
 			})
 				.click(function () {
-
+					options.handler.apply(options.scope);
 				})
 				.next().button({
 					text: false,
@@ -486,8 +519,8 @@ define(['text!templates/pages/biomaterials.tmpl',
 						.position({
 						my: "right top",
 						at: "right bottom",
-						of: $(this).parent(),
-							collision: "fit"
+						of: this,
+						collision: "fit"
 					});
 					$(document).one("click", function () {
 						menu.hide();
@@ -498,7 +531,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 				.buttonset()
 				.next()
 				.hide()
-				.menu();
+				.menu().css({'position':'absolute'});
 
 		},
 

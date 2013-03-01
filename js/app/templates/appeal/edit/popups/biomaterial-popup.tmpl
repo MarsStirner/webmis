@@ -15,7 +15,7 @@
 	<h3> Код ${patient.id}</h3>
 
 	<h3>Тип биоматериала: ${biomaterial.tissueType.name}</h3>
-	<h3> Количество: ${volume} ${biomaterial.unit.name}</h3>
+	{{if volume}}<h3> Количество: ${volume} ${biomaterial.unit.name}</h3>{{/if}}
 
 
 	<table class="Grid">
@@ -35,9 +35,17 @@
 			<tr>
 				<!--<td><input type="checkbox" class="lab_test_id" name="lab_test_id" value="${id}" checked/></td>-->
 				<td>${actionType.name}</td>
-				<td>${biomaterial.amount} ${biomaterial.unit.name}</td>
-				<td>${tubeType.name}</td>
-				<td><span class="color-label" style="background-color:${tubeType.color};" title="${tubeType.color}"></span></td>
+				<td>{{if biomaterial.amount}}${biomaterial.amount} ${biomaterial.unit.name}{{/if}}</td>
+				<td>
+					{{if tubeType.name}}
+						${tubeType.name}
+					{{/if}}
+				</td>
+				<td>
+					{{if tubeType.color}}
+						<span class="color-label" style="background-color:${tubeType.color};" title="${tubeType.color}"></span>
+					{{/if}}
+				</td>
 		</tr>
 		{{/each}}
 		</tbody>
