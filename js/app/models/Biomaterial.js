@@ -8,7 +8,7 @@ define([], function () {
 			actionType: '',
 			testTube: '',
 			status: '',
-			selected: ''
+			selected: false
 		},
 		idAttribute: 'id'
 
