@@ -245,16 +245,18 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.tissues = new App.Collections.DictionaryValues("", {
 				name: "tissueTypes"
 			});
-            view.depended(view.tissues);
+
 			view.tissues.setParams({
 				sortingField: 'name',
 				sortingMethod: 'asc'
 			});
 
-			var tissueSelect = new SelectView({
+			view.tissueSelect = new SelectView({
 				collection: view.tissues,
 				el: view.$('#biomaterial')
 			});
+
+            view.depended(view.tissueSelect);
 
 		},
 
@@ -263,7 +265,6 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			//список отделений
 			view.departments = new App.Collections.Departments();
-            view.depended(view.departments);
 
 			view.departments.setParams({
 				filter: {
@@ -278,7 +279,9 @@ define(['text!templates/pages/biomaterials.tmpl',
 				el: view.$('#departments'),
 				selectText: 'name',
                 initSelection: view.collection.departmentId
-			})
+			});
+
+            view.depended(view.departmentSelect);
 
 		},
 
