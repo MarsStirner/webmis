@@ -390,13 +390,18 @@ define([
 		render: function (modelValidChecked) {
 			var self = this;
 
-			this.$el.html($.tmpl(this.template, this.model.toJSON()));
+			if (!this.mainIsRendered) {
+				this.$el.html($.tmpl(this.template, this.model.toJSON()));
+				this.mainIsRendered = true;
+			} else {
+				//this.$(".EditForm").prepend("<ul class='LineBlockHolder'></ul>");
+			}
 
 			if (this.currentView) {
-				this.currentView.remove();
+				//this.currentView.remove();
 				this.currentView.unbind();
 				this.currentView.off(null, null, this);
-				this.currentView.el = null;
+				//this.currentView.el = null;
 			}
 
 			this.currentView = this.steps[this.currentStep];

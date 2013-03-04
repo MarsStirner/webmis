@@ -754,7 +754,6 @@ select.Regular:disabled {
   border: 1px solid #737477;
   width: 17em;
   padding-right: 2em;
-  padding-top: 1px;
   position: relative;
   display: -moz-inline-stack;
   display: inline-block;

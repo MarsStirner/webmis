@@ -68,6 +68,7 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 			this.$el.append( $("#authorization-page").tmpl() );
 			this.$(".LoginForm" ).html( $("#authorization-page-login-form").tmpl() );
 			this.$("#auth-error").css({"width": "100%", "margin-left": "-1.2em", "margin-bottom": "1em"}).hide();
+			this.$(".Submit").button();
 		},
 		render: function(){
 			$("#wrapper" ).html(this.el);
