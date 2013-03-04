@@ -40,6 +40,14 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.initJobs();
 
+            pubsub.on('departments:change', function(id){
+                console.log('departments:change',id)
+            });
+
+            pubsub.on('biomaterial:change', function(id){
+                console.log('biomaterial:change',id)
+            })
+
 
 
 
@@ -237,6 +245,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.tissues = new App.Collections.DictionaryValues("", {
 				name: "tissueTypes"
 			});
+            view.depended(view.tissues);
 			view.tissues.setParams({
 				sortingField: 'name',
 				sortingMethod: 'asc'
@@ -252,8 +261,10 @@ define(['text!templates/pages/biomaterials.tmpl',
 		initDepartments: function () {
 			var view = this;
 
-			//Получаем список отделений
+			//список отделений
 			view.departments = new App.Collections.Departments();
+            view.depended(view.departments);
+
 			view.departments.setParams({
 				filter: {
 					hasBeds: true
@@ -262,11 +273,12 @@ define(['text!templates/pages/biomaterials.tmpl',
 				sortingMethod: 'asc'
 			});
 
-			var departmentSelect = new SelectView({
+			view.departmentSelect = new SelectView({
 				collection: view.departments,
 				el: view.$('#departments'),
-				selectText: 'name'
-			});
+				selectText: 'name',
+                initSelection: view.collection.departmentId
+			})
 
 		},
 
@@ -290,14 +302,11 @@ define(['text!templates/pages/biomaterials.tmpl',
 		},
 
 		initResetAllButton: function () {
-			var view = this,
-				$resetAllButton = view.$('#reset-all');
+			var view = this;
 
-			$resetAllButton
-				.button()
-				.on('click', function () {
-					view.setStatus(view.collection.models,0);
-				});
+			view.$('#reset-all').button().on('click', function () {
+				view.setStatus(view.collection.models,0);
+			});
 
 		},
 
