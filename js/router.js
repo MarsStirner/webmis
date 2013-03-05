@@ -80,7 +80,14 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			"biomaterials/": "biomaterials",
 
 
-			"prints/": "prints"
+			"prints/": "prints",
+
+			"test/": "test"
+		},
+
+		test: function () {
+			$("#wrapper").append("<button class='lol'>OLOLOLO</button>");
+			$(".lol").button();
 		},
 
 		authorization: function () {

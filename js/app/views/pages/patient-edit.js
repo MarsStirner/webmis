@@ -184,8 +184,8 @@ define([
 				} else {
 					$field.next().removeClass("WrongField");
 				}
-			} else if ($field.hasClass("hasDatepicker")) {
-				$field.parents(".DatePeriod").removeClass("WrongField");
+			//} else if ($field.hasClass("hasDatepicker")) {
+				//$field.parents(".DatePeriod").removeClass("WrongField");
 			} else {
 				$field.removeClass("WrongField");
 			}
@@ -319,9 +319,10 @@ define([
 				console.log(wrongFieldsSelector);
 				this.$(wrongFieldsSelector).each(function () {
 					//if (!$(this).data("subbind")) {
-						if ($(this).hasClass("hasDatepicker")) {
-							$(this).parents(".DatePeriod").addClass("WrongField");
-						} else if ($(this).is("select")) {
+						//if ($(this).hasClass("hasDatepicker")) {
+							//$(this).parents(".DatePeriod").addClass("WrongField");
+						//} else
+						if ($(this).is("select")) {
 							if ($(this).is(".select2")) {
 								$(this).prev().addClass("WrongField");
 							} else {

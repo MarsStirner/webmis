@@ -5,7 +5,7 @@
 		</label>
 		<input type="text" name="medicalInfo-drugIntolerances-${cid}-substance">
 	</div>
-	<div class="QuartCol">
+	<div class="HalfCol">
 		<span class="Label">Степень</span>
 		<select class="Styled" name="medicalInfo-drugIntolerances-${cid}-degree">
 			<option value="" selected="selected">...</option>
@@ -17,14 +17,17 @@
 			 {{/each}}-->
 		</select>
 	</div>
-	<div class="HalfCol">
+	<div class="QuartCol">
 		<span class="Label">Дата установления</span>
-		<div class="DatePeriod SingleDate">
-			<div class="FromTo">
+		<!--<div class="DatePeriod SingleDate">
+			<div class="FromTo">-->
+		<div class="date">
 				<input type="text" name="medicalInfo-drugIntolerances-${cid}-checkingDate" placeholder="дд.мм.гггг" class="SelectDate" data-type="date" data-maxdate="0"/>
-			</div>
-			<i class="DateIcon Icon"></i>
+			<i class="icon-calendar date-icon"></i>
 		</div>
+			<!--</div>
+			<i class="DateIcon Icon"></i>
+		</div>-->
 	</div>
 	<div class="HalfCol">
 		<label>

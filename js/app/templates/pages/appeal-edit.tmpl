@@ -66,27 +66,64 @@
 									<input class="Disabled NotEditable" disabled="disabled" type="text" name="number" placeholder="" />
 								</div>
 							</div>
+						</li>
+						<li>
 							<div class="LineBlock">
-								<div class="HalfCol">
+								<div class="HalfCol datetime">
+									<label> Дата окончания </label>
+									<!--<div class="date">-->
+										<input type="text" class="date-input"/>
+										<!--<i class="icon-calendar date-icon"></i>-->
+									<!--</div>-->
+									<!--<div class="time">-->
+										<input type="text" class="time-input"/>
+										<!--<i class="icon-time time-icon"></i>
+									</div>-->
+								</div>
+							</div>
+							<div class="LineBlock">
+								<div class="QuartCol">
 									<label> Дата начала </label>
-
-									<div class="DateTime">
+									<div class="date">
+										<!--<input type="text" name="beginDate" id="appeal-start-date" placeholder="дд.мм.гггг" data-relation="#appeal-start-time" class="date-input date-range-start Mandatory">-->
+										<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="appeal[date][start]" placeholder="дд.мм.гггг" class="date-input SelectDate Mandatory" required="required" data-mindate="${-Math.floor((new Date().getTime() - new Date(patient.birthDate).getTime())/(1000*60*60*24))}"/>
+										<i class="icon-calendar date-icon"></i>
+									</div>
+									<!--<div class="DateTime">
 										<div class="DatePeriod SingleDate Mandatory">
 											<div class="FromTo">
 												<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="appeal[date][start]" placeholder="дд.мм.гггг" class="SelectDate" required="required" data-mindate="${-Math.floor((new Date().getTime() - new Date(patient.birthDate).getTime())/(1000*60*60*24))}"/>
 											</div>
 											<i class="DateIcon Icon"></i>
 										</div>
-										<!--<input type="text" id="appeal-start-time" class="ShortInput" data-relation="#appeal-start-date" name="appeal[time][start]" required="required">-->
+										&lt;!&ndash;<input type="text" id="appeal-start-time" class="ShortInput" data-relation="#appeal-start-date" name="appeal[time][start]" required="required">&ndash;&gt;
 										<div class="SingleTime">
 											<input type="text" id="appeal-start-time" class="HourPicker Mandatory" data-relation="#appeal-start-date" name="appeal[time][start]" placeholder="чч:мм" required="required"/>
 										</div>
+									</div>-->
+								</div>
+								<div class="QuartCol">
+									<div class="time">
+										<!--<input type="text" class="time-input hasTimepicker" id="appeal-start-time"  placeholder="ЧЧ:ММ" data-relation="#appeal-start-date" value="08:00">-->
+										<input type="text" id="appeal-start-time" class="HourPicker Mandatory" data-relation="#appeal-start-date" name="appeal[time][start]" placeholder="чч:мм" required="required"/>
+										<i class="icon-time time-icon"></i>
 									</div>
 								</div>
-								<div class="HalfCol">
+								<div class="QuartCol">
 									<label> Дата окончания </label>
+									<div class="date">
+										<input type="text" id="appeal-end-date" data-relation="#appeal-end-time" name="appeal[date][end]" placeholder="дд.мм.гггг" class="SelectDate" />
+										<i class="icon-calendar date-icon"></i>
+									</div>
+								</div>
+								<div class="QuartCol">
+									<div class="time">
+										<input type="text" id="appeal-end-time" class="HourPicker" data-relation="#appeal-end-date" name="appeal[time][end]" placeholder="чч:мм"/>
+										<i class="icon-time time-icon"></i>
+									</div>
+								</div>
 
-									<div class="DateTime">
+									<!--<div class="DateTime">
 										<div class="DatePeriod SingleDate">
 											<div class="FromTo">
 												<input type="text" id="appeal-end-date" data-relation="#appeal-end-time" name="appeal[date][end]" placeholder="дд.мм.гггг" class="SelectDate" />
@@ -96,8 +133,8 @@
 										<div class="SingleTime">
 											<input type="text" id="appeal-end-time" class="HourPicker" data-relation="#appeal-end-date" name="appeal[time][end]" placeholder="чч:мм"/>
 										</div>
-									</div>
-								</div>
+									</div>-->
+
 								<div class="HalfCol WithoutName">
 									<div class="InlineForm">
 										<label>

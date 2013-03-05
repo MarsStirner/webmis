@@ -580,6 +580,8 @@ footer {
 	display: inline-block;
 	position: relative;
 
+	width: 100%;
+
 	input {
 		//line-height: normal;
 		padding-right: 1.5em;
@@ -594,11 +596,22 @@ footer {
 	}
 }
 
+/*.datetime {
+	.date {
+		width: 75%;
+	}
+
+	.time {
+		width: 25%;
+	}
+}*/
+
 .date-icon, .time-icon {
 	position: absolute;
-	right: -1.6em;
+	right: -.6em;
 	top: .4em;
 	color: #777;
+	cursor: pointer;
 }
 
 .date-range-scroller {
@@ -659,7 +672,7 @@ footer {
 	margin-top: -.55em !important;
 }
 
-.LineBlockHolder {
+/*.LineBlockHolder {
 	> li {
 		.LineBlock {
 			.ui-button {
@@ -667,7 +680,7 @@ footer {
 			}
 		}
 	}
-}
+}*/
 
 /*
 #page-head .date-range {

@@ -1,5 +1,6 @@
 define([
 	"text!templates/pages/representative-item.tmpl",
+	"views/widget",
 	"models/appeal",
 	"models/flat-directory",
 	"views/form/abstract-line",
@@ -10,7 +11,7 @@ define([
 	"views/mkb-directory",
 	"views/pages/appeal-representative",
 	"views/appeals-history"
-], function (representativeTmpl) {
+], function (representativeTmpl, Widget) {
 	App.Views.AppealEdit = Form.extend({
 		model: App.Models.Appeal,
 
@@ -445,6 +446,19 @@ define([
 			Diagnoses.getAttendants().forEach(function (model) {
 				view.createDiagnosis(model);
 			});
+
+
+
+
+			var ddate = new Widget.Date({
+				el: this.$(".datetime .date-input")
+			}).render();
+
+			var ttime = new Widget.Time({
+				el: this.$(".datetime .time-input")
+			}).render();
+
+
 
 			UIInitialize(this.el);
 

@@ -24,7 +24,7 @@
 		<input type="text" name="payments-${model.cid}-number" placeholder="Номер" data-maxlength="16"/>
 	</div>
 	{{if type == 'dms'}}
-		<div class="QuartCol"></div>
+		<!--<div class="QuartCol"></div>-->
 	{{/if}}
 	<div class="LineCol">
 		<label>
@@ -49,24 +49,31 @@
 		<label>
 			Дата выдачи
 		</label>
-		<div class="DatePeriod SingleDate">
-			<div class="FromTo">
+		<!--<div class="DatePeriod SingleDate">
+			<div class="FromTo">-->
+			<div class="date">
 				<input type="text" name="payments-${model.cid}-rangePolicyDate-start" placeholder="дд.мм.гггг" class="SelectDate" data-type="date" data-maxdate="0"/>
+				<i class="icon-calendar date-icon"></i>
 			</div>
+			<!--</div>
 			<i class="DateIcon Icon"></i>
-		</div>
+		</div>-->
 	</div>
-	<div class="HalfCol">
+	<div class="QuartCol">
 		<label>
 			Дата окончания действия
 		</label>
-		<div class="DatePeriod SingleDate">
-			<div class="FromTo">
+		<!--<div class="DatePeriod SingleDate">
+			<div class="FromTo">-->
+			<div class="date">
 				<input type="text" name="payments-${model.cid}-rangePolicyDate-end" placeholder="дд.мм.гггг" class="SelectDate" data-type="date" data-mindate="1"/>
-			</div>
+					<i class="icon-calendar date-icon"></i>
+				</div>
+			<!--</div>
 			<i class="DateIcon Icon"></i>
-		</div>
+		</div>-->
 	</div>
+	<!--<div class="QuartCol"></div>-->
 	<div class="LineCol">
 		<label>
 			Примечание

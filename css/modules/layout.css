@@ -698,8 +698,9 @@ footer a {
 .date, .time {
   display: inline-block;
   position: relative;
+  width: 100%;
 }
-/* line 583, ../../sass/modules/layout.scss */
+/* line 585, ../../sass/modules/layout.scss */
 .date input, .time input {
   padding-right: 1.5em;
   		/*					-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
@@ -711,31 +712,41 @@ footer a {
   							}*/
 }
 
-/* line 597, ../../sass/modules/layout.scss */
+/*.datetime {
+	.date {
+		width: 75%;
+	}
+
+	.time {
+		width: 25%;
+	}
+}*/
+/* line 609, ../../sass/modules/layout.scss */
 .date-icon, .time-icon {
   position: absolute;
-  right: -1.6em;
+  right: -0.6em;
   top: .4em;
   color: #777;
+  cursor: pointer;
 }
 
-/* line 604, ../../sass/modules/layout.scss */
+/* line 617, ../../sass/modules/layout.scss */
 .date-range-scroller {
   color: #777;
 }
-/* line 607, ../../sass/modules/layout.scss */
+/* line 620, ../../sass/modules/layout.scss */
 .date-range-scroller .date-range {
   display: inline-block;
 }
-/* line 610, ../../sass/modules/layout.scss */
+/* line 623, ../../sass/modules/layout.scss */
 .date-range-scroller .date-range .date {
   width: 10em;
 }
-/* line 614, ../../sass/modules/layout.scss */
+/* line 627, ../../sass/modules/layout.scss */
 .date-range-scroller .date-range .time {
   width: 6.5em;
 }
-/* line 618, ../../sass/modules/layout.scss */
+/* line 631, ../../sass/modules/layout.scss */
 .date-range-scroller .date-range .date-icon, .date-range-scroller .date-range .time-icon {
   position: absolute;
   right: .3em;
@@ -743,12 +754,12 @@ footer a {
   color: #777;
 }
 
-/* line 628, ../../sass/modules/layout.scss */
+/* line 641, ../../sass/modules/layout.scss */
 .icon-color-green {
   color: #009F1F;
 }
 
-/* line 632, ../../sass/modules/layout.scss */
+/* line 645, ../../sass/modules/layout.scss */
 .button-color-green {
   background: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyYzQzZCIvPjxzdG9wIG9mZnNldD0iNDElIiBzdG9wLWNvbG9yPSIjMzBhMzFhIi8+PHN0b3Agb2Zmc2V0PSI2MiUiIHN0b3AtY29sb3I9IiMzMGEzMWEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM1MmM0M2QiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=");
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #52c43d), color-stop(41%, #30a31a), color-stop(62%, #30a31a), color-stop(100%, #52c43d));
@@ -760,13 +771,13 @@ footer a {
   	background: linear-gradient(top, #009F1F 0%,#009F1F 100%);*/
   color: #fff;
 }
-/* line 644, ../../sass/modules/layout.scss */
+/* line 657, ../../sass/modules/layout.scss */
 .button-color-green .ui-button-text {
   text-shadow: none;
 }
 
 /* to override jqueryui icons for font icons */
-/* line 651, ../../sass/modules/layout.scss */
+/* line 664, ../../sass/modules/layout.scss */
 [class^="icon-"],
 [class*=" icon-"] {
   background: none !important;
@@ -775,16 +786,20 @@ footer a {
   padding: .1em 0 0 .1em !important;
 }
 
-/* line 658, ../../sass/modules/layout.scss */
+/* line 671, ../../sass/modules/layout.scss */
 .ui-button-icon-only .ui-icon, .ui-button-text-icon-primary .ui-icon, .ui-button-text-icon-secondary .ui-icon, .ui-button-text-icons .ui-icon, .ui-button-icons-only .ui-icon {
   margin-top: -0.55em !important;
 }
 
-/* line 665, ../../sass/modules/layout.scss */
-.LineBlockHolder > li .LineBlock .ui-button {
-  top: 1.5em;
-}
-
+/*.LineBlockHolder {
+	> li {
+		.LineBlock {
+			.ui-button {
+				top: 1.5em;
+			}
+		}
+	}
+}*/
 /*
 #page-head .date-range {
 	float: left;

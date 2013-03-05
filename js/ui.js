@@ -567,7 +567,7 @@ $(document).ready(function(){
 
 			var $tip = this.$el;
 			var pos = $target.data("tooltip-position") || "right";
-			var p = $target.position();
+			var p = $target.offset();
 			var x, y;
 
 			//console.log($target.offset(), $target.width(), $target.height());

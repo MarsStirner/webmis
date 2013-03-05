@@ -40,7 +40,7 @@
 /* line 36, ../../sass/modules/editform.scss */
 .EditForm .LineBlock .LineCol {
   display: inline-block;
-  vertical-align: top;
+  vertical-align: bottom;
   word-spacing: normal;
   white-space: normal;
   width: 50%;
@@ -127,7 +127,7 @@
   width: 75%;
   display: inline-block;
   padding-right: 3em;
-  vertical-align: top;
+  vertical-align: bottom;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -153,7 +153,7 @@
   width: 50%;
   display: inline-block;
   padding-right: 3em;
-  vertical-align: top;
+  vertical-align: bottom;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -179,7 +179,7 @@
   width: 25%;
   display: inline-block;
   padding-right: 3em;
-  vertical-align: top;
+  vertical-align: bottom;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -205,7 +205,7 @@
   display: inline-block;
   width: 12.5%;
   padding-right: 3em;
-  vertical-align: top;
+  vertical-align: bottom;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -237,7 +237,7 @@
   display: inline-block;
   width: 37.5%;
   padding-right: 3em;
-  vertical-align: top;
+  vertical-align: bottom;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -262,7 +262,7 @@
   width: 33.3%;
   display: inline-block;
   padding-right: 3em;
-  vertical-align: top;
+  vertical-align: bottom;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -288,7 +288,7 @@
   display: inline-block;
   width: 10%;
   padding-right: 3em;
-  vertical-align: top;
+  vertical-align: bottom;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -604,34 +604,34 @@
 
 /* line 497, ../../sass/modules/editform.scss */
 .AddLine {
-  padding-top: 2.7em;
+  height: 2.25em;
 }
 
-/* line 500, ../../sass/modules/editform.scss */
+/* line 501, ../../sass/modules/editform.scss */
 .SearchLine {
   padding-top: 1.8em;
 }
 
-/* line 503, ../../sass/modules/editform.scss */
+/* line 504, ../../sass/modules/editform.scss */
 .SubLine {
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
   margin-right: 3em;
   padding: 0.4em 0 0.3em 0;
 }
-/* line 508, ../../sass/modules/editform.scss */
+/* line 509, ../../sass/modules/editform.scss */
 .SubLine li {
   display: inline;
   font-size: 1.2em;
   padding-right: 1.5em;
 }
 
-/* line 516, ../../sass/modules/editform.scss */
+/* line 517, ../../sass/modules/editform.scss */
 .ChangeHistory {
   color: #6D6D71;
   font-size: 1.2em;
 }
-/* line 519, ../../sass/modules/editform.scss */
+/* line 520, ../../sass/modules/editform.scss */
 .ChangeHistory li {
   padding-bottom: 0.4em;
   margin-bottom: 0.4em;
@@ -639,7 +639,7 @@
   word-spacing: -0.3em;
   white-space: nowrap;
 }
-/* line 525, ../../sass/modules/editform.scss */
+/* line 526, ../../sass/modules/editform.scss */
 .ChangeHistory li .Field {
   float: none;
   display: inline-block;
@@ -647,59 +647,59 @@
   word-spacing: normal;
 }
 
-/* line 533, ../../sass/modules/editform.scss */
+/* line 534, ../../sass/modules/editform.scss */
 .Warning {
   color: #FF0000;
 }
 
-/* line 537, ../../sass/modules/editform.scss */
+/* line 538, ../../sass/modules/editform.scss */
 .BedListHolder {
   padding-bottom: 1em;
   color: #6C6C71;
   margin-left: -1em;
 }
 
-/* line 542, ../../sass/modules/editform.scss */
+/* line 543, ../../sass/modules/editform.scss */
 .BedListHeader {
   padding-bottom: 0.6em;
   font-size: 1.3em;
 }
 
-/* line 546, ../../sass/modules/editform.scss */
+/* line 547, ../../sass/modules/editform.scss */
 .WardLabel {
   display: inline-block;
   width: 6em;
 }
 
-/* line 550, ../../sass/modules/editform.scss */
+/* line 551, ../../sass/modules/editform.scss */
 .BedLabel {
   display: inline-block;
 }
 
-/* line 554, ../../sass/modules/editform.scss */
+/* line 555, ../../sass/modules/editform.scss */
 .WardBeds {
   display: table-cell;
 }
 
-/* line 558, ../../sass/modules/editform.scss */
+/* line 559, ../../sass/modules/editform.scss */
 .Ward {
   padding-bottom: 0.5em;
 }
 
-/* line 561, ../../sass/modules/editform.scss */
+/* line 562, ../../sass/modules/editform.scss */
 .Wardname {
   display: table-cell;
   width: 7.7em;
   vertical-align: top;
   padding-top: 0.6em;
 }
-/* line 566, ../../sass/modules/editform.scss */
+/* line 567, ../../sass/modules/editform.scss */
 .Wardname span {
   display: block;
   font-size: 1.4em;
 }
 
-/* line 572, ../../sass/modules/editform.scss */
+/* line 573, ../../sass/modules/editform.scss */
 .BedList > li {
   display: inline-block;
   width: 7em;
@@ -712,7 +712,7 @@
   -webkit-box-sizing: border-box;
   vertical-align: middle;
 }
-/* line 583, ../../sass/modules/editform.scss */
+/* line 584, ../../sass/modules/editform.scss */
 .BedList > li > label {
   display: block;
   height: 100%;
@@ -722,49 +722,49 @@
   -webkit-box-sizing: border-box;
   font-size: 1.4em;
 }
-/* line 591, ../../sass/modules/editform.scss */
+/* line 592, ../../sass/modules/editform.scss */
 .BedList > li > label input {
   margin: 0 1em 0 0;
 }
 
-/* line 597, ../../sass/modules/editform.scss */
+/* line 598, ../../sass/modules/editform.scss */
 .BedList > li.ReservedWard {
   background: #FFB2B2;
   border: 1px solid #CC3300;
 }
 
-/* line 601, ../../sass/modules/editform.scss */
+/* line 602, ../../sass/modules/editform.scss */
 .BedList > li.Selected {
   background: #CBEDC5;
   border: 1px solid #35CC9A;
 }
 
-/* line 605, ../../sass/modules/editform.scss */
+/* line 606, ../../sass/modules/editform.scss */
 .AppealCodeContainer {
   position: relative;
 }
-/* line 607, ../../sass/modules/editform.scss */
+/* line 608, ../../sass/modules/editform.scss */
 .AppealCodeContainer .Label {
   margin-bottom: 1em;
 }
-/* line 610, ../../sass/modules/editform.scss */
+/* line 611, ../../sass/modules/editform.scss */
 .AppealCodeContainer .AppealCodeBox {
   position: absolute;
   right: -50%;
   top: 0;
 }
-/* line 615, ../../sass/modules/editform.scss */
+/* line 616, ../../sass/modules/editform.scss */
 .AppealCodeContainer .AppealCode {
   font-size: 1.2em;
   font-weight: bold;
 }
 
-/* line 623, ../../sass/modules/editform.scss */
+/* line 624, ../../sass/modules/editform.scss */
 .select2-drop, .select2-container {
   font-size: 1.2em;
 }
 
-/* line 626, ../../sass/modules/editform.scss */
+/* line 627, ../../sass/modules/editform.scss */
 .select2-container .select2-choice {
   border-radius: 0;
   background-image: none;
@@ -772,7 +772,7 @@
   background-color: white;
   color: black;
 }
-/* line 632, ../../sass/modules/editform.scss */
+/* line 633, ../../sass/modules/editform.scss */
 .select2-container .select2-choice > div {
   border-radius: 0;
   border: none;
@@ -780,7 +780,7 @@
   background-color: white;
 }
 
-/* line 639, ../../sass/modules/editform.scss */
+/* line 640, ../../sass/modules/editform.scss */
 .select2-drop {
   border-left: 1px solid #737477;
   border-right: 1px solid #737477;
@@ -788,22 +788,22 @@
   border-radius: 0;
 }
 
-/* line 645, ../../sass/modules/editform.scss */
+/* line 646, ../../sass/modules/editform.scss */
 .select2-drop.select2-drop-above {
   border-radius: 0;
 }
 
-/* line 648, ../../sass/modules/editform.scss */
+/* line 649, ../../sass/modules/editform.scss */
 .select2-container.select2-drop-above .select2-choice {
   border-radius: 0;
   background-image: none;
 }
 
-/* line 653, ../../sass/modules/editform.scss */
+/* line 654, ../../sass/modules/editform.scss */
 .select2-results li {
   padding: 0.6em 0.4em 0.7em 0.4em;
 }
-/* line 656, ../../sass/modules/editform.scss */
+/* line 657, ../../sass/modules/editform.scss */
 .select2-results li.select2-highlighted {
   background: #D2F0FD;
   color: black;
