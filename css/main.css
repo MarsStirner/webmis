@@ -166,3 +166,8 @@ td.status-code-2, td.status-code-2 .Warning {
 .split-button-dropdown .ui-menu-item:hover {
   background-color: #d2f0fd;
 }
+
+/* line 1, ../sass/modules/_ui_datepicker.scss */
+.ui-datepicker td.date-range-selected a {
+  background-color: #b1c5ff;
+}

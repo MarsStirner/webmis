@@ -1,128 +1,167 @@
 define(['text!templates/ui/range-datetime-picker.tmpl',
-				'inputmask'], function (template) {
+    'inputmask'], function (template) {
 
-	var RangeDatepickerView = View.extend({
-		template: template,
+    var RangeDatepickerView = View.extend({
+        template: template,
 
-		events: {
-			"click .Actions.Decrease": "decreaseDates",
-			"click .Actions.Increase": "increaseDates"
-		},
+        events: {
+            "click .Actions.Decrease": "decreaseDates",
+            "click .Actions.Increase": "increaseDates",
+            "change .from-date": "onFromDateChange",
+            "change .to-date": "onToDateChange",
+            "change .from-time": "onFromTimeChange",
+            "change .to-time": "onToTimeChange"
+        },
 
-		initialize: function () {
-			var view = this;
-			console.log('datepicker options', view.options)
+        initialize: function () {
+            var view = this;
 
-			view.startTimestamp = view.options.startTimestamp ? view.options.startTimestamp * 1000 : moment().format('X') * 1000;
-			view.endTimestamp = view.options.endTimestamp ? view.options.endTimestamp * 1000 : moment().format('X') * 1000;
+            var Range = Backbone.Model.extend({});
+            view.range = new Range();
 
-			view.timeFormat = view.options.timeFormat ? view.options.timeFormat : 'HH:mm';
-			view.dateFormat = view.options.dateFormat ? view.options.dateFormat : 'DD.MM.YYYY';
+            view.range.set({'from': view.options.startTimestamp * 1000}, {silent: true});
+            view.range.set({'to': view.options.endTimestamp * 1000}, {silent: true});
 
+//            view.range.on('all', function (event) {
+//                console.log('all', view.range, event)
+//            });
+//
+//            view.range.on('change:from', view.setFromDate, view);
+//            view.range.on('change:from', view.setFromTime, view);
+//
+//            view.range.on('change:to', view.setToDate, view);
+//            view.range.on('change:to', view.setToTime, view);
 
-			//moment(1362467878000).format('DD.MM.YYYY');
-			//moment(1362467878000).format('HH:mm');
+            console.log('datepicker options', view.options)
 
-		},
+            view.startTimestamp = view.options.startTimestamp ? view.options.startTimestamp * 1000 : moment().format('X') * 1000;
+            view.endTimestamp = view.options.endTimestamp ? view.options.endTimestamp * 1000 : moment().format('X') * 1000;
 
-		increaseDates: function (event) {
-			event.preventDefault();
-			var $startDateTime = this.$(".start-date");
-			var $endDateTime = this.$(".end-date");
+            view.timeFormat = view.options.timeFormat ? view.options.timeFormat : 'HH:mm';
+            view.dateFormat = view.options.dateFormat ? view.options.dateFormat : 'DD.MM.YYYY';
 
-			var startDate = $startDateTime.datepicker("getDate");
-			var endDate = $endDateTime.datepicker("getDate");
-			var newMinEndDate = moment(startDate.setDate(startDate.getDate() - 1)).format(this.dateFormat);
-			var newMaxStartDate = moment(endDate.setDate(endDate.getDate() + 1)).format(this.dateFormat);
+        },
+        onFromDateChange: function () {
+            var view = this;
+            var ddmmyyyy = view.$fromDateInput.val().split('.');
+            var dd = parseInt(ddmmyyyy[0],10);
+            var mm = parseInt(ddmmyyyy[1],10)-1;
+            var yyyy = parseInt(ddmmyyyy[2],10);
 
-			$endDateTime.datepicker("option", "minDate", newMinEndDate);
-			$startDateTime.datepicker("option", "maxDate", newMaxStartDate);
-			$startDateTime.datepicker( "refresh" );
+            var from = moment(view.range.get('from')).date(dd).month(mm).year(yyyy).format('X') * 1000;
 
-			this.setDates(1);
-		},
+            view.range.set('from', from);
+        },
+        onFromTimeChange: function () {
+            var view = this;
 
-		decreaseDates: function (event) {
-			event.preventDefault();
-			var view = this;
+            var hhmm = view.$fromTimeInput.val().split(':');
+            var hh = parseInt(hhmm[0],10);
+            var mm = parseInt(hhmm[1],10);
 
-			var $startDateTime = this.$(".start-date");
-			var $endDateTime = this.$(".end-date");
+            var from = moment(view.range.get('from')).hours(hh).minutes(mm).format('X') * 1000;
 
-			var startDate = $startDateTime.datepicker("getDate");
-			var endDate = $endDateTime.datepicker("getDate");
-			var newMinEndDate = moment(startDate.setDate(startDate.getDate() - 1)).format(this.dateFormat);
-			var newMaxStartDate = moment(endDate.setDate(endDate.getDate() - 1)).format(this.dateFormat);
+            view.range.set('from', from);
+        },
 
-			$endDateTime.datepicker("option", "minDate", newMinEndDate);
-			$startDateTime.datepicker("option", "maxDate", newMaxStartDate);
-			$endDateTime.datepicker( "refresh" );
+        onToDateChange: function () {
+            var view = this;
+            var ddmmyyyy = view.$toDateInput.val().split('.');
+            var dd = parseInt(ddmmyyyy[0],10);
+            var mm = parseInt(ddmmyyyy[1],10)-1;
+            var yyyy = parseInt(ddmmyyyy[2],10);
 
-			this.setDates(-1);
-		},
+            var from = moment(view.range.get('to')).date(dd).month(mm).year(yyyy).format('X') * 1000;
 
-		setDates: function (increment) {
-			increment = increment || 0;
-
-			var $startDateTime = this.$(".start-date");
-			var $endDateTime = this.$(".end-date");
-
-			var startDate = $startDateTime.datepicker("getDate");
-			var endDate = $endDateTime.datepicker("getDate");
-
-			if (_.isDate(startDate)) startDate.setDate(startDate.getDate() + increment);
-			if (_.isDate(endDate)) endDate.setDate(endDate.getDate() + increment);
-
-			$startDateTime.datepicker("setDate", startDate);
-			$endDateTime.datepicker("setDate", endDate);
-
-			console.log('startDate', startDate.getDate())
-
-			this.$("#start-date").change();
-		},
-
-		/***
-		 *
-		 * @param {string} time
-		 */
-		_setStartTime: function () {
-			var view = this;
-
-			var time = moment(view.startTimestamp).format(view.timeFormat);
-			view.$('.start-time').val(time)
-		},
-
-		/***
-		 *
-		 * @param {string} time
-		 */
-		_setEndTime: function () {
-			var view = this;
-
-			var time = moment(view.endTimestamp).format(view.timeFormat);
-			view.$('.end-time').val(time)
-		},
-
-		_setStartDate: function () {
-			var view = this;
-
-			var date = moment(view.startTimestamp).format(view.dateFormat);
-			view.$('.start-date').val(date)
-		},
-
-		_setEndDate: function () {
-			var view = this;
-
-			var date = moment(view.endTimestamp).format(view.dateFormat);
-			view.$('.end-date').val(date)
-		},
+            view.range.set('to', from);
+        },
 
 
+        onToTimeChange: function () {
+            var view = this;
 
-		render: function () {
-			var view = this;
+            var hhmm = view.$toTimeInput.val().split(':');
+            var hh = parseInt(hhmm[0],10);
+            var mm = parseInt(hhmm[1],10);
 
-			view.$el.html($.tmpl(view.template));
+            var from = moment(view.range.get('to')).hours(hh).minutes(mm).format('X') * 1000;
+
+            view.range.set('to', from);
+        },
+
+        increaseDates: function (event) {
+            event.preventDefault();
+
+            this.setDates(1);
+        },
+
+        decreaseDates: function (event) {
+            event.preventDefault();
+
+            this.setDates(-1);
+        },
+
+        setDates: function (increment) {
+            increment = increment || 0;
+
+            var $startDateTime = this.$(".from-date");
+            var $endDateTime = this.$(".to-date");
+
+            var startDate = $startDateTime.datepicker("getDate");
+            var endDate = $endDateTime.datepicker("getDate");
+
+            startDate.setDate(startDate.getDate() + increment);
+            endDate.setDate(endDate.getDate() + increment);
+
+            $endDateTime.datepicker("option", "minDate", moment(startDate).format(this.dateFormat));
+            $startDateTime.datepicker("option", "maxDate", moment(endDate).format(this.dateFormat));
+            $endDateTime.datepicker("refresh");
+
+            $startDateTime.datepicker("setDate", startDate);
+            $endDateTime.datepicker("setDate", endDate);
+
+            console.log('startDate', startDate.getDate())
+
+            this.$(".from-date").change();
+        },
+
+        setFromTime: function () {
+            var view = this;
+
+            var time = moment(view.range.get('from')).format(view.timeFormat);
+            view.$('.from-time').val(time)
+        },
+
+        setToTime: function () {
+            var view = this;
+
+            var time = moment(view.range.get('to')).format(view.timeFormat);
+            view.$('.to-time').val(time)
+        },
+
+        setFromDate: function () {
+            var view = this;
+
+            var date = moment(view.range.get('from')).format(view.dateFormat);
+            view.$('.from-date').val(date)
+        },
+
+        setToDate: function () {
+            var view = this;
+
+            var date = moment(view.range.get('to')).format(view.dateFormat);
+            view.$('.to-date').val(date)
+        },
+
+        render: function () {
+            var view = this;
+
+            view.$el.html($.tmpl(view.template));
+
+            view.$fromDateInput = view.$(".from-date");
+            view.$fromTimeInput = view.$(".from-time");
+            view.$toDateInput = view.$(".to-date");
+            view.$toTimeInput = view.$(".to-time");
 
 //			view.$(".SelectDate").each(function () {
 //				var $this = $(this);
@@ -178,60 +217,51 @@ define(['text!templates/ui/range-datetime-picker.tmpl',
 //			});
 
 
+            view.setFromTime();
+            view.setToTime();
+            view.setToDate();
+            view.setFromDate();
+
+            view.$('.from-date').datepicker({
+                //inline: true,
+                changeYear: true,
+                changeMonth: true,
+                showOtherMonths: true,
+                selectOtherMonths: true,
+                beforeShowDay: function (date) {
+                    return [true, (date.getTime() >= view.range.get('from'))&&(date.getTime() <= view.range.get('to')) ? 'date-range-selected' : ''];
+                },
+                onClose: function (selectedDate) {
+                    view.$(".to-date").datepicker("option", "minDate", selectedDate);
+                }
+            });
 
 
-			view._setStartTime();
-			view._setEndTime();
-			view._setEndDate();
-			view._setStartDate();
+            view.$('.to-date').datepicker({
+                ///inline: true,
+                changeYear: true,
+                changeMonth: true,
+                showOtherMonths: true,
+                selectOtherMonths: true,
+                beforeShowDay: function (date) {
+                    return [true, ((date.getTime() >= view.range.get('from'))&&(date.getTime() <= view.range.get('to'))) ? 'date-range-selected' : ''];
+                },
+                onClose: function (selectedDate) {
+                    view.$(".from-date").datepicker("option", "maxDate", selectedDate);
+                }
+            });
 
-			view.$('.start-date').datepicker({
-				//inline: true,
-				changeYear: true,
-				changeMonth: true,
-				showOtherMonths: true,
-				selectOtherMonths: true,
-//				onSelect: function (){
-//					console.log('onSelect',view.$('.start-date').datepicker('option','maxDate'))
-//				},
-				onClose: function (selectedDate) {
-					console.log('endMinDate',selectedDate)
-					view.$(".end-date").datepicker("option", "minDate", selectedDate);
-				}
-			});
+            view.$(".to-date").datepicker("option", "minDate", view.$(".from-date").datepicker("getDate"));
+            view.$(".from-date").datepicker("option", "maxDate", view.$(".to-date").datepicker("getDate"));
 
 
-			view.$('.end-date').datepicker({
-				///inline: true,
-				changeYear: true,
-				changeMonth: true,
-				showOtherMonths: true,
-				selectOtherMonths: true,
-//				onSelect: function (){
-//					console.log('onSelect',view.$('.end-date').datepicker('option','minDate'))
-//				},
-				onClose: function (selectedDate) {
-					console.log('startMaxDate',selectedDate)
-					view.$(".start-date").datepicker("option", "maxDate", selectedDate);
-				}
-			});
+            view.$(".from-date").inputmask("dd.mm.yyyy", { "placeholder": "дд.мм.гггг" });
+            view.$(".to-date").inputmask("dd.mm.yyyy", { "placeholder": "дд.мм.гггг" });
 
-			view.$(".end-date").datepicker("option", "minDate", view.$(".start-date").datepicker("getDate"));
-			view.$(".start-date").datepicker("option", "maxDate", view.$(".end-date").datepicker("getDate"));
+            return view;
+        }
 
+    });
 
-
-
-			view.$(".start-date").inputmask("dd.mm.yyyy",{ "placeholder": "дд.мм.гггг" });
-			view.$(".end-date").inputmask("dd.mm.yyyy",{ "placeholder": "дд.мм.гггг" });
-
-			//view.$(".start-time").inputmask("hh:mm",{ "placeholder": "чч:мм" });
-			//view.$(".end-time").inputmask("hh:mm",{ "placeholder": "чч:мм" });
-
-			return view;
-		}
-
-	});
-
-	return RangeDatepickerView;
+    return RangeDatepickerView;
 });

@@ -7,14 +7,12 @@
 		<div class="DateTime">
 			<div class="DatePeriod SingleDate Mandatory">
 				<div class="FromTo">
-					<input type="text" id="start-date" data-relation="#start-time" name="beginDate"
-								 placeholder="дд.мм.гггг" class="SelectDate start-date"/>
+					<input type="text" id="from-date" name="beginDate" placeholder="дд.мм.гггг" class="SelectDate from-date"/>
 				</div>
 				<i class="DateIcon Icon"></i>
 			</div>
 			<div class="SingleTime">
-				<input type="text" id="start-time" class="HourPicker start-time" data-relation="#start-date"
-							 value="00:00" placeholder="чч:мм"/>
+				<input type="text" id="from-time" class="HourPicker from-time" value="" placeholder="чч:мм"/>
 			</div>
 		</div>
 		<span class="MDash">—</span>
@@ -22,14 +20,13 @@
 		<div class="DateTime">
 			<div class="DatePeriod SingleDate Mandatory">
 				<div class="FromTo">
-					<input type="text" id="end-date" data-relation="#end-time" name="endDate"
-								 placeholder="дд.мм.гггг" class="SelectDate end-date"/>
+					<input type="text" id="to-date" name="endDate"
+								 placeholder="дд.мм.гггг" class="SelectDate to-date"/>
 				</div>
 				<i class="DateIcon Icon"></i>
 			</div>
 			<div class="SingleTime">
-				<input type="text" id="end-time" class="HourPicker end-time" data-relation="#end-date"
-							 value="23:59" placeholder="чч:мм"/>
+				<input type="text" id="to-time" class="HourPicker to-time" value="" placeholder="чч:мм"/>
 			</div>
 		</div>
 		<a class="ScrollDay Actions Increase" href="#">&gt;</a>
