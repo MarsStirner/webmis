@@ -1,6 +1,18 @@
 
 require.config({
-	baseUrl: "/js/app"
+	baseUrl: "/js/app",
+
+	paths: {
+		"inputmask": "/js/lib/inputmask/jquery.inputmask"
+	},
+	shim: {
+		'inputmask': {
+			//deps: ['inputmask/jquery.inputmask.date.extensions'],
+			exports: 'jQuery.fn.inputmask'
+		}
+
+
+	}
 });
 
 
