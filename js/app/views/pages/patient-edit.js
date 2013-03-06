@@ -138,11 +138,18 @@ define([
 		},*/
 
 		changeCurrentStep: function (step) {
-			if (this.currentStep != step.name) {
-				this.currentStep = step.name;
-				this.stepTitle = step.title;
-				this.stepUri = step.uri;
-				this.render();
+			this.validationErrors = this.checkModelValid(this.currentStep);
+			if (this.validationErrors) {
+				this.render(true);
+			} else {
+				if (this.currentStep != step.name) {
+					App.Router.navigate(step.uri);
+
+					this.currentStep = step.name;
+					this.stepTitle = step.title;
+					this.stepUri = step.uri;
+					this.render();
+				}
 			}
 		},
 
@@ -171,12 +178,17 @@ define([
 			var self = this;
 			var $field = $(event.currentTarget);
 
-			if ($field.is("select"))
-				$field.next().removeClass("WrongField");
-			else if ($field.hasClass("hasDatepicker"))
+			if ($field.is("select")) {
+				if ($field.is(".select2")) {
+					$field.prev().removeClass("WrongField");
+				} else {
+					$field.next().removeClass("WrongField");
+				}
+			} else if ($field.hasClass("hasDatepicker")) {
 				$field.parents(".DatePeriod").removeClass("WrongField");
-			else
+			} else {
 				$field.removeClass("WrongField");
+			}
 
 			this.errorToolTip.hide();
 
@@ -280,18 +292,21 @@ define([
 		},
 
 		onSaveClick: function (event) {
-			this.validationErrors = this.checkModelValid();
+			this.validationErrors = this.checkModelValid("all");
 			if (this.validationErrors) {
 				this.render(true);
 			} else {
+				$(event.currentTarget).prop("disabled", true);
+
 				this.model.save({error: function () {
+					$(event.currentTarget).prop("disabled", false);
 					console.log(arguments);
 				}});
 			}
 		},
 
-		checkModelValid: function () {
-			return this.model.validate();
+		checkModelValid: function (section) {
+			return this.model.validate({section: section});
 		},
 
 		toggleValidState: function () {
@@ -301,17 +316,21 @@ define([
 				var wrongFieldsSelector = _(this.validationErrors).map(function (e) {
 					return "[name='" + e.property + "']";
 				}).join(",");
-
+				console.log(wrongFieldsSelector);
 				this.$(wrongFieldsSelector).each(function () {
-					if (!$(this).data("subbind")) {
+					//if (!$(this).data("subbind")) {
 						if ($(this).hasClass("hasDatepicker")) {
 							$(this).parents(".DatePeriod").addClass("WrongField");
 						} else if ($(this).is("select")) {
-							$(this).next().addClass("WrongField");
+							if ($(this).is(".select2")) {
+								$(this).prev().addClass("WrongField");
+							} else {
+								$(this).next().addClass("WrongField");
+							}
 						} else {
 							$(this).addClass("WrongField");
 						}
-					}
+					//}
 				});
 
 				this.$("#errors").fadeIn().find(".WrongFields").text(_(this.validationErrors).pluck("msg").join(", "));
@@ -327,19 +346,29 @@ define([
 		},
 
 		onNextStepClick: function (event) {
-			var index = this.getCurrentMenuStructureItemIndex();
-			if (index < this.menuStructure.length - 1)
-				this.changeCurrentStep(this.menuStructure[this.getCurrentMenuStructureItemIndex() + 1]);
-			else
-				this.changeCurrentStep(this.menuStructure[0]);
+			this.validationErrors = this.checkModelValid(this.currentStep);
+			if (this.validationErrors) {
+				this.render(true);
+			} else {
+				var index = this.getCurrentMenuStructureItemIndex();
+				if (index < this.menuStructure.length - 1)
+					this.changeCurrentStep(this.menuStructure[this.getCurrentMenuStructureItemIndex() + 1]);
+				else
+					this.changeCurrentStep(this.menuStructure[0]);
+			}
 		},
 
 		onPrevStepClick: function (event) {
-			var index = this.getCurrentMenuStructureItemIndex();
-			if (index > 0)
-				this.changeCurrentStep(this.menuStructure[this.getCurrentMenuStructureItemIndex() - 1]);
-			else
-				this.changeCurrentStep(this.menuStructure[this.menuStructure.length - 1]);
+			this.validationErrors = this.checkModelValid(this.currentStep);
+			if (this.validationErrors) {
+				this.render(true);
+			} else {
+				var index = this.getCurrentMenuStructureItemIndex();
+				if (index > 0)
+					this.changeCurrentStep(this.menuStructure[this.getCurrentMenuStructureItemIndex() - 1]);
+				else
+					this.changeCurrentStep(this.menuStructure[this.menuStructure.length - 1]);
+			}
 		},
 
 		getCurrentMenuStructureItemIndex: function () {
@@ -882,15 +911,22 @@ define([
 		template: tmplDocuments,
 
 		events: {
-			"change select[name='tfoms']": "onTfomsChange",
-			"mousedown .TFOMScol .DDSelect": "onTfomsClick"
+			"change select[name='tfoms']": "onTfomsChange"
 		},
 
 		initialize: function (options) {
-			var self = this;
+			// Коллекции используемые в дочерних вью
+			this.paymentsCollection = this.model.get("payments");
+			this.idCardsCollection = this.model.get("idCards");
 
-			this.idCardsView = new IdCardsView({collection: self.model.get("idCards")});
+			this.paymentsCollection.on("dictionaries-change", this.onPaymentsDictionariesChange, this);
 
+			// Дочерние вью
+			this.idCardsView = new IdCardsView({collection: this.idCardsCollection});
+			this.policiesOmsView = new PoliciesView({type: "oms", collection: this.paymentsCollection});
+			this.policiesDmsView = new PoliciesView({type: "dms", collection: this.paymentsCollection});
+
+			// Загрузка справочников
 			var docDicts = [
 				{name: "tfomses", pathPart: "TFOMS"},
 				{name: "insuranceCompanies", pathPart: "insurance"},
@@ -898,101 +934,106 @@ define([
 				{name: "docTypes", pathPart: "clientDocument&filter[groupId]=1"}
 			];
 
-			/*if (!this.model.get("payments").getOms().length) {
-				this.model.get("payments").add({});
-			}
-
-			if (!this.model.get("payments").getDms().length) {
-				var payment = new App.Models.Payment();
-				payment.get("policyType").set("id", 3);
-				this.model.get("payments").add(payment);
-			}*/
-
-			this.policiesOmsView = new PoliciesView({type: "oms", collection: self.model.get("payments")});
-			this.policiesDmsView = new PoliciesView({type: "dms", collection: self.model.get("payments")});
-
 			this.initWithDictionaries(docDicts, this.onDictionariesLoaded, this, true);
 		},
 
-		onDictionariesLoaded: function (dictionaries) {
-			this.dictionaries = dictionaries;
-
-			this.policiesOmsView.dictionaries = this.dictionaries;
-			this.policiesDmsView.dictionaries = this.dictionaries;
-
-			this.render();
-		},
-
-		onTfomsClick: function (event) {
-			this.selectedTfoms = this.$("select[name='tfoms']").val();
-		},
-
 		onTfomsChange: function (event) {
-			/*if (this.$("select[name='tfoms']").val() && this.$("select[name='tfoms']").val() !== this.selectedTfoms) {
-				if (confirm("При изменении ТФОМС выбранная страховая компания будет сброшена. Продолжить?")) {*/
-					this.selectedTfoms = this.$("select[name='tfoms']").val();
-					this.$(".SMO").val("").change();
-					this.toggleSmo();
-				/*} else {
-					this.$("select[name='tfoms']").val(this.selectedTfoms).change();
-				}
-			}*/
-		},
-
-		toggleSmo: function () {
-			var tfomsId = this.$("select[name='tfoms']").val();
-
-			this.$(".SMO").next().toggleClass("Disabled", !tfomsId);
-
-			if (tfomsId) {
-				this.$("li.insuranceCompany").each(function () {
-					$(this).hasClass("tfomsid-"+tfomsId) ? $(this).show() : $(this).hide();
-				});
+			var unsetConfirmed = confirm("Страховые компании будут сброшены, продолжить?");
+			if (unsetConfirmed) {
+				this.paymentsCollection.setSelectedTfoms({tfomsId: $(event.currentTarget).val(), unsetSmo: true});
+			} else {
+				$(event.currentTarget).select2("val", this.paymentsCollection.getSelectedTfoms());
 			}
 		},
+
+		onDictionariesLoaded: function (dictionaries) {
+			this.paymentsCollection.setDictionaries({
+				insuranceCompanies: dictionaries.insuranceCompanies,
+				tfomses: dictionaries.tfomses,
+				policyTypes: dictionaries.policyTypes
+			});
+
+			this.idCardsCollection.setDictionaries({
+				docTypes: dictionaries.docTypes
+			});
+
+			var $tfoms = this.$("select[name='tfoms']");
+			var guessedTfomsId = this.guessTfoms(dictionaries.insuranceCompanies);
+
+			$tfoms.find("option:not(:first)").remove();
+
+
+			$tfoms.append(_.map(dictionaries.tfomses, function (tfoms) {
+				return $("<option></option>", {text: tfoms.value, value: tfoms.id});
+			}));
+
+			this.paymentsCollection.setSelectedTfoms({tfomsId: guessedTfomsId, unsetSmo: false});
+
+			$tfoms.select2("val", guessedTfomsId);
+		},
+
+		guessTfoms: function (insuranceCompanies) {
+			var ic;
+			var someSmo = this.paymentsCollection.find(function (payment) { return payment.get("smo").get("id"); });
+
+			if (someSmo) {
+				var smoId = someSmo.get("smo").get("id");
+				ic = _.find(insuranceCompanies, function (ic) {
+					return ic.id == smoId;
+				}, this);
+			}
+
+			if (ic && ic.headId) {
+				return ic.headId;
+			} else {
+				return "";
+			}
+		},
+
+		/*onPaymentsDictionariesChange: function (dictionaries) {
+			this.$("select[name='tfoms']").empty().append(_.map(dictionaries, function () {
+
+			}));
+		},*/
 
 		render: function () {
-			//this.selectedTfoms = "";
+			//////////////
+			/*var ic;
+			var tfomsId;
+			var someSmo = this.paymentsCollection.find(function (payment) { return payment.get("smo").get("id"); });
 
-			if (!this.model.get("payments").isEmpty() && this.dictionaries && !this.selectedTfoms) {
-				var ic = _(this.dictionaries.insuranceCompanies).find(function (ic) {
-					return ic.id == this.model.get("payments").first().get("smo").get("id");
+			console.log(this.paymentsCollection.toJSON());
+
+			if (someSmo) {
+				var smoId = someSmo.get("smo").get("id");
+				ic = _.find(this.paymentsCollection.getDictionaries().insuranceCompanies, function (ic) {
+					return ic.headId == smoId;
 				}, this);
-
-				if (ic && ic.headId)
-					this.selectedTfoms = ic.headId;
 			}
 
-			/*var beautyPatientJSON = this.model.toJSON();
-
-			var oms = this.model.get("payments").getOms()[0];
-			var dms = this.model.get("payments").getDms()[0];
-
-			var omsJSON = oms.toJSON();
-			var dmsJSON = dms.toJSON();
-
-			omsJSON.cid = oms.cid;
-			dmsJSON.cid = dms.cid;
-
-			beautyPatientJSON.payments = {oms: omsJSON, dms: dmsJSON};*/
-
+			if (ic && ic.id) {
+				tfomsId = ic.id;
+			} else {
+				tfomsId = "";
+			}*/
+			//////////////
 			this.$el.html($.tmpl(this.template, {
 				patient: this.model.toJSON(),
-				selectedTfoms: this.selectedTfoms || "",
-				dictionaries: this.dictionaries || {}
+				selectedTfoms: this.paymentsCollection.getSelectedTfoms(),
+				dictionaries: this.paymentsCollection.getDictionaries()
 			}));
 
 			UIInitialize(this.el);
 
 			this.$(".select2").width("100%").select2();
 
-			this.toggleSmo();
-
 			this.assign({
 				"#id-cards": this.idCardsView,
 				"#policiesOms": this.policiesOmsView,
 				"#policiesDms": this.policiesDmsView
 			});
+
+			this.paymentsCollection.setSelectedTfoms({tfomsId: this.$("select[name='tfoms']").select2("val"), unsetSmo: false});
 
 			return this;
 		}
@@ -1058,24 +1099,18 @@ define([
 
 		events: {
 			"click .AddIcon"   : "onAddIconClick",
-			"click .RemoveIcon": "onRemoveIconClick"
+			"click .RemoveIcon": "onRemoveIconClick",
+			"change .SMO": "onSMOChange"
 		},
 
 		initialize: function (options) {
 			this.model.collection.on("add", this.toggleRemoveIcon, this);
 			this.model.collection.on("remove", this.toggleRemoveIcon, this);
-		},
 
-		toggleRemoveIcon: function (event) {
-			if (this.model.collection) {
-				var vis = false;
-				if (this.options.type == "dms") {
-					vis = this.model.collection.getDms().length > 1;
-				} else {
-					vis = this.model.collection.getOms().length > 1;
-				}
-				this.$(".RemoveIcon").css("display", (vis ? "inline-block" : "none"));
-			}
+			this.model.collection.on("dictionaries-change", this.onDictionariesChange, this);
+			this.model.collection.on("selected-tfoms-change", this.onSelectedTfomsChange, this);
+
+			console.log(this.model.toJSON())
 		},
 
 		onAddIconClick: function (event) {
@@ -1093,13 +1128,57 @@ define([
 			});
 		},
 
+		onSMOChange: function (event) {
+			this.model.get("smo").set({id: $(event.currentTarget).select2("val")});
+		},
+
+		onDictionariesChange: function () {
+			/*var $smo = this.$(".SMO");
+
+			$smo.find("option:not(:first)").remove();
+
+			$smo.append(_.map(this.model.collection.getDictionaries().insuranceCompanies, function (ic) {
+				return $("<option></option>", {text: ic.value, value: ic.id});
+			}));*/
+
+			//$smo.select2("val", this.model.get("smo").get("id"));
+		},
+
+		onSelectedTfomsChange: function (event) {
+			var $smo = this.$(".SMO");
+
+			$smo.find("option:not(:first)").remove();
+
+			$smo.append(_.map(this.model.collection.getDictionaries().insuranceCompanies, function (ic) {
+				return $("<option></option>", {text: ic.value, value: ic.id});
+			}));
+
+			if (event.unsetSmo) {
+				$smo.select2("val", "").change();
+			} else {
+				$smo.select2("val", this.model.get("smo").get("id")).change();
+			}
+		},
+
+		toggleRemoveIcon: function (event) {
+			if (this.model.collection) {
+				var vis = false;
+				if (this.options.type == "dms") {
+					vis = this.model.collection.getDms().length > 1;
+				} else {
+					vis = this.model.collection.getOms().length > 1;
+				}
+				this.$(".RemoveIcon").css("display", (vis ? "inline-block" : "none"));
+			}
+		},
+
 		render: function () {
 			var json = {};
 
 			json.model = this.model.toJSON();
 			json.model.cid = this.model.cid;
 
-			json.dictionaries = this.options.dictionaries;
+			json.dictionaries = this.model.collection.getDictionaries();
 
 			json.type = this.options.type;
 
@@ -1259,6 +1338,7 @@ define([
 			return this;
 		}
 	});
+
 
 	// Шаг 3. Адреса
 	var AddressView = View.extend({
@@ -1669,6 +1749,14 @@ define([
 					case 315:
 						//Военнослужащий
 						socialStatus.dataRelation = ".Occupation.Military";
+						break;
+					case 316:
+						//Член семьи военнослужащего
+						socialStatus.dataRelation = ".Occupation.CommentOnly";
+						break;
+					case 317:
+						//БОМЖ
+						socialStatus.dataRelation = ".Occupation.CommentOnly";
 						break;
 				}
 			});
@@ -2120,7 +2208,6 @@ define([
 		onMenuItemClick: function (event) {
 			event.preventDefault();
 			//if ($(event.currentTarget).data("step") != "address") {
-				App.Router.navigate($(event.currentTarget).data("uri"));
 				this.trigger("step:change", {
 					name: $(event.currentTarget).data("step"),
 					uri: $(event.currentTarget).data("uri"),

@@ -34,8 +34,8 @@ define([
 		events: {
 			"change select.kladrEntries": "onKLADREntryChange",
 			"change .kladrToggle": "onKLADRToggleChange",
-			"change .kladrPart:not(.kladrEntries)": "onKLADRPartChange",
-			"click #updateKladr": "onUpdateKLADRClick"
+			"change .kladrPart:not(.kladrEntries)": "onKLADRPartChange"//,
+			//"click #updateKladr": "onUpdateKLADRClick"
 		},
 
 		initialize: function (options) {
@@ -59,10 +59,10 @@ define([
 		},
 
 		loadKladr: function () {
-			/*this.model.get("districts").setParentCode(this.address.get("republic").get("code"));
-			this.model.get("cities").setParentCode(this.address.get("district").get("code"));
-			this.model.get("localities").setParentCode(this.address.get("city").get("code"));
-			this.model.get("streets").setParentCode(this.address.get("locality").get("code"));*/
+			this.model.get("districts").setParentCode(this.address.get("republic").get("code"));
+			this.model.get("localities").setParentCode(this.address.get("district").get("code"));
+			this.model.get("cities").setParentCode(this.address.get("locality").get("code"));
+			this.model.get("streets").setParentCode(this.address.get("city").get("code"));
 
 			/*if (!this.address.get("republic").get("code") && this.address.get("city").get("code")) {
 				this.address.get("republic").set("code", this.address.get("city").get("code"), {silent: true});
@@ -130,20 +130,24 @@ define([
 				var childLevel = this.model.get(childLevelName);
 
 				if (childLevel) {
-					childLevel.setParentCode(selectedCode).fetch();
+					var promise = childLevel.setParentCode(selectedCode).fetch();
 
-					while (childLevelName) {
-						//console.log("child found, setting parent code and fetching");
+					if (promise) {
+						while (childLevelName) {
+							//console.log("child found, setting parent code and fetching");
 
-						this.address.get(childLevel.level).set({code: "", name: "", socr: ""});
+							this.address.get(childLevel.level).set({code: "", name: "", socr: ""});
 
-						var $childSel = this.$("[data-entries-name=" + childLevelName + "]");
-						$childSel.select2("val", "").select2("disable");
+							var $childSel = this.$("[data-entries-name=" + childLevelName + "]");
 
-						childLevel.setParentCode(selectedCode);//.fetch();
+							$childSel.select2("val", "").select2("disable");
 
-						childLevelName = childLevel.childName;
-						childLevel = this.model.get(childLevelName);
+
+							childLevel.setParentCode(selectedCode);//.fetch();
+
+							childLevelName = childLevel.childName;
+							childLevel = this.model.get(childLevelName);
+						}
 					}
 
 					/*if (childLevelName) {
@@ -210,7 +214,7 @@ define([
 			}
 		},
 
-		onUpdateKLADRClick: function (event) {
+		//onUpdateKLADRClick: function (event) {
 			/*var self = this;
 			var address = self.address.toJSON();
 			var kladrSelectedEntries = [
@@ -222,9 +226,9 @@ define([
 			];
 			var showKladrPreview = _(kladrSelectedEntries).any(function (p) { return p.name; });*/
 
-			this.$(".kladrPreviewLine").hide();
-			this.$(".kladrPartLine").show();
-		},
+			//this.$(".kladrPreviewLine").hide();
+			//this.$(".kladrPartLine").show();
+		//},
 
 		addEntries: function (collectionName, collection) {
 
@@ -252,25 +256,24 @@ define([
 
 				$sel.append(options);
 
-				/*if (this.address.get(collection.level)) {
+				if (this.address.get(collection.level)) {
 					//console.log("setting value", this.$("select[name$=" + collection.level + "-code]"), this.address.get(collection.level).get("code"));
 
 					var code = this.address.get(collection.level).get("code");
 
 					//if (collection.pluck("code").indexOf(code) != -1) {
 						this.$("select[name$=" + collection.level + "-code]").select2('val', code);
-					*//*}
-					else {
-						var indexOfLevel = App.Models.KLADR.LEVELS_ORDER.indexOf(collection.level);
-						var indexOfHigherLevel = indexOfLevel - 1;
+					//} else {
+						//var indexOfLevel = App.Models.KLADR.LEVELS_ORDER.indexOf(collection.level);
+						//var indexOfHigherLevel = indexOfLevel - 1;
 
 						//this.address.get(App.Models.KLADR.LEVELS_ORDER[indexOfHigherLevel]).set("code", code);
 
-						this.$("select[name$=" + App.Models.KLADR.LEVELS_ORDER[indexOfHigherLevel] + "-code]").select2('val', code);
+						//this.$("select[name$=" + App.Models.KLADR.LEVELS_ORDER[indexOfHigherLevel] + "-code]").select2('val', code);
 						//this.address.get(collection.level).set("code")
-					}*//*
+					//}
 
-				}*/
+				}
 			} else {
 
 			}
@@ -280,7 +283,14 @@ define([
 
 				//$sel.select2("disable");
 
-				this.model.get(collection.childName).setParentCode(collection.getParentCode()).fetch();
+				var childColl = this.model.get(collection.childName);
+
+				if (!childColl.getParentCode() || childColl.getParentCode().substr(0, 2) != collection.getParentCode().substr(0, 2)) {
+					childColl.setParentCode(collection.getParentCode());
+				}
+
+				childColl.fetch();
+
 				//this.model.get(collection.childName).fetch();
 			} else {
 				//console.log("no entries found, child name undefined");
@@ -316,13 +326,13 @@ define([
 				address.index = deepestEntryWithIndex ? deepestEntryWithIndex.index : "";
 			}
 
-			var showKladrPreview = _(kladrSelectedEntries).any(function (p) { return p.name; });
+			//var showKladrPreview = false; //_(kladrSelectedEntries).any(function (p) { return p.name; });
 
 			this.$el.html($.tmpl(this.template, {
 				addressType: self.options.addressType,
 				address: address,
-				kladrSelectedEntries: kladrSelectedEntries,
-				showKladrPreview: showKladrPreview
+				kladrSelectedEntries: kladrSelectedEntries//,
+				//showKladrPreview: showKladrPreview
 			}));
 
 			this.$(".select2").width("100%").select2();
@@ -331,10 +341,10 @@ define([
 			//console.log("kladr", !!this.address.get("kladr"));
 			this.toggleKladrMode(!!this.address.get("kladr"));
 
-			this.$(".Styled.Button").css("top", 0);
+			//this.$(".Styled.Button").css("top", 0);
 
-			this.$(".kladrPreviewLine").toggle(showKladrPreview);
-			this.$(".kladrPartLine").toggle(!showKladrPreview);
+			//this.$(".kladrPreviewLine").toggle(showKladrPreview);
+			//this.$(".kladrPartLine").toggle(!showKladrPreview);
 
 			return this;
 		}

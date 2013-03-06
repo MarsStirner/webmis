@@ -587,6 +587,10 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			title: "Создание обращения",
 			uri: "/patients/:id/appeals/new/"
 		},
+		APPEALS_EDIT: {
+			title: "Редактирование обращения",
+			uri: "/appeals/:id/edit"
+		},
 		EXAMS: {
 			title: "Осмотры",
 			uri: "/appeals/:id/examinations/"

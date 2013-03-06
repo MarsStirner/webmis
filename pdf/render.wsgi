@@ -211,6 +211,15 @@ def application(environ, start_response):
             return result_if_true
         return result_if_false
 
+    def conditionIf(path_string, condition, result_if_true, result_if_false, data=dataJSON ):
+        data = data if len(data) > 0 else dataJSON
+        statement = getData(path_string, data)
+
+        if statement == condition: return result_if_true
+
+        return result_if_false
+
+
     def formatDate( path_string, data=dataJSON ):
         data = data if len(data) > 0 else dataJSON
         date_string = getData(path_string, data)
@@ -335,6 +344,7 @@ def application(environ, start_response):
         _plural = _plural,
         _getOccupationString = _getOccupationString,
         simpleIf = simpleIf,
+        conditionIf = conditionIf,
         getAge = getAge,
         formatDate = formatDate,
         formatDateTime = formatDateTime,

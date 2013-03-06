@@ -15,11 +15,13 @@ define(function () {
 		}
 	});*/
 
+	var cachedEntries = {};
+
 	App.Collections.KLADREntries = Collection.extend({
 		//model: App.Models.KLADREntry,
 
 		initialize: function (models, options) {
-			this.cachedEntries = {};
+			//cachedEntries = {};
 
 			this.setLevel(options.level);
 			this.setParentCode(options.parent);
@@ -28,7 +30,7 @@ define(function () {
 
 			this.name = options.name;
 
-			//this.on("reset", this.cacheEntrySet, this);
+			this.on("reset", this.cacheEntrySet, this);
 		},
 
 		setLevel: function (level) {
@@ -55,19 +57,27 @@ define(function () {
 		fetch: function () {
 			this.trigger("fetch:start");
 
-			/*if (this.cachedEntries[this.getLevel() + "_" + this.getParentCode()]) {
-				this.reset(this.cachedEntries[this.getLevel() + "_" + this.getParentCode()]);
-			} else*/ if (this.getParentCode() || this.getLevel() === "republic") {
+			//console.log(cachedEntries, this.getLevel() + "_" + this.getParentCode());
+
+			if (cachedEntries[this.getLevel() + "_" + this.getParentCode()]) {
+				//console.log("from Cache");
+				//return
+				this.reset(cachedEntries[this.getLevel() + "_" + this.getParentCode()]);
+			} else if (this.getParentCode() || this.getLevel() === "republic") {
+				//console.log("from Service");
 				return Collection.prototype.fetch.call(this);
 			} else {
-				return this.reset([]);
+				//console.log("from Empty");
+				//return
+				this.reset([]);
 			}
 		},
 
 		cacheEntrySet: function () {
-			if (!this.cachedEntries[this.getLevel() + "_" + this.getParentCode()] && this.toJSON().length) {
-				this.cachedEntries[this.getLevel() + "_" + this.getParentCode()] = this.toJSON();
-				/*console.log("cached entries", this.toJSON(), this.cachedEntries);*/
+			//if (!cachedEntries[this.getLevel() + "_" + this.getParentCode()] && this.toJSON().length) {
+			if (!cachedEntries[this.getLevel() + "_" + this.getParentCode()]) {
+				cachedEntries[this.getLevel() + "_" + this.getParentCode()] = this.toJSON();
+				/*console.log("cached entries", this.toJSON(), cachedEntries);*/
 			}
 		}
 	});
@@ -84,9 +94,9 @@ define(function () {
 		initialize: function () {
 			this.set({
 				republics:  new App.Collections.KLADREntries([], {level: "republic", name: "republics", childName: "districts"}),
-				districts:  new App.Collections.KLADREntries([], {level: "district", name: "districts", childName: "cities"}),
-				cities:     new App.Collections.KLADREntries([], {level: "city", name: "cities", childName: "localities"}),
-				localities: new App.Collections.KLADREntries([], {level: "locality", name: "localities", childName: "streets"}),
+				districts:  new App.Collections.KLADREntries([], {level: "district", name: "districts", childName: "localities"}),
+				localities: new App.Collections.KLADREntries([], {level: "locality", name: "localities", childName: "cities"}),
+				cities:     new App.Collections.KLADREntries([], {level: "city", name: "cities", childName: "streets"}),
 				streets:    new App.Collections.KLADREntries([], {level: "street", name: "streets"})
 			});
 

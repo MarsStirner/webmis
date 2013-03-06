@@ -340,6 +340,11 @@ define([
 
 			this.$(".HourPicker").mask("99:99");
 
+			var i = 0;
+			this.$("input[type=text],select,.RichText").each(function () {
+				$(this).prop("tabindex", ++i);
+			});
+
 			var patientSex = Cache.Patient.get("sex").length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
 
 			this.$("input[name='diagnosis[mkb][code]']").autocomplete({
