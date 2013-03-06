@@ -90,6 +90,7 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			"appeals/:id/:page/:subpage/:query": "appeal",
 
 			"biomaterials/": "biomaterials",
+			"reports/": "reports",
 
 
 			"prints/": "prints"
@@ -134,6 +135,29 @@ require(["views/FlashMessageView"], function (FlashMessage){
 					this.appView.$("#main").remove();
 					this.appView.$el.append(newMain);
 					//this.appView.changeRenderView(view);
+				}
+			});
+		},
+
+		reports: function () {
+			this.currentPage = "reports";
+
+			require(["views/app", "views/pages/ReportsMainView"], function (AppView, ReportsMainView) {
+				var view = new ReportsMainView();
+
+				if (!this.appView) {
+
+					this.appView = new AppView({
+						renderView: view
+					});
+					this.appView.render();
+
+				} else {
+
+					var newMain = $('<div id="main"></div>').append(view.render().el);
+					this.appView.$("#main").remove();
+					this.appView.$el.append(newMain);
+
 				}
 			});
 		},
@@ -606,6 +630,10 @@ require(["views/FlashMessageView"], function (FlashMessage){
 		CONSULTATION: {
 			title: "Консультации",
 			uri: "/appeals/:id/diagnostics/consultations/"
+		},
+		REPORTS: {
+			title: "Отчёты",
+			uri: "/reports/"
 		}
 	};
 	App.Router.compile = function (link, options) {
