@@ -109,6 +109,11 @@ define(function () {
 								title: "Биоматериалы"
 							},
 							{
+								name: "reports",
+								uri: "/reports/",
+								title: "Отчёты"
+							},
+							{
 								title: "Амбулаторные талоны"
 							}
 						]
