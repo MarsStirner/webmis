@@ -257,7 +257,7 @@ define([
 				/*Collection.setParams({'filter[date]':1334300400000})*/
 				Collection.reset();
 
-				this.printButton = $('<button style="float: right;">Печать формы 007</button>').button().click(this.printForm007);
+				this.printButton = $('<button style="float: right;">Печать</button>').button().click(this.printForm007);
 
 				Filter = new App.Views.Filter({
 					collection: Collection,
