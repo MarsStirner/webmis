@@ -360,9 +360,7 @@
 		</td>
 		<td>
 			{{each(i, diagnosis) diagnoses}}
-				{{if diagnosis.diagnosisKind == "main"}}
-					${diagnosis.mkb.code} ${diagnosis.mkb.diagnosis}
-				{{/if}}
+				${diagnosis.mkb.code} ${diagnosis.mkb.diagnosis}
 			{{/each}}
 		</td>
 </script>
