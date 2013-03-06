@@ -86,12 +86,13 @@ define(["models/Biomaterial"], function (Biomaterial) {
 
 			_.each(labTests, function (labTest, index) {
 
+				console.log('lab-tests'+index,labTest)
 				workList.push({
 					'index': index + 1,
 					'jobTicketDate': labTest.jobTicket.date,
 					'orgStructure': labTest.department.name,
 					'patientName': labTest.patient.name,
-					'patientSex': labTest.patient.sex,
+					'patientSex': labTest.patient.sexShortName,
 					'patientBirthDate': labTest.patient.birthDate,
 					'labTestName': labTest.actionType.name,
 					'tissueTypeName': labTest.biomaterial.tissueType.name,
@@ -154,6 +155,20 @@ define(["models/Biomaterial"], function (Biomaterial) {
 				var volume = 0;
 
 				_.each(model.actions, function (action, key, list) {
+					var sexShortName = '';
+
+					switch (action.patient.sex) {
+						case 'male':
+							sexShortName = 'М'
+								break;
+						case 'female':
+							sexShortName = 'Ж';
+								break;
+						default:
+							//sexShortName = 'не определён!';
+					}
+					action.patient.sexShortName = sexShortName;
+
 					action.department = model.laboratory;
 					action.jobTicket = {
 						'id': model.id,
