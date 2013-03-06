@@ -1,36 +1,37 @@
 define(['text!templates/pages/biomaterials.tmpl',
 	'collections/Biomaterials',
 	'views/grid',
+	'views/ui/RangeDatepickerView',
+	'views/appeal/edit/popups/BiomaterialPopupView',
 	'views/pages/BiomaterialsCountsView',
+	'views/ui/SelectView',
 	'collections/JobTickets',
+	'collections/Barcodes',
 	'collections/dictionary-values',
-	'collections/departments'], function (biomaterialsTemplate, BiomaterialsCollection, GridView, CountView, JobTicketsCollection) {
+	'collections/departments',
+	"views/print"], function (biomaterialsTemplate, BiomaterialsCollection, GridView,DatetimePikerView, JobPopupView, CountView, SelectView, JobsCollection, BarcodesCollection) {
 
 	var BiomaterialsView = View.extend({
 		///className: "ContentHolder",
 		template: biomaterialsTemplate,
 		events: {
-			"click .Actions.Decrease": "decreaseDate",
-			"click .Actions.Increase": "increaseDate",
+			//"click .Actions.Decrease": "decreaseDate",
+			//"click .Actions.Increase": "increaseDate",
 			"click #select-all": "selectAll",
-			"click #execute": "executeJobTikets",
-			"click #send-to-lab": "sendToLab",
-			"click #print": "print",
-			"change .biomaterial_id": "biomaterialSelected"
+
+			"change .id": "onCheckboxChange"
 		},
 
 		initialize: function () {
 			var view = this;
 
-			view.on("all", function (eventName) {
-				console.log('view', eventName);
-			});
-
 			view.collection = new BiomaterialsCollection;
 
-			view.collection.on("all", function (eventName) {
-				console.log('view.collection', eventName);
+			view.collection.on('reset', function () {
+				view.updateButtons();
+				view.resetSelectAllCheckbox();
 			});
+
 
 			view.initGrid();
 
@@ -38,11 +39,16 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.collection.fetch();
 
-			view.initJobTickets();
+			view.initJobs();
 
-			view.initTissues();
+			pubsub.on('departments:change', function (id) {
+				console.log('departments:change', id)
+			});
 
-			view.initDepartments();
+			pubsub.on('biomaterial:change', function (id) {
+				console.log('biomaterial:change', id)
+			})
+
 
 		},
 
@@ -63,43 +69,38 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.grid.on('grid:rowClick', view.onGridRowClick, view);
 
-			view.grid.on("all", function (eventName) {
-				console.log('view.grid', eventName);
-			});
 		},
 
-		onGridRowClick: function (bio, event) {
-			var view = this;
+		onGridRowClick: function (model, event) {
+			var view = this,
+				$eventTarget = $(event.target);
 
-			if ($(event.target).hasClass('biomaterial_id')) {
-				var $select = $(event.target);
-
-				if ($select.is(':checked')) {
-					console.log('bio checked', bio, event);
-					view.selectedJobTickets.add({
-						id: bio.get('jobTicket').id,
-						status: bio.get('jobTicket').status
-					}, {silent: true})
-
-				} else {
-					console.log('bio unchecked', bio, event);
-					view.selectedJobTickets.remove(bio.get('jobTicket').id, {silent: true});
-				}
-
-				console.log('selectedJobTickets', view.selectedJobTickets);
+			if (!$eventTarget.hasClass('id') && (model.get('status') == 0)) {
+				view.openJobPopup(model);
 			}
 
 		},
 
+		openJobPopup: function (model) {
+			var jobPopupView = new JobPopupView({biomaterial: model});
 
-		biomaterialSelected: function () {
-			console.log('change .biomaterial_id');
+			jobPopupView.render().open();
+		},
+
+		onCheckboxChange: function (event) {
 			var view = this;
+			var selected = false;
 
-			console.log('selected', view.$('.biomaterial_id:checkbox:checked').length);
+			var $checkbox = $(event.target);
 
+			if ($checkbox.prop('checked')) {
+				selected = true;
+			}
 
+			var model = view.collection.get($checkbox.val());
+			model.set({'selected': selected});
 
+			view.updateButtons();
 
 		},
 
@@ -107,126 +108,279 @@ define(['text!templates/pages/biomaterials.tmpl',
 			var view = this;
 			var $select_all_button = $(event.target);
 
-			view.$('.biomaterial_id').attr('checked', $select_all_button.prop("checked")).trigger('change')
+			view.$('.id').attr('checked', $select_all_button.prop("checked")).trigger('change')
 
-		},
-		executeJobTikets: function () {
-			console.log('executeJobTikets');
+			//view.updateButtons();
 		},
 
-		sendToLab: function () {
-			console.log('sendToLab');
-		},
-
-		print: function () {
-			console.log('print');
-		},
-
-		initJobTickets: function(){
+		resetSelectAllCheckbox: function () {
 			var view = this;
 
-			view.selectedJobTickets = new JobTicketsCollection;
-
-			view.selectedJobTickets.on('remove', function () {
-				console.log('selectedJobTickets remove');
-			}, view);
-
-			view.selectedJobTickets.on('relational:add relational:remove', function () {
-				console.log('selectedJobTickets add remove');
-				//if(view.selectedJobTickets.length){
-				view.$('#execute, #send-to-lab').button({ disabled: !view.selectedJobTickets.length });
-				//}
-			}, view);
-
-			view.selectedJobTickets.on("all", function (eventName) {
-				console.log('view.selectedJobTickets', eventName);
-			});
+			view.$('#select-all').prop('checked', false);
 		},
 
-		initCounts: function(){
+		setStatus: function (modelsArray, status) {
+			var view = this;
+
+			view.jobs.reset();
+
+			_.each(modelsArray, function (model) {
+				view.jobs.add({'id': model.get('id'), 'status': status});
+			});
+
+			view.jobs.updateAll();
+		},
+
+		updateButtons: function () {
+			var view = this;
+
+			view.updateExecuteButton();
+			view.updateSendToLabButton();
+		},
+
+		updateExecuteButton: function () {
+			var view = this;
+			var disabled = true;
+			var jtc = view.collection.selected;
+
+			if (jtc.status_0.length > 0 && jtc.status_1.length == 0 && jtc.status_2.length == 0) {
+				disabled = false;
+			}
+
+			view.$('#execute').button({ disabled: disabled });
+		},
+
+		updateSendToLabButton: function () {
+			var view = this;
+			var disabled = true;
+			var jtc = view.collection.selected;
+
+			if (jtc.status_0.length == 0 && jtc.status_1.length > 0 && jtc.status_2.length == 0) {
+				disabled = false;
+			}
+
+			view.$('#send-to-lab').button({ disabled: disabled });
+		},
+
+
+		selectedAndStatus10: function (model) {
+			if (model.get('selected') && (model.get('status') < 2)) {
+				return true;
+			}
+		},
+
+		/***
+		 * Запускает печать журнала выполнения работ
+		 */
+		printWorkList: function () {
+			var view = this;
+			var labTests = view.collection.getLabTests(view.selectedAndStatus10);
+			var workList = view.collection.makeWorkList(labTests);
+
+			if (workList.length) {
+
+				new App.Views.Print({
+					data: {'jobs': workList},
+					template: "WorkList"
+				});
+
+			} else {
+				pubsub.trigger('noty', {text: 'Выберите хотя бы один забор биоматериала!', type: 'alert'});
+			}
+
+		},
+
+		printBarcodes: function () {
+			var view = this;
+			var labTests = view.collection.getLabTests(view.selectedAndStatus10);
+			var barcodes = view.collection.makeBarcodes(labTests);
+
+			if (barcodes.length) {
+				//статус заборов биоматериала для которых начали печатать штрихкод меняется на "Выполняется"
+				view.setStatus(view.collection.getSelectedModels(), 1);
+
+				new App.Views.Print({
+					data: {'barcodes': barcodes},
+					template: "WorkListBCode"
+				});
+
+			} else {
+				pubsub.trigger('noty', {text: 'Выберите хотя бы один забор биоматериала!', type: 'alert'});
+			}
+
+
+		},
+
+		initJobs: function () {
+			var view = this;
+
+			view.jobs = new JobsCollection;
+
+			view.jobs.on('updateAll:success', function () {
+				//pubsub.trigger('noty', {text: 'Статус обновлён', type: 'success'});
+				view.collection.fetch();
+			});
+
+			view.jobs.on('updateAll:error', function () {
+				pubsub.trigger('noty', {text: 'Не удалось обновить статус', type: 'error'});
+			});
+
+		},
+
+
+		initCounts: function () {
 			var view = this;
 
 			view.counts = new CountView({ collection: view.collection});
 
 			view.depended(view.counts);
-
-			view.counts.on("all", function (eventName) {
-				console.log('view.counts', eventName);
-			});
-
 		},
 
-		initTissues: function(){
+		initTissues: function () {
 			var view = this;
 
 			//Получаем список типов биоматериалов
 			view.tissues = new App.Collections.DictionaryValues("", {
 				name: "tissueTypes"
 			});
-			view.tissues.on("reset", this.onTissuesLoaded, this);
-			view.tissues.fetch();
 
-			view.tissues.on("all", function (eventName) {
-				console.log('view.tissues', eventName);
+			view.tissues.setParams({
+				sortingField: 'name',
+				sortingMethod: 'asc'
 			});
-		},
 
-		onTissuesLoaded: function (coll) {
+			view.tissueSelect = new SelectView({
+				collection: view.tissues,
+				el: view.$('#biomaterial')
+			});
 
-			_(this.tissues.toJSON()).each(function (item) {
-				this.$(".biomaterial").append($("<option/>", {
-					"text": item.value,
-					"value": item.id
-				}));
-			}, this);
-
-			this.$(".biomaterial").select2();
+			view.depended(view.tissueSelect);
 
 		},
 
-		initDepartments: function(){
+		initDepartments: function () {
 			var view = this;
 
-			//Получаем список отделений
+			//список отделений
 			view.departments = new App.Collections.Departments();
+
 			view.departments.setParams({
 				filter: {
 					hasBeds: true
-				}
-			});
-			view.departments.on("reset", view.onDepartmentsLoaded, view);
-			view.departments.fetch();
-
-			view.departments.on("all", function (eventName) {
-				console.log('view.departments', eventName);
+				},
+				sortingField: 'name',
+				sortingMethod: 'asc'
 			});
 
-		},
+			view.departmentSelect = new SelectView({
+				collection: view.departments,
+				el: view.$('#departments'),
+				selectText: 'name',
+				initSelection: view.collection.departmentId
+			});
 
-		onDepartmentsLoaded: function (departments) {
-
-			this.departmentsJSON = departments.toJSON();
-
-			_(this.departments.toJSON()).each(function (item) {
-				this.$(".departments").append($("<option/>", {
-					"text": item.name,
-					"value": item.id
-				}));
-
-			}, this);
-
-
-			this.$(".departments").select2();
-			this.$(".departments").select2('val', this.collection.departmentId);
+			view.depended(view.departmentSelect);
 
 		},
 
 
-		initStatusButtonset: function () {
+		initStatusFilterButtonset: function () {
 			var view = this;
 
 			view.$("#status_buttonset").buttonset();
-			//view.$("#status_buttonset :radio").click(function(e) {});
+		},
+		initExecuteButton: function () {
+			var view = this;
+
+			view.$('#execute').button().on('click', function () {
+				view.setStatus(view.collection.getSelectedModels(), 1);
+			});
+
+			//view.updateExecuteButton();
+		},
+
+		initResetAllButton: function () {
+			var view = this;
+
+			view.$('#reset-all').button().on('click', function () {
+				view.setStatus(view.collection.models, 0);
+			});
+
+		},
+
+		initSendToLabButton: function () {
+			var view = this;
+
+			view.$('#send-to-lab').button().on('click', function () {
+				view.setStatus(view.collection.getSelectedModels(), 2);
+			});
+
+			//view.updateSendToLabButton();
+		},
+
+		initPrintButton: function () {
+			var view = this;
+
+			var options = {
+				label: 'Печать',
+				handler: view.printBarcodes,
+				scope: view,
+				dropDownItems: [
+					{
+						label: 'Печать штрихкодов',
+						handler: view.printBarcodes
+					},
+					{
+						label: 'Печать журнала выполнений работ',
+						handler: view.printWorkList
+					}
+				]
+			}
+
+			var $list = view.$('.split-button-dropdown');
+
+			_(options.dropDownItems).each(function (ddi) {
+				$list.append($("<li><a href='#' class='SubPrint'>" + ddi.label + "</a></li>").click(function () {
+					console.log('пятница!!!!')
+					event.preventDefault();
+					ddi.handler.apply(options.scope);
+				}));
+			});
+
+
+			view.$('#print').button({
+				label: options.label
+			})
+				.click(function () {
+					options.handler.apply(options.scope);
+				})
+				.next().button({
+					text: false,
+					icons: {
+						primary: "ui-icon-triangle-1-s"
+					}
+				})
+				.click(function () {
+					var menu = $(this)
+						.parent().next('.split-button-dropdown')
+						.show()
+						.position({
+							my: "right top",
+							at: "right bottom",
+							of: this,
+							collision: "fit"
+						});
+					$(document).one("click", function () {
+						menu.hide();
+					});
+					return false;
+				})
+				.parent()
+				.buttonset()
+				.next()
+				.hide()
+				.menu().css({'position': 'absolute'});
+
 		},
 
 		initFilters: function () {
@@ -262,67 +416,44 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 		},
 
-		increaseDate: function (event) {
-			event.preventDefault();
 
-			this.setDate(1);
-		},
 
-		decreaseDate: function (event) {
-			event.preventDefault();
 
-			this.setDate(-1);
-		},
-
-		setDate: function (increment) {
-			increment = increment || 0;
-
-			var $startDateTime = this.$("#start-date");
-			var $endDateTime = this.$("#end-date");
-
-			var startDate = $startDateTime.datepicker("getDate");
-			var endDate = $endDateTime.datepicker("getDate");
-
-			if (_.isDate(startDate)) startDate.setDate(startDate.getDate() + increment);
-			if (_.isDate(endDate)) endDate.setDate(endDate.getDate() + increment);
-
-			$startDateTime.datepicker("setDate", startDate);
-			$endDateTime.datepicker("setDate", endDate);
-
-			this.$("#start-date").change();
-		},
 
 		render: function () {
 			var view = this;
 
 			view.$el.html($.tmpl(view.template));
 
-
-			view.initStatusButtonset();
 			view.initFilters();
+			view.initStatusFilterButtonset();
+			view.initSendToLabButton();
+			view.initExecuteButton();
+			view.initResetAllButton();
 
-			view.$('#execute,#send-to-lab, #print').button({ disabled: true });
+			view.initPrintButton();
+
+			view.initTissues();
+			view.initDepartments();
+
+
+			var now = moment();
+			var startTimestamp = now.subtract('days', 1).hours(0).minutes(0).format('X');
+			var endTimestamp = now.subtract('days', 1).hours(23).minutes(59).format('X');
+
+			view.datepicker = new DatetimePikerView({
+				startTimestamp: startTimestamp,
+				endTimestamp: endTimestamp
+			});
+
+			view.$('#biomaterials-head-filter').prepend(view.datepicker.render().el)
+			//.biomaterials-datatime
 
 			view.$("#biomaterial-grid").html(view.grid.el);
-			view.$("#biomaterial-count table").append(view.counts.el);
+			view.$("#biomaterial-count").append(view.counts.el);
 
 
-			UIInitialize(view.el);
 
-			var now = new Date();
-			var startDate = new Date();
-			var endDate = new Date();
-
-			if (now.getHours() >= 0 && now.getHours() < 8) {
-				startDate.setDate(startDate.getDate() - 1);
-			}
-
-			endDate.setDate(startDate.getDate() + 1);
-
-			view.$("#start-date").datepicker("setDate", startDate);
-			view.$("#end-date").datepicker("setDate", endDate);
-
-			view.setDate();
 
 
 			//UIInitialize(view.el);

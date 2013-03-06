@@ -19,6 +19,8 @@ define([
 
 			this.on("template:loaded", this.ready, this);
 			this.loadTemplate("pages/appeals-list");
+
+			_.bindAll(this, 'printForm007')
 		},
 
 		events: {
@@ -98,6 +100,28 @@ define([
 		newHospitalBed: function (appealId) {
 			this.trigger("change:viewState", {type: 'hospitalbed', options: {}});
 			App.Router.updateUrl("appeals/" + appealId + "/hospitalbed/");
+		},
+
+		printForm007: function () {
+			console.log('printForm007', this)
+			var endDate = $("#appeal-start-date").datepicker("getDate").getTime() + (7 * 60 + 59) * 60 * 1000;
+			var beginDate = endDate - (24 * 60 - 1) * 60 * 1000;
+
+			var form007 = new App.Models.PrintForm007({
+				departmentId: 18,
+				beginDate: beginDate,
+				endDate: endDate
+			});
+
+			new App.Views.Print({
+				model: form007,
+				template: "007"
+			});
+
+			form007.fetch();
+
+			console.log('007 from to', beginDate, endDate);
+
 		},
 
 		ready: function () {
@@ -233,6 +257,8 @@ define([
 				/*Collection.setParams({'filter[date]':1334300400000})*/
 				Collection.reset();
 
+				this.printButton = $('<button style="float: right;">Печать</button>').button().click(this.printForm007);
+
 				Filter = new App.Views.Filter({
 					collection: Collection,
 					templateId: "#appeals-list-filters-nurse-department",
@@ -273,6 +299,10 @@ define([
 			this.depended(AppealsGrid);
 
 			this.$el.find(".Container").html(AppealsGrid.render().el);
+
+			if (this.printButton) {
+				this.$el.find(".FilterPage").append(this.printButton);
+			}
 
 
 			// Пэйджинатор

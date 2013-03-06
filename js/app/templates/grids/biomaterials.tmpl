@@ -3,10 +3,10 @@
 		<thead>
 		<tr>
 			<th>
-				<input type="checkbox" name="all" id="select-all">
+				<input type="checkbox" name="all" id="select-all" title="Отметить все">
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="time">Дата и время</a>
+				<a class="Actions SortCol" data-field="date">Дата и время</a>
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="fullName">ФИО</a>
@@ -18,14 +18,17 @@
 				<a class="Actions SortCol" data-field="birthDate">Дата рожд.</a>
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="actionType.name">Название исследования</a>
+				<a class="Actions SortCol" data-field="biomaterial.tissueType.name">Биоматериал</a>
 			</th>
 			<!---->
 			<th>
-				<a class="Actions SortCol" data-field="actionType.status">Срочность</a>
+				<a class="Actions SortCol" data-field="status">Срочность</a>
 			</th>
-			<th colspan="3">
-				<a class="Actions SortCol" data-field="testTube">Пробирка</a>
+			<!--<th>-->
+				<!--<a class="Actions SortCol" data-field="testTube">Пробирка</a>-->
+			<!--</th>-->
+			<th >
+				Объём
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="status">Статус</a>
@@ -40,52 +43,82 @@
 </script>
 
 <script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
-	<td class="status-code-${status.code}">
-		{{if jobTicket.status!=2}}
-			<input type="checkbox" class="biomaterial_id" name="biomaterial_id" value="${id}" data-job-ticket="${jobTicket.id}">
+	<td class="status-code-${status}">
+		{{if status!=2}}
+		<input type="checkbox" class="id" name="id" value="${id}"/>
 		{{/if}}
-		jobTicket.id = ${jobTicket.id}
+		<!-- ${id} -->
+
 	</td>
 
-	<td class="status-code-${status.code}">
-		{{formatDateTime jobTicket.date}}
+	<td class="status-code-${status}">
+		{{formatDateTime date}}
 	</td>
 
-	<td class="status-code-${status.code}">
+	<td class="status-code-${status}">
 		${patient.name.raw}
 	</td>
-	<td class="status-code-${status.code}">
+	<td class="status-code-${status}">
 		${patient.sex}
 	</td>
-	<td class="status-code-${status.code}">
+	<td class="status-code-${status}">
 		{{formatDate patient.birthDate}}
 
 	</td>
-	<td class="status-code-${status.code}">
-	<b>${actionType.name}</b>
+	<td class="status-code-${status} HasToolTip" data-tooltip-content="#tooltip_${id}">
+
+		{{if status == 0}}
+		<b><u>${biomaterial.tissueType.name} (${actions.length})</u></b>
+		{{else}}
+		${biomaterial.tissueType.name} (${actions.length})
+		{{/if}}
+
+		<div id="tooltip_${id}" class="ToolTip TopTail">
+			<ul style="margin-bottom: 10px;">
+				{{if assigner}}
+					${assigner.name.raw}
+				{{/if}}
+
+				{{if laboratory.name}}
+				<li>Лаборатория: ${laboratory.name}</li>
+				{{/if}}
+				{{if label}}
+				<li>Пометка: ${label}</li>
+				{{/if}}
+				{{if note}}
+				<li>Примечание: ${note}</li>
+				{{/if}}
+			</ul>
+
+
+				<b>Лабораторные исследования:</b>
+			<ol>
+				{{each actions}}
+				<li>${actionType.name}</li>
+				{{/each}}
+
+			</ol>
+
+
+
+		</div>
 	</td>
 
-	<td class="status-code-${status.code}">
- {{if urgent}}<span class="Urgent">срочно</span>{{/if}}
+	<td class="status-code-${status}">
+		{{if urgent}}<span class="Urgent">срочно</span>{{/if}}
 	</td>
-	<td class="status-code-${status.code}">
-		${tubeType.shortName}
-	</td>
-	<td class="status-code-${status.code}">
-		{{if tubeType.volume}}
-			${tubeType.volume}
+
+	<td class="status-code-${status}">
+		{{if volume}}
+		${volume} ${biomaterial.unit.name}
 		{{/if}}
 	</td>
 
 
-	<td class="status-code-${status.code}">
-		{{if tubeType.color}}
-   <span class="color-label" style="background-color:${tubeType.color};"></span>
-		{{/if}}
-	</td>
 
-	<td class="status-code-${status.code}">
-		<span class="status-name">${status.name}</span>
+
+	<td class="status-code-${status}">
+		<span class="status-name">${statusName}</span>
 	</td>
 </script>
 
