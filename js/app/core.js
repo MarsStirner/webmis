@@ -269,7 +269,7 @@ Core = {
 				var duplicate = $this.data("duplicate");
 
 				if (relation) {
-					$this.val(Core.Date.toInt($this.val() + " " + $(relation).val()) || "");
+					$this.val(Core.Date.toInt($this.val() + " " + $clone.find(relation).val()) || "");
 				} else {
 					$this.val(Core.Date.toInt($this.val()) || "");
 				}
