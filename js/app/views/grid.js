@@ -105,7 +105,7 @@ define(["views/grid-row"], function () {
 					}
 
 					if (view.collection.requestData && view.collection.requestData.page > 1) {
-						_index += view.collection.requestData.page * view.collection.requestData.limit;
+						_index += (view.collection.requestData.page - 1) * view.collection.requestData.limit;
 					}
 
 					var GridRow = new App.Views.GridRow({
