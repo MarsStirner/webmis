@@ -277,6 +277,11 @@ define([
 			}
 
 
+			this.model.get("hospitalizationWith").on("add remove", function () {
+				console.log(this.$(".AddRepresentative"));
+				this.$(".AddRepresentative").toggle(!Boolean(this.model.get("hospitalizationWith").length));
+			}, view);
+
 			var representativeList = new RepresentativeList({
 				collection: this.model.get("hospitalizationWith"),
 				relationTypes: dicts.relationTypes
