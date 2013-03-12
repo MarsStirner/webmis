@@ -159,12 +159,26 @@ define([
 			this.model.set({selectedTerms: terms});
 		},*/
 
+
+
 		appendTerm: function (event) {
 			var term = event.term;
 			var selectedTerms = this.model.get("selectedTerms");
+
+			if (selectedTerms.length) {
+				if (!Core.Strings.endsWithPunctuationChar(selectedTerms)) {
+					selectedTerms += ", ";
+				} else {
+					selectedTerms += " ";
+				}
+				selectedTerms += term;
+			} else {
+				selectedTerms = term;
+			}
+
 			this.model.set({
 				//selectedTerms: (selectedTerms.length ? selectedTerms + ", " + term.get("name") : term.get("name"))
-				selectedTerms: (selectedTerms.length ? selectedTerms + ", " + term : term)
+				selectedTerms: (selectedTerms)
 			});
 		},
 
