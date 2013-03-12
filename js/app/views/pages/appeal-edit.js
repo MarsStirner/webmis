@@ -133,6 +133,8 @@ define([
 				if (Core.Date.getAge(patient.get("birthDate")) < 18) {
 					//alert("Нельзя добавить несовершеннолетнего представителя.");
 					this.$nonAdultAlert.dialog("open");
+				} else if (this.model.get("patient").get("id") == patient.get("id")) {
+					this.$samePatinetAlert.dialog("open");
 				} else {
 					this.model.get("hospitalizationWith").add({
 						relative: {
@@ -283,6 +285,20 @@ define([
 			representativeList.render();
 
 			this.$nonAdultAlert = this.$(".NonAdultAlert").dialog({
+				modal: true,
+				autoOpen: false,
+				dialogClass: "webmis",
+				resizable: false,
+				width: "500px",
+
+				buttons: {
+					"Принять": function () {
+						$(this).dialog("close");
+					}
+				}
+			});
+
+			this.$samePatinetAlert = this.$(".SamePatientAlert").dialog({
 				modal: true,
 				autoOpen: false,
 				dialogClass: "webmis",
