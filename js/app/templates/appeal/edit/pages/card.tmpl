@@ -148,10 +148,12 @@
 			<td> Кем доставлен</td>
 			<td>{{if deliveredType && deliveredType != "-1"}}${deliveredType}{{else}}-{{/if}}</td>
 		</tr>
+		{{if ambulanceNumber}}
 		<tr>
 			<td> Номер наряда СП</td>
-			<td>{{if ambulanceNumber}}${ambulanceNumber}{{else}}-{{/if}}</td>
+			<td>${ambulanceNumber}</td>
 		</tr>
+		{{/if}}
 		<tr>
 			<td> Вид транспортировки</td>
 			<td>{{if movingType}}${movingType}{{else}}-{{/if}}</td>
