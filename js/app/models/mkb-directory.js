@@ -153,13 +153,15 @@ define(['models/mkb'], function () {
 	App.Models.MkbClass = Model.extend({
 		defaults: {
 			code: "",
+			diagIdMin: "",
+			diagIdMax: "",
 			groups: []
 		},
 
 		hasChildren: true,
 
 		getTitle: function () {
-			return this.get("id") + " " + this.get("code");
+			return this.get("id") + " [" + this.get("diagIdMin") + "-" + this.get("diagIdMax") + "] " + this.get("code");
 		},
 
 		getBreadcrumbTitle: function () {
