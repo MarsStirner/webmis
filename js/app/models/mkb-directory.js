@@ -40,7 +40,8 @@ define(['models/mkb'], function () {
 		hasChildren: true,
 
 		getTitle: function () {
-			return this.get("id") + " " + this.get("code");
+			//return this.get("id") + " " + this.get("code");
+			return this.get("code");
 		},
 
 		getBreadcrumbTitle: function () {
@@ -98,7 +99,8 @@ define(['models/mkb'], function () {
 		hasChildren: true,
 
 		getTitle: function () {
-			return this.get("id").replace(/[\(\)]/g, "") + " " + this.get("code");
+			//return this.get("id").replace(/[\(\)]/g, "") + " " + this.get("code");
+			return this.get("code");
 		},
 
 		getBreadcrumbTitle: function () {
@@ -161,11 +163,12 @@ define(['models/mkb'], function () {
 		hasChildren: true,
 
 		getTitle: function () {
-			return this.get("id") + " [" + this.get("diagIdMin") + "-" + this.get("diagIdMax") + "] " + this.get("code");
+			//return this.get("id") + " [" + this.get("diagIdMin") + "-" + this.get("diagIdMax") + "] " + this.get("code");
+			return "[" + this.get("diagIdMin") + "-" + this.get("diagIdMax") + "] " + this.get("code");
 		},
 
 		getBreadcrumbTitle: function () {
-			return "Класс " + this.get("id");
+			return this.get("id");
 		},
 
 		/*parse: function (raw) {
