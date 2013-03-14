@@ -68,9 +68,9 @@
 	<td class="status-code-${status} HasToolTip" data-tooltip-content="#tooltip_${id}">
 
 		{{if status == 0}}
-		<b><u>${biomaterial.tissueType.name} (${actions.length})</u></b>
+			<b><u>${biomaterial.tissueType.name} (${actions.length})</u></b>
 		{{else}}
-		${biomaterial.tissueType.name} (${actions.length})
+			${biomaterial.tissueType.name} (${actions.length})
 		{{/if}}
 
 		<div id="tooltip_${id}" class="ToolTip TopTail">
@@ -110,8 +110,10 @@
 
 	<td class="status-code-${status}">
 		{{if volume}}
-		${volume} ${biomaterial.unit.name}
+			${volume}
+			{{if biomaterial.unit && biomaterial.unit.name}} ${biomaterial.unit.name}{{/if}}
 		{{/if}}
+
 	</td>
 
 
@@ -129,7 +131,7 @@
 </script>
 
 <script id="biomaterials-grid-row-default" type="text/x-jquery-tmpl">
-	<h3>Введите необходимые данные в поля фильтров</h3>
+	<td colspan="7">Введите необходимые данные в поля фильтров</td>
 </script>
 
 <script id="biomaterials-grid-row-on-fetch" type="text/x-jquery-tmpl">
