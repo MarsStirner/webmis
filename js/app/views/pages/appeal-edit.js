@@ -16,7 +16,7 @@ define([
 
 		events: {
 			"click .Actions.Save": "onSave",
-			"click .Actions.Cancel": "cancel",
+			"click .Actions.Cancel": "onCancel",
 			"click .AddRepresentative": "onAddRepresentativeClick"
 		},
 
@@ -78,6 +78,16 @@ define([
 			}});
 
 			this.$(".Save").attr("disabled", readyToSave);
+		},
+
+		onCancel: function (event) {
+			event.preventDefault();
+
+			if (this.model.isNew()) {
+				App.Router.navigate("patients/" + this.model.get("patient").get("id") + "/", {trigger:true});
+			} else {
+				App.Router.navigate("appeals/" + this.model.get("id") + "/", {trigger:true});
+			}
 		},
 
 		onAddRepresentativeClick: function () {
