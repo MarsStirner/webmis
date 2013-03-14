@@ -1,22 +1,23 @@
-
-{{each data}}
 ${name}
-        <ul>
-            {{each group[0].attribute}}
-            <li>${name}</li>
-            {{/each}}
-        </ul>
-
-        {{if group[1].attribute.length}}
-        Параметры:
+{{if group}}
 <ul>
-    {{each group[1].attribute}}
-    <li>
-        <input type="checkbox" {{if !properties[0].value}}disabled{{/if}} {{if properties[1].value}}checked{{/if}}/>
-        ${name} </li>
-    {{/each}}
-</ul>
-        {{/if}}
 
-{{/each}}
+	{{each group[0].attribute}}
+	<li>${name}</li>
+	{{/each}}
+</ul>
+
+{{if group[1].attribute.length}}
+Параметры:
+<ul>
+	{{each group[1].attribute}}
+	<li>
+		<input type="checkbox" {{if !properties[0].value}}disabled{{/if}} {{if properties[1].value}}checked{{/if}}/>
+		${name}
+	</li>
+	{{/each}}
+</ul>
+{{/if}}
+{{/if}}
+
 

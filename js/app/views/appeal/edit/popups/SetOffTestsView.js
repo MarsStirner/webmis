@@ -7,7 +7,7 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
             initialize: function () {
                 var view = this;
 
-                view.model = new SetOfTests();
+                view.model = view.options.model;
 
                 view.model.on('change', function(){
                     view.render();
@@ -32,7 +32,8 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
 
             render: function () {
                 var view = this;
-                view.$el.html($.tmpl(view.template, {data:view.model.toJSON()}));
+//							console.log(' view.model', view.model)
+                view.$el.html($.tmpl(view.template, view.model.toJSON()));
                 return view;
             }
 

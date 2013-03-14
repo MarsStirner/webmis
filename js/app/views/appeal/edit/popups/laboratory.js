@@ -6,15 +6,18 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 	"collections/diagnostics/Labs",
 	"views/appeal/edit/popups/LabsListView",
 	"views/appeal/edit/popups/TestsGroupListView",
-    "views/appeal/edit/popups/SetOffTestsView"],
-	function (tmpl, Labs, LabsListView, LabTestsListView, SetOffTestsView) {
+	"views/appeal/edit/popups/SetOffTestsView",
+	"models/diagnostics/SetOfTests",
+"models/diagnostics/labAnalysisDirection"],
+	function (tmpl, Labs, LabsListView, LabTestsListView, SetOffTestsView, SetOfTestsModel, labAnalysisDirection) {
 
 		App.Views.LaboratoryPopup = View.extend({
 			template: tmpl,
 			className: "popup",
 
 			events: {
-				"click .ShowHidePopup": "close"
+				"click .ShowHidePopup": "close",
+				"click .save": "onSave"
 			},
 			initialize: function () {
 				var popup = this;
@@ -44,8 +47,9 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					popup.renderNested(popup.labTestListView, ".lab-test-list-el");
 
 
-                    popup.setOffTestsView = new SetOffTestsView();
-                    popup.renderNested(popup.setOffTestsView, ".set-off-test-el");
+					popup.setOffTests = new SetOfTestsModel();
+					popup.setOffTestsView = new SetOffTestsView({model: popup.setOffTests});
+					popup.renderNested(popup.setOffTestsView, ".set-off-test-el");
 
 
 					$("body").append(this.el);
@@ -62,6 +66,16 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				}
 
 				return this;
+			},
+
+			onSave: function(){
+				var popup = this;
+
+				console.log('popup.setOffTests', popup.setOffTests)
+
+				var direction = new labAnalysisDirection(popup.setOffTests);
+				direction.eventId = 62577;
+				direction.save();
 			},
 
 			open: function () {
