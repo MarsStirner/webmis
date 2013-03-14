@@ -18,7 +18,7 @@
 				<a class="Actions SortCol" data-field="birthDate">Дата рожд.</a>
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="biomaterial.tissueType.name">Биоматериал</a>
+				<a class="Actions SortCol" data-field="tissueType">Биоматериал</a>
 			</th>
 			<!---->
 			<th>
@@ -79,8 +79,8 @@
 					${assigner.name.raw}
 				{{/if}}
 
-				{{if laboratory.name}}
-				<li>Лаборатория: ${laboratory.name}</li>
+				{{if bed.name}}
+				<li>Отделение/койка: ${bed.name}</li>
 				{{/if}}
 				{{if label}}
 				<li>Пометка: ${label}</li>
