@@ -32,6 +32,10 @@ define(['text!templates/pages/biomaterials.tmpl',
 				view.resetSelectAllCheckbox();
 			});
 
+			view.collection.on('fetch', function () {
+				console.log('fetch event')
+			});
+
 
 			view.initGrid();
 
@@ -62,7 +66,8 @@ define(['text!templates/pages/biomaterials.tmpl',
 				gridTemplateId: "#biomaterials-grid",
 				rowTemplateId: "#biomaterials-grid-row",
 				defaultTemplateId: "#biomaterials-grid-row-default",
-				errorTemplateId: "#biomaterials-grid-row-error"
+				errorTemplateId: "#biomaterials-grid-row-error",
+				fetchTemplateId: "#biomaterials-grid-row-on-fetch"
 			});
 
 			view.depended(view.grid);
