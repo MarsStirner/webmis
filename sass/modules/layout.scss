@@ -672,6 +672,78 @@ footer {
 	margin-top: -.55em !important;
 }
 
+/*.select2-drop, .select2-container {
+	font-size: 1.2em;
+}
+.select2-container .select2-choice  {
+	border-radius: 0;
+	background-image: none;
+	border: 1px solid #737477;
+	background-color: white;
+	color: black;
+	> div {
+		border-radius: 0;
+		border: none;
+		background-image: none;
+		background-color: white;
+	}
+}
+.select2-drop {
+	border-left: 1px solid #737477;
+	border-right: 1px solid #737477;
+	border-bottom: 1px solid #737477;
+	border-radius: 0;
+}
+.select2-drop.select2-drop-above {
+	border-radius: 0;
+}
+.select2-container.select2-drop-above .select2-choice {
+	border-radius: 0;
+	background-image: none;
+}
+.select2-results {
+	li {
+		padding: 0.6em 0.4em 0.7em 0.4em;
+	}
+	li.select2-highlighted {
+		background: #D2F0FD;
+		color: black;
+	}
+}*/
+
+.select2-container {
+	.select2-choice {
+		height: 2.25em;
+		font-size: 1.2em;
+		border-color: #737477;
+		span {
+			line-height: 2.25em;
+			height: 2.25em;
+		}
+	}
+}
+
+.select2-results {
+	font-size: 1.2em;
+	li {
+		padding: 0.2em 0.4em 0.2em 0.2em;
+	}
+	li.select2-highlighted {
+		background: #D2F0FD;
+		color: black;
+	}
+}
+
+.select2-drop {
+	border-left: 1px solid #737477;
+	border-right: 1px solid #737477;
+	border-bottom: 1px solid #737477;
+	&.select2-drop-above {
+		border-top: 1px solid #737477;
+	}
+}
+
+
 /*.LineBlockHolder {
 	> li {
 		.LineBlock {

@@ -221,9 +221,9 @@ function UIInitialize (context) {
 		$(this).fadeOut(300);
 	});
 
-	$("select.Styled", context).each ( function ()
-	{
-		new UI.CustomSelect($(this));
+	$("select.Styled", context).each(function () {
+		//new UI.CustomSelect($(this));
+		$(this).width("100%").select2();
 	});
 
 	$(".Combo", context).each(function () {
