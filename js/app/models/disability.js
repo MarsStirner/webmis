@@ -75,9 +75,9 @@ define(["models/date"], function () {
 					if (!this.get("disabilityType").get("id")) {
 						errors.push({property: "disabilities-"+self.cid+"-disabilityType-id", msg: "Тип инвалидности"});
 					}
-					if (!this.get("document").get("id")) {
+					/*if (!this.get("document").get("id")) {
 						errors.push({property: "disabilities-"+self.cid+"-document-id", msg: "Документ подтверждающий инвалидность"});
-					}
+					}*/
 					if (!startDate || isNaN(new Date(parseInt(startDate)).getTime()) || new Date(parseInt(startDate)) > new Date()) {
 						errors.push({property: "disabilities-"+self.cid+"-rangeDisabilityDate-start", msg: "Дата начала инвалидности"});
 					}
