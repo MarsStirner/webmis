@@ -21,6 +21,7 @@ define([
 
 		initialize: function () {
 			this.collection = new App.Collections.LaboratoryDiags;
+			console.log('this.options',this.options)
 			this.collection.appealId = this.options.appealId;
 			this.collection.setParams({
 				sortingField: "directionDate",
@@ -39,7 +40,7 @@ define([
 			this.depended(this.grid);
 
 
-			this.newAssignPopup = new App.Views.LaboratoryPopup;
+			this.newAssignPopup = new App.Views.LaboratoryPopup({appeal:this.options.appeal});
 
 			this.collection.on("reset", this.onCollectionLoaded, this);
 			this.collection.fetch();

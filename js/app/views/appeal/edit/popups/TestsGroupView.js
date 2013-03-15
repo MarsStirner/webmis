@@ -25,6 +25,7 @@ define([ 'text!templates/appeal/edit/popups/labs-list-item.tmpl'],
 //
 			render: function () {
 				var view = this;
+				console.log('render tests',view.model)
 				view.$el.html($.tmpl(view.template, view.model.toJSON()));
 				return view;
 			}
