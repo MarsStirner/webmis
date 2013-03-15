@@ -42,13 +42,13 @@ define(["models/Name", "models/Bed", "models/doctor", "models/condition"], funct
 		parse: function ( raw ) {
 			var depPatient = new App.Models.DepartmentPatient;
 			var data = raw.data ? raw.data : raw;
-			console.log('data',data);
-
-			console.log('depPatient',depPatient);
-			console.log('depPatient.toJSON',depPatient.toJSON());
+//			console.log('data',data);
+//
+//			console.log('depPatient',depPatient);
+//			console.log('depPatient.toJSON',depPatient.toJSON());
 			var val = Core.Objects.mergeAll( depPatient.toJSON(), data );
 
-			console.log('return data',val);
+//			console.log('return data',val);
 
 			return val;
 		}
