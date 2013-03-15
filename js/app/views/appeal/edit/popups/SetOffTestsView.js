@@ -32,8 +32,9 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
 
             render: function () {
                 var view = this;
-//							console.log(' view.model', view.model)
+							console.log(' view.model', view.model)
                 view.$el.html($.tmpl(view.template, view.model.toJSON()));
+							UIInitialize(this.el);
                 return view;
             }
 

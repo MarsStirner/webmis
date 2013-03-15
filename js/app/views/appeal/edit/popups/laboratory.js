@@ -44,10 +44,10 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 				var financeDictionary = new App.Collections.DictionaryValues([], {name:'finance'});
 
-				financeDictionary.on('reset', function(){
-					console.log('dictionary',financeDictionary)
-
-				});
+//				financeDictionary.on('reset', function(){
+//					console.log('dictionary',financeDictionary)
+//
+//				});
 
 				financeDictionary.fetch();
 

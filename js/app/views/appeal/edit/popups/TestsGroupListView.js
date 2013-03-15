@@ -27,13 +27,20 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 				view.collection.on('reset', function () {
 
 					view.collection.each(function (testsGroup) {
+						console.log('TestsGroup',testsGroup);
 
-						var testsGroupView = new TestsGroupView({
-							model : testsGroup,
-							tagName:'li'
-						});
+						if(testsGroup.get('groups').length){
 
-						view.$('.lab-tests-list').append(testsGroupView.render().el);
+						}else{
+							var testsGroupView = new TestsGroupView({
+								model : testsGroup,
+								tagName:'li'
+							});
+
+							view.$('.lab-tests-list').append(testsGroupView.render().el);
+						}
+
+
 
 					});
 

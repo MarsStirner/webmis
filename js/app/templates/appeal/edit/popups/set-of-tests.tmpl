@@ -9,7 +9,7 @@
 
 
 		<ul class="EventList">
-			<li><label><input type="checkbox"/> ${name}</label>
+			<li><label style="width: 400px;"><input type="checkbox"/> ${name}</label>
 
 				{{if group}}
 				{{if group[1].attribute.length}}
@@ -39,9 +39,9 @@
 				<div class="DateTime">
 					<div class="DatePeriod SingleDate">
 						<div class="FromTo">
-							<input type="text" id="start-date-${id}" data-relation="#start-time-${id}"
-																			 name="start-date-${id}" placeholder="дд.мм.гггг" class="SelectDate hasDatepicker"
-																			 required="required" autocomplete="off"></div>
+							<input type="text" id="start-date-${id}" data-relation="#start-time-${id}" data-mindate="0"
+																			 name="start-date-${id}" placeholder="дд.мм.гггг" class="SelectDate has45Datepicker"
+																			 required="required" ></div>
 						<i class="DateIcon Icon"></i></div>
 
 					<div class="SingleTime">
