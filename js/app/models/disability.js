@@ -75,7 +75,7 @@ define(["models/date"], function () {
 					if (!this.get("disabilityType").get("id")) {
 						errors.push({property: "disabilities-"+self.cid+"-disabilityType-id", msg: "Тип инвалидности"});
 					}
-					if (self.get("document").get("series") || self.get("document").get("number") || self.get("document").get("date") && !this.get("document").get("id")) {
+					if ((self.get("document").get("series") || self.get("document").get("number") || self.get("document").get("date")) && !this.get("document").get("id")) {
 						errors.push({property: "disabilities-"+self.cid+"-document-id", msg: "Документ подтверждающий инвалидность"});
 					}
 					if (!startDate || isNaN(new Date(parseInt(startDate)).getTime()) || new Date(parseInt(startDate)) > new Date()) {
