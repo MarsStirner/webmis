@@ -19,7 +19,8 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 			events: {
 				"click .ShowHidePopup": "close",
 				"click .save": "onSave",
-					"click .MKBLauncher": "toggleMKB"
+					"click .MKBLauncher": "toggleMKB",
+				"keyup input[name='diagnosis[mkb][code]']": "onMKBCodeKeyUp"
 			},
 			initialize: function () {
 				var popup = this;
@@ -77,6 +78,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 //				});
 
 				this.$("input[name='diagnosis[mkb][diagnosis]']").val(sd.get("diagnosis"));
+				this.$("input[name='diagnosis[mkb][code]']").val(sd.get("code") || sd.get("id"));
 			},
 
 			onMKBCodeKeyUp: function (event) {
@@ -85,6 +87,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 			render: function () {
 				var popup = this;
+				var self = this;
 
 				if ($(popup.$el.parent().length).length === 0) {
 
@@ -102,6 +105,8 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					this.mkbDirectory = new App.Views.MkbDirectory();
 					this.mkbDirectory.on("selectionConfirmed", this.onMKBConfirmed, this);
 					this.mkbDirectory.render();
+
+					var patientSex = Cache.Patient.get("sex").length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
 
 					this.$("input[name='diagnosis[mkb][code]']").autocomplete({
 						source: function (request, response) {
@@ -129,25 +134,31 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 						},
 						minLength: 2,
 						select: function (event, ui) {
-							self.mkbAttrId = $(this).data("mkb-examattr-id");
+							/*self.model.get("mkb").set({
+								id: ui.item.id,
+								code: ui.item.value,
+								diagnosis: ui.item.diagnosis
+							}, {silent: true});*/
 
-							self.setExamAttr({
+							//self.mkbAttrId = $(this).data("mkb-examattr-id");
+
+							/*self.setExamAttr({
 								attrId: self.mkbAttrId,
 								propertyType: "valueId",
 								value: ui.item.id,
 								displayText: ui.item.value
-							});
+							});*/
 
 							self.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
 						}
 					}).on("keyup", function () {
 							if (!$(this).val().length) {
-								self.setExamAttr({
+								/*self.setExamAttr({
 									attrId: self.mkbAttrId,
 									propertyType: "valueId",
 									value: "",
 									displayText: ""
-								});
+								});*/
 
 								self.$("input[name='diagnosis[mkb][diagnosis]']").val("");
 							}
