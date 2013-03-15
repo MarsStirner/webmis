@@ -4,27 +4,42 @@
 		<!--<tr class="EditTh">-->
 		<!--Дата и время выполнения-->
 		<tr>
-			<th>
-			<a class="Actions SortCol" data-field="directionDate"><span>Направлен</span></a>
-			<div class="Filter Hidden">
-				<div class="DatePeriod SingleDate">
-					<div class="FromTo">
-						<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="directionDate">
-					</div>
-					<i class="DateIcon Icon"></i>
-				</div>
-			</div>
+			<th></th>
+			<th style="width:100px;">
+			<a class="Actions SortCol" data-field="directionDate"><span>Направление/<br/>Выполнение</span></a>
+			<!--<div class="Filter Hidden">-->
+				<!--<div class="DatePeriod SingleDate">-->
+					<!--<div class="FromTo">-->
+						<!--<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="directionDate">-->
+					<!--</div>-->
+					<!--<i class="DateIcon Icon"></i>-->
+				<!--</div>-->
+			<!--</div>-->
 		</th>
 
+			<!--<th>-->
+				<!--<a class="Actions SortCol" data-field="diagnosticDate"><span>Выполнен</span></a>-->
+				<!--<div class="Filter Hidden">-->
+					<!--<div class="DatePeriod SingleDate">-->
+						<!--<div class="FromTo">-->
+							<!--<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="diagnosticDate">-->
+						<!--</div>-->
+						<!--<i class="DateIcon Icon"></i>-->
+					<!--</div>-->
+				<!--</div>-->
+			<!--</th>-->
+
 			<th>
-				<a class="Actions SortCol" data-field="diagnosticDate"><span>Выполнен</span></a>
+				<a class="Actions SortCol" data-field="status"><span>Статус</span></a>
 				<div class="Filter Hidden">
-					<div class="DatePeriod SingleDate">
-						<div class="FromTo">
-							<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="diagnosticDate">
-						</div>
-						<i class="DateIcon Icon"></i>
-					</div>
+					<select class="Styled" name="statusId">
+						<option selected>...</option>
+						<option value="0">Начато</option>
+						<option value="1">Ожидание</option>
+						<option value="2">Закончено</option>
+						<option value="3">Отменено</option>
+						<option value="4">Без&nbsp;результата</option>
+					</select>
 				</div>
 			</th>
 
@@ -50,27 +65,15 @@
 					<input type="text" name="assignPerson" placeholder="ФИО" />
 				</div>
 			</th>
-			<th>
-				<a class="Actions SortCol" data-field="execPerson"><span>Выполнивший врач</span></a>
-				<div class="Filter Hidden">
-					<input type="text" name="execPerson" placeholder="ФИО" />
-				</div>
-			</th>
-			<th>
-				<a class="Actions SortCol" data-field="status"><span>Статус</span></a>
-				<div class="Filter Hidden">
-					<select class="Styled" name="statusId">
-						<option selected>...</option>
-						<option value="0">Начато</option>
-						<option value="1">Ожидание</option>
-						<option value="2">Закончено</option>
-						<option value="3">Отменено</option>
-						<option value="4">Без&nbsp;результата</option>
-					</select>
-				</div>
-			</th>
+			<!--<th>-->
+				<!--<a class="Actions SortCol" data-field="execPerson"><span>Выполнивший врач</span></a>-->
+				<!--<div class="Filter Hidden">-->
+					<!--<input type="text" name="execPerson" placeholder="ФИО" />-->
+				<!--</div>-->
+			<!--</th>-->
+
 			<th colspan="3">
-				Действия
+				<!--Действия-->
 			</th>
 		</tr>
 		</thead>
@@ -81,20 +84,25 @@
 </script>
 
 <script id="lab-diagnostic-grid-row" type="text/x-jquery-tmpl">
-	<td>
-		{{if diagnosticDate}}
-			{{formatDateTime diagnosticDate}}
-		{{else}}
-			-
-		{{/if}}
-	</td>
+	<td><i class=" icon-bar-chart"></i></td>
 	<td>
 		{{if directionDate}}
 		{{formatDateTime directionDate}}
 		{{else}}
-		-
+			{{if diagnosticDate}}
+				{{formatDateTime diagnosticDate}}
+			{{else}}
+				-
+			{{/if}}
 		{{/if}}
+	</td>
 
+	<td{{if status.id === 0}} class="DoneCell"{{/if}}{{if status.id === 3}} class="CancelledCell"{{/if}}>
+	{{if status.name}}
+	${status.name}
+	{{else}}
+	-
+	{{/if}}
 	</td>
 	<td>
 		${diagnosticName.name}
@@ -107,19 +115,16 @@
 	<td>
 		${assignPerson.name.raw}
 	</td>
-	<td>
-		${execPerson.name.raw}
-	</td>
-	<td{{if status.id === 0}} class="DoneCell"{{/if}}{{if status.id === 3}} class="CancelledCell"{{/if}}>
-		{{if status.name}}
-			${status.name}
-		{{else}}
-			-
-		{{/if}}
-	</td>
-	<td><span class=" icon-remove"></span></td>
+	<!--<td>-->
+		<!--${execPerson.name.raw}-->
+	<!--</td>-->
+
 	<td><i class="icon-pencil"></i></td>
-	<td><i class="icon-print"></i></td>
+	<td><span class=" icon-remove cancel-direction"></span></td>
+
+	<td>
+		<!--<i class="icon-print"></i>-->
+	</td>
 </script>
 
 <script id="lab-diagnostic-grid-default" type="text/x-jquery-tmpl">

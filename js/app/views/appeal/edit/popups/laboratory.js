@@ -5,18 +5,32 @@
 define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 	"collections/diagnostics/Labs",
 	"views/appeal/edit/popups/LabsListView",
-	"views/appeal/edit/popups/LabTestsListView"],
-	function (tmpl, Labs, LabsListView, LabTestsListView) {
+	"views/appeal/edit/popups/TestsGroupListView",
+	"views/appeal/edit/popups/SetOffTestsView",
+	"models/diagnostics/SetOfTests",
+"models/diagnostics/labAnalysisDirection",
+"views/ui/SelectView"],
+	function (tmpl, Labs, LabsListView, LabTestsListView, SetOffTestsView, SetOfTestsModel, labAnalysisDirection,SelectView) {
 
 		App.Views.LaboratoryPopup = View.extend({
 			template: tmpl,
 			className: "popup",
 
 			events: {
-				"click .ShowHidePopup": "close"
+				"click .ShowHidePopup": "close",
+				"click .save": "onSave",
+					"click .MKBLauncher": "toggleMKB"
 			},
 			initialize: function () {
 				var popup = this;
+
+				this.doctor = {
+					name: {
+						first: Core.Cookies.get("doctorFirstName"),
+							last: Core.Cookies.get("doctorLastName")
+					}
+				};
+
 
 
 			},
@@ -24,24 +38,132 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				var $element = ( selector instanceof $ ) ? selector : this.$el.find(selector);
 				view.setElement($element).render();
 			},
+			initFinanseSelect: function (){
+				var view = this;
+				var appealFinanceId = view.options.appeal.get('contract').get('finance').get('id');
+
+				var financeDictionary = new App.Collections.DictionaryValues([], {name:'finance'});
+
+//				financeDictionary.on('reset', function(){
+//					console.log('dictionary',financeDictionary)
+//
+//				});
+
+				financeDictionary.fetch();
+
+				view.financeSelect = new SelectView({
+					collection: financeDictionary,
+					el: view.$('#finance'),
+					initSelection: appealFinanceId
+				});
+
+				view.depended(view.financeSelect);
+			},
+
+			toggleMKB: function (event) {
+				event.preventDefault();
+
+				this.mkbAttrId = $(event.currentTarget).data("mkb-examattr-id");
+
+				this.mkbDirectory.open();
+			},
+			onMKBConfirmed: function (event) {
+				var sd = event.selectedDiagnosis;
+//				this.setExamAttr({
+//					attrId: this.mkbAttrId,
+//					propertyType: "valueId",
+//					value: sd.get("id") || sd.get("code"),
+//					displayText: sd.get("code") || sd.get("id")
+//				});
+
+				this.$("input[name='diagnosis[mkb][diagnosis]']").val(sd.get("diagnosis"));
+			},
+
+			onMKBCodeKeyUp: function (event) {
+				$(event.currentTarget).val(Core.Strings.toLatin($(event.currentTarget).val()));
+			},
+
 			render: function () {
 				var popup = this;
 
 				if ($(popup.$el.parent().length).length === 0) {
 
-					popup.$el.html($.tmpl(this.template, {}));
+					popup.$el.html($.tmpl(this.template, {doctor: this.doctor}));
 
-					var labs = new Labs({patientId : 6021});
+					var labs = new Labs();
 					labs.fetch({success: function () {
 						popup.labsListView = new LabsListView({collection: labs});
 						popup.renderNested(popup.labsListView, ".labs-list-el");
 
 					}});
-					var code = 17;
 
-					popup.labTestListView = new LabTestsListView({code: code});
+					popup.initFinanseSelect();
+
+					this.mkbDirectory = new App.Views.MkbDirectory();
+					this.mkbDirectory.on("selectionConfirmed", this.onMKBConfirmed, this);
+					this.mkbDirectory.render();
+
+					this.$("input[name='diagnosis[mkb][code]']").autocomplete({
+						source: function (request, response) {
+							$.ajax({
+								url: "/data/mkbs/",
+								dataType: "jsonp",
+								data: {
+									filter: {
+										view: "mkb",
+										code: request.term,
+										sex: patientSex
+									}
+								},
+								success: function (raw) {
+									response($.map(raw.data, function (item) {
+										return {
+											label: item.code + " " + item.diagnosis,
+											value: item.code,
+											id: item.id,
+											diagnosis: item.diagnosis
+										}
+									}));
+								}
+							});
+						},
+						minLength: 2,
+						select: function (event, ui) {
+							self.mkbAttrId = $(this).data("mkb-examattr-id");
+
+							self.setExamAttr({
+								attrId: self.mkbAttrId,
+								propertyType: "valueId",
+								value: ui.item.id,
+								displayText: ui.item.value
+							});
+
+							self.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
+						}
+					}).on("keyup", function () {
+							if (!$(this).val().length) {
+								self.setExamAttr({
+									attrId: self.mkbAttrId,
+									propertyType: "valueId",
+									value: "",
+									displayText: ""
+								});
+
+								self.$("input[name='diagnosis[mkb][diagnosis]']").val("");
+							}
+						});
+
+
+					popup.labTestListView = new LabTestsListView();
 					popup.renderNested(popup.labTestListView, ".lab-test-list-el");
 
+
+					popup.setOffTests = new SetOfTestsModel();
+					popup.setOffTestsView = new SetOffTestsView({model: popup.setOffTests});
+					popup.renderNested(popup.setOffTestsView, ".set-off-test-el");
+
+
+					UIInitialize(this.el);
 
 					$("body").append(this.el);
 					$(popup.el).dialog({
@@ -57,6 +179,16 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				}
 
 				return this;
+			},
+
+			onSave: function(){
+				var popup = this;
+
+				console.log('popup.setOffTests', popup.setOffTests)
+
+				var direction = new labAnalysisDirection(popup.setOffTests);
+				direction.eventId = 62577;
+				direction.save();
 			},
 
 			open: function () {

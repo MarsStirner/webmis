@@ -12,24 +12,24 @@ define([], function () {
 
 		},
 
-        val: function(value){
-            var view = this;
+		val: function (value) {
+			var view = this;
 
-            if(value){
-                view.$el.select2('val', value);
-            }else{
-               return  view.$el.select2('val');
-            }
+			if (value) {
+				view.$el.select2('val', value);
+			} else {
+				return  view.$el.select2('val');
+			}
 
-        },
-        onChange: function (){
-            var view = this;
+		},
+		onChange: function () {
+			var view = this;
 
-            pubsub.trigger('select:change',view.select2.val())
-        },
+			pubsub.trigger('select:change', view.select2.val())
+		},
 		render: function () {
 			var view = this;
-            var id = view.$el.prop('id');
+			var id = view.$el.prop('id');
 
 			_(view.collection.toJSON()).each(function (item) {
 
@@ -39,18 +39,18 @@ define([], function () {
 				}));
 			}, view);
 
-            view.select2 = view.$el.select2();
+			view.select2 = view.$el.select2();
 
-            if(view.options.initSelection){
-                view.val(view.options.initSelection)
-            }
+			if (view.options.initSelection) {
+				view.val(view.options.initSelection)
+			}
 
-			view.select2.on('change', function(){
-                console.log( )
-                pubsub.trigger(id+':change',view.select2.val());
-            });
+			view.select2.on('change', function () {
+				console.log()
+				pubsub.trigger(id + ':change', view.select2.val());
+			});
 
-            return view;
+			return view;
 		}
 
 	});

@@ -1,0 +1,12 @@
+.labs-list,.lab-tests-list{
+  li label{
+    white-space: inherit!important;
+
+  }
+  .selected{
+    background-color: #118EDC;
+    label{
+      color: #fff;
+    }
+  }
+}

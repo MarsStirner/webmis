@@ -490,7 +490,7 @@ input {
 
 /* line 69, ../../sass/modules/vidget.scss */
 .RefDiagVidget .LeftCol {
-  width: 24%;
+  width: 20%;
 }
 
 /* line 73, ../../sass/modules/vidget.scss */
@@ -500,7 +500,7 @@ input {
 
 /* line 76, ../../sass/modules/vidget.scss */
 .RefDiagVidget .RightCol {
-  width: 47%;
+  width: 55%;
 }
 
 /* line 81, ../../sass/modules/vidget.scss */

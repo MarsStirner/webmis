@@ -1,103 +1,82 @@
 <header class="Clearfix">
 	<h2 class="PopupHeader">Создание направления</h2>
+
 	<div class="PopupActions">
-		<button class="Styled Button BlueBorder"><span>Создать</span></button>
+		<button class="Styled Button BlueBorder save"><span>Создать</span></button>
 		<a href="#" class="ShowHidePopup">Отмена</a>
 	</div>
 </header>
 <section class="PopUpLine">
-<div class="RefDiagVidget">
-<div class="VidgetLine">
-<div class="VidgetCol LeftCol labs-list-el">
+	<div class="RefDiagVidget">
+		<div class="VidgetLine">
+			<div class="VidgetCol LeftCol labs-list-el">
 
-</div>
-<div class="VidgetCol ArrowCol">
-	<i>►</i>
-</div>
-<div class="VidgetCol LeftCol lab-test-list-el">
+			</div>
+			<div class="VidgetCol ArrowCol">
+				<i>►</i>
+			</div>
+			<div class="VidgetCol LeftCol lab-test-list-el">
 
-</div>
-<div class="VidgetCol ArrowCol">
-	<i>►</i>
-</div>
-<div class="VidgetCol RightCol lab-test-form-el">
-	<ul class="SelectAnalysis">
-		<li>
-			<label>
-				01 Рентген поясничной области
-			</label>
-		</li>
-		<li>
-			<label>
-				02 Рентген головы
-			</label>
-		</li>
-		<li>
-			<label>
-				03 Рентген верхних конечностей
-			</label>
-		</li>
-		<li>
-			<label>
-				04 Рентген органов дыхания
-			</label>
-			<ul>
-				<li>
-					<div class="AnalisLine Selected">
-						<div class="AnalisName">
-							<label>
-								<input type="checkbox" name="checkbox12" id="checkbox12" checked=""> 02.1 Правое легкое
-							</label>
+			</div>
+			<div class="VidgetCol ArrowCol">
+				<i>►</i>
+			</div>
+			<div class="VidgetCol RightCol set-off-test-el">
+				<ul class="SelectAnalysis">
+					sdfgh
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="EditForm Clearfix">
+		<!--<ul class="LineBlockHolder">-->
+
+		<div style="margin-bottom: 1.5em;">
+			<div class="HalfCol">
+				<span class="Label">Дата и время создания</span>
+				<div class="DateTime">
+					<div class="DatePeriod SingleDate">
+						<div class="FromTo">
+							<input type="text" name="start-date" id="start-date" placeholder="дд.мм.гггг" class="SelectDate"
+										 data-relation="#start-time"/>
 						</div>
-						<div class="AnalisQuant">
-							<span><input type="checkbox" name="checkbox12" id="checkbox12"></span>
-							<span><input type="text" name="textfield" id="textfield" placeholder=""></span>
-						</div>
+						<i class="DateIcon Icon"></i>
 					</div>
-				</li>
-				<li>
-					<div class="AnalisLine">
-						<div class="AnalisName">
-							<label>
-								<input type="checkbox" name="checkbox" id="checkbox">
-								02.2 Левое легкое
-							</label>
-						</div>
-						<div class="AnalisQuant">
-											<span>
-												<input type="checkbox" name="checkbox" id="checkbox">
-											</span> <span>
-													<input type="text" name="textfield2" id="textfield2" placeholder="">
-													</span>
-						</div>
+					<div class="SemiCol">
+						<input type="text" class="Styled HourPicker" id="start-time" data-relation="#start-date" placeholder="чч:мм"/>
 					</div>
-				</li>
-				<li>
-					<div class="AnalisLine Selected">
-						<div class="AnalisName">
-							<label>
-								<input type="checkbox" name="checkbox2" id="checkbox2" checked="">
-								02.3 эТрахея
-							</label>
-						</div>
-						<div class="AnalisQuant">
-											<span>
-											<input type="checkbox" name="checkbox2" id="checkbox2">
-											</span> <span>
-											<input type="text" name="textfield3" id="textfield3" placeholder="">
-											</span>
-						</div>
-					</div>
-				</li>
-			</ul>
-		</li>
-		<li>
-			<label>
-				05 Рентген поясничной области
-			</label>
-		</li>
-	</ul>
-</div>
-</div>
-</div>
+
+				</div>
+			</div>
+			<div class="ColHalf">
+				<span class="Label">Направивший врач</span>
+				<input name="doctor" type="text" style="color: #777;" disabled value="${doctor.name.first} ${doctor.name.last}">
+			</div>
+			<div class="HalfCol">
+				<span class="Label">Вид оплаты</span><br/>
+				<select name="finance" id="finance" style="width: 100%;"></select>
+			</div>
+		</div>
+
+		<div class="LineBlock">
+			<div class="QuartCol">
+				<span class="Label" style="margin-left: 0;">Диагноз</span>
+				<input name="diagnosis[mkb][code]" class="ExamAttr" data-examattr-id="103" data-mkb-examattr-id="103"
+							 type="text" value="">
+				<span class="FieldInfo">Код по МКБ</span>
+			</div>
+			<div class="HugeCol WithoutName">
+				<input name="diagnosis[mkb][diagnosis]" class="Disabled NotEditable" disabled="disabled" type="text"
+							 placeholder="" value=""/>
+				<span class="FieldInfo">Описание</span>
+			</div>
+			<div class="QuartCol" style="padding-top: 1.9em;">
+				<button class="Styled Button MKBLauncher" data-mkb-examattr-id="103"><span>МКБ-10</span></button>
+			</div>
+		</div>
+
+	</div>
+
+
 </section>

@@ -558,12 +558,12 @@
 				ЧСС ${condition.breathingRate} уд.м
 			{{/if}}
 		<td>
-			{{if condition.arterialBloodPressure.low && condition.arterialBloodPressure.high}}
-					АДД ${condition.arterialBloodPressure.low} - ${condition.arterialBloodPressure.high}
+			{{if condition && condition.arterialBloodPressure && condition.arterialBloodPressure.low && condition.arterialBloodPressure.high}}
+					АД ${condition.arterialBloodPressure.low}/${condition.arterialBloodPressure.high}
 			{{/if}}
 		</td>
 		<td>
-			{{if doctor.name.fio}}
+			{{if doctor && doctor.name.fio}}
 				${doctor.name.fio}
 			{{else}}
 					-

@@ -35,7 +35,7 @@ define(["models/Biomaterial"], function (Biomaterial) {
 				return ((model.get("selected") == true) && (model.get('status') == 2));
 			});
 
-			console.log('что-то выбрали', collection.selected);
+			//console.log('что-то выбрали', collection.selected);
 
 		},
 
@@ -90,7 +90,7 @@ define(["models/Biomaterial"], function (Biomaterial) {
 				workList.push({
 					'index': index + 1,
 					'jobTicketDate': labTest.jobTicket.date,
-					'orgStructure': labTest.department.name,
+					'orgStructure': labTest.bed.name,
 					'patientName': labTest.patient.name,
 					'patientSex': labTest.patient.sexShortName,
 					'patientBirthDate': labTest.patient.birthDate,
@@ -145,10 +145,11 @@ define(["models/Biomaterial"], function (Biomaterial) {
 		normilize: function (response) {
 			return _.map(response, function (model) {
 
-				model.patient = model.actions[0].patient;
-				model.urgent = model.actions[0].urgent;
-				model.assigner = model.actions[0].assigner;
-				model.biomaterial = model.actions[0].biomaterial;
+				//model.patient = model.actions[0].patient;
+				model.urgent = model.actions[0].urgent?model.actions[0].urgent:false;
+				//model.assigner = model.actions[0].assigner;
+				//model.biomaterial = model.actions[0].biomaterial;
+				//model.bed = model.actions[0].bed;
 
 
 				//var biomaterials = _.pluck(model.actions, 'biomaterial');
@@ -169,7 +170,8 @@ define(["models/Biomaterial"], function (Biomaterial) {
 					}
 					action.patient.sexShortName = sexShortName;
 
-					action.department = model.laboratory;
+					action.bed = model.bed;
+					action.department = model.department;
 					action.jobTicket = {
 						'id': model.id,
 						'date': model.date,
