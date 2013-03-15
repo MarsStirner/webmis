@@ -947,6 +947,16 @@ define([
 		},
 
 		onDictionariesLoaded: function (dictionaries) {
+			var dictValueAlphabeticComparator = function (a, b) {
+				if (a.value < b.value) return -1;
+				if (a.value > b.value) return 1;
+				return 0;
+			};
+
+			dictionaries.tfomses.sort(dictValueAlphabeticComparator);
+
+			dictionaries.insuranceCompanies.sort(dictValueAlphabeticComparator);
+
 			this.paymentsCollection.setDictionaries({
 				insuranceCompanies: dictionaries.insuranceCompanies,
 				tfomses: dictionaries.tfomses,

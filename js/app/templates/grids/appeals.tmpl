@@ -358,13 +358,18 @@
 				-
 			{{/if}}
 		</td>
-		<td>
-			{{each(i, diagnosis) diagnoses}}
-				{{if diagnosis.diagnosisKind == "main"}}
-					${diagnosis.mkb.code} ${diagnosis.mkb.diagnosis}
-				{{/if}}
-			{{/each}}
-		</td>
+	{{if diagnoses.length}}
+	<td class="HasToolTip" data-tooltip-content="#tooltip_${id}">
+			${diagnoses[0].mkb.code}
+			<div id="tooltip_${id}" class="ToolTip TopTail">
+				<ul>
+					<li><dfn><b>${diagnoses[0].diagnosisKindLabel}:</b></dfn> ${diagnoses[0].mkb.code} ${diagnoses[0].mkb.diagnosis}</li>
+				</ul>
+			</div>
+	</td>
+	{{else}}
+	<td></td>
+	{{/if}}
 </script>
 
 <script id="appeals-grid-doctor-department" type="text/x-jquery-tmpl">
