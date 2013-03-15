@@ -30,7 +30,7 @@
 		<label>
 			Страховая компания
 		</label>
-		<select class="select2 SMO" name="payments-${model.cid}-smo-id">
+		<select class="select2 SMO" data-subbind="true" name="payments-${model.cid}-smo-id">
 			<option value="" selected="selected">...</option>
 			{{each dictionaries.insuranceCompanies}}
 			<option value="${id}" class="insuranceCompany tfomsid-${headId}">${value}</option>

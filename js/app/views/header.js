@@ -104,6 +104,11 @@ define(function () {
 								title: "Госпитализации"
 							},
 							{
+								name: "biomaterials",
+								uri: "/biomaterials/",
+								title: "Биоматериалы"
+							},
+							{
 								title: "Амбулаторные талоны"
 							}
 						]
@@ -131,14 +136,14 @@ define(function () {
 				view.$el.append(NavigationItemView.render().el);
 			});
 
-			return this;
+			return this
 		},
 
 		updateUrl: function (event) {
 			var $target = $(event.currentTarget),
 				href = $target.find("a").attr("href");
 
-			this.$("li").removeClass("Selected");
+			this.$("li").removeClass("Selected")
 
 			$target.addClass("Selected");
 
@@ -169,7 +174,7 @@ define(function () {
 
 			this.$el.html($("#navigation-item").tmpl(this.options));
 
-			return this;
+			return this
 		}
 	});
 
@@ -209,7 +214,7 @@ define(function () {
 			}
 			UIInitialize(this.el);
 
-			return this;
+			return this
 		}
 	});
 	var RoleSelectorItem = View.extend({
@@ -222,7 +227,7 @@ define(function () {
 		render: function () {
 			this.$el.html(this.options.title);
 
-			return this;
+			return this
 		}
 	});
 

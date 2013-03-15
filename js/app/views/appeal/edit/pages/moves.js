@@ -35,11 +35,16 @@ define([
 			this.collection = new App.Collections.Moves();
 			this.collection.appealId = this.options.appealId;
 
+			this.appealIsClosed = this.options.appeal.closed;
+
 			this.collection.bind('remove', function () {
 				this.collection.fetch();
 			}, this);
 
 			this.collection.bind('reset', function () {
+
+				if(this.appealIsClosed) return;
+
 				var lastMove = this.collection.last();
 				var days = days_between(new Date().getTime(), lastMove.get('admission'));
 				var bedDays = days - 1;
@@ -51,6 +56,8 @@ define([
 					lastMove.set('days', days);
 					lastMove.set('bedDays', bedDays);
 				}
+
+
 			}, this);
 
 
@@ -61,7 +68,7 @@ define([
 				lastRowTemplateId = "#moves-grid-last-row-department",
 				defaultTemplateId = "#moves-grid-department-default";
 
-			if (allowToMove) {
+			if (allowToMove && !this.appealIsClosed) {
 				gridTemplateId = "#moves-grid-department-with-move";
 				rowTemplateId = "#moves-grid-row-department-with-move";
 				lastRowTemplateId = "#moves-grid-last-row-department-with-move";

@@ -1,0 +1,54 @@
+<header class="Clearfix">
+	<h2 class="PopupHeader">Перечень лабораторных исследований</h2>
+
+	<div class="PopupActions">
+		<!--<button class="Styled Button Disabled BlueBorder"><span>Сохранить</span></button>-->
+		<a href="#" class="ShowHidePopup">Закрыть</a>
+	</div>
+</header>
+<section class="PopUpLine">
+
+	<h3> ФИО пациента: ${patient.name.raw}</h3>
+	<h3> Отделение/койка: ${bed.name}</h3>
+	<h3> №ИБ: ${appealNumber}</h3>
+	<h3> Возраст: {{formatDate patient.birthDate}}</h3>
+	<h3> Пол: ${patient.sex}</h3>
+	<h3> Код: ${patient.id}</h3>
+
+	<h3>Тип биоматериала: ${biomaterial.tissueType.name}</h3>
+	{{if volume}}<h3> Количество: ${volume} ${biomaterial.unit.name}</h3>{{/if}}
+
+
+	<table class="Grid">
+		<thead>
+		<tr>
+			<!--<th>-->
+				<!--<input type="checkbox" name="all" id="select-all">-->
+			<!--</th>-->
+			<th>Лабораторное исследование</th>
+			<th>Объём</th>
+			<th>Тип пробирки</th>
+			<th>Цвет пробирки</th>
+		</tr>
+		</thead>
+		<tbody>
+		{{each actions}}
+			<tr>
+				<!--<td><input type="checkbox" class="lab_test_id" name="lab_test_id" value="${id}" checked/></td>-->
+				<td>${actionType.name}</td>
+				<td>{{if biomaterial.amount}}${biomaterial.amount} ${biomaterial.unit.name}{{/if}}</td>
+				<td>
+					{{if tubeType.name}}
+						${tubeType.name}
+					{{/if}}
+				</td>
+				<td>
+					{{if tubeType.color}}
+						<span class="color-label" style="background-color:${tubeType.color};" title="${tubeType.color}"></span>
+					{{/if}}
+				</td>
+		</tr>
+		{{/each}}
+		</tbody>
+	</table>
+</section>

@@ -22,9 +22,9 @@
   -moz-box-shadow: rgba(0, 0, 0, 0.5) 0 0 0.1em 0;
   box-shadow: rgba(0, 0, 0, 0.5) 0 0 0.1em 0;
   margin: 0;
-  border-top: 2px solid #B3B3B3;
+  border-top: 2px solid #b3b3b3;
   border-right: 2px solid #bbbbbb;
-  border-bottom: 2px solid #B3B3B3;
+  border-bottom: 2px solid #b3b3b3;
   border-left: 2px solid #bbbbbb;
   cursor: pointer;
   padding: 0.4em 1.5em;
@@ -37,10 +37,10 @@
 }
 /* line 22, ../../sass/_buttons.scss */
 .Styled.Button:hover, .Styled.Button.Green:hover, .Styled.Button.BlueBorder {
-  border-top: 2px solid #128EDC;
-  border-right: 2px solid #128EDC;
-  border-bottom: 2px solid #128EDC;
-  border-left: 2px solid #128EDC;
+  border-top: 2px solid #128edc;
+  border-right: 2px solid #128edc;
+  border-bottom: 2px solid #128edc;
+  border-left: 2px solid #128edc;
   /*border:2px solid #128EDC;*/
 }
 /* line 32, ../../sass/_buttons.scss */
@@ -65,7 +65,7 @@
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
   opacity: 0.5;
   cursor: default;
-  border: 2px solid #B3B3B3;
+  border: 2px solid #b3b3b3;
 }
 /* line 51, ../../sass/_buttons.scss */
 .Styled.Button.Submit {
@@ -80,7 +80,7 @@
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
   opacity: 0.5;
   cursor: default;
-  border: 2px solid #B3B3B3;
+  border: 2px solid #b3b3b3;
 }
 /* line 64, ../../sass/_buttons.scss */
 .Styled.Button.Green {
@@ -90,7 +90,7 @@
   background: -moz-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
   background: -o-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
   background: linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
-  border: 2px solid #31A31B;
+  border: 2px solid #31a31b;
   color: #fff;
 }
 /* line 72, ../../sass/_buttons.scss */
@@ -102,10 +102,10 @@
 }
 /* line 77, ../../sass/_buttons.scss */
 .Styled.Button.BlueBorder {
-  border-top: 2px solid #128EDC;
-  border-right: 2px solid #128EDC;
-  border-bottom: 2px solid #128EDC;
-  border-left: 2px solid #128EDC;
+  border-top: 2px solid #128edc;
+  border-right: 2px solid #128edc;
+  border-bottom: 2px solid #128edc;
+  border-left: 2px solid #128edc;
   position: relative;
 }
 /* line 86, ../../sass/_buttons.scss */
@@ -193,7 +193,7 @@ a.Button:active i {
   	}*/
 }
 
-/*╨Ш╨║╨╛╨╜╨║╨╕*/
+/*Иконки*/
 /* line 21, ../../sass/_icons.scss */
 .AddIcon {
   background: url("../../images/sprites/icons-sprite.png") no-repeat;
@@ -316,7 +316,7 @@ a.Button:active i {
   		height:14px;
   	}*/
 }
-/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .RemoveIcon:hover, .RemoveIcon.remove_tiny_hover, .RemoveIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -355,7 +355,7 @@ a.Button:active i {
   		margin-right:0.2em;
   	}*/
 }
-/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .DeleteIcon:hover, .DeleteIcon.remove_tiny_hover, .DeleteIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -460,7 +460,7 @@ a.Button:active i {
 /* line 51, ../../sass/modules/popup.scss */
 .popup {
   background: #fff;
-  border: 1px solid #A4B4BD;
+  border: 1px solid #a4b4bd;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
   display: none;
 }
@@ -475,7 +475,7 @@ a.Button:active i {
 }
 /* line 65, ../../sass/modules/popup.scss */
 .popup section.PopupContent {
-  border-left: 1px solid #ccc;
+  border-left: 1px solid #cccccc;
   top: 6em;
   right: 0em;
   bottom: 0;
@@ -519,7 +519,7 @@ a.Button:active i {
 
 /* line 105, ../../sass/modules/popup.scss */
 .PopupCol {
-  border: 1px solid #CCCCCC;
+  border: 1px solid #cccccc;
   overflow: auto;
   padding: 1em;
   -webkit-box-sizing: border-box;
@@ -791,7 +791,7 @@ a.Button:active i {
   margin: 0 3em;
   padding-left: 0;
   padding-right: 0;
-  border-bottom: 1px solid #D9D9D9;
+  border-bottom: 1px solid #d9d9d9;
 }
 /* line 336, ../../sass/modules/popup.scss */
 .popup .MKBHeader .LineBlock {

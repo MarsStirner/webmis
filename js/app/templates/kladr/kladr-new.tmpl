@@ -12,7 +12,7 @@
         Кладр
     </label>
 </li>
-{{if showKladrPreview}}
+<!--{{if showKladrPreview}}
 	{{each(i, part) kladrSelectedEntries}}
 		<li class="kladrPreviewLine">
 			<h3>${part.socr} ${part.name}</h3>
@@ -23,7 +23,7 @@
 			<span>Изменить</span>
 		</button>
 	</li>
-{{/if}}
+{{/if}}-->
 <!-- here goes kladr -->
 <li class="kladrPartLine">
     <label>Регион</label>
@@ -38,14 +38,14 @@
     </select>
 </li>
 <li class="kladrPartLine">
-    <label>Город</label>
-    <select class="select2 kladrPart kladrEntries" name="address-${addressType}-city-code" data-entries-name="cities" data-subbind="true">
-        <option value="" selected>...</option>
-    </select>
+	<label>Населённый пункт</label>
+	<select class="select2 kladrPart kladrEntries" name="address-${addressType}-locality-code" data-entries-name="localities" data-subbind="true">
+		<option value="" selected>...</option>
+	</select>
 </li>
 <li class="kladrPartLine">
-    <label>Населённый пункт</label>
-    <select class="select2 kladrPart kladrEntries" name="address-${addressType}-locality-code" data-entries-name="localities" data-subbind="true">
+    <label>Город</label>
+    <select class="select2 kladrPart kladrEntries" name="address-${addressType}-city-code" data-entries-name="cities" data-subbind="true">
         <option value="" selected>...</option>
     </select>
 </li>

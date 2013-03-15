@@ -40,14 +40,14 @@ define(["collections/appeals"], function ()
 		tagName: "li",
 
 		template:
-			'<h4><a href="/appeals/${id}/">№ ${number}</a></h4>' +
-			'{{if execPerson.department && execPerson.department.name}}${execPerson.department.name}<br>{{/if}}' +
+			'<a href="/appeals/${id}/">№ ${number}</a>' +
+			'<span class="Label">{{formatDate rangeAppealDateTime.start}}{{if rangeAppealDateTime.end}} — {{formatDate rangeAppealDateTime.end}}{{/if}}</span><br>' +
+			'{{if department && department.name}}${department.name}<br>{{/if}}' +
 			'{{if execPerson.doctor && execPerson.doctor.name}}' +
 				'${execPerson.doctor.name.last} ' +
 				'{{if execPerson.doctor.name.first && execPerson.doctor.name.first.length}}${execPerson.doctor.name.first[0]}.{{/if}} ' +
 				'{{if execPerson.doctor.name.middle && execPerson.doctor.name.middle.length}}${execPerson.doctor.name.middle[0]}.<br>{{/if}}' +
-			'{{/if}}' +
-			'{{formatDate rangeAppealDateTime.start}}{{if rangeAppealDateTime.end}} — {{formatDate rangeAppealDateTime.end}}{{/if}}',
+			'{{/if}}',
 
 		render: function () {
 			//this.$el.html( $("#patient-card-page-history-item" ).tmpl( this.model.toJSON() ) );

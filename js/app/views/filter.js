@@ -1,3 +1,5 @@
+define([],function(){
+
 App.Views.Filter = View.extend({
 	events:{
 		"keyup :input":"onInputKeyup",
@@ -78,4 +80,8 @@ App.Views.Filter = View.extend({
 	render:function () {
 		return this;
 	}
+});
+
+	return App.Views.Filter;
+
 });

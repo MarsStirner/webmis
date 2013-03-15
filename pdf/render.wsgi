@@ -100,6 +100,22 @@ def application(environ, start_response):
 
         return result_name
 
+    def getShotName(path_string, data=dataJSON):
+        data = data if len(data) > 0 else dataJSON
+
+        name = getData( path_string, data )
+        
+        result_name = ''
+        if (name.has_key('first') and name.has_key('last') and name.has_key('middle')):
+            result_name += name['last']
+            result_name += ' ' + name['first'][0] + '.'
+            result_name += (' ' + name['middle'][0] + '.') if len(name['middle']) > 0 else ''
+        else:
+            result_name = name['raw'] if len(name['raw']) > 0 else ''
+
+        return result_name
+
+
     def getAddress( path_string, data=dataJSON ):
         data = data if len(data) > 0 else dataJSON
 
@@ -210,6 +226,15 @@ def application(environ, start_response):
         if ( statement ):
             return result_if_true
         return result_if_false
+
+    def conditionIf(path_string, condition, result_if_true, result_if_false, data=dataJSON ):
+        data = data if len(data) > 0 else dataJSON
+        statement = getData(path_string, data)
+
+        if statement == condition: return result_if_true
+
+        return result_if_false
+
 
     def formatDate( path_string, data=dataJSON ):
         data = data if len(data) > 0 else dataJSON
@@ -335,10 +360,12 @@ def application(environ, start_response):
         _plural = _plural,
         _getOccupationString = _getOccupationString,
         simpleIf = simpleIf,
+        conditionIf = conditionIf,
         getAge = getAge,
         formatDate = formatDate,
         formatDateTime = formatDateTime,
         getFullName = getFullName,
+        getShotName = getShotName,
         getSex = getSex,
         getData = getData,
         getBarcode39 = getBarcode39,
