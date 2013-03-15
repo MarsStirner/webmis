@@ -212,6 +212,8 @@ define([
 				Collection = new App.Collections.DepartmentPatients({role: "doctor"});
 				Collection.reset();
 
+				Collection.setParams({filter: {roleId: 25}});
+
 				var DocCollection = new App.Collections.Doctors();
 				var DepCollection = new App.Collections.Departments();
 

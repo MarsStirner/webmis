@@ -21,16 +21,17 @@
 				<div class="HalfCol">
 					<span class="Label">Медикаментозная непереносимость</span>
 				</div>
-				<div class="HalfCol">
-					<p>
-						{{if patient.medicalInfo.drugIntolerances.length && patient.medicalInfo.drugIntolerances[0].substance.length}}
-							{{each(i, drugIntolerance) patient.medicalInfo.drugIntolerances}}
+				<div class="LineCol">
+					{{if patient.medicalInfo.drugIntolerances.length && patient.medicalInfo.drugIntolerances[0].substance.length}}
+						{{each(i, drugIntolerance) patient.medicalInfo.drugIntolerances}}
+							<p>
 								<em class="Warning">${drugIntolerance.substance}	{{if drugIntolerance.degree}}${drugIntolerance.degree} степень{{/if}}	{{if drugIntolerance.checkingDate}}установлено: {{formatDate drugIntolerance.checkingDate}}{{/if}}</em>
-							{{/each}}
-						{{else}}
-							-
-						{{/if}}
-					</p>
+							</p>
+						{{/each}}
+					{{else}}
+						-
+					{{/if}}
+
 				</div>
 			</div>
 
@@ -73,9 +74,9 @@
 				<div class="HalfCol">
 					<p>
 						{{if rangeAppealDateTime.start}}
-						{{formatDate rangeAppealDateTime.start}}
+							{{formatDate rangeAppealDateTime.start}}
 						{{else}}
-						-
+							-
 						{{/if}}
 					</p>
 				</div>
@@ -87,8 +88,8 @@
 				</div>
 				<div class="HalfCol">
 					<p>
-						{{if branchType.name}}
-							${branchType.name}
+						{{if Core.Data.appealExtraData && Core.Data.appealExtraData.get('department')}}
+							${Core.Data.appealExtraData.get('department').name}
 						{{else}}
 							-
 						{{/if}}
@@ -146,26 +147,33 @@
 </div>
 <div class="TreatmentBlock Clearfix">
 	{{if diagnoses.length && diagnoses[0].diagnosisKind.length}}
-	<div class="Diagnosis">
-		{{each(i, diagnosis) diagnoses}}
-		{{if diagnosis.diagnosisKind == "main"}}
-		<h3> Основной диагноз</h3>
-		{{else diagnosis.diagnosisKind == ""}}
-		{{/if}}
-
-		<dl>
-			<dt> ${diagnosis.mkb.code} </dt>
-			<dd> ${diagnosis.mkb.diagnosis} </dd>
-		</dl>
-		{{/each}}
-
-
-		<h3>Конкурирующий диагноз</h3>
-		<dl>
-			<dt> D69.1 </dt>
-			<dd> Качественные дефекты тромбоцитов </dd>
-		</dl>
-	</div>
+		<div class="Diagnosis">
+			{{each(i, diagnosis) diagnoses}}
+				{{if diagnosis.diagnosisKind && diagnosis.mkb && diagnosis.mkb.code}}
+					{{if diagnosis.diagnosisKind == "assignment"}}
+						<h3>Направительный диагноз</h3>
+					{{else diagnosis.diagnosisKind == "admission"}}
+						<h3>Диагноз при поступлении</h3>
+					{{else diagnosis.diagnosisKind == "clinical"}}
+						<h3>Клинический диагноз</h3>
+					{{else diagnosis.diagnosisKind == "final"}}
+						<h3>Заключительный диагноз</h3>
+					{{else diagnosis.diagnosisKind == "aftereffect"}}
+						<h3>Сопутствующий к направительному</h3>
+					{{else diagnosis.diagnosisKind == "attendant"}}
+						<h3>Осложнения к направительному</h3>
+					{{else diagnosis.diagnosisKind == "secondaryToClinical"}}
+						<h3>Сопутствующий к клиническому</h3>
+					{{else diagnosis.diagnosisKind == "complicateToClinical"}}
+						<h3>Осложнения к клиническому</h3>
+					{{/if}}
+					<dl>
+						<dt>${diagnosis.mkb.code}</dt>
+						<dd>${diagnosis.mkb.diagnosis}</dd>
+					</dl>
+				{{/if}}
+			{{/each}}
+		</div>
 	{{/if}}
 
 	<div class="LineBlock Clearfix">
