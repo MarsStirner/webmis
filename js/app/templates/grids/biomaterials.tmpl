@@ -18,7 +18,7 @@
 				<a class="Actions SortCol" data-field="birthDate">Дата рожд.</a>
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="biomaterial.tissueType.name">Биоматериал</a>
+				<a class="Actions SortCol" data-field="tissueType">Биоматериал</a>
 			</th>
 			<!---->
 			<th>
@@ -68,9 +68,9 @@
 	<td class="status-code-${status} HasToolTip" data-tooltip-content="#tooltip_${id}">
 
 		{{if status == 0}}
-		<b><u>${biomaterial.tissueType.name} (${actions.length})</u></b>
+			<b><u>${biomaterial.tissueType.name} (${actions.length})</u></b>
 		{{else}}
-		${biomaterial.tissueType.name} (${actions.length})
+			${biomaterial.tissueType.name} (${actions.length})
 		{{/if}}
 
 		<div id="tooltip_${id}" class="ToolTip TopTail">
@@ -79,8 +79,8 @@
 					${assigner.name.raw}
 				{{/if}}
 
-				{{if laboratory.name}}
-				<li>Лаборатория: ${laboratory.name}</li>
+				{{if bed.name}}
+				<li>Отделение/койка: ${bed.name}</li>
 				{{/if}}
 				{{if label}}
 				<li>Пометка: ${label}</li>
@@ -110,8 +110,10 @@
 
 	<td class="status-code-${status}">
 		{{if volume}}
-		${volume} ${biomaterial.unit.name}
+			${volume}
+			{{if biomaterial.unit && biomaterial.unit.name}} ${biomaterial.unit.name}{{/if}}
 		{{/if}}
+
 	</td>
 
 
@@ -129,5 +131,10 @@
 </script>
 
 <script id="biomaterials-grid-row-default" type="text/x-jquery-tmpl">
-	<h3>Введите необходимые данные в поля фильтров</h3>
+	<td colspan="7">Введите необходимые данные в поля фильтров</td>
 </script>
+
+<script id="biomaterials-grid-row-on-fetch" type="text/x-jquery-tmpl">
+	<td colspan="7"><i class="icon-spinner icon-spin"></i> Выполняем запрос...</td>
+</script>
+

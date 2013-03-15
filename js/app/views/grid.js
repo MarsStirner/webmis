@@ -19,6 +19,8 @@ define(["views/grid-row"], function () {
 
 				this.loadTemplate(this.options.template);
 				this.collection.on("reset", this.refresh, this);
+
+				this.collection.on("fetch", this.onFetch, this);
 			}
 
 		},
@@ -43,6 +45,22 @@ define(["views/grid-row"], function () {
 			});
 
 			this.collection.fetch();
+		},
+		onFetch: function (){
+			var view = this,
+				$el = this.$el;
+
+			if (this.options.fetchTemplateId) {
+				var $tbody = $el.find("tbody").empty();
+				var GridRow = new App.Views.GridRow({
+					collection: view.collection,
+					rowTemplateId: view.options.fetchTemplateId
+				});
+				view.depended(GridRow);
+				$tbody.append(GridRow.render().el);
+			}
+
+
 		},
 
 		filter: function (event) {
