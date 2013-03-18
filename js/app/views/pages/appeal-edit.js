@@ -447,19 +447,6 @@ define([
 				view.createDiagnosis(model);
 			});
 
-
-
-
-			var ddate = new Widget.Date({
-				el: this.$(".datetime .date-input")
-			}).render();
-
-			var ttime = new Widget.Time({
-				el: this.$(".datetime .time-input")
-			}).render();
-
-
-
 			UIInitialize(this.el);
 
 			view.toggleInputs(false);
