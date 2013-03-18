@@ -35,6 +35,10 @@ define(function () {
 
 		},
 
+		setMinDate: function (date) {
+
+		},
+
 		render: function () {
 			this.$el
 				.prop("placeholder", "дд.мм.гггг")

@@ -86,7 +86,13 @@ require(["views/FlashMessageView"], function (FlashMessage){
 		},
 
 		widgets: function () {
+			require(["text!templates/widgets.html", "views/widget"], function (tmplWidgets, Widget) {
+				$("#wrapper").append(_.template(tmplWidgets));
 
+				var w_date = new Widget.Date({el: $(".date")}).render();
+
+				var w_dateTime = new Widget.DateTime({el: $(".date")}).render();
+			});
 		},
 
 		authorization: function () {
