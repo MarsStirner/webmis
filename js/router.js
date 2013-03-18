@@ -82,12 +82,11 @@ require(["views/FlashMessageView"], function (FlashMessage){
 
 			"prints/": "prints",
 
-			"test/": "test"
+			"widgets/": "widgets"
 		},
 
-		test: function () {
-			$("#wrapper").append("<button class='lol'>OLOLOLO</button>");
-			$(".lol").button();
+		widgets: function () {
+
 		},
 
 		authorization: function () {
