@@ -253,8 +253,13 @@ define([
 			}, this);
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function () {
-				Collection = new App.Collections.DepartmentPatients({role: "nurse"});
+				Collection = new App.Collections.DepartmentPatients();
 				/*Collection.setParams({'filter[date]':1334300400000})*/
+
+				Collection.setParams({
+					sortingField: 'number',
+					sortingMethod: 'asc'
+				});
 				Collection.reset();
 
 				this.printButton = $('<button style="float: right;">Печать</button>').button().click(this.printForm007);
