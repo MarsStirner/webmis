@@ -80,7 +80,7 @@ td.status-code-2, td.status-code-2 .Warning {
 }
 
 .biomaterials-datatime {
-	width: 475px;
+	width: 41%;
 	float: left;
 	.DayScroller {
 		float: none;
@@ -89,10 +89,14 @@ td.status-code-2, td.status-code-2 .Warning {
 
 .biomaterials-department {
 
-	width: 355px;
+	width: 33%;
 	float: left;
 	.departments{
 		width:450px;
+	}
+
+	label{
+		display: block;
 	}
 
 }

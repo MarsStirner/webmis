@@ -2,7 +2,7 @@
 /*
 *	FONTS
 */
-/* line 17, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 17, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -24,50 +24,50 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 103, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block;
 }
 
-/* line 17, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 17, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -89,45 +89,45 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 103, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block;
 }
@@ -279,7 +279,7 @@ li [class*=" icon-"].icon-large, .nav li [class^="icon-"].icon-large,
 /* line 132, ../sass/_font-awesome.scss */
 ul.icons {
   list-style-type: none;
-  text-indent: -0.75em;
+  text-indent: -.75em;
 }
 /* line 138, ../sass/_font-awesome.scss */
 ul.icons li [class^="icon-"],
@@ -295,7 +295,7 @@ ul.icons li [class*=" icon-"] {
 /* line 151, ../sass/_font-awesome.scss */
 .icon-border {
   border: solid 1px #eeeeee;
-  padding: .2em .25em .15em;
+  padding: 0.2em 0.25em 0.15em;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -1759,7 +1759,7 @@ html {
   background-repeat: no-repeat;
 }
 
-/* line 14, ../sass/common.scss */
+/* line 16, ../sass/common.scss */
 body {
   min-height: 100%;
   height: 100%;
@@ -1771,51 +1771,51 @@ body {
   min-width: 120em;
 }
 
-/* line 24, ../sass/common.scss */
+/* line 26, ../sass/common.scss */
 body.NoScroll {
   overflow: hidden;
 }
 
 @media screen and (min-width: 800px) {
-  /* line 32, ../sass/common.scss */
+  /* line 34, ../sass/common.scss */
   body {
     font: normal 62.5%/1.5em Arial, Helvetica, sans-serif;
   }
 }
 @media screen and (min-width: 1400px) {
-  /* line 37, ../sass/common.scss */
+  /* line 39, ../sass/common.scss */
   body {
     font: normal 72.5%/1.5em Arial, Helvetica, sans-serif;
   }
 }
 @media screen and (min-width: 1600px) {
-  /* line 42, ../sass/common.scss */
+  /* line 44, ../sass/common.scss */
   body {
     font: normal 82.5%/1.5em Arial, Helvetica, sans-serif;
   }
 }
 @media screen and (min-width: 1800px) {
-  /* line 47, ../sass/common.scss */
+  /* line 49, ../sass/common.scss */
   body {
     font: normal 92.5%/1.5em Arial, Helvetica, sans-serif;
   }
 }
-/* line 56, ../sass/common.scss */
+/* line 58, ../sass/common.scss */
 img {
   border: none;
 }
-/* line 59, ../sass/common.scss */
+/* line 61, ../sass/common.scss */
 img.Left {
   float: left;
   margin: 0 1em 1em 0;
 }
-/* line 63, ../sass/common.scss */
+/* line 65, ../sass/common.scss */
 img.Right {
   float: right;
   margin: 0 0 1em 1em;
 }
 
-/* line 70, ../sass/common.scss */
+/* line 72, ../sass/common.scss */
 .Clearfix, .clearfix {
   zoom: 1;
 }
@@ -1828,7 +1828,7 @@ img.Right {
   visibility: hidden;
 }
 
-/* line 80, ../sass/common.scss */
+/* line 82, ../sass/common.scss */
 h1,
 h2,
 h3,
@@ -1838,23 +1838,23 @@ h6 {
   line-height: 1.4em;
 }
 
-/* line 84, ../sass/common.scss */
+/* line 86, ../sass/common.scss */
 a {
   color: #118ddc;
   /*
-  	TODO: ╨╖╨░╨╝╨╡╨╜╨╕╤В╤М ╨▓╨╡╤А╤Е╨╜╤О╤О ╤Б╤В╤А╨╛╤З╨║╤Г ╨▓ ╨┐╤А╨╛╨┤╨░╨║╤И╨╜╨╡
+  	TODO: заменить верхнюю строчку в продакшне
   	@include link-colors ($color, $LINK_HOVER_COLOR, $LINK_ACTIVE_COLOR, $visited-color);
   */
 }
-/* line 24, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
+/* line 24, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 a:hover {
   color: #dd1111;
 }
-/* line 27, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
+/* line 27, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 a:active {
   color: #118ddc;
 }
-/* line 87, ../sass/common.scss */
+/* line 89, ../sass/common.scss */
 a.Actions {
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -1864,71 +1864,71 @@ a.Actions {
   cursor: pointer;
   border-bottom: 1px dashed;
 }
-/* line 92, ../sass/common.scss */
+/* line 94, ../sass/common.scss */
 a.Actions.Opened {
   border: none;
 }
-/* line 96, ../sass/common.scss */
+/* line 98, ../sass/common.scss */
 a.Iconed {
   text-decoration: none;
   border: none;
 }
-/* line 100, ../sass/common.scss */
+/* line 102, ../sass/common.scss */
 a.Iconed span {
   text-decoration: underline;
 }
 
-/* line 107, ../sass/common.scss */
+/* line 109, ../sass/common.scss */
 .PageActions a.Actions {
   text-decoration: none;
   font-size: 1.2em;
 }
 
-/* line 115, ../sass/common.scss */
+/* line 117, ../sass/common.scss */
 .Hidden,
 .Template,
 .More {
   display: none;
 }
 
-/* line 118, ../sass/common.scss */
+/* line 120, ../sass/common.scss */
 .Visible {
   display: block;
 }
 
-/* line 126, ../sass/common.scss */
+/* line 128, ../sass/common.scss */
 h2 {
   font-size: 2em;
 }
 
-/* line 129, ../sass/common.scss */
+/* line 131, ../sass/common.scss */
 h3 {
   font-size: 1.6em;
 }
 
-/* line 132, ../sass/common.scss */
+/* line 134, ../sass/common.scss */
 h4 {
   font-size: 1.4em;
 }
 
-/* line 139, ../sass/common.scss */
+/* line 141, ../sass/common.scss */
 .Small, small, time {
   color: #747578;
 }
 
-/* line 145, ../sass/common.scss */
+/* line 147, ../sass/common.scss */
 strong {
   font-weight: bold;
 }
 
 /* Common elements */
-/* line 151, ../sass/common.scss */
+/* line 153, ../sass/common.scss */
 table {
   width: 100%;
   border: none;
   border-collapse: collapse;
 }
-/* line 157, ../sass/common.scss */
+/* line 159, ../sass/common.scss */
 table td,
 table th {
   padding: 0;
@@ -1936,12 +1936,12 @@ table th {
 }
 
 /* Buttons */
-/* line 164, ../sass/common.scss */
+/* line 166, ../sass/common.scss */
 a.Styled {
   text-decoration: none;
 }
 
-/* line 168, ../sass/common.scss */
+/* line 170, ../sass/common.scss */
 a.Styled,
 button.Styled {
   padding: 0;
@@ -1956,23 +1956,23 @@ button.Styled {
   *display: inline;
 }
 
-/* line 179, ../sass/common.scss */
+/* line 181, ../sass/common.scss */
 b {
   font-weight: bold;
 }
 
-/* line 183, ../sass/common.scss */
+/* line 185, ../sass/common.scss */
 #body {
   width: 960px;
   margin: auto;
 }
 
-/* line 194, ../sass/common.scss */
+/* line 196, ../sass/common.scss */
 .Rouble {
   font-weight: normal;
   position: relative;
 }
-/* line 198, ../sass/common.scss */
+/* line 200, ../sass/common.scss */
 .Rouble:after {
   content: "-";
   position: absolute;
@@ -1981,18 +1981,18 @@ b {
   font-size: 1em;
 }
 
-/* line 207, ../sass/common.scss */
+/* line 209, ../sass/common.scss */
 .HighestDepth {
   z-index: 999999 !important;
 }
 
-/* line 212, ../sass/common.scss */
+/* line 214, ../sass/common.scss */
 button::-moz-focus-inner {
   border: 0;
   padding: 0;
 }
 
-/* line 217, ../sass/common.scss */
+/* line 219, ../sass/common.scss */
 .ServiceLogin {
   width: 42em;
   margin: 0 auto;
@@ -2001,20 +2001,20 @@ button::-moz-focus-inner {
   text-align: center;
 }
 
-/* line 225, ../sass/common.scss */
+/* line 227, ../sass/common.scss */
 .ServiceLogin h1 {
   font-size: 2.2em;
   margin-bottom: 1.2em;
 }
 
-/* line 229, ../sass/common.scss */
+/* line 231, ../sass/common.scss */
 .ServiceLogin h2 {
   font-size: 1.6em;
   line-height: 1.2em;
   margin-bottom: 1.2em;
 }
 
-/* line 234, ../sass/common.scss */
+/* line 236, ../sass/common.scss */
 .LoginForm {
   background: #fff;
   padding: 3.8em 9.4em;
@@ -2022,38 +2022,38 @@ button::-moz-focus-inner {
   text-align: left;
 }
 
-/* line 240, ../sass/common.scss */
+/* line 242, ../sass/common.scss */
 .LoginForm input {
   font-size: 1.7em;
 }
 
-/* line 243, ../sass/common.scss */
+/* line 245, ../sass/common.scss */
 .LoginForm li {
   margin-bottom: 1.2em;
 }
 
-/* line 247, ../sass/common.scss */
+/* line 249, ../sass/common.scss */
 .LoginForm label, .LoginForm .Label {
   margin-left: -1em;
 }
 
-/* line 250, ../sass/common.scss */
+/* line 252, ../sass/common.scss */
 .SubmitLine {
   padding: 0.5em 0 2em 0;
 }
 
-/* line 253, ../sass/common.scss */
+/* line 255, ../sass/common.scss */
 .RecoveryLink {
   color: #6D6D71;
   font-size: 1.2em;
 }
 
-/* line 257, ../sass/common.scss */
+/* line 259, ../sass/common.scss */
 .LoginForm button {
   width: 100%;
 }
 
-/* line 260, ../sass/common.scss */
+/* line 262, ../sass/common.scss */
 .LoginForm h3 {
   margin-bottom: 1em;
   font-size: 1.4em;

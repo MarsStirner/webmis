@@ -22,9 +22,9 @@
   -moz-box-shadow: rgba(0, 0, 0, 0.5) 0 0 0.1em 0;
   box-shadow: rgba(0, 0, 0, 0.5) 0 0 0.1em 0;
   margin: 0;
-  border-top: 2px solid #B3B3B3;
+  border-top: 2px solid #b3b3b3;
   border-right: 2px solid #bbbbbb;
-  border-bottom: 2px solid #B3B3B3;
+  border-bottom: 2px solid #b3b3b3;
   border-left: 2px solid #bbbbbb;
   cursor: pointer;
   padding: 0.4em 1.5em;
@@ -37,10 +37,10 @@
 }
 /* line 22, ../../sass/_buttons.scss */
 .Styled.Button:hover, .Styled.Button.Green:hover, .Styled.Button.BlueBorder {
-  border-top: 2px solid #128EDC;
-  border-right: 2px solid #128EDC;
-  border-bottom: 2px solid #128EDC;
-  border-left: 2px solid #128EDC;
+  border-top: 2px solid #128edc;
+  border-right: 2px solid #128edc;
+  border-bottom: 2px solid #128edc;
+  border-left: 2px solid #128edc;
   /*border:2px solid #128EDC;*/
 }
 /* line 32, ../../sass/_buttons.scss */
@@ -65,7 +65,7 @@
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
   opacity: 0.5;
   cursor: default;
-  border: 2px solid #B3B3B3;
+  border: 2px solid #b3b3b3;
 }
 /* line 51, ../../sass/_buttons.scss */
 .Styled.Button.Submit {
@@ -80,7 +80,7 @@
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
   opacity: 0.5;
   cursor: default;
-  border: 2px solid #B3B3B3;
+  border: 2px solid #b3b3b3;
 }
 /* line 64, ../../sass/_buttons.scss */
 .Styled.Button.Green {
@@ -90,7 +90,7 @@
   background: -moz-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
   background: -o-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
   background: linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
-  border: 2px solid #31A31B;
+  border: 2px solid #31a31b;
   color: #fff;
 }
 /* line 72, ../../sass/_buttons.scss */
@@ -102,10 +102,10 @@
 }
 /* line 77, ../../sass/_buttons.scss */
 .Styled.Button.BlueBorder {
-  border-top: 2px solid #128EDC;
-  border-right: 2px solid #128EDC;
-  border-bottom: 2px solid #128EDC;
-  border-left: 2px solid #128EDC;
+  border-top: 2px solid #128edc;
+  border-right: 2px solid #128edc;
+  border-bottom: 2px solid #128edc;
+  border-left: 2px solid #128edc;
   position: relative;
 }
 /* line 86, ../../sass/_buttons.scss */
@@ -193,7 +193,7 @@ a.Button:active i {
   	}*/
 }
 
-/*╨Ш╨║╨╛╨╜╨║╨╕*/
+/*Иконки*/
 /* line 21, ../../sass/_icons.scss */
 .AddIcon {
   background: url("../../images/sprites/icons-sprite.png") no-repeat;
@@ -316,7 +316,7 @@ a.Button:active i {
   		height:14px;
   	}*/
 }
-/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .RemoveIcon:hover, .RemoveIcon.remove_tiny_hover, .RemoveIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -355,7 +355,7 @@ a.Button:active i {
   		margin-right:0.2em;
   	}*/
 }
-/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .DeleteIcon:hover, .DeleteIcon.remove_tiny_hover, .DeleteIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -460,7 +460,7 @@ a.Button:active i {
 /* line 51, ../../sass/modules/popup.scss */
 .popup {
   background: #fff;
-  border: 1px solid #A4B4BD;
+  border: 1px solid #a4b4bd;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
   display: none;
 }
@@ -475,7 +475,7 @@ a.Button:active i {
 }
 /* line 65, ../../sass/modules/popup.scss */
 .popup section.PopupContent {
-  border-left: 1px solid #ccc;
+  border-left: 1px solid #cccccc;
   top: 6em;
   right: 0em;
   bottom: 0;
@@ -519,7 +519,7 @@ a.Button:active i {
 
 /* line 105, ../../sass/modules/popup.scss */
 .PopupCol {
-  border: 1px solid #CCCCCC;
+  border: 1px solid #cccccc;
   overflow: auto;
   padding: 1em;
   -webkit-box-sizing: border-box;
@@ -626,28 +626,27 @@ a.Button:active i {
   cursor: pointer;
   margin-bottom: 1px;
   padding-left: 0.4em;
-  white-space: nowrap;
 }
-/* line 198, ../../sass/modules/popup.scss */
+/* line 199, ../../sass/modules/popup.scss */
 .EventList > li label:hover {
   background: #118EDC;
   color: #fff;
 }
-/* line 201, ../../sass/modules/popup.scss */
+/* line 202, ../../sass/modules/popup.scss */
 .EventList > li label:hover .EventRoom {
   color: #ccc;
 }
-/* line 205, ../../sass/modules/popup.scss */
+/* line 206, ../../sass/modules/popup.scss */
 .EventList > li label.Selected {
   background: #118EDC;
   color: #fff;
 }
-/* line 208, ../../sass/modules/popup.scss */
+/* line 209, ../../sass/modules/popup.scss */
 .EventList > li label.Selected .EventRoom {
   color: #ccc;
 }
 
-/* line 215, ../../sass/modules/popup.scss */
+/* line 216, ../../sass/modules/popup.scss */
 .EventRoom {
   display: block;
   padding-left: 2.5em;
@@ -657,37 +656,37 @@ a.Button:active i {
   font-size: 0.9em;
 }
 
-/* line 225, ../../sass/modules/popup.scss */
+/* line 226, ../../sass/modules/popup.scss */
 .PopUpLine.TwoCols {
   margin-right: -0.6em;
 }
-/* line 228, ../../sass/modules/popup.scss */
+/* line 229, ../../sass/modules/popup.scss */
 .PopUpLine.ThreeCols {
   margin-right: -1.5em;
 }
-/* line 230, ../../sass/modules/popup.scss */
+/* line 231, ../../sass/modules/popup.scss */
 .PopUpLine.ThreeCols .PopupCol {
   padding: 0;
 }
-/* line 233, ../../sass/modules/popup.scss */
+/* line 234, ../../sass/modules/popup.scss */
 .PopUpLine.ThreeCols .RightCol {
   width: 32%;
 }
-/* line 236, ../../sass/modules/popup.scss */
+/* line 237, ../../sass/modules/popup.scss */
 .PopUpLine.ThreeCols .LeftCol {
   width: 32%;
 }
-/* line 239, ../../sass/modules/popup.scss */
+/* line 240, ../../sass/modules/popup.scss */
 .PopUpLine.ThreeCols .CenterCol {
   width: 32%;
   right: 34%;
 }
-/* line 243, ../../sass/modules/popup.scss */
+/* line 244, ../../sass/modules/popup.scss */
 .PopUpLine.ThreeCols h3 {
   background: #CCCCCC;
   font-size: 1.2em;
 }
-/* line 246, ../../sass/modules/popup.scss */
+/* line 247, ../../sass/modules/popup.scss */
 .PopUpLine.ThreeCols h3 label {
   margin-bottom: 0;
   font-size: 1em;
@@ -695,38 +694,38 @@ a.Button:active i {
   padding: 0.4em 0.1em 0.2em 0.4em;
   color: #000;
 }
-/* line 255, ../../sass/modules/popup.scss */
+/* line 256, ../../sass/modules/popup.scss */
 .PopUpLine .BreadCrumb {
   padding-bottom: 2.5em;
 }
-/* line 257, ../../sass/modules/popup.scss */
+/* line 258, ../../sass/modules/popup.scss */
 .PopUpLine .BreadCrumb li {
   color: #118DDC;
 }
-/* line 259, ../../sass/modules/popup.scss */
+/* line 260, ../../sass/modules/popup.scss */
 .PopUpLine .BreadCrumb li a {
   color: #118DDC;
 }
-/* line 262, ../../sass/modules/popup.scss */
+/* line 263, ../../sass/modules/popup.scss */
 .PopUpLine .BreadCrumb li:last-child {
   color: #000;
 }
-/* line 265, ../../sass/modules/popup.scss */
+/* line 266, ../../sass/modules/popup.scss */
 .PopUpLine .BreadCrumb li:last-child::after {
   content: "";
 }
-/* line 271, ../../sass/modules/popup.scss */
+/* line 272, ../../sass/modules/popup.scss */
 .PopUpLine #page {
   padding: 0;
 }
 
-/* line 275, ../../sass/modules/popup.scss */
+/* line 276, ../../sass/modules/popup.scss */
 .EventList {
   padding-top: 0.2em;
   overflow: auto;
 }
 
-/* line 281, ../../sass/modules/popup.scss */
+/* line 282, ../../sass/modules/popup.scss */
 .PopupSideBar {
   float: left;
   overflow: auto;
@@ -735,50 +734,50 @@ a.Button:active i {
   padding-top: 2.2em;
 }
 
-/* line 288, ../../sass/modules/popup.scss */
+/* line 289, ../../sass/modules/popup.scss */
 .PopupButtons {
   padding: 3em 0;
 }
 
-/* line 291, ../../sass/modules/popup.scss */
+/* line 292, ../../sass/modules/popup.scss */
 .ContentButtons {
   height: 3.4em;
   padding: 1.8em 0 1.1em 0;
   margin-left: -0.5em;
 }
-/* line 295, ../../sass/modules/popup.scss */
+/* line 296, ../../sass/modules/popup.scss */
 .ContentButtons .PopupActions {
   float: none;
 }
-/* line 297, ../../sass/modules/popup.scss */
+/* line 298, ../../sass/modules/popup.scss */
 .ContentButtons .PopupActions .BlueBorder {
   position: relative;
   top: -2px;
 }
 
-/* line 304, ../../sass/modules/popup.scss */
+/* line 305, ../../sass/modules/popup.scss */
 .MKBPopup button.Styled.ui-button {
   padding: 0;
 }
-/* line 307, ../../sass/modules/popup.scss */
+/* line 308, ../../sass/modules/popup.scss */
 .MKBPopup button.Styled.ui-button span {
   font-weight: normal;
   color: black;
 }
 
-/* line 313, ../../sass/modules/popup.scss */
+/* line 314, ../../sass/modules/popup.scss */
 .MKBPopup .ui-dialog-buttonset .Cancel {
   font-size: 1.2em;
   margin-right: 2em;
   margin-left: 1em;
 }
 
-/* line 319, ../../sass/modules/popup.scss */
+/* line 320, ../../sass/modules/popup.scss */
 .MKBPopup .ui-dialog-buttonpane {
   margin: 0;
 }
 
-/* line 322, ../../sass/modules/popup.scss */
+/* line 323, ../../sass/modules/popup.scss */
 .MKBHolder {
   margin-left: 1.2em;
   height: 41em;
@@ -786,18 +785,18 @@ a.Button:active i {
   border-bottom: 0.1em solid #a6a6a6;
 }
 
-/* line 330, ../../sass/modules/popup.scss */
+/* line 331, ../../sass/modules/popup.scss */
 .popup .MKBHeader {
   margin: 0 3em;
   padding-left: 0;
   padding-right: 0;
-  border-bottom: 1px solid #D9D9D9;
+  border-bottom: 1px solid #d9d9d9;
 }
-/* line 336, ../../sass/modules/popup.scss */
+/* line 337, ../../sass/modules/popup.scss */
 .popup .MKBHeader .LineBlock {
   position: relative;
 }
-/* line 340, ../../sass/modules/popup.scss */
+/* line 341, ../../sass/modules/popup.scss */
 .popup .MKBHeader .searchButton {
   display: inline-block;
   position: relative;
@@ -806,68 +805,68 @@ a.Button:active i {
   z-index: 999;
 }
 
-/* line 352, ../../sass/modules/popup.scss */
+/* line 353, ../../sass/modules/popup.scss */
 .MKBSearch .typeSearch {
   padding-right: 1em;
 }
 
-/* line 356, ../../sass/modules/popup.scss */
+/* line 357, ../../sass/modules/popup.scss */
 .MKBList {
   font-size: 1.2em;
 }
-/* line 358, ../../sass/modules/popup.scss */
+/* line 359, ../../sass/modules/popup.scss */
 .MKBList li {
   padding: 0.1em 0;
 }
-/* line 362, ../../sass/modules/popup.scss */
+/* line 363, ../../sass/modules/popup.scss */
 .MKBList .Opened > span {
   font-weight: bold;
 }
-/* line 365, ../../sass/modules/popup.scss */
+/* line 366, ../../sass/modules/popup.scss */
 .MKBList .Opened > ul {
   display: block;
 }
-/* line 369, ../../sass/modules/popup.scss */
+/* line 370, ../../sass/modules/popup.scss */
 .MKBList ul {
   display: none;
 }
-/* line 373, ../../sass/modules/popup.scss */
+/* line 374, ../../sass/modules/popup.scss */
 .MKBList > li > ul {
   margin-left: 0.5em;
   padding-left: 6em;
   border-left: 0.1em solid #cccccc;
 }
-/* line 378, ../../sass/modules/popup.scss */
+/* line 379, ../../sass/modules/popup.scss */
 .MKBList > li > ul > li > ul {
   padding-left: 6em;
 }
-/* line 381, ../../sass/modules/popup.scss */
+/* line 382, ../../sass/modules/popup.scss */
 .MKBList > li > ul > li > ul > li > ul {
   padding-left: 3em;
 }
-/* line 389, ../../sass/modules/popup.scss */
+/* line 390, ../../sass/modules/popup.scss */
 .MKBList span {
   cursor: pointer;
   display: inline-block;
   line-height: 1.6em;
   padding: 0 0.2em 0 0.2em;
 }
-/* line 394, ../../sass/modules/popup.scss */
+/* line 395, ../../sass/modules/popup.scss */
 .MKBList span:hover {
   background: #c3e2f6;
 }
-/* line 397, ../../sass/modules/popup.scss */
+/* line 398, ../../sass/modules/popup.scss */
 .MKBList span.Selected {
   background: #e5e5e5;
 }
-/* line 400, ../../sass/modules/popup.scss */
+/* line 401, ../../sass/modules/popup.scss */
 .MKBList span i.bullet {
   display: inline-block;
   min-width: 2em;
   margin-right: .5em;
 }
 
-/* line 408, ../../sass/modules/popup.scss */
+/* line 409, ../../sass/modules/popup.scss */
 .TreeHolder {
   margin-left: 1.2em;
   height: 50em;
@@ -875,44 +874,44 @@ a.Button:active i {
   border-bottom: 0.1em solid #a6a6a6;
 }
 
-/* line 416, ../../sass/modules/popup.scss */
+/* line 417, ../../sass/modules/popup.scss */
 .Tree {
   font-size: 1.2em;
 }
-/* line 418, ../../sass/modules/popup.scss */
+/* line 419, ../../sass/modules/popup.scss */
 .Tree li {
   padding: 0.1em 0;
 }
-/* line 422, ../../sass/modules/popup.scss */
+/* line 423, ../../sass/modules/popup.scss */
 .Tree .Opened > span {
   font-weight: bold;
 }
-/* line 425, ../../sass/modules/popup.scss */
+/* line 426, ../../sass/modules/popup.scss */
 .Tree .Opened > ul {
   display: block;
 }
-/* line 429, ../../sass/modules/popup.scss */
+/* line 430, ../../sass/modules/popup.scss */
 .Tree ul {
   display: none;
 }
-/* line 433, ../../sass/modules/popup.scss */
+/* line 434, ../../sass/modules/popup.scss */
 .Tree li ul {
   margin-left: 0.5em;
   padding-left: 2em;
   border-left: 0.1em solid #cccccc;
 }
-/* line 439, ../../sass/modules/popup.scss */
+/* line 440, ../../sass/modules/popup.scss */
 .Tree span {
   cursor: pointer;
   display: inline-block;
   line-height: 1.6em;
   padding: 0 0.2em 0 0.2em;
 }
-/* line 444, ../../sass/modules/popup.scss */
+/* line 445, ../../sass/modules/popup.scss */
 .Tree span:hover {
   background: #c3e2f6;
 }
-/* line 447, ../../sass/modules/popup.scss */
+/* line 448, ../../sass/modules/popup.scss */
 .Tree span.Selected {
   background: #e5e5e5;
 }
