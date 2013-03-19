@@ -1,6 +1,6 @@
 define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 	'collections/diagnostics/LabsTests',
-	'views/appeal/edit/popups/TestsGroupView'],
+	'views/laboratory/TestsGroupView'],
 	function (testsGroupTemplate, TestsGroups, TestsGroupView) {
 
         TestsGroupListView = View.extend({

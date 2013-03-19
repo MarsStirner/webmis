@@ -1,5 +1,5 @@
 define(['text!templates/appeal/edit/popups/labs-list.tmpl',
-	'views/appeal/edit/popups/LabsListItemView'],
+	'views/laboratory/LabsListItemView'],
 	function (labsListTemplate, labsListItemView) {
 
 		LabsListView = View.extend({

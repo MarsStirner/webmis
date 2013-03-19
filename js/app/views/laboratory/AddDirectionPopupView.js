@@ -4,22 +4,22 @@
  */
 define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 	"collections/diagnostics/Labs",
-	"views/appeal/edit/popups/LabsListView",
-	"views/appeal/edit/popups/TestsGroupListView",
-	"views/appeal/edit/popups/SetOffTestsView",
+	"views/laboratory/LabsListView",
+	"views/laboratory/TestsGroupListView",
+	"views/laboratory/SetOffTestsView",
 	"models/diagnostics/SetOfTests",
-"models/diagnostics/labAnalysisDirection",
-"views/ui/SelectView"],
-	function (tmpl, Labs, LabsListView, LabTestsListView, SetOffTestsView, SetOfTestsModel, labAnalysisDirection,SelectView) {
+	"models/diagnostics/labAnalysisDirection",
+	"views/ui/SelectView"],
+	function (tmpl, Labs, LabsListView, LabTestsListView, SetOffTestsView, SetOfTestsModel, labAnalysisDirection, SelectView) {
 
-		App.Views.LaboratoryPopup = View.extend({
+		var LaboratoryPopup = View.extend({
 			template: tmpl,
 			className: "popup",
 
 			events: {
 				"click .ShowHidePopup": "close",
 				"click .save": "onSave",
-					"click .MKBLauncher": "toggleMKB"
+				"click .MKBLauncher": "toggleMKB"
 			},
 			initialize: function () {
 				var popup = this;
@@ -27,10 +27,9 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				this.doctor = {
 					name: {
 						first: Core.Cookies.get("doctorFirstName"),
-							last: Core.Cookies.get("doctorLastName")
+						last: Core.Cookies.get("doctorLastName")
 					}
 				};
-
 
 
 			},
@@ -38,11 +37,11 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				var $element = ( selector instanceof $ ) ? selector : this.$el.find(selector);
 				view.setElement($element).render();
 			},
-			initFinanseSelect: function (){
+			initFinanseSelect: function () {
 				var view = this;
 				var appealFinanceId = view.options.appeal.get('contract').get('finance').get('id');
 
-				var financeDictionary = new App.Collections.DictionaryValues([], {name:'finance'});
+				var financeDictionary = new App.Collections.DictionaryValues([], {name: 'finance'});
 
 //				financeDictionary.on('reset', function(){
 //					console.log('dictionary',financeDictionary)
@@ -181,7 +180,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				return this;
 			},
 
-			onSave: function(){
+			onSave: function () {
 				var popup = this;
 
 				console.log('popup.setOffTests', popup.setOffTests)
@@ -202,5 +201,5 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 			}
 		});
 
-		return App.Views.LaboratoryPopup
+		return LaboratoryPopup;
 	});

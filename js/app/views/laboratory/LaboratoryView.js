@@ -3,14 +3,16 @@
  * Date: 08.06.12
  */
 define([
-	"text!templates/appeal/edit/pages/laboratory.tmpl",
-	"models/diagnostics/labAnalysisDirection",
-	"collections/diagnostics/laboratory-diags",
-	"views/grid",
-	"views/appeal/edit/popups/laboratory"
-], function (template,labAnalysisDirection) {
+	"text!templates/appeal/edit/pages/laboratory.tmpl"
+	, "views/laboratory/AddDirectionPopupView"
+	, "views/laboratory/EditDirectionPopupView"
+	, "models/diagnostics/labAnalysisDirection"
+	, "collections/diagnostics/laboratory-diags"
+	, "views/grid"
 
-	App.Views.Laboratory = View.extend({
+], function (template, AddDirectionPopupView, EditDirectionPopupView, labDirectionModel) {
+
+	var Laboratory = View.extend({
 		className: "ContentHolder",
 		template: template,
 
@@ -20,8 +22,9 @@ define([
 		},
 
 		initialize: function () {
+
+			console.log('this.options', this.options)
 			this.collection = new App.Collections.LaboratoryDiags;
-			console.log('this.options',this.options)
 			this.collection.appealId = this.options.appealId;
 			this.collection.setParams({
 				sortingField: "directionDate",
@@ -37,44 +40,61 @@ define([
 				defaultTemplateId: "#lab-diagnostic-grid-default"
 			});
 
+			this.grid.on('grid:rowClick', this.onGridRowClick, this);
+
 			this.depended(this.grid);
 
 
-			this.newAssignPopup = new App.Views.LaboratoryPopup({appeal:this.options.appeal});
+			this.addDirectionPopupView = new AddDirectionPopupView({appeal: this.options.appeal});
 
-			this.collection.on("reset", this.onCollectionLoaded, this);
+			//this.collection.on("reset", this.onCollectionLoaded, this);
 			this.collection.fetch();
 		},
-		onGridRowClick: function (model,event){
-			console.log('grid click',model)
+
+		onGridRowClick: function (model, event) {
 			event.preventDefault();
 
 			if (_.indexOf(event.target.classList, 'cancel-direction') >= 0) {
-				this.cancelAnalysisDirection(model);
+				this.cancelDirection(model);
 			}
-			if (_.indexOf(event.target.classList, 'bed-registration') >= 0) {
-				//this.newHospitalBed(move);
+
+			if (_.indexOf(event.target.classList, 'edit-direction') >= 0) {
+				this.editDirection(model);
 			}
+
 		},
 
-		cancelAnalysisDirection: function(model){
-			var id = model.get('id');
-			var direction = new labAnalysisDirection();
-			direction._id = id;
-			direction.eventId = 62577;
-			direction.fetch({success: function(model, response) {
-				direction.destroy({success: function(model, response) {
-					console.log('destroy',response);
-				}});
+		editDirection: function (model) {
+			var view = this;
+
+			view.ld = new App.Models.LaboratoryDiag();
+			view.ld.id = model.get('id');
+
+			view.ld.on('reset', function(model){
+				console.log('model',model);
+				this.editDirectionPopupView = new EditDirectionPopupView({model: model});
+				this.editDirectionPopupView.render().open();
+			});
+
+			view.ld.fetch();
+
+
+		},
+
+		cancelDirection: function (model) {
+			var view = this;
+
+			model.eventId = view.collection.appealId;
+
+			model.destroy({success: function () {
+				view.collection.fetch();
 			}});
-			console.log('direction',direction)
-			console.log('cancelAnalysisDirection',model)
 
 		},
 
 		toggleFilters: function (event) {
 			$(event.currentTarget).toggleClass("Pushed");
-			this.$(".Grid thead tr" ).toggleClass("EditTh");
+			this.$(".Grid thead tr").toggleClass("EditTh");
 			this.$(".Grid .Filter").toggle();
 		},
 
@@ -85,7 +105,7 @@ define([
 		render: function () {
 			var view = this;
 
-			this.grid.on('grid:rowClick', this.onGridRowClick, this);
+
 
 			view.$el.empty().html($.tmpl(view.template));
 			view.$("#lab-grid").html(view.grid.el);
@@ -105,11 +125,9 @@ define([
 		},
 
 		onNewDiagnosticClick: function () {
-
-			this.newAssignPopup.render();
-			this.newAssignPopup.open();
+			this.addDirectionPopupView.render().open();
 		}
 	});
 
-	return App.Views.Laboratory
+	return Laboratory;
 });
