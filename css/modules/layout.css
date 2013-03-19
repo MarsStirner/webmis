@@ -841,29 +841,46 @@ footer a {
   height: 2.25em;
 }
 
-/* line 726, ../../sass/modules/layout.scss */
-.select2-results {
-  font-size: 1.2em;
-}
-/* line 728, ../../sass/modules/layout.scss */
-.select2-results li {
-  padding: 0.2em 0.4em 0.2em 0.2em;
-}
-/* line 731, ../../sass/modules/layout.scss */
-.select2-results li.select2-highlighted {
-  background: #D2F0FD;
-  color: black;
-}
-
-/* line 737, ../../sass/modules/layout.scss */
+/* line 730, ../../sass/modules/layout.scss */
 .select2-drop {
   border-left: 1px solid #737477;
   border-right: 1px solid #737477;
   border-bottom: 1px solid #737477;
+  border-radius: 0;
 }
-/* line 741, ../../sass/modules/layout.scss */
+/* line 735, ../../sass/modules/layout.scss */
 .select2-drop.select2-drop-above {
   border-top: 1px solid #737477;
+  border-radius: 0;
+}
+/* line 739, ../../sass/modules/layout.scss */
+.select2-drop .select2-results {
+  margin: 0;
+  padding: 0;
+  font-size: 1.2em;
+}
+/* line 743, ../../sass/modules/layout.scss */
+.select2-drop .select2-results li {
+  padding: 0.2em 0.4em 0.2em 0.2em;
+  border-top: 1px solid #D4D4D4;
+  /*&:first-child {
+  	border-top: none;
+  }*/
+}
+/* line 749, ../../sass/modules/layout.scss */
+.select2-drop .select2-results li.select2-highlighted {
+  background: #D2F0FD;
+  color: black;
+}
+/* line 755, ../../sass/modules/layout.scss */
+.select2-drop .select2-search input {
+  background: white url("../select2.png") no-repeat 100% -22px;
+  background: url("../select2.png") no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
+  background: url("../select2.png") no-repeat 100% -22px, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%);
+  background: url("../select2.png") no-repeat 100% -22px, -moz-linear-gradient(center bottom, white 85%, #eeeeee 99%);
+  background: url("../select2.png") no-repeat 100% -22px, -o-linear-gradient(bottom, white 85%, #eeeeee 99%);
+  background: url("../select2.png") no-repeat 100% -22px, -ms-linear-gradient(top, white 85%, #eeeeee 99%);
+  background: url("../select2.png") no-repeat 100% -22px, linear-gradient(top, #ffffff 85%, #eeeeee 99%);
 }
 
 /*.LineBlockHolder {
