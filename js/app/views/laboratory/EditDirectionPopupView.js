@@ -16,8 +16,9 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl"],
 			initialize: function () {
 				var view = this;
 
-				view.model = this.options.model;
 
+				view.model = this.options.model;
+				console.log('popup init',view.model)
 			},
 
 

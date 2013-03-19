@@ -86,6 +86,10 @@ define([//"models/doctor"
 			return xhr;
 		}
 
+//		, parse:function (raw) {
+//			return raw[0]
+//		}
+
 //		relations: [
 //			{
 //				type: Backbone.HasOne,

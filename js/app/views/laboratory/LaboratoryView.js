@@ -70,14 +70,13 @@ define([
 			view.ld = new App.Models.LaboratoryDiag();
 			view.ld.id = model.get('id');
 
-			view.ld.on('reset', function(model){
-				console.log('model',model);
+			view.ld.fetch({success: function(){
+				console.log('model',view.ld);
 				this.editDirectionPopupView = new EditDirectionPopupView({model: model});
 				this.editDirectionPopupView.render().open();
-			});
+			}});
 
-			view.ld.fetch();
-
+			console.log('editDirection',view.ld);
 
 		},
 
