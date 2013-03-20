@@ -86,9 +86,19 @@ define([//"models/doctor"
 			return xhr;
 		}
 
-//		, parse:function (raw) {
-//			return raw[0]
+//		,parse:function (data) {
+//			var data = _(data.data).isArray() ? _(data.data).first() : data.data;
+//			return data
 //		}
+
+		,parse:function (response, options) {
+			console.log('MODEL',response, options)
+//			if (data.requestData && data.requestData.coreVersion) {
+//				CORE_VERSION = data.requestData.coreVersion;
+//				VersionInfo.show();
+//			}
+			return response.data ? response.data : response
+		}
 
 //		relations: [
 //			{

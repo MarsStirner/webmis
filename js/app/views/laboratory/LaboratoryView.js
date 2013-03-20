@@ -6,11 +6,11 @@ define([
 	"text!templates/appeal/edit/pages/laboratory.tmpl"
 	, "views/laboratory/AddDirectionPopupView"
 	, "views/laboratory/EditDirectionPopupView"
-	, "models/diagnostics/labAnalysisDirection"
+	, "models/diagnostics/laboratory-diag-form"
 	, "collections/diagnostics/laboratory-diags"
 	, "views/grid"
 
-], function (template, AddDirectionPopupView, EditDirectionPopupView, labDirectionModel) {
+], function (template, AddDirectionPopupView, EditDirectionPopupView, laboratoryDiagsForm) {
 
 	var Laboratory = View.extend({
 		className: "ContentHolder",
@@ -67,16 +67,15 @@ define([
 		editDirection: function (model) {
 			var view = this;
 
-			view.ld = new App.Models.LaboratoryDiag();
-			view.ld.id = model.get('id');
+			view.ldf = new laboratoryDiagsForm();
+			view.ldf.id = model.get('id');
 
-			view.ld.fetch({success: function(){
-				console.log('model',view.ld);
-				this.editDirectionPopupView = new EditDirectionPopupView({model: model});
-				this.editDirectionPopupView.render().open();
+			view.ldf.fetch({success: function(model){
+				console.log('model',view.ldf,model);
+				view.editDirectionPopupView = new EditDirectionPopupView({model: model});
+				view.editDirectionPopupView.render().open();
 			}});
 
-			console.log('editDirection',view.ld);
 
 		},
 

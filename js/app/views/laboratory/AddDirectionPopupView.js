@@ -8,7 +8,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 	"views/laboratory/TestsGroupListView",
 	"views/laboratory/SetOffTestsView",
 	"models/diagnostics/SetOfTests",
-	"models/diagnostics/labAnalysisDirection",
+	"models/diagnostics/laboratory-diag-form",
 	"views/ui/SelectView"],
 	function (tmpl, Labs, LabsListView, LabTestsListView, SetOffTestsView, SetOfTestsModel, labAnalysisDirection, SelectView) {
 

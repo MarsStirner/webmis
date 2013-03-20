@@ -1,5 +1,5 @@
 define([], function () {
-	var labAnalysisDirection = Model.extend({
+	return  Model.extend({
 		//idAttribute: "id",
 		initialize: function (){
 			console.log(this)
@@ -9,7 +9,9 @@ define([], function () {
 		url: DATA_PATH + 'diagnostics/laboratory/',
 
 		parse:function (raw) {
-			return raw.data[0]
+			var data = _(raw.data).isArray() ? _(raw.data).first() : raw.data;
+			 data.generalAttrs = data.group[0]["attribute"];
+			return data;
 		},
 
 		destroy: function(options) {
@@ -46,7 +48,7 @@ define([], function () {
 
 			switch (method.toLowerCase()) {
 				case 'read':
-					options.url = DATA_PATH + 'diagnostics/laboratory/' + model._id;
+					options.url = DATA_PATH + 'diagnostics/laboratory/' + model.id;
 					break;
 				case 'create':
 					options.url = DATA_PATH + 'diagnostics/' + model.eventId + '/laboratory';
@@ -67,7 +69,7 @@ define([], function () {
 					options.type = 'PUT';
 					options.data = JSON.stringify({
 						//requestData:{},
-						data:[model.toJSON()]
+						data: [{'id':model.get('id')}]
 					});
 
 					break;
@@ -80,6 +82,5 @@ define([], function () {
 
 	});
 
-	return labAnalysisDirection;
 
 });
