@@ -288,7 +288,18 @@ define(['text!templates/pages/biomaterials.tmpl',
 		initStatusFilterButtonset: function () {
 			var view = this;
 
-			view.$("#status_buttonset").buttonset();
+            view.$("#status_buttonset").buttonset();
+            view.collection.on('reset', function () {
+                var all = view.collection.count.all;
+                var status_0 = view.collection.count.status_0;
+                var status_1 = view.collection.count.status_1;
+                var status_2 = view.collection.count.status_2;
+
+                view.$('#status-all-count').html(all ? '(' + all + ')' : '');
+                view.$('#status-0-count').html(status_0 ? '(' + status_0 + ')' : '');
+                view.$('#status-1-count').html(status_1 ? '(' + status_1 + ')' : '');
+                view.$('#status-2-count').html(status_2 ? '(' + status_2 + ')' : '');
+            });
 		},
 		initExecuteButton: function () {
 			var view = this;

@@ -8,9 +8,38 @@ define(["models/Biomaterial"], function (Biomaterial) {
 			var collection = this;
 
 			collection.countSelected();
+            collection.countStatuses();
 			collection.on("change:selected reset", collection.countSelected, collection);
+            collection.on("reset", collection.countStatuses, collection);
 
 		},
+
+        /***
+         * подсчёт статусов
+         */
+        countStatuses: function(){
+            var collection = this;
+
+            function count(status){
+                return collection.reduce(function(memo, model){
+                    var i = 0;
+
+                    if(model.get('status') == status){
+                        i = 1;
+                    }
+                    return memo + i;
+                },0);
+
+            }
+
+            collection.count = {};
+            collection.count.status_0 = count(0);
+            collection.count.status_1 = count(1);
+            collection.count.status_2 = count(2);
+            collection.count.all = collection.length;
+
+
+        },
 
 		/***
 		 * Считает выбранные джоб тикеты с разными статусами
