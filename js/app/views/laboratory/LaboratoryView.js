@@ -22,8 +22,9 @@ define([
 		},
 
 		initialize: function () {
+			var view = this;
 
-			console.log('this.options', this.options)
+			//console.log('this.options', this.options)
 			this.collection = new App.Collections.LaboratoryDiags;
 			this.collection.appealId = this.options.appealId;
 			this.collection.setParams({
@@ -46,6 +47,10 @@ define([
 
 
 			this.addDirectionPopupView = new AddDirectionPopupView({appeal: this.options.appeal});
+
+			pubsub.on('lab-diagnostic:added',function(){
+				view.collection.fetch();
+			})
 
 			//this.collection.on("reset", this.onCollectionLoaded, this);
 			this.collection.fetch();
@@ -85,6 +90,7 @@ define([
 			model.eventId = view.collection.appealId;
 
 			model.destroy({success: function () {
+				pubsub.trigger('noty', {text:'Направление удалено',type:'alert'});
 				view.collection.fetch();
 			}});
 

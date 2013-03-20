@@ -1,31 +1,31 @@
 define([], function () {
 	return  Model.extend({
 		//idAttribute: "id",
-		initialize: function (){
+		initialize: function () {
 			console.log(this)
 		},
 
 
 		url: DATA_PATH + 'diagnostics/laboratory/',
 
-		parse:function (raw) {
+		parse: function (raw) {
 			var data = _(raw.data).isArray() ? _(raw.data).first() : raw.data;
-			 data.generalAttrs = data.group[0]["attribute"];
+			data.generalAttrs = data.group[0]["attribute"];
 			return data;
 		},
 
-		destroy: function(options) {
+		destroy: function (options) {
 
 			console.log('destroy')
 			options = options ? _.clone(options) : {};
 			var model = this;
 			var success = options.success;
 
-			var destroy = function() {
+			var destroy = function () {
 				model.trigger('destroy', model, model.collection, options);
 			};
 
-			options.success = function(model, resp, options) {
+			options.success = function (model, resp, options) {
 				if (options.wait || model.isNew()) destroy();
 				if (success) success(model, resp, options);
 			};
@@ -41,7 +41,7 @@ define([], function () {
 		},
 
 		sync: function (method, model, options) {
-			console.log('options',options)
+			console.log('options1', options.success)
 			options = options || {};
 			options.dataType = "jsonp";
 			options.contentType = 'application/json';
@@ -53,15 +53,15 @@ define([], function () {
 				case 'create':
 					options.url = DATA_PATH + 'diagnostics/' + model.eventId + '/laboratory';
 					options.data = JSON.stringify({
-						requestData:{},
-						data:[model.toJSON()]
+						requestData: {},
+						data: [model.toJSON()]
 					});
 					break;
 				case 'update':
 					options.url = DATA_PATH + 'diagnostics/' + model.eventId + '/laboratory';
 					options.data = JSON.stringify({
-						requestData:{},
-						data:[model.toJSON()]
+						requestData: {},
+						data: [model.toJSON()]
 					});
 					break;
 				case 'delete':
@@ -69,15 +69,15 @@ define([], function () {
 					options.type = 'PUT';
 					options.data = JSON.stringify({
 						//requestData:{},
-						data: [{'id':model.get('id')}]
+						data: [
+							{'id': model.get('id')}
+						]
 					});
 
 					break;
 			}
-
-			console.log('sync', 'method', method, 'model', model, 'options', options);
-
-			Backbone.sync(method, model, options);
+			console.log('options2', options.success)
+			Backbone.sync.call(Backbone, method, model, options);
 		}
 
 	});

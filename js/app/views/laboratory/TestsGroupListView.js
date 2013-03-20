@@ -26,23 +26,26 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 
 				view.collection.on('reset', function () {
 
-					view.collection.each(function (testsGroup) {
-						console.log('TestsGroup',testsGroup);
+					console.log('view.collection.models',view.collection.toJSON())
+					view.render()
 
-						if(testsGroup.get('groups').length){
-
-						}else{
-							var testsGroupView = new TestsGroupView({
-								model : testsGroup,
-								tagName:'li'
-							});
-
-							view.$('.lab-tests-list').append(testsGroupView.render().el);
-						}
-
-
-
-					});
+//					view.collection.each(function (testsGroup) {
+//
+//
+//						//if(testsGroup.get('groups').length){
+//
+//						//}else{
+//							var testsGroupView = new TestsGroupView({
+//								model : testsGroup,
+//								tagName:'li'
+//							});
+//
+//							view.$('.lab-tests-list').append(testsGroupView.render().el);
+//						//}
+//
+//
+//
+//					});
 
 				});
 
@@ -54,6 +57,15 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 				var view = this;
 
 				view.$el.html($.tmpl(view.template));
+
+				view.$('.lab-tests-list').dynatree({
+//					onActivate: function(node) {
+//						// A DynaTreeNode object is passed to the activation handler
+//						// Note: we also get this event, if persistence is on, and the page is reloaded.
+//						alert("You activated " + node.data.title);
+//					},
+					children: view.collection.toJSON()
+				});
 
 
 			}

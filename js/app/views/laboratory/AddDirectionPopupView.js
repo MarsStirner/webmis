@@ -31,6 +31,8 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					}
 				};
 
+				this.appeal = this.options.appeal;
+
 
 			},
 			renderNested: function (view, selector) {
@@ -181,13 +183,22 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 			},
 
 			onSave: function () {
-				var popup = this;
+				var view = this;
 
-				console.log('popup.setOffTests', popup.setOffTests)
+				console.log('popup.setOffTests', view.setOffTests)
 
-				var direction = new labAnalysisDirection(popup.setOffTests);
-				direction.eventId = 62577;
-				direction.save();
+				var direction = new labAnalysisDirection(view.setOffTests);
+				direction.eventId = view.appeal.get('id');
+				direction.save({},{
+					success: function(model, response, options){
+						console.log('success',model, response, options);
+						pubsub.trigger('lab-diagnostic:added');
+						view.close();
+
+				}
+				,error: function(model, xhr, options){
+						console.log('error',model, xhr, options);
+					}});
 			},
 
 			open: function () {
@@ -198,6 +209,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 			close: function () {
 				$(".ui-dialog-titlebar").show();
 				this.$el.dialog("close");
+				this.$el.remove();
 			}
 		});
 

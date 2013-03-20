@@ -183,9 +183,9 @@
 
 .EventList {
 	& > li {
-		& > ul {
-			margin-left:2em;
-		}
+		//& > ul {
+		//	margin-left:2em;
+		//}
 		label {
 			margin-bottom:0em;
 			color:#000;
@@ -212,6 +212,10 @@
 			}
 		}
 	}
+}
+
+.EventList ul{
+	margin-left: 2em;
 }
 .EventRoom {
     display: block;
