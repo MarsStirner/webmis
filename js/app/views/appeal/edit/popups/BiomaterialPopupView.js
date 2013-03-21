@@ -38,12 +38,12 @@ define(["text!templates/appeal/edit/popups/biomaterial-popup.tmpl"],
 			},
 
 			open: function () {
-				$(".ui-dialog-titlebar").hide();
+				//$(".ui-dialog-titlebar").hide();
 				this.$el.dialog("open");
 			},
 
 			close: function () {
-				$(".ui-dialog-titlebar").show();
+				//$(".ui-dialog-titlebar").show();
 				this.$el.dialog("close");
 			}
 		});

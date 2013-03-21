@@ -5,7 +5,8 @@ define([], function () {
 		defaults: {
 			groupId: "",
 			code: '',
-			name: ""
+			name: "",
+            groups: []
 		}
 	});
 

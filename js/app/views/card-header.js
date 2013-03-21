@@ -2,7 +2,8 @@
  * User: FKurilov
  * Date: 22.11.12
  */
-define(["text!templates/card-header.tmpl", "models/appeal"], function (template) {
+define(["text!templates/card-" +
+	"header.tmpl", "models/appeal"], function (template) {
 
 	/*var CardPrint = View.extend({
 		tagName: "",

@@ -8,16 +8,23 @@
 </header>
 <section class="PopUpLine">
 
-	<h3> ФИО пациента: ${patient.name.raw}</h3>
-	<h3> Отделение/койка: ${bed.name}</h3>
-	<h3> №ИБ: ${appealNumber}</h3>
-	<h3> Возраст: {{formatDate patient.birthDate}}</h3>
-	<h3> Пол: ${patient.sex}</h3>
-	<h3> Код: ${patient.id}</h3>
+	<div> <span style="font-size: 1.6em;">${patient.name.raw} ({{ageString patient.birthDate}})</span>    <a href="/patients/${patient.id}/">Карточка пациента</a></div>
+	<table class="Grid" style="margin: 0 0 20px 0;width: auto;">
+		<thead><tr><td colspan="2"></td></tr></thead>
+		<tbody>
+		<tr><td>История болезни №:</td><td>${appealNumber}</td></tr>
+		<tr><td>Отделение:</td><td>${department.name}</td></tr>
+		<tr><td>Койка:</td><td>${bed.code}</td></tr>
 
-	<h3>Тип биоматериала: ${biomaterial.tissueType.name}</h3>
-	{{if volume}}<h3> Количество: ${volume} ${biomaterial.unit.name}</h3>{{/if}}
 
+		</tbody>
+	</table>
+
+	<h3 style="margin-bottom: 10px;">Тип биоматериала: <strong>${biomaterial.tissueType.name}</strong>
+	{{if volume}}
+		Количество: <strong>${volume} ${biomaterial.unit.name}</strong>
+	{{/if}}
+		</h3>
 
 	<table class="Grid">
 		<thead>
