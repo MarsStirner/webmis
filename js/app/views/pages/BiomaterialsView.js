@@ -15,8 +15,6 @@ define(['text!templates/pages/biomaterials.tmpl',
 		///className: "ContentHolder",
 		template: biomaterialsTemplate,
 		events: {
-			//"click .Actions.Decrease": "decreaseDate",
-			//"click .Actions.Increase": "increaseDate",
 			"click #select-all": "selectAll",
 
 			"change .id": "onCheckboxChange"
@@ -28,9 +26,9 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.collection = new BiomaterialsCollection;
 
 			view.collection.setParams({
-				sortingField: "date",
-				sortingMethod: "asc",
-				filter: {status: 0}
+				sortingField: "date"
+                ,sortingMethod: "asc"
+               ,filter: {status: 0}
 			});
 
 
@@ -38,18 +36,11 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.collection.on('reset', function () {
 				view.updateButtons();
 				view.resetSelectAllCheckbox();
+
 			});
 
-//			var ini = _.once(			function () {
-//				//console.log('ini',view.$('#departments option:selected').val())
-//				view.departmentSelect.$el.val(18);
-//				//console.log('ini2',view.$('#departments option:selected').val())
-//
-//			});
-//
-//			view.collection.on('reset',ini );
 
-
+            view.collection.on('reset',view.setDefaultDepartment, view);
 			view.initGrid();
 
 			view.initCounts();
@@ -58,13 +49,6 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.initJobs();
 
-//			pubsub.on('departments:change', function (id) {
-//				console.log('departments:change', id)
-//			});
-//
-//			pubsub.on('biomaterial:change', function (id) {
-//				console.log('biomaterial:change', id)
-//			})
 
 
 		},
@@ -93,7 +77,9 @@ define(['text!templates/pages/biomaterials.tmpl',
 			var view = this,
 				$eventTarget = $(event.target);
 
-			if (!$eventTarget.hasClass('id') && (model.get('status') == 0)) {
+			if (!$eventTarget.hasClass('id')
+                //&& (model.get('status') == 0)
+                ) {
 				view.openJobPopup(model);
 			}
 
@@ -126,9 +112,8 @@ define(['text!templates/pages/biomaterials.tmpl',
 			var view = this;
 			var $select_all_button = $(event.target);
 
-			view.$('.id').attr('checked', $select_all_button.prop("checked")).trigger('change')
+			view.$('.id').attr('checked', $select_all_button.prop("checked")).trigger('change');
 
-			//view.updateButtons();
 		},
 
 		resetSelectAllCheckbox: function () {
@@ -290,7 +275,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 				sortingMethod: 'asc'
 			});
 
-			console.log('initDepartments view.collection.departmentId',view.collection.departmentId)
+			///console.log('initDepartments view.collection.departmentId',view.collection.departmentId)
 			view.departmentSelect = new SelectView({
 				collection: view.departments,
 				el: view.$('#departments'),
@@ -301,6 +286,14 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.depended(view.departmentSelect);
 
 		},
+        setDefaultDepartment: function(){
+            var view = this;
+            var departmentId = view.collection.requestData.filter.departmentId;
+
+            view.departmentSelect.val(departmentId);
+            view.collection.off('reset', view.setDefaultDepartment);
+
+        },
 
 
 		initStatusFilterButtonset: function () {
@@ -460,6 +453,9 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			$filterDate.datepicker("setDate", new Date());
 
+            var e = (new Date()).getTime() + ((60 * 60 * 24) - 60) * 1000;
+
+            $endDate.val(e);
 
 			$filterDate.on('change', function () {
 				var start = $(this).datepicker("getDate").getTime();
@@ -476,7 +472,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.$el.html($.tmpl(view.template));
 
-			view.initFilters();
+
 			view.initStatusFilterButtonset();
 			view.initSendToLabButton();
 			view.initExecuteButton();
@@ -488,19 +484,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.initTissues();
 			view.initDepartments();
 
-
-//			var now = moment();
-//			var startTimestamp = now.subtract('days', 1).hours(0).minutes(0).format('X');
-//			var endTimestamp = now.subtract('days', 1).hours(23).minutes(59).format('X');
-
-
-//			view.datepicker = new DatetimePikerView({
-//				startTimestamp: startTimestamp,
-//				endTimestamp: endTimestamp
-//			});
-
-//			view.$('#biomaterials-head-filter').prepend(view.datepicker.render().el)
-			//.biomaterials-datatime
+            view.initFilters();
 
 
 			view.$("#biomaterial-grid").html(view.grid.el);
