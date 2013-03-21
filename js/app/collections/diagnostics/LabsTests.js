@@ -16,26 +16,49 @@ define(["models/diagnostics/LabTest"], function (LabTest) {
 			var tree = [];
 
 
-			function convert(list){
-				return _.map(list, function(item){
+			function convert(list) {
+				return _.map(list, function (item) {
 
 					var node = {};
 					node.title = item.name;
+					node.code = item.code;
 
-
-					if(item.groups.length){
+					if (item.groups.length) {
 						node.children = convert(item.groups);
+						node.isFolder = true;
+
 					}
 
 					return node;
-				})
+
+				});
+			};
+
+
+
+			//_.each([1, 2, 3], alert);
+			//var evens = _.filter([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
+
+			function onlyParents(list) {
+				var results = [];
+
+				_.each(list, function (item, index, list) {
+
+					if (item.children && item.children.length) {
+						item.children = onlyParents(item.children);
+						results[results.length] = item;
+					}
+
+				});
+
+				return results;
 
 			}
 
 			tree = convert(raw.data);
+			//console.log('onlyParents', onlyParents(tree))
 
 
-			console.log('tree',tree, raw);
 			return tree;
 		}
 

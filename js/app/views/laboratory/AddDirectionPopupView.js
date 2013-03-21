@@ -92,11 +92,21 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					popup.$el.html($.tmpl(this.template, {doctor: this.doctor}));
 
 					var labs = new Labs();
-					labs.fetch({success: function () {
+					labs.on('reset', function(){
 						popup.labsListView = new LabsListView({collection: labs});
 						popup.renderNested(popup.labsListView, ".labs-list-el");
-
-					}});
+					})
+					labs.reset([{
+						id: 709,
+						groupId: 654,
+						code: "15",
+						name: "lab"
+					}])
+//					labs.fetch({success: function () {
+//						popup.labsListView = new LabsListView({collection: labs});
+//						popup.renderNested(popup.labsListView, ".labs-list-el");
+//
+//					}});
 
 					popup.initFinanseSelect();
 

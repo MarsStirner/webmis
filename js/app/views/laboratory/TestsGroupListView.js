@@ -1,52 +1,31 @@
 define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
-	'collections/diagnostics/LabsTests',
-	'views/laboratory/TestsGroupView'],
-	function (testsGroupTemplate, TestsGroups, TestsGroupView) {
+	'collections/diagnostics/LabsTests'],
+	function (testsGroupTemplate, GroupsOfTests) {
 
-        TestsGroupListView = View.extend({
+		var GroupOfTestsListView = View.extend({
 			template: testsGroupTemplate,
 
 			el: 'ul',
 
 			initialize: function () {
 				var view = this;
-				view.collection = new TestsGroups();
-                view.collection.setParams({
-                    'filter[view]': 'tree'
-                })
+				view.collection = new GroupsOfTests();
 
-				console.log('init LabTestsListView');
+				view.collection.setParams({
+					'filter[view]': 'tree'
+				})
+
+				//	console.log('init LabTestsListView');
 
 				pubsub.on('lab-selected', function (labCode) {
-					view.render();
+					//view.render();
 					view.collection.fetch({data: {'filter[code]': labCode}});
 
 				});
 
 
 				view.collection.on('reset', function () {
-
-					console.log('view.collection.models',view.collection.toJSON())
-					view.render()
-
-//					view.collection.each(function (testsGroup) {
-//
-//
-//						//if(testsGroup.get('groups').length){
-//
-//						//}else{
-//							var testsGroupView = new TestsGroupView({
-//								model : testsGroup,
-//								tagName:'li'
-//							});
-//
-//							view.$('.lab-tests-list').append(testsGroupView.render().el);
-//						//}
-//
-//
-//
-//					});
-
+					view.render();
 				});
 
 
@@ -59,11 +38,14 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 				view.$el.html($.tmpl(view.template));
 
 				view.$('.lab-tests-list').dynatree({
-//					onActivate: function(node) {
-//						// A DynaTreeNode object is passed to the activation handler
-//						// Note: we also get this event, if persistence is on, and the page is reloaded.
-//						alert("You activated " + node.data.title);
-//					},
+					onClick: function(node) {
+						// A DynaTreeNode object is passed to the activation handler
+						// Note: we also get this event, if persistence is on, and the page is reloaded.
+						if(!node.data.children){
+							console.log("You activated " + node.data.code);
+						}
+
+					},
 					children: view.collection.toJSON()
 				});
 
@@ -73,6 +55,6 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 		});
 
 
-		return TestsGroupListView;
+		return GroupOfTestsListView;
 
 	});
