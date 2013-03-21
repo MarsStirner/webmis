@@ -40,7 +40,7 @@
 /* line 36, ../../sass/modules/editform.scss */
 .EditForm .LineBlock .LineCol {
   display: inline-block;
-  vertical-align: bottom;
+  vertical-align: top;
   word-spacing: normal;
   white-space: normal;
   width: 50%;
@@ -127,7 +127,7 @@
   width: 75%;
   display: inline-block;
   padding-right: 3em;
-  vertical-align: bottom;
+  vertical-align: top;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -153,7 +153,7 @@
   width: 50%;
   display: inline-block;
   padding-right: 3em;
-  vertical-align: bottom;
+  vertical-align: top;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -179,7 +179,7 @@
   width: 25%;
   display: inline-block;
   padding-right: 3em;
-  vertical-align: bottom;
+  vertical-align: top;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -205,14 +205,13 @@
   display: inline-block;
   width: 12.5%;
   padding-right: 3em;
-  vertical-align: bottom;
+  vertical-align: top;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 /* line 167, ../../sass/modules/editform.scss */
 .EditForm .QuartCol > * {
-  white-space: normal;
   word-spacing: normal;
 }
 /* line 171, ../../sass/modules/editform.scss */
@@ -237,7 +236,7 @@
   display: inline-block;
   width: 37.5%;
   padding-right: 3em;
-  vertical-align: bottom;
+  vertical-align: top;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -262,7 +261,7 @@
   width: 33.3%;
   display: inline-block;
   padding-right: 3em;
-  vertical-align: bottom;
+  vertical-align: top;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -288,7 +287,7 @@
   display: inline-block;
   width: 10%;
   padding-right: 3em;
-  vertical-align: bottom;
+  vertical-align: top;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;

@@ -35,7 +35,7 @@
 		padding-right:3em;
 		.LineCol {
 			display:inline-block;
-			vertical-align:bottom;
+			vertical-align:top;
 			word-spacing:normal;
 			white-space:normal;
 			width:50%;
@@ -106,7 +106,7 @@
 		width:75%;
 		display: inline-block;
 		padding-right:3em;
-		vertical-align: bottom;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		margin-right:-0.3em;
 		> * {
@@ -125,7 +125,7 @@
 		width:50%;
 		display: inline-block;
 		padding-right:3em;
-		vertical-align: bottom;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		margin-right:-0.3em;
 		> * {
@@ -144,7 +144,7 @@
 		width:25%;
 		display: inline-block;
 		padding-right:3em;
-		vertical-align: bottom;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		margin-right:-0.3em;
 		> * {
@@ -162,10 +162,10 @@
 		display:inline-block;
 		width:12.5%;
 		padding-right: 3em;
-		vertical-align: bottom;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		> * {
-			white-space:normal;
+			//white-space:normal;
 			word-spacing:normal;
 		}
 		input {
@@ -183,7 +183,7 @@
 		display:inline-block;
 		width:37.5%;
 		padding-right: 3em;
-		vertical-align: bottom;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		> * {
 			white-space:normal;
@@ -200,7 +200,7 @@
 		width: 33.3%;
 		display: inline-block;
 		padding-right:3em;
-		vertical-align: bottom;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		margin-right:-0.3em;
 		> * {
@@ -218,7 +218,7 @@
         display:inline-block;
         width:10%;
         padding-right: 3em;
-		vertical-align: bottom;
+		vertical-align:top;
         @include box-sizing(border-box);
         > * {
           white-space:normal;

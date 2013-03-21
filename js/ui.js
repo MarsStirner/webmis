@@ -208,6 +208,18 @@ UI.CustomSelect = function ( $select ){
 
 
 function UIInitialize (context) {
+	/*$(".btn").each(function () {
+		if ($(this).hasClass("btn-add")) {
+			$(this).button({icons: {primary: "icon-plus icon-color-green"}});
+		} else if ($(this).hasClass("btn-print")) {
+			$(this).button({icons: {primary: "icon-print"}});
+		} else if ($(this).hasClass("btn-filter")) {
+			$(this).button({icons: {primary: "icon-filter"}});
+		} else {
+			$(this).button();
+		}
+	});*/
+
 	$("input.Clearable").on("keyup", function() {
 		if ($(this).val().length > 0) {
 			$(this).parent().find(".ClearButton").fadeIn(300).css("display","inline-block");

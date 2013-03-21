@@ -1847,10 +1847,7 @@ define([
 			'<li>' +
 				'<div class="ContentHeader Clearfix">' +
 					'<div class="PageActions">' +
-						'<button id="new-quota" class="Styled Button">' +
-							'<i class="Icon AddIcon Tiny"></i>' +
-							'<span>Добавить талон</span>' +
-						'</button>' +
+						'<button id="new-quota">Добавить талон</button>' +
 					'</div>' +
 				'</div>' +
 				'<div id="quotes-grid"></div>' +
@@ -1960,6 +1957,8 @@ define([
 
 			if (!this.options.patient.isNew()) {
 				this.$el.html($.tmpl(this.template));
+
+				this.$("#new-quota").button({icons: {primary: "icon-plus icon-color-green"}});
 
 				this.$("#quotes-grid").empty().append(this.grid.el);
 
