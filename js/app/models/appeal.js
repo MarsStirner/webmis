@@ -336,7 +336,7 @@ define([
 			//hospitalizationChannelType: {},
 			deliveredType: "",
 			deliveredAfterType: "",
-			movingType: "",
+			movingType: "может идти",
 			stateType: "",
 			//drugsType: {},
 			physicalParameters: {},

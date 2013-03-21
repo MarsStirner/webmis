@@ -16,7 +16,7 @@ define([
 
 		events: {
 			"click .Actions.Save": "onSave",
-			"click .Actions.Cancel": "cancel",
+			"click .Actions.Cancel": "onCancel",
 			"click .AddRepresentative": "onAddRepresentativeClick"
 		},
 
@@ -80,6 +80,16 @@ define([
 			this.$(".Save").attr("disabled", readyToSave);
 		},
 
+		onCancel: function (event) {
+			event.preventDefault();
+
+			if (this.model.isNew()) {
+				App.Router.navigate("patients/" + this.model.get("patient").get("id") + "/", {trigger:true});
+			} else {
+				App.Router.navigate("appeals/" + this.model.get("id") + "/", {trigger:true});
+			}
+		},
+
 		onAddRepresentativeClick: function () {
 			this.openRepresentativeWindow();
 			/*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
@@ -133,6 +143,8 @@ define([
 				if (Core.Date.getAge(patient.get("birthDate")) < 18) {
 					//alert("Нельзя добавить несовершеннолетнего представителя.");
 					this.$nonAdultAlert.dialog("open");
+				} else if (this.model.get("patient").get("id") == patient.get("id")) {
+					this.$samePatinetAlert.dialog("open");
 				} else {
 					this.model.get("hospitalizationWith").add({
 						relative: {
@@ -275,6 +287,11 @@ define([
 			}
 
 
+			this.model.get("hospitalizationWith").on("add remove", function () {
+				console.log(this.$(".AddRepresentative"));
+				this.$(".AddRepresentative").toggle(!Boolean(this.model.get("hospitalizationWith").length));
+			}, view);
+
 			var representativeList = new RepresentativeList({
 				collection: this.model.get("hospitalizationWith"),
 				relationTypes: dicts.relationTypes
@@ -283,6 +300,20 @@ define([
 			representativeList.render();
 
 			this.$nonAdultAlert = this.$(".NonAdultAlert").dialog({
+				modal: true,
+				autoOpen: false,
+				dialogClass: "webmis",
+				resizable: false,
+				width: "500px",
+
+				buttons: {
+					"Принять": function () {
+						$(this).dialog("close");
+					}
+				}
+			});
+
+			this.$samePatinetAlert = this.$(".SamePatientAlert").dialog({
 				modal: true,
 				autoOpen: false,
 				dialogClass: "webmis",

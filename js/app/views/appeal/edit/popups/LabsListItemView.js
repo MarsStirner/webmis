@@ -9,8 +9,12 @@ define([ 'text!templates/appeal/edit/popups/labs-list-item.tmpl'],
 			},
 
 			click: function (e) {
+                var view = this;
+
 				console.log('нада фильтровать по коду', this.model.get('code'));
-				pubsub.trigger('lab-selected', this.model.get('code'))
+				pubsub.trigger('lab-selected', this.model.get('code'));
+                view.$el.siblings().removeClass('selected');
+                view.$el.addClass('selected');
 			},
 
 			render: function () {

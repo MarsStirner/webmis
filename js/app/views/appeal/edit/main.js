@@ -155,7 +155,8 @@ define([
 		},
 
 		onAppealExtraDataLoaded: function (appealExtraData) {
-			appealExtraData = appealExtraData.first();
+			//TODO: Replace this fast fix (made for monitoring page)
+			Core.Data.appealExtraData = appealExtraData = appealExtraData.first();
 
 			this.appeal.closed = appealExtraData ? appealExtraData.get("rangeAppealDateTime").get("end") : false;
 
