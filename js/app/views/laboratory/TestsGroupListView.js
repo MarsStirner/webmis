@@ -1,5 +1,5 @@
 define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
-	'collections/diagnostics/LabsTests'],
+	'collections/diagnostics/LabsTestsGroups'],
 	function (testsGroupTemplate, GroupsOfTests) {
 
 		var GroupOfTestsListView = View.extend({
@@ -41,9 +41,11 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 					onClick: function(node) {
 						// A DynaTreeNode object is passed to the activation handler
 						// Note: we also get this event, if persistence is on, and the page is reloaded.
-						if(!node.data.children){
-							console.log("You activated " + node.data.code);
-						}
+						//if(!node.data.children){
+							console.log("load-group-tests " + node.data.code);
+
+						pubsub.trigger('load-group-tests', node.data.code)
+						//}
 
 					},
 					children: view.collection.toJSON()

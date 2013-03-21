@@ -5,12 +5,13 @@
 define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 	"collections/diagnostics/Labs",
 	"views/laboratory/LabsListView",
+	"collections/diagnostics/LabsTests",
 	"views/laboratory/TestsGroupListView",
 	"views/laboratory/SetOffTestsView",
 	"models/diagnostics/SetOfTests",
 	"models/diagnostics/laboratory-diag-form",
 	"views/ui/SelectView"],
-	function (tmpl, Labs, LabsListView, LabTestsListView, SetOffTestsView, SetOfTestsModel, labAnalysisDirection, SelectView) {
+	function (tmpl, Labs, LabsListView,LabsTestsCollection, LabTestsListView, SetOffTestsView, SetOfTestsModel, labAnalysisDirection, SelectView) {
 
 		var LaboratoryPopup = View.extend({
 			template: tmpl,
@@ -99,8 +100,28 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					labs.reset([{
 						id: 709,
 						groupId: 654,
+						code: "17",
+						name: "lab 17"
+					},{
+						id: 708,
+						groupId: 654,
+						code: "18",
+						name: "lab 18"
+					},{
+						id: 707,
+						groupId: 654,
 						code: "15",
-						name: "lab"
+						name: "lab 15"
+					},{
+						id: 706,
+						groupId: 654,
+						code: "14",
+						name: "lab 14"
+					},{
+						id: 705,
+						groupId: 654,
+						code: "16",
+						name: "lab 16"
 					}])
 //					labs.fetch({success: function () {
 //						popup.labsListView = new LabsListView({collection: labs});
@@ -169,8 +190,9 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					popup.renderNested(popup.labTestListView, ".lab-test-list-el");
 
 
-					popup.setOffTests = new SetOfTestsModel();
-					popup.setOffTestsView = new SetOffTestsView({model: popup.setOffTests});
+					console.log(popup.options.appeal)
+					popup.labsTestsCollection = new LabsTestsCollection();
+					popup.setOffTestsView = new SetOffTestsView({collection: popup.labsTestsCollection,patientId: popup.options.appeal.get('patient').get('id')});
 					popup.renderNested(popup.setOffTestsView, ".set-off-test-el");
 
 
@@ -212,12 +234,12 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 			},
 
 			open: function () {
-				$(".ui-dialog-titlebar").hide();
+				//$(".ui-dialog-titlebar").hide();
 				this.$el.dialog("open");
 			},
 
 			close: function () {
-				$(".ui-dialog-titlebar").show();
+				//$(".ui-dialog-titlebar").show();
 				this.$el.dialog("close");
 				this.$el.remove();
 			}
