@@ -397,6 +397,11 @@
     	&.Selected {
            background: #e5e5e5;
     	}
+		i.bullet {
+			display: inline-block;
+			min-width: 2em;
+			margin-right: .5em;
+		}
     }
 }
 

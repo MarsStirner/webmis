@@ -9,9 +9,9 @@
 				<div class="HalfCol">
 					<p>
 						{{if patient.medicalInfo.blood.group.length}}
-						${patient.medicalInfo.blood.group}
+							${patient.medicalInfo.blood.group}
 						{{else}}
-						-
+							-
 						{{/if}}
 					</p>
 				</div>
@@ -24,11 +24,11 @@
 				<div class="HalfCol">
 					<p>
 						{{if patient.medicalInfo.drugIntolerances.length && patient.medicalInfo.drugIntolerances[0].substance.length}}
-						{{each(i, drugIntolerance) patient.medicalInfo.drugIntolerances}}
-						<em class="Warning">${drugIntolerance.substance}	{{if drugIntolerance.degree}}${drugIntolerance.degree} степень{{/if}}	{{if drugIntolerance.checkingDate}}установлено: {{formatDate drugIntolerance.checkingDate}}{{/if}}</em>
-						{{/each}}
+							{{each(i, drugIntolerance) patient.medicalInfo.drugIntolerances}}
+								<em class="Warning">${drugIntolerance.substance}	{{if drugIntolerance.degree}}${drugIntolerance.degree} степень{{/if}}	{{if drugIntolerance.checkingDate}}установлено: {{formatDate drugIntolerance.checkingDate}}{{/if}}</em>
+							{{/each}}
 						{{else}}
-						-
+							-
 						{{/if}}
 					</p>
 				</div>
@@ -42,9 +42,9 @@
 				<div class="HalfCol">
 					<p>
 						{{if physicalParameters.height}}
-						${physicalParameters.height} см
+							${physicalParameters.height} см
 						{{else}}
-						-
+							-
 						{{/if}}
 					</p>
 				</div>
@@ -57,9 +57,9 @@
 				<div class="HalfCol">
 					<p>
 						{{if physicalParameters.weight}}
-						${physicalParameters.weight} кг
+							${physicalParameters.weight} {{if moment().diff(moment(parseInt(patient.birthDate)), 'month') < 1}} г {{else}} кг {{/if}}
 						{{else}}
-						-
+							-
 						{{/if}}
 					</p>
 				</div>
@@ -88,9 +88,9 @@
 				<div class="HalfCol">
 					<p>
 						{{if branchType.name}}
-						${branchType.name}
+							${branchType.name}
 						{{else}}
-						-
+							-
 						{{/if}}
 					</p>
 				</div>
@@ -103,9 +103,9 @@
 				<div class="HalfCol">
 					<p>
 						{{if ward}}
-						${ward}
+							${ward}
 						{{else}}
-						-
+							-
 						{{/if}}
 					</p>
 				</div>
@@ -118,9 +118,9 @@
 				<div class="HalfCol">
 					<p>
 						{{if placeType.name}}
-						${placeType.name}
+							${placeType.name}
 						{{else}}
-						-
+							-
 						{{/if}}
 					</p>
 
@@ -134,9 +134,9 @@
 				<div class="HalfCol">
 					<p>
 						{{if assignment.doctor}}
-						${assignment.doctor}
+							${assignment.doctor}
 						{{else}}
-						-
+							-
 						{{/if}}
 					</p>
 				</div>

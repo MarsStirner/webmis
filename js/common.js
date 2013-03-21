@@ -582,6 +582,22 @@ Form = View.extend({
 			}
 		});
 
+		this.$("[data-maxsize]").removeClass("WrongField").each(function () {
+			if (parseFloat($(this).val()) > parseFloat($(this).data("maxsize"))) {
+				$(this).addClass("WrongField");
+				$firstFoundedError = $firstFoundedError || $(this);
+				validity = false;
+			}
+		});
+
+		this.$("[data-minsize]").removeClass("WrongField").each(function () {
+			if (parseFloat($(this).val()) < parseFloat($(this).data("minsize"))) {
+				$(this).addClass("WrongField");
+				$firstFoundedError = $firstFoundedError || $(this);
+				validity = false;
+			}
+		});
+
 		if ($firstFoundedError) {
 			//$firstFoundedError.focus();
 			$('html, body').animate({ scrollTop:$($firstFoundedError).offset().top - 30 }, 'fast');
