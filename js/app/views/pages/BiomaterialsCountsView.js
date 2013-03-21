@@ -9,6 +9,10 @@ define(['text!templates/pages/biomaterials-counts-table.tmpl'], function (counts
 				this.render();
 			}, this);
 
+			this.collection.bind('fetch', function () {
+				this.onFetch();
+			}, this);
+
 		},
 		countItems: function () {
 			var view = this;
@@ -38,6 +42,12 @@ define(['text!templates/pages/biomaterials-counts-table.tmpl'], function (counts
 			});
 
 			return counts;
+		},
+
+		onFetch: function (){
+			var view = this;
+			view.$el.html('');
+
 		},
 
 		render: function () {

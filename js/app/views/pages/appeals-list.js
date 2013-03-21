@@ -85,7 +85,7 @@ define([
 		},
 		//Новое мероприятие/направление или перевод в отделение
 		newSendToDepartment: function (appeal) {
-			console.log('newSendToDepartment');
+			//console.log('newSendToDepartment');
 			var sendPopUp = new App.Views.SendToDepartment({
 				appealId: appeal.get("id"),
 				clientId: appeal.get("patient").get("id"),
@@ -103,7 +103,7 @@ define([
 		},
 
 		printForm007: function () {
-			console.log('printForm007', this)
+			//console.log('printForm007', this)
 			var endDate = $("#appeal-start-date").datepicker("getDate").getTime() + (7 * 60 + 59) * 60 * 1000;
 			var beginDate = endDate - (24 * 60 - 1) * 60 * 1000;
 
@@ -115,12 +115,12 @@ define([
 
 			new App.Views.Print({
 				model: form007,
-				template: "007"
+				template: "f007"
 			});
 
 			form007.fetch();
 
-			console.log('007 from to', beginDate, endDate);
+			//console.log('007 from to', beginDate, endDate);
 
 		},
 
@@ -253,8 +253,13 @@ define([
 			}, this);
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function () {
-				Collection = new App.Collections.DepartmentPatients({role: "nurse"});
+				Collection = new App.Collections.DepartmentPatients();
 				/*Collection.setParams({'filter[date]':1334300400000})*/
+
+				Collection.setParams({
+					sortingField: 'number',
+					sortingMethod: 'asc'
+				});
 				Collection.reset();
 
 				this.printButton = $('<button style="float: right;">Печать</button>').button().click(this.printForm007);
