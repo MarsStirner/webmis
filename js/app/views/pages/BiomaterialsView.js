@@ -9,7 +9,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 	'collections/Barcodes',
 	'collections/dictionary-values',
 	'collections/departments',
-	"views/print"], function (biomaterialsTemplate, BiomaterialsCollection, GridView,DatetimePikerView, JobPopupView, CountView, SelectView, JobsCollection, BarcodesCollection) {
+	"views/print"], function (biomaterialsTemplate, BiomaterialsCollection, GridView, DatetimePikerView, JobPopupView, CountView, SelectView, JobsCollection, BarcodesCollection) {
 
 	var BiomaterialsView = View.extend({
 		///className: "ContentHolder",
@@ -27,10 +27,27 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.collection = new BiomaterialsCollection;
 
+			view.collection.setParams({
+				sortingField: "date",
+				sortingMethod: "asc",
+				filter: {status: 0}
+			});
+
+
+
 			view.collection.on('reset', function () {
 				view.updateButtons();
 				view.resetSelectAllCheckbox();
 			});
+
+//			var ini = _.once(			function () {
+//				//console.log('ini',view.$('#departments option:selected').val())
+//				view.departmentSelect.$el.val(18);
+//				//console.log('ini2',view.$('#departments option:selected').val())
+//
+//			});
+//
+//			view.collection.on('reset',ini );
 
 
 			view.initGrid();
@@ -41,13 +58,13 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.initJobs();
 
-			pubsub.on('departments:change', function (id) {
-				console.log('departments:change', id)
-			});
-
-			pubsub.on('biomaterial:change', function (id) {
-				console.log('biomaterial:change', id)
-			})
+//			pubsub.on('departments:change', function (id) {
+//				console.log('departments:change', id)
+//			});
+//
+//			pubsub.on('biomaterial:change', function (id) {
+//				console.log('biomaterial:change', id)
+//			})
 
 
 		},
@@ -62,8 +79,8 @@ define(['text!templates/pages/biomaterials.tmpl',
 				gridTemplateId: "#biomaterials-grid",
 				rowTemplateId: "#biomaterials-grid-row",
 				defaultTemplateId: "#biomaterials-grid-row-default",
-				errorTemplateId: "#biomaterials-grid-row-error"//,
-				//fetchTemplateId: "#biomaterials-grid-row-on-fetch"
+				errorTemplateId: "#biomaterials-grid-row-error"
+//				,fetchTemplateId: "#biomaterials-grid-row-on-fetch"
 			});
 
 			view.depended(view.grid);
@@ -273,11 +290,12 @@ define(['text!templates/pages/biomaterials.tmpl',
 				sortingMethod: 'asc'
 			});
 
+			console.log('initDepartments view.collection.departmentId',view.collection.departmentId)
 			view.departmentSelect = new SelectView({
 				collection: view.departments,
 				el: view.$('#departments'),
 				selectText: 'name',
-				initSelection: view.collection.departmentId
+				initSelection: ''
 			});
 
 			view.depended(view.departmentSelect);
@@ -288,18 +306,22 @@ define(['text!templates/pages/biomaterials.tmpl',
 		initStatusFilterButtonset: function () {
 			var view = this;
 
-            view.$("#status_buttonset").buttonset();
-            view.collection.on('reset', function () {
-                var all = view.collection.count.all;
-                var status_0 = view.collection.count.status_0;
-                var status_1 = view.collection.count.status_1;
-                var status_2 = view.collection.count.status_2;
+			view.$("#status_buttonset").buttonset();
+			view.collection.on('reset', function () {
+				var all = view.collection.count.all;
+				var status_0 = view.collection.count.status_0;
+				var status_1 = view.collection.count.status_1;
+				var status_2 = view.collection.count.status_2;
 
-                view.$('#status-all-count').html(all ? '(' + all + ')' : '');
-                view.$('#status-0-count').html(status_0 ? '(' + status_0 + ')' : '');
-                view.$('#status-1-count').html(status_1 ? '(' + status_1 + ')' : '');
-                view.$('#status-2-count').html(status_2 ? '(' + status_2 + ')' : '');
-            });
+				// view.$('#status-all-count').html(all ? '(' + all + ')' : '');
+				view.$('#status-0-count').html(status_0 ? '(' + status_0 + ')' : '');
+				view.$('#status-1-count').html(status_1 ? '(' + status_1 + ')' : '');
+				view.$('#status-2-count').html(status_2 ? '(' + status_2 + ')' : '');
+			});
+
+			view.collection.on('fetch', function (e) {
+				view.$('#status-all-count, #status-0-count,#status-1-count,#status-2-count').html('')
+			});
 		},
 		initExecuteButton: function () {
 			var view = this;
@@ -414,6 +436,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			var filter2 = Core.Forms.serializeToObject($('#biomaterials-head-filter'));
 
 			var filter = _.extend(filter1, filter2);
+			//console.log(filter)
 
 			view.collection.setParams({
 				filter: filter
@@ -428,8 +451,24 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 		},
 
+		initDatepicker: function () {
+			var view = this;
+			var $filterDate = view.$("#begin-date");
+			var $endDate = view.$("#end-date");
+
+			UIInitialize(view.$el);
+
+			$filterDate.datepicker("setDate", new Date());
 
 
+			$filterDate.on('change', function () {
+				var start = $(this).datepicker("getDate").getTime();
+				var end = start + ((60 * 60 * 24) - 60) * 1000;
+				//console.log('$filterDate', start, end)
+				$endDate.val(end);
+			})
+
+		},
 
 
 		render: function () {
@@ -444,28 +483,28 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.initResetAllButton();
 
 			view.initPrintButton();
+			view.initDatepicker()
 
 			view.initTissues();
 			view.initDepartments();
 
 
-			var now = moment();
-			var startTimestamp = now.subtract('days', 1).hours(0).minutes(0).format('X');
-			var endTimestamp = now.subtract('days', 1).hours(23).minutes(59).format('X');
+//			var now = moment();
+//			var startTimestamp = now.subtract('days', 1).hours(0).minutes(0).format('X');
+//			var endTimestamp = now.subtract('days', 1).hours(23).minutes(59).format('X');
 
-			view.datepicker = new DatetimePikerView({
-				startTimestamp: startTimestamp,
-				endTimestamp: endTimestamp
-			});
 
-			view.$('#biomaterials-head-filter').prepend(view.datepicker.render().el)
+//			view.datepicker = new DatetimePikerView({
+//				startTimestamp: startTimestamp,
+//				endTimestamp: endTimestamp
+//			});
+
+//			view.$('#biomaterials-head-filter').prepend(view.datepicker.render().el)
 			//.biomaterials-datatime
+
 
 			view.$("#biomaterial-grid").html(view.grid.el);
 			view.$("#biomaterial-count").append(view.counts.el);
-
-
-
 
 
 			//UIInitialize(view.el);

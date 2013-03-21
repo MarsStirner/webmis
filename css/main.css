@@ -123,21 +123,25 @@ td.status-code-2, td.status-code-2 .Warning {
 /* line 115, ../sass/modules/_biomaterials.scss */
 .biomaterials-action-type {
   float: left;
-  width: 290px;
-  padding-right: 25px;
+  width: 25%;
 }
 /* line 119, ../sass/modules/_biomaterials.scss */
 .biomaterials-action-type .biomaterial {
-  width: 299px;
+  width: 90%;
 }
 
 /* line 125, ../sass/modules/_biomaterials.scss */
 .biomaterials-status {
   float: left;
-  width: 405px;
 }
 
-/* line 130, ../sass/modules/_biomaterials.scss */
+/* line 129, ../sass/modules/_biomaterials.scss */
+.status-count {
+  font-weight: normal;
+  font-size: 0.8em;
+}
+
+/* line 134, ../sass/modules/_biomaterials.scss */
 .biomaterials-send-to-lab {
   float: right;
   margin-top: 18px;

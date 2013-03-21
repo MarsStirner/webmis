@@ -114,17 +114,21 @@ td.status-code-2, td.status-code-2 .Warning {
 
 .biomaterials-action-type{
 	float: left;
-	width: 290px;
-	padding-right: 25px;
+	width: 25%;
+
 	.biomaterial{
-		width: 299px;
+		width: 90%;
 	}
 }
 
 
 .biomaterials-status{
 	float: left;
-	width: 405px;
+	//width: 405px;
+}
+.status-count{
+	font-weight: normal;
+	font-size: 0.8em;
 }
 
 .biomaterials-send-to-lab{

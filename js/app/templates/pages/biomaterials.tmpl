@@ -5,6 +5,18 @@
 
 		<form action="" id="biomaterials-head-filter">
 
+			<div class="DaySelect" style="margin-right: 20px;">
+				<label>Дата</label><br />
+			<div class="DatePeriod SingleDate">
+				<div class="FromTo">
+					<input type="hidden" id="end-date" name="endDate" value=""/>
+					<input type="text" id="begin-date" name="beginDate" placeholder="дд.мм.гггг" class="SelectDate" />
+				</div>
+				<i class="DateIcon Icon"></i>
+			</div>
+
+				</div>
+
 
 		<div class="biomaterials-department">
 			<label>Отделение</label>
@@ -56,11 +68,11 @@
 						<label>Статус</label>
 
 						<div id="status_buttonset">
-							<input type="radio" id="status-all" name="status" value="" checked="checked"/><label
-							for="status-all">Все<span id="status-all-count"></span></label>
-							<input type="radio" id="status-0" name="status" value="0"/><label for="status-0">Ожидается<span id="status-0-count"></span></label>
-							<input type="radio" id="status-1" name="status" value="1"/><label for="status-1">Выполняется<span id="status-1-count"></span></label>
-							<input type="radio" id="status-2" name="status" value="2"/><label for="status-2">Закончено<span id="status-2-count"></span></label>
+							<input type="radio" id="status-all" name="status" value="" /><label
+							for="status-all">Все<span id="status-all-count" class="status-count"></span></label>
+							<input type="radio" id="status-0" name="status" value="0" checked="checked"/><label for="status-0">Ожидается<span id="status-0-count" class="status-count"></span></label>
+							<input type="radio" id="status-1" name="status" value="1"/><label for="status-1">Выполняется<span id="status-1-count" class="status-count"></span></label>
+							<input type="radio" id="status-2" name="status" value="2"/><label for="status-2">Закончено<span id="status-2-count" class="status-count"></span></label>
 						</div>
 					</div>
 				</form>
