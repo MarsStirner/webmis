@@ -39,7 +39,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			});
 
 
-			view.collection.on('reset', view.setDefaultDepartment, view);
+		//	view.collection.on('reset', view.setDefaultDepartment, view);
 
 			view.initGrid();
 
@@ -274,15 +274,24 @@ define(['text!templates/pages/biomaterials.tmpl',
 				sortingMethod: 'asc'
 			});
 
-			///console.log('initDepartments view.collection.departmentId',view.collection.departmentId)
-			view.departmentSelect = new SelectView({
-				collection: view.departments,
-				el: view.$('#departments'),
-				selectText: 'name',
-				initSelection: ''
-			});
 
-			view.depended(view.departmentSelect);
+			//clognota....
+			//строим селест после того как получили коллекцию биоматериалов, так как оттуда надо взять ид отделения
+			function onetime(){
+				view.departmentSelect = new SelectView({
+					collection: view.departments,
+					el: view.$('#departments'),
+					selectText: 'name'
+					,initSelection: view.collection.requestData.filter.departmentId
+				});
+
+				view.depended(view.departmentSelect);
+				view.collection.off('reset',onetime,view);
+			}
+
+			view.collection.on('reset',onetime,view);
+
+
 
 
 		},
