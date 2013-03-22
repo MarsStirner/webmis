@@ -9,12 +9,16 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
 				var view = this;
 
 				view.collection = view.options.collection;
+				view.collection.setParams({
+					sortingField: "name",
+					sortingMethod: "asc"
+				})
 
 				view.collection.on('reset', function () {
 					view.render();
 				});
 
-				pubsub.on('lab-selected group-of-tests', function (labCode) {
+				pubsub.on('lab-selected tg-parent:click', function (labCode) {
 					view.$el.html('');
 				});
 
@@ -29,6 +33,23 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
 				});
 
 
+			},
+			loadTest: function (code, callback) {
+				var view = this;
+
+				var setOfTests = new SetOfTests({code: code, patientId: view.options.patientId});
+
+				setOfTests.on('change', function (event,model) {
+					var tree = setOfTests.getTree();
+
+					callback(tree);
+					//console.log('tree',tree)
+
+				});
+//
+				setOfTests.fetch();
+
+
 
 
 			},
@@ -36,20 +57,30 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
 
 			render: function () {
 				var view = this;
+				console.log('render .lab-tests-list')
 
-				view.$el.html($.tmpl(view.template));
+				view.$el.html('<div class="lab-tests-list"></div>');
 
 				view.$('.lab-tests-list').dynatree({
-//					onClick: function(node) {
-//						// A DynaTreeNode object is passed to the activation handler
-//						// Note: we also get this event, if persistence is on, and the page is reloaded.
-//						//if(!node.data.children){
-//						console.log("load-group-tests " + node.data.code);
-//
-//						pubsub.trigger('load-group-tests', node.data.code)
-//						//}
-//
-//					},
+					checkbox: true,
+					isLazy: true,
+					fx: { height: "toggle", duration: 200 },
+					autoFocus: false,
+					onSelect: function (select, node) {
+						var code = node.data.code;
+						//console.log('select', select, node)
+
+						if (select && code) {
+
+							view.loadTest(code, function (tree) {
+
+								node.addChild(tree);
+								//node.expand(true);
+							});
+						} else {
+							node.removeChildren();
+						}
+					},
 					children: view.collection.toJSON()
 				});
 

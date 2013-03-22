@@ -36,10 +36,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 
 			},
-			renderNested: function (view, selector) {
-				var $element = ( selector instanceof $ ) ? selector : this.$el.find(selector);
-				view.setElement($element).render();
-			},
+
 			initFinanseSelect: function () {
 				var view = this;
 				var appealFinanceId = view.options.appeal.get('contract').get('finance').get('id');
@@ -85,6 +82,11 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				$(event.currentTarget).val(Core.Strings.toLatin($(event.currentTarget).val()));
 			},
 
+			renderNested: function (view, selector) {
+				var $element = ( selector instanceof $ ) ? selector : this.$el.find(selector);
+				view.setElement($element).render();
+			},
+
 			render: function () {
 				var popup = this;
 
@@ -93,41 +95,43 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					popup.$el.html($.tmpl(this.template, {doctor: this.doctor}));
 
 					var labs = new Labs();
-					labs.on('reset', function(){
-						popup.labsListView = new LabsListView({collection: labs});
-						popup.renderNested(popup.labsListView, ".labs-list-el");
-					})
-					labs.reset([{
-						id: 709,
-						groupId: 654,
-						code: "17",
-						name: "lab 17"
-					},{
-						id: 708,
-						groupId: 654,
-						code: "18",
-						name: "lab 18"
-					},{
-						id: 707,
-						groupId: 654,
-						code: "15",
-						name: "lab 15"
-					},{
-						id: 706,
-						groupId: 654,
-						code: "14",
-						name: "lab 14"
-					},{
-						id: 705,
-						groupId: 654,
-						code: "16",
-						name: "lab 16"
-					}])
-//					labs.fetch({success: function () {
+//					labs.on('reset', function(){
 //						popup.labsListView = new LabsListView({collection: labs});
 //						popup.renderNested(popup.labsListView, ".labs-list-el");
-//
-//					}});
+//					})
+//					labs.reset([{
+//						id: 709,
+//						groupId: 654,
+//						code: "17",
+//						name: "lab 17"
+//					},{
+//						id: 708,
+//						groupId: 654,
+//						code: "18",
+//						name: "lab 18"
+//					},{
+//						id: 707,
+//						groupId: 654,
+//						code: "15",
+//						name: "lab 15"
+//					},{
+//						id: 706,
+//						groupId: 654,
+//						code: "14",
+//						name: "lab 14"
+//					},{
+//						id: 705,
+//						groupId: 654,
+//						code: "16",
+//						name: "lab 16"
+//					}])
+
+
+					labs.fetch({success: function () {
+						popup.labsListView = new LabsListView({collection: labs});
+						popup.renderNested(popup.labsListView, ".labs-list-el");
+
+					}});
 
 					popup.initFinanseSelect();
 

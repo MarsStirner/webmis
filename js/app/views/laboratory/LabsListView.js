@@ -1,34 +1,37 @@
-define(['text!templates/appeal/edit/popups/labs-list.tmpl',
-	'views/laboratory/LabsListItemView'],
-	function (labsListTemplate, labsListItemView) {
+define([],
+	function () {
 
 		LabsListView = View.extend({
-			template: labsListTemplate,
 
 			initialize: function () {
 				var view = this;
 
-				view._listItemViews = [];
-
-				view.collection.each(function (labModel) {
-
-					view._listItemViews.push(new labsListItemView({
-						model: labModel,
-						tagName: 'li'
-					}));
-
+				view.collection.setParams({
+					sortingField: "name",
+					sortingMethod: "asc"
 				});
+
+				view.collection.on('reset', function () {
+					view.render();
+				});
+
 
 			},
 
 			render: function () {
 				var view = this;
 
-				view.$el.html($.tmpl(view.template));
+				view.$el.html('<div class="labs-list"></div>');
 
-				_(view._listItemViews).each(function (labView) {
-					view.$('.labs-list').append(labView.render().el);
+				view.$('.labs-list').dynatree({
+					onClick: function(node) {
+
+						pubsub.trigger('lab-selected', node.data.code)
+
+					},
+					children: view.collection.toJSON()
 				});
+
 
 			}
 
