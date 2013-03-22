@@ -42,6 +42,7 @@ define([
 			}, this);
 
 			this.collection.bind('reset', this.countBedDays, this);
+			this.collection.on('reset', this.toggleHospitalbedMenu, this);
 
 
 			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
@@ -81,6 +82,19 @@ define([
 		toggleMoveTypes: function (event) {
 			this.$(".DDList").toggleClass("Active");
 			event.stopPropagation();
+		},
+
+		toggleHospitalbedMenu: function (e){
+			var lastMove = this.collection.last();
+			var $hospitalbedAction = this.$('#hospitalbed-action');
+
+			if(lastMove.get('bed') == 'Положить на койку'){
+				$hospitalbedAction.show()
+			}else{
+				$hospitalbedAction.hide()
+			}
+
+
 		},
 
 		createNewMove: function (event) {
