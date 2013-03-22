@@ -33,6 +33,9 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
 				});
 
 
+				view.testCollection = view.options.testCollection;
+
+
 			},
 			loadTest: function (code, callback) {
 				var view = this;
@@ -40,18 +43,30 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
 				var setOfTests = new SetOfTests({code: code, patientId: view.options.patientId});
 
 				setOfTests.on('change', function (event,model) {
+					console.log('event,model',event,model)
 					var tree = setOfTests.getTree();
 
 					callback(tree);
 					//console.log('tree',tree)
 
+					view.testCollection.add(setOfTests.toJSON());
+
+					console.log('view.testCollection add',view.testCollection)
 				});
 //
 				setOfTests.fetch();
 
+			},
 
+			removeTest: function(code){
+				var view = this;
 
+				var model = view.testCollection.filter(function(model){ return model.get('code') == code; });
 
+				console.log('removeTest',model)
+
+				view.testCollection.remove(model);
+				console.log('view.testCollection remove',view.testCollection)
 			},
 
 
@@ -78,6 +93,7 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
 								//node.expand(true);
 							});
 						} else {
+							view.removeTest(code);
 							node.removeChildren();
 						}
 					},

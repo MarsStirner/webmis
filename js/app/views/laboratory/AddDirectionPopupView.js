@@ -34,6 +34,28 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 				this.appeal = this.options.appeal;
 
+				this.testCollection = new Backbone.Collection;
+
+				this.testCollection.url = DATA_PATH + 'diagnostics/' + this.appeal.get('id') + '/laboratory';
+
+
+
+				this.testCollection.on('add remove', function(){
+					this.saveButton(this.testCollection.length);
+					console.log('testCollection changed', this.testCollection)
+				}, this);
+
+				this.testCollection.on('updateAll:success',function(){
+
+					pubsub.trigger('lab-diagnostic:added');
+					popup.close();
+
+				});
+
+				pubsub.on('load-group-tests tg-parent:click', function(){
+					popup.testCollection.reset();
+				},popup)
+
 
 			},
 
@@ -95,36 +117,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					popup.$el.html($.tmpl(this.template, {doctor: this.doctor}));
 
 					var labs = new Labs();
-//					labs.on('reset', function(){
-//						popup.labsListView = new LabsListView({collection: labs});
-//						popup.renderNested(popup.labsListView, ".labs-list-el");
-//					})
-//					labs.reset([{
-//						id: 709,
-//						groupId: 654,
-//						code: "17",
-//						name: "lab 17"
-//					},{
-//						id: 708,
-//						groupId: 654,
-//						code: "18",
-//						name: "lab 18"
-//					},{
-//						id: 707,
-//						groupId: 654,
-//						code: "15",
-//						name: "lab 15"
-//					},{
-//						id: 706,
-//						groupId: 654,
-//						code: "14",
-//						name: "lab 14"
-//					},{
-//						id: 705,
-//						groupId: 654,
-//						code: "16",
-//						name: "lab 16"
-//					}])
+
 
 
 					labs.fetch({success: function () {
@@ -193,10 +186,12 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					popup.labTestListView = new LabTestsListView();
 					popup.renderNested(popup.labTestListView, ".lab-test-list-el");
 
-
-					console.log(popup.options.appeal)
 					popup.labsTestsCollection = new LabsTestsCollection();
-					popup.setOffTestsView = new SetOffTestsView({collection: popup.labsTestsCollection,patientId: popup.options.appeal.get('patient').get('id')});
+					popup.setOffTestsView = new SetOffTestsView({
+						collection: popup.labsTestsCollection
+						,	patientId: popup.options.appeal.get('patient').get('id')
+						,testCollection: popup.testCollection
+					});
 					popup.renderNested(popup.setOffTestsView, ".set-off-test-el");
 
 
@@ -207,9 +202,10 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 						autoOpen: false,
 						width: "116em",
 						modal: true,
-						dialogClass: "webmis"
+						dialogClass: "webmis",
+						title: "Создание направления"
 					});
-					//popup.$(".popup #dp").datepicker();
+
 					popup.$("a").click(function (event) {
 						event.preventDefault();
 					});
@@ -218,23 +214,41 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				return this;
 			},
 
+			saveButton: function(enabled){
+//				var $saveButton = this.$('.save');
+//				if(enabled){
+//					$saveButton.removeClass('Disabled');
+//				}else{
+//					$saveButton.addClass('Disabled');
+//				}
+
+			},
+
 			onSave: function () {
 				var view = this;
 
-				console.log('popup.setOffTests', view.setOffTests)
 
-				var direction = new labAnalysisDirection(view.setOffTests);
-				direction.eventId = view.appeal.get('id');
-				direction.save({},{
-					success: function(model, response, options){
-						console.log('success',model, response, options);
-						pubsub.trigger('lab-diagnostic:added');
-						view.close();
 
+				this.testCollection.updateAll =  function () {
+					var collection = this;
+					options = {
+						dataType: "jsonp",
+						contentType: 'application/json',
+						success: function (status) {
+							if(status){
+								collection.trigger('updateAll:success');
+							}else{
+								collection.trigger('updateAll:error');
+							}
+						},
+						data: JSON.stringify({data: collection.toJSON()})
+					};
+
+					return Backbone.sync('create', this, options);
 				}
-				,error: function(model, xhr, options){
-						console.log('error',model, xhr, options);
-					}});
+
+				this.testCollection.updateAll();
+
 			},
 
 			open: function () {
