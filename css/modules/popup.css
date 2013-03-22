@@ -613,10 +613,6 @@ a.Button:active i {
   font-weight: bold;
 }
 
-/* line 186, ../../sass/modules/popup.scss */
-.EventList > li > ul {
-  margin-left: 2em;
-}
 /* line 189, ../../sass/modules/popup.scss */
 .EventList > li label {
   margin-bottom: 0em;
@@ -646,7 +642,12 @@ a.Button:active i {
   color: #ccc;
 }
 
-/* line 216, ../../sass/modules/popup.scss */
+/* line 217, ../../sass/modules/popup.scss */
+.EventList ul {
+  margin-left: 2em;
+}
+
+/* line 220, ../../sass/modules/popup.scss */
 .EventRoom {
   display: block;
   padding-left: 2.5em;
@@ -859,14 +860,8 @@ a.Button:active i {
 .MKBList span.Selected {
   background: #e5e5e5;
 }
-/* line 401, ../../sass/modules/popup.scss */
-.MKBList span i.bullet {
-  display: inline-block;
-  min-width: 2em;
-  margin-right: .5em;
-}
 
-/* line 409, ../../sass/modules/popup.scss */
+/* line 404, ../../sass/modules/popup.scss */
 .TreeHolder {
   margin-left: 1.2em;
   height: 50em;
@@ -874,44 +869,44 @@ a.Button:active i {
   border-bottom: 0.1em solid #a6a6a6;
 }
 
-/* line 417, ../../sass/modules/popup.scss */
+/* line 412, ../../sass/modules/popup.scss */
 .Tree {
   font-size: 1.2em;
 }
-/* line 419, ../../sass/modules/popup.scss */
+/* line 414, ../../sass/modules/popup.scss */
 .Tree li {
   padding: 0.1em 0;
 }
-/* line 423, ../../sass/modules/popup.scss */
+/* line 418, ../../sass/modules/popup.scss */
 .Tree .Opened > span {
   font-weight: bold;
 }
-/* line 426, ../../sass/modules/popup.scss */
+/* line 421, ../../sass/modules/popup.scss */
 .Tree .Opened > ul {
   display: block;
 }
-/* line 430, ../../sass/modules/popup.scss */
+/* line 425, ../../sass/modules/popup.scss */
 .Tree ul {
   display: none;
 }
-/* line 434, ../../sass/modules/popup.scss */
+/* line 429, ../../sass/modules/popup.scss */
 .Tree li ul {
   margin-left: 0.5em;
   padding-left: 2em;
   border-left: 0.1em solid #cccccc;
 }
-/* line 440, ../../sass/modules/popup.scss */
+/* line 435, ../../sass/modules/popup.scss */
 .Tree span {
   cursor: pointer;
   display: inline-block;
   line-height: 1.6em;
   padding: 0 0.2em 0 0.2em;
 }
-/* line 445, ../../sass/modules/popup.scss */
+/* line 440, ../../sass/modules/popup.scss */
 .Tree span:hover {
   background: #c3e2f6;
 }
-/* line 448, ../../sass/modules/popup.scss */
+/* line 443, ../../sass/modules/popup.scss */
 .Tree span.Selected {
   background: #e5e5e5;
 }
