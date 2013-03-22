@@ -4,6 +4,7 @@
  */
 define([
 	"text!templates/appeal/edit/main.tmpl",
+	"views/laboratory/LaboratoryView",
 	//"text!templates/cardnav.tmpl",
 
 	"models/appeal",
@@ -12,7 +13,7 @@ define([
 	"views/breadcrumbs",
 	"views/menu",
 	"views/card-header",
-	"views/appeal/edit/pages/laboratory",
+
 	"views/appeal/edit/pages/instrumental",
 	"views/appeal/edit/pages/consultation",
 	"views/appeal/edit/pages/examinations",
@@ -22,7 +23,8 @@ define([
 	"views/appeal/edit/pages/moves",
 	"views/appeal/edit/pages/HospitalBedView"
 ], function (
-	template
+	template,
+	LaboratoryView
 	//, cardnavTemplate
 	) {
 
@@ -47,7 +49,7 @@ define([
 			"examination-primary-repeated": App.Views.ExaminationPrimary,
 			"examination-primary-repeated-preview": App.Views.ExaminationPrimaryPreview,
 
-			"diagnostics-laboratory": App.Views.Laboratory,
+			"diagnostics-laboratory": LaboratoryView,
 			"diagnostics-instrumental": App.Views.Instrumental,
 			"diagnostics-consultations": App.Views.Consultation,
 

@@ -4,23 +4,23 @@
  */
 define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 	"collections/diagnostics/Labs",
-	"views/appeal/edit/popups/LabsListView",
-	"views/appeal/edit/popups/TestsGroupListView",
-	"views/appeal/edit/popups/SetOffTestsView",
+	"views/laboratory/LabsListView",
+	"collections/diagnostics/LabsTests",
+	"views/laboratory/TestsGroupListView",
+	"views/laboratory/SetOffTestsView",
 	"models/diagnostics/SetOfTests",
-"models/diagnostics/labAnalysisDirection",
-"views/ui/SelectView"],
-	function (tmpl, Labs, LabsListView, LabTestsListView, SetOffTestsView, SetOfTestsModel, labAnalysisDirection,SelectView) {
+	"models/diagnostics/laboratory-diag-form",
+	"views/ui/SelectView"],
+	function (tmpl, Labs, LabsListView,LabsTestsCollection, LabTestsListView, SetOffTestsView, SetOfTestsModel, labAnalysisDirection, SelectView) {
 
-		App.Views.LaboratoryPopup = View.extend({
+		var LaboratoryPopup = View.extend({
 			template: tmpl,
 			className: "popup",
 
 			events: {
 				"click .ShowHidePopup": "close",
 				"click .save": "onSave",
-					"click .MKBLauncher": "toggleMKB",
-				"keyup input[name='diagnosis[mkb][code]']": "onMKBCodeKeyUp"
+				"click .MKBLauncher": "toggleMKB"
 			},
 			initialize: function () {
 				var popup = this;
@@ -28,22 +28,20 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				this.doctor = {
 					name: {
 						first: Core.Cookies.get("doctorFirstName"),
-							last: Core.Cookies.get("doctorLastName")
+						last: Core.Cookies.get("doctorLastName")
 					}
 				};
 
+				this.appeal = this.options.appeal;
 
 
 			},
-			renderNested: function (view, selector) {
-				var $element = ( selector instanceof $ ) ? selector : this.$el.find(selector);
-				view.setElement($element).render();
-			},
-			initFinanseSelect: function (){
+
+			initFinanseSelect: function () {
 				var view = this;
 				var appealFinanceId = view.options.appeal.get('contract').get('finance').get('id');
 
-				var financeDictionary = new App.Collections.DictionaryValues([], {name:'finance'});
+				var financeDictionary = new App.Collections.DictionaryValues([], {name: 'finance'});
 
 //				financeDictionary.on('reset', function(){
 //					console.log('dictionary',financeDictionary)
@@ -78,22 +76,57 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 //				});
 
 				this.$("input[name='diagnosis[mkb][diagnosis]']").val(sd.get("diagnosis"));
-				this.$("input[name='diagnosis[mkb][code]']").val(sd.get("code") || sd.get("id"));
 			},
 
 			onMKBCodeKeyUp: function (event) {
 				$(event.currentTarget).val(Core.Strings.toLatin($(event.currentTarget).val()));
 			},
 
+			renderNested: function (view, selector) {
+				var $element = ( selector instanceof $ ) ? selector : this.$el.find(selector);
+				view.setElement($element).render();
+			},
+
 			render: function () {
 				var popup = this;
-				var self = this;
 
 				if ($(popup.$el.parent().length).length === 0) {
 
 					popup.$el.html($.tmpl(this.template, {doctor: this.doctor}));
 
 					var labs = new Labs();
+//					labs.on('reset', function(){
+//						popup.labsListView = new LabsListView({collection: labs});
+//						popup.renderNested(popup.labsListView, ".labs-list-el");
+//					})
+//					labs.reset([{
+//						id: 709,
+//						groupId: 654,
+//						code: "17",
+//						name: "lab 17"
+//					},{
+//						id: 708,
+//						groupId: 654,
+//						code: "18",
+//						name: "lab 18"
+//					},{
+//						id: 707,
+//						groupId: 654,
+//						code: "15",
+//						name: "lab 15"
+//					},{
+//						id: 706,
+//						groupId: 654,
+//						code: "14",
+//						name: "lab 14"
+//					},{
+//						id: 705,
+//						groupId: 654,
+//						code: "16",
+//						name: "lab 16"
+//					}])
+
+
 					labs.fetch({success: function () {
 						popup.labsListView = new LabsListView({collection: labs});
 						popup.renderNested(popup.labsListView, ".labs-list-el");
@@ -105,8 +138,6 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					this.mkbDirectory = new App.Views.MkbDirectory();
 					this.mkbDirectory.on("selectionConfirmed", this.onMKBConfirmed, this);
 					this.mkbDirectory.render();
-
-					var patientSex = Cache.Patient.get("sex").length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
 
 					this.$("input[name='diagnosis[mkb][code]']").autocomplete({
 						source: function (request, response) {
@@ -134,31 +165,25 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 						},
 						minLength: 2,
 						select: function (event, ui) {
-							/*self.model.get("mkb").set({
-								id: ui.item.id,
-								code: ui.item.value,
-								diagnosis: ui.item.diagnosis
-							}, {silent: true});*/
+							self.mkbAttrId = $(this).data("mkb-examattr-id");
 
-							//self.mkbAttrId = $(this).data("mkb-examattr-id");
-
-							/*self.setExamAttr({
+							self.setExamAttr({
 								attrId: self.mkbAttrId,
 								propertyType: "valueId",
 								value: ui.item.id,
 								displayText: ui.item.value
-							});*/
+							});
 
 							self.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
 						}
 					}).on("keyup", function () {
 							if (!$(this).val().length) {
-								/*self.setExamAttr({
+								self.setExamAttr({
 									attrId: self.mkbAttrId,
 									propertyType: "valueId",
 									value: "",
 									displayText: ""
-								});*/
+								});
 
 								self.$("input[name='diagnosis[mkb][diagnosis]']").val("");
 							}
@@ -169,8 +194,9 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					popup.renderNested(popup.labTestListView, ".lab-test-list-el");
 
 
-					popup.setOffTests = new SetOfTestsModel();
-					popup.setOffTestsView = new SetOffTestsView({model: popup.setOffTests});
+					console.log(popup.options.appeal)
+					popup.labsTestsCollection = new LabsTestsCollection();
+					popup.setOffTestsView = new SetOffTestsView({collection: popup.labsTestsCollection,patientId: popup.options.appeal.get('patient').get('id')});
 					popup.renderNested(popup.setOffTestsView, ".set-off-test-el");
 
 
@@ -192,26 +218,36 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				return this;
 			},
 
-			onSave: function(){
-				var popup = this;
+			onSave: function () {
+				var view = this;
 
-				console.log('popup.setOffTests', popup.setOffTests)
+				console.log('popup.setOffTests', view.setOffTests)
 
-				var direction = new labAnalysisDirection(popup.setOffTests);
-				direction.eventId = 62577;
-				direction.save();
+				var direction = new labAnalysisDirection(view.setOffTests);
+				direction.eventId = view.appeal.get('id');
+				direction.save({},{
+					success: function(model, response, options){
+						console.log('success',model, response, options);
+						pubsub.trigger('lab-diagnostic:added');
+						view.close();
+
+				}
+				,error: function(model, xhr, options){
+						console.log('error',model, xhr, options);
+					}});
 			},
 
 			open: function () {
-				$(".ui-dialog-titlebar").hide();
+				//$(".ui-dialog-titlebar").hide();
 				this.$el.dialog("open");
 			},
 
 			close: function () {
-				$(".ui-dialog-titlebar").show();
+				//$(".ui-dialog-titlebar").show();
 				this.$el.dialog("close");
+				this.$el.remove();
 			}
 		});
 
-		return App.Views.LaboratoryPopup
+		return LaboratoryPopup;
 	});
