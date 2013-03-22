@@ -14,6 +14,7 @@ define([], function () {
 
 		val: function (value) {
 			var view = this;
+			console.log('value',value,view.$el.select2('val'))
 
 			if (value) {
 				view.$el.select2('val', value);
@@ -46,7 +47,7 @@ define([], function () {
 			}
 
 			view.select2.on('change', function () {
-				console.log()
+
 				pubsub.trigger(id + ':change', view.select2.val());
 			});
 

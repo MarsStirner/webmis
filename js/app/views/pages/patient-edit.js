@@ -341,7 +341,11 @@ define([
 			if (this.options.popUpMode) {
 				this.trigger("patient:canceled");
 			} else {
-				App.Router.navigate( this.options.referrer, {trigger:true} );
+				if (this.model.isNew()) {
+					App.Router.navigate("patients/", {trigger:true});
+				} else {
+					App.Router.navigate("patients/" + this.model.get("id") + "/", {trigger:true});
+				}
 			}
 		},
 

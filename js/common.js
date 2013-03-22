@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "develop";
+var GUI_VERSION = "demo-150312";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
@@ -576,6 +576,22 @@ Form = View.extend({
 
 		this.$("select.Mandatory").removeClass("WrongField").each(function () {
 			if (!$(this).val()) {
+				$(this).addClass("WrongField");
+				$firstFoundedError = $firstFoundedError || $(this);
+				validity = false;
+			}
+		});
+
+		this.$("[data-maxsize]").removeClass("WrongField").each(function () {
+			if (parseFloat($(this).val()) > parseFloat($(this).data("maxsize"))) {
+				$(this).addClass("WrongField");
+				$firstFoundedError = $firstFoundedError || $(this);
+				validity = false;
+			}
+		});
+
+		this.$("[data-minsize]").removeClass("WrongField").each(function () {
+			if (parseFloat($(this).val()) < parseFloat($(this).data("minsize"))) {
 				$(this).addClass("WrongField");
 				$firstFoundedError = $firstFoundedError || $(this);
 				validity = false;

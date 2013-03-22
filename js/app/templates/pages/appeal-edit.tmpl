@@ -288,36 +288,36 @@
 							<div class="LineBlock">
 								<div class="QuartCol">
 									<span class="Label">Артериальное давление, левая рука</span>
-									<input type="text" name="physical_parameters[blood_pressure][left][syst]" class="ShortInput" placeholder="" />
+									<input type="text" name="physical_parameters[blood_pressure][left][syst]" class="ShortInput" placeholder="" data-maxsize="300" data-minsize="0" />
 									<span class="FieldInfo">Сист,&nbsp;мм.рт.ст.</span>
 								</div>
 								<div class="QuartCol WithoutName">
-									<input type="text" name="physical_parameters[blood_pressure][left][diast]" class="ShortInput" placeholder="" />
+									<input type="text" name="physical_parameters[blood_pressure][left][diast]" class="ShortInput" placeholder="" data-maxsize="200" data-minsize="0" />
 									<span class="FieldInfo">Диаст,&nbsp;мм.рт.ст.</span>
 								</div>
 								<div class="QuartCol">
 									<span class="Label">Артериальное давление, правая рука</span>
-									<input type="text" name="physical_parameters[blood_pressure][right][syst]" class="ShortInput" placeholder="" />
+									<input type="text" name="physical_parameters[blood_pressure][right][syst]" class="ShortInput" placeholder="" data-maxsize="300" data-minsize="0" />
 									<span class="FieldInfo">Сист,&nbsp;мм.рт.ст.</span>
 								</div>
 								<div class="QuartCol WithoutName">
-									<input type="text" name="physical_parameters[blood_pressure][right][diast]" class="ShortInput" placeholder="" />
+									<input type="text" name="physical_parameters[blood_pressure][right][diast]" class="ShortInput" placeholder="" data-maxsize="200" data-minsize="0" />
 									<span class="FieldInfo">Диаст,&nbsp;мм.рт.ст.</span>
 								</div>
 							</div>
 							<div class="LineBlock">
 								<div class="HalfCol">
 									<label> Температура тела </label>
-									<input type="text" name="physical_parameters[temperature]" class="ShortInput RestrictFloat" placeholder="" />
+									<input type="text" name="physical_parameters[temperature]" class="ShortInput RestrictFloat" placeholder="" data-maxsize="45" data-minsize="0" />
 								</div>
 								<div class="HalfCol">
 									<label> Вес при поступлении (кг) </label>
-									<input type="text" name="physical_parameters[weight]" class="ShortInput RestrictFloat" placeholder="" />
+									<input type="text" name="physical_parameters[weight]" class="ShortInput RestrictFloat" placeholder="" data-maxsize="{{if moment().diff(moment(parseInt(patient.birthDate)), 'month') < 1}}3000{{else}}300{{/if}}" data-minsize="0" />
 									<span class="FieldInfo">Для пациентов младше 1 мес. в гр</span>
 								</div>
 								<div class="HalfCol">
 									<label> Рост (см) </label>
-									<input type="text" name="physical_parameters[height]" class="ShortInput RestrictFloat" placeholder="" />
+									<input type="text" name="physical_parameters[height]" class="ShortInput RestrictFloat" placeholder="" data-maxsize="300" data-minsize="0" />
 								</div>
 							</div>
 						</li>

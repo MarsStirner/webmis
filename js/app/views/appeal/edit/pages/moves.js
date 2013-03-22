@@ -41,24 +41,8 @@ define([
 				this.collection.fetch();
 			}, this);
 
-			this.collection.bind('reset', function () {
-
-				if(this.appealIsClosed) return;
-
-				var lastMove = this.collection.last();
-				var days = days_between(new Date().getTime(), lastMove.get('admission'));
-				var bedDays = days - 1;
-				if (bedDays < 0) {
-					bedDays = 0;
-				}
-
-				if ((lastMove.get('bed') != 'Положить на койку') && (lastMove.get('bed') != null)) {
-					lastMove.set('days', days);
-					lastMove.set('bedDays', bedDays);
-				}
-
-
-			}, this);
+			this.collection.bind('reset', this.countBedDays, this);
+			this.collection.on('reset', this.toggleHospitalbedMenu, this);
 
 
 			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
@@ -100,6 +84,19 @@ define([
 			event.stopPropagation();
 		},
 
+		toggleHospitalbedMenu: function (e){
+			var lastMove = this.collection.last();
+			var $hospitalbedAction = this.$('#hospitalbed-action');
+
+			if(lastMove.get('bed') == 'Положить на койку'){
+				$hospitalbedAction.show()
+			}else{
+				$hospitalbedAction.hide()
+			}
+
+
+		},
+
 		createNewMove: function (event) {
 			this.$(".DDList").removeClass("Active");
 			var moveType = $(event.currentTarget).data("move-type");
@@ -109,6 +106,28 @@ define([
 				this.moveTypeConstrs[moveType].call(this, event);
 			}
 		},
+
+		//подсчёт дней, койко-дней - для последнего движения
+		countBedDays: function () {
+
+			//если госпитализация закрыта, то ничего не делаем
+			if (this.appealIsClosed) return;
+
+			var lastMove = this.collection.last();
+			var days = days_between(new Date().getTime(), lastMove.get('admission'));
+			var bedDays = days - 1;
+
+			if (bedDays < 0) {
+				bedDays = 0;
+			}
+
+			if ((lastMove.get('bed') != 'Положить на койку') && (lastMove.get('bed') != null)) {
+				lastMove.set('days', days);
+				lastMove.set('bedDays', bedDays);
+			}
+
+		},
+
 		/***
 		 * Отмена прописки на койке
 		 * @param move
