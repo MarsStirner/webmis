@@ -141,7 +141,7 @@ header {
 }
 /* line 121, ../../sass/modules/layout.scss */
 .SelectRole .Actions span {
-  border-bottom: 1px dashed black;
+  border-bottom: 1px dashed #000;
 }
 /* line 124, ../../sass/modules/layout.scss */
 .SelectRole .Actions::after {
@@ -156,7 +156,7 @@ header {
 /* line 134, ../../sass/modules/layout.scss */
 .SelectRole .Actions:hover span {
   color: #DD1111;
-  border-bottom: 1px dashed #dd1111;
+  border-bottom: 1px dashed #DD1111;
 }
 /* line 138, ../../sass/modules/layout.scss */
 .SelectRole .Actions:hover::after {
@@ -273,7 +273,7 @@ header {
 }
 /* line 227, ../../sass/modules/layout.scss */
 .NotFilled .Actions span {
-  border-bottom: 1px dashed #118ddc;
+  border-bottom: 1px dashed #118DDC;
 }
 /* line 230, ../../sass/modules/layout.scss */
 .NotFilled .Actions::after {
@@ -288,7 +288,7 @@ header {
 }
 /* line 241, ../../sass/modules/layout.scss */
 .NotFilled .Actions:hover span {
-  border-bottom: 1px dashed #dd1111;
+  border-bottom: 1px dashed #DD1111;
 }
 /* line 244, ../../sass/modules/layout.scss */
 .NotFilled .Actions:hover::after {
@@ -297,7 +297,7 @@ header {
 
 /* line 250, ../../sass/modules/layout.scss */
 .CardHeader {
-  border-bottom: 1px solid #b6b6b6;
+  border-bottom: 1px solid #B6B6B6;
   padding-bottom: 1em;
   margin-bottom: 2em;
 }
@@ -431,8 +431,8 @@ header {
 .SinglePaginator {
   background: #F5F4F4;
   color: #6C6C71;
-  border-top: 1px solid white;
-  border-bottom: 1px solid #e4e4e4;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #E4E4E4;
   margin: -2em -4em 2em -4em;
   padding: 1em 1.5em;
 }
@@ -478,7 +478,7 @@ header {
 /* line 399, ../../sass/modules/layout.scss */
 .SingleHeader {
   margin-bottom: 2.7em;
-  border-bottom: 1px solid #d4d4d4;
+  border-bottom: 1px solid #D4D4D4;
   padding-bottom: 0.5em;
 }
 /* line 403, ../../sass/modules/layout.scss */
@@ -520,7 +520,7 @@ header {
   padding-top: 2.7em;
   padding-right: 4em;
   margin-right: 19em;
-  border-right: 1px solid #d4d4d4;
+  border-right: 1px solid #D4D4D4;
 }
 
 /* line 438, ../../sass/modules/layout.scss */
@@ -651,7 +651,7 @@ footer a {
   top: -2em;
   color: #fff;
   padding: 0.5em 4em;
-  border-bottom: 1px solid #d4d4d4;
+  border-bottom: 1px solid #D4D4D4;
 }
 /* line 545, ../../sass/modules/layout.scss */
 .AlertBlock > .CloseIcon {

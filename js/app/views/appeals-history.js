@@ -41,12 +41,14 @@ define(["collections/appeals"], function ()
 
 		template:
 			'<a href="/appeals/${id}/">№ ${number}</a>' +
-			'<span class="Label">{{formatDate rangeAppealDateTime.start}}{{if rangeAppealDateTime.end}} — {{formatDate rangeAppealDateTime.end}}{{/if}}</span><br>' +
-			'{{if department && department.name}}${department.name}<br>{{/if}}' +
+			'<span class="Label">{{formatDate rangeAppealDateTime.start}}{{if rangeAppealDateTime.end}} — {{formatDate rangeAppealDateTime.end}}{{/if}}</span>' +
+			'{{if department && department.name}}<span>${department.name}</span>{{/if}}' +
 			'{{if execPerson.doctor && execPerson.doctor.name}}' +
+				'<span>' +
 				'${execPerson.doctor.name.last} ' +
 				'{{if execPerson.doctor.name.first && execPerson.doctor.name.first.length}}${execPerson.doctor.name.first[0]}.{{/if}} ' +
-				'{{if execPerson.doctor.name.middle && execPerson.doctor.name.middle.length}}${execPerson.doctor.name.middle[0]}.<br>{{/if}}' +
+				'{{if execPerson.doctor.name.middle && execPerson.doctor.name.middle.length}}${execPerson.doctor.name.middle[0]}.{{/if}}' +
+				'</span>' +
 			'{{/if}}',
 
 		render: function () {
