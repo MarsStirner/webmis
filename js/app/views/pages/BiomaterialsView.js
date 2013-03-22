@@ -26,21 +26,21 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.collection = new BiomaterialsCollection;
 
 			view.collection.setParams({
-				sortingField: "date"
-                ,sortingMethod: "asc"
-               ,filter: {status: 0}
+				sortingField: "date", sortingMethod: "asc"
+				, filter: {status: 0}
 			});
-
 
 
 			view.collection.on('reset', function () {
 				view.updateButtons();
 				view.resetSelectAllCheckbox();
+				console.log('reset', view.collection,view)
 
 			});
 
 
-            view.collection.on('reset',view.setDefaultDepartment, view);
+			view.collection.on('reset', view.setDefaultDepartment, view);
+
 			view.initGrid();
 
 			view.initCounts();
@@ -48,7 +48,6 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.collection.fetch();
 
 			view.initJobs();
-
 
 
 		},
@@ -78,8 +77,8 @@ define(['text!templates/pages/biomaterials.tmpl',
 				$eventTarget = $(event.target);
 
 			if (!$eventTarget.hasClass('id')
-                //&& (model.get('status') == 0)
-                ) {
+			//&& (model.get('status') == 0)
+				) {
 				view.openJobPopup(model);
 			}
 
@@ -285,15 +284,20 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.depended(view.departmentSelect);
 
+
 		},
-        setDefaultDepartment: function(){
-            var view = this;
-            var departmentId = view.collection.requestData.filter.departmentId;
 
-            view.departmentSelect.val(departmentId);
-            view.collection.off('reset', view.setDefaultDepartment);
+		setDefaultDepartment: function () {
+			var view = this;
 
-        },
+			var departmentId = view.collection.requestData.filter.departmentId;
+			console.log('setDefaultDepartment',departmentId);
+
+			//view.$(view.departmentSelect.$el).select2('val',departmentId);
+			view.departmentSelect.val(departmentId);
+			view.collection.off('reset', view.setDefaultDepartment);
+
+		},
 
 
 		initStatusFilterButtonset: function () {
@@ -453,9 +457,9 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			$filterDate.datepicker("setDate", new Date());
 
-            var e = (new Date()).getTime() + ((60 * 60 * 24) - 60) * 1000;
+			var e = (new Date()).getTime() + ((60 * 60 * 24) - 60) * 1000;
 
-            $endDate.val(e);
+			$endDate.val(e);
 
 			$filterDate.on('change', function () {
 				var start = $(this).datepicker("getDate").getTime();
@@ -484,7 +488,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.initTissues();
 			view.initDepartments();
 
-            view.initFilters();
+			view.initFilters();
 
 
 			view.$("#biomaterial-grid").html(view.grid.el);

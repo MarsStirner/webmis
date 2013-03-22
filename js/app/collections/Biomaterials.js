@@ -147,6 +147,9 @@ define(["models/Biomaterial"], function (Biomaterial) {
         },
 
         parse: function (response) {
+					checkForWarnings(response.requestData, "requestData was not found in the JSON");
+					this.requestData = response.requestData || {};
+					this.requestData.filter = this.requestData.filter || {};
 
             return this.normilize(response.data);
         },
