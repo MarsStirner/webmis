@@ -67,10 +67,8 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				}, view);
 
 				view.testCollection.on('updateAll:success',function(){
-
 					pubsub.trigger('lab-diagnostic:added');
 					view.close();
-
 				});
 
 
@@ -93,6 +91,23 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 
                     console.log('test-date',code, date);
+                });
+
+                pubsub.on('test:cito:changed',function(code, cito){
+
+                    var model = view.testCollection.find( function(model){
+                        return model.get('code')== code;
+                    });
+
+
+                    if(model){
+                        var group = model.get('group');
+                       group[0].attribute[7].properties[0].value = cito;
+
+                        model.set('group', group);
+                    }
+                    console.log('model',model);
+
                 });
 
 
@@ -134,12 +149,12 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
                 this.mkbAttrId = sd.get("id");
 
-//				this.setExamAttr({
-//					attrId: this.mkbAttrId,
-//					propertyType: "valueId",
-//					value: sd.get("id") || sd.get("code"),
-//					displayText: sd.get("code") || sd.get("id")
-//				});
+				this.setExamAttr({
+					attrId: this.mkbAttrId,
+					propertyType: "valueId",
+					value: sd.get("id") || sd.get("code"),
+					displayText: sd.get("code") || sd.get("id")
+				});
 
 				this.$("input[name='diagnosis[mkb][diagnosis]']").val(sd.get("diagnosis"));
 			},
@@ -152,29 +167,39 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				var $element = ( selector instanceof $ ) ? selector : this.$el.find(selector);
 				view.setElement($element).render();
 			},
+            setExamAttr: function (opts){
+                console.log('setExamAttr',opts);
+                var $input = this.$("[data-examattr-id="+opts.attrId+"]");
+
+                if ($input.val() != opts.value || opts.displayText) {
+                    $input.val(opts.displayText || opts.value).change();
+                }
+            },
 
 			render: function () {
-				var popup = this;
+				var view = this;
 
-				if ($(popup.$el.parent().length).length === 0) {
+				if ($(view.$el.parent().length).length === 0) {
 
-					popup.$el.html($.tmpl(this.template, {doctor: this.doctor}));
+					view.$el.html($.tmpl(this.template, {doctor: this.doctor}));
 
 					var labs = new Labs();
 
 
 
 					labs.fetch({success: function () {
-						popup.labsListView = new LabsListView({collection: labs});
-						popup.renderNested(popup.labsListView, ".labs-list-el");
+						view.labsListView = new LabsListView({collection: labs});
+						view.renderNested(view.labsListView, ".labs-list-el");
 
 					}});
 
-					popup.initFinanseSelect();
+					view.initFinanseSelect();
 
 					this.mkbDirectory = new App.Views.MkbDirectory();
 					this.mkbDirectory.on("selectionConfirmed", this.onMKBConfirmed, this);
 					this.mkbDirectory.render();
+
+                    var patientSex = Cache.Patient.get("sex").length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
 
 					this.$("input[name='diagnosis[mkb][code]']").autocomplete({
 						source: function (request, response) {
@@ -184,8 +209,8 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 								data: {
 									filter: {
 										view: "mkb",
-										code: request.term//,
-										//sex: patientSex
+										code: request.term,
+										sex: patientSex
 									}
 								},
 								success: function (raw) {
@@ -202,41 +227,41 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 						},
 						minLength: 2,
 						select: function (event, ui) {
-							self.mkbAttrId = $(this).data("mkb-examattr-id");
+							view.mkbAttrId = $(this).data("mkb-examattr-id");
 
-//							self.setExamAttr({
-//								attrId: self.mkbAttrId,
-//								propertyType: "valueId",
-//								value: ui.item.id,
-//								displayText: ui.item.value
-//							});
+							view.setExamAttr({
+								attrId: self.mkbAttrId,
+								propertyType: "valueId",
+								value: ui.item.id,
+								displayText: ui.item.value
+							});
 
-							self.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
+							view.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
 						}
 					}).on("keyup", function () {
 							if (!$(this).val().length) {
-//								self.setExamAttr({
-//									attrId: self.mkbAttrId,
-//									propertyType: "valueId",
-//									value: "",
-//									displayText: ""
-//								});
+								view.setExamAttr({
+									attrId: self.mkbAttrId,
+									propertyType: "valueId",
+									value: "",
+									displayText: ""
+								});
 
-								self.$("input[name='diagnosis[mkb][diagnosis]']").val("");
+								view.$("input[name='diagnosis[mkb][diagnosis]']").val("");
 							}
 						});
 
 
-					popup.labTestListView = new LabTestsListView();
-					popup.renderNested(popup.labTestListView, ".lab-test-list-el");
+					view.labTestListView = new LabTestsListView();
+					view.renderNested(view.labTestListView, ".lab-test-list-el");
 
-					popup.labsTestsCollection = new LabsTestsCollection();
-					popup.setOffTestsView = new SetOffTestsView({
-						collection: popup.labsTestsCollection
-						,	patientId: popup.options.appeal.get('patient').get('id')
-						,testCollection: popup.testCollection
+					view.labsTestsCollection = new LabsTestsCollection();
+					view.setOffTestsView = new SetOffTestsView({
+						collection: view.labsTestsCollection
+						,	patientId: view.options.appeal.get('patient').get('id')
+						,testCollection: view.testCollection
 					});
-					popup.renderNested(popup.setOffTestsView, ".set-off-test-el");
+					view.renderNested(view.setOffTestsView, ".set-off-test-el");
 
 
 					UIInitialize(this.el);
@@ -247,7 +272,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 
 					$("body").append(this.el);
-					$(popup.el).dialog({
+					$(view.el).dialog({
 						autoOpen: false,
 						width: "116em",
 						modal: true,
@@ -255,12 +280,9 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 						title: "Создание направления"
 					});
 
-					popup.$("a").click(function (event) {
-						event.preventDefault();
-					});
 				}
 
-				return this;
+				return view;
 			},
 
 			saveButton: function(enabled){
@@ -286,19 +308,10 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
                     group[0].attribute[4].properties[0].value = view.doctor.name.last;//doctorLastName
                     group[0].attribute[5].properties[0].value = '';//doctorMiddleName
 
-                    group[0].attribute[7].properties[0].value = true;//urgent
+                   // group[0].attribute[7].properties[0].value = true;//urgent
 
 
-                    var labEndDate = (new Date()).getTime()+(60*60*3)*1000;
-                    if (labEndDate) {
-                        var end = new Date(labEndDate);
 
-                        var value = $.datepicker.formatDate("yy-mm-dd", end) + " " + end.toTimeString().match( /^([0-9]{2}:[0-9]{2}:[0-9]{2})/ )[0] ;
-                        console.log('value',value)
-
-                       // group[0].attribute[2].properties[0].value= value;
-
-                    }
 
 
                     //group[1].attribute[3].properties[1].value= this.mkbAttrId;
