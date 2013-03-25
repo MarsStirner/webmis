@@ -72,8 +72,8 @@ define([
 			"click  .Actions.Cancel": "onCancelClick",
 			"click  .Next"  : "onNextStepClick",
 			"click  .Prev"  : "onPrevStepClick",
-			"keyup  :input"         : "onFieldChange",
-			"change :input"         : "onFieldChange",
+			"keyup  :input:not(.select2-input)"         : "onFieldChange",
+			"change :input:not(.select2-input)"         : "onFieldChange",
 			"change select"         : "onFieldChange"
 		},
 
@@ -1875,6 +1875,7 @@ define([
 
 						this.collection.on("reset", function () {
 							this.$("#empty-alert").toggle(!this.collection.length);
+							this.grid.$(".EditQuota").button({text: "false", icons: {primary: "icon-edit"}});
 						}, this);
 
 						this.collection.fetch();
@@ -1962,7 +1963,7 @@ define([
 
 				this.$("#quotes-grid").empty().append(this.grid.el);
 
-				this.grid.$(".EditQuota").live("click", function (event) {
+				this.grid.$(".EditQuota").button().live("click", function (event) {
 					event.preventDefault();
 					event.stopPropagation();
 
@@ -2085,6 +2086,7 @@ define([
 
 			this.$(".select2").width("100%").select2();
 			this.$("#quota-talonNumber").mask("99.9999.99999.999");
+			this.$(".MKBLauncher").button({icons: {primary: "icon-book"}});
 
 			this.mkbDir.render();
 

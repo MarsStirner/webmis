@@ -178,6 +178,9 @@
 		> .Styled.Button {
 			white-space:nowrap;
 		}
+		&.ActionsOnly {
+			vertical-align: bottom;
+		}
 	}
 	.SemiCol {
 		display:inline-block;

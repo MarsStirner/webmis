@@ -108,7 +108,10 @@ $TABLE_CELL_COLOR: #414142;
 			white-space:nowrap;
 		}
 		&.ButtonCell .Button {
-			font-size: 1em;
+			font-size: .9em;
+		}
+		&.ButtonCell .ui-button {
+			font-size: .9em !important;
 		}
 		&.WrongCell {
 			color:#E00000;

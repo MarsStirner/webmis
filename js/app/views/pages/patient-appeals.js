@@ -94,6 +94,8 @@ define(["collections/patient-appeals", "models/patient", "views/breadcrumbs", "v
 					});
 
 					view.$el.find(".ContentHolder").append( Paginator.render().el );
+
+					this.$(".NewAppeal").button({icons: {primary: "icon-plus icon-color-green"}});
 				}
 			});
 		}
