@@ -27,8 +27,18 @@ define([], function () {
 					testList.push({
 						title: test.name,
 						icon: false,
+                        noCustomRender: true,
 						unselectable: !test.properties[0].value,
-						select: test.properties[1].value
+						select: test.properties[1].value,
+                        onCustomRender: function(node){
+                            var html = '';
+                            html += "<a class='dynatree-title' href='#'>";
+
+                            html += node.data.title;
+                            html += "</a>";
+
+                            return html;
+                        }
 					});
 
 				}

@@ -16,7 +16,7 @@ define([], function () {
 
 		destroy: function (options) {
 
-			console.log('destroy')
+			//console.log('destroy')
 			options = options ? _.clone(options) : {};
 			var model = this;
 			var success = options.success;
@@ -76,7 +76,7 @@ define([], function () {
 
 					break;
 			}
-			console.log('options2', options.success)
+			//console.log('options2', options.success)
 			Backbone.sync.call(Backbone, method, model, options);
 		}
 
