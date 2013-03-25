@@ -92,7 +92,7 @@ define([//"models/doctor"
 //		}
 
 		,parse:function (response, options) {
-			console.log('MODEL',response, options)
+			//console.log('MODEL',response, options)
 //			if (data.requestData && data.requestData.coreVersion) {
 //				CORE_VERSION = data.requestData.coreVersion;
 //				VersionInfo.show();

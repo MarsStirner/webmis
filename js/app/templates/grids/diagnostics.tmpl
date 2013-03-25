@@ -31,39 +31,39 @@
 
 			<th>
 				<a class="Actions SortCol" data-field="status"><span>Статус</span></a>
-				<div class="Filter Hidden">
-					<select class="Styled" name="statusId">
-						<option selected>...</option>
-						<option value="0">Начато</option>
-						<option value="1">Ожидание</option>
-						<option value="2">Закончено</option>
-						<option value="3">Отменено</option>
-						<option value="4">Без&nbsp;результата</option>
-					</select>
-				</div>
+				<!--<div class="Filter Hidden">-->
+					<!--<select class="Styled" name="statusId">-->
+						<!--<option selected>...</option>-->
+						<!--<option value="0">Начато</option>-->
+						<!--<option value="1">Ожидание</option>-->
+						<!--<option value="2">Закончено</option>-->
+						<!--<option value="3">Отменено</option>-->
+						<!--<option value="4">Без&nbsp;результата</option>-->
+					<!--</select>-->
+				<!--</div>-->
 			</th>
 
 			<th>
 				<a class="Actions SortCol" data-field="diagnosticName"><span>Вид исследований</span></a>
-				<div class="Filter Hidden">
-					<input type="text" name="diagnosticName" placeholder="Исследование" />
-				</div>
+				<!--<div class="Filter Hidden">-->
+					<!--<input type="text" name="diagnosticName" placeholder="Исследование" />-->
+				<!--</div>-->
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="cito"><span>Cito</span></a>
-				<div class="Filter Hidden">
-					<select class="Styled" name="cito">
-						<option selected>...</option>
-						<option value="true">Да</option>
-						<option value="false">Нет</option>
-					</select>
-				</div>
+				<!--<div class="Filter Hidden">-->
+					<!--<select class="Styled" name="cito">-->
+						<!--<option selected>...</option>-->
+						<!--<option value="true">Да</option>-->
+						<!--<option value="false">Нет</option>-->
+					<!--</select>-->
+				<!--</div>-->
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="assignPerson"><span>Направивший врач</span></a>
-				<div class="Filter Hidden">
-					<input type="text" name="assignPerson" placeholder="ФИО" />
-				</div>
+				<!--<div class="Filter Hidden">-->
+					<!--<input type="text" name="assignPerson" placeholder="ФИО" />-->
+				<!--</div>-->
 			</th>
 			<!--<th>-->
 				<!--<a class="Actions SortCol" data-field="execPerson"><span>Выполнивший врач</span></a>-->
@@ -108,8 +108,8 @@
 		${diagnosticName.name}
 	</td>
 	<td>
-		{{if urgent}}
-			<i class="Icon AttentionIcon"></i>
+		{{if cito}}
+			<span class="Privilege">Срочно</span>
 		{{/if}}
 	</td>
 	<td>
