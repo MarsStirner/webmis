@@ -220,6 +220,16 @@ function UIInitialize (context) {
 		}
 	});*/
 
+	/*var $buttons = $(".btn").button();
+
+	$(".btn-add", $buttons).button("option", "icons", {primary: "icon-plus icon-color-green"});
+	$(".btn-print", $buttons).button("option", "icons", {primary: "icon-print"});
+	$(".btn-filter", $buttons).button("option", "icons", {primary: "icon-filter"});*/
+
+	$(".date-icon").on("click", function () {
+		$(this).prev().datepicker("show");
+	});
+
 	$("input.Clearable").on("keyup", function() {
 		if ($(this).val().length > 0) {
 			$(this).parent().find(".ClearButton").fadeIn(300).css("display","inline-block");

@@ -449,6 +449,10 @@ define([
 
 			UIInitialize(this.el);
 
+			this.$(".Save").button();
+			this.$(".MKBLauncher").button({icons: {primary: "icon-book"}});
+			this.$(".AddRepresentative").button({icons: {primary: "icon-plus icon-color-green"}});
+
 			view.toggleInputs(false);
 		},
 
