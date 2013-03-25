@@ -203,10 +203,26 @@ define([
 		},
 
 		toggleComment: function (event) {
-			var $cb = $(event.currentTarget);
-			var $toggleTargets = $cb.parents(".SetComment").find(".FormLink, .RichTextWrapper");
 
-			$toggleTargets.toggle();
+
+			//if (confirmedClear) {
+			var $cb = $(event.currentTarget);
+			var commentIsEmpty = $cb.parents(".SetComment").find(".ExamAttr").val().length === 0;
+			var confirmedClear = true;
+
+			if (!commentIsEmpty) {
+				confirmedClear = confirm("Поле будет очищено и скрыто. Продолжить?");
+			}
+
+			if (confirmedClear) {
+				var $toggleTargets = $cb.parents(".SetComment").find(".FormLink, .RichTextWrapper");
+				$toggleTargets.toggle();
+				$cb.parents(".SetComment").find(".ExamAttr").val("").change();
+			} else {
+				$cb.prop("checked", !$cb.prop("checked"));
+			}
+
+			//}
 		},
 
 		save: function (event) {

@@ -358,13 +358,18 @@
 				-
 			{{/if}}
 		</td>
-		<td>
-			{{each(i, diagnosis) diagnoses}}
-				{{if diagnosis.diagnosisKind == "main"}}
-					${diagnosis.mkb.code} ${diagnosis.mkb.diagnosis}
-				{{/if}}
-			{{/each}}
-		</td>
+	{{if diagnoses.length}}
+	<td class="HasToolTip" data-tooltip-content="#tooltip_${id}">
+			${diagnoses[0].mkb.code}
+			<div id="tooltip_${id}" class="ToolTip TopTail">
+				<ul>
+					<li><dfn><b>${diagnoses[0].diagnosisKindLabel}:</b></dfn> ${diagnoses[0].mkb.code} ${diagnoses[0].mkb.diagnosis}</li>
+				</ul>
+			</div>
+	</td>
+	{{else}}
+	<td></td>
+	{{/if}}
 </script>
 
 
@@ -383,7 +388,7 @@
 					<a class="Actions SortCol" data-field="birthDate"><span>Дата рожд.</span></a>
 				</th>
 				<th>
-					<a class="Actions SortCol" data-field="hospitalBed"><span>Палата/Койка</span></a>
+					<a class="Actions SortCol" data-field="bed"><span>Палата/Койка</span></a>
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="department"><span>Отделение</span></a>
@@ -491,7 +496,7 @@
 			<!--<tr class="EditTh">-->
 			<tr>
 				<th>
-					<a class="Actions SortCol" data-field="hospitalBed"><span>Палата/Койка</span></a>
+					<a class="Actions SortCol" data-field="bed"><span>Палата/Койка</span></a>
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="number"><span>Номер ИБ</span></a>
@@ -555,12 +560,12 @@
 				ЧСС ${condition.breathingRate} уд.м
 			{{/if}}
 		<td>
-			{{if condition.arterialBloodPressure.low && condition.arterialBloodPressure.high}}
-					АДД ${condition.arterialBloodPressure.low} - ${condition.arterialBloodPressure.high}
+			{{if condition && condition.arterialBloodPressure && condition.arterialBloodPressure.low && condition.arterialBloodPressure.high}}
+					АД ${condition.arterialBloodPressure.low}/${condition.arterialBloodPressure.high}
 			{{/if}}
 		</td>
 		<td>
-			{{if doctor.name.fio}}
+			{{if doctor && doctor.name.fio}}
 				${doctor.name.fio}
 			{{else}}
 					-

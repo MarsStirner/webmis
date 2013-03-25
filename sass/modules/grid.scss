@@ -47,7 +47,7 @@ $TABLE_CELL_COLOR: #414142;
                 color:#000;
 				&::after {
 					visibility: visible;
-					content:"▼";
+					content:"▲";
 
 				}
 			}
@@ -55,7 +55,7 @@ $TABLE_CELL_COLOR: #414142;
 			&.Desc {
 				.Actions {
 					&::after{
-						content:"▲";
+						content:"▼";
 					}
 				}
 			}

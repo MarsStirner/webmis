@@ -6,7 +6,7 @@
 define(["text!templates/mkb-directory.tmpl", "models/mkb-directory"], function (tmpl) {
 	var MkbTreeNode = View.extend({
 		tagName: "li",
-		template: "<span>{{decorate(title, searchString)}}</span>",
+		template: "<span><i class='bullet'>${bullet}</i>{{decorate(title, searchString)}}</span>",
 
 		childrenLoaded: false,
 		isSelectedDiagnosis: false,
@@ -79,7 +79,7 @@ define(["text!templates/mkb-directory.tmpl", "models/mkb-directory"], function (
 		},
 
 		render: function (searchString) {
-			this.$el.html($.tmpl(this.template, {title: this.model.getTitle(), searchString: searchString || ""}));
+			this.$el.html($.tmpl(this.template, {bullet: this.model.getBreadcrumbTitle(), title: this.model.getTitle(), searchString: searchString || ""}));
 
 			return this;
 		}

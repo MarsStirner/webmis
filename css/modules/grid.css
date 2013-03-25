@@ -50,11 +50,11 @@
 /* line 48, ../../sass/modules/grid.scss */
 .Grid th.Active a.Actions::after {
   visibility: visible;
-  content: "▼";
+  content: "▲";
 }
 /* line 57, ../../sass/modules/grid.scss */
 .Grid th.Active.Desc .Actions::after {
-  content: "▲";
+  content: "▼";
 }
 /* line 63, ../../sass/modules/grid.scss */
 .Grid th.NumTh {

@@ -342,7 +342,11 @@ define([
 			if (this.options.popUpMode) {
 				this.trigger("patient:canceled");
 			} else {
-				App.Router.navigate( this.options.referrer, {trigger:true} );
+				if (this.model.isNew()) {
+					App.Router.navigate("patients/", {trigger:true});
+				} else {
+					App.Router.navigate("patients/" + this.model.get("id") + "/", {trigger:true});
+				}
 			}
 		},
 
@@ -957,6 +961,16 @@ define([
 		},
 
 		onDictionariesLoaded: function (dictionaries) {
+			var dictValueAlphabeticComparator = function (a, b) {
+				if (a.value < b.value) return -1;
+				if (a.value > b.value) return 1;
+				return 0;
+			};
+
+			dictionaries.tfomses.sort(dictValueAlphabeticComparator);
+
+			dictionaries.insuranceCompanies.sort(dictValueAlphabeticComparator);
+
 			this.paymentsCollection.setDictionaries({
 				insuranceCompanies: dictionaries.insuranceCompanies,
 				tfomses: dictionaries.tfomses,

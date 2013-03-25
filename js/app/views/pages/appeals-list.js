@@ -19,6 +19,8 @@ define([
 
 			this.on("template:loaded", this.ready, this);
 			this.loadTemplate("pages/appeals-list");
+
+			_.bindAll(this, 'printForm007')
 		},
 
 		events: {
@@ -83,7 +85,7 @@ define([
 		},
 		//Новое мероприятие/направление или перевод в отделение
 		newSendToDepartment: function (appeal) {
-			console.log('newSendToDepartment');
+			//console.log('newSendToDepartment');
 			var sendPopUp = new App.Views.SendToDepartment({
 				appealId: appeal.get("id"),
 				clientId: appeal.get("patient").get("id"),
@@ -98,6 +100,28 @@ define([
 		newHospitalBed: function (appealId) {
 			this.trigger("change:viewState", {type: 'hospitalbed', options: {}});
 			App.Router.updateUrl("appeals/" + appealId + "/hospitalbed/");
+		},
+
+		printForm007: function () {
+			//console.log('printForm007', this)
+			var endDate = $("#appeal-start-date").datepicker("getDate").getTime() + (7 * 60 + 59) * 60 * 1000;
+			var beginDate = endDate - (24 * 60 - 1) * 60 * 1000;
+
+			var form007 = new App.Models.PrintForm007({
+				departmentId: 18,
+				beginDate: beginDate,
+				endDate: endDate
+			});
+
+			new App.Views.Print({
+				model: form007,
+				template: "f007"
+			});
+
+			form007.fetch();
+
+			//console.log('007 from to', beginDate, endDate);
+
 		},
 
 		ready: function () {
@@ -188,6 +212,8 @@ define([
 				Collection = new App.Collections.DepartmentPatients({role: "doctor"});
 				Collection.reset();
 
+				Collection.setParams({filter: {roleId: 25}});
+
 				var DocCollection = new App.Collections.Doctors();
 				var DepCollection = new App.Collections.Departments();
 
@@ -229,9 +255,16 @@ define([
 			}, this);
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function () {
-				Collection = new App.Collections.DepartmentPatients({role: "nurse"});
+				Collection = new App.Collections.DepartmentPatients();
 				/*Collection.setParams({'filter[date]':1334300400000})*/
+
+				Collection.setParams({
+					sortingField: 'number',
+					sortingMethod: 'asc'
+				});
 				Collection.reset();
+
+				this.printButton = $('<button style="float: right;">Печать</button>').button().click(this.printForm007);
 
 				Filter = new App.Views.Filter({
 					collection: Collection,
@@ -273,6 +306,10 @@ define([
 			this.depended(AppealsGrid);
 
 			this.$el.find(".Container").html(AppealsGrid.render().el);
+
+			if (this.printButton) {
+				this.$el.find(".FilterPage").append(this.printButton);
+			}
 
 
 			// Пэйджинатор

@@ -232,7 +232,7 @@ Model = Backbone.RelationalModel.extend({
 		options = options || {};
 		var self = this;
 
-		return Backbone.Model.prototype.fetch.call(this, options);
+		return Backbone.Model.prototype.fetch.call(self, options);
 	},
 
 	// Переопределяем стандартный метод, чтобы JSON не содержал ссылок на другие модели, а парсил вообще всё.
@@ -325,6 +325,8 @@ Collection = Backbone.Collection.extend({
 
 	fetch:function (options) {
 		options = options || {};
+
+		this.trigger( "fetch", this );
 
 		var data = $.extend(this.getParams(), options.data);
 
@@ -574,6 +576,22 @@ Form = View.extend({
 
 		this.$("select.Mandatory").removeClass("WrongField").each(function () {
 			if (!$(this).val()) {
+				$(this).addClass("WrongField");
+				$firstFoundedError = $firstFoundedError || $(this);
+				validity = false;
+			}
+		});
+
+		this.$("[data-maxsize]").removeClass("WrongField").each(function () {
+			if (parseFloat($(this).val()) > parseFloat($(this).data("maxsize"))) {
+				$(this).addClass("WrongField");
+				$firstFoundedError = $firstFoundedError || $(this);
+				validity = false;
+			}
+		});
+
+		this.$("[data-minsize]").removeClass("WrongField").each(function () {
+			if (parseFloat($(this).val()) < parseFloat($(this).data("minsize"))) {
 				$(this).addClass("WrongField");
 				$firstFoundedError = $firstFoundedError || $(this);
 				validity = false;

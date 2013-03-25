@@ -37,7 +37,9 @@ define([
 			this.departments.setParams({
 				filter: {
 					hasBeds: true
-				}
+				},
+				sortingField: 'name',
+				sortingMethod: 'asc'
 			});
 			this.departments.on("reset", this.onDepartmentsLoaded, this);
 			this.departments.fetch();

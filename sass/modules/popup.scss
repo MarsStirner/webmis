@@ -183,9 +183,9 @@
 
 .EventList {
 	& > li {
-		& > ul {
-			margin-left:2em;
-		}
+		//& > ul {
+		//	margin-left:2em;
+		//}
 		label {
 			margin-bottom:0em;
 			color:#000;
@@ -194,7 +194,8 @@
 			cursor:pointer;
 			margin-bottom:1px;
 			padding-left:0.4em;
-			white-space:nowrap;
+			//white-space:nowrap;
+
 			&:hover{
 				background:#118EDC;
 				color:#fff;
@@ -211,6 +212,10 @@
 			}
 		}
 	}
+}
+
+.EventList ul{
+	margin-left: 2em;
 }
 .EventRoom {
     display: block;
@@ -397,6 +402,11 @@
     	&.Selected {
            background: #e5e5e5;
     	}
+		i.bullet {
+			display: inline-block;
+			min-width: 2em;
+			margin-right: .5em;
+		}
     }
 }
 
