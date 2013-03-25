@@ -114,6 +114,9 @@ define([
 			view.$el.empty().html($.tmpl(view.template));
 			view.$("#lab-grid").html(view.grid.el);
 
+			view.$("#assign-lab-diag").button({icons: {primary: "icon-plus icon-color-green"}});
+			view.$(".ToggleFilters").button({icons: {primary: "icon-filter"}});
+
 			view.paginator = new App.Views.Paginator({
 				collection: view.collection
 			});
