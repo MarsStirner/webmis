@@ -15,11 +15,13 @@ define([
 		template: tmpl,
 
 		events: {
-			"click .Cancel": "onCancelClick",
-			"click .Save": "onSaveClick"
+			/*"click .Cancel": "onCancelClick",
+			"click .Save": "onSaveClick"*/
 		},
 
 		initialize: function (options) {
+			_.bindAll(this);
+
 			this.model = new App.Models.Move();
 			console.log(this.options.appeal);
 			this.model.appealId = this.options.appealId;
@@ -78,11 +80,22 @@ define([
 
 				$(this.el).dialog({
 					autoOpen: false,
-					width: "72em",
+					width: "70em",
 					modal: true,
 					dialogClass: "webmis",
 					resizable: false,
-					title: this.options.popupTitle
+					title: this.options.popupTitle,
+					buttons: [
+						{
+							text: "Сохранить",
+							"class": "button-color-green",
+							click: this.onSaveClick
+						},
+						{
+							text: "Отмена",
+							click: this.onCancelClick
+						}
+					]
 				});
 
 				this.$("a").click(function (event) {

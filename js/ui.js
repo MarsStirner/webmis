@@ -245,7 +245,7 @@ function UIInitialize (context) {
 
 	$("select.Styled", context).each(function () {
 		//new UI.CustomSelect($(this));
-		$(this).width("100%").select2({minimumResultsForSearch: 6});
+		$(this).width("100%").addClass("select2").select2({minimumResultsForSearch: 6});
 	});
 
 	$(".Combo", context).each(function () {

@@ -72,8 +72,8 @@ define(["text!templates/card-" +
 
 				if (options.dropDownItems && options.dropDownItems.length) {
 					var $dropDown = $(
-						'<div class="DDList" style="display: block;">' +
-							'<div class="Content ButtonContent" style="top: 0; max-height: 30em; width: 200px;">' +
+						'<div class="DDList" style="display: block; left: -200px;">' +
+							'<div class="Content ButtonContent" style="top: 0; max-height: 30em; width: 20em;">' +
 							'<ul></ul>' +
 						'</div>'
 					);
@@ -96,8 +96,8 @@ define(["text!templates/card-" +
 						.click(function () {
 							$dropDown.position({
 								my: "right top",
-								at: "right bottom",
-								of: this
+								at: "left bottom",
+								of: $(this).parent().parent()
 							}).toggleClass("Active");
 
 							return false;

@@ -1049,7 +1049,7 @@ define([
 
 			UIInitialize(this.el);
 
-			this.$(".select2").width("100%").select2();
+			//this.$(".select2").width("100%").select2();
 
 			this.assign({
 				"#id-cards": this.idCardsView,
@@ -1212,7 +1212,7 @@ define([
 
 			UIInitialize(this.el);
 
-			this.$(".select2").width("100%").select2();
+			//this.$(".select2").width("100%").select2();
 
 			this.toggleRemoveIcon();
 
@@ -1837,7 +1837,7 @@ define([
 
 			UIInitialize(this.el);
 
-			this.$(".select2").width("100%").select2();
+			//this.$(".select2").width("100%").select2();
 
 			/*this.assign({
 				"#disabilities": this.disabilities//,
@@ -2098,7 +2098,7 @@ define([
 
 			UIInitialize(this.el);
 
-			this.$(".select2").width("100%").select2();
+			//this.$(".select2").width("100%").select2();
 			this.$("#quota-talonNumber").mask("99.9999.99999.999");
 			this.$(".MKBLauncher").button({icons: {primary: "icon-book"}});
 

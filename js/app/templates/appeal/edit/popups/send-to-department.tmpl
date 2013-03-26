@@ -12,19 +12,29 @@
 							<option value="">...</option>
 						</select>
 					</div>
-					<div class="LineCol">
-						<label> Дата и время поступления</label>
-						<div class="DateTime">
+					<div class="HalfCol">
+						<label style="white-space: nowrap"> Дата и время поступления</label>
+						<div class="date">
+							<input type="text" id="movingDate" data-relation="#movingTime"  data-mindate="0" name="movingDate" placeholder="дд.мм.гггг" class="SelectDate date-input" required="required" />
+							<i class="icon-calendar date-icon"></i>
+						</div>
+						<!--<div class="DateTime">
 							<div class="DatePeriod SingleDate Mandatory">
 								<div class="FromTo">
 									<input type="text" id="movingDate" data-relation="#movingTime"  data-mindate="0" name="movingDate" placeholder="дд.мм.гггг" class="SelectDate" required="required" />
 								</div>
 								<i class="DateIcon Icon"></i>
 							</div>
-							<!--<input type="text" id="appeal-start-time" class="ShortInput" data-relation="#appeal-start-date" name="appeal[time][start]" required="required">-->
+							&lt;!&ndash;<input type="text" id="appeal-start-time" class="ShortInput" data-relation="#appeal-start-date" name="appeal[time][start]" required="required">&ndash;&gt;
 							<div class="SingleTime">
 								<input type="text" id="movingTime" class="HourPicker Mandatory" data-relation="#movingDate" name="movingTime" placeholder="чч:мм" required="required"/>
 							</div>
+						</div>-->
+					</div>
+					<div class="HalfCol WithoutName">
+						<div class="time">
+							<input type="text" id="movingTime" class="HourPicker Mandatory" data-relation="#movingDate" name="movingTime" placeholder="чч:мм" required="required"/>
+							<i class="icon-time time-icon"></i>
 						</div>
 					</div>
 					<!--<div class="HalfCol">
@@ -42,13 +52,13 @@
 						<input type="text" id="movingTime" data-relation="#movingDate" placeholder="чч:мм" class="Styled HourPicker">
 					</div>-->
 				</div>
-				<div class="LineBlock">
+				<!--<div class="LineBlock">
 					<div class="PageActions WideCol CloseHistory">
 						<button class="Styled Button Green Actions Save"><span>Сохранить</span></button>
 						<a href="#" class="Actions Cancel ShowHidePopup" style="position: relative; top: 1.6em;">Отмена</a>
 
 					</div>
-				</div>
+				</div>-->
 			</li>
 		</ul>
 	</div>

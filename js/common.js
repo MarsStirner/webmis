@@ -569,18 +569,18 @@ Form = View.extend({
 				if ($firstFoundedError.hasClass("DDSelect"))
 					$firstFoundedError = $firstFoundedError.prev();
 				else if ($firstFoundedError.hasClass("select2"))
-					$firstFoundedError = $firstFoundedError.next();
+					$firstFoundedError = $firstFoundedError.prev();
 				validity = false;
 			}
 		});
 
-		this.$("select.Mandatory").removeClass("WrongField").each(function () {
+		/*this.$("select.Mandatory").removeClass("WrongField").each(function () {
 			if (!$(this).val()) {
 				$(this).addClass("WrongField");
 				$firstFoundedError = $firstFoundedError || $(this);
 				validity = false;
 			}
-		});
+		});*/
 
 		this.$("[data-maxsize]").removeClass("WrongField").each(function () {
 			if (parseFloat($(this).val()) > parseFloat($(this).data("maxsize"))) {

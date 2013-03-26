@@ -205,6 +205,8 @@ define([
 
 			this.$el.html($.tmpl(this.template, {allowToMove: allowToMove, isClosed: self.options.appeal.isClosed()}));
 			this.$("#lab-grid").html(this.grid.el);
+			console.log(this.$("#new-move"));
+			this.$("#new-move").button({icons: {primary: "icon-plus icon-color-green", secondary: "icon-caret-down"}});
 
 			this.delegateEvents();
 			this.grid.delegateEvents();
