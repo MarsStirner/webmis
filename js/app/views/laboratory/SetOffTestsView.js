@@ -76,10 +76,13 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
                 var view = this;
                 //console.log('render .lab-tests-list',view.collection.toJSON())
 
-                view.$el.html('<div class="lab-tests-list"></div>');
+                view.$el.html('<div class="lab-tests-list2"></div>');
 
-                view.$('.lab-tests-list').dynatree({
+
+
+                view.$('.lab-tests-list2').dynatree({
                     clickFolderMode: 2,
+                    generateIds: true,
                     noLink: true,
                     checkbox: true,
                     onCustomRender: function (node) {
@@ -135,6 +138,8 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
                         var $citoCheckbox = $(nodeSpan).find("input[name='sito']");
 
                         $citoCheckbox.on('click', function (e) {
+                            //.dynatree("option", "autoCollapse", true);
+                            node.data.cito = $citoCheckbox.prop('checked');
                             if (node.data.code) {
                                 pubsub.trigger('test:cito:changed', node.data.code, $citoCheckbox.prop('checked'));
                             }

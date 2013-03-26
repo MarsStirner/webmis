@@ -1751,6 +1751,21 @@ ul.icons li [class*=" icon-"] {
   color: #fff;
 }
 
+/* line 15, ../sass/modules/_labs.scss */
+.labs-list .dynatree-container {
+  white-space: normal;
+  border: none;
+}
+/* line 19, ../sass/modules/_labs.scss */
+.labs-list .dynatree-container span.dynatree-connector {
+  display: none;
+}
+
+/* line 26, ../sass/modules/_labs.scss */
+.lab-tests-list .dynatree-container {
+  border: none;
+}
+
 /* line 9, ../sass/common.scss */
 html {
   height: 100%;
