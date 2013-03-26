@@ -360,7 +360,7 @@ define([
 
 			endDate.setDate(startDate.getDate() + 1);
 
-			this.$(".date-range-start").datepicker("setDate", startDate);
+			this.$(".date-range-start, #appeal-start-date").datepicker("setDate", startDate);
 			this.$(".date-range-end").datepicker("setDate", endDate);
 
 			this.setDate();
