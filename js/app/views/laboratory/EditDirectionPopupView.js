@@ -344,14 +344,15 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
                 this.$("#start-time").val(date.getHours() + ':' + date.getMinutes()).mask("99:99");
 
 
-                $("body").append(this.el);
+                //$("body").append(this.el);
 
                 view.$el.dialog({
                     autoOpen: false,
                     width: "116em",
                     modal: true,
                     dialogClass: "webmis",
-                    title: "Редактирование направления"
+                    title: "Редактирование направления",
+                    onClose: view.close
 
                 });
 

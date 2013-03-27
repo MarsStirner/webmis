@@ -1766,6 +1766,72 @@ ul.icons li [class*=" icon-"] {
   border: none;
 }
 
+/* line 33, ../sass/modules/_labs.scss */
+.edit-tree .dynatree-container {
+  white-space: normal;
+  overflow: hidden;
+}
+/* line 37, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node {
+  position: relative;
+  display: block;
+}
+/* line 40, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node table {
+  width: 550px;
+  display: inline-block;
+}
+/* line 43, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node table td {
+  vertical-align: top;
+}
+/* line 47, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node table td.title-col {
+  padding-left: 5px;
+  width: 370px;
+}
+/* line 51, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node table td.sito-col {
+  width: 25px;
+}
+/* line 54, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node table td.time-col {
+  width: 165px;
+}
+
+/* line 63, ../sass/modules/_labs.scss */
+.lab-tests-list2 .dynatree-container {
+  white-space: normal;
+  overflow: hidden;
+}
+/* line 67, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node {
+  position: relative;
+  display: block;
+}
+/* line 71, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node table {
+  width: 90%;
+  display: inline-block;
+}
+/* line 74, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node table td {
+  vertical-align: top;
+}
+/* line 78, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node table td.title-col {
+  padding-left: 5px;
+  min-width: 370px;
+}
+/* line 82, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node table td.sito-col {
+  min-width: 25px;
+}
+/* line 85, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node table td.time-col {
+  min-width: 165px;
+}
+
 /* line 9, ../sass/common.scss */
 html {
   height: 100%;
