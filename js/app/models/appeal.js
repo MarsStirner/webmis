@@ -476,7 +476,7 @@ define([
             var diagnosesCollection = this.get('diagnoses');
             if (diagnosesCollection.length) {
                 //console.log('есть диагнозы',view.appeal.get('diagnoses').toJSON());
-                var model = {};
+                var model = false;
 //                        var priorities = ['final','clinical','admission','assignment'];
 //                        var diagnosesModels = [];
 //
@@ -511,12 +511,9 @@ define([
 
                 //console.log('getDiagnosis',model);
 
-                return model;
 
-            } else {
-                return false;
             }
-
+            return model;
         },
 
         parse: function (data) {
