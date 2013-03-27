@@ -350,6 +350,8 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
                         onClose: view.close
 					});
 
+				view.$(".save, .MKBLauncher").button();
+
 				//}
 
 				return view;
