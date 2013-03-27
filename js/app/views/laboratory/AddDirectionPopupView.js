@@ -340,13 +340,14 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
                     this.$("#start-time").val(now.getHours()+':'+now.getMinutes()).mask("99:99");
 
 
-					$("body").append(this.el);
+					//$("body").append(this.el);
 					$(view.el).dialog({
 						autoOpen: false,
 						width: "116em",
 						modal: true,
 						dialogClass: "webmis",
-						title: "Создание направления"
+						title: "Создание направления",
+                        onClose: view.close
 					});
 
 				//}

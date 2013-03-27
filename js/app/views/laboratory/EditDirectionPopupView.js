@@ -149,6 +149,32 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
                     $input.val(opts.displayText || opts.value).change();
                 }
             },
+            modelToTree: function(){
+                var view = this;
+                var tree = [];
+                var root = {};
+                root.title = view.model.get('name');
+                root.expand = true;
+                root.icon = false;
+                root.select= true;
+                root.unselectable = true;
+
+                root.children = [];
+
+                var attributes = view.model.get('group')[1].attribute;
+                var stringAttributes = _.filter(attributes,function(attr){
+                    return attr.type == "String";
+                });
+
+                root.children = _.map(stringAttributes, function(attr){
+                    return {title: attr.name,noCustomRender:true, icon: false}
+                });
+
+                return [root];
+
+               // root.cito = view.model.get('group')[0].attribute[8].properties[0].value;
+                    console.log('modelToTree',root)
+            },
 
             render: function () {
                 var view = this;
@@ -163,6 +189,83 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 
                 var patientSex = Cache.Patient.get("sex").length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
 
+
+
+                view.$('.edit-tree').dynatree({
+                    clickFolderMode: 2,
+                    minExpandLevel: 2,
+
+                    generateIds: true,
+                    noLink: true,
+                    checkbox: true,
+                    children: view.modelToTree(),
+                    onRender: function (node, nodeSpan) {
+                        //console.log(node, nodeSpan)
+                        UIInitialize($(nodeSpan));
+
+
+                        //$(nodeSpan).find(".SelectDate").datepicker("setDate", "+1");
+
+                        $(nodeSpan).find(".HourPicker").mask("99:99");
+
+//                        var $citoCheckbox = $(nodeSpan).find("input[name='sito']");
+//
+//                        $citoCheckbox.on('click', function (e) {
+//                            //.dynatree("option", "autoCollapse", true);
+//                            node.data.cito = $citoCheckbox.prop('checked');
+//                            if (node.data.code) {
+//                                pubsub.trigger('test:cito:changed', node.data.code, $citoCheckbox.prop('checked'));
+//                            }
+//                        });
+                    },
+                    onCustomRender: function (node) {
+                        var html = '';
+                        if (node.data.noCustomRender) {
+
+                            html += '<span class="title-col">';
+                            //html += "<a class='dynatree-title' href='#'>";
+                            html += node.data.title;
+                           // html += "</a>";
+                            html += '</span>';
+
+                        }else{
+                            html += '<table><tr><td class="title-col">';
+
+                            //html += "<a class='dynatree-title' href='#'>";
+
+                            html += node.data.title;
+                            //html += "</a>";
+                            html += '</td>';
+
+
+
+                            html += '<td class="sito-col" >';
+
+                            html += '<input  type="checkbox" val="" name="cito' + node.data.key + '" id="cito' + node.data.key + '" />';
+                            html += '</td>';
+
+                            html += '<td class="time-col" >';
+
+                            html += '<div class="DataTime" style="font-size: 9px;width: 160px;">';
+
+                            html += '<div class="DatePeriod SingleDate">' +
+                                '<div class="FromTo">' +
+                                '<input type="text"  id="date' + node.data.key + '" name="date' + node.data.key + '" placeholder="дд.мм.гггг" class="SelectDate" data-mindate="0">' +
+                                '</div><i class="DateIcon Icon"></i></div>';
+
+                            html += '<div class="SingleTime" style="width: 4.5em;margin: 0 2em 0 .5em;display: inline-block;vertical-align: middle;">' +
+                                '<input type="text" id="time' + node.data.key + '" class="HourPicker" value="07:00" data-relation="#date' + node.data.key + '" name="time' + node.data.key + '" placeholder="чч:мм" required="required">' +
+                                '</div>';
+
+                            html += '</div>';
+                            html += '</td></tr></table>'
+}
+
+
+
+                        return html;
+                    }
+                });
                 //автокомплит для кода диагноза
                 this.$("input[name='diagnosis[mkb][code]']").autocomplete({
                     source: function (request, response) {
@@ -224,9 +327,9 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
                 UIInitialize(this.el);
 
                 //Диагноз
-                var diagnosis = (view.getProperty('Направительный диагноз'));
+                var diagnosis = view.getProperty('Направительный диагноз');
                 if(diagnosis){
-                    diagnosis.split(/\s+/);
+                    diagnosis = diagnosis.split(/\s+/);
                     var diagnosisCode = diagnosis[0];
                     var diagnosisText = (diagnosis.splice(1)).join(' ');
                     view.$("input[name='diagnosis[mkb][diagnosis]']").val(diagnosisText);
@@ -241,14 +344,15 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
                 this.$("#start-time").val(date.getHours() + ':' + date.getMinutes()).mask("99:99");
 
 
-                $("body").append(this.el);
+                //$("body").append(this.el);
 
                 view.$el.dialog({
                     autoOpen: false,
                     width: "116em",
                     modal: true,
                     dialogClass: "webmis",
-                    title: "Редактирование направления"
+                    title: "Редактирование направления",
+                    onClose: view.close
 
                 });
 
