@@ -105,7 +105,7 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
 
                         html += '<span class="sito-col" style="width:50px;display: inline-block;">';
 
-                        html += '<input  type="checkbox" val="" name="sito" />';
+                        html += '<input  type="checkbox" val="" name="cito' + node.data.key + '" id="cito' + node.data.key + '" />';
                         html += '</span>';
 
                         html += '<span class="time-col" style="width:150px;display: inline-block;">';
@@ -114,11 +114,11 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
 
                         html += '<div class="DatePeriod SingleDate">' +
                             '<div class="FromTo">' +
-                            '<input type="text"  id="date' + node.data.key + '" name="date" placeholder="дд.мм.гггг" class="SelectDate" data-mindate="0">' +
+                            '<input type="text"  id="date' + node.data.key + '" name="date' + node.data.key + '" placeholder="дд.мм.гггг" class="SelectDate" data-mindate="0">' +
                             '</div><i class="DateIcon Icon"></i></div>';
 
                         html += '<div class="SingleTime" style="width: 4.5em;margin: 0 2em 0 .5em;display: inline-block;vertical-align: middle;">' +
-                            '<input type="text" id="time' + node.data.key + '" class="HourPicker" value="07:00" data-relation="#date' + node.data.key + '" name="time" placeholder="чч:мм" required="required">' +
+                            '<input type="text" id="time' + node.data.key + '" class="HourPicker" value="07:00" data-relation="#date' + node.data.key + '" name="time' + node.data.key + '" placeholder="чч:мм" required="required">' +
                             '</div>';
 
                         html += '</div>';

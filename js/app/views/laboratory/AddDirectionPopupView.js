@@ -37,53 +37,53 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 
 
-                function getDiagnosis(diagnosesCollection){
-                    if(view.appeal.get('diagnoses').length){
-                        //console.log('есть диагнозы',view.appeal.get('diagnoses').toJSON());
-                        var model = {};
-//                        var priorities = ['final','clinical','admission','assignment'];
-//                        var diagnosesModels = [];
+//                function getDiagnosis(diagnosesCollection){
+//                    if(view.appeal.get('diagnoses').length){
+//                        //console.log('есть диагнозы',view.appeal.get('diagnoses').toJSON());
+//                        var model = {};
+////                        var priorities = ['final','clinical','admission','assignment'];
+////                        var diagnosesModels = [];
+////
+////                        _.each(priorities,function(priority){
+////                            var diagnosis = diagnosesCollection.find(function(model){
+////                                return model.get('diagnosisKind') == priority;
+////                            });
+////
+////                            if(diagnosis){
+////                                var obj = {};
+////                                obj[priority]=diagnosis;
+////                                diagnosesModels.push(obj);
+////                            }
+////
+////                        });
+////                        console.log('diagnosesModels',diagnosesModels)
 //
-//                        _.each(priorities,function(priority){
-//                            var diagnosis = diagnosesCollection.find(function(model){
-//                                return model.get('diagnosisKind') == priority;
-//                            });
-//
-//                            if(diagnosis){
-//                                var obj = {};
-//                                obj[priority]=diagnosis;
-//                                diagnosesModels.push(obj);
-//                            }
-//
+//                        var admission = diagnosesCollection.find(function(model){
+//                            return model.get('diagnosisKind') == 'admission';
 //                        });
-//                        console.log('diagnosesModels',diagnosesModels)
+//                        var assignment = diagnosesCollection.find(function(model){
+//                            return model.get('diagnosisKind') == 'assignment';
+//                        });
+//
+//                        if(assignment && assignment.get('mkb') &&  assignment.get('mkb').get('diagnosis')){
+//                            model = assignment;
+//                        }
+//
+//                        if(admission && admission.get('mkb') &&  admission.get('mkb').get('diagnosis')){
+//                            model = admission;
+//                        }
+//
+//                        //console.log('getDiagnosis',model);
+//
+//                        return model;
+//
+//                    }else{
+//                        return false;
+//                    }
+//
+//                }
 
-                        var admission = diagnosesCollection.find(function(model){
-                            return model.get('diagnosisKind') == 'admission';
-                        });
-                        var assignment = diagnosesCollection.find(function(model){
-                            return model.get('diagnosisKind') == 'assignment';
-                        });
-
-                        if(assignment && assignment.get('mkb') &&  assignment.get('mkb').get('diagnosis')){
-                            model = assignment;
-                        }
-
-                        if(admission && admission.get('mkb') &&  admission.get('mkb').get('diagnosis')){
-                            model = admission;
-                        }
-
-                        //console.log('getDiagnosis',model);
-
-                        return model;
-
-                    }else{
-                        return false;
-                    }
-
-                }
-
-                view.diagnosis = getDiagnosis(view.appeal.get('diagnoses'));
+                view.diagnosis = view.appeal.getDiagnosis();
 
 
 
@@ -209,6 +209,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					displayText: sd.get("code") || sd.get("id")
 				});
 
+                this.$("input[name='diagnosis[mkb][code]']").val(sd.get("code"));
 				this.$("input[name='diagnosis[mkb][diagnosis]']").val(sd.get("diagnosis"));
 			},
 
@@ -239,7 +240,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 			render: function () {
 				var view = this;
 
-				if ($(view.$el.parent().length).length === 0) {
+				//if ($(view.$el.parent().length).length === 0) {
 
 					view.$el.html($.tmpl(this.template, {doctor: this.doctor}));
 
@@ -336,7 +337,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
                     var now = new Date();
                     this.$("#start-date").datepicker("setDate", now);
-                    this.$("#start-time").val(now.getHours()+':'+now.getMinutes());
+                    this.$("#start-time").val(now.getHours()+':'+now.getMinutes()).mask("99:99");
 
 
 					$("body").append(this.el);
@@ -348,7 +349,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 						title: "Создание направления"
 					});
 
-				}
+				//}
 
 				return view;
 			},
@@ -376,18 +377,18 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
                     return node.select == true
                 });
 
-                _.each(selected, function(test){
-                    //test.code;
-
-                    var selected_params = _.filter(test.children, function(node){
-                        return node.select == true;
-                    });
-
-                   // console.log('selected_params',selected_params)
-
-
-
-                })
+//                _.each(selected, function(test){
+//                    //test.code;
+//
+//                    var selected_params = _.filter(test.children, function(node){
+//                        return node.select == true;
+//                    });
+//
+//                   // console.log('selected_params',selected_params)
+//
+//
+//
+//                })
 
                 console.log('onSave tree selected',selected);
 
@@ -399,6 +400,15 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
                         return node.code == model.get('code')
                     });
 
+                    var $dateInput = view.$('#date'+modelTree.key);
+                    var $timeInput = view.$('#time'+modelTree.key);
+                    var $citoInput = view.$('#cito'+modelTree.key);
+                    var date = moment($dateInput.datepicker( "getDate" )).format('YYYY-MM-DD');
+                    var time = $timeInput.val()+':00';
+                    var cito = $citoInput.prop('checked');
+
+                    console.log('node inputs',date,time,cito)
+
                     var selected_params = _.filter(modelTree.children, function(node){
                         return node.select == true;
                     });
@@ -406,16 +416,15 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
                     var group = model.get('group');
 
 
+                    //выбранные тесты
                     console.log('modelTree ',model.get('group'), modelTree,selected_params )
                     _.each(selected_params, function(param){
                         console.log(param.title)
                         _.each(group[1].attribute, function(attribute,index){
-
                             if(attribute.name == param.title){
                                 group[1].attribute[index].properties[1].value = 'true';
                             }
                         })
-
                     })
 
 
@@ -423,19 +432,15 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
                     group[0].attribute[4].properties[0].value = view.doctor.name.last;//doctorLastName
                     group[0].attribute[5].properties[0].value = '';//doctorMiddleName
 
-                   // group[0].attribute[7].properties[0].value = true;//urgent
+                    group[0].attribute[7].properties[0].value = cito;//urgent
 
+                    group[0].attribute[10].properties[0].value= date+' '+time;//plannedEndDate
 
-
-
-
-                    //group[1].attribute[3].properties[1].value= this.mkbAttrId;
-                    //this.mkbAttrId
 
                     //group[1].attribute[0].properties[0].value = (new Date()).getTime();
                     console.log(model.get('group'))
                     model.set('group',group);
-                    console.log('group',model.get('group'))
+                    console.log('model',model.toJSON())
 
                     //console.log(view,view.$("input[name='diagnosis[mkb][code]']").data('mkbAttrId'))
                 })
