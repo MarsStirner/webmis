@@ -51,21 +51,21 @@ define([], function () {
 					options.url = DATA_PATH + 'diagnostics/laboratory/' + model.id;
 					break;
 				case 'create':
-					options.url = DATA_PATH + 'diagnostics/' + model.eventId + '/laboratory';
+					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory';
 					options.data = JSON.stringify({
 						requestData: {},
 						data: [model.toJSON()]
 					});
 					break;
 				case 'update':
-					options.url = DATA_PATH + 'diagnostics/' + model.eventId + '/laboratory';
+					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory';
 					options.data = JSON.stringify({
 						requestData: {},
 						data: [model.toJSON()]
 					});
 					break;
 				case 'delete':
-					options.url = DATA_PATH + 'diagnostics/' + model.eventId + '/laboratory/remove';
+					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory/remove';
 					options.type = 'PUT';
 					options.data = JSON.stringify({
 						//requestData:{},

@@ -23,7 +23,7 @@ define(function () {
 
 		url: function () {
 			if (this.appealId) {
-				return DATA_PATH + "appeals/" + this.appealId + "/moving/";
+				return DATA_PATH + "appeals/" + this.appealId + "/hospitalbed/moving/";
 			} else {
 				throw new Error("No appeal id to move");
 			}

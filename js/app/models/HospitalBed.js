@@ -16,9 +16,11 @@ define(["collections/Beds"], function () {
 
 
 		url: function (isSave) {
-			return DATA_PATH + (isSave ?
-				("appeals/" + this.appealId + "/hospitalbed/") :
-				("hospitalbed/" + this.moveId));
+//			return DATA_PATH + (isSave ?
+//				("appeals/" + this.appealId + "/hospitalbed/") :
+//				("hospitalbed/" + this.moveId));
+
+			return DATA_PATH + "appeals/" + this.appealId + "/hospitalbed/";
 		},
 
 		sync: function (method, model, options) {

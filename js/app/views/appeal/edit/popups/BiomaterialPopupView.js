@@ -31,7 +31,8 @@ define(["text!templates/appeal/edit/popups/biomaterial-popup.tmpl"],
 					autoOpen: false,
 					width: "116em",
 					modal: true,
-					dialogClass: "webmis"
+					dialogClass: "webmis",
+					title:"Перечень лабораторных исследований"
 				});
 
 				return popup;

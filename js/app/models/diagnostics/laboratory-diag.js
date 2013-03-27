@@ -48,7 +48,7 @@ define([//"models/doctor"
 //					});
 //					break;
 				case 'delete':
-					options.url = DATA_PATH + 'diagnostics/' + model.eventId + '/laboratory/remove';
+					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory/remove';
 					options.type = 'PUT';
 					options.data = JSON.stringify({
 						//requestData:{},
