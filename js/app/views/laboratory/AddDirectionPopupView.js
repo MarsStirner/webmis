@@ -350,21 +350,20 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
                         onClose: view.close
 					});
 
-				view.$(".save, .MKBLauncher").button();
-
+				view.$(".save,.MKBLauncher").button();
+                view.$(".save").button("disable");
 				//}
 
 				return view;
 			},
 
 			saveButton: function(enabled){
-//				var $saveButton = this.$('.save');
-//				if(enabled){
-//					$saveButton.removeClass('Disabled').attr('disabled', false);
-//                    $('.save').on('click', this.onSave);
-//				}else{
-//					$saveButton.addClass('Disabled').attr('disabled', true);
-//				}
+				var $saveButton = this.$('.save');
+				if(enabled){
+					$saveButton.button("enable")
+				}else{
+					$saveButton.button("disable")
+				}
 
 			},
 
