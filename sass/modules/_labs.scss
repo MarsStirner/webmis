@@ -38,7 +38,7 @@
     position: relative;
     display: block;
     table{
-      width: 550px;
+      width: 90%;
       display: inline-block;
       td{
         vertical-align: top;
@@ -47,6 +47,7 @@
         &.title-col{
           padding-left: 5px;
           width: 370px;
+          width: 100%;
         }
         &.sito-col{
           width: 25px;
@@ -78,6 +79,7 @@
         &.title-col{
           padding-left: 5px;
           min-width: 370px;
+          width: 100%;
         }
         &.sito-col{
           min-width: 25px;
