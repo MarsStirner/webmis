@@ -11,7 +11,7 @@
 /* line 12, ../../sass/modules/grid.scss */
 .Grid th {
   padding: 0.8em 0.7em;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid #000;
   color: #6D6D71;
   white-space: nowrap;
 }
@@ -74,7 +74,7 @@
 }
 /* line 77, ../../sass/modules/grid.scss */
 .Grid td {
-  border-bottom: 1px solid #d9d9d9;
+  border-bottom: 1px solid #D9D9D9;
   padding: 0.8em 0.7em 0.9em 0.7em;
   /*cursor: pointer;*/
 }
@@ -175,7 +175,7 @@
 
 /* line 157, ../../sass/modules/grid.scss */
 .NormCell {
-  border-left: 1px solid #d9d9d9;
+  border-left: 1px solid #D9D9D9;
 }
 
 /* line 162, ../../sass/modules/grid.scss */
@@ -193,26 +193,26 @@
 /*DrugList*/
 /* line 175, ../../sass/modules/grid.scss */
 .DrugList {
-  border-top: 1px solid black;
-  border-right: 1px solid #d4d4d4;
-  border-bottom: 1px solid black;
-  border-left: 1px solid #d4d4d4;
+  border-top: 1px solid #000000;
+  border-right: 1px solid #D4D4D4;
+  border-bottom: 1px solid #000000;
+  border-left: 1px solid #D4D4D4;
   font-size: 1.3em;
 }
 /* line 181, ../../sass/modules/grid.scss */
 .DrugList th {
   padding: 0.6em 0.3em 0.5em 0.3em;
-  border-top: 1px solid black;
-  border-left: 1px solid #d4d4d4;
-  border-bottom: 1px solid black;
-  border-right: 1px solid #d4d4d4;
+  border-top: 1px solid #000000;
+  border-left: 1px solid #D4D4D4;
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #D4D4D4;
   text-align: center;
   min-width: 1.5em;
 }
 /* line 190, ../../sass/modules/grid.scss */
 .DrugList td {
   padding: 0.8em 0.3em 0.9em 0.3em;
-  border: 1px solid #d4d4d4;
+  border: 1px solid #D4D4D4;
 }
 /* line 193, ../../sass/modules/grid.scss */
 .DrugList td.Active {
@@ -240,7 +240,7 @@
   top: 1.5em;
   left: 1.5em;
   cursor: default;
-  border: 1px solid #d4d4d4;
+  border: 1px solid #D4D4D4;
   -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 3px 5px 0;
   -moz-box-shadow: rgba(0, 0, 0, 0.5) 0 3px 5px 0;
   box-shadow: rgba(0, 0, 0, 0.5) 0 3px 5px 0;
@@ -367,11 +367,11 @@
 /* line 318, ../../sass/modules/grid.scss */
 .PatientGrid .MultiSelectLink {
   text-decoration: none;
-  border-bottom: 1px dotted #118ddc;
+  border-bottom: 1px dotted #118DDC;
 }
 /* line 321, ../../sass/modules/grid.scss */
 .PatientGrid .MultiSelectLink:hover {
-  border-bottom: 1px dotted #dd1111;
+  border-bottom: 1px dotted #DD1111;
 }
 /* line 325, ../../sass/modules/grid.scss */
 .PatientGrid th {

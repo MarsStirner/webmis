@@ -1,10 +1,10 @@
 <header class="Clearfix">
     <div class="PopupActions">
-        <button class="Styled Button BlueBorder save Disabled88"><span>Создать</span></button>
+        <button class="save button-color-green Disabled88">Создать</button>
         <!--<a href="#" class="ShowHidePopup">Отмена</a>-->
     </div>
 </header>
-<section class="PopUpLine">
+<section class="PopUpLine labs-popup">
 	<div class="RefDiagVidget">
 		<div class="VidgetLine">
 			<div class="VidgetCol LeftCol labs-list-el">
@@ -31,9 +31,14 @@
 		<!--<ul class="LineBlockHolder">-->
 
 		<div style="margin-bottom: 1.5em;">
-			<div class="HalfCol">
-				<span class="Label">Дата и время создания</span>
-				<div class="DateTime">
+			<div class="QuartCol">
+				<span class="Label" style="white-space: nowrap">Дата и время создания</span>
+				<div class="date">
+					<input type="text" data-mindate="0" name="start-date" id="start-date" placeholder="дд.мм.гггг" class="SelectDate"
+								 data-relation="#start-time"/>
+					<i class="icon-calendar date-icon"></i>
+				</div>
+				<!--<div class="DateTime">
 					<div class="DatePeriod SingleDate">
 						<div class="FromTo">
 							<input type="text" data-mindate="0" name="start-date" id="start-date" placeholder="дд.мм.гггг" class="SelectDate"
@@ -45,6 +50,12 @@
 						<input type="text" class="Styled HourPicker" id="start-time" data-relation="#start-date" placeholder="чч:мм"/>
 					</div>
 
+				</div>-->
+			</div>
+			<div class="DecCol WithoutName">
+				<div class="time">
+					<input type="text" class="Styled HourPicker" id="start-time" data-relation="#start-date" placeholder="чч:мм"/>
+					<i class="icon-time time-icon"></i>
 				</div>
 			</div>
 			<div class="ColHalf">
@@ -70,7 +81,7 @@
 				<span class="FieldInfo">Описание</span>
 			</div>
 			<div class="QuartCol" style="padding-top: 1.9em;">
-				<button class="Styled Button MKBLauncher" data-mkb-examattr-id="103"><span>МКБ-10</span></button>
+				<button class="MKBLauncher" data-mkb-examattr-id="103">МКБ-10</button>
 			</div>
 		</div>
 
