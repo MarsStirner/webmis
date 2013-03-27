@@ -10,7 +10,7 @@ define(["models/diagnostics/laboratory-diag"], function (LabDiagnostic) {
 			return DATA_PATH + "appeals/" + this.appealId + "/diagnostics/laboratory/";
 		}
 		,parse:function (response, options) {
-			console.log('COLLECTION',response, options)
+			//console.log('COLLECTION',response, options)
 //			if (data.requestData && data.requestData.coreVersion) {
 //				CORE_VERSION = data.requestData.coreVersion;
 //				VersionInfo.show();

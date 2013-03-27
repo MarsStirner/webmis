@@ -23,28 +23,157 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				"click .MKBLauncher": "toggleMKB"
 			},
 			initialize: function () {
-				var popup = this;
+				var view = this;
 
-				this.doctor = {
+				view.doctor = {
 					name: {
 						first: Core.Cookies.get("doctorFirstName"),
 						last: Core.Cookies.get("doctorLastName")
 					}
 				};
 
-				this.appeal = this.options.appeal;
+				view.appeal = view.options.appeal;
+                console.log('appeal',view.appeal);
+
+
+
+//                function getDiagnosis(diagnosesCollection){
+//                    if(view.appeal.get('diagnoses').length){
+//                        //console.log('есть диагнозы',view.appeal.get('diagnoses').toJSON());
+//                        var model = {};
+////                        var priorities = ['final','clinical','admission','assignment'];
+////                        var diagnosesModels = [];
+////
+////                        _.each(priorities,function(priority){
+////                            var diagnosis = diagnosesCollection.find(function(model){
+////                                return model.get('diagnosisKind') == priority;
+////                            });
+////
+////                            if(diagnosis){
+////                                var obj = {};
+////                                obj[priority]=diagnosis;
+////                                diagnosesModels.push(obj);
+////                            }
+////
+////                        });
+////                        console.log('diagnosesModels',diagnosesModels)
+//
+//                        var admission = diagnosesCollection.find(function(model){
+//                            return model.get('diagnosisKind') == 'admission';
+//                        });
+//                        var assignment = diagnosesCollection.find(function(model){
+//                            return model.get('diagnosisKind') == 'assignment';
+//                        });
+//
+//                        if(assignment && assignment.get('mkb') &&  assignment.get('mkb').get('diagnosis')){
+//                            model = assignment;
+//                        }
+//
+//                        if(admission && admission.get('mkb') &&  admission.get('mkb').get('diagnosis')){
+//                            model = admission;
+//                        }
+//
+//                        //console.log('getDiagnosis',model);
+//
+//                        return model;
+//
+//                    }else{
+//                        return false;
+//                    }
+//
+//                }
+
+                view.diagnosis = view.appeal.getDiagnosis();
+
+
+
+
+				var TestCollection = Collection.extend({
+                    url : DATA_PATH + 'diagnostics/' + this.appeal.get('id') + '/laboratory',
+                    updateAll :  function () {
+                    var collection = this;
+                    options = {
+                        dataType: "jsonp",
+                        contentType: 'application/json',
+                        success: function (status) {
+                            if(status){
+                                collection.trigger('updateAll:success');
+                            }else{
+                                collection.trigger('updateAll:error');
+                            }
+                        },
+                        data: JSON.stringify({data: collection.toJSON()})
+                    };
+
+                    return Backbone.sync('create', this, options);
+                }
+
+                });
+
+				view.testCollection = new TestCollection();
+
+
+
+				view.testCollection.on('add remove reset', function(){
+					view.saveButton(view.testCollection.length);
+					console.log('testCollection changed', view.testCollection)
+				}, view);
+
+				view.testCollection.on('updateAll:success',function(){
+					pubsub.trigger('lab-diagnostic:added');
+					view.close();
+				});
+
+
+				pubsub.on('load-group-tests tg-parent:click', function(){
+					view.testCollection.reset();
+				},view);
+
+                pubsub.on('test:date:changed',function(code, date){
+
+                    var model = view.testCollection.find( function(model){
+                        return model.get('code')== code;
+                    });
+
+                    if(model){
+                        var group = model.get('group');
+                        group[0].attribute[2].properties[0].value = date + ' 07:00:00';
+
+                        model.set('group', group);
+                    }
+
+
+                    //console.log('test-date',code, date);
+                });
+
+                pubsub.on('test:cito:changed',function(code, cito){
+
+                    var model = view.testCollection.find( function(model){
+                        return model.get('code')== code;
+                    });
+
+
+                    if(model){
+                        var group = model.get('group');
+                       group[0].attribute[7].properties[0].value = cito;
+
+                        model.set('group', group);
+                    }
+                    //console.log('model',model);
+
+                });
 
 
 			},
 
 			initFinanseSelect: function () {
 				var view = this;
-				var appealFinanceId = view.options.appeal.get('contract').get('finance').get('id');
+				var appealFinanceId = view.options.appeal.get('appealType').get('finance').get('id');
 
 				var financeDictionary = new App.Collections.DictionaryValues([], {name: 'finance'});
 
 //				financeDictionary.on('reset', function(){
-//					console.log('dictionary',financeDictionary)
+//					console.log('dictionary',financeDictionary,appealFinanceId,view.options.appeal)
 //
 //				});
 
@@ -59,6 +188,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				view.depended(view.financeSelect);
 			},
 
+
 			toggleMKB: function (event) {
 				event.preventDefault();
 
@@ -68,13 +198,18 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 			},
 			onMKBConfirmed: function (event) {
 				var sd = event.selectedDiagnosis;
-//				this.setExamAttr({
-//					attrId: this.mkbAttrId,
-//					propertyType: "valueId",
-//					value: sd.get("id") || sd.get("code"),
-//					displayText: sd.get("code") || sd.get("id")
-//				});
+                //console.log('sd', sd.get("id"));
 
+                this.mkbAttrId = sd.get("id");
+
+				this.setExamAttr({
+					attrId: this.mkbAttrId,
+					propertyType: "valueId",
+					value: sd.get("id") || sd.get("code"),
+					displayText: sd.get("code") || sd.get("id")
+				});
+
+                this.$("input[name='diagnosis[mkb][code]']").val(sd.get("code"));
 				this.$("input[name='diagnosis[mkb][diagnosis]']").val(sd.get("diagnosis"));
 			},
 
@@ -86,58 +221,46 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				var $element = ( selector instanceof $ ) ? selector : this.$el.find(selector);
 				view.setElement($element).render();
 			},
+            setExamAttr: function (opts){
+
+
+//                var examAttr = this.examAttributes.find(function (a) {
+//                    return a.get("typeId") == opts.attrId;
+//                });
+
+                console.log('setExamAttr',opts );
+
+                var $input = this.$("[data-examattr-id="+opts.attrId+"]");
+
+                if ($input.val() != opts.value || opts.displayText) {
+                    $input.val(opts.displayText || opts.value).change();
+                }
+            },
 
 			render: function () {
-				var popup = this;
+				var view = this;
 
-				if ($(popup.$el.parent().length).length === 0) {
+				//if ($(view.$el.parent().length).length === 0) {
 
-					popup.$el.html($.tmpl(this.template, {doctor: this.doctor}));
+					view.$el.html($.tmpl(this.template, {doctor: this.doctor}));
 
 					var labs = new Labs();
-//					labs.on('reset', function(){
-//						popup.labsListView = new LabsListView({collection: labs});
-//						popup.renderNested(popup.labsListView, ".labs-list-el");
-//					})
-//					labs.reset([{
-//						id: 709,
-//						groupId: 654,
-//						code: "17",
-//						name: "lab 17"
-//					},{
-//						id: 708,
-//						groupId: 654,
-//						code: "18",
-//						name: "lab 18"
-//					},{
-//						id: 707,
-//						groupId: 654,
-//						code: "15",
-//						name: "lab 15"
-//					},{
-//						id: 706,
-//						groupId: 654,
-//						code: "14",
-//						name: "lab 14"
-//					},{
-//						id: 705,
-//						groupId: 654,
-//						code: "16",
-//						name: "lab 16"
-//					}])
+
 
 
 					labs.fetch({success: function () {
-						popup.labsListView = new LabsListView({collection: labs});
-						popup.renderNested(popup.labsListView, ".labs-list-el");
+						view.labsListView = new LabsListView({collection: labs});
+						view.renderNested(view.labsListView, ".labs-list-el");
 
 					}});
 
-					popup.initFinanseSelect();
+					view.initFinanseSelect();
 
 					this.mkbDirectory = new App.Views.MkbDirectory();
 					this.mkbDirectory.on("selectionConfirmed", this.onMKBConfirmed, this);
 					this.mkbDirectory.render();
+
+                    var patientSex = Cache.Patient.get("sex").length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
 
 					this.$("input[name='diagnosis[mkb][code]']").autocomplete({
 						source: function (request, response) {
@@ -165,76 +288,164 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 						},
 						minLength: 2,
 						select: function (event, ui) {
-							self.mkbAttrId = $(this).data("mkb-examattr-id");
+							view.mkbAttrId = $(this).data("mkb-examattr-id");
 
-							self.setExamAttr({
+							view.setExamAttr({
 								attrId: self.mkbAttrId,
 								propertyType: "valueId",
 								value: ui.item.id,
 								displayText: ui.item.value
 							});
 
-							self.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
+                            console.log('ui.item',ui.item)
+
+							view.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
+                            view.$("input[name='diagnosis[mkb][code]']").val(ui.item.displayText);
 						}
 					}).on("keyup", function () {
 							if (!$(this).val().length) {
-								self.setExamAttr({
+								view.setExamAttr({
 									attrId: self.mkbAttrId,
 									propertyType: "valueId",
 									value: "",
 									displayText: ""
 								});
 
-								self.$("input[name='diagnosis[mkb][diagnosis]']").val("");
+								view.$("input[name='diagnosis[mkb][diagnosis]']").val("");
 							}
 						});
 
 
-					popup.labTestListView = new LabTestsListView();
-					popup.renderNested(popup.labTestListView, ".lab-test-list-el");
+                    if(view.diagnosis){
+                        view.$("input[name='diagnosis[mkb][diagnosis]']").val(view.diagnosis.get('mkb').get('diagnosis'));
+                        view.$("input[name='diagnosis[mkb][code]']").val(view.diagnosis.get('mkb').get('code'));
+                    }
 
+					view.labTestListView = new LabTestsListView();
+					view.renderNested(view.labTestListView, ".lab-test-list-el");
 
-					console.log(popup.options.appeal)
-					popup.labsTestsCollection = new LabsTestsCollection();
-					popup.setOffTestsView = new SetOffTestsView({collection: popup.labsTestsCollection,patientId: popup.options.appeal.get('patient').get('id')});
-					popup.renderNested(popup.setOffTestsView, ".set-off-test-el");
+					view.labsTestsCollection = new LabsTestsCollection();
+					view.setOffTestsView = new SetOffTestsView({
+						collection: view.labsTestsCollection
+						,	patientId: view.options.appeal.get('patient').get('id')
+						,testCollection: view.testCollection
+					});
+					view.renderNested(view.setOffTestsView, ".set-off-test-el");
 
 
 					UIInitialize(this.el);
 
+                    var now = new Date();
+                    this.$("#start-date").datepicker("setDate", now);
+                    this.$("#start-time").val(now.getHours()+':'+now.getMinutes()).mask("99:99");
+
+
 					$("body").append(this.el);
-					$(popup.el).dialog({
+					$(view.el).dialog({
 						autoOpen: false,
 						width: "116em",
 						modal: true,
-						dialogClass: "webmis"
+						dialogClass: "webmis",
+						title: "Создание направления"
 					});
-					//popup.$(".popup #dp").datepicker();
-					popup.$("a").click(function (event) {
-						event.preventDefault();
-					});
-				}
 
-				return this;
+				//}
+
+				return view;
+			},
+
+			saveButton: function(enabled){
+//				var $saveButton = this.$('.save');
+//				if(enabled){
+//					$saveButton.removeClass('Disabled').attr('disabled', false);
+//                    $('.save').on('click', this.onSave);
+//				}else{
+//					$saveButton.addClass('Disabled').attr('disabled', true);
+//				}
+
 			},
 
 			onSave: function () {
 				var view = this;
+               // console.log('onSave',view,view.testCollection);
 
-				console.log('popup.setOffTests', view.setOffTests)
+                var tree = view.$('.lab-tests-list2').dynatree("getTree");
+//                tree.serializeArray();
+               // console.log('onSave tree',tree,tree.toDict());
 
-				var direction = new labAnalysisDirection(view.setOffTests);
-				direction.eventId = view.appeal.get('id');
-				direction.save({},{
-					success: function(model, response, options){
-						console.log('success',model, response, options);
-						pubsub.trigger('lab-diagnostic:added');
-						view.close();
+                var selected = _.filter(tree.toDict().children, function(node){
+                    return node.select == true
+                });
 
-				}
-				,error: function(model, xhr, options){
-						console.log('error',model, xhr, options);
-					}});
+//                _.each(selected, function(test){
+//                    //test.code;
+//
+//                    var selected_params = _.filter(test.children, function(node){
+//                        return node.select == true;
+//                    });
+//
+//                   // console.log('selected_params',selected_params)
+//
+//
+//
+//                })
+
+                console.log('onSave tree selected',selected);
+
+
+                view.testCollection.forEach(function(model){
+
+
+                    var modelTree = _.find(selected, function(node){
+                        return node.code == model.get('code')
+                    });
+
+                    var $dateInput = view.$('#date'+modelTree.key);
+                    var $timeInput = view.$('#time'+modelTree.key);
+                    var $citoInput = view.$('#cito'+modelTree.key);
+                    var date = moment($dateInput.datepicker( "getDate" )).format('YYYY-MM-DD');
+                    var time = $timeInput.val()+':00';
+                    var cito = $citoInput.prop('checked');
+
+                    console.log('node inputs',date,time,cito)
+
+                    var selected_params = _.filter(modelTree.children, function(node){
+                        return node.select == true;
+                    });
+
+                    var group = model.get('group');
+
+
+                    //выбранные тесты
+                    console.log('modelTree ',model.get('group'), modelTree,selected_params )
+                    _.each(selected_params, function(param){
+                        console.log(param.title)
+                        _.each(group[1].attribute, function(attribute,index){
+                            if(attribute.name == param.title){
+                                group[1].attribute[index].properties[1].value = 'true';
+                            }
+                        })
+                    })
+
+
+                    group[0].attribute[3].properties[0].value = view.doctor.name.first;//doctorFirstName
+                    group[0].attribute[4].properties[0].value = view.doctor.name.last;//doctorLastName
+                    group[0].attribute[5].properties[0].value = '';//doctorMiddleName
+
+                    group[0].attribute[7].properties[0].value = cito;//urgent
+
+                    group[0].attribute[10].properties[0].value= date+' '+time;//plannedEndDate
+
+
+                    //group[1].attribute[0].properties[0].value = (new Date()).getTime();
+                    console.log(model.get('group'))
+                    model.set('group',group);
+                    console.log('model',model.toJSON())
+
+                    //console.log(view,view.$("input[name='diagnosis[mkb][code]']").data('mkbAttrId'))
+                })
+				view.testCollection.updateAll();
+
 			},
 
 			open: function () {

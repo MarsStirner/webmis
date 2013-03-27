@@ -36,7 +36,7 @@ define(["models/diagnostics/Lab"], function (Lab) {
 			};
 
 			tree = convert(raw.data);
-			console.log(tree)
+			//console.log(tree)
 
 			return  tree;
 		}

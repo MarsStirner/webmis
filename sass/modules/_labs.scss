@@ -10,3 +10,21 @@
     }
   }
 }
+
+.labs-list{
+  .dynatree-container{
+    white-space: normal;
+    border: none;
+
+    span.dynatree-connector{
+      display: none;
+    }
+
+  }
+}
+.lab-tests-list{
+  .dynatree-container{
+    //white-space: normal;
+    border: none;
+  }
+}

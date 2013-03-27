@@ -22,6 +22,7 @@ define(["models/diagnostics/LabTestGroup"], function (LabTestGroup) {
 					var node = {};
 					node.title = item.name;
 					node.code = item.code;
+                    node.icon = false;
 
 					if (item.groups.length) {
 						node.children = convert(item.groups);

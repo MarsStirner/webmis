@@ -76,8 +76,10 @@ define([
 			view.ldf.id = model.get('id');
 
 			view.ldf.fetch({success: function(model){
-				console.log('model',view.ldf,model);
-				view.editDirectionPopupView = new EditDirectionPopupView({model: model});
+				//console.log('model',view.ldf,model);
+				view.editDirectionPopupView = new EditDirectionPopupView({
+                    model: model,
+                    appeal: view.options.appeal});
 				view.editDirectionPopupView.render().open();
 			}});
 

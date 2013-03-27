@@ -1,10 +1,8 @@
 <header class="Clearfix">
-	<h2 class="PopupHeader">Создание направления</h2>
-
-	<div class="PopupActions">
-		<button class="Styled Button BlueBorder save"><span>Создать</span></button>
-		<a href="#" class="ShowHidePopup">Отмена</a>
-	</div>
+    <div class="PopupActions">
+        <button class="Styled Button BlueBorder save Disabled88"><span>Создать</span></button>
+        <!--<a href="#" class="ShowHidePopup">Отмена</a>-->
+    </div>
 </header>
 <section class="PopUpLine">
 	<div class="RefDiagVidget">
@@ -38,7 +36,7 @@
 				<div class="DateTime">
 					<div class="DatePeriod SingleDate">
 						<div class="FromTo">
-							<input type="text" name="start-date" id="start-date" placeholder="дд.мм.гггг" class="SelectDate"
+							<input type="text" data-mindate="0" name="start-date" id="start-date" placeholder="дд.мм.гггг" class="SelectDate"
 										 data-relation="#start-time"/>
 						</div>
 						<i class="DateIcon Icon"></i>
@@ -80,3 +78,5 @@
 
 
 </section>
+
+

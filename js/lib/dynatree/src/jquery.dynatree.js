@@ -1245,11 +1245,11 @@ DynaTreeNode.prototype = {
 				}
 			}else{
 				// 'noLink' option was set
-				return true;
+				//return true;
 			}
 		}
 		// Make sure that clicks stop, otherwise <a href='#'> jumps to the top
-		event.preventDefault();
+		//event.preventDefault();
 	},
 
 	_onDblClick: function(event) {
@@ -1258,90 +1258,90 @@ DynaTreeNode.prototype = {
 
 	_onKeydown: function(event) {
 //		this.tree.logDebug("dtnode.onKeydown(" + event.type + "): dtnode:" + this + ", charCode:" + event.charCode + ", keyCode: " + event.keyCode + ", which: " + event.which);
-		var handled = true,
-			sib;
-//		alert("keyDown" + event.which);
-
-		switch( event.which ) {
-			// charCodes:
-//			case 43: // '+'
-			case 107: // '+'
-			case 187: // '+' @ Chrome, Safari
-				if( !this.bExpanded ){ this.toggleExpand(); }
-				break;
-//			case 45: // '-'
-			case 109: // '-'
-			case 189: // '+' @ Chrome, Safari
-				if( this.bExpanded ){ this.toggleExpand(); }
-				break;
-			//~ case 42: // '*'
-				//~ break;
-			//~ case 47: // '/'
-				//~ break;
-			// case 13: // <enter>
-				// <enter> on a focused <a> tag seems to generate a click-event.
-				// this._userActivate();
-				// break;
-			case 32: // <space>
-				this._userActivate();
-				break;
-			case 8: // <backspace>
-				if( this.parent ){
-					this.parent.focus();
-				}
-				break;
-			case 37: // <left>
-				if( this.bExpanded ) {
-					this.toggleExpand();
-					this.focus();
-//				} else if( this.parent && (this.tree.options.rootVisible || this.parent.parent) ) {
-				} else if( this.parent && this.parent.parent ) {
-					this.parent.focus();
-				}
-				break;
-			case 39: // <right>
-				if( !this.bExpanded && (this.childList || this.data.isLazy) ) {
-					this.toggleExpand();
-					this.focus();
-				} else if( this.childList ) {
-					this.childList[0].focus();
-				}
-				break;
-			case 38: // <up>
-				sib = this.getPrevSibling();
-				while( sib && sib.bExpanded && sib.childList ){
-					sib = sib.childList[sib.childList.length-1];
-				}
-//				if( !sib && this.parent && (this.tree.options.rootVisible || this.parent.parent) )
-				if( !sib && this.parent && this.parent.parent ){
-					sib = this.parent;
-				}
-				if( sib ){
-					sib.focus();
-				}
-				break;
-			case 40: // <down>
-				if( this.bExpanded && this.childList ) {
-					sib = this.childList[0];
-				} else {
-					var parents = this._parentList(false, true);
-					for(var i=parents.length-1; i>=0; i--) {
-						sib = parents[i].getNextSibling();
-						if( sib ){ break; }
-					}
-				}
-				if( sib ){
-					sib.focus();
-				}
-				break;
-			default:
-				handled = false;
-		}
-		// Return false, if handled, to prevent default processing
-//		return !handled;
-		if(handled){
-			event.preventDefault();
-		}
+//		var handled = true,
+//			sib;
+////		alert("keyDown" + event.which);
+//
+//		switch( event.which ) {
+//			// charCodes:
+////			case 43: // '+'
+//			case 107: // '+'
+//			case 187: // '+' @ Chrome, Safari
+//				if( !this.bExpanded ){ this.toggleExpand(); }
+//				break;
+////			case 45: // '-'
+//			case 109: // '-'
+//			case 189: // '+' @ Chrome, Safari
+//				if( this.bExpanded ){ this.toggleExpand(); }
+//				break;
+//			//~ case 42: // '*'
+//				//~ break;
+//			//~ case 47: // '/'
+//				//~ break;
+//			// case 13: // <enter>
+//				// <enter> on a focused <a> tag seems to generate a click-event.
+//				// this._userActivate();
+//				// break;
+//			case 32: // <space>
+//				this._userActivate();
+//				break;
+//			case 8: // <backspace>
+//				if( this.parent ){
+//					this.parent.focus();
+//				}
+//				break;
+//			case 37: // <left>
+//				if( this.bExpanded ) {
+//					this.toggleExpand();
+//					this.focus();
+////				} else if( this.parent && (this.tree.options.rootVisible || this.parent.parent) ) {
+//				} else if( this.parent && this.parent.parent ) {
+//					this.parent.focus();
+//				}
+//				break;
+//			case 39: // <right>
+//				if( !this.bExpanded && (this.childList || this.data.isLazy) ) {
+//					this.toggleExpand();
+//					this.focus();
+//				} else if( this.childList ) {
+//					this.childList[0].focus();
+//				}
+//				break;
+//			case 38: // <up>
+//				sib = this.getPrevSibling();
+//				while( sib && sib.bExpanded && sib.childList ){
+//					sib = sib.childList[sib.childList.length-1];
+//				}
+////				if( !sib && this.parent && (this.tree.options.rootVisible || this.parent.parent) )
+//				if( !sib && this.parent && this.parent.parent ){
+//					sib = this.parent;
+//				}
+//				if( sib ){
+//					sib.focus();
+//				}
+//				break;
+//			case 40: // <down>
+//				if( this.bExpanded && this.childList ) {
+//					sib = this.childList[0];
+//				} else {
+//					var parents = this._parentList(false, true);
+//					for(var i=parents.length-1; i>=0; i--) {
+//						sib = parents[i].getNextSibling();
+//						if( sib ){ break; }
+//					}
+//				}
+//				if( sib ){
+//					sib.focus();
+//				}
+//				break;
+//			default:
+//				handled = false;
+//		}
+//		// Return false, if handled, to prevent default processing
+////		return !handled;
+//		if(handled){
+//			event.preventDefault();
+//		}
 	},
 
 	_onKeypress: function(event) {
@@ -1354,32 +1354,32 @@ DynaTreeNode.prototype = {
 		// Handles blur and focus events.
 //		this.tree.logDebug("dtnode._onFocus(%o): %o", event, this);
 		var opts = this.tree.options;
-		if ( event.type == "blur" || event.type == "focusout" ) {
-			if ( opts.onBlur ){
-				opts.onBlur.call(this.tree, this);
-			}
-			if( this.tree.tnFocused ){
-				$(this.tree.tnFocused.span).removeClass(opts.classNames.focused);
-			}
-			this.tree.tnFocused = null;
-			if( opts.persist ){
-				$.cookie(opts.cookieId+"-focus", "", opts.cookie);
-			}
-		} else if ( event.type=="focus" || event.type=="focusin") {
+//		if ( event.type == "blur" || event.type == "focusout" ) {
+//			if ( opts.onBlur ){
+//				opts.onBlur.call(this.tree, this);
+//			}
+//			if( this.tree.tnFocused ){
+//				$(this.tree.tnFocused.span).removeClass(opts.classNames.focused);
+//			}
+//			this.tree.tnFocused = null;
+//			if( opts.persist ){
+//				$.cookie(opts.cookieId+"-focus", "", opts.cookie);
+//			}
+//		} else if ( event.type=="focus" || event.type=="focusin") {
 			// Fix: sometimes the blur event is not generated
-			if( this.tree.tnFocused && this.tree.tnFocused !== this ) {
-				this.tree.logDebug("dtnode.onFocus: out of sync: curFocus: %o", this.tree.tnFocused);
-				$(this.tree.tnFocused.span).removeClass(opts.classNames.focused);
-			}
-			this.tree.tnFocused = this;
-			if ( opts.onFocus ){
-				opts.onFocus.call(this.tree, this);
-			}
-			$(this.tree.tnFocused.span).addClass(opts.classNames.focused);
-			if( opts.persist ){
-				$.cookie(opts.cookieId+"-focus", this.data.key, opts.cookie);
-			}
-		}
+//			if( this.tree.tnFocused && this.tree.tnFocused !== this ) {
+//				this.tree.logDebug("dtnode.onFocus: out of sync: curFocus: %o", this.tree.tnFocused);
+//				$(this.tree.tnFocused.span).removeClass(opts.classNames.focused);
+//			}
+//			this.tree.tnFocused = this;
+//			if ( opts.onFocus ){
+//				opts.onFocus.call(this.tree, this);
+//			}
+//			$(this.tree.tnFocused.span).addClass(opts.classNames.focused);
+//			if( opts.persist ){
+//				$.cookie(opts.cookieId+"-focus", this.data.key, opts.cookie);
+//			}
+//		}
 		// TODO: return anything?
 //		return false;
 	},

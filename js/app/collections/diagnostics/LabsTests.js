@@ -21,6 +21,8 @@ define(["models/diagnostics/LabTest"], function (LabTest) {
 					var node = {};
 					node.title = item.name;
 					node.code = item.code;
+                    node.icon = false;
+                    node.cito = '';
 
 					if (item.groups && item.groups.length) {
 						node.children = convert(item.groups);
@@ -34,7 +36,7 @@ define(["models/diagnostics/LabTest"], function (LabTest) {
 			};
 
 			tree = convert(raw.data);
-			console.log(tree)
+			//console.log(tree)
 
 			return  tree;
 		}
