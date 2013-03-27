@@ -14,7 +14,9 @@
 		<tbody>
 		<tr><td>История болезни №:</td><td>${appealNumber}</td></tr>
 		<tr><td>Отделение:</td><td>${department.name}</td></tr>
+		{{if bed && bed.code}}
 		<tr><td>Койка:</td><td>${bed.code}</td></tr>
+		{{/if}}
 
 
 		</tbody>
