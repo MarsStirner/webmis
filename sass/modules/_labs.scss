@@ -28,3 +28,32 @@
     border: none;
   }
 }
+
+.edit-tree{
+  .dynatree-container{
+    white-space: normal;
+  }
+  span.dynatree-node{
+    position: relative;
+    display: block;
+    table{
+      width: 550px;
+      display: inline-block;
+      td{
+        vertical-align: top;
+        //border: 1px solid;
+
+        &.title-col{
+          padding-left: 5px;
+          width: 370px;
+        }
+        &.sito-col{
+          width: 25px;
+        }
+        &.time-col{
+          width: 165px;
+        }
+      }
+    }
+  }
+}
