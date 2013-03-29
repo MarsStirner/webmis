@@ -144,6 +144,40 @@ header {
 	}
 }
 
+.LinkToProfile {
+	margin: 0;
+}
+
+.profile-options {
+	position: absolute;
+	z-index: 9999;
+	font-size: 1.2em;
+	color: black;
+
+	li {
+		color:#3F3F40;
+		border-top:1px solid #D4D4D4;
+		padding:0.6em 8px;
+		cursor:pointer;
+
+		&:hover {
+			background:#d2f0fd;
+		}
+		&:first-child {
+			border-top:none;
+			cursor:default;
+			background-color: #cccccc
+		}
+		&:last-child {
+			padding: 0;
+		}
+	}
+}
+
+.logout {
+	width: 100%;
+}
+
 #page {
 	/*background: #fff;
 	border:1px solid #A0A0A0;
@@ -640,6 +674,9 @@ footer {
 
 .icon-color-green {
 	color: #009F1F;
+}
+.icon-color-red {
+	color: #dd1111;
 }
 
 .button-color-green {
