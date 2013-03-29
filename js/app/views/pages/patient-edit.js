@@ -1889,7 +1889,7 @@ define([
 
 						this.collection.on("reset", function () {
 							this.$("#empty-alert").toggle(!this.collection.length);
-							this.grid.$(".EditQuota").button({text: "false", icons: {primary: "icon-edit"}});
+							//this.grid.$(".EditQuota").button({text: "false", icons: {primary: "icon-edit"}});
 						}, this);
 
 						this.collection.fetch();
