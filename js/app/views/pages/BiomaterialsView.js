@@ -381,7 +381,6 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			_(options.dropDownItems).each(function (ddi) {
 				$list.append($("<li><a href='#' class='SubPrint'>" + ddi.label + "</a></li>").click(function () {
-					console.log('пятница!!!!')
 					event.preventDefault();
 					ddi.handler.apply(options.scope);
 				}));
@@ -464,11 +463,15 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			UIInitialize(view.$el);
 
-			$filterDate.datepicker("setDate", new Date());
+			var startOfday = moment(new Date()).startOf('day');
 
-			var e = (new Date()).getTime() + ((60 * 60 * 24) - 60) * 1000;
+			var endOfDay = moment(new Date()).endOf("day");
 
-			$endDate.val(e);
+			$filterDate.datepicker("setDate", startOfday.toDate());
+
+//			var e = (new Date()).getTime() + ((60 * 60 * 24) - 60) * 1000;
+//// это неправильно у енддате получается текуший час и минуты, надо 23:59
+			$endDate.val(endOfDay.valueOf());
 
 			$filterDate.on('change', function () {
 				var start = $(this).datepicker("getDate").getTime();
