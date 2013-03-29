@@ -12,11 +12,13 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 
 			events: {
 				"click .ShowHidePopup": "close",
-				"click .save": "onSave",
-				"click .cancel": "close",
+				//"click .save": "onSave",
+				//"click .cancel": "close",
 				"click .MKBLauncher": "toggleMKB"
 			},
 			initialize: function () {
+				_.bindAll(this);
+
 				var view = this;
 
 				view.doctor = view.getDoctor();
@@ -202,7 +204,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 						//console.log(node, nodeSpan)
 						UIInitialize($(nodeSpan));
 
-						$(nodeSpan).find(".HourPicker").mask("99:99");
+						$(nodeSpan).find(".HourPicker").mask("99:99").timepicker({showPeriodLabels: false});
 
 					},
 					onCustomRender: function (node) {
@@ -339,10 +341,10 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				var assessmentBeginDate = view.getProperty('assessmentBeginDate')
 				var date = new Date(assessmentBeginDate);
 				this.$("#start-date").datepicker("setDate", date);
-				this.$("#start-time").val(date.getHours() + ':' + date.getMinutes()).mask("99:99");
+				this.$("#start-time").val(date.getHours() + ':' + date.getMinutes()).mask("99:99").timepicker({showPeriodLabels: false});
 
 
-				view.$('.save,.cancel').button();
+				//view.$('.save,.cancel').button();
 
 				//$("body").append(this.el);
 
@@ -352,8 +354,17 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 					modal: true,
 					dialogClass: "webmis",
 					title: "Редактирование направления",
-					onClose: view.close
-
+					onClose: view.close,
+					buttons: [
+						{
+							text: "Сохранить",
+							click: this.onSave
+						},
+						{
+							text: "Отмена",
+							click: this.close
+						}
+					]
 				});
 
 
