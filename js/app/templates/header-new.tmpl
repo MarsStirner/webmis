@@ -11,39 +11,6 @@
 			</li>
 	<% }); %>
 </ul>
-<style>
-	.LinkToProfile {
-		margin: 0;
-	}
-
-	.profile-options {
-		position: absolute;
-		z-index: 9999;
-		font-size: 1.2em;
-		color: black;
-	}
-
-	.profile-options li {
-		color:#3F3F40;
-		border-top:1px solid #D4D4D4;
-		padding:0.6em 8px;
-		cursor:pointer;
-	}
-
-	.profile-options li:hover {
-		background:#d2f0fd;
-	}
-
-	.profile-options li:first-child {
-		border-top:none;
-		cursor:default;
-		background-color: #cccccc
-	}
-
-	.profile-options li:last-child {
-		padding: 0;
-	}
-</style>
 <div class="UserSide">
 	<button class="LinkToProfile"><%= doctor.name.last %> <%= doctor.name.first[0] %>.</button>
 	<ul class="profile-options">
@@ -58,6 +25,6 @@
 				<span><%= role.title %></span>
 			</li>
 		<% }); %>
-		<li><button class="logout" style="width: 100%">Выход</button></li>
+		<li><button class="logout">Выход</button></li>
 	</ul>
 </div>
