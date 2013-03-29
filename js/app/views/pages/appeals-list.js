@@ -108,7 +108,7 @@ define([
 			var beginDate = endDate - (24 * 60 - 1) * 60 * 1000;
 
 			var form007 = new App.Models.PrintForm007({
-				departmentId: 18,
+				//departmentId: 18,
 				beginDate: beginDate,
 				endDate: endDate
 			});
