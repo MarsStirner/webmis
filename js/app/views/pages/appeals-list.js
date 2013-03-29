@@ -259,7 +259,7 @@ define([
 				/*Collection.setParams({'filter[date]':1334300400000})*/
 
 				Collection.setParams({
-					sortingField: 'number',
+					sortingField: 'bed',
 					sortingMethod: 'asc'
 				});
 				Collection.reset();
@@ -285,8 +285,8 @@ define([
 					var target = $(event.target);
 
 					if (target.hasClass('bed-registration')) {
-						console.log(model);
-						console.log('bed-registration', model.get('id'));
+//						console.log(model);
+//						console.log('bed-registration', model.get('id'));
 						view.newHospitalBed(model.get('id'));
 					} else {
 						App.Router.navigate('/appeals/' + model.get('id') + '/', {trigger: true});

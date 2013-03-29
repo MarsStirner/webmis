@@ -47,12 +47,19 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 						options = {
 							dataType: "jsonp",
 							contentType: 'application/json',
-							success: function (status) {
-								if (status) {
-									collection.trigger('updateAll:success');
+							success: function (data,status) {
+								console.log('updateAll success', arguments)
+								if (status == 'success') {
+									collection.trigger('updateAll:success',arguments);
 								} else {
-									collection.trigger('updateAll:error');
+									//collection.trigger('updateAll:error',status);
 								}
+							},
+							error: function (x,status){
+
+								var response = $.parseJSON(x.responseText);
+								collection.trigger('updateAll:error',response);
+								console.log('updateAll error', response.exception,response.errorCode,response.errorMessage,arguments)
 							},
 							data: JSON.stringify({data: collection.toJSON()})
 						};
@@ -72,7 +79,12 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 				view.testCollection.on('updateAll:success', function () {
 					pubsub.trigger('lab-diagnostic:added');
+
 					view.close();
+				});
+
+				view.testCollection.on('updateAll:error', function (response) {
+					pubsub.trigger('noty', {text: 'Ошибка: ' + response.exception+', errorCode: '+response.errorCode , type: 'error'});
 				});
 
 
@@ -382,8 +394,8 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 					view.setParam(model, 'plannedEndDate', 'value', date + ' ' + time);
 
-					var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
-					view.setParam(model, 'Направительный диагноз', 'valueId', mkbId);
+//					var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
+//					view.setParam(model, 'Направительный диагноз', 'valueId', mkbId);
 
 					view.setParam(model, 'finance', 'value', $($('#finance option:selected')[0]).val());
 

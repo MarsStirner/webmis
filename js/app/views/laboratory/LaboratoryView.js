@@ -48,7 +48,7 @@ define([
 
 			this.addDirectionPopupView = new AddDirectionPopupView({appeal: this.options.appeal});
 
-			pubsub.on('lab-diagnostic:added',function(){
+			pubsub.on('lab-diagnostic:added', function () {
 				view.collection.fetch();
 			})
 
@@ -75,11 +75,11 @@ define([
 			view.ldf = new laboratoryDiagsForm();
 			view.ldf.id = model.get('id');
 
-			view.ldf.fetch({success: function(model){
+			view.ldf.fetch({success: function (model) {
 				//console.log('model',view.ldf,model);
 				view.editDirectionPopupView = new EditDirectionPopupView({
-                    model: model,
-                    appeal: view.options.appeal});
+					model: model,
+					appeal: view.options.appeal});
 				view.editDirectionPopupView.render().open();
 			}});
 
@@ -91,9 +91,17 @@ define([
 
 			model.eventId = view.collection.appealId;
 
+			var id = model.get('id')
+
 			model.destroy({success: function () {
-				pubsub.trigger('noty', {text:'Направление удалено',type:'alert'});
+				pubsub.trigger('noty', {text: 'Направление удалено', type: 'alert'});
 				view.collection.fetch();
+				//console.log('cancelDirection success',arguments)
+			}, error: function (x, error) {
+
+				var response = $.parseJSON(x.responseText);
+				pubsub.trigger('noty', {text: 'Ошибка: ' + response.exception+', errorCode: '+response.errorCode+', id:' + id, type: 'error'});
+				//console.log('cancelDirection error',responce.responseText,arguments)
 			}});
 
 		},
@@ -110,7 +118,6 @@ define([
 
 		render: function () {
 			var view = this;
-
 
 
 			view.$el.empty().html($.tmpl(view.template));

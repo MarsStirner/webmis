@@ -42,7 +42,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				});
 				var modelFinanceId = modelFinanceAttr.properties[0].value;
 
-				console.log(' modelFinanceId', modelFinanceId)
+				console.log('modelFinanceId', modelFinanceId, appealFinanceId)
 
 				view.financeSelect = new SelectView({
 					collection: view.financeDictionary,
@@ -370,7 +370,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 //				});
 //
 				var modelTree = tree.toDict().children[0];
-				console.log('modelTree', modelTree)
+				//console.log('modelTree', modelTree)
 				var $dateInput = view.$('#date' + modelTree.key);
 				var date = moment($dateInput.datepicker("getDate")).format('YYYY-MM-DD');
 
@@ -380,7 +380,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				var $citoInput = view.$('#cito' + modelTree.key);
 				var cito = $citoInput.prop('checked');
 
-				console.log('node inputs', date, time, cito)
+				//console.log('node inputs', date, time, cito)
 
 				var selected_params = _.filter(modelTree.children, function (node) {
 					return node.select == true;
@@ -421,8 +421,8 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 
 				view.setParam(view.model, 'plannedEndDate', 'value', date + ' ' + time);
 
-				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
-				view.setParam(view.model, 'Направительный диагноз', 'valueId', mkbId);
+//				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
+//				view.setParam(view.model, 'Направительный диагноз', 'valueId', mkbId);
 
 				view.setParam(view.model, 'finance', 'value', $($('#finance option:selected')[0]).val());
 
