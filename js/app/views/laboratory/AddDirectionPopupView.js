@@ -19,11 +19,13 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 			events: {
 				"click .ShowHidePopup": "close",
-				"click .save": "onSave",
-				"click .cancel": "close",
+				//"click .save": "onSave",
+				//"click .cancel": "close",
 				"click .MKBLauncher": "toggleMKB"
 			},
 			initialize: function () {
+				_.bindAll(this);
+
 				var view = this;
 
 				view.doctor = {
@@ -276,7 +278,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 				var now = new Date();
 				this.$("#start-date").datepicker("setDate", now);
-				this.$("#start-time").val(now.getHours() + ':' + now.getMinutes()).mask("99:99");
+				this.$("#start-time").val(now.getHours() + ':' + now.getMinutes()).mask("99:99").timepicker({showPeriodLabels: false});
 
 
 				//$("body").append(this.el);
@@ -286,18 +288,33 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					modal: true,
 					dialogClass: "webmis",
 					title: "Создание направления",
-					onClose: view.close
+					onClose: view.close,
+					buttons: [
+						{
+							text: "Сохранить",
+							click: this.onSave,
+							"class": "button-color-green save"
+						},
+						{
+							text: "Отмена",
+							click: this.close
+						}
+					]
 				});
 
-				view.$(".save,.MKBLauncher,.cancel").button();
-				view.$(".save").button("disable");
+				/*view.$(".save,.MKBLauncher,.cancel").button();
+				view.$(".save").button("disable");*/
 				//}
+
+				this.$el.closest(".ui-dialog").find('.save').button("disable");
+
+				view.$(".MKBLauncher").button({icons: {primary: "icon-book"}});
 
 				return view;
 			},
 
 			saveButton: function (enabled) {
-				var $saveButton = this.$('.save');
+				var $saveButton = this.$el.closest(".ui-dialog").find('.save');
 				if (enabled) {
 					$saveButton.button("enable")
 				} else {

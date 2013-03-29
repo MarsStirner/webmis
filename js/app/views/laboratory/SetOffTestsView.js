@@ -136,7 +136,7 @@ define([ 'text!templates/appeal/edit/popups/set-of-tests.tmpl',
 
                         $(nodeSpan).find(".SelectDate").datepicker("setDate", "+1");
 
-                        $(nodeSpan).find(".HourPicker").mask("99:99");
+                        $(nodeSpan).find(".HourPicker").mask("99:99").timepicker({showPeriodLabels: false});
 
                         var $citoCheckbox = $(nodeSpan).find("input[name='sito']");
 
