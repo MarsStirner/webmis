@@ -757,7 +757,12 @@ footer a {
   color: #009F1F;
 }
 
-/* line 645, ../../sass/modules/layout.scss */
+/* line 644, ../../sass/modules/layout.scss */
+.icon-color-red {
+  color: #dd1111;
+}
+
+/* line 648, ../../sass/modules/layout.scss */
 .button-color-green {
   background: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyYzQzZCIvPjxzdG9wIG9mZnNldD0iNDElIiBzdG9wLWNvbG9yPSIjMzBhMzFhIi8+PHN0b3Agb2Zmc2V0PSI2MiUiIHN0b3AtY29sb3I9IiMzMGEzMWEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM1MmM0M2QiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=");
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #52c43d), color-stop(41%, #30a31a), color-stop(62%, #30a31a), color-stop(100%, #52c43d));
@@ -769,13 +774,13 @@ footer a {
   	background: linear-gradient(top, #009F1F 0%,#009F1F 100%);*/
   color: #fff;
 }
-/* line 657, ../../sass/modules/layout.scss */
+/* line 660, ../../sass/modules/layout.scss */
 .button-color-green .ui-button-text {
   text-shadow: none;
 }
 
 /* to override jqueryui icons for font icons */
-/* line 664, ../../sass/modules/layout.scss */
+/* line 667, ../../sass/modules/layout.scss */
 [class^="icon-"],
 [class*=" icon-"] {
   background: none !important;
@@ -784,12 +789,12 @@ footer a {
   padding: .1em 0 0 .1em !important;
 }
 
-/* line 671, ../../sass/modules/layout.scss */
+/* line 674, ../../sass/modules/layout.scss */
 .ui-button-icon-only .ui-icon, .ui-button-text-icon-primary .ui-icon, .ui-button-text-icon-secondary .ui-icon, .ui-button-text-icons .ui-icon, .ui-button-icons-only .ui-icon {
   margin-top: -0.55em !important;
 }
 
-/* line 675, ../../sass/modules/layout.scss */
+/* line 678, ../../sass/modules/layout.scss */
 .LineBlockHolder > li .LineBlock .ui-button {
   top: 1.5em;
 }
@@ -832,37 +837,37 @@ footer a {
 		color: black;
 	}
 }*/
-/* line 719, ../../sass/modules/layout.scss */
+/* line 722, ../../sass/modules/layout.scss */
 .select2-container .select2-choice {
   height: 2.25em;
   font-size: 1.2em;
   border-color: #737477;
 }
-/* line 723, ../../sass/modules/layout.scss */
+/* line 726, ../../sass/modules/layout.scss */
 .select2-container .select2-choice span {
   line-height: 2.25em;
   height: 2.25em;
 }
 
-/* line 734, ../../sass/modules/layout.scss */
+/* line 737, ../../sass/modules/layout.scss */
 .select2-drop {
   border-left: 1px solid #737477;
   border-right: 1px solid #737477;
   border-bottom: 1px solid #737477;
   border-radius: 0;
 }
-/* line 739, ../../sass/modules/layout.scss */
+/* line 742, ../../sass/modules/layout.scss */
 .select2-drop.select2-drop-above {
   border-top: 1px solid #737477;
   border-radius: 0;
 }
-/* line 743, ../../sass/modules/layout.scss */
+/* line 746, ../../sass/modules/layout.scss */
 .select2-drop .select2-results {
   margin: 0;
   padding: 0;
   font-size: 1.2em;
 }
-/* line 747, ../../sass/modules/layout.scss */
+/* line 750, ../../sass/modules/layout.scss */
 .select2-drop .select2-results li {
   padding: 0.2em 0.4em 0.2em 0.2em;
   border-top: 1px solid #D4D4D4;
@@ -870,12 +875,12 @@ footer a {
   	border-top: none;
   }*/
 }
-/* line 753, ../../sass/modules/layout.scss */
+/* line 756, ../../sass/modules/layout.scss */
 .select2-drop .select2-results li.select2-highlighted {
   background: #D2F0FD;
   color: black;
 }
-/* line 759, ../../sass/modules/layout.scss */
+/* line 762, ../../sass/modules/layout.scss */
 .select2-drop .select2-search input {
   background: white url("../select2.png") no-repeat 100% -22px;
   background: url("../select2.png") no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
