@@ -19,9 +19,7 @@
 		</li>
 		<% _.each(userAvailableRoles, function (role) { %>
 			<li class="user-role" data-role="<%= role.role %>">
-				<% if (currentRole === role.role) { %>
-					<i class="icon-check"></i>
-				<% } %>
+				<i class="icon-check<% if (currentRole !== role.role) { %> transparent<% } %>"></i>
 				<span><%= role.title %></span>
 			</li>
 		<% }); %>
