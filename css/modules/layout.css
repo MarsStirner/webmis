@@ -119,10 +119,8 @@ header {
 .UserSide {
   float: right;
   /*padding-right:1em;*/
-  padding-top: 0.5em;
   max-width: 50%;
   white-space: nowrap;
-  font-size: 1.3em;
 }
 /* line 108, ../../sass/modules/layout.scss */
 .UserSide a.LinkToProfile {
