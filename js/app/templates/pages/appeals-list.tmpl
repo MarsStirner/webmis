@@ -145,27 +145,28 @@
 <script id="appeals-list-filters-nurse-department" type="text/x-jquery-tmpl">
 	<form>
 		<div id="page-head">
-			<div class="FilterPage Clearfix">
+			<div class="EditForm Clearfix">
 				<div class="FilterLabel" style="float: left;">Лежащие в отделениии по состоянию на</div>
-				<div class="DaySelect">
-					<div class="date" style="width: 10em;">
-						<input type="text" id="appeal-start-date" name="date" placeholder="дд.мм.гггг" class="SelectDate date-input">
-						<i class="icon-calendar date-icon" style="right: .3em; top: .3em;"></i>
-					</div>
-				</div>
-			</div>
-			<!--<div class="FilterPage Clearfix">
-				<div class="DaySelect">
-					<div class="FilterLabel">Лежащие в отделениии по состоянию на</div>
-					<div class="DatePeriod SingleDate">
-						<div class="FromTo">
-							&lt;!&ndash;<input type="hidden" name="departmentId" value="18"/>&ndash;&gt;
-							<input type="text" id="appeal-start-date" name="date" placeholder="дд.мм.гггг" class="SelectDate date-input" />
+
+
+					<div class="QuartCol">
+						<div class="date">
+							<input type="text" name="date" id="appeal-start-date" placeholder="ДД.ММ.ГГГГ" data-relation="#appeal-start-time" class="date-input date-range-start Mandatory"/>
+							<i class="icon-calendar date-icon"></i>
 						</div>
-						<i class="DateIcon Icon"></i>
 					</div>
-				</div>
-			</div>-->
+					<div class="DecCol">
+						<div class="time">
+							<input type="text" class="time-input" id="appeal-start-time" placeholder="ЧЧ:ММ" data-relation="#appeal-start-date" value="08:00"/>
+							<i class="icon-time time-icon"></i>
+						</div>
+
+					</div>
+
+
+
+
+
 		</div>
 	</form>
 </script>

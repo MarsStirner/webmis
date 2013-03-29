@@ -308,7 +308,7 @@ define([
 			this.$el.find(".Container").html(AppealsGrid.render().el);
 
 			if (this.printButton) {
-				this.$el.find(".FilterPage").append(this.printButton);
+				this.$el.find(".EditForm").append(this.printButton);
 			}
 
 
