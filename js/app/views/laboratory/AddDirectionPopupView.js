@@ -20,6 +20,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 			events: {
 				"click .ShowHidePopup": "close",
 				"click .save": "onSave",
+				"click .cancel": "close",
 				"click .MKBLauncher": "toggleMKB"
 			},
 			initialize: function () {
@@ -37,7 +38,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 				view.diagnosis = view.appeal.getDiagnosis();
 
-				console.log('view.diagnosis',view.diagnosis)
+				//console.log('view.diagnosis', view.diagnosis)
 
 
 				var TestCollection = Collection.extend({
@@ -47,19 +48,19 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 						options = {
 							dataType: "jsonp",
 							contentType: 'application/json',
-							success: function (data,status) {
+							success: function (data, status) {
 								console.log('updateAll success', arguments)
 								if (status == 'success') {
-									collection.trigger('updateAll:success',arguments);
+									collection.trigger('updateAll:success', arguments);
 								} else {
 									//collection.trigger('updateAll:error',status);
 								}
 							},
-							error: function (x,status){
+							error: function (x, status) {
 
 								var response = $.parseJSON(x.responseText);
-								collection.trigger('updateAll:error',response);
-								console.log('updateAll error', response.exception,response.errorCode,response.errorMessage,arguments)
+								collection.trigger('updateAll:error', response);
+								console.log('updateAll error', response.exception, response.errorCode, response.errorMessage, arguments)
 							},
 							data: JSON.stringify({data: collection.toJSON()})
 						};
@@ -84,7 +85,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				});
 
 				view.testCollection.on('updateAll:error', function (response) {
-					pubsub.trigger('noty', {text: 'Ошибка: ' + response.exception+', errorCode: '+response.errorCode , type: 'error'});
+					pubsub.trigger('noty', {text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode, type: 'error'});
 				});
 
 
@@ -92,39 +93,23 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					view.testCollection.reset();
 				}, view);
 
-				pubsub.on('test:date:changed', function (code, date) {
 
-//					var model = view.testCollection.find(function (model) {
-//						return model.get('code') == code;
-//					});
+//				pubsub.on('test:cito:changed', function (code, cito) {
 //
-//					if (model) {
-//						var group = model.get('group');
-//						group[0].attribute[2].properties[0].value = date + ' 07:00:00';
+////					var model = view.testCollection.find(function (model) {
+////						return model.get('code') == code;
+////					});
+////
+////
+////					if (model) {
+////						var group = model.get('group');
+////						group[0].attribute[7].properties[0].value = cito;
+////
+////						model.set('group', group);
+////					}
+//					//console.log('model',model);
 //
-//						model.set('group', group);
-//					}
-
-
-					//console.log('test-date',code, date);
-				});
-
-				pubsub.on('test:cito:changed', function (code, cito) {
-
-					var model = view.testCollection.find(function (model) {
-						return model.get('code') == code;
-					});
-
-
-					if (model) {
-						var group = model.get('group');
-						group[0].attribute[7].properties[0].value = cito;
-
-						model.set('group', group);
-					}
-					//console.log('model',model);
-
-				});
+//				});
 
 
 			},
@@ -173,9 +158,8 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				});
 
 				this.$("input[name='diagnosis[mkb][code]']").val(sd.get("code"));
-
 				this.$("input[name='diagnosis[mkb][diagnosis]']").val(sd.get("diagnosis"));
-				this.$("input[name='diagnosis[mkb][code]']").data('mkb-id',sd.get("id"));
+				this.$("input[name='diagnosis[mkb][code]']").data('mkb-id', sd.get("id"));
 			},
 
 			onMKBCodeKeyUp: function (event) {
@@ -188,18 +172,6 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 			},
 			setExamAttr: function (opts) {
 
-
-//                var examAttr = this.examAttributes.find(function (a) {
-//                    return a.get("typeId") == opts.attrId;
-//                });
-
-//				console.log('setExamAttr', opts);
-//
-//				var $input = this.$("[data-examattr-id=" + opts.attrId + "]");
-//
-//				if ($input.val() != opts.value || opts.displayText) {
-//					$input.val(opts.displayText || opts.value).change();
-//				}
 			},
 
 			render: function () {
@@ -215,6 +187,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				labs.fetch({success: function () {
 					view.labsListView = new LabsListView({collection: labs});
 					view.renderNested(view.labsListView, ".labs-list-el");
+					view.depended(view.labsListView);
 
 				}});
 
@@ -265,7 +238,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 						view.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
 						view.$("input[name='diagnosis[mkb][code]']").val(ui.item.displayText);
-						view.$("input[name='diagnosis[mkb][code]']").data('mkb-id',ui.item.id);
+						view.$("input[name='diagnosis[mkb][code]']").data('mkb-id', ui.item.id);
 					}
 				}).on("keyup", function () {
 						if (!$(this).val().length) {
@@ -284,16 +257,18 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				if (view.diagnosis) {
 					view.$("input[name='diagnosis[mkb][diagnosis]']").val(view.diagnosis.get('mkb').get('diagnosis'));
 					view.$("input[name='diagnosis[mkb][code]']").val(view.diagnosis.get('mkb').get('code'));
-					view.$("input[name='diagnosis[mkb][code]']").data('mkb-id',view.diagnosis.get('mkb').get('id'));
+					view.$("input[name='diagnosis[mkb][code]']").data('mkb-id', view.diagnosis.get('mkb').get('id'));
 				}
 
 				view.labTestListView = new LabTestsListView();
+				view.depended(view.labTestListView);
 				view.renderNested(view.labTestListView, ".lab-test-list-el");
 
 				view.labsTestsCollection = new LabsTestsCollection();
 				view.setOffTestsView = new SetOffTestsView({
 					collection: view.labsTestsCollection, patientId: view.options.appeal.get('patient').get('id'), testCollection: view.testCollection
 				});
+				view.depended(view.setOffTestsView);
 				view.renderNested(view.setOffTestsView, ".set-off-test-el");
 
 
@@ -314,7 +289,7 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 					onClose: view.close
 				});
 
-				view.$(".save,.MKBLauncher").button();
+				view.$(".save,.MKBLauncher,.cancel").button();
 				view.$(".save").button("disable");
 				//}
 
@@ -394,8 +369,8 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 
 					view.setParam(model, 'plannedEndDate', 'value', date + ' ' + time);
 
-//					var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
-//					view.setParam(model, 'Направительный диагноз', 'valueId', mkbId);
+					var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
+					view.setParam(model, 'Направительный диагноз', 'valueId', mkbId);
 
 					view.setParam(model, 'finance', 'value', $($('#finance option:selected')[0]).val());
 
@@ -419,18 +394,15 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 							_.each(a.properties, function (p, propertyIndex) {
 								if (p.name == propertyName) {
 									console.log('нашли', groupIndex, attributeIndex, propertyIndex);
-//									if(_.has(object, key) ){
-//
-//									}
-									group[groupIndex].attribute[attributeIndex].properties[propertyIndex][propertyName] = value;
+									group[groupIndex].attribute[attributeIndex].properties[propertyIndex]['value'] = value;
 									find = true;
 								}
 
 							});
 
-							if(!find){//нет нужного проперти, вставляем его
+							if (!find) {//нет нужного проперти, вставляем его
 								group[groupIndex].attribute[attributeIndex].properties.push({name: propertyName, value: value});
-								console.log('не нашли', groupIndex, attributeIndex,group[groupIndex].attribute[attributeIndex].properties);
+								console.log('не нашли', groupIndex, attributeIndex, group[groupIndex].attribute[attributeIndex].properties);
 							}
 
 						}

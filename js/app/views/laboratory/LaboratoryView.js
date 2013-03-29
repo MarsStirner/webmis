@@ -46,7 +46,7 @@ define([
 			this.depended(this.grid);
 
 
-			this.addDirectionPopupView = new AddDirectionPopupView({appeal: this.options.appeal});
+			///this.addDirectionPopupView = new AddDirectionPopupView({appeal: this.options.appeal});
 
 			pubsub.on('lab-diagnostic:added', function () {
 				view.collection.fetch();
@@ -121,17 +121,19 @@ define([
 
 
 			view.$el.empty().html($.tmpl(view.template));
-			view.$("#lab-grid").html(view.grid.el);
+			view.$("#grid").html(view.grid.el);
 
 			view.$("#assign-lab-diag").button({icons: {primary: "icon-plus icon-color-green"}});
 			view.$(".ToggleFilters").button({icons: {primary: "icon-filter"}});
 
+
+			console.log('view.collection',view.collection)
 			view.paginator = new App.Views.Paginator({
 				collection: view.collection
 			});
 			view.depended(view.paginator);
 
-			view.$el.append(view.paginator.render().el);
+			view.$("#grid-pager").html(view.paginator.render().el);
 
 			view.delegateEvents();
 			view.grid.delegateEvents();
@@ -141,6 +143,8 @@ define([
 		},
 
 		onNewDiagnosticClick: function () {
+
+			this.addDirectionPopupView = new AddDirectionPopupView({appeal: this.options.appeal});
 			this.addDirectionPopupView.render().open();
 		}
 	});

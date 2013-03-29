@@ -6,70 +6,70 @@
 		<tr>
 			<th></th>
 			<th style="width:100px;">
-			<a class="Actions SortCol" data-field="directionDate"><span>Направление/<br/>Выполнение</span></a>
-			<!--<div class="Filter Hidden">-->
+				<a class="Actions SortCol" data-field="directionDate"><span>Направление/<br/>Выполнение</span></a>
+				<!--<div class="Filter Hidden">-->
 				<!--<div class="DatePeriod SingleDate">-->
-					<!--<div class="FromTo">-->
-						<!--<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="directionDate">-->
-					<!--</div>-->
-					<!--<i class="DateIcon Icon"></i>-->
+				<!--<div class="FromTo">-->
+				<!--<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="directionDate">-->
 				<!--</div>-->
-			<!--</div>-->
-		</th>
+				<!--<i class="DateIcon Icon"></i>-->
+				<!--</div>-->
+				<!--</div>-->
+			</th>
 
 			<!--<th>-->
-				<!--<a class="Actions SortCol" data-field="diagnosticDate"><span>Выполнен</span></a>-->
-				<!--<div class="Filter Hidden">-->
-					<!--<div class="DatePeriod SingleDate">-->
-						<!--<div class="FromTo">-->
-							<!--<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="diagnosticDate">-->
-						<!--</div>-->
-						<!--<i class="DateIcon Icon"></i>-->
-					<!--</div>-->
-				<!--</div>-->
+			<!--<a class="Actions SortCol" data-field="diagnosticDate"><span>Выполнен</span></a>-->
+			<!--<div class="Filter Hidden">-->
+			<!--<div class="DatePeriod SingleDate">-->
+			<!--<div class="FromTo">-->
+			<!--<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="diagnosticDate">-->
+			<!--</div>-->
+			<!--<i class="DateIcon Icon"></i>-->
+			<!--</div>-->
+			<!--</div>-->
 			<!--</th>-->
 
 			<th>
 				<a class="Actions SortCol" data-field="status"><span>Статус</span></a>
 				<!--<div class="Filter Hidden">-->
-					<!--<select class="Styled" name="statusId">-->
-						<!--<option selected>...</option>-->
-						<!--<option value="0">Начато</option>-->
-						<!--<option value="1">Ожидание</option>-->
-						<!--<option value="2">Закончено</option>-->
-						<!--<option value="3">Отменено</option>-->
-						<!--<option value="4">Без&nbsp;результата</option>-->
-					<!--</select>-->
+				<!--<select class="Styled" name="statusId">-->
+				<!--<option selected>...</option>-->
+				<!--<option value="0">Начато</option>-->
+				<!--<option value="1">Ожидание</option>-->
+				<!--<option value="2">Закончено</option>-->
+				<!--<option value="3">Отменено</option>-->
+				<!--<option value="4">Без&nbsp;результата</option>-->
+				<!--</select>-->
 				<!--</div>-->
 			</th>
 
 			<th>
 				<a class="Actions SortCol" data-field="diagnosticName"><span>Вид исследований</span></a>
 				<!--<div class="Filter Hidden">-->
-					<!--<input type="text" name="diagnosticName" placeholder="Исследование" />-->
+				<!--<input type="text" name="diagnosticName" placeholder="Исследование" />-->
 				<!--</div>-->
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="cito"><span>Cito</span></a>
 				<!--<div class="Filter Hidden">-->
-					<!--<select class="Styled" name="cito">-->
-						<!--<option selected>...</option>-->
-						<!--<option value="true">Да</option>-->
-						<!--<option value="false">Нет</option>-->
-					<!--</select>-->
+				<!--<select class="Styled" name="cito">-->
+				<!--<option selected>...</option>-->
+				<!--<option value="true">Да</option>-->
+				<!--<option value="false">Нет</option>-->
+				<!--</select>-->
 				<!--</div>-->
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="assignPerson"><span>Направивший врач</span></a>
 				<!--<div class="Filter Hidden">-->
-					<!--<input type="text" name="assignPerson" placeholder="ФИО" />-->
+				<!--<input type="text" name="assignPerson" placeholder="ФИО" />-->
 				<!--</div>-->
 			</th>
 			<!--<th>-->
-				<!--<a class="Actions SortCol" data-field="execPerson"><span>Выполнивший врач</span></a>-->
-				<!--<div class="Filter Hidden">-->
-					<!--<input type="text" name="execPerson" placeholder="ФИО" />-->
-				<!--</div>-->
+			<!--<a class="Actions SortCol" data-field="execPerson"><span>Выполнивший врач</span></a>-->
+			<!--<div class="Filter Hidden">-->
+			<!--<input type="text" name="execPerson" placeholder="ФИО" />-->
+			<!--</div>-->
 			<!--</th>-->
 
 			<th colspan="3">
@@ -89,15 +89,16 @@
 		{{if directionDate}}
 		{{formatDateTime directionDate}}
 		{{else}}
-			{{if diagnosticDate}}
-				{{formatDateTime diagnosticDate}}
-			{{else}}
-				-
-			{{/if}}
+		{{if diagnosticDate}}
+		{{formatDateTime diagnosticDate}}
+		{{else}}
+		-
+		{{/if}}
 		{{/if}}
 	</td>
 
-	<td{{if status.id === 0}} class="DoneCell"{{/if}}{{if status.id === 3}} class="CancelledCell"{{/if}}>
+	<td
+	{{if status.id === 0}} class="DoneCell"{{/if}}{{if status.id === 3}} class="CancelledCell"{{/if}}>
 	{{if status.name}}
 	${status.name}
 	{{else}}
@@ -109,19 +110,23 @@
 	</td>
 	<td>
 		{{if cito}}
-			<span class="Privilege">Срочно</span>
+		<span class="Privilege">Срочно</span>
 		{{/if}}
 	</td>
 	<td>
 		${assignPerson.name.raw}
 	</td>
 	<!--<td>-->
-		<!--${execPerson.name.raw}-->
+	<!--${execPerson.name.raw}-->
 	<!--</td>-->
 
+	{{if status.id === 0}}
 	<td><i class="icon-pencil edit-direction"></i></td>
 	<td><span class=" icon-remove cancel-direction"></span></td>
-
+	{{else}}
+	<td></td>
+	<td></td>
+	{{/if}}
 	<td>
 		<!--<i class="icon-print"></i>-->
 	</td>
@@ -142,6 +147,7 @@
 		<tr>
 			<th>
 				<a class="Actions SortCol" data-field="diagnosticDate"><span>Дата и время выполнения</span></a>
+
 				<div class="Filter Hidden">
 					<div class="DatePeriod SingleDate">
 						<div class="FromTo">
@@ -153,12 +159,14 @@
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="diagnosticName"><span>Вид исследований</span></a>
+
 				<div class="Filter Hidden">
-					<input type="text" name="diagnosticName" placeholder="Исследование" />
+					<input type="text" name="diagnosticName" placeholder="Исследование"/>
 				</div>
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="urgent"><span>Cito</span></a>
+
 				<div class="Filter Hidden">
 					<select class="Styled" name="urgent">
 						<option selected>...</option>
@@ -169,18 +177,21 @@
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="assignPerson"><span>Направивший врач</span></a>
+
 				<div class="Filter Hidden">
-					<input type="text" name="assignPerson" placeholder="ФИО" />
+					<input type="text" name="assignPerson" placeholder="ФИО"/>
 				</div>
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="execPerson"><span>Выполнивший врач</span></a>
+
 				<div class="Filter Hidden">
-					<input type="text" name="execPerson" placeholder="ФИО" />
+					<input type="text" name="execPerson" placeholder="ФИО"/>
 				</div>
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="status"><span>Статус</span></a>
+
 				<div class="Filter Hidden">
 					<select class="Styled" name="status">
 						<option selected>...</option>
@@ -203,9 +214,9 @@
 <script id="inst-diagnostic-grid-row" type="text/x-jquery-tmpl">
 	<td>
 		{{if diagnosticDate}}
-			{{formatDate diagnosticDate}}
+		{{formatDate diagnosticDate}}
 		{{else}}
-			-
+		-
 		{{/if}}
 	</td>
 	<td>
@@ -213,7 +224,7 @@
 	</td>
 	<td>
 		{{if urgent}}
-			<i class="Icon AttentionIcon"></i>
+		<i class="Icon AttentionIcon"></i>
 		{{/if}}
 	</td>
 	<td>
@@ -222,12 +233,13 @@
 	<td>
 		${execPerson.name.raw}
 	</td>
-	<td{{if status.id === 0}} class="DoneCell"{{/if}}{{if status.id === 3}} class="CancelledCell"{{/if}}>
-		{{if status.name}}
-			${status.name}
-		{{else}}
-			-
-		{{/if}}
+	<td
+	{{if status.id === 0}} class="DoneCell"{{/if}}{{if status.id === 3}} class="CancelledCell"{{/if}}>
+	{{if status.name}}
+	${status.name}
+	{{else}}
+	-
+	{{/if}}
 	</td>
 </script>
 
@@ -246,6 +258,7 @@
 		<tr>
 			<th>
 				<a class="Actions SortCol" data-field="diagnosticDate"><span>Дата и время выполнения</span></a>
+
 				<div class="Filter Hidden">
 					<div class="DatePeriod SingleDate">
 						<div class="FromTo">
@@ -257,12 +270,14 @@
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="diagnosticName"><span>Вид консультации</span></a>
+
 				<div class="Filter Hidden">
-					<input type="text" name="diagnosticName" placeholder="Консультация" />
+					<input type="text" name="diagnosticName" placeholder="Консультация"/>
 				</div>
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="urgent"><span>Cito</span></a>
+
 				<div class="Filter Hidden">
 					<select class="Styled" name="urgent">
 						<option selected>...</option>
@@ -273,18 +288,21 @@
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="assignPerson"><span>Направивший врач</span></a>
+
 				<div class="Filter Hidden">
-					<input type="text" name="assignPerson" placeholder="ФИО" />
+					<input type="text" name="assignPerson" placeholder="ФИО"/>
 				</div>
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="execPerson"><span>Выполнивший врач</span></a>
+
 				<div class="Filter Hidden">
-					<input type="text" name="execPerson" placeholder="ФИО" />
+					<input type="text" name="execPerson" placeholder="ФИО"/>
 				</div>
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="status"><span>Статус</span></a>
+
 				<div class="Filter Hidden">
 					<select class="Styled" name="status">
 						<option selected>...</option>
@@ -307,9 +325,9 @@
 <script id="consult-diagnostic-grid-row" type="text/x-jquery-tmpl">
 	<td>
 		{{if diagnosticDate}}
-			{{formatDate diagnosticDate}}
+		{{formatDate diagnosticDate}}
 		{{else}}
-			-
+		-
 		{{/if}}
 	</td>
 	<td>
@@ -326,12 +344,13 @@
 	<td>
 		${execPerson.name.raw}
 	</td>
-	<td{{if status.id === 0}} class="DoneCell"{{/if}}{{if status.id === 3}} class="CancelledCell"{{/if}}>
-		{{if status.name}}
-			${status.name}
-		{{else}}
-			-
-		{{/if}}
+	<td
+	{{if status.id === 0}} class="DoneCell"{{/if}}{{if status.id === 3}} class="CancelledCell"{{/if}}>
+	{{if status.name}}
+	${status.name}
+	{{else}}
+	-
+	{{/if}}
 	</td>
 </script>
 

@@ -13,6 +13,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 			events: {
 				"click .ShowHidePopup": "close",
 				"click .save": "onSave",
+				"click .cancel": "close",
 				"click .MKBLauncher": "toggleMKB"
 			},
 			initialize: function () {
@@ -69,8 +70,10 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				};
 
 			},
-			getProperty: function (name) {
+			getProperty: function (name, propertyName) {
 				var view = this;
+
+				if(!propertyName) propertyName = 'value';
 
 				var attributes = view.model.get('group')[0].attribute.concat(view.model.get('group')[1].attribute);
 
@@ -81,15 +84,12 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				if (!attr) return;
 
 				var property = _.find(attr.properties, function (property) {
-					return property.name == 'value';
+					return property.name == propertyName;
 				});
 
 				if (!property) return;
 
 				var value = property.value;
-//
-//                if(attr.type == 'Datetime'){
-//                }
 
 				return value;
 			},
@@ -323,12 +323,15 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 
 				//Диагноз
 				var diagnosis = view.getProperty('Направительный диагноз');
+				var diagnosisId = view.getProperty('Направительный диагноз','valueId');
 				if (diagnosis) {
+					console.log('diagnosis',diagnosis)
 					diagnosis = diagnosis.split(/\s+/);
 					var diagnosisCode = diagnosis[0];
 					var diagnosisText = (diagnosis.splice(1)).join(' ');
 					view.$("input[name='diagnosis[mkb][diagnosis]']").val(diagnosisText);
 					view.$("input[name='diagnosis[mkb][code]']").val(diagnosisCode);
+					view.$("input[name='diagnosis[mkb][code]']").data('mkb-id',diagnosisId);
 				}
 
 
@@ -339,7 +342,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				this.$("#start-time").val(date.getHours() + ':' + date.getMinutes()).mask("99:99");
 
 
-				view.$('.save').button();
+				view.$('.save,.cancel').button();
 
 				//$("body").append(this.el);
 
@@ -421,8 +424,9 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 
 				view.setParam(view.model, 'plannedEndDate', 'value', date + ' ' + time);
 
-//				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
-//				view.setParam(view.model, 'Направительный диагноз', 'valueId', mkbId);
+				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
+				console.log('mkbId',mkbId)
+				view.setParam(view.model, 'Направительный диагноз', 'valueId', mkbId);
 
 				view.setParam(view.model, 'finance', 'value', $($('#finance option:selected')[0]).val());
 

@@ -2,7 +2,7 @@
  * User: FKurilov
  * Date: 22.06.12
  */
-define(["text!templates/app.tmpl", "views/header-new"], function (tmpl, Header) {
+define(["text!templates/app.tmpl", "views/header"], function (tmpl, Header) {
 	App.Views.App = Backbone.View.extend({
 		el: $("#wrapper"),
 		events: {
