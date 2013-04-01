@@ -3,14 +3,13 @@
  * Date: 08.06.12
  */
 define([
-	"text!templates/appeal/edit/pages/laboratory.tmpl"
-	, "views/laboratory/AddDirectionPopupView"
-	, "views/laboratory/EditDirectionPopupView"
-	, "models/diagnostics/laboratory-diag-form"
-	, "collections/diagnostics/laboratory-diags"
-	, "views/grid"
-
-], function (template, AddDirectionPopupView, EditDirectionPopupView, laboratoryDiagsForm) {
+	"text!templates/appeal/edit/pages/laboratory.tmpl",
+	"views/laboratory/AddDirectionPopupView",
+	"views/laboratory/EditDirectionPopupView",
+	"models/diagnostics/laboratory-diag-form",
+	"collections/diagnostics/laboratory-diags",
+	"views/grid"],
+	function (template, AddDirectionPopupView, EditDirectionPopupView, laboratoryDiagsForm) {
 
 	var Laboratory = View.extend({
 		className: "ContentHolder",
@@ -25,7 +24,7 @@ define([
 			var view = this;
 
 			//console.log('this.options', this.options)
-			this.collection = new App.Collections.LaboratoryDiags;
+			this.collection = new App.Collections.LaboratoryDiags();
 			this.collection.appealId = this.options.appealId;
 			this.collection.setParams({
 				sortingField: "directionDate",
@@ -50,7 +49,7 @@ define([
 
 			pubsub.on('lab-diagnostic:added', function () {
 				view.collection.fetch();
-			})
+			});
 
 			//this.collection.on("reset", this.onCollectionLoaded, this);
 			this.collection.fetch();
@@ -91,7 +90,7 @@ define([
 
 			model.eventId = view.collection.appealId;
 
-			var id = model.get('id')
+			var id = model.get('id');
 
 			model.destroy({success: function () {
 				pubsub.trigger('noty', {text: 'Направление удалено', type: 'alert'});
@@ -127,7 +126,8 @@ define([
 			view.$(".ToggleFilters").button({icons: {primary: "icon-filter"}});
 
 
-			console.log('view.collection',view.collection)
+			console.log('view.collection',view.collection);
+
 			view.paginator = new App.Views.Paginator({
 				collection: view.collection
 			});

@@ -267,9 +267,13 @@ define(["text!templates/appeal/edit/popups/laboratory.tmpl",
 				view.renderNested(view.labTestListView, ".lab-test-list-el");
 
 				view.labsTestsCollection = new LabsTestsCollection();
+
 				view.setOffTestsView = new SetOffTestsView({
-					collection: view.labsTestsCollection, patientId: view.options.appeal.get('patient').get('id'), testCollection: view.testCollection
+					collection: view.labsTestsCollection,
+					patientId: view.options.appeal.get('patient').get('id'),
+					testCollection: view.testCollection
 				});
+
 				view.depended(view.setOffTestsView);
 				view.renderNested(view.setOffTestsView, ".set-off-test-el");
 
