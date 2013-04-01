@@ -203,6 +203,11 @@ header {
 }
 
 /* line 181, ../../sass/modules/layout.scss */
+.transparent {
+  color: transparent;
+}
+
+/* line 185, ../../sass/modules/layout.scss */
 #page {
   /*background: #fff;
   border:1px solid #A0A0A0;
@@ -210,53 +215,53 @@ header {
   @include box-shadow ( rgba(179, 179, 179, 0.8) 0 0 3px 0);*/
 }
 
-/* line 187, ../../sass/modules/layout.scss */
+/* line 191, ../../sass/modules/layout.scss */
 #page-head {
   border-bottom: 1px solid #d4d4d4;
   padding: 1em;
   margin-bottom: 1em;
 }
 
-/* line 193, ../../sass/modules/layout.scss */
+/* line 197, ../../sass/modules/layout.scss */
 .BreadCrumb li {
   display: inline-block;
   font-size: 1.2em;
   margin-right: 0.5em;
   color: #999999;
 }
-/* line 198, ../../sass/modules/layout.scss */
+/* line 202, ../../sass/modules/layout.scss */
 .BreadCrumb li::after {
   content: "→";
 }
-/* line 201, ../../sass/modules/layout.scss */
+/* line 205, ../../sass/modules/layout.scss */
 .BreadCrumb li a {
   color: #999999;
 }
-/* line 203, ../../sass/modules/layout.scss */
+/* line 207, ../../sass/modules/layout.scss */
 .BreadCrumb li a:hover {
   text-decoration: none;
 }
-/* line 207, ../../sass/modules/layout.scss */
+/* line 211, ../../sass/modules/layout.scss */
 .BreadCrumb li:last-child {
   color: #000;
 }
-/* line 210, ../../sass/modules/layout.scss */
+/* line 214, ../../sass/modules/layout.scss */
 .BreadCrumb li:last-child::after {
   content: "";
 }
 
-/* line 217, ../../sass/modules/layout.scss */
+/* line 221, ../../sass/modules/layout.scss */
 .DaySelect {
   float: left;
 }
 
-/* line 220, ../../sass/modules/layout.scss */
+/* line 224, ../../sass/modules/layout.scss */
 .DayScroller {
   float: left;
   margin-left: -1em;
 }
 
-/* line 224, ../../sass/modules/layout.scss */
+/* line 228, ../../sass/modules/layout.scss */
 .FilterLabel {
   display: inline-block;
   vertical-align: middle;
@@ -266,55 +271,55 @@ header {
   margin-right: 0.5em;
 }
 
-/* line 233, ../../sass/modules/layout.scss */
+/* line 237, ../../sass/modules/layout.scss */
 .PageActions {
   float: left;
 }
-/* line 235, ../../sass/modules/layout.scss */
+/* line 239, ../../sass/modules/layout.scss */
 .PageActions .DDList .ButtonContent {
   max-height: none;
   overflow-y: auto;
 }
-/* line 239, ../../sass/modules/layout.scss */
+/* line 243, ../../sass/modules/layout.scss */
 .PageActions .Styled.Button {
   margin-right: 1em;
 }
-/* line 241, ../../sass/modules/layout.scss */
+/* line 245, ../../sass/modules/layout.scss */
 .PageActions .Styled.Button:last-child {
   margin-right: 0;
 }
-/* line 245, ../../sass/modules/layout.scss */
+/* line 249, ../../sass/modules/layout.scss */
 .PageActions .DDList {
   margin-right: 1.5em;
 }
 
 /*Закрыть ИБ*/
-/* line 250, ../../sass/modules/layout.scss */
+/* line 254, ../../sass/modules/layout.scss */
 .CloseHistory {
   float: right;
 }
-/* line 252, ../../sass/modules/layout.scss */
+/* line 256, ../../sass/modules/layout.scss */
 .CloseHistory .Styled.Button {
   margin-left: 1em;
 }
-/* line 255, ../../sass/modules/layout.scss */
+/* line 259, ../../sass/modules/layout.scss */
 .CloseHistory .DDList {
   margin-left: 1em;
 }
 
-/* line 259, ../../sass/modules/layout.scss */
+/* line 263, ../../sass/modules/layout.scss */
 .NotFilled {
   font-size: 1.2em;
 }
-/* line 261, ../../sass/modules/layout.scss */
+/* line 265, ../../sass/modules/layout.scss */
 .NotFilled .Actions {
   border-bottom: none;
 }
-/* line 263, ../../sass/modules/layout.scss */
+/* line 267, ../../sass/modules/layout.scss */
 .NotFilled .Actions span {
   border-bottom: 1px dashed #118DDC;
 }
-/* line 266, ../../sass/modules/layout.scss */
+/* line 270, ../../sass/modules/layout.scss */
 .NotFilled .Actions::after {
   content: "▼";
   font-size: 0.5em;
@@ -325,65 +330,65 @@ header {
   line-height: 1em;
   color: #118DDC;
 }
-/* line 277, ../../sass/modules/layout.scss */
+/* line 281, ../../sass/modules/layout.scss */
 .NotFilled .Actions:hover span {
   border-bottom: 1px dashed #DD1111;
 }
-/* line 280, ../../sass/modules/layout.scss */
+/* line 284, ../../sass/modules/layout.scss */
 .NotFilled .Actions:hover::after {
   color: #DD1111;
 }
 
-/* line 286, ../../sass/modules/layout.scss */
+/* line 290, ../../sass/modules/layout.scss */
 .CardHeader {
   border-bottom: 1px solid #B6B6B6;
   padding-bottom: 1em;
   margin-bottom: 2em;
 }
 
-/* line 293, ../../sass/modules/layout.scss */
+/* line 297, ../../sass/modules/layout.scss */
 .CardNav {
   float: left;
 }
-/* line 295, ../../sass/modules/layout.scss */
+/* line 299, ../../sass/modules/layout.scss */
 .CardNav h2 {
   display: inline-block;
   margin-right: 0.3em;
   vertical-align: middle;
 }
-/* line 300, ../../sass/modules/layout.scss */
+/* line 304, ../../sass/modules/layout.scss */
 .CardNav .SectionNav {
   float: none;
   display: inline-block;
   vertical-align: middle;
 }
-/* line 304, ../../sass/modules/layout.scss */
+/* line 308, ../../sass/modules/layout.scss */
 .CardNav .SectionNav li {
   font-size: 1.2em;
   font-weight: normal;
 }
 
-/* line 310, ../../sass/modules/layout.scss */
+/* line 314, ../../sass/modules/layout.scss */
 .CardPrint {
   float: right;
 }
 
 /*Основная  часть*/
-/* line 315, ../../sass/modules/layout.scss */
+/* line 319, ../../sass/modules/layout.scss */
 .SideBar {
   float: right;
   width: 19em;
   padding: 0 0 4.5em 3em;
 }
 
-/* line 320, ../../sass/modules/layout.scss */
+/* line 324, ../../sass/modules/layout.scss */
 .LeftSideBar {
   float: left;
   width: 18em;
   padding: 2.7em 3em 4.5em 0em;
 }
 
-/* line 325, ../../sass/modules/layout.scss */
+/* line 329, ../../sass/modules/layout.scss */
 .ContentSide {
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -395,27 +400,27 @@ header {
   background: #fff;
 }
 
-/* line 331, ../../sass/modules/layout.scss */
+/* line 335, ../../sass/modules/layout.scss */
 .ContentHolder {
   width: 100%;
   float: left;
 }
 
-/* line 335, ../../sass/modules/layout.scss */
+/* line 339, ../../sass/modules/layout.scss */
 .ContentHeader {
   margin-bottom: 2em;
 }
-/* line 338, ../../sass/modules/layout.scss */
+/* line 342, ../../sass/modules/layout.scss */
 .ContentHeader .PageActions {
   width: 100%;
 }
 
-/* line 342, ../../sass/modules/layout.scss */
+/* line 346, ../../sass/modules/layout.scss */
 .FormSide {
   margin-right: 25em;
 }
 
-/* line 347, ../../sass/modules/layout.scss */
+/* line 351, ../../sass/modules/layout.scss */
 .ThreeCol .ContentSide {
   border-right: 1px solid #d4d4d4;
   border-left: 1px solid #d4d4d4;
@@ -423,50 +428,50 @@ header {
   margin-left: 21em;
 }
 
-/* line 355, ../../sass/modules/layout.scss */
+/* line 359, ../../sass/modules/layout.scss */
 .TwoCol .ContentSide {
   border-right: none;
   margin-left: 20em;
   margin-right: 0;
 }
 
-/* line 363, ../../sass/modules/layout.scss */
+/* line 367, ../../sass/modules/layout.scss */
 .OneCol.WithRightSideBar .ContentSide {
   background: url(../../images/separator.png) repeat-y 91em top white;
 }
-/* line 367, ../../sass/modules/layout.scss */
+/* line 371, ../../sass/modules/layout.scss */
 .OneCol .ContentSide {
   margin: 0;
 }
-/* line 371, ../../sass/modules/layout.scss */
+/* line 375, ../../sass/modules/layout.scss */
 .OneCol .SinglePaginator {
   margin-bottom: 0;
 }
-/* line 374, ../../sass/modules/layout.scss */
+/* line 378, ../../sass/modules/layout.scss */
 .OneCol .SingleContentHolder {
   margin: 0 -1em;
 }
 
-/* line 381, ../../sass/modules/layout.scss */
+/* line 385, ../../sass/modules/layout.scss */
 .PaginatorHolder {
   overflow-x: hidden;
   padding: 3em 0 0 0;
 }
 
-/* line 385, ../../sass/modules/layout.scss */
+/* line 389, ../../sass/modules/layout.scss */
 .PaginatorHolder > .Paginator {
   float: left;
   white-space: nowrap;
 }
 
-/* line 390, ../../sass/modules/layout.scss */
+/* line 394, ../../sass/modules/layout.scss */
 .FindResult {
   font-size: 1.2em;
   line-height: 2.3em;
   float: right;
 }
 
-/* line 397, ../../sass/modules/layout.scss */
+/* line 401, ../../sass/modules/layout.scss */
 .SinglePaginator {
   background: #F5F4F4;
   color: #6C6C71;
@@ -475,86 +480,86 @@ header {
   margin: -2em -4em 2em -4em;
   padding: 1em 1.5em;
 }
-/* line 404, ../../sass/modules/layout.scss */
+/* line 408, ../../sass/modules/layout.scss */
 .SinglePaginator .PrevPage {
   float: left;
   font-size: 1.3em;
 }
-/* line 408, ../../sass/modules/layout.scss */
+/* line 412, ../../sass/modules/layout.scss */
 .SinglePaginator .NextPage {
   float: right;
   font-size: 1.3em;
 }
-/* line 412, ../../sass/modules/layout.scss */
+/* line 416, ../../sass/modules/layout.scss */
 .SinglePaginator .Disabled {
   color: #B2B2B2;
 }
 
-/* line 416, ../../sass/modules/layout.scss */
+/* line 420, ../../sass/modules/layout.scss */
 .InspectionPaginator {
   font-size: 1.3em;
   color: #118DDC;
   padding-top: 0.5em;
 }
-/* line 420, ../../sass/modules/layout.scss */
+/* line 424, ../../sass/modules/layout.scss */
 .InspectionPaginator .AllPage {
   margin-right: 2em;
 }
-/* line 423, ../../sass/modules/layout.scss */
+/* line 427, ../../sass/modules/layout.scss */
 .InspectionPaginator .PrevPage {
   display: inline-block;
   margin-right: 0.5em;
 }
-/* line 427, ../../sass/modules/layout.scss */
+/* line 431, ../../sass/modules/layout.scss */
 .InspectionPaginator .NextPage {
   display: inline-block;
 }
-/* line 430, ../../sass/modules/layout.scss */
+/* line 434, ../../sass/modules/layout.scss */
 .InspectionPaginator .Disabled {
   color: #B2B2B2;
 }
 
-/* line 435, ../../sass/modules/layout.scss */
+/* line 439, ../../sass/modules/layout.scss */
 .SingleHeader {
   margin-bottom: 2.7em;
   border-bottom: 1px solid #D4D4D4;
   padding-bottom: 0.5em;
 }
-/* line 439, ../../sass/modules/layout.scss */
+/* line 443, ../../sass/modules/layout.scss */
 .SingleHeader h2 {
   float: left;
 }
-/* line 442, ../../sass/modules/layout.scss */
+/* line 446, ../../sass/modules/layout.scss */
 .SingleHeader .SingleInfo {
   font-size: 1.3em;
   float: right;
   color: #999999;
   line-height: 2em;
 }
-/* line 447, ../../sass/modules/layout.scss */
+/* line 451, ../../sass/modules/layout.scss */
 .SingleHeader .SingleInfo .Date {
   font-weight: bold;
 }
-/* line 450, ../../sass/modules/layout.scss */
+/* line 454, ../../sass/modules/layout.scss */
 .SingleHeader .SingleInfo .Time {
   font-weight: bold;
 }
 
 /*Анализы*/
-/* line 459, ../../sass/modules/layout.scss */
+/* line 463, ../../sass/modules/layout.scss */
 .SingleContentHolder {
   margin-top: -2.7em;
   margin-bottom: -3em;
 }
 
-/* line 463, ../../sass/modules/layout.scss */
+/* line 467, ../../sass/modules/layout.scss */
 .SingleAside {
   padding-top: 2.7em;
   float: right;
   width: 16em;
 }
 
-/* line 468, ../../sass/modules/layout.scss */
+/* line 472, ../../sass/modules/layout.scss */
 .SingleContentSide {
   padding-top: 2.7em;
   padding-right: 4em;
@@ -562,46 +567,46 @@ header {
   border-right: 1px solid #D4D4D4;
 }
 
-/* line 474, ../../sass/modules/layout.scss */
+/* line 478, ../../sass/modules/layout.scss */
 .SingleContentSide {
   padding-bottom: 4em;
 }
 
-/* line 477, ../../sass/modules/layout.scss */
+/* line 481, ../../sass/modules/layout.scss */
 .BelowNorm, .Grid tr:hover .BelowNorm {
   background: #D2F0FD;
 }
 
-/* line 480, ../../sass/modules/layout.scss */
+/* line 484, ../../sass/modules/layout.scss */
 .AboveNorm, .Grid tr:hover .AboveNorm {
   background: #FFB2B2;
 }
 
-/* line 483, ../../sass/modules/layout.scss */
+/* line 487, ../../sass/modules/layout.scss */
 .Legend > li {
   font-size: 1.3em;
   padding: 0.8em 1em 0.7em 1em;
   margin-bottom: 0.1em;
 }
 
-/* line 489, ../../sass/modules/layout.scss */
+/* line 493, ../../sass/modules/layout.scss */
 .PagingList li {
   display: inline-block;
   color: #118DDC;
   margin-right: 1em;
 }
-/* line 494, ../../sass/modules/layout.scss */
+/* line 498, ../../sass/modules/layout.scss */
 .PagingList .AllList {
   padding-right: 2em;
 }
-/* line 497, ../../sass/modules/layout.scss */
+/* line 501, ../../sass/modules/layout.scss */
 .PagingList .PrevPage:before {
   content: "←";
   display: inline-block;
   padding-right: 0.2em;
   font-size: 1.2em;
 }
-/* line 503, ../../sass/modules/layout.scss */
+/* line 507, ../../sass/modules/layout.scss */
 .PagingList .NextPage:after {
   content: "→";
   display: inline-block;
@@ -609,44 +614,44 @@ header {
   font-size: 1.2em;
 }
 
-/* line 511, ../../sass/modules/layout.scss */
+/* line 515, ../../sass/modules/layout.scss */
 .PatientInfo {
   font-size: 1.2em;
   margin-bottom: 3em;
 }
-/* line 514, ../../sass/modules/layout.scss */
+/* line 518, ../../sass/modules/layout.scss */
 .PatientInfo ul {
   display: table-cell;
   vertical-align: top;
   width: 30em;
   padding-right: 2em;
 }
-/* line 519, ../../sass/modules/layout.scss */
+/* line 523, ../../sass/modules/layout.scss */
 .PatientInfo ul:last-child {
   padding-right: 0;
 }
-/* line 522, ../../sass/modules/layout.scss */
+/* line 526, ../../sass/modules/layout.scss */
 .PatientInfo ul li {
   padding-left: 12em;
   margin-bottom: 0.5em;
 }
-/* line 525, ../../sass/modules/layout.scss */
+/* line 529, ../../sass/modules/layout.scss */
 .PatientInfo ul li dfn {
   display: inline-block;
   width: 11.7em;
   margin-left: -12em;
 }
 
-/* line 533, ../../sass/modules/layout.scss */
+/* line 537, ../../sass/modules/layout.scss */
 .PatientHeader {
   margin-bottom: 2em;
 }
-/* line 535, ../../sass/modules/layout.scss */
+/* line 539, ../../sass/modules/layout.scss */
 .PatientHeader .PatientDayPaginator {
   display: inline-block;
   margin-left: 7em;
 }
-/* line 538, ../../sass/modules/layout.scss */
+/* line 542, ../../sass/modules/layout.scss */
 .PatientHeader .PatientDayPaginator .Arrow {
   display: inline-block;
   vertical-align: middle;
@@ -654,16 +659,16 @@ header {
   padding: 0 0.2em 0.2em 0.2em;
   color: #0099FF;
 }
-/* line 545, ../../sass/modules/layout.scss */
+/* line 549, ../../sass/modules/layout.scss */
 .PatientHeader .PatientDayPaginator .LeftArrow {
   margin-right: 3em;
 }
-/* line 548, ../../sass/modules/layout.scss */
+/* line 552, ../../sass/modules/layout.scss */
 .PatientHeader .PatientDayPaginator .RightArrow {
   margin-left: 3em;
 }
 
-/* line 556, ../../sass/modules/layout.scss */
+/* line 560, ../../sass/modules/layout.scss */
 footer {
   width: 100%;
   height: 3.1em;
@@ -672,17 +677,17 @@ footer {
   font-size: 1.2em;
   color: #6D6D71;
 }
-/* line 564, ../../sass/modules/layout.scss */
+/* line 568, ../../sass/modules/layout.scss */
 footer a {
   color: #6D6D71;
 }
 
-/* line 569, ../../sass/modules/layout.scss */
+/* line 573, ../../sass/modules/layout.scss */
 .Separator {
   padding: 0 0.4em;
 }
 
-/* line 573, ../../sass/modules/layout.scss */
+/* line 577, ../../sass/modules/layout.scss */
 .AlertBlock {
   margin-right: -4em;
   margin-left: -4em;
@@ -692,7 +697,7 @@ footer a {
   padding: 0.5em 4em;
   border-bottom: 1px solid #D4D4D4;
 }
-/* line 581, ../../sass/modules/layout.scss */
+/* line 585, ../../sass/modules/layout.scss */
 .AlertBlock > .CloseIcon {
   position: absolute;
   top: 50%;
@@ -701,43 +706,43 @@ footer a {
   margin-top: -7px;
 }
 
-/* line 589, ../../sass/modules/layout.scss */
+/* line 593, ../../sass/modules/layout.scss */
 .AlertTxt {
   font-size: 1.3em;
 }
 
-/* line 593, ../../sass/modules/layout.scss */
+/* line 597, ../../sass/modules/layout.scss */
 .Positive {
   background: #339900;
 }
 
-/* line 596, ../../sass/modules/layout.scss */
+/* line 600, ../../sass/modules/layout.scss */
 .Negative {
   background: #CC0000;
 }
 
-/* line 599, ../../sass/modules/layout.scss */
+/* line 603, ../../sass/modules/layout.scss */
 .Neutral {
   background: #FF9900;
 }
 
-/* line 603, ../../sass/modules/layout.scss */
+/* line 607, ../../sass/modules/layout.scss */
 .ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title {
   font-size: 1.2em;
 }
 
-/* line 609, ../../sass/modules/layout.scss */
+/* line 613, ../../sass/modules/layout.scss */
 .datetime {
   display: inline-block;
 }
 
-/* line 613, ../../sass/modules/layout.scss */
+/* line 617, ../../sass/modules/layout.scss */
 .date, .time {
   display: inline-block;
   position: relative;
   width: 100%;
 }
-/* line 619, ../../sass/modules/layout.scss */
+/* line 623, ../../sass/modules/layout.scss */
 .date input, .time input {
   padding-right: 1.5em;
   		/*					-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
@@ -758,7 +763,7 @@ footer a {
 		width: 25%;
 	}
 }*/
-/* line 643, ../../sass/modules/layout.scss */
+/* line 647, ../../sass/modules/layout.scss */
 .date-icon, .time-icon {
   position: absolute;
   right: -0.6em;
@@ -767,23 +772,23 @@ footer a {
   cursor: pointer;
 }
 
-/* line 651, ../../sass/modules/layout.scss */
+/* line 655, ../../sass/modules/layout.scss */
 .date-range-scroller {
   color: #777;
 }
-/* line 654, ../../sass/modules/layout.scss */
+/* line 658, ../../sass/modules/layout.scss */
 .date-range-scroller .date-range {
   display: inline-block;
 }
-/* line 657, ../../sass/modules/layout.scss */
+/* line 661, ../../sass/modules/layout.scss */
 .date-range-scroller .date-range .date {
   width: 10em;
 }
-/* line 661, ../../sass/modules/layout.scss */
+/* line 665, ../../sass/modules/layout.scss */
 .date-range-scroller .date-range .time {
   width: 6.5em;
 }
-/* line 665, ../../sass/modules/layout.scss */
+/* line 669, ../../sass/modules/layout.scss */
 .date-range-scroller .date-range .date-icon, .date-range-scroller .date-range .time-icon {
   position: absolute;
   right: .3em;
@@ -791,17 +796,17 @@ footer a {
   color: #777;
 }
 
-/* line 675, ../../sass/modules/layout.scss */
+/* line 679, ../../sass/modules/layout.scss */
 .icon-color-green {
   color: #009F1F;
 }
 
-/* line 678, ../../sass/modules/layout.scss */
+/* line 682, ../../sass/modules/layout.scss */
 .icon-color-red {
   color: #dd1111;
 }
 
-/* line 682, ../../sass/modules/layout.scss */
+/* line 686, ../../sass/modules/layout.scss */
 .button-color-green {
   background: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyYzQzZCIvPjxzdG9wIG9mZnNldD0iNDElIiBzdG9wLWNvbG9yPSIjMzBhMzFhIi8+PHN0b3Agb2Zmc2V0PSI2MiUiIHN0b3AtY29sb3I9IiMzMGEzMWEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM1MmM0M2QiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=");
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #52c43d), color-stop(41%, #30a31a), color-stop(62%, #30a31a), color-stop(100%, #52c43d));
@@ -813,13 +818,13 @@ footer a {
   	background: linear-gradient(top, #009F1F 0%,#009F1F 100%);*/
   color: #fff;
 }
-/* line 694, ../../sass/modules/layout.scss */
+/* line 698, ../../sass/modules/layout.scss */
 .button-color-green .ui-button-text {
   text-shadow: none;
 }
 
 /* to override jqueryui icons for font icons */
-/* line 701, ../../sass/modules/layout.scss */
+/* line 705, ../../sass/modules/layout.scss */
 [class^="icon-"],
 [class*=" icon-"] {
   background: none !important;
@@ -828,12 +833,12 @@ footer a {
   padding: .1em 0 0 .1em !important;
 }
 
-/* line 708, ../../sass/modules/layout.scss */
+/* line 712, ../../sass/modules/layout.scss */
 .ui-button-icon-only .ui-icon, .ui-button-text-icon-primary .ui-icon, .ui-button-text-icon-secondary .ui-icon, .ui-button-text-icons .ui-icon, .ui-button-icons-only .ui-icon {
   margin-top: -0.55em !important;
 }
 
-/* line 712, ../../sass/modules/layout.scss */
+/* line 716, ../../sass/modules/layout.scss */
 .LineBlockHolder > li .LineBlock .ui-button {
   top: 1.5em;
 }
@@ -876,37 +881,37 @@ footer a {
 		color: black;
 	}
 }*/
-/* line 756, ../../sass/modules/layout.scss */
+/* line 760, ../../sass/modules/layout.scss */
 .select2-container .select2-choice {
   height: 2.25em;
   font-size: 1.2em;
   border-color: #737477;
 }
-/* line 760, ../../sass/modules/layout.scss */
+/* line 764, ../../sass/modules/layout.scss */
 .select2-container .select2-choice span {
   line-height: 2.25em;
   height: 2.25em;
 }
 
-/* line 771, ../../sass/modules/layout.scss */
+/* line 775, ../../sass/modules/layout.scss */
 .select2-drop {
   border-left: 1px solid #737477;
   border-right: 1px solid #737477;
   border-bottom: 1px solid #737477;
   border-radius: 0;
 }
-/* line 776, ../../sass/modules/layout.scss */
+/* line 780, ../../sass/modules/layout.scss */
 .select2-drop.select2-drop-above {
   border-top: 1px solid #737477;
   border-radius: 0;
 }
-/* line 780, ../../sass/modules/layout.scss */
+/* line 784, ../../sass/modules/layout.scss */
 .select2-drop .select2-results {
   margin: 0;
   padding: 0;
   font-size: 1.2em;
 }
-/* line 784, ../../sass/modules/layout.scss */
+/* line 788, ../../sass/modules/layout.scss */
 .select2-drop .select2-results li {
   padding: 0.2em 0.4em 0.2em 0.2em;
   border-top: 1px solid #D4D4D4;
@@ -914,12 +919,12 @@ footer a {
   	border-top: none;
   }*/
 }
-/* line 790, ../../sass/modules/layout.scss */
+/* line 794, ../../sass/modules/layout.scss */
 .select2-drop .select2-results li.select2-highlighted {
   background: #D2F0FD;
   color: black;
 }
-/* line 796, ../../sass/modules/layout.scss */
+/* line 800, ../../sass/modules/layout.scss */
 .select2-drop .select2-search input {
   background: white url("../select2.png") no-repeat 100% -22px;
   background: url("../select2.png") no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
