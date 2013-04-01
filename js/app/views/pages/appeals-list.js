@@ -358,6 +358,12 @@ define([
 				startDate.setDate(startDate.getDate() - 1);
 			}
 
+			//для медсестры отделения ставим текущее время в таймпикере
+			this.separateRoles(ROLES.NURSE_DEPARTMENT, function () {
+				var time = moment().format('HH:mm');
+				this.$("#appeal-start-time").val(time);
+			},this);
+
 			endDate.setDate(startDate.getDate() + 1);
 
 			this.$(".date-range-start, #appeal-start-date").datepicker("setDate", startDate);
