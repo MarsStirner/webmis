@@ -1,4 +1,4 @@
-define([], function() {
+define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 
 	var MkbInput = View.extend({
 		events: {
@@ -18,7 +18,7 @@ define([], function() {
 		toggleMKB: function(event) {
 			event.preventDefault();
 
-			this.mkbAttrId = $(event.currentTarget).data("mkb-examattr-id");
+			//this.mkbAttrId = $(event.currentTarget).data("mkb-examattr-id");
 
 			this.mkbDirectory.open();
 		},
@@ -27,7 +27,7 @@ define([], function() {
 			var sd = event.selectedDiagnosis;
 			//console.log('sd', sd.get("id"));
 
-			this.mkbAttrId = sd.get("id");
+			//this.mkbAttrId = sd.get("id");
 
 			this.$("input[name='diagnosis[mkb][code]']").val(sd.get("code"));
 			this.$("input[name='diagnosis[mkb][diagnosis]']").val(sd.get("diagnosis"));
@@ -40,8 +40,8 @@ define([], function() {
 
 		render: function() {
 			var view = this;
-console.log('jgfhjhfhgjdkhgkjh');
-			view.$el.html('render');
+
+			view.$el.html($.tmpl(tmpl));
 
 
 
@@ -73,7 +73,7 @@ console.log('jgfhjhfhgjdkhgkjh');
 				},
 				minLength: 2,
 				select: function(event, ui) {
-					view.mkbAttrId = $(this).data("mkb-examattr-id");
+					//view.mkbAttrId = $(this).data("mkb-examattr-id");
 
 					view.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
 					view.$("input[name='diagnosis[mkb][code]']").val(ui.item.displayText);
