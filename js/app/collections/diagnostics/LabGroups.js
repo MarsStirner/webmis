@@ -1,69 +1,74 @@
-define(["models/diagnostics/LabGroup"], function (LabTestGroup) {
+define(["models/diagnostics/LabGroup"],
 
-	var LabsTests = Collection.extend({
+function(LabGroup) {
 
-		model: LabTestGroup,
+	var LabGroups = Collection.extend({
 
+		model: LabGroup,
 
-		url: function () {
+		url: function() {
 			var path = DATA_PATH + "actionTypes/laboratory/";
 
 			return path;
 		},
-		parse: function (raw) {
+
+		/**
+		 * конвертирует данные в нужный нам формат дерева, для dynatree
+		 * @param  {array} data
+		 * @return {array}
+		 */
+		convertToTree: function(data) {
+			var convertToTree = arguments.callee;
+
+			return _.map(data, function(item) {
+				var node = {};
+
+				node.title = item.name;
+				node.code = item.code;
+				node.icon = false;
+
+				if (item.groups && item.groups.length) {
+					node.children = convertToTree(item.groups);
+					node.isFolder = true;
+				}
+
+				return node;
+			});
+		},
+
+		/**
+		 * удаляет из дерева элементы у которых нет дочерних элементов
+		 * @param  {array} tree древовидная структура из convertToTree
+		 * @return {array}
+		 */
+		onlyParents: function(tree) {
+			var results = [];
+			var onlyParents = arguments.callee;
+
+			_.each(tree, function(item, index, list) {
+
+				if (item.children && item.children.length) {
+					item.children = onlyParents(item.children);
+					results[results.length] = item;
+				}
+
+			});
+
+			return results;
+		},
+
+		parse: function(raw) {
 			var tree = [];
 
+			tree = this.convertToTree(raw.data);
+			var parents = this.onlyParents(tree);
 
-			function convert(list) {
-				return _.map(list, function (item) {
-
-					var node = {};
-					node.title = item.name;
-					node.code = item.code;
-                    node.icon = false;
-
-					if (item.groups.length) {
-						node.children = convert(item.groups);
-						node.isFolder = true;
-
-					}
-
-					return node;
-
-				});
-			};
-
-
-
-			//_.each([1, 2, 3], alert);
-			//var evens = _.filter([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
-
-			function onlyParents(list) {
-				var results = [];
-
-				_.each(list, function (item, index, list) {
-
-					if (item.children && item.children.length) {
-						item.children = onlyParents(item.children);
-						results[results.length] = item;
-					}
-
-				});
-
-				return results;
-
-			}
-
-			tree = convert(raw.data);
-
-			var parents = onlyParents(tree);
-
-			return  parents;
+			return parents;
 		}
 
 	});
 
 
-	return LabsTests;
+	return LabGroups;
 
 });
