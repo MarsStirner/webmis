@@ -397,32 +397,32 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				//console.log('node inputs', date, time, cito)
 
 				var selected_params = _.filter(modelTree.children, function (node) {
-					return node.select == true;
+					return node.select === true;
 				});
 
 				var unselected_params = _.filter(modelTree.children, function (node) {
-					return node.select == false;
+					return node.select === false;
 				});
 
 				var group = view.model.get('group');
 
 				//выбранные тесты
-				console.log('modelTree ', view.model.get('group'), modelTree, selected_params)
+				console.log('modelTree ', view.model.get('group'), modelTree, selected_params);
 				_.each(selected_params, function (param) {
 					_.each(group[1].attribute, function (attribute, index) {
 						if (attribute.name == param.title) {
 							group[1].attribute[index].properties[0].value = 'true';
 						}
-					})
-				})
+					});
+				});
 
 				_.each(unselected_params, function (param) {
 					_.each(group[1].attribute, function (attribute, index) {
 						if (attribute.name == param.title) {
 							group[1].attribute[index].properties[0].value = 'false';
 						}
-					})
-				})
+					});
+				});
 
 				view.setParam(view.model, 'doctorFirstName', 'value', view.doctor.name.first);
 				//group[0].attribute[4].properties[0].value = view.doctor.name.last;//doctorLastName
@@ -436,7 +436,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				view.setParam(view.model, 'plannedEndDate', 'value', date + ' ' + time);
 
 				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
-				console.log('mkbId',mkbId)
+				console.log('mkbId',mkbId);
 				view.setParam(view.model, 'Направительный диагноз', 'valueId', mkbId);
 
 				view.setParam(view.model, 'finance', 'value', $($('#finance option:selected')[0]).val());
@@ -450,7 +450,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 
 				}});
 
-				console.log('model111', view.model.toJSON())
+				console.log('model111', view.model.toJSON());
 
 
 			},

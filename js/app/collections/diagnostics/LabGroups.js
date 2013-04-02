@@ -1,6 +1,4 @@
-//список лабораторий
-
-define(["models/diagnostics/LabTestGroup"], function (LabTestGroup) {
+define(["models/diagnostics/LabGroup"], function (LabTestGroup) {
 
 	var LabsTests = Collection.extend({
 

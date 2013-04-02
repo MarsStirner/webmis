@@ -1,6 +1,6 @@
 define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
-	'collections/diagnostics/LabsTestsGroups'],
-	function (testsGroupTemplate, GroupsOfTests) {
+	],
+	function (testsGroupTemplate) {
 
 		var GroupOfTestsListView = View.extend({
 			template: testsGroupTemplate,
@@ -9,17 +9,10 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 
 			initialize: function () {
 				var view = this;
-				view.collection = new GroupsOfTests();
-
-				view.collection.setParams({
-					'filter[view]': 'tree',
-					sortingField: "name",
-					sortingMethod: "asc"
-				})
-
+				
 				//	console.log('init LabTestsListView');
 
-				pubsub.on('lab-selected', function (labCode) {
+				pubsub.on('lab:selected', function (labCode) {
 					view.$el.html('');
 					view.collection.fetch({data: {'filter[code]': labCode}});
 
@@ -46,9 +39,9 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 						if (!node.data.children.length) {
 							console.log("load-group-tests " + node.data.code);
 
-							pubsub.trigger('load-group-tests', node.data.code)
+							pubsub.trigger('load-group-tests', node.data.code);
 						} else {
-							pubsub.trigger('tg-parent:click')
+							pubsub.trigger('tg-parent:click');
 						}
 
 					},
