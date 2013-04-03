@@ -1,0 +1,795 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "js/app/views/pages/appeals-list.js",
+			"settings":
+			{
+				"buffer_size": 10201,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "<script id=\"appeals-list-page\" type=\"text/x-jquery-tmpl\">\n	<section id=\"page\" class=\"Clearfix OneCol\">\n		<div class=\"ContentSide Clearfix\">\n			<div class=\"ContentHolder\">\n				<div class=\"Container\">\n\n				</div>\n			</div>\n		</div>\n	</section>\n</script>\n\n<script id=\"appeals-list-filters-reception\" type=\"text/x-jquery-tmpl\">\n	<form>\n	<div id=\"page-head\" class=\"Clearfix\">\n		<div class=\"date-range-scroller pull-left\">\n			<button type=\"button\" class=\"shift-btn shift-back\" title=\"Назад\">&sp;</button>\n\n			<div class=\"date-range\">\n				<div class=\"datetime\">\n					<div class=\"date\">\n						<input type=\"text\" name=\"beginDate\" id=\"appeal-start-date\" placeholder=\"ДД.ММ.ГГГГ\" data-relation=\"#appeal-start-time\" class=\"date-input date-range-start Mandatory\"/>\n						<i class=\"icon-calendar date-icon\"></i>\n					</div>\n					<div class=\"time\">\n						<input type=\"text\" class=\"time-input\" id=\"appeal-start-time\" placeholder=\"ЧЧ:ММ\" data-relation=\"#appeal-start-date\" value=\"08:00\"/>\n						<i class=\"icon-time time-icon\"></i>\n					</div>\n				</div>\n\n				<i class=\"icon-minus\"></i>\n\n				<div class=\"datetime\">\n					<div class=\"date\">\n						<input type=\"text\" name=\"endDate\" id=\"appeal-end-date\" placeholder=\"ДД.ММ.ГГГГ\" data-relation=\"#appeal-end-time\" class=\"date-input date-range-end Mandatory\"/>\n						<i class=\"icon-calendar date-icon\"></i>\n					</div>\n					<div class=\"time\">\n						<input type=\"text\" class=\"time-input\" placeholder=\"ЧЧ:ММ\" id=\"appeal-end-time\" data-relation=\"#appeal-end-date\" value=\"07:59\"/>\n						<i class=\"icon-time time-icon\"></i>\n					</div>\n				</div>\n			</div>\n\n			<button type=\"button\" class=\"shift-btn shift-forward\" title=\"Вперед\">&sp;</button>\n		</div>\n\n		<div class=\"pull-right\">\n			<input id=\"appeal-list-filter-toggle\" class=\"toggle-filters\" type=\"checkbox\"/>\n			<label for=\"appeal-list-filter-toggle\">Фильтр</label>\n				<!--<i class=\"icon-search\"></i>-->\n			<button class=\"print-btn\"><span>Печать</span></button>\n		</div>\n\n		<!--<div class=\"FilterPage Clearfix\">\n			<div class=\"DayScroller\">\n				<a class=\"ScrollDay Actions Decrease\" href=\"#\">&lt;</a>\n				<div class=\"DateTime\">\n					<div class=\"DatePeriod SingleDate Mandatory\">\n						<div class=\"FromTo\">\n							<input type=\"text\" id=\"appeal-start-date\" data-relation=\"#appeal-start-time\" name=\"beginDate\" placeholder=\"дд.мм.гггг\" class=\"SelectDate\" />\n						</div>\n						<i class=\"DateIcon Icon\"></i>\n					</div>\n					<div class=\"SingleTime\">\n						<input type=\"text\" id=\"appeal-start-time\" class=\"HourPicker\" data-relation=\"#appeal-start-date\" value=\"08:00\" placeholder=\"чч:мм\"/>\n					</div>\n				</div>\n				<span class=\"MDash\">—</span>\n				<div class=\"DateTime\">\n					<div class=\"DatePeriod SingleDate Mandatory\">\n						<div class=\"FromTo\">\n							<input type=\"text\" id=\"appeal-end-date\" data-relation=\"#appeal-end-time\" name=\"endDate\" placeholder=\"дд.мм.гггг\" class=\"SelectDate\" />\n						</div>\n						<i class=\"DateIcon Icon\"></i>\n					</div>\n					<div class=\"SingleTime\">\n						<input type=\"text\" id=\"appeal-end-time\" class=\"HourPicker\" data-relation=\"#appeal-end-date\" value=\"07:59\" placeholder=\"чч:мм\"/>\n					</div>\n				</div>\n				<a class=\"ScrollDay Actions Increase\" href=\"#\">&gt;</a>\n			</div>\n			<div class=\"CloseHistory\">\n				<button class=\"Styled Button Actions ToggleFilters\"><i class=\"Icon Tiny SearchIcon\"></i><span>Фильтр</span></button>\n				<button class=\"Styled Button\"><span>Печать</span></button>\n			</div>\n		</div>-->\n	</div>\n	</form>\n</script>\n\n<script id=\"appeals-list-filters-doctor-department\" type=\"text/x-jquery-tmpl\">\n	<form>\n		<div class=\"SearchBlock\">\n			<div class=\"EditForm Clearfix\">\n				<ul class=\"LineBlockHolder\">\n					<li>\n						<div class=\"LineBlock\">\n							<div class=\"HalfCol\">\n								<div class=\"FilterPage Clearfix\">\n									<div class=\"DaySelect\">\n										<div class=\"FilterLabel\" style=\"float: left;\">Лежащие в отделениии по состоянию на</div>\n\n										<div class=\"date\" style=\"width: 10em;\">\n											<input type=\"hidden\" name=\"beginDate\" value=\"\"/>\n											<input type=\"text\" id=\"appeal-start-date\" name=\"endDate\" placeholder=\"дд.мм.гггг\" class=\"SelectDate date-input\">\n											<i class=\"icon-calendar date-icon\"></i>\n										</div>\n									</div>\n								</div>\n								<!--<div class=\"DaySelect\">\n									<div class=\"FilterLabel\">Лежащие в отделениии по состоянию на</div>\n									<div class=\"DatePeriod SingleDate\">\n										<div class=\"FromTo\">\n											<input type=\"hidden\" name=\"beginDate\" value=\"\"/>\n											<input type=\"text\" id=\"appeal-start-date\" name=\"endDate\" placeholder=\"дд.мм.гггг\" class=\"SelectDate\" />\n										</div>\n										<i class=\"DateIcon Icon\"></i>\n									</div>\n								</div>-->\n							</div>\n							<div class=\"HalfCol\">\n								<label>Врач</label>\n								<select class=\"Styled\" id=\"docs-dictionary\" name=\"doctorId\">\n									<option value=\"\">...</option>\n								</select>\n							</div>\n							<div class=\"HalfCol\">\n								<label>Отделение</label>\n								<select class=\"Styled\" id=\"deps-dictionary\" name=\"departmentId\">\n									<option value=\"\">...</option>\n								</select>\n							</div>\n							<div class=\"HalfCol\">\n								<div class=\"CloseHistory\"><button role=\"button\" class=\"print-btn\">Печать</button></div>\n							</div>\n						</div>\n					</li>\n				</ul>\n			</div>\n		</div>\n	</form>\n</script>\n\n<script id=\"appeals-list-filters-nurse-department\" type=\"text/x-jquery-tmpl\">\n	<form>\n		<div id=\"page-head\">\n			<div class=\"EditForm Clearfix\">\n				<div class=\"FilterLabel\" style=\"float: left;\">Лежащие в отделениии по состоянию на</div>\n\n\n					<div class=\"QuartCol\">\n						<div class=\"date\">\n							<input type=\"text\" name=\"date\" id=\"appeal-start-date\" placeholder=\"ДД.ММ.ГГГГ\" data-relation=\"#appeal-start-time\" class=\"date-input date-range-start Mandatory\"/>\n							<i class=\"icon-calendar date-icon\"></i>\n						</div>\n					</div>\n					<div class=\"DecCol\">\n						<div class=\"time\">\n							<input type=\"text\" class=\"time-input\" id=\"appeal-start-time\" placeholder=\"ЧЧ:ММ\" data-relation=\"#appeal-start-date\" value=\"\"/>\n							<i class=\"icon-time time-icon\"></i>\n						</div>\n\n					</div>\n\n\n\n\n\n		</div>\n	</form>\n</script>\n",
+			"file": "js/app/templates/pages/appeals-list.tmpl",
+			"file_size": 6504,
+			"file_write_time": 1364822743000000,
+			"settings":
+			{
+				"buffer_size": 6107,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "js/common.js",
+			"settings":
+			{
+				"buffer_size": 19625,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "sass/_form.scss",
+			"settings":
+			{
+				"buffer_size": 246,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "<!DOCTYPE html>\n<html>\n	<head>\n		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n		<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\" />\n		<title>WebMIS</title>\n\n		<link href=\"/css/select2.css\" rel=\"stylesheet\" type=\"text/css\">\n\n		<link href=\"/css/common.css\" rel=\"stylesheet\" type=\"text/css\">\n		<link href=\"/css/custom-theme/Aristo.css\" rel=\"stylesheet\" type=\"text/css\">\n		<link href=\"/css/jquery.ui.timepicker.css\" rel=\"stylesheet\" type=\"text/css\">\n		<!--<link href=\"/css/chosen.css\" rel=\"stylesheet\" type=\"text/css\">-->\n\n		<link href=\"/css/main.css\" rel=\"stylesheet\" type=\"text/css\">\n		<link href=\"/css/modules/layout.css\" rel=\"stylesheet\" type=\"text/css\">\n		<link href=\"/css/modules/grid.css\" rel=\"stylesheet\" type=\"text/css\">\n		<link href=\"/css/modules/uiLib.css\" rel=\"stylesheet\" type=\"text/css\">\n		<link href=\"/css/modules/aside.css\" rel=\"stylesheet\" type=\"text/css\">\n		<link href=\"/css/modules/popup.css\" rel=\"stylesheet\" type=\"text/css\">\n		<link href=\"/css/modules/vidget.css\" rel=\"stylesheet\" type=\"text/css\">\n		<link href=\"/css/modules/editform.css\" rel=\"stylesheet\" type=\"text/css\">\n		<link href=\"/css/modules/treatment.css\" rel=\"stylesheet\" type=\"text/css\">\n		<link href=\"/css/modules/inspection.css\" rel=\"stylesheet\" type=\"text/css\">\n\n		<!--script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script-->\n		<script src=\"/js/lib/jquery-1.8.2.min.js\"></script>\n		<script src=\"/js/lib/jquery-ui-1.9.1.custom.min.js\"></script>\n		<!--<script src=\"http://code.jquery.com/jquery-1.9.1.js\"></script>-->\n		<script src=\"/js/lib/jquery.ui.datepicker-ru.js\"></script>\n		<script src=\"/js/lib/jquery.ui.timepicker.js\"></script>\n		<script src=\"/js/lib/jquery.ui.timepicker-ru.js\"></script>\n\n		<script src=\"/js/lib/jquery.tmpl.js\"></script>\n\n		<!-- noty -->\n		<script type=\"text/javascript\" src=\"/js/lib/noty/jquery.noty.js\"></script>\n		<script type=\"text/javascript\" src=\"/js/lib/noty/layouts/inline.js\"></script>\n		<script type=\"text/javascript\" src=\"/js/lib/noty/themes/default.js\"></script>\n\n		<link rel='stylesheet' type='text/css' href='/js/lib/dynatree/src/skin-vista/ui.dynatree.css'>\n		<script src='/js/lib/dynatree/src/jquery.dynatree.js' type=\"text/javascript\"></script>\n\n		<!--<script src=\"/js/lib/chosen.jquery.js\"></script>-->\n		<script src=\"/js/lib/jquery.caret.min.js\"></script>\n		<script src=\"/js/lib/jquery.maskedinput-1.3.js\"></script>\n		<script src=\"/js/lib/jquery.numeric.js\"></script>\n		<script src=\"/js/lib/select2.js\"></script>\n		<script src=\"/js/lib/md5_crypt.js\"></script>\n		<script src=\"/js/lib/underscore.js\"></script>\n		<script src=\"/js/lib/backbone.js\"></script>\n		<script src=\"/js/lib/backbone-relational.js\"></script>\n\n		<script src=\"/js/lib/moment.min.js\"></script>\n\n		<script src=\"/js/ui.js\"></script>\n\n		<script src=\"/js/common.js\"></script>\n		<script src=\"/js/app/core.js\"></script>\n		<script src=\"/js/lib/require.js\" data-main=\"/js/router\"></script>\n\n		<!--[if lt IE 7]>\n			<script src=\"http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE7.js\"></script>\n		<![endif]-->\n		<!--[if lt IE 9]>\n			<link href=\"../css/ie.css\" rel=\"stylesheet\" />\n			<script src=\"http://html5shiv.googlecode.com/svn/trunk/html5.js\"></script>\n		<![endif]-->\n	</head>\n	<body>\n		<div id=\"wrapper\">\n\n\n		</div>\n	</body>\n</html>\n",
+			"file": "index.html",
+			"file_size": 3294,
+			"file_write_time": 1364822742000000,
+			"settings":
+			{
+				"buffer_size": 3294,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 75.0,
+		"selected_items":
+		[
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"INST",
+				"Package Control: Install Package"
+			],
+			[
+				"INS",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 575.0
+	},
+	"console":
+	{
+		"height": 88.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/alex/.config/sublime-text-2/Packages/User/Preferences.sublime-settings",
+		"/home/alex/.config/sublime-text-2/Packages/Web Inspector/swi.sublime-settings",
+		"/home/alex/.config/sublime-text-2/Packages/Web Inspector/Default (Linux).sublime-keymap",
+		"/home/alex/projects/webmis/js/router.js",
+		"/home/alex/projects/webmis/sass/_controls.scss",
+		"/home/alex/projects/webmis/sass/_icons.scss",
+		"/home/alex/projects/webmis/js/app/views/pages/appeals-list.js",
+		"/home/alex/projects/webmis/proxy.php",
+		"/home/alex/projects/webmis/index.html",
+		"/home/alex/projects/webmis/.htaccess"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "js/app/views/pages/appeals-list.js",
+					"settings":
+					{
+						"buffer_size": 10201,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9758,
+								9758
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 5814.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "js/app/templates/pages/appeals-list.tmpl",
+					"settings":
+					{
+						"buffer_size": 6107,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1069,
+								1069
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 323.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "js/common.js",
+					"settings":
+					{
+						"buffer_size": 19625,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9979,
+								9979
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 6996.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "sass/_form.scss",
+					"settings":
+					{
+						"buffer_size": 246,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								182,
+								182
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Syntax Highlighting for Sass/Syntaxes/SCSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "index.html",
+					"settings":
+					{
+						"buffer_size": 3294,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3294,
+								3294
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 969.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 51.0
+	},
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"appeal",
+				"js/app/views/pages/appeals-list.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 259.0,
+	"status_bar_visible": true
+}
