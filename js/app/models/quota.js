@@ -82,7 +82,11 @@ define(["models/mkb", "models/department"], function () {
 				key: "request",
 				relatedModel: App.Models.QuotaRequest
 			}
-		]
+		],
+
+		urlRoot: function () {
+			return DATA_PATH + "appeals/" + this.get("appealNumber") + "/quotes";
+		}
 
 		/*url: function () {
 			return DATA_PATH + "appeals/" + this.get("appealNumber") + "/quotes";
