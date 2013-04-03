@@ -86,14 +86,10 @@
 <script id="lab-diagnostic-grid-row" type="text/x-jquery-tmpl">
 	<td><i class=" icon-bar-chart"></i></td>
 	<td>
-		{{if directionDate}}
-		{{formatDateTime directionDate}}
+		{{if plannedEndDate}}
+			{{formatDateTime plannedEndDate}}
 		{{else}}
-		{{if diagnosticDate}}
-		{{formatDateTime diagnosticDate}}
-		{{else}}
-		-
-		{{/if}}
+			-
 		{{/if}}
 	</td>
 
