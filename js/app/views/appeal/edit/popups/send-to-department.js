@@ -37,7 +37,12 @@ define([
 			},this);
 
 			this.departments = new App.Collections.Departments();
-			this.departments.setParams({filter: {hasBeds: true}});
+			this.departments.setParams({
+				filter: {hasBeds: true},
+				limit: 0,
+				sortingField: 'name',
+				sortingMethod: 'asc'
+			});
 			this.departments.on("reset", this.onDepartmentsReset, this);
 			this.departments.fetch();
 		},
