@@ -121,7 +121,7 @@ define([
 				bedDays = 0;
 			}
 
-			if ((lastMove.get('bed') != 'Положить на койку') && (lastMove.get('bed') != null)) {
+			if ((lastMove.get('bed') !== 'Положить на койку') && (lastMove.get('bed') !== null)) {
 				lastMove.set('days', days);
 				lastMove.set('bedDays', bedDays);
 			}
@@ -134,10 +134,10 @@ define([
 		 */
 		cancelMove: function (move) {
 			var view = this;
-			var url = DATA_PATH + 'hospitalbed/' + move.get('id') + '/calloff';
+			var url = DATA_PATH + 'appeals/'+ view.collection.appealId +'/hospitalbed/' + move.get('id');
 
 			$.ajax({
-				method: 'get',
+				type: 'DELETE',
 				url: url,
 				dataType: 'jsonp',
 				//beforeSend: function(jqXHR, settings){
