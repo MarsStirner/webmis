@@ -143,6 +143,7 @@ function(
 				collection: view.groupsCollection
 			});
 
+
 			view.depended(view.groupsView);
 
 

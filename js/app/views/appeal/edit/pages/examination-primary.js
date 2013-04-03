@@ -368,7 +368,7 @@ define([
 			this.$("input[name='diagnosis[mkb][code]']").autocomplete({
 				source: function (request, response) {
 					$.ajax({
-						url: "/data/mkbs/",
+						url: "/data/dir/mkbs/",
 						dataType: "jsonp",
 						data: {
 							filter: {
