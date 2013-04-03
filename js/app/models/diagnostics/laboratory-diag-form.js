@@ -2,7 +2,7 @@ define([], function () {
 	return  Model.extend({
 		//idAttribute: "id",
 		initialize: function () {
-			console.log(this)
+			console.log(this);
 		},
 
 
@@ -41,14 +41,16 @@ define([], function () {
 		},
 
 		sync: function (method, model, options) {
-			console.log('options1', options.success)
+			console.log('options1', options.success);
 			options = options || {};
 			options.dataType = "jsonp";
 			options.contentType = 'application/json';
 
+			console.log('model',model);
+
 			switch (method.toLowerCase()) {
 				case 'read':
-					options.url = DATA_PATH + 'diagnostics/laboratory/' + model.id;
+					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory/' + model.id;
 					break;
 				case 'create':
 					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory';
@@ -58,15 +60,15 @@ define([], function () {
 					});
 					break;
 				case 'update':
-					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory';
+					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory/' + model.get('id');
 					options.data = JSON.stringify({
 						requestData: {},
 						data: [model.toJSON()]
 					});
 					break;
 				case 'delete':
-					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory/remove';
-					options.type = 'PUT';
+					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory';
+					options.type = 'DELETE';
 					options.data = JSON.stringify({
 						//requestData:{},
 						data: [

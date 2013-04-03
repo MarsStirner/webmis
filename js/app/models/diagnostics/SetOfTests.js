@@ -59,7 +59,7 @@ define([], function() {
         },
 
         url: function() {
-            return DATA_PATH + "actionTypes/laboratory/?filter[code]=" + this.code + "&patientId=" + this.patientId;
+            return DATA_PATH + "dir/actionTypes/laboratory/?filter[code]=" + this.code + "&patientId=" + this.patientId;
         },
 
         parse: function(raw) {

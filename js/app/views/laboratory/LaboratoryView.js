@@ -73,9 +73,12 @@ define([
 
 			view.ldf = new laboratoryDiagsForm();
 			view.ldf.id = model.get('id');
+			view.ldf.eventId = view.collection.appealId;
 
 			view.ldf.fetch({success: function (model) {
-				//console.log('model',view.ldf,model);
+
+				console.log('model.eventId', model.eventId);
+
 				view.editDirectionPopupView = new EditDirectionPopupView({
 					model: model,
 					appeal: view.options.appeal});
