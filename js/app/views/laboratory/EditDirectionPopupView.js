@@ -3,8 +3,9 @@
  * Date: 25.06.12
  */
 define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
-	"views/ui/SelectView"],
-	function (tmpl, SelectView) {
+	"views/ui/SelectView",
+	"text!templates/laboratory/node-test4edit.html"],
+	function (tmpl, SelectView, test4EditTmpl) {
 
 		return View.extend({
 			template: tmpl,
@@ -28,7 +29,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 
 				view.model = this.options.model;
 				view.model.eventId = view.options.appeal.get('id');
-				console.log('popup init', view.model)
+				console.log('popup init', view.model);
 
 
 			},
@@ -45,7 +46,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				});
 				var modelFinanceId = modelFinanceAttr.properties[0].value;
 
-				console.log('modelFinanceId', modelFinanceId, appealFinanceId)
+				console.log('modelFinanceId', modelFinanceId, appealFinanceId);
 
 				view.financeSelect = new SelectView({
 					collection: view.financeDictionary,
@@ -169,7 +170,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 						noCustomRender: true,
 						icon: false,
 						select: attr.properties[0].value == 'true' ? true : false
-					}
+					};
 				});
 
 
@@ -213,48 +214,18 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 						if (node.data.noCustomRender) {
 
 							html += '<span class="title-col">';
-							//html += "<a class='dynatree-title' href='#'>";
 							html += node.data.title;
-							// html += "</a>";
 							html += '</span>';
 
 						} else {
-							console.log(node);
-							var checked = '';
+
 							if (node.data.cito == "true") {
-								var checked = 'checked="checked"';
+								node.data.checked = 'checked="checked"';
+							}else{
+								node.data.checked = '';
 							}
-							html += '<table><tr><td class="title-col">';
-
-							//html += "<a class='dynatree-title' href='#'>";
-
-							html += node.data.title;
-							//html += "</a>";
-							html += '</td>';
-
-
-							html += '<td class="sito-col" >';
-
-							html += '<input  type="checkbox" val="" name="cito' + node.data.key + '" id="cito' + node.data.key + '" ' + checked + '/>';
-							html += '</td>';
-
-							html += '<td class="time-col" >';
-
-							html += '<div class="DataTime" style="font-size: 9px;width: 160px;">';
-
-							html += '<div class="DatePeriod SingleDate">' +
-								'<div class="FromTo">' +
-								'<input type="text" value="' + node.data.date + '" id="date' + node.data.key + '" name="date' + node.data.key + '" placeholder="дд.мм.гггг" class="SelectDate" data-mindate="0">' +
-								'</div><i class="DateIcon Icon"></i></div>';
-
-							html += '<div class="SingleTime" style="width: 4.5em;margin: 0 2em 0 .5em;display: inline-block;vertical-align: middle;">' +
-								'<input type="text" id="time' + node.data.key + '" class="HourPicker" value="' + node.data.time + '" data-relation="#date' + node.data.key + '" name="time' + node.data.key + '" placeholder="чч:мм" required="required">' +
-								'</div>';
-
-							html += '</div>';
-							html += '</td></tr></table>'
+							html= _.template(test4EditTmpl, node.data);
 						}
-
 
 						return html;
 					}
@@ -281,7 +252,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 										value: item.code,
 										id: item.id,
 										diagnosis: item.diagnosis
-									}
+									};
 								}));
 							}
 						});
@@ -297,7 +268,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 							displayText: ui.item.value
 						});
 
-						console.log('ui.item', ui.item)
+						console.log('ui.item', ui.item);
 
 						view.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
 						view.$("input[name='diagnosis[mkb][code]']").val(ui.item.displayText);
@@ -327,7 +298,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				var diagnosis = view.getProperty('Направительный диагноз');
 				var diagnosisId = view.getProperty('Направительный диагноз','valueId');
 				if (diagnosis) {
-					console.log('diagnosis',diagnosis)
+					console.log('diagnosis',diagnosis);
 					diagnosis = diagnosis.split(/\s+/);
 					var diagnosisCode = diagnosis[0];
 					var diagnosisText = (diagnosis.splice(1)).join(' ');
@@ -338,7 +309,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 
 
 				//Дата и время создания
-				var assessmentBeginDate = view.getProperty('assessmentBeginDate')
+				var assessmentBeginDate = view.getProperty('assessmentBeginDate');
 				var date = new Date(assessmentBeginDate);
 				this.$("#start-date").datepicker("setDate", date);
 				this.$("#start-time").val(date.getHours() + ':' + date.getMinutes()).mask("99:99").timepicker({showPeriodLabels: false});
@@ -486,7 +457,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 
 				model.set('group', group);
 
-				console.log('setParam', attributeName, propertyName, value, group)
+				console.log('setParam', attributeName, propertyName, value, group);
 
 			},
 
