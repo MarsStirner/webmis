@@ -11,7 +11,7 @@ define(["models/thesaurus-term"], function () {
 		},
 
 		url: function () {
-			var path = DATA_PATH + "thesaurus/";
+			var path = DATA_PATH + "dir/thesaurus/";
 			if (this.parentGroupId) {
 				path += "?filter[groupId]=" + this.parentGroupId;
 			}

@@ -7,7 +7,7 @@ define(["models/department"], function ()
 	App.Collections.Departments = Collection.extend({
 		model: App.Models.Department,
 		url: function () {
-			return DATA_PATH + "departments/"
+			return DATA_PATH + "dir/departments/"
 		}
 	});
 

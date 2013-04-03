@@ -32,7 +32,7 @@ define(["models/mkb", "models/department"], function () {
 		model: App.Models.QuotaType,
 
 		url: function () {
-			return DATA_PATH + "quotaTypes";
+			return DATA_PATH + "dir/quotaTypes";
 		}
 	});
 
@@ -82,11 +82,11 @@ define(["models/mkb", "models/department"], function () {
 				key: "request",
 				relatedModel: App.Models.QuotaRequest
 			}
-		],
+		]
 
-		url: function () {
+		/*url: function () {
 			return DATA_PATH + "appeals/" + this.get("appealNumber") + "/quotes";
-		}
+		}*/
 	});
 
 	return App.Models.Quota;
