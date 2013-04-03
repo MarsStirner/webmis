@@ -9,7 +9,7 @@ define(["models/dictionary-value"], function () {
 			this.name = options.name;
 		},
 		url: function () {
-			return DATA_PATH + "dictionary?dictName=" + this.name;
+			return DATA_PATH + "dir?dictName=" + this.name;
 		}
 	});
 });
