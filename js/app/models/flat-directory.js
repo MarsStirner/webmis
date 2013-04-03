@@ -101,7 +101,7 @@ define(function () {
 		},
 
 		url: function () {
-			return DATA_PATH + "flatDirectory/?limit=999&flatDirectoryId=" + this.get("id") + this.getAdditionalParams();
+			return DATA_PATH + "dir/flatDirectory/?limit=999&flatDirectoryId=" + this.get("id") + this.getAdditionalParams();
 		},
 
 		toBeautyJSON: function () {
