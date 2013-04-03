@@ -13,7 +13,7 @@ define(function () {
 		model: App.Models.EventType,
 
 		url: function () {
-			return DATA_PATH + "eventTypes";
+			return DATA_PATH + "dir/eventTypes";
 		}
 	});
 });
