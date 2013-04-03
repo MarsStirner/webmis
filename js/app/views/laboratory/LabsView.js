@@ -18,7 +18,7 @@ define([],
 
 				view.$('.labs-list').dynatree({
 					onClick: function(node) {
-						pubsub.trigger('lab:selected', node.data.code);
+						pubsub.trigger('lab:click', node.data.code);
 					},
 					children: view.collection.toJSON()
 				});

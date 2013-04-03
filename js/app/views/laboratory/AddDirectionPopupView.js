@@ -167,7 +167,7 @@ function(
 			view.depended(view.mkbInputView);
 
 
-			pubsub.on('load-group-tests tg-parent:click', function() {
+			pubsub.on('group:click parent-group:click', function() {
 				view.testCollection.reset();
 			}, view);
 

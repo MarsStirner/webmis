@@ -1826,7 +1826,6 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link {
 /* line 87, ../sass/modules/_labs.scss */
 .group-tests table td.title-col {
   padding-left: 40px;
-  min-width: 370px;
   width: 100%;
 }
 /* line 92, ../sass/modules/_labs.scss */
@@ -1835,7 +1834,7 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link {
 }
 /* line 95, ../sass/modules/_labs.scss */
 .group-tests table td.time-col {
-  min-width: 165px;
+  min-width: 14.6em;
 }
 
 /* line 107, ../sass/modules/_labs.scss */
@@ -1867,6 +1866,27 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link {
   left: 40px;
   position: relative;
   top: -3px;
+}
+
+/* line 139, ../sass/modules/_labs.scss */
+.datetime .date {
+  width: 8.67em;
+}
+/* line 141, ../sass/modules/_labs.scss */
+.datetime .date .date-icon {
+  right: 0.1em;
+}
+/* line 145, ../sass/modules/_labs.scss */
+.datetime .time {
+  width: 5.33em;
+}
+/* line 147, ../sass/modules/_labs.scss */
+.datetime .time .HourPicker {
+  vertical-align: baseline;
+}
+/* line 150, ../sass/modules/_labs.scss */
+.datetime .time .time-icon {
+  right: 0em;
 }
 
 /* line 9, ../sass/common.scss */

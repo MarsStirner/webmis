@@ -575,7 +575,6 @@ a.Button:active i {
 
 /* line 150, ../../sass/modules/popup.scss */
 .ArrowCol {
-  cursor: pointer;
   overflow: hidden;
   border: none;
   padding: 0;

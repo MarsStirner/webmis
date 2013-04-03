@@ -1,5 +1,4 @@
-define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
-	],
+define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl'],
 	function (testsGroupTemplate) {
 
 		var GroupOfTestsListView = View.extend({
@@ -9,10 +8,9 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 
 			initialize: function () {
 				var view = this;
-				
 				//	console.log('init LabTestsListView');
 
-				pubsub.on('lab:selected', function (labCode) {
+				pubsub.on('lab:click', function (labCode) {
 					view.$el.html('');
 					view.collection.fetch({data: {'filter[code]': labCode}});
 
@@ -39,9 +37,9 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl',
 						if (!node.data.children.length) {
 							console.log("load-group-tests " + node.data.code);
 
-							pubsub.trigger('load-group-tests', node.data.code);
+							pubsub.trigger('group:click', node.data.code);
 						} else {
-							pubsub.trigger('tg-parent:click');
+							pubsub.trigger('parent-group:click');
 						}
 
 					},
