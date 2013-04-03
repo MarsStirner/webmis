@@ -2,7 +2,7 @@
 /*
 *	FONTS
 */
-/* line 17, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 17, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -24,50 +24,50 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 103, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block;
 }
 
-/* line 17, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 17, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -89,45 +89,45 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 103, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block;
 }
@@ -279,7 +279,7 @@ li [class*=" icon-"].icon-large, .nav li [class^="icon-"].icon-large,
 /* line 132, ../sass/_font-awesome.scss */
 ul.icons {
   list-style-type: none;
-  text-indent: -0.75em;
+  text-indent: -.75em;
 }
 /* line 138, ../sass/_font-awesome.scss */
 ul.icons li [class^="icon-"],
@@ -295,7 +295,7 @@ ul.icons li [class*=" icon-"] {
 /* line 151, ../sass/_font-awesome.scss */
 .icon-border {
   border: solid 1px #eeeeee;
-  padding: .2em .25em .15em;
+  padding: 0.2em 0.25em 0.15em;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -1738,100 +1738,135 @@ ul.icons li [class*=" icon-"] {
   content: "\f115";
 }
 
-/* line 2, ../sass/modules/_labs.scss */
+/* line 3, ../sass/modules/_labs.scss */
+.labs .dynatree-container,
+.groups .dynatree-container,
+.group-tests .dynatree-container {
+  font-size: inherit;
+}
+
+/* line 8, ../sass/modules/_labs.scss */
+ul.dynatree-container a:focus, span.dynatree-focused a:link {
+  outline: 0;
+}
+
+/* line 13, ../sass/modules/_labs.scss */
 .labs-list li label, .lab-tests-list li label {
   white-space: inherit!important;
 }
-/* line 6, ../sass/modules/_labs.scss */
+/* line 17, ../sass/modules/_labs.scss */
 .labs-list .selected, .lab-tests-list .selected {
   background-color: #118EDC;
 }
-/* line 8, ../sass/modules/_labs.scss */
+/* line 19, ../sass/modules/_labs.scss */
 .labs-list .selected label, .lab-tests-list .selected label {
   color: #fff;
 }
 
-/* line 15, ../sass/modules/_labs.scss */
+/* line 26, ../sass/modules/_labs.scss */
 .labs-list .dynatree-container {
   white-space: normal;
   border: none;
 }
-/* line 19, ../sass/modules/_labs.scss */
+/* line 30, ../sass/modules/_labs.scss */
 .labs-list .dynatree-container span.dynatree-connector {
   display: none;
 }
 
-/* line 26, ../sass/modules/_labs.scss */
+/* line 37, ../sass/modules/_labs.scss */
 .lab-tests-list .dynatree-container {
   border: none;
 }
 
-/* line 33, ../sass/modules/_labs.scss */
+/* line 44, ../sass/modules/_labs.scss */
 .edit-tree .dynatree-container {
   white-space: normal;
   overflow: hidden;
 }
-/* line 37, ../sass/modules/_labs.scss */
+/* line 48, ../sass/modules/_labs.scss */
 .edit-tree span.dynatree-node {
   position: relative;
   display: block;
 }
-/* line 40, ../sass/modules/_labs.scss */
+/* line 51, ../sass/modules/_labs.scss */
 .edit-tree span.dynatree-node table {
   width: 90%;
   display: inline-block;
 }
-/* line 43, ../sass/modules/_labs.scss */
+/* line 54, ../sass/modules/_labs.scss */
 .edit-tree span.dynatree-node table td {
   vertical-align: top;
 }
-/* line 47, ../sass/modules/_labs.scss */
+/* line 58, ../sass/modules/_labs.scss */
 .edit-tree span.dynatree-node table td.title-col {
   padding-left: 5px;
   width: 370px;
   width: 100%;
 }
-/* line 52, ../sass/modules/_labs.scss */
+/* line 63, ../sass/modules/_labs.scss */
 .edit-tree span.dynatree-node table td.sito-col {
   width: 25px;
 }
-/* line 55, ../sass/modules/_labs.scss */
+/* line 66, ../sass/modules/_labs.scss */
 .edit-tree span.dynatree-node table td.time-col {
   width: 165px;
 }
 
-/* line 64, ../sass/modules/_labs.scss */
+/* line 77, ../sass/modules/_labs.scss */
+.group-tests table {
+  width: 100%;
+  display: inline-block;
+  position: relative;
+  top: -3px;
+}
+/* line 83, ../sass/modules/_labs.scss */
+.group-tests table td {
+  vertical-align: top;
+}
+/* line 87, ../sass/modules/_labs.scss */
+.group-tests table td.title-col {
+  padding-left: 40px;
+  min-width: 370px;
+  width: 100%;
+}
+/* line 92, ../sass/modules/_labs.scss */
+.group-tests table td.cito-col {
+  min-width: 25px;
+}
+/* line 95, ../sass/modules/_labs.scss */
+.group-tests table td.time-col {
+  min-width: 165px;
+}
+
+/* line 107, ../sass/modules/_labs.scss */
 .lab-tests-list2 .dynatree-container {
   white-space: normal;
   overflow: hidden;
 }
-/* line 68, ../sass/modules/_labs.scss */
+/* line 111, ../sass/modules/_labs.scss */
 .lab-tests-list2 span.dynatree-node {
   position: relative;
   display: block;
 }
-/* line 72, ../sass/modules/_labs.scss */
-.lab-tests-list2 span.dynatree-node table {
-  width: 90%;
-  display: inline-block;
+/* line 114, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node .dynatree-connector, .lab-tests-list2 span.dynatree-node .dynatree-expander {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
 }
-/* line 75, ../sass/modules/_labs.scss */
-.lab-tests-list2 span.dynatree-node table td {
-  vertical-align: top;
+/* line 120, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node .dynatree-checkbox {
+  position: absolute;
+  top: 0;
+  left: 18px;
+  z-index: 10;
 }
-/* line 79, ../sass/modules/_labs.scss */
-.lab-tests-list2 span.dynatree-node table td.title-col {
-  padding-left: 5px;
-  min-width: 370px;
-  width: 100%;
-}
-/* line 84, ../sass/modules/_labs.scss */
-.lab-tests-list2 span.dynatree-node table td.sito-col {
-  min-width: 25px;
-}
-/* line 87, ../sass/modules/_labs.scss */
-.lab-tests-list2 span.dynatree-node table td.time-col {
-  min-width: 165px;
+/* line 126, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node span.title-col {
+  left: 40px;
+  position: relative;
+  top: -3px;
 }
 
 /* line 9, ../sass/common.scss */
@@ -1969,15 +2004,15 @@ h6 {
 a {
   color: #118ddc;
   /*
-  	TODO: ╨╖╨░╨╝╨╡╨╜╨╕╤В╤М ╨▓╨╡╤А╤Е╨╜╤О╤О ╤Б╤В╤А╨╛╤З╨║╤Г ╨▓ ╨┐╤А╨╛╨┤╨░╨║╤И╨╜╨╡
+  	TODO: заменить верхнюю строчку в продакшне
   	@include link-colors ($color, $LINK_HOVER_COLOR, $LINK_ACTIVE_COLOR, $visited-color);
   */
 }
-/* line 24, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
+/* line 24, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 a:hover {
   color: #dd1111;
 }
-/* line 27, ../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
+/* line 27, ../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 a:active {
   color: #118ddc;
 }

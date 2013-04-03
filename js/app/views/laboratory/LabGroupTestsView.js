@@ -48,9 +48,9 @@ function(setOfTestsViewTemplate, SetOfTests) {
 
             setOfTests.on('change', function(event, model) {
 
-                // var tree = setOfTests.getTree();
+                var tree = setOfTests.getTree();
 
-                // callback(tree);
+                 callback(tree);
                 //console.log('tree',tree)
 
                 view.testCollection.add(setOfTests.toJSON());
@@ -80,7 +80,7 @@ function(setOfTestsViewTemplate, SetOfTests) {
             var view = this;
             //console.log('render .lab-tests-list',view.collection.toJSON())
 
-            view.$el.html('<div class="lab-tests-list2"></div>');
+            view.$el.html('<table><tr><td class="title-col"></td><td class="cito-col">cito</td><td class="time-col"></td></tr></table><div class="lab-tests-list2"></div>');
 
 
             view.$('.lab-tests-list2').dynatree({
@@ -108,7 +108,7 @@ function(setOfTestsViewTemplate, SetOfTests) {
                         html += '</td>';
 
 
-                        html += '<td class="sito-col" >';
+                        html += '<td class="cito-col" >';
 
                         html += '<input  type="checkbox" val="" name="cito' + node.data.key + '" id="cito' + node.data.key + '" />';
                         html += '</td>';
@@ -146,7 +146,7 @@ function(setOfTestsViewTemplate, SetOfTests) {
                         showPeriodLabels: false
                     });
 
-                    var $citoCheckbox = $nodeSpan.find("input[name='sito']");
+                    var $citoCheckbox = $nodeSpan.find("input[name='cito']");
 
                     $citoCheckbox.on('click', function(e) {
                         //.dynatree("option", "autoCollapse", true);

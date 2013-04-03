@@ -1,3 +1,14 @@
+.labs .dynatree-container, 
+.groups .dynatree-container,
+.group-tests .dynatree-container{
+
+  font-size:inherit;
+}
+
+ul.dynatree-container a:focus, span.dynatree-focused a:link{
+  outline: 0;
+}
+
 .labs-list,.lab-tests-list{
   li label{
     white-space: inherit!important;
@@ -60,7 +71,39 @@
   }
 }
 
+
+
+.group-tests{
+    table{
+    width: 100%;
+    display: inline-block;
+    position: relative;
+    //z-index: 5;
+    top: -3px;
+    td{
+      vertical-align: top;
+      //border: 1px solid;
+
+      &.title-col{
+        padding-left: 40px;
+        min-width: 370px;
+        width: 100%;
+      }
+      &.cito-col{
+        min-width: 25px;
+      }
+      &.time-col{
+        min-width: 165px;
+      }
+    }
+  }
+}
 .lab-tests-list2{
+
+
+
+
+
   .dynatree-container{
     white-space: normal;
     overflow: hidden;
@@ -68,27 +111,25 @@
   span.dynatree-node{
     position: relative;
     display: block;
-
-    table{
-      width: 90%;
-      display: inline-block;
-      td{
-        vertical-align: top;
-        //border: 1px solid;
-
-        &.title-col{
-          padding-left: 5px;
-          min-width: 370px;
-          width: 100%;
-        }
-        &.sito-col{
-          min-width: 25px;
-        }
-        &.time-col{
-          min-width: 165px;
-        }
-      }
+    .dynatree-connector, .dynatree-expander{
+      position: absolute;
+      top: 0;
+      left:0;
+      z-index: 10;
     }
+    .dynatree-checkbox{
+      position: absolute;
+      top: 0;
+      left: 18px;
+      z-index: 10;
+    }
+    span.title-col{
+      left: 40px;
+      position: relative;
+      top: -3px;
+    }
+
+
 
   }
 
