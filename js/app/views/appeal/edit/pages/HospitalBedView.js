@@ -35,9 +35,8 @@ define([
 			//Получаем список отделений со свободными койками
 			this.departments = new App.Collections.Departments();
 			this.departments.setParams({
-				filter: {
-					hasBeds: true
-				},
+				filter: {hasBeds: true},
+				limit: 0,
 				sortingField: 'name',
 				sortingMethod: 'asc'
 			});

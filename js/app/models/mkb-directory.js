@@ -20,11 +20,11 @@ define(['models/mkb'], function () {
 
 		url: function () {
 			if (this.requestAll) {
-				return DATA_PATH + "mkbs/?filter[view]=mkb&filter[sex]=" + this.sex;
+				return DATA_PATH + "dir/mkbs/?filter[view]=mkb&filter[sex]=" + this.sex;
 			} else if ( this.diagnosis ) {
-				return DATA_PATH + "mkbs/?filter[view]=mkb&filter[diagnosis]=" + this.diagnosis + "&filter[sex]=" + this.sex;
+				return DATA_PATH + "dir/mkbs/?filter[view]=mkb&filter[diagnosis]=" + this.diagnosis + "&filter[sex]=" + this.sex;
 			} else {
-				return DATA_PATH + "mkbs/?filter[view]=mkb&filter[code]=" + this.subGroupId + "&filter[sex]=" + this.sex;
+				return DATA_PATH + "dir/mkbs/?filter[view]=mkb&filter[code]=" + this.subGroupId + "&filter[sex]=" + this.sex;
 			}
 
 		}
@@ -85,7 +85,7 @@ define(['models/mkb'], function () {
 			this.sex = Cache.Patient.get("sex" ).length ? (Cache.Patient.get("sex")=="male" ? 1 : 2) : 0;
 		},
 		url: function () {
-			return DATA_PATH + "mkbs/?filter[view]=subgroup&filter[groupId]=" + this.groupId+"&filter[sex]="+this.sex;
+			return DATA_PATH + "dir/mkbs/?filter[view]=subgroup&filter[groupId]=" + this.groupId+"&filter[sex]="+this.sex;
 		}
 	});
 
@@ -147,7 +147,7 @@ define(['models/mkb'], function () {
 		},
 
 		url: function () {
-			return DATA_PATH + "mkbs/?filter[view]=group&filter[classId]=" + this.classMkbId +"&filter[sex]="+this.sex;
+			return DATA_PATH + "dir/mkbs/?filter[view]=group&filter[classId]=" + this.classMkbId +"&filter[sex]="+this.sex;
 		}
 	});
 
@@ -233,8 +233,8 @@ define(['models/mkb'], function () {
 
 		url: function () {
 			return this.getInitialCode() ?
-				DATA_PATH + "mkbs/?filter[code]=" + this.getInitialCode() +"&filter[sex]="+this.sex :
-				DATA_PATH + "mkbs/?filter[view]=class"+"&filter[sex]="+this.sex;
+				DATA_PATH + "dir/mkbs/?filter[code]=" + this.getInitialCode() +"&filter[sex]="+this.sex :
+				DATA_PATH + "dir/mkbs/?filter[view]=class"+"&filter[sex]="+this.sex;
 		}
 	});
 
