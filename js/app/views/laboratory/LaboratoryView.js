@@ -3,14 +3,13 @@
  * Date: 08.06.12
  */
 define([
-	"text!templates/appeal/edit/pages/laboratory.tmpl"
-	, "views/laboratory/AddDirectionPopupView"
-	, "views/laboratory/EditDirectionPopupView"
-	, "models/diagnostics/laboratory-diag-form"
-	, "collections/diagnostics/laboratory-diags"
-	, "views/grid"
-
-], function (template, AddDirectionPopupView, EditDirectionPopupView, laboratoryDiagsForm) {
+	"text!templates/appeal/edit/pages/laboratory.tmpl",
+	"views/laboratory/AddDirectionPopupView",
+	"views/laboratory/EditDirectionPopupView",
+	"models/diagnostics/laboratory-diag-form",
+	"collections/diagnostics/laboratory-diags",
+	"views/grid"],
+	function (template, AddDirectionPopupView, EditDirectionPopupView, laboratoryDiagsForm) {
 
 	var Laboratory = View.extend({
 		className: "ContentHolder",
@@ -25,7 +24,7 @@ define([
 			var view = this;
 
 			//console.log('this.options', this.options)
-			this.collection = new App.Collections.LaboratoryDiags;
+			this.collection = new App.Collections.LaboratoryDiags();
 			this.collection.appealId = this.options.appealId;
 			this.collection.setParams({
 				sortingField: "directionDate",
@@ -50,7 +49,7 @@ define([
 
 			pubsub.on('lab-diagnostic:added', function () {
 				view.collection.fetch();
-			})
+			});
 
 			//this.collection.on("reset", this.onCollectionLoaded, this);
 			this.collection.fetch();
@@ -74,9 +73,12 @@ define([
 
 			view.ldf = new laboratoryDiagsForm();
 			view.ldf.id = model.get('id');
+			view.ldf.eventId = view.collection.appealId;
 
 			view.ldf.fetch({success: function (model) {
-				//console.log('model',view.ldf,model);
+
+				console.log('model.eventId', model.eventId);
+
 				view.editDirectionPopupView = new EditDirectionPopupView({
 					model: model,
 					appeal: view.options.appeal});
@@ -91,7 +93,7 @@ define([
 
 			model.eventId = view.collection.appealId;
 
-			var id = model.get('id')
+			var id = model.get('id');
 
 			model.destroy({success: function () {
 				pubsub.trigger('noty', {text: 'Направление удалено', type: 'alert'});
@@ -127,7 +129,8 @@ define([
 			view.$(".ToggleFilters").button({icons: {primary: "icon-filter"}});
 
 
-			console.log('view.collection',view.collection)
+			console.log('view.collection',view.collection);
+
 			view.paginator = new App.Views.Paginator({
 				collection: view.collection
 			});

@@ -28,10 +28,10 @@ define([//"models/doctor"
 			options.dataType = "jsonp";
 			options.contentType = 'application/json';
 
-			console.log('sync',model)
+
 			switch (method.toLowerCase()) {
 				case 'read':
-					options.url = DATA_PATH + 'diagnostics/laboratory/' + model.id;
+					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory/' + model.id;
 					break;
 //				case 'create':
 //					options.url = DATA_PATH + 'diagnostics/' + model.eventId + '/laboratory';
@@ -48,8 +48,8 @@ define([//"models/doctor"
 //					});
 //					break;
 				case 'delete':
-					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory/remove';
-					options.type = 'PUT';
+					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory';///'+model.get('id');
+					options.type = 'DELETE';
 					options.data = JSON.stringify({
 						//requestData:{},
 						data: [{'id':model.get('id')}]

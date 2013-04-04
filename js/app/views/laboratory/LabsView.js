@@ -1,20 +1,13 @@
 define([],
 	function () {
 
-		LabsListView = View.extend({
+		LabsCollectionView = View.extend({
 
 			initialize: function () {
-				var view = this;
 
-				view.collection.setParams({
-					sortingField: "name",
-					sortingMethod: "asc"
-				});
-
-				view.collection.on('reset', function () {
-					view.render();
-				});
-
+				this.collection.on('reset', function () {
+					this.render();
+				},this);
 
 			},
 
@@ -25,19 +18,16 @@ define([],
 
 				view.$('.labs-list').dynatree({
 					onClick: function(node) {
-
-						pubsub.trigger('lab-selected', node.data.code)
-
+						pubsub.trigger('lab:click', node.data.code);
 					},
 					children: view.collection.toJSON()
 				});
-
 
 			}
 
 		});
 
 
-		return LabsListView;
+		return LabsCollectionView;
 
 	});

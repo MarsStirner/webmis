@@ -1,8 +1,8 @@
 define([], function () {
-	var LabTest = Model.extend({
+	var LabGroup = Model.extend({
 		defaults: {}
 	});
 
-	return LabTest;
+	return LabGroup;
 
 });

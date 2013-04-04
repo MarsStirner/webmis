@@ -22,9 +22,9 @@
   -moz-box-shadow: rgba(0, 0, 0, 0.5) 0 0 0.1em 0;
   box-shadow: rgba(0, 0, 0, 0.5) 0 0 0.1em 0;
   margin: 0;
-  border-top: 2px solid #B3B3B3;
+  border-top: 2px solid #b3b3b3;
   border-right: 2px solid #bbbbbb;
-  border-bottom: 2px solid #B3B3B3;
+  border-bottom: 2px solid #b3b3b3;
   border-left: 2px solid #bbbbbb;
   cursor: pointer;
   padding: 0.4em 1.5em;
@@ -37,10 +37,10 @@
 }
 /* line 22, ../../sass/_buttons.scss */
 .Styled.Button:hover, .Styled.Button.Green:hover, .Styled.Button.BlueBorder, .VarColor .Styled.Button.BlueBorder {
-  border-top: 2px solid #128EDC;
-  border-right: 2px solid #128EDC;
-  border-bottom: 2px solid #128EDC;
-  border-left: 2px solid #128EDC;
+  border-top: 2px solid #128edc;
+  border-right: 2px solid #128edc;
+  border-bottom: 2px solid #128edc;
+  border-left: 2px solid #128edc;
   /*border:2px solid #128EDC;*/
 }
 /* line 32, ../../sass/_buttons.scss */
@@ -65,7 +65,7 @@
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
   opacity: 0.5;
   cursor: default;
-  border: 2px solid #B3B3B3;
+  border: 2px solid #b3b3b3;
 }
 /* line 51, ../../sass/_buttons.scss */
 .Styled.Button.Submit {
@@ -80,7 +80,7 @@
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
   opacity: 0.5;
   cursor: default;
-  border: 2px solid #B3B3B3;
+  border: 2px solid #b3b3b3;
 }
 /* line 64, ../../sass/_buttons.scss */
 .Styled.Button.Green {
@@ -90,7 +90,7 @@
   background: -moz-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
   background: -o-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
   background: linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
-  border: 2px solid #31A31B;
+  border: 2px solid #31a31b;
   color: #fff;
 }
 /* line 72, ../../sass/_buttons.scss */
@@ -102,10 +102,10 @@
 }
 /* line 77, ../../sass/_buttons.scss */
 .Styled.Button.BlueBorder {
-  border-top: 2px solid #128EDC;
-  border-right: 2px solid #128EDC;
-  border-bottom: 2px solid #128EDC;
-  border-left: 2px solid #128EDC;
+  border-top: 2px solid #128edc;
+  border-right: 2px solid #128edc;
+  border-bottom: 2px solid #128edc;
+  border-left: 2px solid #128edc;
   position: relative;
 }
 /* line 86, ../../sass/_buttons.scss */
@@ -193,7 +193,7 @@ a.Button:active i {
   	}*/
 }
 
-/*╨Ш╨║╨╛╨╜╨║╨╕*/
+/*Иконки*/
 /* line 21, ../../sass/_icons.scss */
 .AddIcon {
   background: url("../../images/sprites/icons-sprite.png") no-repeat;
@@ -316,7 +316,7 @@ a.Button:active i {
   		height:14px;
   	}*/
 }
-/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .RemoveIcon:hover, .RemoveIcon.remove_tiny_hover, .RemoveIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -355,7 +355,7 @@ a.Button:active i {
   		margin-right:0.2em;
   	}*/
 }
-/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../.rvm/gems/ruby-1.9.3-p374/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .DeleteIcon:hover, .DeleteIcon.remove_tiny_hover, .DeleteIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -419,8 +419,8 @@ a.Button:active i {
   width: 90%;
   margin: 0 auto 10px auto;
   padding: 10px 0;
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
 }
 
 /* line 17, ../../sass/modules/uiLib.scss */
@@ -452,7 +452,7 @@ a.Button:active i {
   left: 0;
   top: 1.2em;
   background: #fff;
-  border: 1px solid #D4D4D4;
+  border: 1px solid #d4d4d4;
   min-width: 100%;
   -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 2px 3px 0;
   -moz-box-shadow: rgba(0, 0, 0, 0.5) 0 2px 3px 0;
@@ -469,7 +469,7 @@ a.Button:active i {
 /* line 56, ../../sass/modules/uiLib.scss */
 .DDList > .Content li {
   color: #3F3F40;
-  border-top: 1px solid #D4D4D4;
+  border-top: 1px solid #d4d4d4;
   padding: 0.6em 8px;
   cursor: pointer;
 }
@@ -642,12 +642,12 @@ input[type="text"]:focus, input[type="password"]:focus, div.RichText:focus, text
 
 /* line 196, ../../sass/modules/uiLib.scss */
 .Mandatory {
-  outline: 1px solid #7FCCFF;
+  outline: 1px solid #7fccff;
 }
 
 /* line 199, ../../sass/modules/uiLib.scss */
 .WrongField {
-  outline: 2px solid #FF4040;
+  outline: 2px solid #ff4040;
 }
 
 /* line 202, ../../sass/modules/uiLib.scss */
@@ -672,14 +672,14 @@ textarea {
 
 /* line 217, ../../sass/modules/uiLib.scss */
 input[type="text"]:focus, textarea:focus, input.Dirty {
-  border: 1px solid #0099FF;
+  border: 1px solid #0099ff;
   color: black;
 }
 
 /* line 221, ../../sass/modules/uiLib.scss */
 input[type="text"].Disabled, textarea.Disabled, .DDSelect.Disabled, .RichText.Disabled {
   background: #F5F4F4;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
 }
 
 /* line 225, ../../sass/modules/uiLib.scss */
@@ -793,7 +793,7 @@ select.Regular:disabled {
 }
 /* line 311, ../../sass/modules/uiLib.scss */
 .DatePeriod.Dirty {
-  border: 1px solid #0099FF;
+  border: 1px solid #0099ff;
   color: black;
 }
 /* line 315, ../../sass/modules/uiLib.scss */
@@ -803,7 +803,7 @@ select.Regular:disabled {
 /* line 318, ../../sass/modules/uiLib.scss */
 .DatePeriod.Disabled {
   background: #F5F4F4;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
 }
 
 /* line 328, ../../sass/modules/uiLib.scss */
@@ -1004,14 +1004,14 @@ select.Regular:disabled {
   height: 2em;
   text-align: center;
   line-height: 2em;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   text-decoration: none;
   color: #404041;
 }
 /* line 506, ../../sass/modules/uiLib.scss */
 .Paginator > li a:hover {
   background: #DFF4FD;
-  border: 1px solid #118EDC;
+  border: 1px solid #118edc;
   color: #118EDC;
 }
 
@@ -1028,13 +1028,13 @@ select.Regular:disabled {
 /* line 521, ../../sass/modules/uiLib.scss */
 .Paginator > li.Active a {
   background: #DFF4FD;
-  border: 1px solid #118EDC;
+  border: 1px solid #118edc;
   color: #118EDC;
 }
 
 /* line 527, ../../sass/modules/uiLib.scss */
 .Paginator > li.Disabled a, .Paginator > li.Disabled a:hover {
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   color: #404041;
   opacity: 0.4;
   cursor: default;
@@ -1084,7 +1084,7 @@ select.Regular:disabled {
 
 /* line 568, ../../sass/modules/uiLib.scss */
 a.ScrollPage {
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   color: #6D6E71;
   display: inline-block;
   height: 2em;
@@ -1097,7 +1097,7 @@ a.ScrollPage {
 /* line 578, ../../sass/modules/uiLib.scss */
 a.ScrollPage:hover {
   background: #DFF4FD;
-  border: 1px solid #118EDC;
+  border: 1px solid #118edc;
   color: #118EDC;
 }
 
@@ -1135,7 +1135,7 @@ a.ScrollDay:hover {
   background: -moz-linear-gradient(#d3d3d3 0%, #f7f7f7 100%);
   background: -o-linear-gradient(#d3d3d3 0%, #f7f7f7 100%);
   background: linear-gradient(#d3d3d3 0%, #f7f7f7 100%);
-  border: 1px solid #118EDC;
+  border: 1px solid #118edc;
   color: #118EDC;
 }
 
@@ -1149,7 +1149,7 @@ a.ScrollDay:hover {
 /* line 611, ../../sass/modules/uiLib.scss */
 .Disabled a.ScrollPage:hover {
   background: none;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   color: #6D6E71;
   cursor: default;
 }
