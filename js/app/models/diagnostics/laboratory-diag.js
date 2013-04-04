@@ -48,12 +48,12 @@ define([//"models/doctor"
 //					});
 //					break;
 				case 'delete':
-					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory/'+model.get('id');
+					options.url = DATA_PATH + 'appeals/' + model.eventId + '/diagnostics/laboratory';///'+model.get('id');
 					options.type = 'DELETE';
-					// options.data = JSON.stringify({
-					// 	//requestData:{},
-					// 	data: [{'id':model.get('id')}]
-					// });
+					options.data = JSON.stringify({
+						//requestData:{},
+						data: [{'id':model.get('id')}]
+					});
 
 					break;
 			}
