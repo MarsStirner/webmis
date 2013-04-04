@@ -3,10 +3,10 @@ define([
 ], function () {
 
 	App.Models.PrintAppeal = App.Models.Appeal.extend({
-		urlRoot: function(){
-			return DATA_PATH + "print/appeals/"
+		url: function() {
+			return DATA_PATH + "appeals/" + this.get("id") + "/print/";
 		}
 	});
 
-	return App.Models.Appeal;
+	return App.Models.PrintAppeal;
 } );
