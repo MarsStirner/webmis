@@ -1,4 +1,4 @@
-<h2>${patient.name.last} ${patient.name.first} ${patient.name.middle} — {{formatDate patient.birthDate}}, {{ageString patient.birthDate}}</h2>
+<h2>История болезни номер <%= number %></h2>
 <div class="EditForm">
 	<ul class="LineBlockHolder Clearfix">
 		<li>
@@ -8,11 +8,11 @@
 				</div>
 				<div class="HalfCol">
 					<p>
-						{{if patient.medicalInfo.blood.group.length}}
-							${patient.medicalInfo.blood.group}
-						{{else}}
+						<% if (patient.medicalInfo.blood.group.length) { %>
+							<%= patient.medicalInfo.blood.group %>
+						<% } else { %>
 							-
-						{{/if}}
+						<% } %>
 					</p>
 				</div>
 			</div>
@@ -22,19 +22,25 @@
 					<span class="Label">Медикаментозная непереносимость</span>
 				</div>
 				<div class="LineCol">
-					{{if patient.medicalInfo.drugIntolerances.length && patient.medicalInfo.drugIntolerances[0].substance.length}}
-						{{each(i, drugIntolerance) patient.medicalInfo.drugIntolerances}}
+					<% if (patient.medicalInfo.drugIntolerances.length && patient.medicalInfo.drugIntolerances[0].substance.length) { %>
+						<% _.each(patient.medicalInfo.drugIntolerances, function (drugIntolerance) { %>
 							<p>
-								<em class="Warning">${drugIntolerance.substance}	{{if drugIntolerance.degree}}${drugIntolerance.degree} степень{{/if}}	{{if drugIntolerance.checkingDate}}установлено: {{formatDate drugIntolerance.checkingDate}}{{/if}}</em>
+								<em class="Warning">
+									<%= drugIntolerance.substance %>
+									<% if (drugIntolerance.degree) { %>
+										<%= drugIntolerance.degree %> степень
+									<% } %>
+									<% if (drugIntolerance.checkingDate) { %>
+										установлено: <%= Core.Date.format(drugIntolerance.checkingDate) %>
+									<% } %>
+								</em>
 							</p>
-						{{/each}}
-					{{else}}
+						<% }); %>
+					<% } else { %>
 						-
-					{{/if}}
-
+					<% } %>
 				</div>
 			</div>
-
 
 			<div class="LineBlock">
 				<div class="HalfCol">
@@ -42,11 +48,11 @@
 				</div>
 				<div class="HalfCol">
 					<p>
-						{{if physicalParameters.height}}
-							${physicalParameters.height} см
-						{{else}}
+						<% if (physicalParameters.height) { %>
+							<%= physicalParameters.height %> см
+						<% } else { %>
 							-
-						{{/if}}
+						<% } %>
 					</p>
 				</div>
 			</div>
@@ -57,11 +63,16 @@
 				</div>
 				<div class="HalfCol">
 					<p>
-						{{if physicalParameters.weight}}
-							${physicalParameters.weight} {{if moment().diff(moment(parseInt(patient.birthDate)), 'month') < 1}} г {{else}} кг {{/if}}
-						{{else}}
+						<% if (physicalParameters.weight) { %>
+							<%= physicalParameters.weight %>
+							<% if (moment().diff(moment(parseInt(patient.birthDate)), 'month') < 1) { %>
+								г
+							<% } else { %>
+								кг
+							<% } %>
+						<% } else { %>
 							-
-						{{/if}}
+						<% } %>
 					</p>
 				</div>
 			</div>
@@ -73,11 +84,11 @@
 				</div>
 				<div class="HalfCol">
 					<p>
-						{{if rangeAppealDateTime.start}}
-							{{formatDate rangeAppealDateTime.start}}
-						{{else}}
+						<% if (rangeAppealDateTime.start) { %>
+							<%= Core.Date.format(rangeAppealDateTime.start) %>
+						<% } else { %>
 							-
-						{{/if}}
+						<% } %>
 					</p>
 				</div>
 			</div>
@@ -88,16 +99,16 @@
 				</div>
 				<div class="HalfCol">
 					<p>
-						{{if Core.Data.appealExtraData && Core.Data.appealExtraData.get('department')}}
-							${Core.Data.appealExtraData.get('department').name}
-						{{else}}
+						<% if (Core.Data.appealExtraData && Core.Data.appealExtraData.get('department')) { %>
+							<%= Core.Data.appealExtraData.get('department').name %>
+						<% } else { %>
 							-
-						{{/if}}
+						<% } %>
 					</p>
 				</div>
 			</div>
 
-			<div class="LineBlock">
+			<!--<div class="LineBlock">
 				<div class="HalfCol">
 					<span class="Label">Палата</span>
 				</div>
@@ -110,7 +121,7 @@
 						{{/if}}
 					</p>
 				</div>
-			</div>
+			</div>-->
 
 			<div class="LineBlock">
 				<div class="HalfCol">
@@ -118,13 +129,8 @@
 				</div>
 				<div class="HalfCol">
 					<p>
-						{{if placeType.name}}
-							${placeType.name}
-						{{else}}
-							-
-						{{/if}}
+						_КОЙКА_
 					</p>
-
 				</div>
 			</div>
 
@@ -134,11 +140,7 @@
 				</div>
 				<div class="HalfCol">
 					<p>
-						{{if assignment.doctor}}
-							${assignment.doctor}
-						{{else}}
-							-
-						{{/if}}
+						_execPerson_
 					</p>
 				</div>
 			</div>

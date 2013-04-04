@@ -146,18 +146,27 @@ define([
 				{name: "hospitalizationPointTypes", id: 19, fd: true},
 				{name: "hospitalizationTypes", id: 18, fd: true}
 			], function (dicts) {
-				var template = cardTemplate;
+				//var template = cardTemplate;
 
-				this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
+				if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT) {
+					this.$el.html(_.template(cardMonitoringTemplate, _.extend({
+						closed: this.model.closed,
+						isClosed: this.model.isClosed(),
+						allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
+						dicts: dicts
+					}, this.model.toJSON())));
+				} else {
+					this.$el.html($.tmpl(cardTemplate, _.extend({
+						closed: this.model.closed,
+						isClosed: this.model.isClosed(),
+						allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
+						dicts: dicts
+					}, this.model.toJSON())));
+				}
+
+				/*this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
 					template = cardMonitoringTemplate
-				});
-
-				this.$el.html($.tmpl(template, _.extend({
-					closed: this.model.closed,
-					isClosed: this.model.isClosed(),
-					allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
-					dicts: dicts
-				}, this.model.toJSON())));
+				});*/
 
 				this.$(".EditAppeal").button({icons: {primary: "icon-edit"}});
 
