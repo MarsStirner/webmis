@@ -104,17 +104,32 @@ define(["models/Biomaterial"], function (Biomaterial) {
 
 			_.each(labTests, function (labTest, index) {
 
-				console.log('lab-tests' + index, labTest)
+				var orgStructure = '';
+				if(labTest.bed && labTest.bed.name){
+					orgStructure = labTest.bed.name;
+				}
+
+				var tissueTypeName = '';
+				if(labTest.biomaterial && labTest.biomaterial.tissueType && labTest.biomaterial.tissueType.name){
+					tissueTypeName = labTest.biomaterial.tissueType.name;
+				}
+
+				var tubeTypeName = '';
+				if(labTest.tubeType && labTest.tubeType.name){
+					tubeTypeName = labTest.tubeType.name;
+				}
+
+
 				workList.push({
 					'index': index + 1,
 					'jobTicketDate': labTest.jobTicket.date,
-					'orgStructure': labTest.bed.name,
+					'orgStructure': orgStructure,
 					'patientName': labTest.patient.name,
 					'patientSex': labTest.patient.sexShortName,
 					'patientBirthDate': labTest.patient.birthDate,
 					'labTestName': labTest.actionType.name,
-					'tissueTypeName': labTest.biomaterial.tissueType.name,
-					'tubeTypeName': labTest.tubeType.name,
+					'tissueTypeName': tissueTypeName,
+					'tubeTypeName': tubeTypeName,
 					'jobTicketLabel': labTest.jobTicket.label,
 					'jobTicketNote': labTest.jobTicket.note,
 					'takenTissueJournalId': labTest.takenTissueJournal
