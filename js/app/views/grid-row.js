@@ -3,7 +3,14 @@ define([], function () {
 		tagName: "tr",
 
 		events: {
-			"click": "updateUrl"
+			"click": "updateUrl",
+			"dblclick": "onDbClick"
+		},
+
+		onDbClick: function (event) {
+			if (this.options.triggerOnly) {
+				this.trigger("row:dbclick", this.model, event);
+			}
 		},
 
 		updateUrl: function (event) {

@@ -68,7 +68,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.depended(view.grid);
 
-			view.grid.on('grid:rowClick', view.onGridRowClick, view);
+			view.grid.on('grid:rowDbClick', view.onGridRowClick, view);
 
 		},
 
@@ -281,7 +281,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			});
 
 
-			//clognota....
+
 			//строим селест после того как получили коллекцию биоматериалов, так как оттуда надо взять ид отделения
 			function onetime(){
 				view.departmentSelect = new SelectView({
