@@ -10,7 +10,7 @@ define(["models/Bed"], function () {
 		},
 		url: function () {
 			if (this.departmentId) {
-				return DATA_PATH + "hospitalbed/vacant?filter[departmentId]=" + this.departmentId;
+				return DATA_PATH + "appeals/1/hospitalbed/vacant?filter[departmentId]=" + this.departmentId;
 			} else {
 				throw new Error("No departmentId for bed collection");
 			}
