@@ -178,3 +178,7 @@ pip-log.txt
 
 #html templates
 htmltemplates/
+
+#sublime 2
+*sublime-project
+*sublime-workspace

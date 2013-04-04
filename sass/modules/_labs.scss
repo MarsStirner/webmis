@@ -1,95 +1,157 @@
-.labs-list,.lab-tests-list{
-  li label{
-    white-space: inherit!important;
+.labs .dynatree-container, 
+.groups .dynatree-container,
+.group-tests .dynatree-container{
 
-  }
-  .selected{
-    background-color: #118EDC;
-    label{
-      color: #fff;
-    }
-  }
+	font-size:inherit;
+}
+
+ul.dynatree-container a:focus, span.dynatree-focused a:link{
+	outline: 0;
+}
+
+.labs-list,.lab-tests-list{
+	li label{
+		white-space: inherit!important;
+
+	}
+	.selected{
+		background-color: #118EDC;
+		label{
+			color: #fff;
+		}
+	}
 }
 
 .labs-list{
-  .dynatree-container{
-    white-space: normal;
-    border: none;
+	.dynatree-container{
+		white-space: normal;
+		border: none;
 
-    span.dynatree-connector{
-      display: none;
-    }
+		span.dynatree-connector{
+			display: none;
+		}
 
-  }
+	}
 }
 .lab-tests-list{
-  .dynatree-container{
-    //white-space: normal;
-    border: none;
-  }
+	.dynatree-container{
+		//white-space: normal;
+		border: none;
+	}
 }
 
 .edit-tree{
-  .dynatree-container{
-    white-space: normal;
-    overflow: hidden;
-  }
-  span.dynatree-node{
-    position: relative;
-    display: block;
-    table{
-      width: 90%;
-      display: inline-block;
-      td{
-        vertical-align: top;
-        //border: 1px solid;
+	.dynatree-container{
+		white-space: normal;
+		overflow: hidden;
+	}
+	span.dynatree-node{
+		position: relative;
+		display: block;
+		table{
+			width: 100%;
+			display: inline-block;
+			position: relative;
+			td{
+				vertical-align: top;
+				//border: 1px solid;
 
-        &.title-col{
-          padding-left: 5px;
-          width: 370px;
-          width: 100%;
-        }
-        &.sito-col{
-          width: 25px;
-        }
-        &.time-col{
-          width: 165px;
-        }
-      }
-    }
-  }
+				&.title-col{
+					padding-left: 5px;
+					// width: 370px;
+					width: 100%;
+				}
+				&.sito-col{
+					min-width: 25px;
+				}
+				&.time-col{
+					min-width: 14.6em;
+				}
+			}
+		}
+	}
 }
 
+
+
+.group-tests{
+		table{
+		width: 100%;
+		display: inline-block;
+		position: relative;
+		//z-index: 5;
+		top: -3px;
+		td{
+			vertical-align: top;
+			//border: 1px solid;
+
+			&.title-col{
+				padding-left: 40px;
+				//min-width: 370px;
+				width: 100%;
+			}
+			&.cito-col{
+				min-width: 25px;
+			}
+			&.time-col{
+				min-width: 14.6em;
+			}
+		}
+	}
+}
+
+.edit-tree .dynatree-checkbox:first-child{
+		display: none;
+	}
+
 .lab-tests-list2{
-  .dynatree-container{
-    white-space: normal;
-    overflow: hidden;
-  }
-  span.dynatree-node{
-    position: relative;
-    display: block;
+	.dynatree-container{
+		white-space: normal;
+		overflow: hidden;
+	}
+	span.dynatree-node{
+		position: relative;
+		display: block;
+		.dynatree-connector, .dynatree-expander{
+			position: absolute;
+			top: 0;
+			left:0;
+			z-index: 10;
+		}
+		.dynatree-checkbox{
+			position: absolute;
+			top: 0;
+			left: 18px;
+			z-index: 10;
+		}
+		span.title-col{
+			left: 40px;
+			position: relative;
+			top: -3px;
+		}
 
-    table{
-      width: 90%;
-      display: inline-block;
-      td{
-        vertical-align: top;
-        //border: 1px solid;
 
-        &.title-col{
-          padding-left: 5px;
-          min-width: 370px;
-          width: 100%;
-        }
-        &.sito-col{
-          min-width: 25px;
-        }
-        &.time-col{
-          min-width: 165px;
-        }
-      }
-    }
 
-  }
+	}
+
+}
+
+.datetime{
+	.date{
+		width: 8.67em;
+			.date-icon{
+				right: 0.1em;
+			}
+	}
+	.time{
+		width: 5.33em;
+		.HourPicker {
+			vertical-align: baseline;
+		}
+		.time-icon{
+			right: 0.0em
+		}
+
+	}
 
 }

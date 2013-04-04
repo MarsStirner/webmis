@@ -16,17 +16,19 @@
             </div>
             <div class="VidgetCol RightCol set-off-test-el">
                 <ul class="edit-tree">
-                    sdfgh
                 </ul>
             </div>
         </div>
     </div>
 
     <div class="EditForm Clearfix">
+        <a href="#" style="color:#fff;outline:0;">.</a>
         <!--<ul class="LineBlockHolder">-->
 
         <div style="margin-bottom: 1.5em;">
-            <div class="HalfCol">
+
+
+<!--             <div class="HalfCol">
                 <span class="Label">Дата и время создания</span>
                 <div class="DateTime">
                     <div class="DatePeriod SingleDate">
@@ -41,7 +43,26 @@
                     </div>
 
                 </div>
+            </div> -->
+
+            <div class="QuartCol">
+                <span class="Label" style="white-space: nowrap">Дата и время создания</span>
+                <div class="date">
+
+
+                    <input type="text" data-mindate="0" name="start-date" id="start-date" placeholder="дд.мм.гггг" class="SelectDate"
+                                 data-relation="#start-time" />
+                    <i class="icon-calendar date-icon"></i>
+                </div>
             </div>
+            <div class="DecCol WithoutName">
+                <div class="time">
+                    <input type="text" class="Styled HourPicker" id="start-time" data-relation="#start-date" placeholder="чч:мм"/>
+                    <i class="icon-time time-icon"></i>
+                </div>
+            </div>
+
+
             <div class="ColHalf">
                 <span class="Label">Направивший врач</span>
                 <input name="doctor" type="text" style="color: #777;" disabled value="${doctor.name.first} ${doctor.name.last}">
@@ -51,6 +72,8 @@
                 <select name="finance" id="finance" style="width: 100%;"></select>
             </div>
         </div>
+
+
 
         <div class="LineBlock">
             <div class="QuartCol">
@@ -71,14 +94,6 @@
 
     </div>
 
-	<!--<div class="clearfix">
-		&lt;!&ndash;<div class="PopupActions">&ndash;&gt;
-		&lt;!&ndash;<button class="cancel" style="float:right;"><span>Отмена</span></button>
-		<button class="save button-color-green" style="float:right;"><span>Сохранить</span></button>&ndash;&gt;
-
-			&lt;!&ndash;<a href="#" class="ShowHidePopup">Отмена</a>&ndash;&gt;
-		&lt;!&ndash;</div>&ndash;&gt;
-	</div>-->
 </section>
 
 
