@@ -23,7 +23,12 @@ define([
 		initialize: function () {
 			var view = this;
 
-			//console.log('this.options', this.options)
+
+			view.canAddDirection = view.options.appeal.closed ? false : true;
+
+
+			console.log('can addd', view.options.appeal.closed,view.canAddDiagnostic,view.options.appeal);
+
 			this.collection = new App.Collections.LaboratoryDiags();
 			this.collection.appealId = this.options.appealId;
 			this.collection.setParams({
@@ -122,7 +127,7 @@ define([
 			var view = this;
 
 
-			view.$el.empty().html($.tmpl(view.template));
+			view.$el.empty().html($.tmpl(view.template,{canAddDirection:view.canAddDirection}));
 			view.$("#grid").html(view.grid.el);
 
 			view.$("#assign-lab-diag").button({icons: {primary: "icon-plus icon-color-green"}});
