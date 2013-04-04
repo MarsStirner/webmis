@@ -134,6 +134,7 @@ define([
 		 */
 		cancelMove: function (move) {
 			var view = this;
+			///appeals/70972/hospitalbed/271834
 			var url = DATA_PATH + 'appeals/'+ view.collection.appealId +'/hospitalbed/' + move.get('id');
 
 			$.ajax({
