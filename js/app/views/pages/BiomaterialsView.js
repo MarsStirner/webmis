@@ -369,7 +369,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			var options = {
 				label: 'Печать',
-				handler: view.printBarcodes,
+				handler: view.printWorkList,
 				scope: view,
 				dropDownItems: [
 					{
