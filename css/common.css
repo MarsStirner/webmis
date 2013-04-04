@@ -1894,6 +1894,26 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link {
   right: 0em;
 }
 
+/* line 160, ../sass/modules/_labs.scss */
+.lab-status-0 {
+  color: blue;
+}
+
+/* line 164, ../sass/modules/_labs.scss */
+.lab-status-1 {
+  color: black;
+}
+
+/* line 168, ../sass/modules/_labs.scss */
+.lab-status-2 {
+  color: green;
+}
+
+/* line 172, ../sass/modules/_labs.scss */
+.lab-status-3 {
+  color: #bbb;
+}
+
 /* line 9, ../sass/common.scss */
 html {
   height: 100%;

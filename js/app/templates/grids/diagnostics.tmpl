@@ -94,34 +94,39 @@
 	</td>
 
 	<td
-	{{if status.id === 0}} class="DoneCell"{{/if}}{{if status.id === 3}} class="CancelledCell"{{/if}}>
-	{{if status.name}}
-	${status.name}
+	{{if status}} class="lab-status-${status.id}"{{/if}}>
+
+	{{if status && status.name}}
+		${status.name}
 	{{else}}
-	-
+		-
 	{{/if}}
 	</td>
+
 	<td>
-		${diagnosticName.name}
-	</td>
-	<td>
-		{{if cito}}
-		<span class="Privilege">Срочно</span>
+		{{if diagnosticName && diagnosticName.name}}
+			${diagnosticName.name}
 		{{/if}}
 	</td>
-	<td>
-		${assignPerson.name.raw}
-	</td>
-	<!--<td>-->
-	<!--${execPerson.name.raw}-->
-	<!--</td>-->
 
-	{{if status.id === 0}}
-	<td><i class="icon-pencil edit-direction"></i></td>
-	<td><span class=" icon-remove cancel-direction"></span></td>
+	<td>
+		{{if cito}}
+			<span class="Privilege">Срочно</span>
+		{{/if}}
+	</td>
+
+	<td>
+		{{if assignPerson && assignPerson.name && assignPerson.name.raw}}
+			${assignPerson.name.raw}
+		{{/if}}
+	</td>
+
+	{{if status && (status.id === 0)}}
+		<td><i class="icon-pencil edit-direction"></i></td>
+		<td><span class=" icon-remove cancel-direction"></span></td>
 	{{else}}
-	<td></td>
-	<td></td>
+		<td></td>
+		<td></td>
 	{{/if}}
 	<td>
 		<!--<i class="icon-print"></i>-->

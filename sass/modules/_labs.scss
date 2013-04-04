@@ -155,3 +155,20 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link{
 	}
 
 }
+
+//начато
+.lab-status-0{
+	color: blue;
+}
+//ожидание
+.lab-status-1{
+	color: black;
+}
+//закончено
+.lab-status-2{
+	color: green;
+}
+//отменено
+.lab-status-3{
+	color: #bbb;
+}
