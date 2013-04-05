@@ -350,9 +350,9 @@ function(
 
 			//установка диагноза
 			if (view.appealDiagnosis) {
-				view.$("input[name='diagnosis[mkb][diagnosis]']").val(view.diagnosis.get('mkb').get('diagnosis'));
-				view.$("input[name='diagnosis[mkb][code]']").val(view.diagnosis.get('mkb').get('code'));
-				view.$("input[name='diagnosis[mkb][code]']").data('mkb-id', view.diagnosis.get('mkb').get('id'));
+				view.$("input[name='diagnosis[mkb][diagnosis]']").val(view.appealDiagnosis.get('mkb').get('diagnosis'));
+				view.$("input[name='diagnosis[mkb][code]']").val(view.appealDiagnosis.get('mkb').get('code'));
+				view.$("input[name='diagnosis[mkb][code]']").data('mkb-id', view.appealDiagnosis.get('mkb').get('id'));
 			}
 
 
