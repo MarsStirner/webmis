@@ -4,18 +4,19 @@
  */
 define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 	"views/ui/SelectView",
-	"text!templates/laboratory/node-test4edit.html"],
-	function (tmpl, SelectView, test4EditTmpl) {
+	"text!templates/laboratory/node-test4edit.html",
+	"views/ui/MkbInputView"],
+	function (tmpl, SelectView, test4EditTmpl, MkbInputView) {
 
 		return View.extend({
 			template: tmpl,
 			className: "popup",
 
 			events: {
-				"click .ShowHidePopup": "close",
+				"click .ShowHidePopup": "close"//,
 				//"click .save": "onSave",
 				//"click .cancel": "close",
-				"click .MKBLauncher": "toggleMKB"
+				//"click .MKBLauncher": "toggleMKB"
 			},
 			initialize: function () {
 				_.bindAll(this);
@@ -30,6 +31,10 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				view.model = this.options.model;
 				view.model.eventId = view.options.appeal.get('id');
 				console.log('popup init', view.model);
+
+				//инпут классификатора диагнозов
+			view.mkbInputView = new MkbInputView();
+			view.depended(view.mkbInputView);
 
 
 			},
@@ -97,49 +102,6 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				return value;
 			},
 
-			toggleMKB: function (event) {
-				event.preventDefault();
-
-				this.mkbAttrId = $(event.currentTarget).data("mkb-examattr-id");
-
-				this.mkbDirectory.open();
-			},
-			onMKBConfirmed: function (event) {
-				var sd = event.selectedDiagnosis;
-				console.log('sd', sd, sd.get("id"));
-
-				this.mkbAttrId = sd.get("id");
-
-				this.setExamAttr({
-					attrId: this.mkbAttrId,
-					propertyType: "valueId",
-					value: sd.get("id") || sd.get("code"),
-					displayText: sd.get("code") || sd.get("id")
-				});
-
-				this.$("input[name='diagnosis[mkb][code]']").val(sd.get("code"));
-				this.$("input[name='diagnosis[mkb][diagnosis]']").val(sd.get("diagnosis"));
-				this.$("input[name='diagnosis[mkb][code]']").data('mkb-id', sd.get("id"));
-			},
-
-			onMKBCodeKeyUp: function (event) {
-				$(event.currentTarget).val(Core.Strings.toLatin($(event.currentTarget).val()));
-			},
-			setExamAttr: function (opts) {
-
-
-//                var examAttr = this.examAttributes.find(function (a) {
-//                    return a.get("typeId") == opts.attrId;
-//                });
-
-				console.log('setExamAttr', opts);
-
-				var $input = this.$("[data-examattr-id=" + opts.attrId + "]");
-
-				if ($input.val() != opts.value || opts.displayText) {
-					$input.val(opts.displayText || opts.value).change();
-				}
-			},
 			modelToTree: function () {
 				var view = this;
 				var tree = [];
@@ -179,19 +141,15 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				return [root];
 			},
 
+			renderNested: function(view, selector) {
+				var $element = (selector instanceof $) ? selector : this.$el.find(selector);
+				view.setElement($element).render();
+			},
+
 			render: function () {
 				var view = this;
 
-				///if ($(view.$el.parent().length).length === 0) {
-
 				view.$el.html($.tmpl(view.template, {doctor: view.doctor}));
-
-				this.mkbDirectory = new App.Views.MkbDirectory();
-				this.mkbDirectory.on("selectionConfirmed", this.onMKBConfirmed, this);
-				this.mkbDirectory.render();
-
-				var patientSex = Cache.Patient.get("sex").length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
-
 
 				view.$('.edit-tree').dynatree({
 					clickFolderMode: 2,
@@ -232,61 +190,6 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				});
 
 
-				//автокомплит для кода диагноза
-				this.$("input[name='diagnosis[mkb][code]']").autocomplete({
-					source: function (request, response) {
-						$.ajax({
-							url: "/data/dir/mkbs/",
-							dataType: "jsonp",
-							data: {
-								filter: {
-									view: "mkb",
-									code: request.term,
-									sex: patientSex
-								}
-							},
-							success: function (raw) {
-								response($.map(raw.data, function (item) {
-									return {
-										label: item.code + " " + item.diagnosis,
-										value: item.code,
-										id: item.id,
-										diagnosis: item.diagnosis
-									};
-								}));
-							}
-						});
-					},
-					minLength: 2,
-					select: function (event, ui) {
-						view.mkbAttrId = $(this).data("mkb-examattr-id");
-
-						view.setExamAttr({
-							attrId: self.mkbAttrId,
-							propertyType: "valueId",
-							value: ui.item.id,
-							displayText: ui.item.value
-						});
-
-						console.log('ui.item', ui.item);
-
-						view.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
-						view.$("input[name='diagnosis[mkb][code]']").val(ui.item.displayText);
-						view.$("input[name='diagnosis[mkb][code]']").data('mkb-id', ui.item.id);
-
-					}
-				}).on("keyup", function () {
-						if (!$(this).val().length) {
-							view.setExamAttr({
-								attrId: self.mkbAttrId,
-								propertyType: "valueId",
-								value: "",
-								displayText: ""
-							});
-
-							view.$("input[name='diagnosis[mkb][diagnosis]']").val("");
-						}
-					});
 
 
 				//Вид оплаты
@@ -294,11 +197,13 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 
 				UIInitialize(this.el);
 
+				view.renderNested(view.mkbInputView, ".mbk");
+
 				//Диагноз
 				var diagnosis = view.getProperty('Направительный диагноз');
 				var diagnosisId = view.getProperty('Направительный диагноз','valueId');
 				if (diagnosis) {
-					console.log('diagnosis',diagnosis);
+					//console.log('diagnosis',diagnosis);
 					diagnosis = diagnosis.split(/\s+/);
 					var diagnosisCode = diagnosis[0];
 					var diagnosisText = (diagnosis.splice(1)).join(' ');
@@ -312,12 +217,9 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				var assessmentBeginDate = view.getProperty('assessmentBeginDate');
 				var date = new Date(assessmentBeginDate);
 				this.$("#start-date").datepicker("setDate", date);
-				this.$("#start-time").val(date.getHours() + ':' + date.getMinutes()).mask("99:99").timepicker({showPeriodLabels: false});
+				console.log('date.getHours()', date, date.getHours(), date.getMinutes());
+				this.$("#start-time").val(('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2)).mask("99:99").timepicker({showPeriodLabels: false});
 
-
-				//view.$('.save,.cancel').button();
-
-				//$("body").append(this.el);
 
 				view.$el.dialog({
 					autoOpen: false,
@@ -339,8 +241,6 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				});
 
 
-				// }
-
 				return view;
 			},
 
@@ -349,6 +249,11 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 
 
 				var tree = view.$('.edit-tree').dynatree("getTree");
+
+				var $startDateInput = $('#start-date');
+				var startDate = moment($startDateInput.datepicker("getDate")).format('YYYY-MM-DD');
+				var $startTimeInput = $('#start-time');
+				var startTime = $startTimeInput.val() + ':00';
 
 //				var selected = _.filter(tree.toDict().children.children, function (node) {
 //					return node.select == true
@@ -405,6 +310,7 @@ define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 				view.setParam(view.model, 'urgent', 'value', cito);
 
 				view.setParam(view.model, 'plannedEndDate', 'value', date + ' ' + time);
+				view.setParam(view.model, 'assessmentBeginDate', 'value', startDate + ' ' + startTime);
 
 				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
 				console.log('mkbId',mkbId);

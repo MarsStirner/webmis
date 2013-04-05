@@ -217,8 +217,13 @@ function(
 				return node.select === true;
 			});
 
+			var $startDateInput = $('#start-date');
+			var startDate = moment($startDateInput.datepicker("getDate")).format('YYYY-MM-DD');
+			var $startTimeInput = $('#start-time');
+			var startTime = $startTimeInput.val() + ':00';
 
-			console.log('onSave tree selected', selected);
+
+			//console.log('onSave tree selected', selected);
 
 
 			view.testCollection.forEach(function(model) {
@@ -237,7 +242,7 @@ function(
 				var $citoInput = view.$('#cito' + modelTree.key);
 				var cito = $citoInput.prop('checked');
 
-				console.log('node inputs', date, time, cito);
+				//console.log('node inputs', date, time, cito);
 
 				var selected_params = _.filter(modelTree.children, function(node) {
 					return node.select === true;
@@ -247,7 +252,7 @@ function(
 
 
 				//выбранные тесты
-				console.log('modelTree ', model.get('group'), modelTree, selected_params);
+				//console.log('modelTree ', model.get('group'), modelTree, selected_params);
 				_.each(selected_params, function(param) {
 					_.each(group[1].attribute, function(attribute, index) {
 						if (attribute.name == param.title) {
@@ -261,6 +266,7 @@ function(
 				view.setParam(model, 'doctorMiddleName', 'value', '');
 				view.setParam(model, 'urgent', 'value', cito);
 				view.setParam(model, 'plannedEndDate', 'value', date + ' ' + time);
+				view.setParam(model, 'assessmentDate', 'value', startDate + ' ' + startTime);
 
 				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
 				view.setParam(model, 'Направительный диагноз', 'valueId', mkbId);
@@ -296,7 +302,7 @@ function(
 								name: propertyName,
 								value: value
 							});
-							console.log('не нашли', groupIndex, attributeIndex, group[groupIndex].attribute[attributeIndex].properties);
+							//console.log('не нашли', groupIndex, attributeIndex, group[groupIndex].attribute[attributeIndex].properties);
 						}
 
 					}
@@ -305,7 +311,7 @@ function(
 
 			model.set('group', group);
 
-			console.log('setParam', attributeName, propertyName, value, group);
+			//console.log('setParam', attributeName, propertyName, value, group);
 
 		},
 
