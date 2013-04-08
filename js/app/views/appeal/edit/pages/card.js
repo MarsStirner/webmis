@@ -1,5 +1,6 @@
+
 define([
-	"text!templates/appeal/edit/pages/card-monitoring.tmpl",
+	"text!templates/appeal/edit/pages/monitoring.tmpl",
 	"text!templates/appeal/edit/pages/card.tmpl",
 	"views/print",
 	"models/print/appeal"
