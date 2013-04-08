@@ -267,7 +267,6 @@ function(
 				view.setParam(model, 'urgent', 'value', cito);
 				view.setParam(model, 'plannedEndDate', 'value', date + ' ' + time);
 				view.setParam(model, 'assessmentDate', 'value', startDate + ' ' + startTime);
-
 				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
 				view.setParam(model, 'Направительный диагноз', 'valueId', mkbId);
 
@@ -368,7 +367,7 @@ function(
 			//Дата и время создания
 			var now = new Date();
 			this.$("#start-date").datepicker("setDate", now);
-			this.$("#start-time").val(now.getHours() + ':' + now.getMinutes()).mask("99:99").timepicker({
+			this.$("#start-time").val(('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2)).mask("99:99").timepicker({
 				showPeriodLabels: false
 			});
 
