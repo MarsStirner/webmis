@@ -32,7 +32,7 @@ define([
 			this.collection = new App.Collections.LaboratoryDiags();
 			this.collection.appealId = this.options.appealId;
 			this.collection.setParams({
-				sortingField: "directionDate",
+				sortingField: "plannedEndDate",
 				sortingMethod: "desc"
 			});
 
