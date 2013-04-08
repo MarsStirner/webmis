@@ -349,6 +349,7 @@ define([
 			this.connectDates();
 
 			this.$(".CopyFromPrevious").button({icons: {primary: "icon-copy"}});
+			this.$(".SaveBtn").button({className: ""});
 
 			// Ограничение ввода для полей формата Double
 			self.$('.RestrictFloat').keypress(function(eve) {

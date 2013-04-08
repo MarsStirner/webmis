@@ -155,6 +155,8 @@ define([
 
 				this.$el.html(_.template(tmpl, tmplData));
 
+				this.$(".EditExam").button({icons: {primary: "icon-edit"}});
+
 				self.trigger("change:printState");
 
 			}, this);

@@ -407,7 +407,7 @@
 
 /* line 331, ../../sass/modules/editform.scss */
 .LineBlockHolder > li {
-  border-bottom: 1px solid #d9d9d9;
+  border-bottom: 1px solid #D9D9D9;
   padding-bottom: 2em;
   padding-left: 1em;
   margin-bottom: 2em;
@@ -513,7 +513,7 @@
 /* line 427, ../../sass/modules/editform.scss */
 .FormButtons:after {
   content: "";
-  border-color: white white white #d2f0fd;
+  border-color: white white white #D2F0FD;
   border-style: solid;
   border-width: 2.5em 2.5em 2.5em 2.5em;
   position: absolute;
@@ -533,7 +533,7 @@
 
 /* line 446, ../../sass/modules/editform.scss */
 .FormGridHolder {
-  border: 1px solid #6e6f72;
+  border: 1px solid #6E6F72;
 }
 
 /* line 450, ../../sass/modules/editform.scss */
@@ -541,7 +541,7 @@
   font-size: 1.3em;
   vertical-align: middle;
   width: 50%;
-  border: 1px solid #d9d9d9;
+  border: 1px solid #D9D9D9;
   padding: 0.1em 0.8em;
   line-height: 2.3em;
   vertical-align: middle;
@@ -552,7 +552,7 @@
 }
 /* line 462, ../../sass/modules/editform.scss */
 .FormGrid td {
-  border: 1px solid #d9d9d9;
+  border: 1px solid #D9D9D9;
   vertical-align: middle;
 }
 /* line 466, ../../sass/modules/editform.scss */
@@ -568,7 +568,7 @@
 
 /* line 473, ../../sass/modules/editform.scss */
 .AdressForm {
-  border: 1px solid #cccccc;
+  border: 1px solid #ccc;
   padding: 1.5em 3.5em;
   border-radius: 0.5em;
 }
@@ -617,8 +617,8 @@
 
 /* line 507, ../../sass/modules/editform.scss */
 .SubLine {
-  border-top: 1px solid #cccccc;
-  border-bottom: 1px solid #cccccc;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
   margin-right: 3em;
   padding: 0.4em 0 0.3em 0;
 }
@@ -638,7 +638,7 @@
 .ChangeHistory li {
   padding-bottom: 0.4em;
   margin-bottom: 0.4em;
-  border-bottom: 1px solid #d9d9d9;
+  border-bottom: 1px solid #D9D9D9;
   word-spacing: -0.3em;
   white-space: nowrap;
 }
@@ -708,7 +708,7 @@
   width: 7em;
   height: 3.6em;
   background: #DFF4FD;
-  border: 1px solid #86cbe0;
+  border: 1px solid #86CBE0;
   border-radius: 5px;
   margin: 0 0.5em 0.7em 0;
   -moz-box-sizing: border-box;
@@ -733,13 +733,13 @@
 /* line 601, ../../sass/modules/editform.scss */
 .BedList > li.ReservedWard {
   background: #FFB2B2;
-  border: 1px solid #cc3300;
+  border: 1px solid #CC3300;
 }
 
 /* line 605, ../../sass/modules/editform.scss */
 .BedList > li.Selected {
   background: #CBEDC5;
-  border: 1px solid #35cc9a;
+  border: 1px solid #35CC9A;
 }
 
 /* line 609, ../../sass/modules/editform.scss */
