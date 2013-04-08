@@ -23,10 +23,14 @@ define([
 			_.bindAll(this);
 
 			this.model = new App.Models.Move();
-			console.log(this.options.appeal);
+
+			this.previousDepartmentName = this.options.previousDepartmentName;
+			this.previousDepartmentDate = this.options.previousDepartmentDate;
 			this.model.appealId = this.options.appealId;
 			this.model.set("clientId", this.options.clientId);
 			this.model.set("moveDatetime", this.options.moveDatetime);
+
+			console.log('move ',this.model );
 			this.model.on("sync", function () {
 				pubsub.trigger('noty', {text:'Направление в отделение создано'});
 				this.close();
@@ -65,14 +69,12 @@ define([
 		},
 
 		open: function (opts) {
-			//$(".ui-dialog-titlebar").hide();
 			this.$el.dialog("open");
-
 			return this;
 		},
 
 		close: function () {
-			//$(".ui-dialog-titlebar").show();
+
 			this.$el.dialog("close");
 			this.model.unbind(null, null, this);
 			this.trigger("closed").unbind(null, null, this).remove();
@@ -81,7 +83,11 @@ define([
 
 		render: function () {
 			if (!this.$el.hasClass("webmis")) {
-				this.$el.html($.tmpl(this.template, {}));
+
+				this.$el.html($.tmpl(this.template, {
+					previousDepartmentName: this.previousDepartmentName,
+					previousDepartmentDate: this.previousDepartmentDate
+				}));
 
 				$(this.el).dialog({
 					autoOpen: false,
