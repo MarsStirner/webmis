@@ -90,7 +90,7 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			"appeals/:id/:page/:subpage/:query": "appeal",
 
 			"biomaterials/": "biomaterials",
-			"reports/": "reports",
+			"reports/*path": "reports",
 
 
 			"prints/": "prints",
@@ -151,11 +151,12 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			});
 		},
 
-		reports: function () {
+		reports: function (path) {
 			this.currentPage = "reports";
+			console.log('router reports',arguments);
 
-			require(["views/app", "views/pages/ReportsMainView"], function (AppView, ReportsMainView) {
-				var view = new ReportsMainView();
+			require(["views/app", "views/reports/ReportsMainView"], function (AppView, ReportsMainView) {
+				var view = new ReportsMainView({path: path});
 
 				if (!this.appView) {
 
