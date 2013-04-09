@@ -10,7 +10,7 @@ define(["models/doctor"], function () {
 		defaults: {name: ""}
 	});
 
-	App.Models.InstrumentalDiag = Model.extend({
+	var InstrumentalDiag = Model.extend({
 		defaults: {
 			diagnosticDate: 0,
 			diagnosticName: {},
@@ -52,5 +52,5 @@ define(["models/doctor"], function () {
 		}
 	});
 
-	return App.Models.InstrumentalDiag;
+	return InstrumentalDiag;
 });
