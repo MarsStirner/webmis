@@ -613,7 +613,7 @@ require(["views/FlashMessageView"], function (FlashMessage){
 		},
 		INSTRUMENTAL: {
 			title: "Инструментальные исследования",
-			uri: "/appeals/:id/diagnostics/instrumental/"
+			uri: "/appeals/:id/instrumental/"
 		},
 		CONSULTATION: {
 			title: "Консультации",
