@@ -1,15 +1,19 @@
 
 define([
-	"text!templates/appeal/edit/pages/monitoring.tmpl",
+	//"text!templates/appeal/edit/pages/monitoring.tmpl",
 	"text!templates/appeal/edit/pages/card.tmpl",
 	"views/print",
 	"models/print/appeal"
-], function (cardMonitoringTemplate, cardTemplate) {
+], function (
+	//cardMonitoringTemplate,
+	cardTemplate) {
 
-	App.Views.Card = View.extend ({
+	App.Views.Card = View.extend({
 		events: {
 			"click .EditAppeal": "onEditAppealClick"
 		},
+
+		attributes: {"style": "display: table;"},
 
 		canPrint: true,
 
@@ -149,21 +153,21 @@ define([
 			], function (dicts) {
 				//var template = cardTemplate;
 
-				if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT) {
+				/*if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT) {
 					this.$el.html(_.template(cardMonitoringTemplate, _.extend({
 						closed: this.model.closed,
 						isClosed: this.model.isClosed(),
 						allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
 						dicts: dicts
 					}, this.model.toJSON())));
-				} else {
+				} else {*/
 					this.$el.html($.tmpl(cardTemplate, _.extend({
 						closed: this.model.closed,
 						isClosed: this.model.isClosed(),
 						allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
 						dicts: dicts
 					}, this.model.toJSON())));
-				}
+				//}
 
 				/*this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
 					template = cardMonitoringTemplate
@@ -181,6 +185,8 @@ define([
 			return this;
 		}
 	});
+
+
 
 	return App.Views.Card;
 });

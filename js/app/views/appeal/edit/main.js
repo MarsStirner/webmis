@@ -20,6 +20,7 @@ define([
 	"views/appeal/edit/pages/examination-edit",
 	"views/appeal/edit/pages/examination-primary",
 	"views/appeal/edit/pages/card",
+	"views/appeal/edit/pages/monitoring",
 	"views/appeal/edit/pages/moves",
 	"views/appeal/edit/pages/HospitalBedView"
 ], function (

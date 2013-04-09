@@ -935,6 +935,11 @@ footer a {
   background: url("../select2.png") no-repeat 100% -22px, linear-gradient(top, #ffffff 85%, #eeeeee 99%);
 }
 
+/* line 811, ../../sass/modules/layout.scss */
+.row-fluid {
+  padding-top: 2em;
+}
+
 /*.LineBlockHolder {
 	> li {
 		.LineBlock {
