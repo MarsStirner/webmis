@@ -3,7 +3,7 @@
 		<div class="PageActions">
 			<div class="CloseHistory">
 				{{if allowEditAppeal}}
-				<button class="Styled Button Actions EditAppeal {{if isClosed}}Disabled{{/if}}" {{if isClosed}}disabled="disabled"{{/if}}><span>Редактировать</span></button>
+				<button class="Actions EditAppeal {{if isClosed}}Disabled{{/if}}" {{if isClosed}}disabled="disabled"{{/if}}>Редактировать</button>
 				{{/if}}
 			</div>
 			<div>
@@ -148,10 +148,12 @@
 			<td> Кем доставлен</td>
 			<td>{{if deliveredType && deliveredType != "-1"}}${deliveredType}{{else}}-{{/if}}</td>
 		</tr>
+		{{if ambulanceNumber}}
 		<tr>
 			<td> Номер наряда СП</td>
-			<td>{{if ambulanceNumber}}${ambulanceNumber}{{else}}-{{/if}}</td>
+			<td>${ambulanceNumber}</td>
 		</tr>
+		{{/if}}
 		<tr>
 			<td> Вид транспортировки</td>
 			<td>{{if movingType}}${movingType}{{else}}-{{/if}}</td>

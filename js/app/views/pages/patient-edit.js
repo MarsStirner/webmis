@@ -70,10 +70,10 @@ define([
 		events: {
 			"click  .Actions.Save"  : "onSaveClick",
 			"click  .Actions.Cancel": "onCancelClick",
-			"click  .Actions.Next"  : "onNextStepClick",
-			"click  .Actions.Prev"  : "onPrevStepClick",
-			"keyup  :input"         : "onFieldChange",
-			"change :input"         : "onFieldChange",
+			"click  .Next"  : "onNextStepClick",
+			"click  .Prev"  : "onPrevStepClick",
+			"keyup  :input:not(.select2-input)"         : "onFieldChange",
+			"change :input:not(.select2-input)"         : "onFieldChange",
 			"change select"         : "onFieldChange"
 		},
 
@@ -184,8 +184,8 @@ define([
 				} else {
 					$field.next().removeClass("WrongField");
 				}
-			} else if ($field.hasClass("hasDatepicker")) {
-				$field.parents(".DatePeriod").removeClass("WrongField");
+			//} else if ($field.hasClass("hasDatepicker")) {
+				//$field.parents(".DatePeriod").removeClass("WrongField");
 			} else {
 				$field.removeClass("WrongField");
 			}
@@ -319,9 +319,10 @@ define([
 				console.log(wrongFieldsSelector);
 				this.$(wrongFieldsSelector).each(function () {
 					//if (!$(this).data("subbind")) {
-						if ($(this).hasClass("hasDatepicker")) {
-							$(this).parents(".DatePeriod").addClass("WrongField");
-						} else if ($(this).is("select")) {
+						//if ($(this).hasClass("hasDatepicker")) {
+							//$(this).parents(".DatePeriod").addClass("WrongField");
+						//} else
+						if ($(this).is("select")) {
 							if ($(this).is(".select2")) {
 								$(this).prev().addClass("WrongField");
 							} else {
@@ -341,7 +342,11 @@ define([
 			if (this.options.popUpMode) {
 				this.trigger("patient:canceled");
 			} else {
-				App.Router.navigate( this.options.referrer, {trigger:true} );
+				if (this.model.isNew()) {
+					App.Router.navigate("patients/", {trigger:true});
+				} else {
+					App.Router.navigate("patients/" + this.model.get("id") + "/", {trigger:true});
+				}
 			}
 		},
 
@@ -390,13 +395,18 @@ define([
 		render: function (modelValidChecked) {
 			var self = this;
 
-			this.$el.html($.tmpl(this.template, this.model.toJSON()));
+			if (!this.mainIsRendered) {
+				this.$el.html($.tmpl(this.template, this.model.toJSON()));
+				this.mainIsRendered = true;
+			} else {
+				//this.$(".EditForm").prepend("<ul class='LineBlockHolder'></ul>");
+			}
 
 			if (this.currentView) {
-				this.currentView.remove();
+				//this.currentView.remove();
 				this.currentView.unbind();
 				this.currentView.off(null, null, this);
-				this.currentView.el = null;
+				//this.currentView.el = null;
 			}
 
 			this.currentView = this.steps[this.currentStep];
@@ -426,6 +436,8 @@ define([
 
 			this.$(".ToolTip").hide();
 
+			this.$(".Prev,.Next,.Save").button();
+			this.$(".Update").hide();
 			this.$(".Prev").toggle(!this.isOnFirstPage());
 			this.$(".Next").toggle(!this.isOnLastPage());
 
@@ -568,6 +580,8 @@ define([
 			var beautyJSON = this.model.toJSON();
 
 			this.$el.html($.tmpl(this.template, beautyJSON));
+
+			//this.$("select").width("100%").select2({minimumResultsForSearch: 10});
 
 			this.assign({
 				//"#relations": this.relationsView,
@@ -947,6 +961,16 @@ define([
 		},
 
 		onDictionariesLoaded: function (dictionaries) {
+			var dictValueAlphabeticComparator = function (a, b) {
+				if (a.value < b.value) return -1;
+				if (a.value > b.value) return 1;
+				return 0;
+			};
+
+			dictionaries.tfomses.sort(dictValueAlphabeticComparator);
+
+			dictionaries.insuranceCompanies.sort(dictValueAlphabeticComparator);
+
 			this.paymentsCollection.setDictionaries({
 				insuranceCompanies: dictionaries.insuranceCompanies,
 				tfomses: dictionaries.tfomses,
@@ -1025,7 +1049,7 @@ define([
 
 			UIInitialize(this.el);
 
-			this.$(".select2").width("100%").select2();
+			//this.$(".select2").width("100%").select2();
 
 			this.assign({
 				"#id-cards": this.idCardsView,
@@ -1188,7 +1212,7 @@ define([
 
 			UIInitialize(this.el);
 
-			this.$(".select2").width("100%").select2();
+			//this.$(".select2").width("100%").select2();
 
 			this.toggleRemoveIcon();
 
@@ -1813,7 +1837,7 @@ define([
 
 			UIInitialize(this.el);
 
-			this.$(".select2").width("100%").select2();
+			//this.$(".select2").width("100%").select2();
 
 			/*this.assign({
 				"#disabilities": this.disabilities//,
@@ -1837,10 +1861,7 @@ define([
 			'<li>' +
 				'<div class="ContentHeader Clearfix">' +
 					'<div class="PageActions">' +
-						'<button id="new-quota" class="Styled Button">' +
-							'<i class="Icon AddIcon Tiny"></i>' +
-							'<span>Добавить талон</span>' +
-						'</button>' +
+						'<button id="new-quota">Добавить талон</button>' +
 					'</div>' +
 				'</div>' +
 				'<div id="quotes-grid"></div>' +
@@ -1868,6 +1889,7 @@ define([
 
 						this.collection.on("reset", function () {
 							this.$("#empty-alert").toggle(!this.collection.length);
+							//this.grid.$(".EditQuota").button({text: "false", icons: {primary: "icon-edit"}});
 						}, this);
 
 						this.collection.fetch();
@@ -1951,9 +1973,11 @@ define([
 			if (!this.options.patient.isNew()) {
 				this.$el.html($.tmpl(this.template));
 
+				this.$("#new-quota").button({icons: {primary: "icon-plus icon-color-green"}});
+
 				this.$("#quotes-grid").empty().append(this.grid.el);
 
-				this.grid.$(".EditQuota").live("click", function (event) {
+				this.grid.$(".EditQuota").button().live("click", function (event) {
 					event.preventDefault();
 					event.stopPropagation();
 
@@ -2074,8 +2098,9 @@ define([
 
 			UIInitialize(this.el);
 
-			this.$(".select2").width("100%").select2();
+			//this.$(".select2").width("100%").select2();
 			this.$("#quota-talonNumber").mask("99.9999.99999.999");
+			this.$(".MKBLauncher").button({icons: {primary: "icon-book"}});
 
 			this.mkbDir.render();
 
@@ -2084,7 +2109,7 @@ define([
 			this.$("#quota-diagnosis-code").autocomplete({
 				source: function (request, response) {
 					$.ajax({
-						url: "/data/mkbs/",
+						url: "/data/dir/mkbs/",
 						dataType: "jsonp",
 						data: {
 							filter: {

@@ -21,6 +21,8 @@ header {
 	/*padding-bottom:0.8em;*/
 	background:#cccccc;
 	padding:0.5em 0;
+	background: -webkit-linear-gradient(top, #ededed 0%,#c4c4c4 100%);
+	border-bottom: 1px #aaaaaa solid;;
 }
 .Header {
 	width: 116em;
@@ -99,10 +101,10 @@ header {
 .UserSide {
 	float:right;
 	/*padding-right:1em;*/
-	padding-top: 0.5em;
+	//padding-top: 0.5em;
 	max-width:50%;
 	white-space:nowrap;
-	font-size:$MAIN_FONT;
+	//font-size:$MAIN_FONT;
 	a.LinkToProfile {
 		text-decoration:none;
 		color:#000;
@@ -140,6 +142,44 @@ header {
 			}
 		}
 	}
+}
+
+.LinkToProfile {
+	margin: 0;
+}
+
+.profile-options {
+	position: absolute;
+	z-index: 9999;
+	font-size: 1.2em;
+	color: black;
+
+	li {
+		color:#3F3F40;
+		border-top:1px solid #D4D4D4;
+		padding:0.6em 8px;
+		cursor:pointer;
+
+		&:hover {
+			background:#d2f0fd;
+		}
+		&:first-child {
+			border-top:none;
+			cursor:default;
+			background-color: #cccccc
+		}
+		&:last-child {
+			padding: 0;
+		}
+	}
+}
+
+.logout {
+	width: 100%;
+}
+
+.transparent {
+	color: transparent;
 }
 
 #page {
@@ -563,3 +603,223 @@ footer {
 .Neutral {
 	background:#FF9900;
 }
+
+.ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title {
+	font-size: 1.2em;
+}
+
+// TESTING
+
+.datetime {
+	display: inline-block;
+}
+
+.date, .time {
+	display: inline-block;
+	position: relative;
+
+	width: 100%;
+
+	input {
+		//line-height: normal;
+		padding-right: 1.5em;
+
+		/*					-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+							box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
+
+							&:focus {
+								-webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+								box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
+							}*/
+	}
+}
+
+/*.datetime {
+	.date {
+		width: 75%;
+	}
+
+	.time {
+		width: 25%;
+	}
+}*/
+
+.date-icon, .time-icon {
+	position: absolute;
+	right: -.6em;
+	top: .4em;
+	color: #777;
+	cursor: pointer;
+}
+
+.date-range-scroller {
+	color: #777;
+
+	.date-range {
+		display: inline-block;
+
+		.date {
+			width: 10em;
+		}
+
+		.time {
+			width: 6.5em;
+		}
+
+		.date-icon, .time-icon {
+			position: absolute;
+			right: .3em;
+			top: .3em;
+			//cursor: pointer;
+			color: #777;
+		}
+	}
+}
+
+.icon-color-green {
+	color: #009F1F;
+}
+.icon-color-red {
+	color: #dd1111;
+}
+
+.button-color-green {
+	background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyYzQzZCIvPjxzdG9wIG9mZnNldD0iNDElIiBzdG9wLWNvbG9yPSIjMzBhMzFhIi8+PHN0b3Agb2Zmc2V0PSI2MiUiIHN0b3AtY29sb3I9IiMzMGEzMWEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM1MmM0M2QiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
+	background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #52c43d), color-stop(41%, #30a31a), color-stop(62%, #30a31a), color-stop(100%, #52c43d));
+	background: -webkit-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
+	background: -moz-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
+	background: -o-linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
+	background: linear-gradient(#52c43d 0%, #30a31a 41%, #30a31a 62%, #52c43d 100%);
+
+/*	background: -webkit-linear-gradient(top, #009F1F 0%,#009F1F 100%);
+	background: linear-gradient(top, #009F1F 0%,#009F1F 100%);*/
+	color: #fff;
+
+	.ui-button-text {
+		text-shadow: none;
+	}
+}
+
+/* to override jqueryui icons for font icons */
+[class^="icon-"],
+[class*=" icon-"] {
+	background: none !important;
+	background-image: none !important;
+	text-indent: 0 !important;
+	padding: .1em 0 0 .1em !important;
+}
+
+.ui-button-icon-only .ui-icon, .ui-button-text-icon-primary .ui-icon, .ui-button-text-icon-secondary .ui-icon, .ui-button-text-icons .ui-icon, .ui-button-icons-only .ui-icon {
+	margin-top: -.55em !important;
+}
+
+.LineBlockHolder > li .LineBlock .ui-button {
+	top: 1.5em;
+}
+
+/*.select2-drop, .select2-container {
+	font-size: 1.2em;
+}
+.select2-container .select2-choice  {
+	border-radius: 0;
+	background-image: none;
+	border: 1px solid #737477;
+	background-color: white;
+	color: black;
+	> div {
+		border-radius: 0;
+		border: none;
+		background-image: none;
+		background-color: white;
+	}
+}
+.select2-drop {
+	border-left: 1px solid #737477;
+	border-right: 1px solid #737477;
+	border-bottom: 1px solid #737477;
+	border-radius: 0;
+}
+.select2-drop.select2-drop-above {
+	border-radius: 0;
+}
+.select2-container.select2-drop-above .select2-choice {
+	border-radius: 0;
+	background-image: none;
+}
+.select2-results {
+	li {
+		padding: 0.6em 0.4em 0.7em 0.4em;
+	}
+	li.select2-highlighted {
+		background: #D2F0FD;
+		color: black;
+	}
+}*/
+
+.select2-container {
+	.select2-choice {
+		height: 2.25em;
+		font-size: 1.2em;
+		border-color: #737477;
+		span {
+			line-height: 2.25em;
+			height: 2.25em;
+		}
+	}
+}
+
+.select2-results {
+
+}
+
+.select2-drop {
+	border-left: 1px solid #737477;
+	border-right: 1px solid #737477;
+	border-bottom: 1px solid #737477;
+	border-radius: 0;
+	&.select2-drop-above {
+		border-top: 1px solid #737477;
+		border-radius: 0;
+	}
+	.select2-results {
+		margin: 0;
+		padding: 0;
+		font-size: 1.2em;
+		li {
+			padding: 0.2em 0.4em 0.2em 0.2em;
+			border-top: 1px solid #D4D4D4;
+			/*&:first-child {
+				border-top: none;
+			}*/
+			&.select2-highlighted {
+				background: #D2F0FD;
+				color: black;
+			}
+		}
+	}
+	.select2-search input {
+		background: #fff url('../select2.png') no-repeat 100% -22px;
+		background: url('../select2.png') no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
+		background: url('../select2.png') no-repeat 100% -22px, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%);
+		background: url('../select2.png') no-repeat 100% -22px, -moz-linear-gradient(center bottom, white 85%, #eeeeee 99%);
+		background: url('../select2.png') no-repeat 100% -22px, -o-linear-gradient(bottom, white 85%, #eeeeee 99%);
+		background: url('../select2.png') no-repeat 100% -22px, -ms-linear-gradient(top, #ffffff 85%, #eeeeee 99%);
+		background: url('../select2.png') no-repeat 100% -22px, linear-gradient(top, #ffffff 85%, #eeeeee 99%);
+	}
+}
+
+
+/*.LineBlockHolder {
+	> li {
+		.LineBlock {
+			.ui-button {
+				top: 1.5em;
+			}
+		}
+	}
+}*/
+
+/*
+#page-head .date-range {
+	float: left;
+}*/

@@ -167,7 +167,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 /* line 43, ../sass/_font-awesome.scss */
 [class^="icon-"],
 [class*=" icon-"] {
-  font-size: 17px;
+  font-size: 14px;
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
@@ -1738,7 +1738,183 @@ ul.icons li [class*=" icon-"] {
   content: "\f115";
 }
 
-/* line 7, ../sass/common.scss */
+/* line 3, ../sass/modules/_labs.scss */
+.labs .dynatree-container,
+.groups .dynatree-container,
+.group-tests .dynatree-container {
+  font-size: inherit;
+}
+
+/* line 8, ../sass/modules/_labs.scss */
+ul.dynatree-container a:focus, span.dynatree-focused a:link {
+  outline: 0;
+}
+
+/* line 13, ../sass/modules/_labs.scss */
+.labs-list li label, .lab-tests-list li label {
+  white-space: inherit!important;
+}
+/* line 17, ../sass/modules/_labs.scss */
+.labs-list .selected, .lab-tests-list .selected {
+  background-color: #118EDC;
+}
+/* line 19, ../sass/modules/_labs.scss */
+.labs-list .selected label, .lab-tests-list .selected label {
+  color: #fff;
+}
+
+/* line 26, ../sass/modules/_labs.scss */
+.labs-list .dynatree-container {
+  white-space: normal;
+  border: none;
+}
+/* line 30, ../sass/modules/_labs.scss */
+.labs-list .dynatree-container span.dynatree-connector {
+  display: none;
+}
+
+/* line 37, ../sass/modules/_labs.scss */
+.lab-tests-list .dynatree-container {
+  border: none;
+}
+
+/* line 44, ../sass/modules/_labs.scss */
+.edit-tree .dynatree-container {
+  white-space: normal;
+  overflow: hidden;
+}
+/* line 48, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node {
+  position: relative;
+  display: block;
+}
+/* line 51, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node table {
+  width: 100%;
+  display: inline-block;
+  position: relative;
+}
+/* line 55, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node table td {
+  vertical-align: top;
+}
+/* line 59, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node table td.title-col {
+  padding-left: 5px;
+  width: 100%;
+}
+/* line 64, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node table td.sito-col {
+  min-width: 25px;
+}
+/* line 67, ../sass/modules/_labs.scss */
+.edit-tree span.dynatree-node table td.time-col {
+  min-width: 14.6em;
+}
+
+/* line 78, ../sass/modules/_labs.scss */
+.group-tests table {
+  width: 100%;
+  display: inline-block;
+  position: relative;
+  top: -3px;
+}
+/* line 84, ../sass/modules/_labs.scss */
+.group-tests table td {
+  vertical-align: top;
+}
+/* line 88, ../sass/modules/_labs.scss */
+.group-tests table td.title-col {
+  padding-left: 40px;
+  width: 100%;
+}
+/* line 93, ../sass/modules/_labs.scss */
+.group-tests table td.cito-col {
+  min-width: 25px;
+}
+/* line 96, ../sass/modules/_labs.scss */
+.group-tests table td.time-col {
+  min-width: 14.6em;
+}
+
+/* line 103, ../sass/modules/_labs.scss */
+.edit-tree .dynatree-checkbox:first-child {
+  display: none;
+}
+
+/* line 108, ../sass/modules/_labs.scss */
+.lab-tests-list2 .dynatree-container {
+  white-space: normal;
+  overflow: hidden;
+}
+/* line 112, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node {
+  position: relative;
+  display: block;
+}
+/* line 115, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node .dynatree-connector, .lab-tests-list2 span.dynatree-node .dynatree-expander {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+/* line 121, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node .dynatree-checkbox {
+  position: absolute;
+  top: 0;
+  left: 18px;
+  z-index: 10;
+}
+/* line 127, ../sass/modules/_labs.scss */
+.lab-tests-list2 span.dynatree-node span.title-col {
+  left: 40px;
+  position: relative;
+  top: -3px;
+}
+
+/* line 140, ../sass/modules/_labs.scss */
+.datetime .date {
+  width: 8.67em;
+}
+/* line 142, ../sass/modules/_labs.scss */
+.datetime .date .date-icon {
+  right: 0.1em;
+}
+/* line 146, ../sass/modules/_labs.scss */
+.datetime .time {
+  width: 5.33em;
+}
+/* line 148, ../sass/modules/_labs.scss */
+.datetime .time .HourPicker {
+  vertical-align: baseline;
+}
+/* line 151, ../sass/modules/_labs.scss */
+.datetime .time .time-icon {
+  right: 0em;
+}
+
+/* line 160, ../sass/modules/_labs.scss */
+.lab-status-0 {
+  color: blue;
+}
+
+/* line 164, ../sass/modules/_labs.scss */
+.lab-status-1 {
+  color: black;
+}
+
+/* line 168, ../sass/modules/_labs.scss */
+.lab-status-2 {
+  color: green;
+}
+
+/* line 172, ../sass/modules/_labs.scss */
+.lab-status-3 {
+  color: #bbb;
+}
+
+/* line 9, ../sass/common.scss */
 html {
   height: 100%;
   min-height: 100%;
@@ -1746,7 +1922,7 @@ html {
   background-repeat: no-repeat;
 }
 
-/* line 14, ../sass/common.scss */
+/* line 16, ../sass/common.scss */
 body {
   min-height: 100%;
   height: 100%;
@@ -1758,51 +1934,95 @@ body {
   min-width: 120em;
 }
 
-/* line 24, ../sass/common.scss */
+/* line 26, ../sass/common.scss */
 body.NoScroll {
   overflow: hidden;
 }
 
 @media screen and (min-width: 800px) {
-  /* line 32, ../sass/common.scss */
+  /* line 34, ../sass/common.scss */
   body {
     font: normal 62.5%/1.5em Arial, Helvetica, sans-serif;
   }
+
+  /* line 37, ../sass/common.scss */
+  [class^="icon-"], [class*=" icon-"] {
+    font-size: 14px;
+  }
+
+  /* line 40, ../sass/common.scss */
+  .ui-icon {
+    width: 14px;
+    height: 14px;
+  }
 }
 @media screen and (min-width: 1400px) {
-  /* line 37, ../sass/common.scss */
+  /* line 46, ../sass/common.scss */
   body {
     font: normal 72.5%/1.5em Arial, Helvetica, sans-serif;
   }
+
+  /* line 49, ../sass/common.scss */
+  [class^="icon-"], [class*=" icon-"] {
+    font-size: 16px;
+  }
+
+  /* line 52, ../sass/common.scss */
+  .ui-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
 }
 @media screen and (min-width: 1600px) {
-  /* line 42, ../sass/common.scss */
+  /* line 58, ../sass/common.scss */
   body {
     font: normal 82.5%/1.5em Arial, Helvetica, sans-serif;
   }
+
+  /* line 61, ../sass/common.scss */
+  [class^="icon-"], [class*=" icon-"] {
+    font-size: 16px;
+  }
+
+  /* line 64, ../sass/common.scss */
+  .ui-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
 }
 @media screen and (min-width: 1800px) {
-  /* line 47, ../sass/common.scss */
+  /* line 70, ../sass/common.scss */
   body {
     font: normal 92.5%/1.5em Arial, Helvetica, sans-serif;
   }
+
+  /* line 73, ../sass/common.scss */
+  [class^="icon-"], [class*=" icon-"] {
+    font-size: 18px;
+  }
+
+  /* line 76, ../sass/common.scss */
+  .ui-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
 }
-/* line 56, ../sass/common.scss */
+/* line 86, ../sass/common.scss */
 img {
   border: none;
 }
-/* line 59, ../sass/common.scss */
+/* line 89, ../sass/common.scss */
 img.Left {
   float: left;
   margin: 0 1em 1em 0;
 }
-/* line 63, ../sass/common.scss */
+/* line 93, ../sass/common.scss */
 img.Right {
   float: right;
   margin: 0 0 1em 1em;
 }
 
-/* line 70, ../sass/common.scss */
+/* line 100, ../sass/common.scss */
 .Clearfix, .clearfix {
   zoom: 1;
 }
@@ -1815,7 +2035,7 @@ img.Right {
   visibility: hidden;
 }
 
-/* line 80, ../sass/common.scss */
+/* line 110, ../sass/common.scss */
 h1,
 h2,
 h3,
@@ -1825,7 +2045,7 @@ h6 {
   line-height: 1.4em;
 }
 
-/* line 84, ../sass/common.scss */
+/* line 114, ../sass/common.scss */
 a {
   color: #118ddc;
   /*
@@ -1841,7 +2061,7 @@ a:hover {
 a:active {
   color: #118ddc;
 }
-/* line 87, ../sass/common.scss */
+/* line 117, ../sass/common.scss */
 a.Actions {
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -1851,84 +2071,83 @@ a.Actions {
   cursor: pointer;
   border-bottom: 1px dashed;
 }
-/* line 92, ../sass/common.scss */
+/* line 122, ../sass/common.scss */
 a.Actions.Opened {
   border: none;
 }
-/* line 96, ../sass/common.scss */
+/* line 126, ../sass/common.scss */
 a.Iconed {
   text-decoration: none;
   border: none;
 }
-/* line 100, ../sass/common.scss */
+/* line 130, ../sass/common.scss */
 a.Iconed span {
   text-decoration: underline;
 }
 
-/* line 107, ../sass/common.scss */
+/* line 137, ../sass/common.scss */
 .PageActions a.Actions {
   text-decoration: none;
   font-size: 1.2em;
 }
 
-/* line 115, ../sass/common.scss */
+/* line 145, ../sass/common.scss */
 .Hidden,
 .Template,
 .More {
   display: none;
 }
 
-/* line 118, ../sass/common.scss */
+/* line 148, ../sass/common.scss */
 .Visible {
   display: block;
 }
 
-/* line 126, ../sass/common.scss */
+/* line 156, ../sass/common.scss */
 h2 {
   font-size: 2em;
 }
 
-/* line 129, ../sass/common.scss */
+/* line 159, ../sass/common.scss */
 h3 {
   font-size: 1.6em;
 }
 
-/* line 132, ../sass/common.scss */
+/* line 162, ../sass/common.scss */
 h4 {
   font-size: 1.4em;
 }
 
-/* line 139, ../sass/common.scss */
+/* line 169, ../sass/common.scss */
 .Small, small, time {
   color: #747578;
 }
 
-/* line 145, ../sass/common.scss */
+/* line 175, ../sass/common.scss */
 strong {
   font-weight: bold;
 }
 
 /* Common elements */
-/* line 151, ../sass/common.scss */
+/* line 181, ../sass/common.scss */
 table {
   width: 100%;
   border: none;
   border-collapse: collapse;
 }
-/* line 157, ../sass/common.scss */
+/* line 187, ../sass/common.scss */
 table td,
 table th {
   padding: 0;
-  vertical-align: baseline;
 }
 
 /* Buttons */
-/* line 164, ../sass/common.scss */
+/* line 194, ../sass/common.scss */
 a.Styled {
   text-decoration: none;
 }
 
-/* line 168, ../sass/common.scss */
+/* line 198, ../sass/common.scss */
 a.Styled,
 button.Styled {
   padding: 0;
@@ -1943,23 +2162,23 @@ button.Styled {
   *display: inline;
 }
 
-/* line 179, ../sass/common.scss */
+/* line 209, ../sass/common.scss */
 b {
   font-weight: bold;
 }
 
-/* line 183, ../sass/common.scss */
+/* line 213, ../sass/common.scss */
 #body {
   width: 960px;
   margin: auto;
 }
 
-/* line 194, ../sass/common.scss */
+/* line 224, ../sass/common.scss */
 .Rouble {
   font-weight: normal;
   position: relative;
 }
-/* line 198, ../sass/common.scss */
+/* line 228, ../sass/common.scss */
 .Rouble:after {
   content: "-";
   position: absolute;
@@ -1968,18 +2187,18 @@ b {
   font-size: 1em;
 }
 
-/* line 207, ../sass/common.scss */
+/* line 237, ../sass/common.scss */
 .HighestDepth {
   z-index: 999999 !important;
 }
 
-/* line 212, ../sass/common.scss */
+/* line 242, ../sass/common.scss */
 button::-moz-focus-inner {
   border: 0;
   padding: 0;
 }
 
-/* line 217, ../sass/common.scss */
+/* line 247, ../sass/common.scss */
 .ServiceLogin {
   width: 42em;
   margin: 0 auto;
@@ -1988,20 +2207,20 @@ button::-moz-focus-inner {
   text-align: center;
 }
 
-/* line 225, ../sass/common.scss */
+/* line 255, ../sass/common.scss */
 .ServiceLogin h1 {
   font-size: 2.2em;
   margin-bottom: 1.2em;
 }
 
-/* line 229, ../sass/common.scss */
+/* line 259, ../sass/common.scss */
 .ServiceLogin h2 {
   font-size: 1.6em;
   line-height: 1.2em;
   margin-bottom: 1.2em;
 }
 
-/* line 234, ../sass/common.scss */
+/* line 264, ../sass/common.scss */
 .LoginForm {
   background: #fff;
   padding: 3.8em 9.4em;
@@ -2009,38 +2228,38 @@ button::-moz-focus-inner {
   text-align: left;
 }
 
-/* line 240, ../sass/common.scss */
+/* line 270, ../sass/common.scss */
 .LoginForm input {
   font-size: 1.7em;
 }
 
-/* line 243, ../sass/common.scss */
+/* line 273, ../sass/common.scss */
 .LoginForm li {
   margin-bottom: 1.2em;
 }
 
-/* line 247, ../sass/common.scss */
+/* line 277, ../sass/common.scss */
 .LoginForm label, .LoginForm .Label {
   margin-left: -1em;
 }
 
-/* line 250, ../sass/common.scss */
+/* line 280, ../sass/common.scss */
 .SubmitLine {
   padding: 0.5em 0 2em 0;
 }
 
-/* line 253, ../sass/common.scss */
+/* line 283, ../sass/common.scss */
 .RecoveryLink {
   color: #6D6D71;
   font-size: 1.2em;
 }
 
-/* line 257, ../sass/common.scss */
+/* line 287, ../sass/common.scss */
 .LoginForm button {
   width: 100%;
 }
 
-/* line 260, ../sass/common.scss */
+/* line 290, ../sass/common.scss */
 .LoginForm h3 {
   margin-bottom: 1em;
   font-size: 1.4em;

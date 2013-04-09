@@ -75,10 +75,10 @@
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
-		> textarea {
+		textarea {
 			@include box-sizing(content-box);
 		}
 		&.HasValidationToolTip {
@@ -94,7 +94,7 @@
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
         .LineBlock {
@@ -106,14 +106,14 @@
 		width:75%;
 		display: inline-block;
 		padding-right:3em;
-		vertical-align: top;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		margin-right:-0.3em;
 		> * {
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> .Styled.Button {
@@ -125,14 +125,14 @@
 		width:50%;
 		display: inline-block;
 		padding-right:3em;
-		vertical-align: top;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		margin-right:-0.3em;
 		> * {
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> .Styled.Button {
@@ -144,14 +144,14 @@
 		width:25%;
 		display: inline-block;
 		padding-right:3em;
-		vertical-align: top;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		margin-right:-0.3em;
 		> * {
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> .Styled.Button {
@@ -162,13 +162,13 @@
 		display:inline-block;
 		width:12.5%;
 		padding-right: 3em;
-		vertical-align: top;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		> * {
-			white-space:normal;
+			//white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> select {
@@ -178,18 +178,21 @@
 		> .Styled.Button {
 			white-space:nowrap;
 		}
+		&.ActionsOnly {
+			vertical-align: bottom;
+		}
 	}
 	.SemiCol {
 		display:inline-block;
 		width:37.5%;
 		padding-right: 3em;
-		vertical-align: top;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		> * {
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> .Styled.Button {
@@ -200,14 +203,14 @@
 		width: 33.3%;
 		display: inline-block;
 		padding-right:3em;
-		vertical-align: top;
+		vertical-align:top;
 		@include box-sizing(border-box);
 		margin-right:-0.3em;
 		> * {
 			white-space:normal;
 			word-spacing:normal;
 		}
-		> input {
+		input {
 			@include box-sizing(content-box);
 		}
 		> .Styled.Button {
@@ -218,13 +221,13 @@
         display:inline-block;
         width:10%;
         padding-right: 3em;
-        vertical-align: top;
+		vertical-align:top;
         @include box-sizing(border-box);
         > * {
           white-space:normal;
           word-spacing:normal;
         }
-        > input {
+        input {
           @include box-sizing(content-box);
         }
         > select {
@@ -283,7 +286,7 @@
 		.bedNumber {
 			vertical-align: middle;
 			line-height: 2.9;
-			font-size: 1.1em;
+			font-size: 12px;
 			padding: 0 5px 0 2px;
 			color: rgb(108, 108, 113);
 		}
@@ -495,7 +498,8 @@
 	padding-right:0;
 }
 .AddLine {
-	padding-top:2.7em;
+	//padding-top:2.7em;
+	height: 2.25em;
 }
 .SearchLine {
  	padding-top:1.8em;
@@ -619,42 +623,4 @@
 }
 .DDList.MultipleHours > .Content {
 
-}
-.select2-drop, .select2-container {
-  font-size: 1.2em;
-}
-.select2-container .select2-choice  {
-  border-radius: 0;
-  background-image: none;
-  border: 1px solid #737477;
-  background-color: white;
-  color: black;
-  > div {
-    border-radius: 0;
-    border: none;
-    background-image: none;
-    background-color: white;
-  }
-}
-.select2-drop {
-  border-left: 1px solid #737477;
-  border-right: 1px solid #737477;
-  border-bottom: 1px solid #737477;
-  border-radius: 0;
-}
-.select2-drop.select2-drop-above {
-  border-radius: 0;
-}
-.select2-container.select2-drop-above .select2-choice {
-  border-radius: 0;
-  background-image: none;
-}
-.select2-results {
-  li {
-    padding: 0.6em 0.4em 0.7em 0.4em;
-  }
-  li.select2-highlighted {
-    background: #D2F0FD;
-    color: black;
-  }
 }

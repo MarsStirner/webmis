@@ -19,6 +19,9 @@ define(["views/grid-row"], function () {
 
 				this.loadTemplate(this.options.template);
 				this.collection.on("reset", this.refresh, this);
+				this.collection.on("reset", this.showDefaultSorting, this);
+
+				this.collection.on("fetch", this.onFetch, this);
 			}
 
 		},
@@ -43,6 +46,47 @@ define(["views/grid-row"], function () {
 			});
 
 			this.collection.fetch();
+		},
+
+		//шаблон показываемый во время загрузки данных
+		onFetch: function () {
+			var view = this;
+
+			if (this.options.fetchTemplateId) {
+				var $tbody = view.$el.find("tbody").empty();
+
+				var GridRow = new App.Views.GridRow({
+					collection: view.collection,
+					rowTemplateId: view.options.fetchTemplateId
+				});
+
+				view.depended(GridRow);
+				$tbody.append(GridRow.render().el);
+			}
+
+		},
+
+		//показ сортировки по умолчанию
+		showDefaultSorting: function () {
+			var view = this;
+
+			if (view.collection.requestData && view.collection.requestData.sortingField && view.collection.requestData.sortingMethod) {
+
+				var sortingMethod = view.collection.requestData.sortingMethod;
+
+				var $sortingField = view.$el.find("[data-field='" + view.collection.requestData.sortingField + "']");
+
+				if ($sortingField) {
+					var $th = $sortingField.parent('th');
+
+					$th.addClass('Active');
+
+					if (sortingMethod == 'desc') {
+						$th.addClass('Desc');
+					}
+				}
+			}
+
 		},
 
 		filter: function (event) {
@@ -88,6 +132,7 @@ define(["views/grid-row"], function () {
 			var view = this,
 				$el = this.$el;
 
+
 			var $tbody = $el.find("tbody").empty();
 
 			var total = view.collection.length;
@@ -100,12 +145,12 @@ define(["views/grid-row"], function () {
 					var rowTemplateId = view.options.rowTemplateId;
 
 					//console.log(i);
-					if(view.options.lastRowTemplateId && (i == total-1) && (i > 0)){
+					if (view.options.lastRowTemplateId && (i == total - 1) && (i > 0)) {
 						rowTemplateId = view.options.lastRowTemplateId;
 					}
 
 					if (view.collection.requestData && view.collection.requestData.page > 1) {
-						_index += view.collection.requestData.page * view.collection.requestData.limit;
+						_index += (view.collection.requestData.page - 1) * view.collection.requestData.limit;
 					}
 
 					var GridRow = new App.Views.GridRow({
@@ -119,6 +164,9 @@ define(["views/grid-row"], function () {
 
 					GridRow.on("row:click", function (model, event) {
 						view.trigger("grid:rowClick", model, event);
+					}, this);
+					GridRow.on("row:dbclick", function (model, event) {
+						view.trigger("grid:rowDbClick", model, event);
 					}, this);
 
 					$tbody.append(GridRow.render().el);
@@ -147,9 +195,9 @@ define(["views/grid-row"], function () {
 		render: function () {
 			this.$el.empty();
 
-			return this
+			return this;
 		}
 	});
 
-	return App.Views.Grid
+	return App.Views.Grid;
 });

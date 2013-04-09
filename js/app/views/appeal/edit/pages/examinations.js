@@ -56,6 +56,9 @@ define([
 
 			this.$el.html($.tmpl(this.template, {isClosed: self.options.appeal.isClosed()}));
 
+			this.$("#new-exam").button({icons: {primary: "icon-plus icon-color-green", secondary: "icon-caret-down"}});
+			this.$(".ToggleFilters").button({icons: {primary: "icon-filter"}});
+
 			this.$("#lab-grid").html(this.grid.el);
 
 			this.grid.$("tbody tr").live("click", function () {

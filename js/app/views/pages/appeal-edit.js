@@ -1,5 +1,6 @@
 define([
 	"text!templates/pages/representative-item.tmpl",
+	"views/widget",
 	"models/appeal",
 	"models/flat-directory",
 	"views/form/abstract-line",
@@ -10,13 +11,13 @@ define([
 	"views/mkb-directory",
 	"views/pages/appeal-representative",
 	"views/appeals-history"
-], function (representativeTmpl) {
+], function (representativeTmpl, Widget) {
 	App.Views.AppealEdit = Form.extend({
 		model: App.Models.Appeal,
 
 		events: {
 			"click .Actions.Save": "onSave",
-			"click .Actions.Cancel": "cancel",
+			"click .Actions.Cancel": "onCancel",
 			"click .AddRepresentative": "onAddRepresentativeClick"
 		},
 
@@ -80,6 +81,16 @@ define([
 			this.$(".Save").attr("disabled", readyToSave);
 		},
 
+		onCancel: function (event) {
+			event.preventDefault();
+
+			if (this.model.isNew()) {
+				App.Router.navigate("patients/" + this.model.get("patient").get("id") + "/", {trigger:true});
+			} else {
+				App.Router.navigate("appeals/" + this.model.get("id") + "/", {trigger:true});
+			}
+		},
+
 		onAddRepresentativeClick: function () {
 			this.openRepresentativeWindow();
 			/*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
@@ -133,6 +144,8 @@ define([
 				if (Core.Date.getAge(patient.get("birthDate")) < 18) {
 					//alert("Нельзя добавить несовершеннолетнего представителя.");
 					this.$nonAdultAlert.dialog("open");
+				} else if (this.model.get("patient").get("id") == patient.get("id")) {
+					this.$samePatinetAlert.dialog("open");
 				} else {
 					this.model.get("hospitalizationWith").add({
 						relative: {
@@ -275,6 +288,11 @@ define([
 			}
 
 
+			this.model.get("hospitalizationWith").on("add remove", function () {
+				console.log(this.$(".AddRepresentative"));
+				this.$(".AddRepresentative").toggle(!Boolean(this.model.get("hospitalizationWith").length));
+			}, view);
+
 			var representativeList = new RepresentativeList({
 				collection: this.model.get("hospitalizationWith"),
 				relationTypes: dicts.relationTypes
@@ -283,6 +301,20 @@ define([
 			representativeList.render();
 
 			this.$nonAdultAlert = this.$(".NonAdultAlert").dialog({
+				modal: true,
+				autoOpen: false,
+				dialogClass: "webmis",
+				resizable: false,
+				width: "500px",
+
+				buttons: {
+					"Принять": function () {
+						$(this).dialog("close");
+					}
+				}
+			});
+
+			this.$samePatinetAlert = this.$(".SamePatientAlert").dialog({
 				modal: true,
 				autoOpen: false,
 				dialogClass: "webmis",
@@ -447,6 +479,10 @@ define([
 			});
 
 			UIInitialize(this.el);
+
+			this.$(".Save").button();
+			this.$(".MKBLauncher").button({icons: {primary: "icon-book"}});
+			this.$(".AddRepresentative").button({icons: {primary: "icon-plus icon-color-green"}});
 
 			view.toggleInputs(false);
 		},
@@ -626,7 +662,7 @@ define([
 			this.$("input[name='diagnosis[mkb][code]']").autocomplete({
 				source: function (request, response) {
 					$.ajax({
-						url: "/data/mkbs/",
+						url: "/data/dir/mkbs/",
 						dataType: "jsonp",
 						data: {
 							filter: {

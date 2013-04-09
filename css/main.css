@@ -6,7 +6,7 @@
   padding: 2px 4px;
   background-color: #fff;
   margin-bottom: -4px;
-  border: 1px solid #bbbbbb;
+  border: 1px solid #bbb;
 }
 
 /* line 13, ../sass/modules/_biomaterials.scss */
@@ -87,7 +87,7 @@ td.status-code-2, td.status-code-2 .Warning {
 
 /* line 82, ../sass/modules/_biomaterials.scss */
 .biomaterials-datatime {
-  width: 475px;
+  width: 41%;
   float: left;
 }
 /* line 85, ../sass/modules/_biomaterials.scss */
@@ -97,43 +97,51 @@ td.status-code-2, td.status-code-2 .Warning {
 
 /* line 90, ../sass/modules/_biomaterials.scss */
 .biomaterials-department {
-  width: 355px;
+  width: 33%;
   float: left;
 }
 /* line 94, ../sass/modules/_biomaterials.scss */
 .biomaterials-department .departments {
   width: 450px;
 }
+/* line 98, ../sass/modules/_biomaterials.scss */
+.biomaterials-department label {
+  display: block;
+}
 
-/* line 100, ../sass/modules/_biomaterials.scss */
+/* line 104, ../sass/modules/_biomaterials.scss */
 .biomaterials-print {
   float: right;
   margin-top: 19px;
 }
 
-/* line 107, ../sass/modules/_biomaterials.scss */
+/* line 111, ../sass/modules/_biomaterials.scss */
 .biomaterials-table-filter {
   margin-bottom: 25px;
 }
 
-/* line 111, ../sass/modules/_biomaterials.scss */
+/* line 115, ../sass/modules/_biomaterials.scss */
 .biomaterials-action-type {
   float: left;
-  width: 290px;
-  padding-right: 25px;
+  width: 25%;
 }
-/* line 115, ../sass/modules/_biomaterials.scss */
+/* line 119, ../sass/modules/_biomaterials.scss */
 .biomaterials-action-type .biomaterial {
-  width: 299px;
+  width: 90%;
 }
 
-/* line 121, ../sass/modules/_biomaterials.scss */
+/* line 125, ../sass/modules/_biomaterials.scss */
 .biomaterials-status {
   float: left;
-  width: 405px;
 }
 
-/* line 126, ../sass/modules/_biomaterials.scss */
+/* line 129, ../sass/modules/_biomaterials.scss */
+.status-count {
+  font-weight: normal;
+  font-size: 0.8em;
+}
+
+/* line 134, ../sass/modules/_biomaterials.scss */
 .biomaterials-send-to-lab {
   float: right;
   margin-top: 18px;

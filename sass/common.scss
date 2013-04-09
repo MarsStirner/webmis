@@ -4,6 +4,8 @@
 @include global-reset;
 @import "font-awesome";
 
+@import "modules/labs";
+
 html {
 	height:100%;
 	min-height:100%;
@@ -32,20 +34,48 @@ body.NoScroll {
 	body {
 		font: normal 62.5%/1.5em Arial, Helvetica, sans-serif;
 	}
+	[class^="icon-"], [class*=" icon-"] {
+		font-size: 14px;
+	}
+	.ui-icon {
+		width: 14px;
+		height: 14px;
+	}
 }
 @media screen and (min-width: 1400px) {
 	body {
 		font: normal 72.5%/1.5em Arial, Helvetica, sans-serif;
+	}
+	[class^="icon-"], [class*=" icon-"] {
+		font-size: 16px;
+	}
+	.ui-icon {
+		width: 16px !important;
+		height: 16px !important;
 	}
 }
 @media screen and (min-width: 1600px) {
 	body {
 		font: normal 82.5%/1.5em Arial, Helvetica, sans-serif;
 	}
+	[class^="icon-"], [class*=" icon-"] {
+		font-size: 16px;
+	}
+	.ui-icon {
+		width: 16px !important;
+		height: 16px !important;
+	}
 }
 @media screen and (min-width: 1800px) {
 	body {
 		font: normal 92.5%/1.5em Arial, Helvetica, sans-serif;
+	}
+	[class^="icon-"], [class*=" icon-"] {
+		font-size: 18px;
+	}
+	.ui-icon {
+		width: 18px !important;
+		height: 18px !important;
 	}
 }
 
@@ -156,7 +186,7 @@ table {
 	td,
 	th {
 		padding: 0;
-		vertical-align: baseline;
+		//vertical-align: baseline;
 	}
 }
 

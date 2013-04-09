@@ -4,8 +4,7 @@ define([
 	"views/grid",
 	"views/paginator",
 	"views/appeal/edit/popups/send-to-department",
-	"views/appeal/edit/pages/HospitalBedView"
-], function (template) {
+	"views/appeal/edit/pages/HospitalBedView"], function(template) {
 
 	function days_between(date1, date2) {
 
@@ -31,37 +30,22 @@ define([
 			"click #move-type-list li": "createNewMove"
 		},
 
-		initialize: function () {
+		initialize: function() {
 			this.collection = new App.Collections.Moves();
 			this.collection.appealId = this.options.appealId;
 
 			this.appealIsClosed = this.options.appeal.closed;
 
-			this.collection.bind('remove', function () {
+			this.collection.bind('remove', function() {
 				this.collection.fetch();
 			}, this);
 
-			this.collection.bind('reset', function () {
-
-				if(this.appealIsClosed) return;
-
-				var lastMove = this.collection.last();
-				var days = days_between(new Date().getTime(), lastMove.get('admission'));
-				var bedDays = days - 1;
-				if (bedDays < 0) {
-					bedDays = 0;
-				}
-
-				if ((lastMove.get('bed') != 'Положить на койку') && (lastMove.get('bed') != null)) {
-					lastMove.set('days', days);
-					lastMove.set('bedDays', bedDays);
-				}
+			this.collection.bind('reset', this.countBedDays, this);
+			this.collection.on('reset', this.toggleDirectionText, this);
+			this.collection.on('reset', this.toggleHospitalbedMenu, this);
 
 
-			}, this);
-
-
-			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
+			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT));
 
 			var gridTemplateId = "#moves-grid-department",
 				rowTemplateId = "#moves-grid-row-department",
@@ -95,12 +79,33 @@ define([
 			this.collection.fetch();
 		},
 
-		toggleMoveTypes: function (event) {
+		toggleMoveTypes: function(event) {
 			this.$(".DDList").toggleClass("Active");
 			event.stopPropagation();
 		},
 
-		createNewMove: function (event) {
+		toggleDirectionText: function(){
+			this.directionText = 'Направление в отделение';
+
+			if (this.collection.length > 1) {
+				this.directionText = 'Перевод в отделение';
+			}
+		},
+
+		toggleHospitalbedMenu: function(e) {
+			var lastMove = this.collection.last();
+			var $hospitalbedAction = this.$('#hospitalbed-action');
+
+			if (lastMove.get('bed') == 'Положить на койку') {
+				$hospitalbedAction.show();
+			} else {
+				$hospitalbedAction.hide();
+			}
+
+			this.$('.direction').text(this.directionText);
+		},
+
+		createNewMove: function(event) {
 			this.$(".DDList").removeClass("Active");
 			var moveType = $(event.currentTarget).data("move-type");
 
@@ -109,27 +114,57 @@ define([
 				this.moveTypeConstrs[moveType].call(this, event);
 			}
 		},
+
+		//подсчёт дней, койко-дней - для последнего движения
+		countBedDays: function() {
+
+			//если госпитализация закрыта, то ничего не делаем
+			if (this.appealIsClosed) return;
+
+			var lastMove = this.collection.last();
+			var days = days_between(new Date().getTime(), lastMove.get('admission'));
+			var bedDays = days - 1;
+
+			if (bedDays < 0) {
+				bedDays = 0;
+			}
+
+			if ((lastMove.get('bed') !== 'Положить на койку') && (lastMove.get('bed') !== null)) {
+				lastMove.set('days', days);
+				lastMove.set('bedDays', bedDays);
+			}
+
+		},
+
 		/***
 		 * Отмена прописки на койке
 		 * @param move
 		 */
-		cancelMove: function (move) {
+		cancelMove: function(move) {
 			var view = this;
-			var url = DATA_PATH + 'hospitalbed/' + move.get('id') + '/calloff';
+			//@todo перенести в move.js
+			var url = DATA_PATH + 'appeals/' + view.collection.appealId + '/hospitalbed/' + move.get('id');
 
 			$.ajax({
-				method: 'get',
+				type: 'DELETE',
 				url: url,
 				dataType: 'jsonp',
 				//beforeSend: function(jqXHR, settings){
 				//	console.log('jqXHR',jqXHR);
 				//	console.log('settings',settings);
 				//},
-				success: function (data) {
+				success: function(data) {
 					view.collection.trigger('remove');
-					pubsub.trigger('noty', {text: 'Регистрация отменена', type: 'warning'});
-				}, error: function (data) {
-					pubsub.trigger('noty', {text: 'Ошибка при попытке отменены регистрации', type: 'error'});
+					pubsub.trigger('noty', {
+						text: 'Регистрация отменена',
+						type: 'warning'
+					});
+				},
+				error: function(data) {
+					pubsub.trigger('noty', {
+						text: 'Ошибка при попытке отменены регистрации',
+						type: 'error'
+					});
 				}
 			});
 
@@ -137,9 +172,9 @@ define([
 		},
 
 		//Новое мероприятие/направление или перевод в отделение
-		newSendToDepartment: function (event) {
+		newSendToDepartment: function(event) {
 
-			var popupTitle = "Направление в отделение";
+
 			var collectionLength = this.collection.length;
 			var previousMove = this.collection.models[collectionLength - 2];
 			var lastMove = this.collection.models[collectionLength - 1];
@@ -149,28 +184,42 @@ define([
 			if (!lastMove.get('leave') && lastMove.get('admission')) {
 				moveDatetime = new Date().getTime();
 			}
+			var previousDepartmentName = false;
+			var previousDepartmentDate = false;
+
+			if(this.collection.length > 1){
+				previousDepartmentName = lastMove.get('unit');
+				previousDepartmentDate = lastMove.get('admission');
+			}
 
 
 			var sendPopUp = new App.Views.SendToDepartment({
+				previousDepartmentName: previousDepartmentName,
+				previousDepartmentDate: previousDepartmentDate,
 				appealId: this.options.appeal.get("id"),
 				clientId: this.options.appeal.get("patient").get("id"),
 				moveDatetime: moveDatetime,
-				popupTitle: popupTitle
+				popupTitle: this.directionText
 			}).render().open();
-			sendPopUp.on("closed", function () {
+
+			sendPopUp.on("closed", function() {
 				this.collection.fetch();
 			}, this);
+
 		},
 
 		//Новое мероприятие/регистрация на койку
-		newHospitalBed: function () {
-			this.trigger("change:viewState", {type: 'hospitalbed', options: {}});
+		newHospitalBed: function() {
+			this.trigger("change:viewState", {
+				type: 'hospitalbed',
+				options: {}
+			});
 			App.Router.updateUrl("appeals/" + this.options.appealId + "/hospitalbed/");
 		},
 
-		render: function () {
+		render: function() {
 
-			this.grid.on('grid:rowClick', function (move, event) {
+			this.grid.on('grid:rowClick', function(move, event) {
 				event.preventDefault();
 
 				if (_.indexOf(event.target.classList, 'cancel-bed-registration') >= 0) {
@@ -182,10 +231,20 @@ define([
 			}, this);
 
 			var self = this;
-			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || ( Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT) );
+			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT));
 
-			this.$el.html($.tmpl(this.template, {allowToMove: allowToMove, isClosed: self.options.appeal.isClosed()}));
+			this.$el.html($.tmpl(this.template, {
+				allowToMove: allowToMove,
+				isClosed: self.options.appeal.isClosed()
+			}));
 			this.$("#lab-grid").html(this.grid.el);
+			console.log(this.$("#new-move"));
+			this.$("#new-move").button({
+				icons: {
+					primary: "icon-plus icon-color-green",
+					secondary: "icon-caret-down"
+				}
+			});
 
 			this.delegateEvents();
 			this.grid.delegateEvents();

@@ -37,6 +37,7 @@ Core = {
 			document.cookie = name + "=" + value + ";expires=" + expire.toGMTString() + "; path=/";
 		}
 	},
+
 	Data: {
 		currentRole: function (value) {
 			if (value == undefined) {
@@ -46,6 +47,7 @@ Core = {
 			}
 		}
 	},
+
 	Queue: {
 		queuesArray: {},
 
@@ -122,6 +124,7 @@ Core = {
 			}
 		}
 	},
+
 	Language: {
 		/**
 		 * Возвращает правильный падеж для заданного числа
@@ -152,6 +155,7 @@ Core = {
 			}
 		}
 	},
+
 	Objects: {
 		/**
 		 * Рекурсивно сливает два объекта
@@ -179,6 +183,7 @@ Core = {
 			return result
 		}
 	},
+	
 	Numbers: {
 
 		/**
@@ -263,13 +268,13 @@ Core = {
 			}
 
 			// Отдельные условия для дэйтпикеров
-			$clone.find(".SelectDate").each(function () {
+			$clone.find(".SelectDate, .date-input").each(function () {
 				var $this = $(this);
 				var relation = $this.data("relation");
 				var duplicate = $this.data("duplicate");
 
 				if (relation) {
-					$this.val(Core.Date.toInt($this.val() + " " + $(relation).val()) || "");
+					$this.val(Core.Date.toInt($this.val() + " " + $clone.find(relation).val()) || "");
 				} else {
 					$this.val(Core.Date.toInt($this.val()) || "");
 				}
@@ -346,6 +351,32 @@ Core = {
 					return listChars[c] || c;
 				}).join("") :
 				(listChars[string] || string);
+		},
+		
+		endsWith: function (str, chr) {
+			console.log(arguments, str[str.length-1], chr);
+			return str.length ? str[str.length - 1] === chr : false;
+		},
+
+		endsWithPunctuationChar: function (str) {
+			var punctChars = [".", ",", "!", "?", ";", ":"];
+			var punctCharFound = false;
+
+			for (var i = 0; i < punctChars.length; i++) {
+				//console.log(str, punctChars[i], Core.Strings.endsWith(str, punctChars[i]));
+				if (Core.Strings.endsWith(str, punctChars[i])) {
+					punctCharFound = true;
+					break;
+				}
+			}
+
+			console.log(punctCharFound);
+
+			return punctCharFound;
+		},
+
+		startsWith: function (str, chr) {
+			return str.length ? str[0] === chr : false;
 		}
 	},
 
@@ -399,6 +430,7 @@ Core = {
 			return params == {} ? null : params;
 		}
 	},
+
 	Date: {
 		differenceBetweenDates: function (DateObject1, DateObject2) {
 			var date1 = DateObject1.getTime();

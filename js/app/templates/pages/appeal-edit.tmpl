@@ -39,9 +39,9 @@
 				</li>
 			</ul>
 		</div>
-		<div class="CardPrint">
+		<!--<div class="CardPrint">
 			<button class="Styled Button Disabled"><span>Печать</span></button>
-		</div>
+		</div>-->
 	</div>
 	<section id="page" class="Clearfix OneCol WithRightSideBar">
 		<div class="ContentSide Clearfix">
@@ -53,7 +53,7 @@
 			<div class="ContentHolder">
 				<div class="ContentHeader Clearfix">
 					<div class="PageActions">
-						<button class="Styled Button Green Actions Save"><span>{{if isNew}}Создать{{else}}Сохранить{{/if}}</span></button>
+						<button class="button-color-green Actions Save"><span>{{if isNew}}Создать{{else}}Сохранить{{/if}}</span></button>
 						<a class="Actions Cancel"><span>Отмена</span></a>
 					</div>
 				</div>
@@ -66,27 +66,51 @@
 									<input class="Disabled NotEditable" disabled="disabled" type="text" name="number" placeholder="" />
 								</div>
 							</div>
+						</li>
+						<li>
 							<div class="LineBlock">
-								<div class="HalfCol">
+								<div class="QuartCol">
 									<label> Дата начала </label>
-
-									<div class="DateTime">
+									<div class="date">
+										<!--<input type="text" name="beginDate" id="appeal-start-date" placeholder="дд.мм.гггг" data-relation="#appeal-start-time" class="date-input date-range-start Mandatory">-->
+										<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="appeal[date][start]" placeholder="дд.мм.гггг" class="date-input SelectDate Mandatory" required="required" data-mindate="${-Math.floor((new Date().getTime() - new Date(patient.birthDate).getTime())/(1000*60*60*24))}"/>
+										<i class="icon-calendar date-icon"></i>
+									</div>
+									<!--<div class="DateTime">
 										<div class="DatePeriod SingleDate Mandatory">
 											<div class="FromTo">
 												<input type="text" id="appeal-start-date" data-relation="#appeal-start-time" name="appeal[date][start]" placeholder="дд.мм.гггг" class="SelectDate" required="required" data-mindate="${-Math.floor((new Date().getTime() - new Date(patient.birthDate).getTime())/(1000*60*60*24))}"/>
 											</div>
 											<i class="DateIcon Icon"></i>
 										</div>
-										<!--<input type="text" id="appeal-start-time" class="ShortInput" data-relation="#appeal-start-date" name="appeal[time][start]" required="required">-->
+										&lt;!&ndash;<input type="text" id="appeal-start-time" class="ShortInput" data-relation="#appeal-start-date" name="appeal[time][start]" required="required">&ndash;&gt;
 										<div class="SingleTime">
 											<input type="text" id="appeal-start-time" class="HourPicker Mandatory" data-relation="#appeal-start-date" name="appeal[time][start]" placeholder="чч:мм" required="required"/>
 										</div>
+									</div>-->
+								</div>
+								<div class="QuartCol WithoutName">
+									<div class="time">
+										<!--<input type="text" class="time-input hasTimepicker" id="appeal-start-time"  placeholder="ЧЧ:ММ" data-relation="#appeal-start-date" value="08:00">-->
+										<input type="text" id="appeal-start-time" class="HourPicker Mandatory" data-relation="#appeal-start-date" name="appeal[time][start]" placeholder="чч:мм" required="required"/>
+										<i class="icon-time time-icon"></i>
 									</div>
 								</div>
-								<div class="HalfCol">
+								<div class="QuartCol">
 									<label> Дата окончания </label>
+									<div class="date">
+										<input type="text" id="appeal-end-date" data-relation="#appeal-end-time" name="appeal[date][end]" placeholder="дд.мм.гггг" class="SelectDate" />
+										<i class="icon-calendar date-icon"></i>
+									</div>
+								</div>
+								<div class="QuartCol WithoutName">
+									<div class="time">
+										<input type="text" id="appeal-end-time" class="HourPicker" data-relation="#appeal-end-date" name="appeal[time][end]" placeholder="чч:мм"/>
+										<i class="icon-time time-icon"></i>
+									</div>
+								</div>
 
-									<div class="DateTime">
+									<!--<div class="DateTime">
 										<div class="DatePeriod SingleDate">
 											<div class="FromTo">
 												<input type="text" id="appeal-end-date" data-relation="#appeal-end-time" name="appeal[date][end]" placeholder="дд.мм.гггг" class="SelectDate" />
@@ -96,8 +120,8 @@
 										<div class="SingleTime">
 											<input type="text" id="appeal-end-time" class="HourPicker" data-relation="#appeal-end-date" name="appeal[time][end]" placeholder="чч:мм"/>
 										</div>
-									</div>
-								</div>
+									</div>-->
+
 								<div class="HalfCol WithoutName">
 									<div class="InlineForm">
 										<label>
@@ -181,8 +205,8 @@
 								<ul class="representative-list"></ul>
 							</div>
 							<div class="LineBlock">
-								<button class="Styled Button AddRepresentative" style="margin-bottom: 1em;">
-									<span>Добавить законного представителя</span>
+								<button class="AddRepresentative" style="margin-bottom: 1em;">
+									Добавить законного представителя
 								</button>
 							</div>
 						</li>
@@ -200,15 +224,18 @@
 									<label> Номер направления </label>
 									<input type="text" name="assignment[number]" placeholder="№" />
 								</div>
-								<div class="HalfCol">
+								<div class="QuartCol">
 									<span class="Label">Дата направления</span>
-
-									<div class="DatePeriod SingleDate">
+									<div class="date">
+										<input type="text" name="assignment[assignment_date]" placeholder="дд.мм.гггг" class="date-input SelectDate" />
+										<i class="icon-calendar date-icon"></i>
+									</div>
+									<!--<div class="DatePeriod SingleDate">
 										<div class="FromTo">
 											<input type="text" name="assignment[assignment_date]" placeholder="дд.мм.гггг" class="SelectDate" />
 										</div>
 										<i class="DateIcon Icon"></i>
-									</div>
+									</div>-->
 								</div>
 							</div>
 							<div class="LineBlock">
@@ -288,36 +315,36 @@
 							<div class="LineBlock">
 								<div class="QuartCol">
 									<span class="Label">Артериальное давление, левая рука</span>
-									<input type="text" name="physical_parameters[blood_pressure][left][syst]" class="ShortInput" placeholder="" />
+									<input type="text" name="physical_parameters[blood_pressure][left][syst]" class="ShortInput" placeholder="" data-maxsize="300" data-minsize="0" />
 									<span class="FieldInfo">Сист,&nbsp;мм.рт.ст.</span>
 								</div>
 								<div class="QuartCol WithoutName">
-									<input type="text" name="physical_parameters[blood_pressure][left][diast]" class="ShortInput" placeholder="" />
+									<input type="text" name="physical_parameters[blood_pressure][left][diast]" class="ShortInput" placeholder="" data-maxsize="200" data-minsize="0" />
 									<span class="FieldInfo">Диаст,&nbsp;мм.рт.ст.</span>
 								</div>
 								<div class="QuartCol">
 									<span class="Label">Артериальное давление, правая рука</span>
-									<input type="text" name="physical_parameters[blood_pressure][right][syst]" class="ShortInput" placeholder="" />
+									<input type="text" name="physical_parameters[blood_pressure][right][syst]" class="ShortInput" placeholder="" data-maxsize="300" data-minsize="0" />
 									<span class="FieldInfo">Сист,&nbsp;мм.рт.ст.</span>
 								</div>
 								<div class="QuartCol WithoutName">
-									<input type="text" name="physical_parameters[blood_pressure][right][diast]" class="ShortInput" placeholder="" />
+									<input type="text" name="physical_parameters[blood_pressure][right][diast]" class="ShortInput" placeholder="" data-maxsize="200" data-minsize="0" />
 									<span class="FieldInfo">Диаст,&nbsp;мм.рт.ст.</span>
 								</div>
 							</div>
 							<div class="LineBlock">
 								<div class="HalfCol">
 									<label> Температура тела </label>
-									<input type="text" name="physical_parameters[temperature]" class="ShortInput RestrictFloat" placeholder="" />
+									<input type="text" name="physical_parameters[temperature]" class="ShortInput RestrictFloat" placeholder="" data-maxsize="45" data-minsize="0" />
 								</div>
 								<div class="HalfCol">
 									<label> Вес при поступлении (кг) </label>
-									<input type="text" name="physical_parameters[weight]" class="ShortInput RestrictFloat" placeholder="" />
+									<input type="text" name="physical_parameters[weight]" class="ShortInput RestrictFloat" placeholder="" data-maxsize="{{if moment().diff(moment(parseInt(patient.birthDate)), 'month') < 1}}3000{{else}}300{{/if}}" data-minsize="0" />
 									<span class="FieldInfo">Для пациентов младше 1 мес. в гр</span>
 								</div>
 								<div class="HalfCol">
 									<label> Рост (см) </label>
-									<input type="text" name="physical_parameters[height]" class="ShortInput RestrictFloat" placeholder="" />
+									<input type="text" name="physical_parameters[height]" class="ShortInput RestrictFloat" placeholder="" data-maxsize="300" data-minsize="0" />
 								</div>
 							</div>
 						</li>
@@ -348,7 +375,7 @@
 						</ul>
 						<div class="FormButtons">
 							<div class="PageActions">
-								<button class="Styled Button Green Actions Save"><span>{{if isNew}}Создать{{else}}Сохранить{{/if}}</span></button>
+								<button class="button-color-green Actions Save"><span>{{if isNew}}Создать{{else}}Сохранить{{/if}}</span></button>
 								<a class="Actions Cancel"><span>Отмена</span></a>
 							</div>
 						</div>
@@ -358,6 +385,7 @@
 		</div>
 	</section>
 	<div title="Ошибка" class="NonAdultAlert"><span style="font-size: 1.2em;">Нельзя добавить несовершеннолетнего представителя.</span></div>
+	<div title="Ошибка" class="SamePatientAlert"><span style="font-size: 1.2em;">Нельзя добавить пациента в качестве представителя.</span></div>
 </script>
 
 <script id="appeal-edit-diagnosis" type="text/x-jquery-tmpl">
@@ -372,7 +400,7 @@
 			<span class="FieldInfo">Описание</span>
 		</div>
 		<div class="QuartCol">
-			<button class="Styled Button MKBLauncher"><span>МКБ-10</span></button>
+			<button class="MKBLauncher"><span>МКБ-10</span></button>
 		</div>
 		<!--<div class="QuartCol">
 			<div class="AddLine">

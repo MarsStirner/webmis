@@ -8,14 +8,14 @@
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="beginDate"><span>Дата и время</span></a>
-					<div class="Filter Hidden">
+					<!--<div class="Filter Hidden">
 						<div class="DatePeriod SingleDate">
 							<div class="FromTo">
 								<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="beginDate">
 							</div>
 							<i class="DateIcon Icon"></i>
 						</div>
-					</div>
+					</div>-->
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="externalId"><span>№ истории болезни</span></a>
@@ -31,29 +31,29 @@
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="birthDate"><span>Дата рожд.</span></a>
-					<div class="Filter Hidden">
+					<!--<div class="Filter Hidden">
 						<div class="DatePeriod SingleDate">
 							<div class="FromTo">
 								<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="birthDate">
 							</div>
 							<i class="DateIcon Icon"></i>
 						</div>
-					</div>
+					</div>-->
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="birthDate"><span>Пол</span></a>
-					<div class="Filter Hidden">
+					<!--<div class="Filter Hidden">
 						<select class="Styled" name="sex">
 							<option value="1" selected="selected">М</option>
 							<option value="2">Ж</option>
 						</select>
-					</div>
+					</div>-->
 				</th>
 				<th>
-					<a class="Actions SortCol" data-field="diagnosis"><span>Диагноз</span></a>
-					<div class="Filter Hidden">
+					<a class="Actions SortCol" data-field="diagnosis"><span>Направительный диагноз</span></a>
+					<!--<div class="Filter Hidden">
 						<input type="text" name="diagnosis" placeholder="Название или номер МКБ" />
-					</div>
+					</div>-->
 				</th>
 				<th>
 					<a class="Actions SortCol"  data-field="phone"><span>Телефон</span></a>
@@ -66,7 +66,6 @@
 		</tbody>
 	</table>
 </script>
-
 
 <script id="appeals-grid-doctor-row" type="text/x-jquery-tmpl">
 		<td {{if !havePrimary}} class="HavePrimary"{{/if}}>
@@ -148,6 +147,7 @@
 		</td>
 </script>
 
+
 <script id="appeals-grid-nurse" type="text/x-jquery-tmpl">
 	<table class="Grid">
 		<thead>
@@ -155,20 +155,20 @@
 		<tr>
 			<th>
 				<a class="Actions SortCol" data-field="eventId"><span>№</span></a>
-				<div class="Filter Hidden">
+				<!--<div class="Filter Hidden">
 					<input type="text" name="eventId" placeholder="№" />
-				</div>
+				</div>-->
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="beginDate"><span>Дата</span></a>
-				<div class="Filter Hidden">
+				<!--<div class="Filter Hidden">
 					<div class="DatePeriod SingleDate">
 						<div class="FromTo">
 							<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="beginDate">
 						</div>
 						<i class="DateIcon Icon"></i>
 					</div>
-				</div>
+				</div>-->
 
 			</th>
 			<th>
@@ -185,28 +185,28 @@
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="birthDate"><span>Дата рожд.</span></a>
-				<div class="Filter Hidden">
+				<!--<div class="Filter Hidden">
 					<div class="DatePeriod SingleDate">
 						<div class="FromTo">
 							<input type="text" class="SelectDate" placeholder="дд.мм.гггг" name="birthDate">
 						</div>
 						<i class="DateIcon Icon"></i>
 					</div>
-				</div>
+				</div>-->
 			</th>
 			<th>
-				<a class="Actions SortCol"  data-field="status"><span>Статус</span></a>
-				<div class="Filter Hidden">
+				<a class="Actions SortCol" data-field="status"><span>Статус</span></a>
+				<!--<div class="Filter Hidden">
 					<input type="text" name="status" placeholder="Статус" />
-				</div>
+				</div>-->
 			</th>
 			<th>
-				<a class="Actions SortCol"  data-field="actions"><span>Действия / отделение</span></a>
-				<div class="Hidden Filter">
+				<a class="Actions SortCol" data-field="actions"><span>Действия / отделение</span></a>
+				<!--<div class="Hidden Filter">
 					<select class="Styled" id="deps-dictionary" name="departmentId">
 						<option value="">...</option>
 					</select>
-				</div>
+				</div>-->
 			</th>
 		</tr>
 		</thead>
@@ -358,14 +358,20 @@
 				-
 			{{/if}}
 		</td>
-		<td>
-			{{each(i, diagnosis) diagnoses}}
-				{{if diagnosis.diagnosisKind == "main"}}
-					${diagnosis.mkb.code} ${diagnosis.mkb.diagnosis}
-				{{/if}}
-			{{/each}}
-		</td>
+	{{if diagnoses.length}}
+	<td class="HasToolTip" data-tooltip-content="#tooltip_${id}">
+			${diagnoses[0].mkb.code}
+			<div id="tooltip_${id}" class="ToolTip TopTail">
+				<ul>
+					<li><dfn><b>${diagnoses[0].diagnosisKindLabel}:</b></dfn> ${diagnoses[0].mkb.code} ${diagnoses[0].mkb.diagnosis}</li>
+				</ul>
+			</div>
+	</td>
+	{{else}}
+	<td></td>
+	{{/if}}
 </script>
+
 
 <script id="appeals-grid-doctor-department" type="text/x-jquery-tmpl">
 	<table class="Grid">
@@ -382,7 +388,7 @@
 					<a class="Actions SortCol" data-field="birthDate"><span>Дата рожд.</span></a>
 				</th>
 				<th>
-					<a class="Actions SortCol" data-field="hospitalBed"><span>Палата/Койка</span></a>
+					<a class="Actions SortCol" data-field="bed"><span>Палата/Койка</span></a>
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="department"><span>Отделение</span></a>
@@ -482,6 +488,7 @@
         </td>
 </script>
 
+
 <script id="appeals-grid-nurse-department" type="text/x-jquery-tmpl">
 
 	<table class="Grid">
@@ -489,7 +496,7 @@
 			<!--<tr class="EditTh">-->
 			<tr>
 				<th>
-					<a class="Actions SortCol" data-field="hospitalBed"><span>Палата/Койка</span></a>
+					<a class="Actions SortCol" data-field="bed"><span>Палата/Койка</span></a>
 				</th>
 				<th>
 					<a class="Actions SortCol" data-field="number"><span>Номер ИБ</span></a>
@@ -553,12 +560,12 @@
 				ЧСС ${condition.breathingRate} уд.м
 			{{/if}}
 		<td>
-			{{if condition.arterialBloodPressure.low && condition.arterialBloodPressure.high}}
-					АДД ${condition.arterialBloodPressure.low} - ${condition.arterialBloodPressure.high}
+			{{if condition && condition.arterialBloodPressure && condition.arterialBloodPressure.low && condition.arterialBloodPressure.high}}
+					АД ${condition.arterialBloodPressure.low}/${condition.arterialBloodPressure.high}
 			{{/if}}
 		</td>
 		<td>
-			{{if doctor.name.fio}}
+			{{if doctor && doctor.name.fio}}
 				${doctor.name.fio}
 			{{else}}
 					-

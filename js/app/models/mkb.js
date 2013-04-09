@@ -8,7 +8,8 @@ define( function ()
 		},
 
 		getTitle: function () {
-			return this.get("code") + " " + this.get("diagnosis");
+			//return this.get("code") + " " + this.get("diagnosis");
+			return this.get("diagnosis");
 		},
 
 		getBreadcrumbTitle: function () {

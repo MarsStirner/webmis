@@ -102,9 +102,17 @@ aside {
 /*История обращений*/
 
 .TreatmentHistory > li {
-	margin-bottom:1.5em;
-	font-size:1.3em;
-	line-height:1.2em;
+	margin-bottom: 1.5em;
+	//font-size: 1.2em;
+	line-height: 1.2em;
+	> a, span {
+		display: block;
+		font-size: 1.2em;
+		margin-bottom: .3em;
+	}
+	> .Label {
+		margin-bottom: .3em;
+	}
 }
 .AllTreatments {
 	font-size:1.3em;

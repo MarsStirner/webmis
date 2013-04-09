@@ -8,7 +8,7 @@ define(["models/doctor"], function ()
 	App.Collections.DoctorsFree = Collection.extend({
 		model: App.Models.Doctor,
 		url: function () {
-			return DATA_PATH + "persons/free/"
+			return DATA_PATH + "dir/persons/free/"
 		}
 	});
 

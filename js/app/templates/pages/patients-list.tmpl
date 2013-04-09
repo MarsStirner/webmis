@@ -8,9 +8,12 @@
 
 				<div class="GridButtons">
 					{{if allowCreateAppeal}}
-						<a href="/patients/new/" class="Styled Button AddButton"><i class="Icon AddIcon Tiny"></i><span>Новая карточка</span>
+						<!--<a href="/patients/new/" class="Styled Button AddButton"><i class="Icon AddIcon Tiny"></i><span>Новая карточка</span>-->
+						<button class="AddButton">
+							<!--<i class="icon-plus"></i>-->Новая карточка
+						</button>
+
 					{{/if}}
-					</a>
 				</div>
 			</div>
 		</div>
@@ -35,14 +38,18 @@
 								<span class="ClearButton DeleteIcon"></span>
 							</div>
 							<div class="QuartCol">
-								<span class="Label">
+								<label>
 									Дата рождения
-								</span>
-								<div class="DatePeriod SingleDate">
+								</label>
+								<!--<div class="DatePeriod SingleDate">
 									<div class="FromTo">
 										<input type="text" name="birthDate" placeholder="дд.мм.гггг" class="SelectDate" value="{{if requestData.filter && requestData.filter.birthDate}}${requestData.filter.birthDate}{{/if}}" />
 									</div>
 									<i class="DateIcon Icon"></i>
+								</div>-->
+								<div class="date">
+									<input type="text" name="birthDate" class="SelectDate" placeholder="дд.мм.гггг" value="{{if requestData.filter && requestData.filter.birthDate}}${requestData.filter.birthDate}{{/if}}" />
+									<i class="icon-calendar date-icon"></i>
 								</div>
 							</div>
 							<div class="SemiCol">
@@ -51,7 +58,7 @@
 								<span class="ClearButton DeleteIcon"></span>
 							</div>
 							<div class="QuartCol">
-								<button class="Styled Button SearchButton"><span>Поиск</span></button>
+								<button class="SearchButton">Поиск</button>
 							</div>
 						</div>
 					</li>

@@ -1,8 +1,7 @@
 <div class="ContentHeader">
 	<div class="PageActions">
 		<div class="CloseHistory">
-			<button class="Styled Button Actions CopyFromPrevious"><span>Копировать из предыдущего</span>
-			</button>
+			<button class="Actions CopyFromPrevious">Копировать из предыдущего</button>
 		</div>
 		<h2>Осмотр</h2>
 	</div>
@@ -12,9 +11,13 @@
 <ul class="LineBlockHolder">
 <li>
 	<div class="LineBlock">
-		<div class="HalfCol">
+		<div class="QuartCol">
 			<label> Начало </label>
-			<div class="DateTime">
+			<div class="date">
+				<input type="text" id="exam-begin-date" data-relation="#exam-begin-time" placeholder="дд.мм.гггг" class="SelectDate Mandatory">
+				<i class="icon-calendar date-icon"></i>
+			</div>
+			<!--<div class="DateTime">
 				<div class="DatePeriod SingleDate Mandatory">
 					<div class="FromTo">
 						<input type="text" id="exam-begin-date" data-relation="#exam-begin-time" placeholder="дд.мм.гггг" class="SelectDate">
@@ -24,11 +27,22 @@
 				<div class="SemiCol">
 					<input type="text" id="exam-begin-time" data-relation="#exam-begin-date" placeholder="чч:мм" class="Styled HourPicker Mandatory">
 				</div>
+			</div>-->
+		</div>
+		<div class="DecCol WithoutName">
+			<div class="time">
+				<input type="text" id="exam-begin-time" data-relation="#exam-begin-date" placeholder="чч:мм" class="Styled HourPicker Mandatory">
+				<i class="icon-time time-icon"></i>
 			</div>
 		</div>
-		<div class="HalfCol">
+
+		<div class="QuartCol">
 			<label> Окончание </label>
-			<div class="DateTime">
+			<div class="date">
+				<input type="text" placeholder="дд.мм.гггг" class="SelectDate" id="exam-end-date" data-relation="#exam-end-time">
+				<i class="icon-calendar date-icon"></i>
+			</div>
+			<!--<div class="DateTime">
 				<div class="DatePeriod SingleDate">
 					<div class="FromTo">
 						<input type="text" placeholder="дд.мм.гггг" class="SelectDate" id="exam-end-date" data-relation="#exam-end-time">
@@ -38,6 +52,12 @@
 				<div class="SemiCol">
 					<input type="text" class="Styled HourPicker" id="exam-end-time" data-relation="#exam-end-date" placeholder="чч:мм"/>
 				</div>
+			</div>-->
+		</div>
+		<div class="DecCol WithoutName">
+			<div class="time">
+				<input type="text" id="exam-end-time" data-relation="#exam-end-date" placeholder="чч:мм" class="Styled HourPicker"/>
+				<i class="icon-time time-icon"></i>
 			</div>
 		</div>
 	</div>

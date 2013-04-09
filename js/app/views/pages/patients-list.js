@@ -69,6 +69,20 @@ define(["collections/patients", "views/grid", "views/filter", "views/paginator"]
 
 			UIInitialize(this.el);
 
+			this.$("[name=birthDate]").datepicker().mask("99.99.9999");
+
+			this.$(".AddButton").button({
+				icons: {
+					primary: "icon-plus icon-color-green"
+				}
+			});
+
+			this.$(".SearchButton").button({
+				icons: {
+					primary: "icon-search"
+				}
+			});
+
 			this.$("input[name='patientCode']").on("keypress", function (event) {
 				if (event.which < 48 || event.which > 57) {
 					event.preventDefault();
@@ -82,6 +96,8 @@ define(["collections/patients", "views/grid", "views/filter", "views/paginator"]
 			if (this.options.popUpMode) {
 				event.preventDefault();
 				this.trigger("patient:newClick");
+			} else {
+				App.Router.navigate("/patients/new/", {trigger: true});
 			}
 		},
 

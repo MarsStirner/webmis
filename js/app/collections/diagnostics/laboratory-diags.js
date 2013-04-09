@@ -9,5 +9,6 @@ define(["models/diagnostics/laboratory-diag"], function (LabDiagnostic) {
 		url: function () {
 			return DATA_PATH + "appeals/" + this.appealId + "/diagnostics/laboratory/";
 		}
+
 	});
 });

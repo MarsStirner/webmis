@@ -159,6 +159,8 @@ define([
 					dicts: dicts
 				}, this.model.toJSON())));
 
+				this.$(".EditAppeal").button({icons: {primary: "icon-edit"}});
+
 				this.delegateEvents();
 
 				this.trigger("change:printState");

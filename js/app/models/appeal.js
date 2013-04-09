@@ -1,23 +1,23 @@
 define([
-		"models/date",
-		"models/patient",
-		"models/doctor",
-		"collections/relations",
-		"collections/diagnoses"
-	], function () {
+	"models/date",
+	"models/patient",
+	"models/doctor",
+	"collections/relations",
+	"collections/diagnoses"
+], function () {
 
-		var AppealTypePart = Model.extend({
-			defaults: {
-				"id": "",
-				"name": ""
-			}
-		});
+	var AppealTypePart = Model.extend({
+		defaults: {
+			"id": "",
+			"name": ""
+		}
+	});
 
 	var AppealType = Model.extend({
 		/*defaults: {
-			id: 168,
-			name: "Дневной стационар"
-		}*/
+		 id: 168,
+		 name: "Дневной стационар"
+		 }*/
 		defaults: {
 			"eventType": {},
 			"requestType": {},
@@ -55,36 +55,36 @@ define([
 		}
 	});
 	/*var HospitalizationChannelType = Model.extend({
-		defaults: {
-			id: -1,
-			name: ""
-		}
-	});*/
+	 defaults: {
+	 id: -1,
+	 name: ""
+	 }
+	 });*/
 	/*var DeliveredType = Model.extend({
-		defaults: {
-			id: -1,
-			name: ""
-		}
-	});*/
+	 defaults: {
+	 id: -1,
+	 name: ""
+	 }
+	 });*/
 	/*var DeliveredAfterType = Model.extend({
-		defaults: {
-			id: -1,
-			name: ""
-		}
-	});*/
+	 defaults: {
+	 id: -1,
+	 name: ""
+	 }
+	 });*/
 	/*var StateType = Model.extend({
-		defaults: {
-			id: -1,
-			name: ""
-		}
-	});*/
+	 defaults: {
+	 id: -1,
+	 name: ""
+	 }
+	 });*/
 	//TODO: что ето было?
 	/*var DrugsType = Model.extend({
-		defaults: {
-			id: -1,
-			name: ""
-		}
-	});*/
+	 defaults: {
+	 id: -1,
+	 name: ""
+	 }
+	 });*/
 	var BranchType = Model.extend({
 		defaults: {
 			id: -1,
@@ -103,7 +103,7 @@ define([
 			syst: "",
 			diast: ""
 		},
-		clean: function(){
+		clean: function () {
 			this.set({
 				syst: this.get("syst").toString().replace(/\D/gi, ""), //.replace("\\", "/"),
 				diast: this.get("diast").toString().replace(/\D/gi, "") //.replace("\\", "/")
@@ -116,9 +116,9 @@ define([
 			right: {}
 		},
 		/*defaults: {
-			left: "",
-			right: ""
-		},*/
+		 left: "",
+		 right: ""
+		 },*/
 		relations: [
 			{
 				type: Backbone.HasOne,
@@ -146,22 +146,22 @@ define([
 				relatedModel: PhysicalParametersBloodPressure
 			}
 		]/*,
-		clean: function () {
-			this.set({
-				//temperature: this.get("temperature").toString().replace(/\D/, ""),
-				weight: this.get("weight").toString().replace(/\D/, ""),
-				height: this.get("height").toString().replace(/\D/, "")
-			});
-		}*/
+		 clean: function () {
+		 this.set({
+		 //temperature: this.get("temperature").toString().replace(/\D/, ""),
+		 weight: this.get("weight").toString().replace(/\D/, ""),
+		 height: this.get("height").toString().replace(/\D/, "")
+		 });
+		 }*/
 	});
 
 
 	/*var AssignmentDirected = Model.extend({
-		defaults: {
-			id: -1,
-			name: ""
-		}
-	});*/
+	 defaults: {
+	 id: -1,
+	 name: ""
+	 }
+	 });*/
 	var Assignment = Model.extend({
 		defaults: {
 			"directed": "",
@@ -169,18 +169,18 @@ define([
 			"assignmentDate": "",
 			"number": ""
 		}/*,
-		relations: [
-			{
-				type: Backbone.HasOne,
-				key: "directed",
-				relatedModel: AssignmentDirected
-			},
-			{
-				type: Backbone.HasOne,
-				key: "doctor",
-				relatedModel: "App.Models.Doctor"
-			}
-		]*/
+		 relations: [
+		 {
+		 type: Backbone.HasOne,
+		 key: "directed",
+		 relatedModel: AssignmentDirected
+		 },
+		 {
+		 type: Backbone.HasOne,
+		 key: "doctor",
+		 relatedModel: "App.Models.Doctor"
+		 }
+		 ]*/
 	});
 
 	var AgreedType = Model.extend({
@@ -260,7 +260,7 @@ define([
 		defaults: {
 			number: "",
 			begDate: "",
-			finance:{}
+			finance: {}
 		},
 
 		relations: [
@@ -277,20 +277,23 @@ define([
 
 		/*initialize: function () {
 
-		},*/
+		 },*/
 
 		isClosed: function () {
 			//return Boolean(this.get("rangeAppealDateTime").get("end"));
 			return Boolean(this.closed);
 		},
 
-		urlRoot: function(){
-			return DATA_PATH + "appeals/"
+		urlRoot: function () {
+			return this.isNew() ?
+				(DATA_PATH + "patients/" + this.get("patient").get("id") + "/appeals/") :
+				(DATA_PATH + "appeals/");
 		},
 
-		url: function () {
-			return ((this.isNew() || this.isSaving) ? (DATA_PATH + "patients/" + this.get("patient").get("id") + "/appeals/") : (this.urlRoot() + this.get("id")));
-		},
+		/*url: function () {
+			//return this.isNew() ? (DATA_PATH + "patients/" + this.get("patient").get("id") + "/appeals/") :
+			//return ((this.isNew() || this.isSaving) ? (DATA_PATH + "patients/" + this.get("patient").get("id") + "/appeals/") : (this.urlRoot() + this.get("id")));
+		},*/
 
 		save: function () {
 			this.isSaving = true;
@@ -298,15 +301,15 @@ define([
 			var emptyDiags = [];
 
 			/*this.get("diagnoses").each(function (diag) {
-				if (!_.isUndefined(diag.get("mkb").get("id")) &&
-					diag.get("mkb").get("id").toString() &&
-					diag.get("mkb").get("id") === 0 //&&
-					//!diag.get("description")
-					) {
-					//emptyDiags.push(diag);
-					diag.get("mkb").unset("id");
-				}
-			});*/
+			 if (!_.isUndefined(diag.get("mkb").get("id")) &&
+			 diag.get("mkb").get("id").toString() &&
+			 diag.get("mkb").get("id") === 0 //&&
+			 //!diag.get("description")
+			 ) {
+			 //emptyDiags.push(diag);
+			 diag.get("mkb").unset("id");
+			 }
+			 });*/
 
 			if (emptyDiags.length) {
 				this.get("diagnoses").remove(emptyDiags);
@@ -336,13 +339,15 @@ define([
 			//hospitalizationChannelType: {},
 			deliveredType: "",
 			deliveredAfterType: "",
-			movingType: "",
+			movingType: "может идти",
 			stateType: "",
 			//drugsType: {},
 			physicalParameters: {},
 			branchType: {},
 			placeType: {},
-			diagnoses: [{}],
+			diagnoses: [
+				{}
+			],
 			agreedDoctor: "",
 			agreedType: {},
 			injury: "",
@@ -382,30 +387,30 @@ define([
 				relatedModel: HospitalizationPointType
 			},
 			/*{
-				type: Backbone.HasOne,
-				key: "hospitalizationChannelType",
-				relatedModel: HospitalizationChannelType
-			},*/
+			 type: Backbone.HasOne,
+			 key: "hospitalizationChannelType",
+			 relatedModel: HospitalizationChannelType
+			 },*/
 			/*{
-				type: Backbone.HasOne,
-				key: "deliveredType",
-				relatedModel: DeliveredType
-			},*/
+			 type: Backbone.HasOne,
+			 key: "deliveredType",
+			 relatedModel: DeliveredType
+			 },*/
 			/*{
-				type: Backbone.HasOne,
-				key: "deliveredAfterType",
-				relatedModel: DeliveredAfterType
-			},*/
+			 type: Backbone.HasOne,
+			 key: "deliveredAfterType",
+			 relatedModel: DeliveredAfterType
+			 },*/
 			/*{
-				type: Backbone.HasOne,
-				key: "stateType",
-				relatedModel: StateType
-			},*/
+			 type: Backbone.HasOne,
+			 key: "stateType",
+			 relatedModel: StateType
+			 },*/
 			/*{
-				type: Backbone.HasOne,
-				key: "drugsType",
-				relatedModel: DrugsType
-			},*/
+			 type: Backbone.HasOne,
+			 key: "drugsType",
+			 relatedModel: DrugsType
+			 },*/
 			{
 				type: Backbone.HasOne,
 				key: "branchType",
@@ -422,11 +427,11 @@ define([
 				relatedModel: "App.Models.Date"
 			},
 			/*{
-				type: Backbone.HasMany,
-				key: "relations",
-				relatedModel: "App.Models.Relation",
-				collectionType: "App.Collections.Relations"
-			},*/
+			 type: Backbone.HasMany,
+			 key: "relations",
+			 relatedModel: "App.Models.Relation",
+			 collectionType: "App.Collections.Relations"
+			 },*/
 			{
 				type: Backbone.HasMany,
 				key: "diagnoses",
@@ -434,10 +439,10 @@ define([
 				collectionType: "App.Collections.Diagnoses"
 			},
 			/*{
-				type: Backbone.HasOne,
-				key: "agreedDoctor",
-				relatedModel: "App.Models.Doctor"
-			},*/
+			 type: Backbone.HasOne,
+			 key: "agreedDoctor",
+			 relatedModel: "App.Models.Doctor"
+			 },*/
 			{
 				type: Backbone.HasOne,
 				key: "patient",
@@ -466,7 +471,55 @@ define([
 			}
 		],
 
-		parse: function ( data ) {
+		/***
+		 *
+		 * @returns {*} false или модель диагноза admission, assignment, в соответствии с приоритетом.
+		 */
+		getDiagnosis: function () {
+			var diagnosesCollection = this.get('diagnoses');
+			if (diagnosesCollection.length) {
+				//console.log('есть диагнозы',view.appeal.get('diagnoses').toJSON());
+				var model = false;
+//                        var priorities = ['final','clinical','admission','assignment'];
+//                        var diagnosesModels = [];
+//
+//                        _.each(priorities,function(priority){
+//                            var diagnosis = diagnosesCollection.find(function(model){
+//                                return model.get('diagnosisKind') == priority;
+//                            });
+//
+//                            if(diagnosis){
+//                                var obj = {};
+//                                obj[priority]=diagnosis;
+//                                diagnosesModels.push(obj);
+//                            }
+//
+//                        });
+//                        console.log('diagnosesModels',diagnosesModels)
+
+				var admission = diagnosesCollection.find(function (model) {
+					return model.get('diagnosisKind') == 'admission';
+				});
+				var assignment = diagnosesCollection.find(function (model) {
+					return model.get('diagnosisKind') == 'assignment';
+				});
+
+				if (assignment && assignment.get('mkb') && assignment.get('mkb').get('diagnosis')) {
+					model = assignment;
+				}
+
+				if (admission && admission.get('mkb') && admission.get('mkb').get('diagnosis')) {
+					model = admission;
+				}
+
+				//console.log('getDiagnosis',model);
+
+
+			}
+			return model;
+		},
+
+		parse: function (data) {
 			//var newAppeal = new App.Models.Appeal;
 			data = data.data ? data.data : data;
 
@@ -476,12 +529,12 @@ define([
 				if (_.isNull(prop)) data[key] = this.defaults[key];
 
 				/*if (key === "diagnoses" && data[key].length) {
-					_(data[key]).each(function (diagnosis) {
-						if (diagnosis.mkb && (diagnosis.mkb.id === 0)) {
-							delete diagnosis.mkb.id;
-						}
-					});
-				}*/
+				 _(data[key]).each(function (diagnosis) {
+				 if (diagnosis.mkb && (diagnosis.mkb.id === 0)) {
+				 delete diagnosis.mkb.id;
+				 }
+				 });
+				 }*/
 			}, this);
 
 			return Model.prototype.parse.call(this, data);
@@ -490,4 +543,4 @@ define([
 	});
 
 	return App.Models.Appeal;
-} );
+});

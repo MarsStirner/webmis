@@ -9,59 +9,42 @@ define([
 	"collections/department-patients",
 	"views/appeal/edit/popups/send-to-department",
 	"models/print/form007",
-	"views/print"
-], function () {
+	"views/print"], function() {
 	App.Views.AppealsList = View.extend({
 		id: "main",
 
-		initialize: function () {
+		initialize: function() {
 			this.clearAll();
 
 			this.on("template:loaded", this.ready, this);
 			this.loadTemplate("pages/appeals-list");
 
-			_.bindAll(this, 'printForm007')
+			_.bindAll(this, 'printForm007');
 		},
 
 		events: {
-			"click .Actions.Decrease": "decreaseDate",
-			"click .Actions.Increase": "increaseDate",
-			"click .Actions.ToggleFilters": "toggleFilters"
+			"click .shift-back": "decreaseDate",
+			"click .shift-forward": "increaseDate",
+			"click .toggle-filters": "toggleFilters"
 		},
 
-		increaseDate: function (event) {
+		increaseDate: function(event) {
 			event.preventDefault();
 
 			this.setDate(1);
 		},
 
-		decreaseDate: function (event) {
+		decreaseDate: function(event) {
 			event.preventDefault();
 
 			this.setDate(-1);
 		},
 
-		setDate: function (increment) {
+		setDate: function(increment) {
 			increment = increment || 0;
 
-			var $startDateTime = this.$("#appeal-start-date");
-			var $endDateTime = this.$("#appeal-end-date");
-
-			/*var date = new Date;
-
-			 var startDayDifference = 1;
-			 var endDayDifference = 0;
-
-			 if ( $startDateTime.length > 0 && $endDateTime.length > 0 && $startDateTime.datepicker("getDate") && $endDateTime.datepicker("getDate") ) {
-			 var startDifference = Core.Date.differenceBetweenDates( date, $startDateTime.datepicker("getDate" ) );
-			 var endDifference = Core.Date.differenceBetweenDates( date, $endDateTime.datepicker("getDate") );
-
-			 startDayDifference = Math.floor(startDifference.difference / (1000*60*60*24));
-			 endDayDifference = Math.floor(endDifference.difference / (1000*60*60*24));
-			 }
-
-			 var startDays = - startDayDifference + increment,
-			 endDays = - endDayDifference + increment;*/
+			var $startDateTime = this.$(".date-range-start");
+			var $endDateTime = this.$(".date-range-end");
 
 			var startDate = $startDateTime.datepicker("getDate");
 			var endDate = $endDateTime.datepicker("getDate");
@@ -72,59 +55,68 @@ define([
 			$startDateTime.datepicker("setDate", startDate);
 			$endDateTime.datepicker("setDate", endDate);
 
-			this.collection.setParams({page: 1});
+			this.collection.setParams({
+				page: 1
+			});
 
 			this.$("#appeal-start-date").change();
 			//this.$("#appeal-end-date").change();
 		},
 
-		toggleFilters: function (event) {
-			$(event.currentTarget).toggleClass("Pushed");
+		toggleFilters: function(event) {
+			//$(event.currentTarget).toggleClass("Pushed");
 			this.$(".Grid thead tr").toggleClass("EditTh");
 			this.$(".Grid .Filter").toggle();
 		},
 		//Новое мероприятие/направление или перевод в отделение
-		newSendToDepartment: function (appeal) {
-			console.log('newSendToDepartment');
+		newSendToDepartment: function(appeal) {
+			var previousDepartmentName = false;
+			var previousDepartmentDate = false;
+
 			var sendPopUp = new App.Views.SendToDepartment({
+				previousDepartmentName: previousDepartmentName,
+				previousDepartmentDate: previousDepartmentDate,
 				appealId: appeal.get("id"),
 				clientId: appeal.get("patient").get("id"),
 				moveDatetime: appeal.get("createDatetime"),
 				popupTitle: "Направление в отделение"
 			}).render().open();
 
-			sendPopUp.on("closed", function () {
+			sendPopUp.on("closed", function() {
 				this.collection.fetch();
 			}, this);
 		},
-		newHospitalBed: function (appealId) {
-			this.trigger("change:viewState", {type: 'hospitalbed', options: {}});
+		newHospitalBed: function(appealId) {
+			this.trigger("change:viewState", {
+				type: 'hospitalbed',
+				options: {}
+			});
 			App.Router.updateUrl("appeals/" + appealId + "/hospitalbed/");
 		},
 
-		printForm007: function () {
-			console.log('printForm007', this)
+		printForm007: function() {
+			//console.log('printForm007', this)
 			var endDate = $("#appeal-start-date").datepicker("getDate").getTime() + (7 * 60 + 59) * 60 * 1000;
 			var beginDate = endDate - (24 * 60 - 1) * 60 * 1000;
 
 			var form007 = new App.Models.PrintForm007({
-				departmentId: 18,
+				//departmentId: 18,
 				beginDate: beginDate,
 				endDate: endDate
 			});
 
 			new App.Views.Print({
 				model: form007,
-				template: "007"
+				template: "f007"
 			});
 
 			form007.fetch();
 
-			console.log('007 from to', beginDate, endDate);
+			//console.log('007 from to', beginDate, endDate);
 
 		},
 
-		ready: function () {
+		ready: function() {
 			var view = this;
 
 			this.$el.html($("#appeals-list-page").tmpl());
@@ -135,8 +127,8 @@ define([
 			var Filter;
 			var AppealsGrid;
 
-			this.separateRoles(ROLES.DOCTOR_RECEPTIONIST, function () {
-				Collection = new App.Collections.Appeals;
+			this.separateRoles(ROLES.DOCTOR_RECEPTIONIST, function() {
+				Collection = new App.Collections.Appeals();
 
 				Filter = new App.Views.Filter({
 					collection: Collection,
@@ -154,15 +146,15 @@ define([
 
 			}, this);
 
-			this.separateRoles(ROLES.NURSE_RECEPTIONIST, function () {
-				Collection = new App.Collections.Appeals;
+			this.separateRoles(ROLES.NURSE_RECEPTIONIST, function() {
+				Collection = new App.Collections.Appeals();
 
 				/*	Filter = new App.Views.Filter(
-				 {
-				 collection: Collection,
-				 templateId: "#appeals-list-filters-reception",
-				 path: this.options.path
-				 });*/
+				{
+				collection: Collection,
+				templateId: "#appeals-list-filters-reception",
+				path: this.options.path
+				});*/
 
 				var DepCollection = new App.Collections.Departments();
 				Collection.on("reset", function resetHandler() {
@@ -179,10 +171,10 @@ define([
 						departments: {
 							collection: DepCollection,
 							elementId: "deps-dictionary",
-							getText: function (model) {
+							getText: function(model) {
 								return model.get("name");
 							},
-							getValue: function (model) {
+							getValue: function(model) {
 								return model.get("id");
 							}
 						}
@@ -198,9 +190,11 @@ define([
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
 
-				AppealsGrid.on('grid:rowClick', function (model, event) {
+				AppealsGrid.on('grid:rowClick', function(model, event) {
 					if (event.target.localName != 'a') {
-						App.Router.navigate('/appeals/' + model.get('id') + '/', {trigger: true});
+						App.Router.navigate('/appeals/' + model.get('id') + '/', {
+							trigger: true
+						});
 					} else {
 						view.newSendToDepartment(model);
 					}
@@ -208,9 +202,17 @@ define([
 
 			}, this);
 
-			this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
-				Collection = new App.Collections.DepartmentPatients({role: "doctor"});
+			this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function() {
+				Collection = new App.Collections.DepartmentPatients({
+					role: "doctor"
+				});
 				Collection.reset();
+
+				Collection.setParams({
+					filter: {
+						roleId: 25
+					}
+				});
 
 				var DocCollection = new App.Collections.Doctors();
 				var DepCollection = new App.Collections.Departments();
@@ -223,20 +225,20 @@ define([
 						doctors: {
 							collection: DocCollection,
 							elementId: "docs-dictionary",
-							getText: function (model) {
+							getText: function(model) {
 								return model.get("name").get("raw");
 							},
-							getValue: function (model) {
+							getValue: function(model) {
 								return model.get("id");
 							}
 						},
 						departments: {
 							collection: DepCollection,
 							elementId: "deps-dictionary",
-							getText: function (model) {
+							getText: function(model) {
 								return model.get("name");
 							},
-							getValue: function (model) {
+							getValue: function(model) {
 								return model.get("id");
 							}
 						}
@@ -252,9 +254,14 @@ define([
 				});
 			}, this);
 
-			this.separateRoles(ROLES.NURSE_DEPARTMENT, function () {
-				Collection = new App.Collections.DepartmentPatients({role: "nurse"});
+			this.separateRoles(ROLES.NURSE_DEPARTMENT, function() {
+				Collection = new App.Collections.DepartmentPatients();
 				/*Collection.setParams({'filter[date]':1334300400000})*/
+
+				Collection.setParams({
+					sortingField: 'bed',
+					sortingMethod: 'asc'
+				});
 				Collection.reset();
 
 				this.printButton = $('<button style="float: right;">Печать</button>').button().click(this.printForm007);
@@ -274,15 +281,17 @@ define([
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
 
-				AppealsGrid.on('grid:rowClick', function (model, event) {
+				AppealsGrid.on('grid:rowClick', function(model, event) {
 					var target = $(event.target);
 
 					if (target.hasClass('bed-registration')) {
-						console.log(model);
-						console.log('bed-registration', model.get('id'));
+						//						console.log(model);
+						//						console.log('bed-registration', model.get('id'));
 						view.newHospitalBed(model.get('id'));
 					} else {
-						App.Router.navigate('/appeals/' + model.get('id') + '/', {trigger: true});
+						App.Router.navigate('/appeals/' + model.get('id') + '/', {
+							trigger: true
+						});
 					}
 
 				});
@@ -301,7 +310,7 @@ define([
 			this.$el.find(".Container").html(AppealsGrid.render().el);
 
 			if (this.printButton) {
-				this.$el.find(".FilterPage").append(this.printButton);
+				this.$el.find(".EditForm").append(this.printButton);
 			}
 
 
@@ -313,7 +322,41 @@ define([
 
 			this.$el.find(".Container").append(Paginator.render().el);
 
-			UIInitialize(this.el);
+			//UIInitialize(this.el);
+
+			this.$(".date-input").datepicker().mask("99.99.9999");
+
+			this.$("#appeal-start-time").timepicker({
+				showPeriodLabels: false,
+				defaultTime: "08:00"
+			}).mask("99:99");
+			this.$("#appeal-end-time").timepicker({
+				showPeriodLabels: false,
+				defaultTime: "07:59"
+			}).mask("99:99");
+
+			this.$(".print-btn").button({
+				icons: {
+					primary: "icon-print"
+				}
+			});
+			this.$(".shift-back").button({
+				icons: {
+					primary: "icon-angle-left"
+				},
+				text: false
+			});
+			this.$(".shift-forward").button({
+				icons: {
+					primary: "icon-angle-right"
+				},
+				text: false
+			});
+			this.$(".toggle-filters").button({
+				icons: {
+					primary: "icon-filter"
+				}
+			});
 
 			var now = new Date();
 			var startDate = new Date();
@@ -323,10 +366,16 @@ define([
 				startDate.setDate(startDate.getDate() - 1);
 			}
 
+			//для медсестры отделения ставим текущее время в таймпикере
+			this.separateRoles(ROLES.NURSE_DEPARTMENT, function() {
+				var time = moment().format('HH:mm');
+				this.$("#appeal-start-time").val(time);
+			}, this);
+
 			endDate.setDate(startDate.getDate() + 1);
 
-			this.$("#appeal-start-date").datepicker("setDate", startDate);
-			this.$("#appeal-end-date").datepicker("setDate", endDate);
+			this.$(".date-range-start, #appeal-start-date").datepicker("setDate", startDate);
+			this.$(".date-range-end").datepicker("setDate", endDate);
 
 			this.setDate();
 		}

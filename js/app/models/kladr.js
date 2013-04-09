@@ -51,7 +51,7 @@ define(function () {
 		},
 
 		url: function () {
-			return DATA_PATH + "dictionary?dictName=KLADR&filter[level]=" + this.getLevel() + "&filter[parent]=" + this.getParentCode();
+			return DATA_PATH + "dir?dictName=KLADR&filter[level]=" + this.getLevel() + "&filter[parent]=" + this.getParentCode();
 		},
 
 		fetch: function () {

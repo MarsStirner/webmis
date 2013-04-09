@@ -203,10 +203,26 @@ define([
 		},
 
 		toggleComment: function (event) {
-			var $cb = $(event.currentTarget);
-			var $toggleTargets = $cb.parents(".SetComment").find(".FormLink, .RichTextWrapper");
 
-			$toggleTargets.toggle();
+
+			//if (confirmedClear) {
+			var $cb = $(event.currentTarget);
+			var commentIsEmpty = $cb.parents(".SetComment").find(".ExamAttr").val().length === 0;
+			var confirmedClear = true;
+
+			if (!commentIsEmpty) {
+				confirmedClear = confirm("Поле будет очищено и скрыто. Продолжить?");
+			}
+
+			if (confirmedClear) {
+				var $toggleTargets = $cb.parents(".SetComment").find(".FormLink, .RichTextWrapper");
+				$toggleTargets.toggle();
+				$cb.parents(".SetComment").find(".ExamAttr").val("").change();
+			} else {
+				$cb.prop("checked", !$cb.prop("checked"));
+			}
+
+			//}
 		},
 
 		save: function (event) {
@@ -325,6 +341,8 @@ define([
 			this.showInputs();
 			this.connectDates();
 
+			this.$(".CopyFromPrevious").button({icons: {primary: "icon-copy"}});
+
 			// Ограничение ввода для полей формата Double
 			self.$('.RestrictFloat').keypress(function(eve) {
 				if ((eve.which != 46 || $(this).val().indexOf('.') != -1) && (eve.which < 48 || eve.which > 57) || (eve.which == 46 && $(this).caret().start == 0) ) {
@@ -350,7 +368,7 @@ define([
 			this.$("input[name='diagnosis[mkb][code]']").autocomplete({
 				source: function (request, response) {
 					$.ajax({
-						url: "/data/mkbs/",
+						url: "/data/dir/mkbs/",
 						dataType: "jsonp",
 						data: {
 							filter: {

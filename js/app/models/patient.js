@@ -68,10 +68,10 @@ define([
 
 		urlRoot: DATA_PATH + "patients/",
 
-		url: function () {
+		/*url: function () {
 			return DATA_PATH + "patients/" + (this.isNew() ? "" : (this.get("id") + "/"));
 			//return DATA_PATH + "patients/" + (this.get("id") + "/" || "");
-		},
+		},*/
 
 		relations: [
 			{

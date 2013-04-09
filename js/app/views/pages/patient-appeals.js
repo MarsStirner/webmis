@@ -1,14 +1,22 @@
-define(["collections/patient-appeals", "models/patient", "views/breadcrumbs", "views/grid", "views/paginator"], function ()
-{
+define([
+	"collections/patient-appeals",
+	"models/patient",
+	"views/breadcrumbs",
+	"views/grid",
+	"views/paginator"
+], function () {
 	App.Views.PatientAppeals = View.extend({
 		events: {
 			"click .NewAppeal": "onNewAppealClick"
 		},
+
 		collection: App.Collections.Appeals,
+
 		initialize: function () {
 			this.on("template:loaded", this.ready, this);
 			this.loadTemplate("pages/patient-appeals");
 		},
+
 		onNewAppealClick: function (event) {
 			var self = this;
 
@@ -36,6 +44,7 @@ define(["collections/patient-appeals", "models/patient", "views/breadcrumbs", "v
 				notClosedAlert.dialog("open");
 			}
 		},
+
 		ready: function () {
 			var view = this;
 
@@ -51,10 +60,10 @@ define(["collections/patient-appeals", "models/patient", "views/breadcrumbs", "v
 
 					data.allowCreateAppeal = Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST;
 
-					view.$el.html( $("#patient-appeals" ).tmpl(data) );
+					view.$el.html($("#patient-appeals").tmpl(data));
 
 					var Breadcrumbs = new App.Views.Breadcrumbs;
-					this.$("#page-head" ).append( Breadcrumbs.render().el );
+					this.$("#page-head").append(Breadcrumbs.render().el);
 
 					Breadcrumbs.on("template:loaded", function () {
 						Breadcrumbs.setStructure([
@@ -70,7 +79,7 @@ define(["collections/patient-appeals", "models/patient", "views/breadcrumbs", "v
 						sortingMethod: "desc"
 					});
 
-					var AppealsGrid = new App.Views.Grid ({
+					var AppealsGrid = new App.Views.Grid({
 						collection: patientAppeals,
 						template: "grids/appeals",
 						gridTemplateId: "#patient-appeals-grid",
@@ -85,17 +94,19 @@ define(["collections/patient-appeals", "models/patient", "views/breadcrumbs", "v
 
 					view.depended(AppealsGrid);
 
-					view.$el.find(".ContentHolder").append( AppealsGrid.render().el );
+					view.$el.find(".ContentHolder").append(AppealsGrid.render().el);
 
 
 					// Пэйджинатор
-					var Paginator = new App.Views.Paginator ({
+					var Paginator = new App.Views.Paginator({
 						collection: patientAppeals
 					});
 
-					view.$el.find(".ContentHolder").append( Paginator.render().el );
+					view.$el.find(".ContentHolder").append(Paginator.render().el);
+
+					this.$(".NewAppeal").button({icons: {primary: "icon-plus icon-color-green"}});
 				}
 			});
 		}
 	});
-} );
+});

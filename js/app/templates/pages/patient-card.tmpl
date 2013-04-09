@@ -57,12 +57,12 @@
 				<div class="ContentHeader Clearfix">
 					<div class="PageActions">
 						{{if allowCreateAppeal}}
-						<a href="./appeals/new/" class="Styled Button NewAppeal"><i class="AddIcon Icon Tiny"></i><span>Новая госпитализация</span></a>
+							<button class="NewAppeal">Новая госпитализация</button>
 						{{/if}}
 						{{if allowEditPatientCard}}
-						<div class="CloseHistory">
-							<a href="./edit/" class="Styled Button"><span>Редактировать</span></a>
-						</div>
+							<div class="pull-right">
+								<button class="EditAppeal">Редактировать</button>
+							</div>
 						{{/if}}
 					</div>
 				</div>
@@ -347,24 +347,35 @@
 									<div class="LineBlock">
 										<p>{{if occupation.socialStatus.status}}<strong>${occupation.socialStatus.status}</strong>{{/if}}</p>
 
-										{{if occupation.socialStatus.id == 310}}
-										<p>${occupation.works[0].position} в «${occupation.works[0].workingPlace}»</p>
+										{{if occupation.socialStatus.id == 310 && (occupation.works[0].position || occupation.works[0].workingPlace)}}
+										<p>
+											{{if occupation.works[0].position}}${occupation.works[0].position}{{/if}}
+											{{if occupation.works[0].workingPlace}} в «${occupation.works[0].workingPlace}{{/if}}»
+										</p>
 										{{/if}}
 
-										{{if occupation.socialStatus.id == 313}}
+										{{if occupation.socialStatus.id == 313 && occupation.works[0].preschoolNumber}}
 										<p>Номер детсада, ясли: ${occupation.works[0].preschoolNumber}</p>
 										{{/if}}
 
-										{{if occupation.socialStatus.id == 314}}
-										<p>Номер школы: ${occupation.works[0].schoolNumber}, класс ${occupation.works[0].classNumber}</p>
+										{{if occupation.socialStatus.id == 314 && (occupation.works[0].schoolNumber || occupation.works[0].classNumber)}}
+										<p>
+											{{if occupation.works[0].schoolNumber}}Номер школы: ${occupation.works[0].schoolNumber}{{/if}}
+											{{if occupation.works[0].classNumber}} класс ${occupation.works[0].classNumber}{{/if}}
+										</p>
 										{{/if}}
 
 										{{if occupation.socialStatus.id == 315}}
-										<p>Род войск: ${occupation.works[0].forceBranch.branch}</p>
-										<p>Войсковая часть: ${occupation.works[0].militaryUnit}</p>
-										<p>Звание: {{if occupation.works[0].rank}}${occupation.works[0].rank.rank}{{/if}}</p>
+											{{if occupation.works[0].forceBranch.branch}}
+												<p>Род войск: ${occupation.works[0].forceBranch.branch}</p>
+											{{/if}}
+											{{if occupation.works[0].militaryUnit}}
+												<p>Войсковая часть: ${occupation.works[0].militaryUnit}</p>
+											{{/if}}
+											{{if occupation.works[0].rank && occupation.works[0].rank.rank}}
+												<p>Звание: ${occupation.works[0].rank.rank}</p>
+											{{/if}}
 										{{/if}}
-
 
 										{{if occupation.comment}}<p>Примечание: ${occupation.comment}</p>{{/if}}
 									</div>

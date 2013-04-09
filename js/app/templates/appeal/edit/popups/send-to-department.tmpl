@@ -1,53 +1,43 @@
-<!--<header class="Clearfix">
-	<h2 class="PopupHeader">Направление в отделение</h2>
-</header>-->
 <section class="PopUpLine">
 	<div class="EditForm Clearfix">
 		<ul class="LineBlockHolder">
+			{{if previousDepartmentName}}
+			<li style="border: none;">
+				<div class="LineBlock">
+					<div class="LineCol">
+						<span class="Label" style="margin-left:0;">Переведён из отделения</span>
+						<b>${previousDepartmentName}</b>
+					</div>
+					<div class="HalfCol WithoutName" style="word-spacing:0;">
+						{{formatDateTime previousDepartmentDate}}
+					</div>
+				</div>
+			</li>
+			{{/if}}
+
 			<li>
 				<div class="LineBlock">
 					<div class="LineCol">
-						<span class="Label">Отделение</span>
+						<span class="Label" style="margin-left:0;">Отделение</span>
 						<select id="department" name="department" class="select2 Mandatory">
 							<option value="">...</option>
 						</select>
 					</div>
-					<div class="LineCol">
-						<label> Дата и время поступления</label>
-						<div class="DateTime">
-							<div class="DatePeriod SingleDate Mandatory">
-								<div class="FromTo">
-									<input type="text" id="movingDate" data-relation="#movingTime"  data-mindate="0" name="movingDate" placeholder="дд.мм.гггг" class="SelectDate" required="required" />
-								</div>
-								<i class="DateIcon Icon"></i>
-							</div>
-							<!--<input type="text" id="appeal-start-time" class="ShortInput" data-relation="#appeal-start-date" name="appeal[time][start]" required="required">-->
-							<div class="SingleTime">
-								<input type="text" id="movingTime" class="HourPicker Mandatory" data-relation="#movingDate" name="movingTime" placeholder="чч:мм" required="required"/>
-							</div>
+					<div class="HalfCol">
+						<label style="white-space: nowrap; margin-left:0;"> Дата и время поступления</label>
+						<div class="date">
+							<input type="text" id="movingDate" data-relation="#movingTime"  data-mindate="0" name="movingDate" placeholder="дд.мм.гггг" class="SelectDate date-input" required="required" />
+							<i class="icon-calendar date-icon"></i>
 						</div>
-					</div>
-					<!--<div class="HalfCol">
-						<label> Начало </label>
-						<div class="DateTime">
-							<div class="DatePeriod SingleDate">
-								<div class="FromTo">
-									<input type="text" id="movingDate" data-relation="#movingTime" placeholder="дд.мм.гггг" class="SelectDate">
-								</div>
-								<i class="DateIcon Icon"></i>
-							</div>
-						</div>
-					</div>
-					<div class="QuartCol">
-						<input type="text" id="movingTime" data-relation="#movingDate" placeholder="чч:мм" class="Styled HourPicker">
-					</div>-->
-				</div>
-				<div class="LineBlock">
-					<div class="PageActions WideCol CloseHistory">
-						<button class="Styled Button Green Actions Save"><span>Сохранить</span></button>
-						<a href="#" class="Actions Cancel ShowHidePopup" style="position: relative; top: 1.6em;">Отмена</a>
 
 					</div>
+					<div class="HalfCol WithoutName">
+						<div class="time">
+							<input type="text" id="movingTime" class="HourPicker Mandatory" data-relation="#movingDate" name="movingTime" placeholder="чч:мм" required="required"/>
+							<i class="icon-time time-icon"></i>
+						</div>
+					</div>
+
 				</div>
 			</li>
 		</ul>

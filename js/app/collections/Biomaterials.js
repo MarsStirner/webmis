@@ -8,7 +8,33 @@ define(["models/Biomaterial"], function (Biomaterial) {
 			var collection = this;
 
 			collection.countSelected();
+			collection.countStatuses();
 			collection.on("change:selected reset", collection.countSelected, collection);
+			collection.on("reset", collection.countStatuses, collection);
+
+		},
+
+		/***
+		 * подсчёт статусов
+		 */
+		countStatuses: function () {
+			var collection = this;
+
+			function countByStatus(status) {
+				return collection.reduce(function (memo, model) {
+					var i = 0;
+
+					if (model.get('status') == status) {
+						i = 1;
+					}
+					return memo + i;
+				}, 0);
+
+			}
+
+			collection.count = {
+				status_0: countByStatus(0), status_1: countByStatus(1), status_2: countByStatus(2), all: collection.length
+			};
 
 		},
 
@@ -18,31 +44,23 @@ define(["models/Biomaterial"], function (Biomaterial) {
 		countSelected: function () {
 			var collection = this;
 
-			collection.selected = {};
-			collection.selected.status_0 = [];
-			collection.selected.status_1 = [];
-			collection.selected.status_2 = [];
+			function filterSelectedByStatus(status) {
+				return collection.filter(function (model) {
+					return ((model.get("selected") == true) && (model.get('status') == status));
+				});
+			}
 
-			collection.selected.status_0 = collection.filter(function (model) {
-				return ((model.get("selected") == true) && (model.get('status') == 0));
-			});
+			collection.selected = {
+				status_0: filterSelectedByStatus(0), status_1: filterSelectedByStatus(1), status_2: filterSelectedByStatus(2)
+			};
 
-			collection.selected.status_1 = collection.filter(function (model) {
-				return ((model.get("selected") == true) && (model.get('status') == 1));
-			});
-
-			collection.selected.status_2 = collection.filter(function (model) {
-				return ((model.get("selected") == true) && (model.get('status') == 2));
-			});
-
-			console.log('что-то выбрали', collection.selected);
 
 		},
 
-		getSelectedModels: function() {
+		getSelectedModels: function () {
 			var collection = this;
 
-			return collection.filter(function(model){
+			return collection.filter(function (model) {
 				return model.get('selected');
 			});
 		},
@@ -86,17 +104,32 @@ define(["models/Biomaterial"], function (Biomaterial) {
 
 			_.each(labTests, function (labTest, index) {
 
-				console.log('lab-tests'+index,labTest)
+				var orgStructure = '';
+				if(labTest.bed && labTest.bed.name){
+					orgStructure = labTest.bed.name;
+				}
+
+				var tissueTypeName = '';
+				if(labTest.biomaterial && labTest.biomaterial.tissueType && labTest.biomaterial.tissueType.name){
+					tissueTypeName = labTest.biomaterial.tissueType.name;
+				}
+
+				var tubeTypeName = '';
+				if(labTest.tubeType && labTest.tubeType.name){
+					tubeTypeName = labTest.tubeType.name;
+				}
+
+
 				workList.push({
 					'index': index + 1,
 					'jobTicketDate': labTest.jobTicket.date,
-					'orgStructure': labTest.department.name,
+					'orgStructure': orgStructure,
 					'patientName': labTest.patient.name,
 					'patientSex': labTest.patient.sexShortName,
 					'patientBirthDate': labTest.patient.birthDate,
 					'labTestName': labTest.actionType.name,
-					'tissueTypeName': labTest.biomaterial.tissueType.name,
-					'tubeTypeName': labTest.tubeType.name,
+					'tissueTypeName': tissueTypeName,
+					'tubeTypeName': tubeTypeName,
 					'jobTicketLabel': labTest.jobTicket.label,
 					'jobTicketNote': labTest.jobTicket.note,
 					'takenTissueJournalId': labTest.takenTissueJournal
@@ -120,7 +153,8 @@ define(["models/Biomaterial"], function (Biomaterial) {
 				barcodes.push({
 					datetime: labTest.jobTicket.date,
 					barcode: labTest.takenTissueJournal,
-					name: labTest.patient.name
+					name: labTest.patient.name,
+					appealNumber: labTest.appealNumber
 				});
 
 			});
@@ -133,25 +167,14 @@ define(["models/Biomaterial"], function (Biomaterial) {
 			this.requestData = response.requestData || {};
 			this.requestData.filter = this.requestData.filter || {};
 
-			if (response.requestData && this.requestData.coreVersion) {
-				CORE_VERSION = response.requestData.coreVersion;
-				VersionInfo.show();
-			}
-			this.departmentId = response.requestData.filter.departmentId;
-
 			return this.normilize(response.data);
 		},
 
 		normilize: function (response) {
 			return _.map(response, function (model) {
 
-				model.patient = model.actions[0].patient;
-				model.urgent = model.actions[0].urgent;
-				model.assigner = model.actions[0].assigner;
-				model.biomaterial = model.actions[0].biomaterial;
+				model.urgent = model.actions[0].urgent ? model.actions[0].urgent : false;
 
-
-				//var biomaterials = _.pluck(model.actions, 'biomaterial');
 				var volume = 0;
 
 				_.each(model.actions, function (action, key, list) {
@@ -160,16 +183,18 @@ define(["models/Biomaterial"], function (Biomaterial) {
 					switch (action.patient.sex) {
 						case 'male':
 							sexShortName = 'М'
-								break;
+							break;
 						case 'female':
 							sexShortName = 'Ж';
-								break;
+							break;
 						default:
-							//sexShortName = 'не определён!';
+						//sexShortName = 'не определён!';
 					}
 					action.patient.sexShortName = sexShortName;
 
-					action.department = model.laboratory;
+					action.appealNumber = model.appealNumber;
+					action.bed = model.bed;
+					action.department = model.department;
 					action.jobTicket = {
 						'id': model.id,
 						'date': model.date,

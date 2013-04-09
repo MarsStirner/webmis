@@ -30,23 +30,29 @@
 				<label>
 					Дата начала
 				</label>
-				<div class="DatePeriod SingleDate">
-					<div class="FromTo">
+				<!--<div class="DatePeriod SingleDate">
+					<div class="FromTo">-->
+				<div class="date">
 						<input type="text" name="disabilities-${disCid}-rangeDisabilityDate-start" placeholder="дд.мм.гггг" class="SelectDate" data-type="date" data-maxdate="0"/>
-					</div>
-					<i class="DateIcon Icon"></i>
+					<i class="icon-calendar date-icon"></i>
 				</div>
+					<!--</div>
+					<i class="DateIcon Icon"></i>
+				</div>-->
 			</div>
 			<div class="QuartCol">
 				<label>
 					Дата окончания
 				</label>
-				<div class="DatePeriod SingleDate">
-					<div class="FromTo">
+				<!--<div class="DatePeriod SingleDate">
+					<div class="FromTo">-->
+				<div class="date">
 						<input type="text" name="disabilities-${disCid}-rangeDisabilityDate-end" placeholder="дд.мм.гггг" class="SelectDate" data-type="date" data-mindate="1"/>
-					</div>
-					<i class="DateIcon Icon"></i>
+					<i class="icon-calendar date-icon"></i>
 				</div>
+					<!--</div>
+					<i class="DateIcon Icon"></i>
+				</div>-->
 			</div>
 		</div>
 		<div class="LineBlock">
@@ -75,12 +81,15 @@
 				<label>
 					Дата выдачи
 				</label>
-				<div class="DatePeriod SingleDate">
-					<div class="FromTo">
+				<!--<div class="DatePeriod SingleDate">
+					<div class="FromTo">-->
+				<div class="date">
 						<input type="text" name="disabilities-${disCid}-document-date" placeholder="дд.мм.гггг" class="SelectDate" data-type="date" data-maxdate="0"/>
-					</div>
-					<i class="DateIcon Icon"></i>
+					<i class="icon-calendar date-icon"></i>
 				</div>
+					<!--</div>
+					<i class="DateIcon Icon"></i>
+				</div>-->
 			</div>
 		</div>
 		<div class="LineBlock">
@@ -215,7 +224,7 @@
 	<div class="LineBlock">
 		<div class="SemiCol">
 			<span class="Label">Гражданство</span>
-			<select class="select2" name="citizenship-first-socStatusType-id">
+			<select class="Styled" name="citizenship-first-socStatusType-id">
 				<option value="" selected="selected">...</option>
 				{{each dicts.citizenships}}
 				<option value="${id}">${value}</option>
@@ -224,7 +233,7 @@
 		</div>
 		<div class="SemiCol">
 			<span class="Label">Второе гражданство</span>
-			<select class="select2" name="citizenship-second-socStatusType-id">
+			<select class="Styled" name="citizenship-second-socStatusType-id">
 				<option value="" selected="selected">...</option>
 				{{each dicts.citizenships}}
 				<option value="${id}">${value}</option>

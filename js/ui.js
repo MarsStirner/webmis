@@ -208,6 +208,28 @@ UI.CustomSelect = function ( $select ){
 
 
 function UIInitialize (context) {
+	/*$(".btn").each(function () {
+		if ($(this).hasClass("btn-add")) {
+			$(this).button({icons: {primary: "icon-plus icon-color-green"}});
+		} else if ($(this).hasClass("btn-print")) {
+			$(this).button({icons: {primary: "icon-print"}});
+		} else if ($(this).hasClass("btn-filter")) {
+			$(this).button({icons: {primary: "icon-filter"}});
+		} else {
+			$(this).button();
+		}
+	});*/
+
+	/*var $buttons = $(".btn").button();
+
+	$(".btn-add", $buttons).button("option", "icons", {primary: "icon-plus icon-color-green"});
+	$(".btn-print", $buttons).button("option", "icons", {primary: "icon-print"});
+	$(".btn-filter", $buttons).button("option", "icons", {primary: "icon-filter"});*/
+
+	$(".date-icon").on("click", function () {
+		$(this).prev().datepicker("show");
+	});
+
 	$("input.Clearable").on("keyup", function() {
 		if ($(this).val().length > 0) {
 			$(this).parent().find(".ClearButton").fadeIn(300).css("display","inline-block");
@@ -221,9 +243,9 @@ function UIInitialize (context) {
 		$(this).fadeOut(300);
 	});
 
-	$("select.Styled", context).each ( function ()
-	{
-		new UI.CustomSelect($(this));
+	$("select.Styled", context).each(function () {
+		//new UI.CustomSelect($(this));
+		$(this).width("100%").addClass("select2").select2({minimumResultsForSearch: 6});
 	});
 
 	$(".Combo", context).each(function () {
@@ -567,7 +589,7 @@ $(document).ready(function(){
 
 			var $tip = this.$el;
 			var pos = $target.data("tooltip-position") || "right";
-			var p = $target.position();
+			var p = $target.offset();
 			var x, y;
 
 			//console.log($target.offset(), $target.width(), $target.height());

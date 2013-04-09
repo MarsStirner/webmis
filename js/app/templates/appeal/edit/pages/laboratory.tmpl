@@ -1,10 +1,13 @@
 <div class="ContentHeader Clearfix">
 	<div class="PageActions">
-		<button id="assign-lab-diag" class="Styled Button"><i class="Icon AddIcon Tiny"></i><span>Назначить</span></button>
-		<div class="CloseHistory">
+		{{if canAddDirection}}
+		<button id="assign-lab-diag">Назначить</button>
+		{{/if}}
+		<!--<div class="CloseHistory">
 			<button class="Styled Button Actions ToggleFilters"><i class="Icon Tiny SearchIcon"></i><span>Фильтр</span></button>
-		</div>
+		</div>-->
 	</div>
 </div>
 
-<div id="lab-grid"></div>
+<div id="grid"></div>
+<div id="grid-pager"></div>

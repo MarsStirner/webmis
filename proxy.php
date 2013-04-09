@@ -19,6 +19,13 @@
 			curl_setopt( $ch, CURLOPT_POSTFIELDS, file_get_contents('php://input') );
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
 		}
+
+		if ( strtolower($_SERVER['REQUEST_METHOD']) == 'delete' ) {
+			curl_setopt( $ch, CURLOPT_POST, true );
+			curl_setopt( $ch, CURLOPT_POSTFIELDS, file_get_contents('php://input') );
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+		}
+
 		curl_setopt( $ch, CURLOPT_COOKIE, $cookie );
 
 		$headers = array();
