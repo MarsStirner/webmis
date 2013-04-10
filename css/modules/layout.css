@@ -936,8 +936,17 @@ footer a {
 }
 
 /* line 811, ../../sass/modules/layout.scss */
-.row-fluid {
+.monitoring-layout {
+  display: table;
+}
+/* line 814, ../../sass/modules/layout.scss */
+.monitoring-layout .TreatmentBlock {
   padding-top: 2em;
+}
+/* line 818, ../../sass/modules/layout.scss */
+.monitoring-layout h4 {
+  padding-top: 2em;
+  text-decoration: underline;
 }
 
 /*.LineBlockHolder {

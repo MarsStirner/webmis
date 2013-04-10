@@ -405,10 +405,15 @@ require(["views/FlashMessageView"], function (FlashMessage){
 
 			this.currentPage = "appeals";
 
-			if (page)
+			if (page) {
 				page = subpage ? page + "-" + subpage : page;
-			else
-				page = "card";
+			} else {
+				if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT) {
+					page = "monitoring";
+				} else {
+					page = "card";
+				}
+			}
 
 			require(["views/app", "views/appeal/edit/main"], function (AppView, AppealMainView) {
 

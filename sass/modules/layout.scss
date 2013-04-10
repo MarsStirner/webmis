@@ -808,8 +808,22 @@ footer {
 	}
 }
 
-.row-fluid {
-	padding-top: 2em;
+.monitoring-layout {
+	display: table;
+
+	.TreatmentBlock {
+		padding-top: 2em;
+	}
+
+	h4 {
+		padding-top: 2em;
+		text-decoration: underline;
+
+	}
+
+	.row-fluid {
+		//padding-top: 2em;
+	}
 }
 
 /*.LineBlockHolder {

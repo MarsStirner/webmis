@@ -1,8 +1,8 @@
-<h3>История болезни № <%= number %></h3>
+<h3>История болезни № <%= appeal.number %></h3>
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span6">
-			<table class="Grid MonitoringWidget">
+			<table class="Grid MonitoringWidget patient-info">
 				<tr>
 					<td>Группа крови и резус</td>
 					<td>
@@ -40,8 +40,8 @@
 				<tr>
 					<td>Рост</td>
 					<td>
-						<% if (physicalParameters.height) { %>
-						<%= physicalParameters.height %> см
+						<% if (appeal.physicalParameters.height) { %>
+						<%= appeal.physicalParameters.height %> см
 						<% } else { %>
 						-
 						<% } %>
@@ -72,8 +72,8 @@
 				<tr>
 					<td>Вес</td>
 					<td>
-						<% if (physicalParameters.weight) { %>
-						<%= physicalParameters.weight %>
+						<% if (appeal.physicalParameters.weight) { %>
+						<%= appeal.physicalParameters.weight %>
 						<% if (moment().diff(moment(parseInt(patient.birthDate)), 'month') < 1) { %>
 						г
 						<% } else { %>
@@ -95,23 +95,19 @@
 				<tr>
 					<td>Дата поступления</td>
 					<td>
-						<%= Core.Date.format(Core.Data.appealExtraData.get("rangeAppealDateTime").get("start")) %>
+						<%= Core.Date.format(appealExtraData.rangeAppealDateTime.start) %>
 					</td>
 				</tr>
 				<tr>
 					<td>Продолжительность лечения (дней) или дата выписки</td>
 					<td>
-						<% if (rangeAppealDateTime.end) { %>
-						<%= Core.Date.format(Core.Data.appealExtraData.get("rangeAppealDateTime").get("end")) %>
-						<% } else { %>
-						<%= moment().diff(moment(Core.Data.appealExtraData.get("rangeAppealDateTime").get("start")), "days") + 1 %>
-						<% } %>
+						<%= Core.Date.format(appealExtraData.rangeAppealDateTime.end) || moment().diff(moment(appealExtraData.rangeAppealDateTime.start), "days") + 1 %>
 					</td>
 				</tr>
 				<tr>
 					<td>Отделение</td>
 					<td>
-						<%= Core.Data.appealExtraData.get("department").name %>
+						<%= appealExtraData.department.name %>
 					</td>
 				</tr>
 				<tr>
@@ -129,7 +125,7 @@
 				<tr>
 					<td>Лечащий врач</td>
 					<td>
-						<%= setPerson.doctor.name.full %>
+						<%= appeal.setPerson.doctor.name.full %>
 					</td>
 				</tr>
 			</table>
@@ -149,17 +145,17 @@
 					<% }); %>
 				</div>
 			<% } else {%>
-				<h3 class="Diagnosis">Диагноз не установлен</h3>
+				<div class="Diagnosis"><h3>Диагноз не установлен</h3></div>
 			<% } %>
 		</div>
 	</div>
-
+	<h4>Мониторинг</h4>
 	<div class="row-fluid">
 		<div class="span12 monitoring-info">
 			<!--  -->
 		</div>
 	</div>
-
+	<h4>Экспресс-анализы</h4>
 	<div class="row-fluid">
 		<div class="span12 express-analyses">
 			<!--  -->

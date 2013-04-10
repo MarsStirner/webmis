@@ -1,0 +1,10 @@
+<tr>
+	<td><%=Core.Date.format(item.get("datetime"))%></td>
+	<td><%=item.get("temperature")%></td>
+	<td><%=item.get("bloodPressure").right.syst%>/<%=item.get("bloodPressure").right.diast%></td>
+	<td><%=item.get("heartRate")%></td>
+	<td><%=item.get("spo2")%></td>
+	<td><%=item.get("breathRate")%></td>
+	<td><%=item.get("state")%></td>
+	<td><%=item.get("health")%></td>
+</tr>
