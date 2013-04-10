@@ -295,7 +295,7 @@ Collection = Backbone.Collection.extend({
 	},
 
 	sync:function (method, model, options) {
-		options.dataType = "jsonp";
+		options.dataType = options.dataType ? options.dataType : "jsonp";
 
 		return Backbone.sync(method, model, options);
 	},
