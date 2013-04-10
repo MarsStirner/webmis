@@ -217,8 +217,13 @@ function(
 				return node.select === true;
 			});
 
+			var $startDateInput = $('#start-date');
+			var startDate = moment($startDateInput.datepicker("getDate")).format('YYYY-MM-DD');
+			var $startTimeInput = $('#start-time');
+			var startTime = $startTimeInput.val() + ':00';
 
-			console.log('onSave tree selected', selected);
+
+			//console.log('onSave tree selected', selected);
 
 
 			view.testCollection.forEach(function(model) {
@@ -237,7 +242,7 @@ function(
 				var $citoInput = view.$('#cito' + modelTree.key);
 				var cito = $citoInput.prop('checked');
 
-				console.log('node inputs', date, time, cito);
+				//console.log('node inputs', date, time, cito);
 
 				var selected_params = _.filter(modelTree.children, function(node) {
 					return node.select === true;
@@ -247,7 +252,7 @@ function(
 
 
 				//выбранные тесты
-				console.log('modelTree ', model.get('group'), modelTree, selected_params);
+				//console.log('modelTree ', model.get('group'), modelTree, selected_params);
 				_.each(selected_params, function(param) {
 					_.each(group[1].attribute, function(attribute, index) {
 						if (attribute.name == param.title) {
@@ -261,7 +266,7 @@ function(
 				view.setParam(model, 'doctorMiddleName', 'value', '');
 				view.setParam(model, 'urgent', 'value', cito);
 				view.setParam(model, 'plannedEndDate', 'value', date + ' ' + time);
-
+				view.setParam(model, 'assessmentDate', 'value', startDate + ' ' + startTime);
 				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
 				view.setParam(model, 'Направительный диагноз', 'valueId', mkbId);
 
@@ -296,7 +301,7 @@ function(
 								name: propertyName,
 								value: value
 							});
-							console.log('не нашли', groupIndex, attributeIndex, group[groupIndex].attribute[attributeIndex].properties);
+							//console.log('не нашли', groupIndex, attributeIndex, group[groupIndex].attribute[attributeIndex].properties);
 						}
 
 					}
@@ -305,7 +310,7 @@ function(
 
 			model.set('group', group);
 
-			console.log('setParam', attributeName, propertyName, value, group);
+			//console.log('setParam', attributeName, propertyName, value, group);
 
 		},
 
@@ -350,9 +355,9 @@ function(
 
 			//установка диагноза
 			if (view.appealDiagnosis) {
-				view.$("input[name='diagnosis[mkb][diagnosis]']").val(view.diagnosis.get('mkb').get('diagnosis'));
-				view.$("input[name='diagnosis[mkb][code]']").val(view.diagnosis.get('mkb').get('code'));
-				view.$("input[name='diagnosis[mkb][code]']").data('mkb-id', view.diagnosis.get('mkb').get('id'));
+				view.$("input[name='diagnosis[mkb][diagnosis]']").val(view.appealDiagnosis.get('mkb').get('diagnosis'));
+				view.$("input[name='diagnosis[mkb][code]']").val(view.appealDiagnosis.get('mkb').get('code'));
+				view.$("input[name='diagnosis[mkb][code]']").data('mkb-id', view.appealDiagnosis.get('mkb').get('id'));
 			}
 
 
@@ -362,7 +367,7 @@ function(
 			//Дата и время создания
 			var now = new Date();
 			this.$("#start-date").datepicker("setDate", now);
-			this.$("#start-time").val(now.getHours() + ':' + now.getMinutes()).mask("99:99").timepicker({
+			this.$("#start-time").val(('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2)).mask("99:99").timepicker({
 				showPeriodLabels: false
 			});
 

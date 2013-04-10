@@ -46,22 +46,6 @@ define([
 			var $startDateTime = this.$(".date-range-start");
 			var $endDateTime = this.$(".date-range-end");
 
-			/*var date = new Date;
-
-			var startDayDifference = 1;
-			var endDayDifference = 0;
-
-			if ( $startDateTime.length > 0 && $endDateTime.length > 0 && $startDateTime.datepicker("getDate") && $endDateTime.datepicker("getDate") ) {
-			var startDifference = Core.Date.differenceBetweenDates( date, $startDateTime.datepicker("getDate" ) );
-			var endDifference = Core.Date.differenceBetweenDates( date, $endDateTime.datepicker("getDate") );
-
-			startDayDifference = Math.floor(startDifference.difference / (1000*60*60*24));
-			endDayDifference = Math.floor(endDifference.difference / (1000*60*60*24));
-			}
-
-			var startDays = - startDayDifference + increment,
-			endDays = - endDayDifference + increment;*/
-
 			var startDate = $startDateTime.datepicker("getDate");
 			var endDate = $endDateTime.datepicker("getDate");
 
@@ -86,8 +70,12 @@ define([
 		},
 		//Новое мероприятие/направление или перевод в отделение
 		newSendToDepartment: function(appeal) {
-			//console.log('newSendToDepartment');
+			var previousDepartmentName = false;
+			var previousDepartmentDate = false;
+
 			var sendPopUp = new App.Views.SendToDepartment({
+				previousDepartmentName: previousDepartmentName,
+				previousDepartmentDate: previousDepartmentDate,
 				appealId: appeal.get("id"),
 				clientId: appeal.get("patient").get("id"),
 				moveDatetime: appeal.get("createDatetime"),

@@ -713,6 +713,13 @@ footer {
 	margin-top: -.55em !important;
 }
 
+.ui-button {
+	-webkit-transition: none;
+	-moz-transition: none;
+	-o-transition: none;
+	transition: none;
+}
+
 .LineBlockHolder > li .LineBlock .ui-button {
 	top: 1.5em;
 }

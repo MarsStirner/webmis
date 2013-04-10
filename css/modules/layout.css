@@ -839,6 +839,14 @@ footer a {
 }
 
 /* line 716, ../../sass/modules/layout.scss */
+.ui-button {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+
+/* line 723, ../../sass/modules/layout.scss */
 .LineBlockHolder > li .LineBlock .ui-button {
   top: 1.5em;
 }
@@ -881,37 +889,37 @@ footer a {
 		color: black;
 	}
 }*/
-/* line 760, ../../sass/modules/layout.scss */
+/* line 767, ../../sass/modules/layout.scss */
 .select2-container .select2-choice {
   height: 2.25em;
   font-size: 1.2em;
   border-color: #737477;
 }
-/* line 764, ../../sass/modules/layout.scss */
+/* line 771, ../../sass/modules/layout.scss */
 .select2-container .select2-choice span {
   line-height: 2.25em;
   height: 2.25em;
 }
 
-/* line 775, ../../sass/modules/layout.scss */
+/* line 782, ../../sass/modules/layout.scss */
 .select2-drop {
   border-left: 1px solid #737477;
   border-right: 1px solid #737477;
   border-bottom: 1px solid #737477;
   border-radius: 0;
 }
-/* line 780, ../../sass/modules/layout.scss */
+/* line 787, ../../sass/modules/layout.scss */
 .select2-drop.select2-drop-above {
   border-top: 1px solid #737477;
   border-radius: 0;
 }
-/* line 784, ../../sass/modules/layout.scss */
+/* line 791, ../../sass/modules/layout.scss */
 .select2-drop .select2-results {
   margin: 0;
   padding: 0;
   font-size: 1.2em;
 }
-/* line 788, ../../sass/modules/layout.scss */
+/* line 795, ../../sass/modules/layout.scss */
 .select2-drop .select2-results li {
   padding: 0.2em 0.4em 0.2em 0.2em;
   border-top: 1px solid #D4D4D4;
@@ -919,12 +927,12 @@ footer a {
   	border-top: none;
   }*/
 }
-/* line 794, ../../sass/modules/layout.scss */
+/* line 801, ../../sass/modules/layout.scss */
 .select2-drop .select2-results li.select2-highlighted {
   background: #D2F0FD;
   color: black;
 }
-/* line 800, ../../sass/modules/layout.scss */
+/* line 807, ../../sass/modules/layout.scss */
 .select2-drop .select2-search input {
   background: white url("../select2.png") no-repeat 100% -22px;
   background: url("../select2.png") no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));

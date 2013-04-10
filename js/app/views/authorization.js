@@ -60,7 +60,7 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 			this.on("template:loaded", this.ready, this);
 			this.loadTemplate("authorization");
 
-			this.collection = new App.Collections.Roles;
+			this.collection = new App.Collections.Roles();
 			this.collection.on("reset", this.showAvailableRoles, this);
 			this.collection.on("error", this.showErrorToolTip, this);
 		},
@@ -73,7 +73,7 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 		render: function(){
 			$("#wrapper" ).html(this.el);
 
-			return this
+			return this;
 		}
 	});
 
@@ -85,7 +85,7 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 		tagName: "li",
 
 		chooseRole: function(event){
-			var Authorization = new App.Models.Authorization;
+			var Authorization = new App.Models.Authorization();
 
 			Authorization.login = this.model.collection.login;
 			Authorization.password = this.model.collection.password;
@@ -161,6 +161,7 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 
 			if (!roleUnavailable) {
 				Core.Cookies.set("authToken", model.get("authToken").id);
+				Core.Cookies.set("userId", model.get("userId"));
 				Core.Cookies.set("doctorFirstName", Doctor.get("name").get("first"));
 				Core.Cookies.set("doctorLastName", Doctor.get("name").get("last"));
 

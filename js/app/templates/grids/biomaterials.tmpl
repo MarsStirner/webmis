@@ -74,11 +74,13 @@
 		{{/if}}
 
 		<div id="tooltip_${id}" class="ToolTip TopTail">
-			<ul style="margin-bottom: 10px;">
+				<ul >
 				{{if assigner}}
-					${assigner.name.raw}
+					<li>Назначивший врач: ${assigner.name.raw}</li>
 				{{/if}}
 
+				</ul>
+				<ul style="margin-bottom: 10px;">
 				{{if bed && bed.name}}
 				<li>Отделение/койка: ${bed.name}</li>
 				{{/if}}
@@ -91,7 +93,7 @@
 			</ul>
 
 
-				<b>Лабораторные исследования:</b>
+				<b>{{if actions.length > 1}}Лабораторные исследования{{else}}Лабораторное исследованиe{{/if}}:</b>
 			<ol>
 				{{each actions}}
 				<li>${actionType.name}</li>

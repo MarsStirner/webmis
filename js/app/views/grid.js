@@ -70,9 +70,7 @@ define(["views/grid-row"], function () {
 		showDefaultSorting: function () {
 			var view = this;
 
-			if (view.collection.requestData
-				&& view.collection.requestData.sortingField
-				&& view.collection.requestData.sortingMethod) {
+			if (view.collection.requestData && view.collection.requestData.sortingField && view.collection.requestData.sortingMethod) {
 
 				var sortingMethod = view.collection.requestData.sortingMethod;
 
@@ -84,7 +82,7 @@ define(["views/grid-row"], function () {
 					$th.addClass('Active');
 
 					if (sortingMethod == 'desc') {
-						$th.addClass('Desc')
+						$th.addClass('Desc');
 					}
 				}
 			}
@@ -167,6 +165,9 @@ define(["views/grid-row"], function () {
 					GridRow.on("row:click", function (model, event) {
 						view.trigger("grid:rowClick", model, event);
 					}, this);
+					GridRow.on("row:dbclick", function (model, event) {
+						view.trigger("grid:rowDbClick", model, event);
+					}, this);
 
 					$tbody.append(GridRow.render().el);
 				});
@@ -194,9 +195,9 @@ define(["views/grid-row"], function () {
 		render: function () {
 			this.$el.empty();
 
-			return this
+			return this;
 		}
 	});
 
-	return App.Views.Grid
+	return App.Views.Grid;
 });

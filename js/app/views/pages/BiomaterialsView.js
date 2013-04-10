@@ -23,18 +23,18 @@ define(['text!templates/pages/biomaterials.tmpl',
 		initialize: function () {
 			var view = this;
 
-			view.collection = new BiomaterialsCollection;
+			view.collection = new BiomaterialsCollection();
 
 			view.collection.setParams({
-				sortingField: "date", sortingMethod: "asc"
-				, filter: {status: 0}
+				sortingField: "date", sortingMethod: "asc",
+				filter: {status: 0}
 			});
 
 
 			view.collection.on('reset', function () {
 				view.updateButtons();
 				view.resetSelectAllCheckbox();
-				console.log('reset', view.collection,view)
+				///console.log('reset', view.collection,view);
 
 			});
 
@@ -68,7 +68,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.depended(view.grid);
 
-			view.grid.on('grid:rowClick', view.onGridRowClick, view);
+			view.grid.on('grid:rowDbClick', view.onGridRowClick, view);
 
 		},
 
@@ -127,10 +127,16 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.jobs.reset();
 
 			_.each(modelsArray, function (model) {
-				view.jobs.add({'id': model.get('id'), 'status': status});
+				//console.log('model',model);
+				if(model.get('status') !== status){
+					view.jobs.add({'id': model.get('id'), 'status': status});
+				}
 			});
 
-			view.jobs.updateAll();
+			if(view.jobs.length){
+				view.jobs.updateAll();
+			}
+
 		},
 
 		updateButtons: function () {
@@ -145,7 +151,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			var disabled = true;
 			var jtc = view.collection.selected;
 
-			if (jtc.status_0.length > 0 && jtc.status_1.length == 0 && jtc.status_2.length == 0) {
+			if (jtc.status_0.length > 0 && jtc.status_1.length === 0 && jtc.status_2.length === 0) {
 				disabled = false;
 			}
 
@@ -157,7 +163,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			var disabled = true;
 			var jtc = view.collection.selected;
 
-			if (jtc.status_0.length == 0 && jtc.status_1.length > 0 && jtc.status_2.length == 0) {
+			if (jtc.status_0.length === 0 && jtc.status_1.length > 0 && jtc.status_2.length === 0) {
 				disabled = false;
 			}
 
@@ -216,7 +222,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 		initJobs: function () {
 			var view = this;
 
-			view.jobs = new JobsCollection;
+			view.jobs = new JobsCollection();
 
 			view.jobs.on('updateAll:success', function () {
 				//pubsub.trigger('noty', {text: 'Статус обновлён', type: 'success'});
@@ -275,14 +281,14 @@ define(['text!templates/pages/biomaterials.tmpl',
 			});
 
 
-			//clognota....
+
 			//строим селест после того как получили коллекцию биоматериалов, так как оттуда надо взять ид отделения
 			function onetime(){
 				view.departmentSelect = new SelectView({
 					collection: view.departments,
 					el: view.$('#departments'),
-					selectText: 'name'
-					,initSelection: view.collection.requestData.filter.departmentId
+					selectText: 'name',
+					initSelection: view.collection.requestData.filter.departmentId
 				});
 
 				view.depended(view.departmentSelect);
@@ -326,7 +332,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			});
 
 			view.collection.on('fetch', function (e) {
-				view.$('#status-all-count, #status-0-count,#status-1-count,#status-2-count').html('')
+				view.$('#status-all-count, #status-0-count,#status-1-count,#status-2-count').html('');
 			});
 		},
 		initExecuteButton: function () {
@@ -363,7 +369,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			var options = {
 				label: 'Печать',
-				handler: view.printBarcodes,
+				handler: view.printWorkList,
 				scope: view,
 				dropDownItems: [
 					{
@@ -375,7 +381,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 						handler: view.printWorkList
 					}
 				]
-			}
+			};
 
 			var $list = view.$('.split-button-dropdown');
 
@@ -478,7 +484,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 				var end = start + ((60 * 60 * 24) - 60) * 1000;
 				//console.log('$filterDate', start, end)
 				$endDate.val(end);
-			})
+			});
 
 		},
 
@@ -495,7 +501,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 			view.initResetAllButton();
 
 			view.initPrintButton();
-			view.initDatepicker()
+			view.initDatepicker();
 
 			view.initTissues();
 			view.initDepartments();
