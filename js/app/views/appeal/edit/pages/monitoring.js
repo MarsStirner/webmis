@@ -9,12 +9,20 @@ define([
 	"text!templates/appeal/edit/pages/monitoring/express-analyses.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl"
 ], function (monitoringTmpl, monitoringInfoTmpl, monitoringInfoItemTmpl, expressAnalysesTmpl, expressAnalysesItemTmpl) {
+	/**
+	 * Структура модуля
+	 * @type {{Views: {}, Collections: {}, Models: {}}}
+	 */
 	var Monitoring = {
 		Views: {},
 		Collections: {},
 		Models: {}
 	};
 
+	/**
+	 * Модель для таблицы "Мониторинг"
+	 * @type {*}
+	 */
 	Monitoring.Models.MonitoringInfo = Model.extend({
 		defaults: {
 			datetime: "",
@@ -37,6 +45,10 @@ define([
 		}
 	});
 
+	/**
+	 * Коллекция для таблицы "Мониторинг"
+	 * @type {*}
+	 */
 	Monitoring.Collections.MonitoringInfos = Collection.extend({
 		model: Monitoring.Models.MonitoringInfo,
 
@@ -50,20 +62,28 @@ define([
 		}
 	});
 
+	/**
+	 * Модель для таблицы "Экспресс-анализы"
+	 * @type {*}
+	 */
 	Monitoring.Models.ExpressAnalysis = Model.extend({
 		defaults: {
-			"datetime": 1365514653953,
-			"k": 186.1,
-			"na": 132.5,
-			"ca": 168.2,
-			"glucose": 111.3,
-			"protein": 321.12,
-			"urea": 156.31,
-			"bilubrinOb": 123.4,
-			"bilubrinPr": 153.1
+			"datetime": "",
+			"k": "",
+			"na": "",
+			"ca": "",
+			"glucose": "",
+			"protein": "",
+			"urea": "",
+			"bilubrinOb": "",
+			"bilubrinPr": ""
 		}
 	});
 
+	/**
+	 * Коллекция для таблицы "Экспресс-анализы"
+	 * @type {*}
+	 */
 	Monitoring.Collections.ExpressAnalyses = Collection.extend({
 		model: Monitoring.Models.MonitoringInfo,
 
@@ -77,6 +97,10 @@ define([
 		}
 	});
 
+	/**
+	 * Главная вьюха, контейнер для виджетов
+	 * @type {*}
+	 */
 	Monitoring.Views.Layout = View.extend({
 		className: "monitoring-layout",
 
@@ -102,6 +126,7 @@ define([
 		},
 
 		render: function () {
+			//Было бы хорошо вынести каждый блок-виджет в свой вью, но сейчас нет надобности
 			this.$el.html(_.template(monitoringTmpl, this.data()));
 
 			this.assign({
@@ -113,28 +138,45 @@ define([
 		}
 	});
 
+	/**
+	 * Базовый класс для виджетов-таблиц сортируемых на клиенте
+	 * @type {*}
+	 */
 	Monitoring.Views.ClientSortableGrid = View.extend({
 		events: {
 			"click th.sortable": "onThSortableClick"
 		},
 
 		initialize: function () {
+			//вызывается и после фетча и после сорта
 			this.collection.on("reset", this.render, this);
-			this.collection.on("sort", this.renderItems, this);
+			//в нашей версии бэкбона - нету :(
+			//this.collection.on("sort", this.renderItems, this);
 			this.collection.fetch();
 		},
 
 		onThSortableClick: function (event) {
-			this.applySort($(event.currentTarget).data("sort-field"), $(event.currentTarget).data("sort-type"));
-			this.updateSortCaret($(event.currentTarget));
+			var $target = $(event.currentTarget);
+
+			var sortConditions = this.updateSortConditions($target);
+			this.applySort(sortConditions);
 		},
 
-		applySort: function (sortField, sortType) {
-			this.collection.comparator = this.getComparator(sortField, sortType);
+		/**
+		 * Применяет сортировку коллекции по переданным памметрам
+		 * @param sortConditions {{sortField: string, sortType: string, sortDirection: "desc" || "asc"}}
+		 */
+		applySort: function (sortConditions) {
+			this.collection.comparator = this.getComparator(sortConditions.sortField, sortConditions.sortType, sortConditions.sortDirection);
 			this.collection.sort({sortRequest: true});
 		},
 
-		updateSortCaret: function ($targetTh) {
+		/**
+		 * Добавляет визуальную индикацию текущей сортировки, извлекает и возвращает выбранные параметры сортировки
+		 * @param $targetTh
+		 * @returns {{sortField: string, sortType: string, sortDirection: "desc" || "asc"}}
+		 */
+		updateSortConditions: function ($targetTh) {
 			if (!this.$caret) {
 				this.$caret = $('<i/>');
 			}
@@ -144,26 +186,58 @@ define([
 			if ($targetTh.hasClass("sorted")) {
 				if ($targetTh.hasClass("asc")) {
 					$targetTh.removeClass("asc").addClass("desc");
-					this.$caret.addClass("icon-caret-up");
+					this.$caret.addClass("icon-caret-down");
 				} else if ($targetTh.hasClass("desc")) {
 					$targetTh.removeClass("desc").addClass("asc");
-					this.$caret.addClass("icon-caret-down");
+					this.$caret.addClass("icon-caret-up");
 				}
 			} else {
 				this.$("th").removeClass("sorted asc desc");
 				$targetTh.addClass("sorted asc");
-				this.$caret.addClass("icon-caret-down");
+				this.$caret.addClass("icon-caret-up");
 			}
 
 			this.$caret.appendTo($targetTh);
-		},
 
-		getComparator: function (fieldName, sortType) {
-			return function (item) {
-				return item.get(fieldName);
+			return {
+				sortField: $targetTh.data("sort-field"),
+				sortType: $targetTh.data("sort-type"),
+				sortDirection: ($targetTh.hasClass("desc") ? "desc" : "asc")
 			};
 		},
 
+		/**
+		 * Возвращает фукцию сортировки коллекции по заданным параметрам
+		 * @param fieldName
+		 * @param sortType
+		 * @param sortDirection
+		 * @returns {Function}
+		 */
+		getComparator: function (fieldName, sortType, sortDirection) {
+			switch (sortType) {
+				case "datetime":
+				case "numeric":
+					return function (itemA, itemB) {
+						var a = parseFloat(itemA.get(fieldName)), b =  parseFloat(itemB.get(fieldName));
+
+						if (a > b) return sortDirection === "asc" ? 1 : -1;
+						else if (a < b) return sortDirection === "asc" ? -1 : 1;
+						else return 0;
+					};
+				default:
+					return function (itemA, itemB) {
+						var a = itemA.get(fieldName).toString(), b = itemB.get(fieldName).toString();
+
+						if (a > b) return sortDirection === "asc" ? 1 : -1;
+						else if (a < b) return sortDirection === "asc" ? -1 : 1;
+						else return 0;
+					};
+			}
+		},
+
+		/**
+		 * Перерисовывает только ряды таблицы
+		 */
 		renderItems: function () {
 			this.$("tbody").empty().append(this.collection.map(function (item) {
 				return _.template(this.itemTemplate, {item: item});
@@ -171,9 +245,13 @@ define([
 		},
 
 		render: function (c, options) {
+			//этот параметр передаётся только при сортировке, и в этом случае
+			//мы хотим отрендерить только ряды
 			options = options || {sortRequest: false};
 			if (!options.sortRequest) {
-				this.$el.html(_.template(this.template, this.data()));
+				//сейчас в теле таблицы данных нет
+				//this.$el.html(_.template(this.template, this.data()));
+				this.$el.html(_.template(this.template));
 			}
 
 			this.renderItems();
@@ -182,13 +260,17 @@ define([
 		}
 	});
 
+	/**
+	 * Вью таблицы-виджета "Мониторинг"
+	 * @type {*}
+	 */
 	Monitoring.Views.MonitoringInfo = Monitoring.Views.ClientSortableGrid.extend({
 		template: monitoringInfoTmpl,
 		itemTemplate: monitoringInfoItemTmpl,
 
-		data: function () {
+		/*data: function () {
 			return {infos: this.collection};
-		},
+		},*/
 
 		initialize: function (options) {
 			this.collection = new Monitoring.Collections.MonitoringInfos();
@@ -196,13 +278,17 @@ define([
 		}
 	});
 
+	/**
+	 * Вью таблицы-виджета "Экспресс-анализы"
+	 * @type {*}
+	 */
 	Monitoring.Views.ExpressAnalyses = Monitoring.Views.ClientSortableGrid.extend({
 		template: expressAnalysesTmpl,
 		itemTemplate: expressAnalysesItemTmpl,
 
-		data: function () {
+		/*data: function () {
 			return {analyses: this.collection};
-		},
+		},*/
 
 		initialize: function (options) {
 			this.collection = new Monitoring.Collections.ExpressAnalyses();

@@ -1,4 +1,7 @@
-<h3>История болезни № <%= appeal.number %></h3>
+<div class="row-fluid monitoring-layout-header">
+	<div class="span11"><h3>История болезни № <%= appeal.number %></h3></div>
+	<div class="span1"><i class="refresh-monitoring icon-refresh pull-right" title="Обновить"></i></div>
+</div>
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span6">
@@ -12,7 +15,7 @@
 						-
 						<% } %>
 						<!--<i class="icon-pencil"></i>-->
-						<a href="#" style="margin-left: 2em; float: right">Изменить</a>
+						<a href="#" class="pull-right">Изменить</a>
 					</td>
 				</tr>
 				<tr>

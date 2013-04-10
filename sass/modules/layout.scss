@@ -831,6 +831,13 @@ footer {
 	.row-fluid {
 		//padding-top: 2em;
 	}
+
+	.monitoring-layout-header {
+		margin-bottom: 2em;
+		.refresh-monitoring {
+			cursor: pointer;
+		}
+	}
 }
 
 /*.LineBlockHolder {
