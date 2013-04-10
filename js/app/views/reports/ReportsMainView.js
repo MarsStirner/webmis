@@ -42,7 +42,7 @@ HospitalView) {
 			var menu = this.getMenuStructure();
 
 			var item = this.searchTree({
-				menu: menu,
+				element: menu,
 				match: path,
 				elementParamName: 'uri',
 				elementChildrenName: 'structure'
@@ -66,6 +66,7 @@ HospitalView) {
 		searchTree: function(options) {
 			///http://stackoverflow.com/questions/9133500/how-to-find-a-node-in-a-tree-with-javascript
 			var searchTree = arguments.callee;
+			var element = options.element;
 
 			if (element[options.elementParamName] == options.match) {
 				return element;
@@ -73,7 +74,12 @@ HospitalView) {
 				var result = null;
 				console.log('element[elementChildrenName]', element[options.elementChildrenName], element[options.elementChildrenName].length);
 				for (var i = 0; result === null && i < element[options.elementChildrenName].length; i++) {
-					result = searchTree(options);
+					result = searchTree({
+				element:element[options.elementChildrenName][i],
+				match: options.match,
+				elementParamName: options.elementParamName,
+				elementChildrenName: options.elementChildrenName
+			});
 				}
 				return result;
 			}
