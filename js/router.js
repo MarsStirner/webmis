@@ -11,7 +11,6 @@ require.config({
 			exports: 'jQuery.fn.inputmask'
 		}
 
-
 	}
 });
 

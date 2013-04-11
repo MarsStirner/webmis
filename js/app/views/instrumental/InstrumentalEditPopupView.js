@@ -1,17 +1,17 @@
 
 define([
 	"text!templates/appeal/edit/popups/instrumental-edit.tmpl",
-	"views/ui/PopupView",
+	"views/ui/PopupMIxin",
 	"views/instrumental/InstrumentalPopupBottomFormView",
-	"collections/diagnostics/diagnostic-types"], function(tmpl, PopupView, BFView) {
+	"collections/diagnostics/diagnostic-types"], function(tmpl, popupMIxin, BFView) {
 
-	return PopupView.extend({
+	return View.extend({
 		template: tmpl,
 		events: {
 		},
 
 		initialize: function(options) {
-			this.constructor.__super__.initialize.apply(this, options);
+			//this.constructor.__super__.initialize.apply(this, options);
 			_.bindAll(this);
 
 			//юзер
@@ -45,7 +45,7 @@ define([
 		onSave: function() {
 			console.log('onSave instrumental');
 		}
-	});
+	}).mixin([popupMIxin]);
 
 
 });
