@@ -4,11 +4,27 @@
  */
 define([
 	"text!templates/appeal/edit/pages/monitoring/layout.tmpl",
+	"text!templates/appeal/edit/pages/monitoring/patient-info.tmpl",
+	"text!templates/appeal/edit/pages/monitoring/signal-info.tmpl",
+	"text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/monitoring-info.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/monitoring-info-item.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/express-analyses.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl"
-], function (monitoringTmpl, monitoringInfoTmpl, monitoringInfoItemTmpl, expressAnalysesTmpl, expressAnalysesItemTmpl) {
+	"text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl",
+
+	"collections/moves"
+], function (
+	monitoringTmpl,
+	patientInfoTmpl,
+	signalInfoTmpl,
+	patientDiagnosesListTmpl,
+	monitoringInfoGridTmpl,
+	monitoringInfoItemTmpl,
+	expressAnalysesTmpl,
+	expressAnalysesItemTmpl,
+	Moves
+	) {
+
 	/**
 	 * Структура модуля
 	 * @type {{Views: {}, Collections: {}, Models: {}}}
@@ -18,6 +34,10 @@ define([
 		Collections: {},
 		Models: {}
 	};
+
+
+	// Коллекции
+	//////////////////////////////////////////////////////
 
 	/**
 	 * Модель для таблицы "Мониторинг"
@@ -98,6 +118,97 @@ define([
 	});
 
 	/**
+	 * Модель диагноза пациента
+	 * @type {*}
+	 */
+	Monitoring.Models.PatientDiagnosis = Model.extend({
+		defaults: {
+			"diagnosticId": "",
+			"diagnosisKind": "",
+			"datetime": "",
+			"description": "",
+			"injury": "",
+			"doctor": {
+				"name": {
+					"first": "",
+					"last": "",
+					"middle": "",
+					"raw": ""
+				}
+			},
+			"mkb": {
+				"id": "",
+				"code": "",
+				"diagnosis": ""
+			}
+		}
+	});
+
+	/**
+	 * Коллекция диагнозов пациента
+	 * @type {*}
+	 */
+	Monitoring.Collections.PatientDiagnoses = Collection.extend({
+		model: Monitoring.Models.PatientDiagnosis,
+
+		diagKinds: {
+			"assignment": {priority: 0, title: "Направительный диагноз"},
+			"admission": {priority: 1, title: "Диагноз при поступлении"},
+			"clinical": {priority: 2, title: "Клинический"},
+			"final": {priority: 3, title: "Заключительный"}
+		},
+
+		sync:function (method, model, options) {
+			return Backbone.sync(method, model, options);
+		},
+
+		url: function () {
+			return "/patient-diagnoses.json";
+			//return DATA_PATH + "";
+		},
+
+		comparator: function (a, b) {
+			var apr = this.diagKinds[a.get("diagnosisKind")].priority;
+			var bpr = this.diagKinds[b.get("diagnosisKind")].priority;
+
+			if (apr > bpr) {
+				return 1;
+			} else if (apr < bpr) {
+				return -1;
+			} else {
+				return 0;
+			}
+		},
+
+		parse: function (raw) {
+			var data = Collection.prototype.parse.call(this, raw);
+
+			/*data.sort(function (a, b) {
+				var apr = diagKinds[a.diagnosisKind].priority;
+				var bpr = diagKinds[b.diagnosisKind].priority;
+
+				if (apr > bpr) {
+					return 1;
+				} else if (apr < bpr) {
+					return -1;
+				} else {
+					return 0;
+				}
+			});*/
+
+			_.each(data, function (diag) {
+				diag.diagnosisKindLabel = this.diagKinds[diag.diagnosisKind].title;
+			}, this);
+
+			return data;
+		}
+	});
+
+
+	// Лэйаут
+	//////////////////////////////////////////////////////
+
+	/**
 	 * Главная вьюха, контейнер для виджетов
 	 * @type {*}
 	 */
@@ -111,17 +222,11 @@ define([
 		},
 
 		initialize: function () {
-			this.monitoringInfo = new Monitoring.Views.MonitoringInfo();
-			this.expressAnalyses = new Monitoring.Views.ExpressAnalyses();
 		},
 
 		data: function () {
-			var appealJSON = this.options.appeal.toJSON();
 			return {
-				appeal: appealJSON,
-				patient: appealJSON.patient,
-				appealExtraData: Core.Data.appealExtraData.toJSON(),
-				diagnoses: []
+				appealNumber: this.options.appeal.get("number")
 			};
 		},
 
@@ -130,13 +235,20 @@ define([
 			this.$el.html(_.template(monitoringTmpl, this.data()));
 
 			this.assign({
-				".monitoring-info": this.monitoringInfo,
-				".express-analyses": this.expressAnalyses
+				".patient-info": new Monitoring.Views.PatientInfo({appeal: this.options.appeal}),
+				".signal-info": new Monitoring.Views.SignalInfo({appeal: this.options.appeal}),
+				".patient-diagnoses-list": new Monitoring.Views.PatientDiagnosesList({appeal: this.options.appeal}),
+				".monitoring-info": new Monitoring.Views.MonitoringInfoGrid(),
+				".express-analyses": new Monitoring.Views.ExpressAnalyses()
 			});
 
 			return this;
 		}
 	});
+
+
+	// Базовые вью для виджетов
+	//////////////////////////////////////////////////////
 
 	/**
 	 * Базовый класс для виджетов-таблиц сортируемых на клиенте
@@ -149,10 +261,9 @@ define([
 
 		initialize: function () {
 			//вызывается и после фетча и после сорта
-			this.collection.on("reset", this.render, this);
+			this.collection.on("reset", this.render, this).fetch();
 			//в нашей версии бэкбона - нету :(
 			//this.collection.on("sort", this.renderItems, this);
-			this.collection.fetch();
 		},
 
 		onThSortableClick: function (event) {
@@ -239,9 +350,10 @@ define([
 		 * Перерисовывает только ряды таблицы
 		 */
 		renderItems: function () {
-			this.$("tbody").empty().append(this.collection.map(function (item) {
+			/*this.$("tbody").empty().append(this.collection.map(function (item) {
 				return _.template(this.itemTemplate, {item: item});
-			}, this));
+			}, this));*/
+			this.$("tbody").empty().append(_.template(this.itemTemplate, {collection: this.collection}));
 		},
 
 		render: function (c, options) {
@@ -260,12 +372,100 @@ define([
 		}
 	});
 
+
+	// Виджеты
+	//////////////////////////////////////////////////////
+
+	/**
+	 * Сведения о пациенте
+	 * @type {*}
+	 */
+	Monitoring.Views.PatientInfo = View.extend({
+		template: patientInfoTmpl,
+
+		events: {
+			"click .edit-blood": "onEditBloodClick"
+		},
+
+		data: function () {
+			var appealJSON = this.options.appeal.toJSON();
+			return {
+				appeal: appealJSON,
+				patient: appealJSON.patient
+			};
+		},
+
+		onEditBloodClick: function (event) {
+			event.preventDefault();
+			console.log("edit blood");
+		},
+
+		render: function () {
+			this.$el.html(_.template(this.template, this.data()));
+
+			return this;
+		}
+	});
+
+	/**
+	 * Блок сигнальной информации о пациенте
+	 * @type {*}
+	 */
+	Monitoring.Views.SignalInfo = View.extend({
+		template: signalInfoTmpl,
+
+		initialize: function () {
+			this.moves = new Moves();
+			this.moves.appealId = this.options.appeal.get("id");
+			this.moves.on("reset", this.render, this).fetch();
+		},
+
+		data: function () {
+			return {
+				lastMove: this.moves.last(),
+				appeal: this.options.appeal.toJSON(),
+				appealExtraData: Core.Data.appealExtraData.toJSON()
+			};
+		},
+
+		render: function () {
+			this.$el.html(_.template(this.template, this.data()));
+
+			return this;
+		}
+	});
+
+	/**
+	 * Список диагнозов пациента
+	 * @type {*}
+	 */
+	Monitoring.Views.PatientDiagnosesList = View.extend({
+		template: patientDiagnosesListTmpl,
+
+		data: function () {
+			return {
+				diagnoses: this.collection
+			};
+		},
+
+		initialize: function (options) {
+			this.collection = new Monitoring.Collections.PatientDiagnoses();
+			this.collection.on("reset", this.render, this).fetch();
+		},
+
+		render: function () {
+			this.$el.html(_.template(this.template, this.data()));
+
+			return this;
+		}
+	});
+
 	/**
 	 * Вью таблицы-виджета "Мониторинг"
 	 * @type {*}
 	 */
-	Monitoring.Views.MonitoringInfo = Monitoring.Views.ClientSortableGrid.extend({
-		template: monitoringInfoTmpl,
+	Monitoring.Views.MonitoringInfoGrid = Monitoring.Views.ClientSortableGrid.extend({
+		template: monitoringInfoGridTmpl,
 		itemTemplate: monitoringInfoItemTmpl,
 
 		/*data: function () {

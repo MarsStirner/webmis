@@ -279,6 +279,13 @@ $TABLE_CELL_COLOR: #414142;
 			color: #6D6D71;
 		}
 	}
+
+	li {
+		margin-top: 1em;
+	}
+	li:first-child {
+		margin-top: 0;
+	}
 }
 
 .MonitoringGrid {

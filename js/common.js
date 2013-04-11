@@ -5,11 +5,11 @@ var CORE_VERSION;
 DEBUG_MODE = true;
 
 ROLES = {
-	DEFAULT:"default",
-	NURSE_RECEPTIONIST:"nurse-receptionist",
-	DOCTOR_RECEPTIONIST:"doctor-receptionist",
-	NURSE_DEPARTMENT:"nurse-department",
-	DOCTOR_DEPARTMENT:"doctor-department"
+	DEFAULT: "default",
+	NURSE_RECEPTIONIST: "nurse-receptionist",
+	DOCTOR_RECEPTIONIST: "doctor-receptionist",
+	NURSE_DEPARTMENT: "nurse-department",
+	DOCTOR_DEPARTMENT: "doctor-department"
 };
 
 DEFAULT_ANIMATION_TIME = 300;
@@ -26,15 +26,14 @@ App.Views = {};
 pubsub = _.extend({}, Backbone.Events);
 
 
-
 // Загруженная информация
 Data = {};
 Cache = {};
 
 Model = Backbone.RelationalModel.extend({
-	idAttribute:"_id",
+	idAttribute: "_id",
 
-	connect:function (key, $inputs, context) {
+	connect: function (key, $inputs, context) {
 		var model = this;
 
 		if (typeof $inputs == "string") {
@@ -208,7 +207,7 @@ Model = Backbone.RelationalModel.extend({
 	},
 
 	// Отключение привязки. Не удаляет сами обработчики, но выключает реакцию в них.
-	disconnect:function (model, key, $inputs, context) {
+	disconnect: function (model, key, $inputs, context) {
 		if (typeof $inputs == "string") {
 			$inputs = $(":input[name='" + $inputs + "']", context);
 		}
@@ -220,7 +219,7 @@ Model = Backbone.RelationalModel.extend({
 	},
 
 
-	parse:function (data) {
+	parse: function (data) {
 		if (data.requestData && data.requestData.coreVersion) {
 			CORE_VERSION = data.requestData.coreVersion;
 			VersionInfo.show();
@@ -228,7 +227,7 @@ Model = Backbone.RelationalModel.extend({
 		return data.data ? data.data : data
 	},
 
-	fetch:function (options) {
+	fetch: function (options) {
 		options = options || {};
 		var self = this;
 
@@ -236,24 +235,24 @@ Model = Backbone.RelationalModel.extend({
 	},
 
 	// Переопределяем стандартный метод, чтобы JSON не содержал ссылок на другие модели, а парсил вообще всё.
-	toJSON:function () {
+	toJSON: function () {
 		return JSON.parse(JSON.stringify(_.clone(this.attributes)))
 	},
 
-	sync:function (method, model, options) {
+	sync: function (method, model, options) {
 		options.dataType = "jsonp";
 		options.url = model.url();
 		options.contentType = 'application/json';
 
 		if (method == "create" || method == "update") {
 			options.data = JSON.stringify({
-				requestData:{},
-				data:model.toJSON()
+				requestData: {},
+				data: model.toJSON()
 			});
 		}
 		return Backbone.sync(method, model, options);
 	},
-	errorHandler:function (model, xhr) {
+	errorHandler: function (model, xhr) {
 		if (xhr.responseText && xhr.responseText.length) {
 			try {
 				var json = JSON.parse(xhr.responseText);
@@ -277,40 +276,40 @@ Model = Backbone.RelationalModel.extend({
 			showError(xhr.responseText);
 		}
 	},
-	initialize:function () {
+	initialize: function () {
 		this.on("error", this.errorHandler, this);
 	}
 });
 
 Collection = Backbone.Collection.extend({
-	initialize:function () {
+	initialize: function () {
 		this._params = {
-			filter:{},
-			sortingField:"id",
-			sortingMethod:"asc",
-			limit:10,
-			page:1,
-			recordsCount:0
+			filter: {},
+			sortingField: "id",
+			sortingMethod: "asc",
+			limit: 10,
+			page: 1,
+			recordsCount: 0
 		};
 	},
 
-	sync:function (method, model, options) {
+	sync: function (method, model, options) {
 		options.dataType = "jsonp";
 
 		return Backbone.sync(method, model, options);
 	},
 
-	getParams:function () {
+	getParams: function () {
 		return this._params
 	},
-	setParams:function (obj) {
+	setParams: function (obj) {
 		this._params = $.extend(this._params, obj);
 
 		return this._params
 	},
 
 
-	parse:function (data) {
+	parse: function (data) {
 		checkForWarnings(data.requestData, "requestData was not found in the JSON");
 		this.requestData = data.requestData || {};
 		this.requestData.filter = this.requestData.filter || {};
@@ -323,10 +322,10 @@ Collection = Backbone.Collection.extend({
 		return data.data
 	},
 
-	fetch:function (options) {
+	fetch: function (options) {
 		options = options || {};
 
-		this.trigger( "fetch", this );
+		this.trigger("fetch", this);
 
 		var data = $.extend(this.getParams(), options.data);
 
@@ -345,20 +344,20 @@ Collection = Backbone.Collection.extend({
 
 
 		return Backbone.Collection.prototype.fetch.call(this, $.extend(options, {
-			data:data,
-			error:errorHandler
+			data: data,
+			error: errorHandler
 		}));
 	}
 });
 View = Backbone.View.extend({
-	collectionLoaded:function () {
+	collectionLoaded: function () {
 	},
-	modelLoaded:function () {
+	modelLoaded: function () {
 	},
-	templateLoaded:function () {
+	templateLoaded: function () {
 	},
 
-	_dataLoaded:function () {
+	_dataLoaded: function () {
 		this._loadingQueue--;
 		if (this.collection) {
 			this.collection.off("reset", this._dataLoaded);
@@ -373,7 +372,7 @@ View = Backbone.View.extend({
 			this.ready();
 		}
 	},
-	_templateLoaded:function () {
+	_templateLoaded: function () {
 		this._loadingQueue--;
 		this.off("template:loaded", this._templateLoaded);
 		this.templateLoaded();
@@ -383,7 +382,7 @@ View = Backbone.View.extend({
 		}
 	},
 	// Дожидаемся загрузки и шаблона и коллекции
-	autoLoadHandler:function () {
+	autoLoadHandler: function () {
 		this._loadingQueue = 1;
 		if (this.collection) {
 			this._loadingQueue = 2;
@@ -395,7 +394,7 @@ View = Backbone.View.extend({
 
 		this.on("template:loaded", this._templateLoaded, this);
 	},
-	queue:function (queue, callback, context) {
+	queue: function (queue, callback, context) {
 		var queueLength = queue.length;
 		var loaded = 0;
 
@@ -411,7 +410,7 @@ View = Backbone.View.extend({
 		}
 	},
 
-	loadTemplate:function (templateName) {
+	loadTemplate: function (templateName) {
 		var $body = $(document.body),
 			view = this;
 
@@ -419,10 +418,10 @@ View = Backbone.View.extend({
 			view.trigger("template:loaded", template);
 		});
 	},
-	init:function () {
+	init: function () {
 
 	},
-	separateRoles:function (role, callback, scope) {
+	separateRoles: function (role, callback, scope) {
 		var userInRole = false;
 
 		if (role instanceof Array) {
@@ -435,26 +434,26 @@ View = Backbone.View.extend({
 			scope ? callback.call(scope) : callback();
 		}
 	},
-	depended:function (view) {
+	depended: function (view) {
 		if (!this._dependedViews) {
 			this._dependedViews = [];
 		}
 		this._dependedViews.push(view);
 	},
-	destroy:function () {
+	destroy: function () {
 		this.undelegateEvents();
 		this.$el.remove();
 		this.clear();
 
 		delete this
 	},
-	clearAll:function () {
+	clearAll: function () {
 		_(Data).each(function (view) {
 			view.destroy();
 		});
 		Data = {};
 	},
-	clear:function () {
+	clear: function () {
 
 		_(this._dependedViews).each(function (view) {
 			view.destroy();
@@ -462,10 +461,10 @@ View = Backbone.View.extend({
 		this._dependedViews = [];
 
 	},
-	render:function () {
+	render: function () {
 		return this
 	},
-	assign:function (selector, view) {
+	assign: function (selector, view) {
 		var selectors;
 		if (_.isObject(selector)) {
 			selectors = selector;
@@ -479,7 +478,7 @@ View = Backbone.View.extend({
 			view.setElement(this.$(selector)).render();
 		}, this);
 	},
-	initWithDictionaries:function (dicts, callback, scope, returnAsJSON) {
+	initWithDictionaries: function (dicts, callback, scope, returnAsJSON) {
 		if (!dicts || !dicts.length) callback.call(scope);
 
 		var promises = [];
@@ -494,7 +493,7 @@ View = Backbone.View.extend({
 				dictionary = new App.Collections.ThesaurusTerms();
 				dictionary.parentGroupId = dict.id;
 			} else {
-				dictionary = new App.Collections.DictionaryValues([], {name:dict.pathPart});
+				dictionary = new App.Collections.DictionaryValues([], {name: dict.pathPart});
 			}
 
 			promises.push(dictionary.fetch());
@@ -518,12 +517,12 @@ View = Backbone.View.extend({
 });
 
 Form = View.extend({
-	cancel:function (event) {
+	cancel: function (event) {
 		event.preventDefault();
-		App.Router.navigate(this.options.referrer, {trigger:true});
+		App.Router.navigate(this.options.referrer, {trigger: true});
 	},
 
-	save:function (event, options) {
+	save: function (event, options) {
 		if (event) event.preventDefault();
 
 		var readyToSave = this.validate();
@@ -535,7 +534,7 @@ Form = View.extend({
 		return readyToSave;
 	},
 
-	validate:function () {
+	validate: function () {
 		var validity = true,
 			$firstFoundedError;
 
@@ -575,12 +574,12 @@ Form = View.extend({
 		});
 
 		/*this.$("select.Mandatory").removeClass("WrongField").each(function () {
-			if (!$(this).val()) {
-				$(this).addClass("WrongField");
-				$firstFoundedError = $firstFoundedError || $(this);
-				validity = false;
-			}
-		});*/
+		 if (!$(this).val()) {
+		 $(this).addClass("WrongField");
+		 $firstFoundedError = $firstFoundedError || $(this);
+		 validity = false;
+		 }
+		 });*/
 
 		this.$("[data-maxsize]").removeClass("WrongField").each(function () {
 			if (parseFloat($(this).val()) > parseFloat($(this).data("maxsize"))) {
@@ -600,7 +599,7 @@ Form = View.extend({
 
 		if ($firstFoundedError) {
 			//$firstFoundedError.focus();
-			$('html, body').animate({ scrollTop:$($firstFoundedError).offset().top - 30 }, 'fast');
+			$('html, body').animate({ scrollTop: $($firstFoundedError).offset().top - 30 }, 'fast');
 		}
 
 		return validity
@@ -609,30 +608,30 @@ Form = View.extend({
 
 // НЕ ДУМАЙ ПРО СОХРАНЕНИЕ!
 DynamicView = View.extend({
-	renderStructure:function (structure) {
+	renderStructure: function (structure) {
 		var view = this;
 
 		_.each(structure.group, function (block) {
 			var Block = new DynamicViewBlock({
-				structure:block
+				structure: block
 			});
 
 			view.$el.append(Block.render().el);
 		});
 	},
-	initialize:function () {
+	initialize: function () {
 		this.loadStructure();
 		this.on("structure:loaded", this.renderStructure, this);
 	},
 
 
-	loadStructure:function () {
+	loadStructure: function () {
 		var view = this;
 
 		$.ajax({
-			url:this.url(),
-			dataType:"jsonp",
-			success:function (json) {
+			url: this.url(),
+			dataType: "jsonp",
+			success: function (json) {
 				var data = json.data;
 
 				view.trigger("structure:loaded", data);
@@ -642,12 +641,12 @@ DynamicView = View.extend({
 	}
 });
 DynamicViewBlock = View.extend({
-	render:function () {
+	render: function () {
 		var view = this;
 
 		_.each(this.options.structure.attribute, function (attribute) {
 			var Item = new DynamicViewBlockItem({
-				structure:attribute
+				structure: attribute
 			});
 
 			view.$el.append(Item.render().el);
@@ -656,7 +655,7 @@ DynamicViewBlock = View.extend({
 	}
 });
 DynamicViewBlockItem = View.extend({
-	render:function () {
+	render: function () {
 		var view = this;
 
 		view.$el.html("<b>" + this.options.structure.name + "</b>: ");
@@ -677,8 +676,8 @@ DynamicViewBlockItem = View.extend({
 function showError (message) {
 	var $message = $("<div/>");
 	var $iframe = $("<iframe/>").css({
-		width:"100%",
-		height:"100%"
+		width: "100%",
+		height: "100%"
 	}).appendTo($message);
 
 	setTimeout(function () {
@@ -687,9 +686,9 @@ function showError (message) {
 	}, 1);
 
 	$message.dialog({
-		title:"Ошибка!",
-		width:400,
-		modal:true
+		title: "Ошибка!",
+		width: 400,
+		modal: true
 	});
 }
 
@@ -731,38 +730,38 @@ function checkForWarnings (variables, warningText) {
 //  Расширение тегов jQuery templates
 //
 $.extend($.tmpl.tag, {
-	"phone":{
-		_default:{ $1:"$data" },
-		open:"if($notnull_1){__.push(Core.Numbers.makePhone($.encode($1a)));}"
+	"phone": {
+		_default: { $1: "$data" },
+		open: "if($notnull_1){__.push(Core.Numbers.makePhone($.encode($1a)));}"
 	},
-	"formatDate":{
-		_default:{ $1:"$data" },
-		open:"if($notnull_1){__.push(Core.Date.format($.encode($1a)));}"
+	"formatDate": {
+		_default: { $1: "$data" },
+		open: "if($notnull_1){__.push(Core.Date.format($.encode($1a)));}"
 	},
-	"formatDateTime":{
-		_default:{ $1:"$data" },
-		open:"if($notnull_1){__.push(Core.Date.formatDateTime($.encode($1a)));}"
+	"formatDateTime": {
+		_default: { $1: "$data" },
+		open: "if($notnull_1){__.push(Core.Date.formatDateTime($.encode($1a)));}"
 	},
-	"countDays":{
-		open:"if($notnull_1){__.push(Core.Date.countDays($.encode($1a)));}"
+	"countDays": {
+		open: "if($notnull_1){__.push(Core.Date.countDays($.encode($1a)));}"
 	},
-	"getYear":{
-		_default:{ $1:"$data" },
-		open:"if($notnull_1){__.push(Core.Date.getYear($.encode($1a)));}"
+	"getYear": {
+		_default: { $1: "$data" },
+		open: "if($notnull_1){__.push(Core.Date.getYear($.encode($1a)));}"
 	},
-	"age":{
-		_default:{ $1:"$data" },
-		open:"if($notnull_1){__.push(Core.Date.getAge($.encode($1a)));}"
+	"age": {
+		_default: { $1: "$data" },
+		open: "if($notnull_1){__.push(Core.Date.getAge($.encode($1a)));}"
 	},
-	"ageString":{
-		_default:{ $1:"$data" },
-		open:"if($notnull_1){__.push(Core.Date.getAgeString($.encode($1a)));}"
+	"ageString": {
+		_default: { $1: "$data" },
+		open: "if($notnull_1){__.push(Core.Date.getAgeString($.encode($1a)));}"
 	},
-	"decorate":{
-		open:"if($notnull_1){__.push(Core.Strings.decorate($2));}"
+	"decorate": {
+		open: "if($notnull_1){__.push(Core.Strings.decorate($2));}"
 	},
-	"plural":{
-		open:"if($notnull_1){__.push(Core.Language.plural($2));}"
+	"plural": {
+		open: "if($notnull_1){__.push(Core.Language.plural($2));}"
 	}
 });
 
@@ -781,8 +780,8 @@ var throbberHideTimeout, showErrorTimeout, requestQueue = [];
 
 jQuery.ajaxSetup(
 	{
-		showThrobberTimeout:null,
-		beforeSend:function () {
+		showThrobberTimeout: null,
+		beforeSend: function () {
 			clearTimeout(throbberHideTimeout);
 			clearTimeout(showErrorTimeout);
 			this.showThrobberTimeout = setTimeout(showThrobber, 700);
@@ -792,7 +791,7 @@ jQuery.ajaxSetup(
 			}, 30000);
 			requestQueue.push(1);
 		},
-		complete:function () {
+		complete: function () {
 			requestQueue.pop();
 			if (!requestQueue.length) {
 				throbberHideTimeout = setTimeout(hideThrobber, 200);
@@ -801,7 +800,7 @@ jQuery.ajaxSetup(
 			clearTimeout(this.showThrobberTimeout);
 
 		},
-		error:function () {
+		error: function () {
 			requestQueue.pop();
 			throbberHideTimeout = setTimeout(hideThrobber, 200);
 			clearTimeout(showErrorTimeout);
@@ -810,17 +809,17 @@ jQuery.ajaxSetup(
 	});
 
 VersionInfo = {
-	_getElement:function () {
+	_getElement: function () {
 		if (!this._element) {
 			this._element = $("<div/>").css({
-				position:"fixed",
-				bottom:8,
-				right:8,
-				padding:10,
-				opacity:"0",
-				fontSize:"10px",
-				border:"1px solid #81B5C1",
-				background:"#DEEDF2"
+				position: "fixed",
+				bottom: 8,
+				right: 8,
+				padding: 10,
+				opacity: "0",
+				fontSize: "10px",
+				border: "1px solid #81B5C1",
+				background: "#DEEDF2"
 			});
 			$(document.body).append(this._element);
 
@@ -830,13 +829,13 @@ VersionInfo = {
 				.hover(
 				function () {
 					$(this).stop(true, true).animate({
-						opacity:1
+						opacity: 1
 					}, DEFAULT_ANIMATION_TIME);
 				},
 				function () {
 					if (!toggler) {
 						$(this).stop(true, true).animate({
-							opacity:"0"
+							opacity: "0"
 						}, DEFAULT_ANIMATION_TIME);
 					}
 				})
@@ -847,7 +846,7 @@ VersionInfo = {
 		return this._element
 	},
 
-	show:function () {
+	show: function () {
 		if (DEBUG_MODE) {
 			var html = "Версия GUI: <b>" + GUI_VERSION + "</b>";
 
@@ -857,7 +856,7 @@ VersionInfo = {
 			this._getElement().html(html);
 		}
 	},
-	hide:function () {
+	hide: function () {
 		this._getElement().fadeOut(DEFAULT_ANIMATION_TIME);
 	}
 };

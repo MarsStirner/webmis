@@ -1,0 +1,38 @@
+<tbody>
+<tr>
+	<td>Дата поступления</td>
+	<td>
+		<%= Core.Date.format(appealExtraData.rangeAppealDateTime.start) %>
+	</td>
+</tr>
+<tr>
+	<td>Продолжительность лечения (дней) или дата выписки</td>
+	<td>
+		<%= Core.Date.format(appealExtraData.rangeAppealDateTime.end) || moment().diff(moment(appealExtraData.rangeAppealDateTime.start), "days") + 1 %>
+	</td>
+</tr>
+<tr>
+	<td>Отделение</td>
+	<td>
+		<%= appealExtraData.department.name %>
+	</td>
+</tr>
+<!--<tr>
+	<td>Палата</td>
+	<td>
+		N/A
+	</td>
+</tr>-->
+<tr>
+	<td>Койка</td>
+	<td>
+		<% if (lastMove) { %><%= lastMove.get("bed") %><%}%>
+	</td>
+</tr>
+<tr>
+	<td>Лечащий врач</td>
+	<td>
+		<%= appeal.setPerson.doctor.name.full %>
+	</td>
+</tr>
+</tbody>
