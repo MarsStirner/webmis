@@ -2,7 +2,8 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 
 	var MkbInput = View.extend({
 		events: {
-			"click .MKBLauncher": "toggleMKB"
+			"click .MKBLauncher": "toggleMKB",
+			"keyup [name='diagnosis[mkb][code]']": "onMKBCodeKeyUp"
 		},
 
 		initialize: function() {
