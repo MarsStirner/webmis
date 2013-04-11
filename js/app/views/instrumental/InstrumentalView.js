@@ -10,8 +10,6 @@ define([
 	"views/grid",
 	"views/paginator"], function(template, InstrumentalDiags, InstrumentalPopupView, InstrumentalEditPopupView) {
 
-
-
 	var InstrumentalView = View.extend({
 		className: "ContentHolder",
 		template: template,
@@ -36,12 +34,9 @@ define([
 				rowTemplateId: "#inst-diagnostic-grid-row",
 				defaultTemplateId: "#inst-diagnostic-grid-default"
 			});
-			this.grid.on('all', function() {
-				console.log('all', arguments);
-			});
+
 			this.grid.on('grid:rowClick', this.onGridRowClick, this);
 			this.depended(this.grid);
-
 
 
 			this.paginator = new App.Views.Paginator({
@@ -49,14 +44,17 @@ define([
 			});
 			this.depended(this.paginator);
 
+
 			this.collection.on("reset", function(collection) {
 				console.log('reset collection', collection);
 			}, this);
+
 
 			this.collection.fetch({
 				dataType: 'json',
 				url: "/js/app/views/instrumental/instrumental.json"
 			});
+
 
 		},
 
