@@ -137,7 +137,7 @@ HospitalView) {
 
 			this.$(".LeftSideBar").html(this.menu.render().el);
 
-			this.getPageNameByPath(this.options.path);
+			//this.getPageNameByPath(this.options.path);
 
 			return view;
 		}
