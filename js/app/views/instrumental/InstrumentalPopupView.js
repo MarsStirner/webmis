@@ -6,13 +6,14 @@ define([
 	"text!templates/appeal/edit/popups/instrumental.tmpl",
 	"views/ui/PopupMIxin",
 	"views/instrumental/InstrumentalPopupBottomFormView",
-	"collections/diagnostics/diagnostic-types"], function(tmpl, popupMIxin, BFView) {
+	"collections/diagnostics/InstrumntalGroups", "collections/diagnostics/diagnostic-types"], function(tmpl, popupMIxin, BFView, InstrumntalGroups) {
 
 	var InstrumentalPopup = View.extend({
 		template: tmpl,
 		events: {
 			//"click .ShowHidePopup": "close",
-			//"click .EventList li": "onRootTypeSelected"
+			"click .EventList li": "onRootTypeSelected",
+			"click .SelectAnalysis li":"onSelectAnalysis"
 		},
 
 		initialize: function(options) {
@@ -33,51 +34,67 @@ define([
 			this.bfView = new BFView({data: this.data, appeal: this.options.appeal});
 			this.depended(this.bfView);
 
-			// this.diagnosticTypes = new App.Collections.DiagnosticTypes({
-			// 	type: "inst"
-			// });
-			//this.diagnosticTypes.on("reset", this.onDiagnosticTypesLoaded, this);
-			//this.diagnosticTypes.fetch();
-			//
+			this.diagnosticTypes = new App.Collections.DiagnosticTypes({
+				type: "inst"
+			});
+			this.diagnosticTypes.on("reset", this.onDiagnosticTypesLoaded, this);
+			this.diagnosticTypes.fetch();
+
+			var groups = new  InstrumntalGroups();
+			groups.on('reset', function(collection){
+				console.log(collection.toJSON());
+			});
+			groups.setParams({
+				'filter[view]': 'tree'
+			});
+
+			groups.fetch()
 
 		},
 
-		// onDiagnosticTypesLoaded: function() {
-		// 	this.$(".EventList").empty();
-		// 	this.diagnosticTypes.each(function(dType) {
-		// 		this.$(".EventList").append("<li data-code='" + dType.get("code") + "'><label>" + dType.get("name") + "</label></li>");
-		// 	}, this);
-		// },
+		onDiagnosticTypesLoaded: function() {
+			this.$(".EventList").empty();
+			this.diagnosticTypes.each(function(dType) {
+				this.$(".EventList").append("<li data-code='" + dType.get("code") + "'><label>" + dType.get("name") + "</label></li>");
+			}, this);
+		},
 
-		// onRootTypeSelected: function(event) {
-		// 	var selectedCode = $(event.currentTarget).data("code");
-		// 	var selectedType = this.diagnosticTypes.find(function(type) {
-		// 		return type.get("code") === selectedCode;
-		// 	});
+		onRootTypeSelected: function(event) {
+			var selectedCode = $(event.currentTarget).data("code");
+			var selectedType = this.diagnosticTypes.find(function(type) {
+				return type.get("code") == selectedCode;
+			});
+			console.log(selectedCode,this.diagnosticTypes, selectedType );
 
-		// 	selectedType.subTypes = new App.Collections.DiagnosticTypes({
-		// 		type: "inst"
-		// 	});
+			selectedType.subTypes = new App.Collections.DiagnosticTypes({
+				type: "inst"
+			});
 
-		// 	selectedType.subTypes.setParams({
-		// 		filter: {
-		// 			code: selectedCode
-		// 		}
-		// 	});
+			selectedType.subTypes.setParams({
+				filter: {
+					code: selectedCode
+				}
+			});
 
-		// 	this.selectedSubTypes = selectedType.subTypes;
+			this.selectedSubTypes = selectedType.subTypes;
 
-		// 	selectedType.subTypes.on("reset", this.onSubTypesLoaded, this);
-		// 	selectedType.subTypes.fetch();
-		// },
+			selectedType.subTypes.on("reset", this.onSubTypesLoaded, this);
+			selectedType.subTypes.fetch();
+		},
 
-		// onSubTypesLoaded: function() {
-		// 	this.$(".SelectAnalysis").empty();
-		// 	this.selectedSubTypes.each(function(dType) {
-		// 		// TODO: Исправить
-		// 		this.$(".SelectAnalysis").append("<li data-code='" + dType.get("code") + "'><label>" + dType.get("name") + "</label></li>");
-		// 	}, this);
-		// },
+		onSubTypesLoaded: function() {
+			this.$(".SelectAnalysis").empty();
+			this.selectedSubTypes.each(function(dType) {
+				// TODO: Исправить
+				this.$(".SelectAnalysis").append("<li data-code='" + dType.get("code") + "'><label>" + dType.get("name") + "</label></li>");
+			}, this);
+		},
+
+		onSelectAnalysis: function(e){
+			var selectedCode = $(event.currentTarget).data("code");
+			console.log(selectedCode,event,event.currentTarget);
+
+		},
 
 		render: function() {
 
