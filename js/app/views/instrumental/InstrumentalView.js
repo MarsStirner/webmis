@@ -51,8 +51,8 @@ define([
 
 
 			this.collection.fetch({
-				dataType: 'json',
-				url: "/js/app/views/instrumental/instrumental.json"
+				// dataType: 'json',
+				// url: "/js/app/views/instrumental/instrumental.json"
 			});
 
 
