@@ -35,6 +35,9 @@ define([], function () {
 			if (this.model) {
 				resultObject = $.extend(this.model.toJSON(), resultObject);
 			}
+			if(this.collection.extra){
+				resultObject = $.extend(resultObject, this.collection.extra);
+			}
 
 
 			this.$el.html($(this.options.rowTemplateId).tmpl(resultObject));
