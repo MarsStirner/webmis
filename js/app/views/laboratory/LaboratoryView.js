@@ -36,10 +36,14 @@ define([
 				sortingMethod: "desc"
 			});
 
+			this.collection.extra = {
+				userId: Core.Cookies.get("userId")
+			}
+
 			this.grid = new App.Views.Grid({
 				popUpMode: true,
 				collection: this.collection,
-				template: "grids/diagnostics",
+				template: "grids/laboratory",
 				gridTemplateId: "#lab-diagnostic-grid",
 				rowTemplateId: "#lab-diagnostic-grid-row",
 				defaultTemplateId: "#lab-diagnostic-grid-default"
