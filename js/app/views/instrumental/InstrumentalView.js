@@ -26,6 +26,10 @@ define([
 				sortingMethod: "asc"
 			});
 
+			this.collection.extra = {
+				userId: Core.Cookies.get("userId")
+			};
+
 			this.grid = new App.Views.Grid({
 				popUpMode: true,
 				collection: this.collection,

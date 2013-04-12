@@ -57,7 +57,7 @@
 		${assignPerson.name.raw}
 	</td>
 
-	{{if status && (status.id === 0)}}
+	{{if status && (status.id === 0) && (userId == assignPerson.id || userId == createPerson.id)}}
 
 		<td><i class="icon-pencil edit-direction"></i></td>
 		<td><span class=" icon-remove cancel-direction"></span></td>
