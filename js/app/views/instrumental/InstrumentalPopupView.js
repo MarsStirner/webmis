@@ -6,7 +6,8 @@ define([
 	"text!templates/appeal/edit/popups/instrumental.tmpl",
 	"mixins/PopupMixin",
 	"views/instrumental/InstrumentalPopupBottomFormView",
-	"collections/diagnostics/InstrumntalGroups", "collections/diagnostics/diagnostic-types"], function(tmpl, popupMIxin, BFView, InstrumntalGroups) {
+	"collections/diagnostics/InstrumntalGroups", 
+	"collections/diagnostics/diagnostic-types"], function(tmpl, popupMixin, BFView, InstrumntalGroups) {
 
 
 	var InstrumentalPopup = View.extend({
