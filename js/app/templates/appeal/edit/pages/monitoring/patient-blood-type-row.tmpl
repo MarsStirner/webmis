@@ -1,0 +1,19 @@
+<td>Группа крови и резус</td>
+<td>
+	<% if (currentBloodType && currentBloodType.get("group")) { %>
+	<a href="#" class="show-patient-blood-history" title="Показать историю изменения"><%= currentBloodType.get("group") %></a>
+	<a href="#" class="edit-blood pull-right">Изменить</a>
+	<!--<div class="row">
+		<div class="span12">
+
+		</div>
+	</div>-->
+	<% } else { %>
+	-
+	<% } %>
+	<select class="Styled">
+		<%bloodTypes.each(function (bloodType) {%>
+		 <option><%=bloodType.get("value")%></option>
+		<%});%>
+	</select>
+</td>

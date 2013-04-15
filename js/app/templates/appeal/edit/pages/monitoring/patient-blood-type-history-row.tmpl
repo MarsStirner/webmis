@@ -1,0 +1,14 @@
+<td>История изменения группы крови</td>
+<td>
+	<% if (bloodTypeHistory.length) { %>
+		<%bloodTypeHistory.each(function (bloodType) {%>
+		<div class="row">
+			<div class="span12">
+				<span><%= bloodType %></span>
+			</div>
+		</div>
+		<%});%>
+	<% } else { %>
+	Нет данных
+	<% } %>
+</td>

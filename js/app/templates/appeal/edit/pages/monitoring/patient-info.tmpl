@@ -1,16 +1,6 @@
 <tbody>
-<tr>
-	<td>Группа крови и резус</td>
-	<td>
-		<% if (patient.medicalInfo.blood.group.length) { %>
-		<%= patient.medicalInfo.blood.group %>
-		<% } else { %>
-		-
-		<% } %>
-		<!--<i class="icon-pencil"></i>-->
-		<a href="#" class="edit-blood pull-right">Изменить</a>
-	</td>
-</tr>
+<tr class="patient-blood-type"></tr>
+<tr class="patient-blood-type-history"></tr>
 <tr>
 	<td>Медикаментозная непереносимость</td>
 	<td>

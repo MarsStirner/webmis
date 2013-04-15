@@ -964,6 +964,11 @@ footer a {
 .monitoring-layout .monitoring-layout-header .refresh-monitoring {
   cursor: pointer;
 }
+/* line 840, ../../sass/modules/layout.scss */
+.monitoring-layout .monitoring-layout-header .label {
+  margin-left: 1em;
+  font-size: 100%;
+}
 
 /*.LineBlockHolder {
 	> li {

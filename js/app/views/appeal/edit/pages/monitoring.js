@@ -4,7 +4,10 @@
  */
 define([
 	"text!templates/appeal/edit/pages/monitoring/layout.tmpl",
+	"text!templates/appeal/edit/pages/monitoring/header.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/patient-info.tmpl",
+	"text!templates/appeal/edit/pages/monitoring/patient-blood-type-row.tmpl",
+	"text!templates/appeal/edit/pages/monitoring/patient-blood-type-history-row.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/signal-info.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/monitoring-info.tmpl",
@@ -12,17 +15,23 @@ define([
 	"text!templates/appeal/edit/pages/monitoring/express-analyses.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl",
 
-	"collections/moves"
+	"collections/moves",
+	"collections/dictionary-values",
 ], function (
 	monitoringTmpl,
+	headerTmpl,
 	patientInfoTmpl,
+	patientBloodTypesRowTmpl,
+	patientBloodTypeHistoryRowTmpl,
 	signalInfoTmpl,
 	patientDiagnosesListTmpl,
 	monitoringInfoGridTmpl,
 	monitoringInfoItemTmpl,
 	expressAnalysesTmpl,
 	expressAnalysesItemTmpl,
-	Moves
+
+	Moves,
+	DictionaryValues
 	) {
 
 	/**
@@ -35,9 +44,39 @@ define([
 		Models: {}
 	};
 
+	/**
+	 * Экземпляры моделей/коллекций общих для нескольких классов
+	 */
+	var appeal;
+	var appealJSON;
+	var bloodTypes;
 
 	// Коллекции
 	//////////////////////////////////////////////////////
+
+	/**
+	 * Группа крови пациента
+	 * @type {*}
+	 */
+	Monitoring.Models.PatientBloodType = Model.extend({
+
+	});
+
+	/**
+	 * История изменения группы крови пациента
+	 * @type {*}
+	 */
+	Monitoring.Collections.PatientBloodTypes = Collection.extend({
+		model: Monitoring.Models.PatientBloodType,
+
+		initialize: function (models, options) {
+			this.patientId = options.patientId;
+		},
+
+		url: function () {
+			return DATA_PATH + "patients/" + this.patientId + "/bloodtypes";
+		}
+	});
 
 	/**
 	 * Модель для таблицы "Мониторинг"
@@ -212,7 +251,7 @@ define([
 	 * Главная вьюха, контейнер для виджетов
 	 * @type {*}
 	 */
-	Monitoring.Views.Layout = View.extend({
+	Monitoring.Views.Layout = Backbone.View.extend({
 		className: "monitoring-layout",
 
 		template: monitoringTmpl,
@@ -222,25 +261,25 @@ define([
 		},
 
 		initialize: function () {
-		},
-
-		data: function () {
-			return {
-				appealNumber: this.options.appeal.get("number")
-			};
+			appeal = this.options.appeal;
+			appealJSON = appeal.toJSON();
 		},
 
 		render: function () {
-			//Было бы хорошо вынести каждый блок-виджет в свой вью, но сейчас нет надобности
-			this.$el.html(_.template(monitoringTmpl, this.data()));
+			console.time("layout render time");
+
+			this.$el.html(_.template(this.template));
 
 			this.assign({
-				".patient-info": new Monitoring.Views.PatientInfo({appeal: this.options.appeal}),
-				".signal-info": new Monitoring.Views.SignalInfo({appeal: this.options.appeal}),
-				".patient-diagnoses-list": new Monitoring.Views.PatientDiagnosesList({appeal: this.options.appeal}),
+				".monitoring-layout-header": new Monitoring.Views.Header(),
+				".patient-info": new Monitoring.Views.PatientInfo(),
+				".signal-info": new Monitoring.Views.SignalInfo(),
+				".patient-diagnoses-list": new Monitoring.Views.PatientDiagnosesList(),
 				".monitoring-info": new Monitoring.Views.MonitoringInfoGrid(),
 				".express-analyses": new Monitoring.Views.ExpressAnalyses()
 			});
+
+			console.timeEnd("layout render time");
 
 			return this;
 		}
@@ -254,7 +293,7 @@ define([
 	 * Базовый класс для виджетов-таблиц сортируемых на клиенте
 	 * @type {*}
 	 */
-	Monitoring.Views.ClientSortableGrid = View.extend({
+	Monitoring.Views.ClientSortableGrid = Backbone.View.extend({
 		events: {
 			"click th.sortable": "onThSortableClick"
 		},
@@ -377,27 +416,18 @@ define([
 	//////////////////////////////////////////////////////
 
 	/**
-	 * Сведения о пациенте
+	 * Заголовок страницы
 	 * @type {*}
 	 */
-	Monitoring.Views.PatientInfo = View.extend({
-		template: patientInfoTmpl,
-
-		events: {
-			"click .edit-blood": "onEditBloodClick"
-		},
+	Monitoring.Views.Header = Backbone.View.extend({
+		template: headerTmpl,
 
 		data: function () {
-			var appealJSON = this.options.appeal.toJSON();
 			return {
-				appeal: appealJSON,
-				patient: appealJSON.patient
+				appealNumber: appeal.get("number"),
+				appealIsUrgent: appeal.get("urgent"),
+				appealIsClosed: appeal.closed
 			};
-		},
-
-		onEditBloodClick: function (event) {
-			event.preventDefault();
-			console.log("edit blood");
 		},
 
 		render: function () {
@@ -408,22 +438,142 @@ define([
 	});
 
 	/**
+	 * Сведения о пациенте
+	 * @type {*}
+	 */
+	Monitoring.Views.PatientInfo = Backbone.View.extend({
+		template: patientInfoTmpl,
+
+		data: function () {
+			return {
+				appeal: appealJSON,
+				patient: appealJSON.patient
+			};
+		},
+
+		render: function () {
+			this.$el.html(_.template(this.template, this.data()));
+
+			this.assign({
+				".patient-blood-type": new Monitoring.Views.PatientBloodTypeRow(),
+				".patient-blood-type-history": new Monitoring.Views.PatientBloodTypeHistoryRow()
+			});
+
+			return this;
+		}
+	});
+
+	/**
+	 * Текущая группа крови пациента
+	 * @type {*}
+	 */
+	Monitoring.Views.PatientBloodTypeRow = Backbone.View.extend({
+		template: patientBloodTypesRowTmpl,
+
+		data: function () {
+			return {
+				currentBloodType: appeal.get("patient").get("medicalInfo").get("blood"),
+				bloodTypes: this.bloodTypesDict
+			};
+		},
+
+		events: {
+			"click .edit-blood": "onEditBloodClick",
+			"click .show-patient-blood-history": "onShowPatientBloodHistory"
+		},
+
+		historyShown: false,
+
+		initialize: function (options) {
+			if (!bloodTypes) {
+				bloodTypes = new Monitoring.Collections.PatientBloodTypes([], {patientId: appeal.get("patient").get("id")});
+			}
+			this.collection = bloodTypes;
+
+			this.bloodTypesDict = new DictionaryValues([], {name: "bloodTypes"});
+
+			this.bloodTypesDict.on("reset", this.render, this).fetch();
+		},
+
+		onEditBloodClick: function (event) {
+			event.preventDefault();
+			console.log("edit blood");
+		},
+
+		onShowPatientBloodHistory: function (event) {
+			event.preventDefault();
+			var $target = $(event.currentTarget);
+
+			this.historyShown = !this.historyShown;
+
+			$target.prop("title", this.historyShown ? "Скрыть историю изменения" : "Показать историю изменения");
+
+			this.collection.trigger(this.historyShown ? "request:show" : "request:hide");
+		},
+
+		render: function () {
+			this.$el.html(_.template(this.template, this.data()));
+
+			return this;
+		}
+	});
+
+	/**
+	 * Истрория изменения группы крови
+	 * @type {*}
+	 */
+	Monitoring.Views.PatientBloodTypeHistoryRow = View.extend({
+		template: patientBloodTypeHistoryRowTmpl,
+
+		data: function () {
+			return {
+				bloodTypeHistory: this.collection
+			};
+		},
+
+		events: {
+
+		},
+
+		initialize: function (options) {
+			if (!bloodTypes) {
+				bloodTypes = new Monitoring.Collections.PatientBloodTypes([], {patientId: appeal.get("patient").get("id")});
+				bloodTypes.fetch();
+			}
+			this.collection = bloodTypes;
+			this.collection.on("request:show", this.toggleVisible, this);
+			this.collection.on("request:hide", this.toggleVisible, this);
+		},
+
+		toggleVisible: function (event) {
+			this.$el.toggle();
+		},
+
+		render: function () {
+			this.$el.hide().html(_.template(this.template, this.data()));
+
+			return this;
+		}
+	});
+
+	/**
 	 * Блок сигнальной информации о пациенте
 	 * @type {*}
 	 */
-	Monitoring.Views.SignalInfo = View.extend({
+	Monitoring.Views.SignalInfo = Backbone.View.extend({
 		template: signalInfoTmpl,
 
 		initialize: function () {
 			this.moves = new Moves();
-			this.moves.appealId = this.options.appeal.get("id");
+			this.moves.appealId = appeal.get("id");
+			console.log("fetching moves");
 			this.moves.on("reset", this.render, this).fetch();
 		},
 
 		data: function () {
 			return {
 				lastMove: this.moves.last(),
-				appeal: this.options.appeal.toJSON(),
+				appeal: appealJSON,
 				appealExtraData: Core.Data.appealExtraData.toJSON()
 			};
 		},
@@ -439,7 +589,7 @@ define([
 	 * Список диагнозов пациента
 	 * @type {*}
 	 */
-	Monitoring.Views.PatientDiagnosesList = View.extend({
+	Monitoring.Views.PatientDiagnosesList = Backbone.View.extend({
 		template: patientDiagnosesListTmpl,
 
 		data: function () {
@@ -450,6 +600,7 @@ define([
 
 		initialize: function (options) {
 			this.collection = new Monitoring.Collections.PatientDiagnoses();
+			console.log("fetching diagnoses");
 			this.collection.on("reset", this.render, this).fetch();
 		},
 
