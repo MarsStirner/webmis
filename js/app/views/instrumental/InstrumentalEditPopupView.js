@@ -1,9 +1,9 @@
 
 define([
 	"text!templates/appeal/edit/popups/instrumental-edit.tmpl",
-	"views/ui/PopupMIxin",
+	"mixins/PopupMixin",
 	"views/instrumental/InstrumentalPopupBottomFormView",
-	"collections/diagnostics/diagnostic-types"], function(tmpl, popupMIxin, BFView) {
+	"collections/diagnostics/diagnostic-types"], function(tmpl, popupMixin, BFView) {
 
 	return View.extend({
 		template: tmpl,
@@ -45,7 +45,7 @@ define([
 		onSave: function() {
 			console.log('onSave instrumental');
 		}
-	}).mixin([popupMIxin]);
+	}).mixin([popupMixin]);
 
 
 });

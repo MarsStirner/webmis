@@ -68,7 +68,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 			view.depended(view.grid);
 
-			view.grid.on('grid:rowDbClick', view.onGridRowClick, view);
+			view.grid.on('grid:rowClick', view.onGridRowClick, view);
 
 		},
 
@@ -76,9 +76,9 @@ define(['text!templates/pages/biomaterials.tmpl',
 			var view = this,
 				$eventTarget = $(event.target);
 
-			if (!$eventTarget.hasClass('id')
-			//&& (model.get('status') == 0)
-				) {
+				console.log($eventTarget)
+
+			if (!$eventTarget.hasClass('id') && $eventTarget.hasClass('open-popup')) {
 				view.openJobPopup(model);
 			}
 
