@@ -4,7 +4,7 @@
  */
 define([
 	"text!templates/appeal/edit/popups/instrumental.tmpl",
-	"views/ui/PopupMIxin",
+	"mixin/PopupMixin",
 	"views/instrumental/InstrumentalPopupBottomFormView",
 	"collections/diagnostics/diagnostic-types"], function(tmpl, popupMIxin, BFView) {
 
@@ -92,7 +92,7 @@ define([
 		onSave: function() {
 			console.log('onSave instrumental');
 		}
-	}).mixin([popupMIxin]);
+	}).mixin([popupMixin]);
 
 	return InstrumentalPopup;
 });
