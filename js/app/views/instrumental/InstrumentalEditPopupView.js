@@ -3,7 +3,7 @@ define([
 	"text!templates/appeal/edit/popups/instrumental-edit.tmpl",
 	"mixins/PopupMixin",
 	"views/instrumental/InstrumentalPopupBottomFormView",
-	"collections/diagnostics/diagnostic-types"], function(tmpl, popupMIxin, BFView) {
+	"collections/diagnostics/diagnostic-types"], function(tmpl, popupMixin, BFView) {
 
 	return View.extend({
 		template: tmpl,

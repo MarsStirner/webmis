@@ -4,9 +4,9 @@
  */
 define([
 	"text!templates/appeal/edit/popups/instrumental.tmpl",
-	"mixin/PopupMixin",
+	"mixins/PopupMixin",
 	"views/instrumental/InstrumentalPopupBottomFormView",
-	"collections/diagnostics/diagnostic-types"], function(tmpl, popupMIxin, BFView) {
+	"collections/diagnostics/diagnostic-types"], function(tmpl, popupMixin, BFView) {
 
 	var InstrumentalPopup = View.extend({
 		template: tmpl,
