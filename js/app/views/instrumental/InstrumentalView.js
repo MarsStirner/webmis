@@ -4,11 +4,15 @@
  */
 define([
 	"text!templates/appeal/edit/pages/instrumental.tmpl",
-	"collections/diagnostics/instrumental-diags",
+	"collections/diagnostics/InstrumentalResearchs",
 	"views/instrumental/InstrumentalPopupView",
 	"views/instrumental/InstrumentalEditPopupView",
 	"views/grid",
-	"views/paginator"], function(template, InstrumentalDiags, InstrumentalPopupView, InstrumentalEditPopupView) {
+	"views/paginator"],
+	function(template,
+			InstrumentalResearchs,
+			InstrumentalPopupView,
+			InstrumentalEditPopupView) {
 
 	var InstrumentalView = View.extend({
 		className: "ContentHolder",
@@ -18,9 +22,12 @@ define([
 			"click #assign-inst-diag": "onNewDiagnosticClick"
 		},
 
-		initialize: function() {
-			this.collection = new InstrumentalDiags();
-			this.collection.appealId = this.options.appealId;
+		initialize: function(options) {
+			console.log('view', options);
+			this.collection = new InstrumentalResearchs([], {
+				appealId: options.appealId
+			});
+
 			this.collection.setParams({
 				sortingField: "plannedEndDate",
 				sortingMethod: "asc"
@@ -54,10 +61,7 @@ define([
 			}, this);
 
 
-			this.collection.fetch({
-				// dataType: 'json',
-				// url: "/js/app/views/instrumental/instrumental.json"
-			});
+			this.collection.fetch({});
 
 
 		},
@@ -84,14 +88,20 @@ define([
 
 		cancelDirection: function(model) {
 			console.log('cancelDirection', model);
-			pubsub.trigger('noty', {text:'функционал ещё не реализован',type:'alert'});
+			pubsub.trigger('noty', {
+				text: 'функционал ещё не реализован',
+				type: 'alert'
+			});
 
 		},
 
 		editDirection: function(model) {
 			console.log('editDirection', model);
+			var testId = model.get('id');
+			//var test = тут загрузить данные теста
 			this.newEditPopup = new InstrumentalEditPopupView({
-				appeal: this.options.appeal
+				appeal: this.options.appeal//,
+				//model: test
 			});
 			this.newEditPopup.render().open();
 

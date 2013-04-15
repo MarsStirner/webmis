@@ -6,8 +6,16 @@ define([
 	"text!templates/appeal/edit/popups/instrumental.tmpl",
 	"mixins/PopupMixin",
 	"views/instrumental/InstrumentalPopupBottomFormView",
-	"collections/diagnostics/InstrumntalGroups", 
-	"collections/diagnostics/diagnostic-types"], function(tmpl, popupMixin, BFView, InstrumntalGroups) {
+	"collections/diagnostics/InstrumntalGroups",
+	"collections/diagnostics/InstrumentalResearchs",
+	"models/diagnostics/InstrumentalResearchTemplate",
+	"collections/diagnostics/diagnostic-types"], function(
+tmpl,
+popupMixin,
+BFView,
+InstrumntalGroups,
+InstrumentalResearchs,
+InstrumentalResearchTemplate) {
 
 
 	var InstrumentalPopup = View.extend({
@@ -15,7 +23,8 @@ define([
 		events: {
 			//"click .ShowHidePopup": "close",
 			"click .EventList li": "onRootTypeSelected",
-			"click .SelectAnalysis li":"onSelectAnalysis"
+			"click .SelectAnalysis li": "onSelectAnalysis",
+			"click .test": "test"
 		},
 
 		initialize: function(options) {
@@ -33,25 +42,49 @@ define([
 				'doctor': this.doctor
 			};
 
-			this.bfView = new BFView({data: this.data, appeal: this.options.appeal});
+			this.bfView = new BFView({
+				data: this.data,
+				appeal: this.options.appeal
+			});
 			this.depended(this.bfView);
 
-			this.diagnosticTypes = new App.Collections.DiagnosticTypes({
-				type: "inst"
-			});
-			this.diagnosticTypes.on("reset", this.onDiagnosticTypesLoaded, this);
-			this.diagnosticTypes.fetch();
+			// this.diagnosticTypes = new App.Collections.DiagnosticTypes({
+			// 	type: "inst"
+			// });
+			// this.diagnosticTypes.on("reset", this.onDiagnosticTypesLoaded, this);
+			// this.diagnosticTypes.fetch();
 
-			var groups = new  InstrumntalGroups();
-			groups.on('reset', function(collection){
-				console.log(collection.toJSON());
-			});
-			groups.setParams({
-				'filter[view]': 'tree'
-			});
+			// var groups = new InstrumntalGroups();
+			// groups.on('reset', function(collection) {
+			// 	console.log(collection.toJSON());
+			// });
+			// groups.setParams({
+			// 	'filter[view]': 'tree'
+			// });
 
-			groups.fetch()
+			// groups.fetch()
 
+		},
+
+		test: function() {
+			console.log(this);
+			var patientId =  this.options.appeal.get('patient').get('id');
+			var appealId = this.options.appeal.get('id');
+			var tests = new InstrumentalResearchs(null,{appealId: appealId});
+			var testTemplate= new InstrumentalResearchTemplate({},{code:'20.6.5',patientId: patientId});
+			console.log('test',testTemplate);
+
+
+			testTemplate.fetch().done(function() {
+				testTemplate.setProperty('finance', 'value', 5)
+				tests.add(testTemplate);
+				console.log('fetch test', arguments, tests, testTemplate);
+
+				tests.saveAll({success: function(raw, status){
+					console.log('success saveall', arguments);
+				}});
+
+			});
 		},
 
 		onDiagnosticTypesLoaded: function() {
@@ -66,7 +99,7 @@ define([
 			var selectedType = this.diagnosticTypes.find(function(type) {
 				return type.get("code") == selectedCode;
 			});
-			console.log(selectedCode,this.diagnosticTypes, selectedType );
+			console.log(selectedCode, this.diagnosticTypes, selectedType);
 
 			selectedType.subTypes = new App.Collections.DiagnosticTypes({
 				type: "inst"
@@ -92,9 +125,9 @@ define([
 			}, this);
 		},
 
-		onSelectAnalysis: function(e){
+		onSelectAnalysis: function(e) {
 			var selectedCode = $(event.currentTarget).data("code");
-			console.log(selectedCode,event,event.currentTarget);
+			console.log(selectedCode, event, event.currentTarget);
 
 		},
 
