@@ -9,12 +9,12 @@
 			<% _.each(patient.medicalInfo.drugIntolerances, function (drugIntolerance) { %>
 			<li>
 				<em class="Warning">
-					<%= drugIntolerance.substance %>,
+					<span style="font-weight: bold;"><%= drugIntolerance.substance %></span><br>
 					<% if (drugIntolerance.degree) { %>
-					<%= drugIntolerance.degree %> степень,
+					<span>степень: <%= drugIntolerance.degree %></span><br>
 					<% } %>
 					<% if (drugIntolerance.checkingDate) { %>
-					установлено: <%= Core.Date.format(drugIntolerance.checkingDate) %>
+					<span>установлено: <%= Core.Date.format(drugIntolerance.checkingDate) %></span>
 					<% } %>
 				</em>
 			</li>
@@ -33,12 +33,12 @@
 			<% _.each(patient.medicalInfo.allergies, function (allergy) { %>
 			<li>
 				<em class="Warning">
-					<%= allergy.substance %>,
+					<span style="font-weight: bold;"><%= allergy.substance %></span><br>
 					<% if (allergy.degree) { %>
-					<%= allergy.degree %> степень,
+					<span>степень: <%= allergy.degree %></span><br>
 					<% } %>
 					<% if (allergy.checkingDate) { %>
-					установлено: <%= Core.Date.format(allergy.checkingDate) %>
+					<span>установлено: <%= Core.Date.format(allergy.checkingDate) %></span>
 					<% } %>
 				</em>
 			</li>

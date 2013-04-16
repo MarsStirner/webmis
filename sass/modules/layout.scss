@@ -841,6 +841,29 @@ footer {
 			margin-left: 1em; font-size: 100%;
 		}
 	}
+
+	.blood-type {
+		font-size: 100%;
+		padding: 4px;
+		margin: 0;
+	}
+	.patient-blood-type {
+		.row-fluid [class*="span"] {
+			min-height: 0;
+		}
+	}
+	.ui-button-text {
+		font-size: 0.95em;
+	}
+
+	.cancel-blood {
+		padding-top: .8em;
+		padding-left: .5em;
+	}
+
+	.blood-type-selector-controls {
+		margin-top: 0.7em;
+	}
 }
 
 /*.LineBlockHolder {

@@ -1,13 +1,13 @@
-<td>История изменения группы крови</td>
-<td>
+<td colspan="2" style="padding-left: 1em;">
+	<span>История изменения группы крови</span>
 	<% if (bloodTypeHistory.length) { %>
-		<%bloodTypeHistory.each(function (bloodType) {%>
-		<div class="row">
-			<div class="span12">
-				<span><%= bloodType %></span>
-			</div>
-		</div>
-		<%});%>
+	<ul style="margin-top: 1em; padding-left: 1em;">
+		<% bloodTypeHistory.each(function (bloodType) { %>
+			<li>
+				<span style="color: grey"><%= Core.Date.format(bloodType.get("bloodDate")) %>:</span> <span style="color: #414142;"><%= bloodType.get("bloodType").name %></span>
+			</li>
+		<% }); %>
+	</ul>
 	<% } else { %>
 	Нет данных
 	<% } %>

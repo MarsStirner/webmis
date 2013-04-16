@@ -969,6 +969,29 @@ footer a {
   margin-left: 1em;
   font-size: 100%;
 }
+/* line 845, ../../sass/modules/layout.scss */
+.monitoring-layout .blood-type {
+  font-size: 100%;
+  padding: 4px;
+  margin: 0;
+}
+/* line 851, ../../sass/modules/layout.scss */
+.monitoring-layout .patient-blood-type .row-fluid [class*="span"] {
+  min-height: 0;
+}
+/* line 855, ../../sass/modules/layout.scss */
+.monitoring-layout .ui-button-text {
+  font-size: 0.95em;
+}
+/* line 859, ../../sass/modules/layout.scss */
+.monitoring-layout .cancel-blood {
+  padding-top: .8em;
+  padding-left: .5em;
+}
+/* line 864, ../../sass/modules/layout.scss */
+.monitoring-layout .blood-type-selector-controls {
+  margin-top: 0.7em;
+}
 
 /*.LineBlockHolder {
 	> li {
