@@ -15,6 +15,8 @@ define([
 	"text!templates/appeal/edit/pages/monitoring/express-analyses.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl",
 
+	"views/appeal/edit/pages/card",
+
 	"collections/moves",
 	"collections/dictionary-values",
 ], function (
@@ -29,6 +31,8 @@ define([
 	monitoringInfoItemTmpl,
 	expressAnalysesTmpl,
 	expressAnalysesItemTmpl,
+
+	Card,
 
 	Moves,
 	DictionaryValues
@@ -260,17 +264,19 @@ define([
 	 * Главная вьюха, контейнер для виджетов
 	 * @type {*}
 	 */
-	Monitoring.Views.Layout = Backbone.View.extend({
+	Monitoring.Views.Layout = Card.extend({
 		className: "monitoring-layout",
 
 		template: monitoringTmpl,
 
 		initialize: function () {
-			appeal = this.options.appeal;
+			appeal = this.model = this.options.appeal;
 			appealJSON = appeal.toJSON();
 		},
 
 		render: function () {
+			this.trigger("change:printState");
+
 			console.time("layout render time");
 
 			this.$el.html(_.template(this.template));
