@@ -349,7 +349,8 @@ define([
 			this.connectDates();
 
 			this.$(".CopyFromPrevious").button({icons: {primary: "icon-copy"}});
-			this.$(".SaveBtn").button({className: ""});
+			this.$(".MKBLauncher").button({icons: {primary: "icon-book"}});
+			this.$(".SaveBtn").button();
 
 			// Ограничение ввода для полей формата Double
 			self.$('.RestrictFloat').keypress(function(eve) {

@@ -866,7 +866,7 @@ footer {
 	}
 
 	.patient-blood-type-history {
-		td {
+		td:first-child {
 			padding-left: 1em;
 		}
 		ul {
