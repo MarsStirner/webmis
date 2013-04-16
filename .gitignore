@@ -182,3 +182,5 @@ htmltemplates/
 #sublime 2
 *sublime-project
 *sublime-workspace
+node_modules
+build
