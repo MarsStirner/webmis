@@ -101,53 +101,50 @@ define(['text!templates/ui/range-datetime-picker.tmpl',
 		setDates: function(increment) {
 			increment = increment || 0;
 
-			var $startDateTime = this.$(".from-date");
-			var $endDateTime = this.$(".to-date");
-
-			var startDate = $startDateTime.datepicker("getDate");
-			var endDate = $endDateTime.datepicker("getDate");
+			var startDate = view.$fromDateInput.datepicker("getDate");
+			var endDate = view.$toDateInput.datepicker("getDate");
 
 			startDate.setDate(startDate.getDate() + increment);
 			endDate.setDate(endDate.getDate() + increment);
 
-			$endDateTime.datepicker("option", "minDate", moment(startDate).format(this.dateFormat));
-			$startDateTime.datepicker("option", "maxDate", moment(endDate).format(this.dateFormat));
-			$endDateTime.datepicker("refresh");
+			view.$toDateInput.datepicker("option", "minDate", moment(startDate).format(this.dateFormat));
+			view.$fromDateInput.datepicker("option", "maxDate", moment(endDate).format(this.dateFormat));
+			view.$toDateInput.datepicker("refresh");
 
-			$startDateTime.datepicker("setDate", startDate);
-			$endDateTime.datepicker("setDate", endDate);
+			view.$fromDateInput.datepicker("setDate", startDate);
+			view.$toDateInput.datepicker("setDate", endDate);
 
-			console.log('startDate', startDate.getDate())
+			// console.log('startDate', startDate.getDate())
 
-			this.$(".from-date").change();
+			view.$fromDateInput.change();
 		},
 
 		setFromTime: function() {
 			var view = this;
 
 			var time = moment(view.range.get('from')).format(view.timeFormat);
-			view.$('.from-time').val(time)
+			view.$fromTimeInput.val(time)
 		},
 
 		setToTime: function() {
 			var view = this;
 
 			var time = moment(view.range.get('to')).format(view.timeFormat);
-			view.$('.to-time').val(time)
+			view.$toTimeInput.val(time)
 		},
 
 		setFromDate: function() {
 			var view = this;
 
 			var date = moment(view.range.get('from')).format(view.dateFormat);
-			view.$('.from-date').val(date)
+			view.$fromDateInput.val(date)
 		},
 
 		setToDate: function() {
 			var view = this;
 
 			var date = moment(view.range.get('to')).format(view.dateFormat);
-			view.$('.to-date').val(date)
+			view.$toDateInput.val(date)
 		},
 
 		render: function() {
@@ -159,7 +156,7 @@ define(['text!templates/ui/range-datetime-picker.tmpl',
 			view.$fromTimeInput = view.$(".from-time");
 			view.$toDateInput = view.$(".to-date");
 			view.$toTimeInput = view.$(".to-time");
-                                view.$(".increase, .decrease").button();
+			view.$(".increase, .decrease").button();
 
 
 			view.setFromTime();
@@ -167,7 +164,7 @@ define(['text!templates/ui/range-datetime-picker.tmpl',
 			view.setToDate();
 			view.setFromDate();
 
-			view.$('.from-date').datepicker({
+			view.$fromDateInput.datepicker({
 				//inline: true,
 				changeYear: true,
 				changeMonth: true,
@@ -177,12 +174,12 @@ define(['text!templates/ui/range-datetime-picker.tmpl',
 					return [true, (date.getTime() >= view.range.get('from')) && (date.getTime() <= view.range.get('to')) ? 'date-range-selected' : ''];
 				},
 				onClose: function(selectedDate) {
-					view.$(".to-date").datepicker("option", "minDate", selectedDate);
+					view.$toDateInput.datepicker("option", "minDate", selectedDate);
 				}
 			});
 
 
-			view.$('.to-date').datepicker({
+			view.$toDateInput.datepicker({
 				///inline: true,
 				changeYear: true,
 				changeMonth: true,
@@ -192,18 +189,19 @@ define(['text!templates/ui/range-datetime-picker.tmpl',
 					return [true, ((date.getTime() >= view.range.get('from')) && (date.getTime() <= view.range.get('to'))) ? 'date-range-selected' : ''];
 				},
 				onClose: function(selectedDate) {
-					view.$(".from-date").datepicker("option", "maxDate", selectedDate);
+					view.$fromDateInput.datepicker("option", "maxDate", selectedDate);
 				}
 			});
 
-			view.$(".to-date").datepicker("option", "minDate", view.$(".from-date").datepicker("getDate"));
-			view.$(".from-date").datepicker("option", "maxDate", view.$(".to-date").datepicker("getDate"));
+			view.$toDateInput.datepicker("option", "minDate", view.$fromDateInput.datepicker("getDate"));
+			view.$fromDateInput.datepicker("option", "maxDate", view.$toDateInput.datepicker("getDate"));
+			view.$fromTimeInput.mask("99:99").timepicker();
+			view.$toTimeInput.mask("99:99").timepicker();
 
-
-			view.$(".from-date").inputmask("dd.mm.yyyy", {
+			view.$fromDateInput.inputmask("dd.mm.yyyy", {
 				"placeholder": "дд.мм.гггг"
 			});
-			view.$(".to-date").inputmask("dd.mm.yyyy", {
+			view.$toDateInput.inputmask("dd.mm.yyyy", {
 				"placeholder": "дд.мм.гггг"
 			});
 

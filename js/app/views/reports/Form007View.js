@@ -12,10 +12,11 @@ define(["text!templates/reports/f007.html",
 
 		initialize: function() {
 			var view = this;
+			var now = (new Date()).getTime()/1000;
 
 			this.rangeView = new RangeDatepickerView({
-				startTimestamp: 1365681693 - (60 * 60 * 24),
-				endTimestamp: 1365681693
+				startTimestamp: now - (60 * 60 * 24),
+				endTimestamp: now
 			});
 
 			this.departments = new App.Collections.Departments();
@@ -64,22 +65,63 @@ define(["text!templates/reports/f007.html",
 		},
 
 		print: function() {
-
-			console.log('from-date', $("#from-date").datepicker("getDate").getTime());
-			console.log('from-date', $("#from-date").datepicker("getDate").getTime());
-			console.log('departments', $("#departments :selected").val())
+			var view = this;
+			view.$("#iframe").html('');
 
 			var form007 = new App.Models.PrintForm007({
 				departmentId: $("#departments :selected").val(),
-				beginDate: $("#from-date").datepicker("getDate").getTime(),
-				endDate: $("#to-date").datepicker("getDate").getTime()
+				beginDate: this.rangeView.range.get('from'),
+				endDate: this.rangeView.range.get('to')
 			});
 
 
-			form007.fetch();
+
+			form007.fetch().done(function() {
+
+				var $iframe = $("<iframe id='myiframe'  name='myiframe' src='/pdf/' style='width: 100%;height: 400px;'></iframe>");
+				view.$("#iframe").html($iframe); //.hide();
+
+				var loaded = false;
+				$iframe.load(function() {
+					if(!loaded){
+						loaded = true;
+					}else{
+						return;
+					}
+					//создаём форму
+					var form = view.make("form", {
+						"accept-charset": "utf-8",
+						"action": "/pdf/",
+						method: "post"
+					}); //, style: "visibility: hidden"
+					//создаём текстовую область для данных
+					var textarea = view.make("textarea", {
+						name: "data"
+					});
+					//создаём поле ввода для имени шаблона
+					var input = view.make("input", {
+						name: "template",
+						value: 'f007'
+					});
+
+					// вставляем данные в текстовую область
+					textarea.innerHTML = JSON.stringify(form007.toJSON());
+
+					//console.log(JSON.stringify(form007.toJSON()))
+
+					var doc = $("#myiframe").contents()[0];
+					$(doc.body).html($(form).append(textarea).append(input)).hide();
+					$(doc.body).find('form').trigger('submit');
+
+				});
+
+
+			});
+
+
 		},
 		render: function() {
-			console.log('007 render');
+			//console.log('007 render');
 
 			this.$el.html($.tmpl(this.template));
 
