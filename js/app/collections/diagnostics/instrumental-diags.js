@@ -2,14 +2,14 @@
  * User: FKurilov
  * Date: 08.06.12
  */
-define(["models/diagnostics/instrumental-diag"], function () {
-	App.Collections.InstrumentalDiags = Collection.extend({
-		model: App.Models.InstrumentalDiag,
+define(["models/diagnostics/instrumental-diag"], function (InstrumentalDiag) {
+	var InstrumentalDiags = Collection.extend({
+		model: InstrumentalDiag,
 
 		url: function () {
 			return DATA_PATH + "appeals/" + this.appealId + "/diagnostics/instrumental/";
 		}
 	});
 
-	return App.Collections.InstrumentalDiags
+	return InstrumentalDiags;
 });

@@ -5,6 +5,7 @@
 define([
 	"text!templates/appeal/edit/main.tmpl",
 	"views/laboratory/LaboratoryView",
+	"views/instrumental/InstrumentalView",
 	//"text!templates/cardnav.tmpl",
 
 	"models/appeal",
@@ -14,7 +15,9 @@ define([
 	"views/menu",
 	"views/card-header",
 
-	"views/appeal/edit/pages/instrumental",
+	//"views/appeal/edit/pages/instrumental",
+
+
 	"views/appeal/edit/pages/consultation",
 	"views/appeal/edit/pages/examinations",
 	"views/appeal/edit/pages/examination-edit",
@@ -24,7 +27,8 @@ define([
 	"views/appeal/edit/pages/HospitalBedView"
 ], function (
 	template,
-	LaboratoryView
+	LaboratoryView,
+	InstrumentalView
 	//, cardnavTemplate
 	) {
 
@@ -50,7 +54,7 @@ define([
 			"examination-primary-repeated-preview": App.Views.ExaminationPrimaryPreview,
 
 			"diagnostics-laboratory": LaboratoryView,
-			"diagnostics-instrumental": App.Views.Instrumental,
+			"diagnostics-instrumental": InstrumentalView,
 			"diagnostics-consultations": App.Views.Consultation,
 
 			"first-examination-edit": App.Views.ExaminationEdit,
@@ -409,6 +413,11 @@ define([
 							name: "diagnostics-laboratory",
 							title: "Лабораторные исследования",
 							uri: "/appeals/:id/diagnostics/laboratory/"
+						}, appealJSON),
+						App.Router.compile({
+							name: "diagnostics-instrumental",
+							title: "Инструментальные исследования",
+							uri: "/appeals/:id/diagnostics/instrumental/"
 						}, appealJSON),
 //						{name: "address", title: "Диагностика"},
 //						{name: "medical-info", title: "Лечение", structure: [

@@ -10,7 +10,7 @@ define(["models/doctor"], function () {
 		defaults: {name: ""}
 	});
 
-	App.Models.InstrumentalDiag = Model.extend({
+	var InstrumentalDiag = Model.extend({
 		defaults: {
 			diagnosticDate: 0,
 			diagnosticName: {},
@@ -42,15 +42,15 @@ define(["models/doctor"], function () {
 				key: "execPerson",
 				relatedModel: App.Models.Doctor
 			}
-		],
+		]//,
 
-		parse: function ( data ) {
-			var instDiag = new App.Models.InstrumentalDiag;
-			data = data.data ? data.data : data;
+		// parse: function ( data ) {
+		// 	//var instDiag = new App.Models.InstrumentalDiag();
+		// 	data = data.data ? data.data : data;
 
-			return Core.Objects.mergeAll(instDiag.toJSON(), data);
-		}
+		// 	return data;//Core.Objects.mergeAll(instDiag.toJSON(), data);
+		// }
 	});
 
-	return App.Models.InstrumentalDiag;
+	return InstrumentalDiag;
 });
