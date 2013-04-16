@@ -8,7 +8,11 @@
 <tr>
 	<td>Продолжительность лечения (дней) или дата выписки</td>
 	<td>
-		<%= Core.Date.format(appealExtraData.rangeAppealDateTime.end) || moment().diff(moment(appealExtraData.rangeAppealDateTime.start), "days") + 1 %>
+		<% if (appealExtraData.rangeAppealDateTime.end) { %>
+			<%= Core.Date.format(appealExtraData.rangeAppealDateTime.end) %>
+		<% } else { %>
+			<%= moment().diff(moment(appealExtraData.rangeAppealDateTime.start), "days") + 1 %>
+		<% } %>
 	</td>
 </tr>
 <tr>
@@ -26,7 +30,11 @@
 <tr>
 	<td>Койка</td>
 	<td>
-		<% if (lastMove) { %><%= lastMove.get("bed") %><%}%>
+		<% if (lastMove && lastMove.get("bed")) { %>
+			<%= lastMove.get("bed") %>
+		<% } else { %>
+			-
+		<% } %>
 	</td>
 </tr>
 <tr>

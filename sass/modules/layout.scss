@@ -864,6 +864,19 @@ footer {
 	.blood-type-selector-controls {
 		margin-top: 0.7em;
 	}
+
+	.patient-blood-type-history {
+		td {
+			padding-left: 1em;
+		}
+		ul {
+			margin-top: 1em;
+			padding-left: 1em;
+			li span.blood-date {
+				color: #414142;
+			}
+		}
+	}
 }
 
 /*.LineBlockHolder {

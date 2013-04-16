@@ -992,6 +992,19 @@ footer a {
 .monitoring-layout .blood-type-selector-controls {
   margin-top: 0.7em;
 }
+/* line 869, ../../sass/modules/layout.scss */
+.monitoring-layout .patient-blood-type-history td {
+  padding-left: 1em;
+}
+/* line 872, ../../sass/modules/layout.scss */
+.monitoring-layout .patient-blood-type-history ul {
+  margin-top: 1em;
+  padding-left: 1em;
+}
+/* line 875, ../../sass/modules/layout.scss */
+.monitoring-layout .patient-blood-type-history ul li span.blood-date {
+  color: #414142;
+}
 
 /*.LineBlockHolder {
 	> li {

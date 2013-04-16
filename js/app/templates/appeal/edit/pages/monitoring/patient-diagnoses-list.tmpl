@@ -1,13 +1,15 @@
-<% if (diagnoses.length) { %>
-<div class="Diagnosis">
-	<% diagnoses.each(function (diagnosis) { %>
-	<h3><%= diagnosis.get("diagnosisKindLabel") %></h3>
-	<dl>
-		<dt><%= diagnosis.get("mkb").code %></dt>
-		<dd><%= diagnosis.get("mkb").diagnosis %></dd>
-	</dl>
-	<% }); %>
-</div>
+<% if (diagnoses.length && _(diagnoses.toJSON()).chain().pluck("mkb").pluck("code").any().value()) { %>
+	<div class="Diagnosis">
+		<% diagnoses.each(function (diagnosis) { %>
+			<% if (diagnosis.get("mkb").code) { %>
+				<h3><%= diagnosis.get("diagnosisKindLabel") %></h3>
+				<dl>
+					<dt><%= diagnosis.get("mkb").code %></dt>
+					<dd><%= diagnosis.get("mkb").diagnosis %></dd>
+				</dl>
+			<% } %>
+		<% }); %>
+	</div>
 <% } else {%>
-<div class="Diagnosis"><h3>Диагноз не установлен</h3></div>
+	<div class="Diagnosis"><h3>Диагноз не установлен</h3></div>
 <% } %>

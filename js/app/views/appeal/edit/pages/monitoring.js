@@ -217,16 +217,15 @@ define([
 			"assignment": {priority: 0, title: "Направительный диагноз"},
 			"admission": {priority: 1, title: "Диагноз при поступлении"},
 			"clinical": {priority: 2, title: "Клинический"},
-			"final": {priority: 3, title: "Заключительный"}
-		},
-
-		sync:function (method, model, options) {
-			return Backbone.sync(method, model, options);
+			"final": {priority: 3, title: "Заключительный"},
+			"aftereffect": {priority: 4, title: "Сопутствующий к направительному"},
+			"attendant": {priority: 5, title: "Осложнения к направительному"},
+			"secondaryToClinical": {priority: 6, title: "Сопутствующий к клиническому"},
+			"complicateToClinical": {priority: 7, title: "Осложнения к клиническому"}
 		},
 
 		url: function () {
-			return "/patient-diagnoses.json";
-			//return DATA_PATH + "";
+			return DATA_PATH + "appeals/" + appeal.get("id") +  "/diagnoses/";
 		},
 
 		comparator: function (a, b) {
@@ -244,19 +243,6 @@ define([
 
 		parse: function (raw) {
 			var data = Collection.prototype.parse.call(this, raw);
-
-			/*data.sort(function (a, b) {
-				var apr = diagKinds[a.diagnosisKind].priority;
-				var bpr = diagKinds[b.diagnosisKind].priority;
-
-				if (apr > bpr) {
-					return 1;
-				} else if (apr < bpr) {
-					return -1;
-				} else {
-					return 0;
-				}
-			});*/
 
 			_.each(data, function (diag) {
 				diag.diagnosisKindLabel = this.diagKinds[diag.diagnosisKind].title;
@@ -534,24 +520,22 @@ define([
 		onEditBloodClick: function (event) {
 			event.preventDefault();
 
-			this.$(".current-blood-type").hide();
-			this.$(".blood-type-selector").show();
-			this.$(".blood-type").focus();
+			this.toggleEditState(true);
 		},
 
 		onSaveBloodClick: function (event) {
 			event.preventDefault();
 
 			var self = this;
-
 			var newBloodId = parseInt(this.$(".blood-type").val());
+			var newBloodName = this.$(".blood-type option:selected").text();
 
 			if (newBloodId != this.data().currentBloodType.get("id")) {
 				this.collection.create({
 					"bloodDate": new Date().getTime(),
 					"bloodType": {
 						"id": newBloodId,
-						"name": this.$(".blood-type option:selected").text()
+						"name": newBloodName
 					}
 				}, {
 					success: function () {
@@ -565,20 +549,19 @@ define([
 				});
 			}
 
-			this.$(".show-patient-blood-history").text(this.$(".blood-type option:selected").html());
+			//this.$(".show-patient-blood-history").text(this.$(".blood-type option:selected").html());
+			appeal.get("patient").get("medicalInfo").get("blood").set({
+				id: newBloodId,
+				group: newBloodName
+			});
 
-			this.$(".current-blood-type").show();
-			this.$(".blood-type-selector").hide();
+			this.toggleEditState(false);
 		},
 
 		onCancelBloodClick: function (event) {
 			event.preventDefault();
-			this.render();
 
-			/*this.$(".show-patient-blood-history").text(this.$(".blood-type option:selected").html());
-
-			this.$(".show-patient-blood-history, .edit-blood").show();
-			this.$(".blood-type, .save-blood, .cancel-blood").hide();*/
+			this.toggleEditState(false);
 		},
 
 		onShowPatientBloodHistory: function (event) {
@@ -590,6 +573,19 @@ define([
 			$target.prop("title", this.historyShown ? "Скрыть историю изменения" : "Показать историю изменения");
 
 			this.collection.trigger(this.historyShown ? "request:show" : "request:hide");
+		},
+
+		toggleEditState: function (enabled) {
+			if (enabled) {
+				this.$(".current-blood-type").hide();
+				this.$(".blood-type-selector").show();
+				this.$(".blood-type").focus();
+
+				this.$el.css({"background-color": "whitesmoke"});
+			} else {
+				this.$el.css({"background-color": "white"});
+				this.render();
+			}
 		},
 
 		render: function () {

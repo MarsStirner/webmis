@@ -3,7 +3,8 @@ define([
 	//"text!templates/appeal/edit/pages/monitoring.tmpl",
 	"text!templates/appeal/edit/pages/card.tmpl",
 	"views/print",
-	"models/print/appeal"
+	"models/print/appeal",
+	"collections/moves"
 ], function (
 	//cardMonitoringTemplate,
 	cardTemplate) {
@@ -55,21 +56,21 @@ define([
 		},
 
 		printAppeal: function () {
+			var self = this;
+
 			var PrintAppeal = new App.Models.PrintAppeal({
 				id: this.model.get("id")
 			});
 
-			new App.Views.Print({
-				model: PrintAppeal,
-				template: "f003"
+			var moves = new App.Collections.Moves();
+			moves.appealId = this.model.get("id");
+
+			$.when(PrintAppeal.fetch(), moves.fetch()).then(function () {
+				new App.Views.Print({
+					data: _.extend({moves: moves.toJSON()}, PrintAppeal.toJSON()),
+					template: "f003"
+				});
 			});
-
-			PrintAppeal.fetch();
-
-			/*new App.Views.Print({
-				data: this.model.toJSON(),
-				template: "f003"
-			});*/
 		},
 
 		printConsentToExam: function () {
