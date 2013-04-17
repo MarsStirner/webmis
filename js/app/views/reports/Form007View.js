@@ -19,25 +19,27 @@ define(["text!templates/reports/f007.html",
 				endTimestamp: now
 			});
 
-			this.departments = new App.Collections.Departments();
+			this.depended(this.rangeView);
 
-			this.departments.setParams({
-				filter: {
-					hasBeds: true
-				},
-				sortingField: 'name',
-				sortingMethod: 'asc'
-			});
+			// this.departments = new App.Collections.Departments();
 
-			this.departmentSelect = new SelectView({
-				collection: this.departments,
-				el: view.$('#departments'),
-				selectText: 'name'
-			});
+			// this.departments.setParams({
+			// 	filter: {
+			// 		hasBeds: true
+			// 	},
+			// 	sortingField: 'name',
+			// 	sortingMethod: 'asc'
+			// });
 
-			//this.departments.fetch();
+			// this.departmentSelect = new SelectView({
+			// 	collection: this.departments,
+			// 	el: view.$('#departments'),
+			// 	selectText: 'name'
+			// });
 
-			this.depended(this.departmentSelect);
+			// //this.departments.fetch();
+
+			// this.depended(this.departmentSelect);
 
 		},
 		initDepartments: function() {
@@ -131,7 +133,10 @@ define(["text!templates/reports/f007.html",
 			this.initDepartments();
 
 			return this;
-		}
+		},
+		cleanUp: function() {
+			this.departmentSelect.cleanUp();
+		},
 
 	});
 });

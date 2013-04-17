@@ -75,11 +75,11 @@ HospitalView) {
 				console.log('element[elementChildrenName]', element[options.elementChildrenName], element[options.elementChildrenName].length);
 				for (var i = 0; result === null && i < element[options.elementChildrenName].length; i++) {
 					result = searchTree({
-				element:element[options.elementChildrenName][i],
-				match: options.match,
-				elementParamName: options.elementParamName,
-				elementChildrenName: options.elementChildrenName
-			});
+						element: element[options.elementChildrenName][i],
+						match: options.match,
+						elementParamName: options.elementParamName,
+						elementChildrenName: options.elementChildrenName
+					});
 				}
 				return result;
 			}
@@ -91,16 +91,17 @@ HospitalView) {
 				if (this.typeViews[type]) {
 					this.type = type;
 
-					// if (this.contentView) {
-					// 			//this.setBreadcrumbsStructure();
-					// 			this.contentView.off(null, null, this);
-					// 			if (this.contentView.model) {
-					// 				this.contentView.model.off(null, null, this.contentView);
-					// 			}
-					// 			if (this.contentView.cleanUp) {
-					// 				this.contentView.cleanUp();
-					// 			}
-					// 		}
+					if (this.contentView) {
+						this.contentView.off(null, null, this);
+						// if (this.contentView.model) {
+						// 	this.contentView.model.off(null, null, this.contentView);
+						// }
+						if (this.contentView.cleanUp) {
+							this.contentView.cleanUp();
+						}
+						this.contentView.remove();
+						this.contentView.destroy();
+					}
 
 					this.contentView = new this.typeViews[type](_.extend({
 						//appealId: this.appealId,

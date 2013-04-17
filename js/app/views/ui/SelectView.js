@@ -14,7 +14,7 @@ define([], function () {
 
 		val: function (value) {
 			var view = this;
-			console.log('value',value,view.$el.select2('val'))
+			//console.log('value',value,view.$el.select2('val'))
 
 			if (value) {
 				view.$el.select2('val', value);
@@ -47,11 +47,13 @@ define([], function () {
 			}
 
 			view.select2.on('change', function () {
-
 				pubsub.trigger(id + ':change', view.select2.val());
 			});
 
 			return view;
+		},
+		cleanUp: function(){
+			this.collection.off(null, null, this);
 		}
 
 	});
