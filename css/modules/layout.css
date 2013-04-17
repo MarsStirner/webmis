@@ -973,37 +973,42 @@ footer a {
 .monitoring-layout .blood-type {
   font-size: 100%;
   padding: 4px;
-  margin: 0;
+  margin: .45em 0 0 1em;
+  width: 100%;
 }
-/* line 851, ../../sass/modules/layout.scss */
+/* line 852, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type .row-fluid [class*="span"] {
   min-height: 0;
 }
-/* line 855, ../../sass/modules/layout.scss */
+/* line 856, ../../sass/modules/layout.scss */
 .monitoring-layout .ui-button-text {
   font-size: 0.95em;
 }
-/* line 859, ../../sass/modules/layout.scss */
+/* line 860, ../../sass/modules/layout.scss */
 .monitoring-layout .cancel-blood {
   padding-top: .8em;
   padding-left: .5em;
 }
-/* line 864, ../../sass/modules/layout.scss */
+/* line 865, ../../sass/modules/layout.scss */
 .monitoring-layout .blood-type-selector-controls {
-  margin-top: 0.7em;
+  margin: 0;
 }
-/* line 869, ../../sass/modules/layout.scss */
+/* line 870, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history td:first-child {
   padding-left: 1em;
 }
-/* line 872, ../../sass/modules/layout.scss */
+/* line 873, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history ul {
   margin-top: 1em;
   padding-left: 1em;
 }
-/* line 875, ../../sass/modules/layout.scss */
+/* line 876, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history ul li span.blood-date {
   color: #414142;
+}
+/* line 882, ../../sass/modules/layout.scss */
+.monitoring-layout .blood-type-selector {
+  margin-top: 0.7em;
 }
 
 /*.LineBlockHolder {

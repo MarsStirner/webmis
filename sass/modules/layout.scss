@@ -845,7 +845,8 @@ footer {
 	.blood-type {
 		font-size: 100%;
 		padding: 4px;
-		margin: 0;
+		margin: .45em 0 0 1em;
+		width: 100%;
 	}
 	.patient-blood-type {
 		.row-fluid [class*="span"] {
@@ -862,7 +863,7 @@ footer {
 	}
 
 	.blood-type-selector-controls {
-		margin-top: 0.7em;
+		margin: 0;
 	}
 
 	.patient-blood-type-history {
@@ -876,6 +877,10 @@ footer {
 				color: #414142;
 			}
 		}
+	}
+
+	.blood-type-selector {
+		margin-top: 0.7em;
 	}
 }
 

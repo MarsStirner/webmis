@@ -587,12 +587,16 @@ define([
 
 		toggleEditState: function (enabled) {
 			if (enabled) {
+				this.$("td").first().prop("colspan", 2);
+				this.$("td").last().hide();
 				this.$(".current-blood-type").hide();
 				this.$(".blood-type-selector").show();
 				this.$(".blood-type").focus();
 
 				this.$el.css({"background-color": "whitesmoke"});
 			} else {
+				this.$("td").first().prop("colspan", 1);
+				this.$("td").last().show();
 				this.$el.css({"background-color": "white"});
 				this.render();
 			}

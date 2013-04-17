@@ -3,10 +3,16 @@
 		<% diagnoses.each(function (diagnosis) { %>
 			<% if (diagnosis.get("mkb").code) { %>
 				<h3><%= diagnosis.get("diagnosisKindLabel") %></h3>
-				<dl>
+				<p>
+					<%= diagnosis.get("mkb").code %> &mdash; <%= diagnosis.get("mkb").diagnosis %>
+				</p>
+				<p>
+					<%= diagnosis.get("doctor").name.raw %>
+				</p>
+				<!--<dl>
 					<dt><%= diagnosis.get("mkb").code %></dt>
 					<dd><%= diagnosis.get("mkb").diagnosis %></dd>
-				</dl>
+				</dl>-->
 			<% } %>
 		<% }); %>
 	</div>
