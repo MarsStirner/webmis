@@ -63,6 +63,11 @@ define([
 
 			this.collection.fetch({});
 
+			pubsub.on('instrumental-diagnostic:added', function () {
+				this.collection.fetch();
+			},this);
+
+
 
 		},
 
@@ -123,6 +128,11 @@ define([
 			this.paginator.delegateEvents();
 
 			return this;
+		},
+
+		cleanUp: function () {
+			this.collection.off(null, null, this);
+
 		}
 	});
 
