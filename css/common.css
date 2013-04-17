@@ -1919,19 +1919,24 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link {
   color: blue;
 }
 
-/* line 4, ../sass/modules/_instrumental.scss */
+/* line 3, ../sass/modules/_instrumental.scss */
 .instrumental-status-1 {
   color: #000;
 }
 
-/* line 8, ../sass/modules/_instrumental.scss */
+/* line 7, ../sass/modules/_instrumental.scss */
 .instrumental-status-2 {
   color: green;
 }
 
-/* line 12, ../sass/modules/_instrumental.scss */
+/* line 11, ../sass/modules/_instrumental.scss */
 .instrumental-status-3 {
   color: #bbb;
+}
+
+/* line 16, ../sass/modules/_instrumental.scss */
+.bottom-form .date .date-icon, .bottom-form .time .time-icon {
+  right: 0.6em;
 }
 
 /* line 11, ../sass/common.scss */

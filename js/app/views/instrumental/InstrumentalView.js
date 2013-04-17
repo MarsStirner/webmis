@@ -30,7 +30,7 @@ define([
 
 			this.collection.setParams({
 				sortingField: "plannedEndDate",
-				sortingMethod: "asc"
+				sortingMethod: "desc"
 			});
 
 			this.collection.extra = {
@@ -56,9 +56,9 @@ define([
 			this.depended(this.paginator);
 
 
-			this.collection.on("reset", function(collection) {
-				console.log('reset collection', collection);
-			}, this);
+			//this.collection.on("reset", function(collection) {
+			//	console.log('reset collection', collection);
+			//}, this);
 
 
 			this.collection.fetch({});

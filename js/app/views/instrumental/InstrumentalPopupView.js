@@ -48,21 +48,21 @@ InstrumentalResearchTemplate) {
 			});
 			this.depended(this.bfView);
 
-			// this.diagnosticTypes = new App.Collections.DiagnosticTypes({
-			// 	type: "inst"
-			// });
-			// this.diagnosticTypes.on("reset", this.onDiagnosticTypesLoaded, this);
-			// this.diagnosticTypes.fetch();
+			this.diagnosticTypes = new App.Collections.DiagnosticTypes({
+				type: "inst"
+			});
+			this.diagnosticTypes.on("reset", this.onDiagnosticTypesLoaded, this);
+			this.diagnosticTypes.fetch();
 
-			// var groups = new InstrumntalGroups();
-			// groups.on('reset', function(collection) {
-			// 	console.log(collection.toJSON());
-			// });
-			// groups.setParams({
-			// 	'filter[view]': 'tree'
-			// });
+			var groups = new InstrumntalGroups();
+			groups.on('reset', function(collection) {
+				console.log(collection.toJSON());
+			});
+			groups.setParams({
+				'filter[view]': 'tree'
+			});
 
-			// groups.fetch()
+			groups.fetch()
 
 		},
 
