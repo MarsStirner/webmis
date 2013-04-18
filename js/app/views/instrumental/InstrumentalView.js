@@ -94,21 +94,23 @@ define([
 		cancelDirection: function(model) {
 			console.log('cancelDirection', model);
 			pubsub.trigger('noty', {
-				text: 'функционал ещё не реализован',
-				type: 'alert'
+				text: 'функционал ещё не реализован'
 			});
 
 		},
 
 		editDirection: function(model) {
 			console.log('editDirection', model);
+			pubsub.trigger('noty', {
+				text: 'функционал ещё не реализован'
+			});
 			var testId = model.get('id');
 			//var test = тут загрузить данные теста
-			this.newEditPopup = new InstrumentalEditPopupView({
-				appeal: this.options.appeal//,
-				//model: test
-			});
-			this.newEditPopup.render().open();
+			// this.newEditPopup = new InstrumentalEditPopupView({
+			// 	appeal: this.options.appeal//,
+			// 	//model: test
+			// });
+			// this.newEditPopup.render().open();
 
 		},
 

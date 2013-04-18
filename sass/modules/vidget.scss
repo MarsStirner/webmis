@@ -3,17 +3,40 @@
 @import "icons";
 
 .DiagnosisVidget {
-    margin-bottom: 3em;
-    padding-top:2em;
-    h2 {
+	margin-bottom: 3em;
+	padding-top:2em;
+	h2 {
 		margin-bottom:0.8em;
 	}
-    .DatepickerHolder {
-    	width:23em;
-    	float:right;
-    	padding-bottom: 1.4em;
-    }
+	.DatepickerHolder {
+		width:23em;
+		float:right;
+		padding-bottom: 1.4em;
+	}
+
+	.ArrowCol {
+		border:none;
+		position:relative;
+		width:2.9%;
+	}
+
+	.col1 {
+		width:25%;
+	}
+
+	.col2 {
+		width:30%;
+	}
+	.col3 {
+		width:65%;
+	}
 }
+
+.instrumental-types .dynatree-connector{
+	width: 0;
+	height: 0;
+}
+
 .RefDiagVidget {
 	margin-bottom: 3em;
    // padding-top:2em;
@@ -52,27 +75,18 @@
 	}
 }
 
-.DiagnosisVidget .ArrowCol {
-	border:none;
-	position:relative;
-	width:2.9%;
-}
+
 .RefDiagVidget .ArrowCol {
 	border:none;
 	position:relative;
 	width:2.5%;
 }
 
-.DiagnosisVidget .LeftCol {
-	width:33%;
-}
  .RefDiagVidget  .LeftCol {
 	width:20%;
 }
 
-.DiagnosisVidget .RightCol {
-	width:63.5%;
-}
+
  .RefDiagVidget .RightCol{
  	 width:55%;
  }

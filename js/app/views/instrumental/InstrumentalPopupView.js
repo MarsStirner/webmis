@@ -48,231 +48,161 @@ InstrumentalResearchTemplate) {
 			});
 			this.depended(this.bfView);
 
-			// this.diagnosticTypes = new App.Collections.DiagnosticTypes({
-			// 	type: "inst"
-			// });
-			// this.diagnosticTypes.on("reset", this.onDiagnosticTypesLoaded, this);
-			// this.diagnosticTypes.fetch();
+			this.instrumntalGroups = new InstrumntalGroups();
+			this.instrumntalGroups.parents = true;
 
-
-
-			this.groups = new InstrumntalGroups();
-			// this.groups.on('reset', function(collection) {
-			// 	console.log(collection.toJSON());
-			// });
-			this.groups.setParams({
-				'filter[view]': 'tree'
-			});
+			this.instrumntalResearchs = new InstrumntalGroups();
 
 
 
 		},
 
-		loadResearch: function(code) {
-			console.log('loadResearch', code);
+		loadGroups: function(code) {
 			var view = this;
+			console.log('loadGroups', code);
 
-			var patientId = this.options.appeal.get('patient').get('id');
-			view.testTemplate = new InstrumentalResearchTemplate({}, {
-				code: code,
-				patientId: patientId
+			view.instrumntalGroups.setParams({
+				'filter[view]': 'tree'
+				//,'filter[code]': code
 			});
-			view.$el.closest(".ui-dialog").find('.save').button("disable");
 
-			view.testTemplate.fetch().done(function() {
-				view.$el.closest(".ui-dialog").find('.save').button("enable");
-				var treeData = view.getTree(view.testTemplate);
+			view.$instrumentalGroups.html('<li>Загружается...</li>');
+			view.instrumntalGroups.fetch().done(function() {
 
+				view.$instrumentalGroups.html('');
 
+				view.$instrumentalGroups.dynatree({
+					onClick: function(node) {
+						view.$instrumentalResearchs.html('');
+						view.testCode = false;
+						view.updateSaveButton();
 
-				view.$('.SelectAnalysis').dynatree({
-					generateIds: true,
-					noLink: true,
-					checkbox: true,
-					children: treeData
+						if (node.data.children && node.data.children.length > 0) {
+
+						} else {
+							view.$instrumentalResearchs.html('<li>Загружается...</li>');
+							view.loadResearchs(node.data.code);
+						}
+
+						view.updateSaveButton();
+					},
+					children: view.instrumntalGroups.toJSON()
 				});
 
-				if (!view.testTree) {
-					view.testTree = view.$('.SelectAnalysis').dynatree("getTree");
-
+				if (!view.groupsTree) {
+					view.groupsTree = view.$instrumentalGroups.dynatree("getTree");
 				}
-				view.testTree.reload();
-
-
+				view.groupsTree.reload();
 
 			});
 
 		},
 
-		getTree: function(testTemplate) {
-
-			//var tests = testTemplate.get('group')[0].attribute.concat(testTemplate.get('group')[1].attribute);
-
-			var tests = testTemplate.get('group')[1].attribute;
-			console.log('tests', tests);
-			var testList = [];
-
-			_.each(tests, function(test) {
-
-
-				if (true){//test.type == "String") {
-
-					var unselectable = false;
-					var select = true;
-
-					if (test.properties[0].value == 'false') {
-						unselectable = true;
-					} else {
-						unselectable = false;
-					}
-
-
-					testList.push({
-						title: test.name + ' - ' + test.type,
-						icon: false,
-						noCustomRender: true,
-						unselectable: unselectable,
-						select: select,
-						onCustomRender: function(node) {
-							var html = '';
-							html += "<a class='dynatree-title' href='#'>";
-							html += node.data.title;
-							html += "</a>";
-
-							return html;
-						}
-					});
-
-				}
-
+		loadResearchs: function(code) {
+			var view = this;
+			view.instrumntalResearchs.setParams({
+				'filter[code]': code
 			});
 
+			view.instrumntalResearchs.fetch().done(function() {
 
-			return testList;
+				view.$instrumentalResearchs.dynatree({
+					checkbox: true,
+					selectMode: 1,
+					onSelect: function(select, node) {
+						if (select) {
+							view.testCode = node.data.code;
+						} else {
+							view.testCode = false;
+						}
+						view.updateSaveButton();
+					},
+					onClick: function(node) {
+						//if (node.data.children && node.data.children.length > 0) {
+						//} else {
+						//	console.log('instrumntalResearch',node.data.code);
+						//}
+					},
+					children: view.instrumntalResearchs.toJSON()
+				});
+
+				if (!view.researchsTree) {
+					view.researchsTree = view.$instrumentalResearchs.dynatree("getTree");
+				}
+				view.researchsTree.reload();
+			});
+
+		},
+
+		updateSaveButton: function() {
+			var view = this;
+
+			if (view.testCode) {
+				view.$saveButton.button("enable");
+			} else {
+				view.$saveButton.button("disable");
+			}
+
 		},
 
 		onSave: function() {
 			var view = this;
+			if (!view.testCode) {
+				return;
+			}
+
+			var patientId = view.options.appeal.get('patient').get('id');
 			var appealId = this.options.appeal.get('id');
 
-			view.tests = new InstrumentalResearchs(null, {
-				appealId: appealId
-			});
-			console.log('onSave instrumental');
-
-			view.testTemplate.setProperty('finance', 'value', 5);
-			view.tests.add(view.testTemplate);
-			console.log('fetch test', arguments, view.tests, view.testTemplate);
-
-			view.tests.saveAll({
-				success: function(raw, status) {
-					console.log('success saveall', arguments);
-					view.close();
-					pubsub.trigger('instrumental-diagnostic:added');
-				}
+			view.testTemplate = new InstrumentalResearchTemplate({}, {
+				code: view.testCode,
+				patientId: patientId
 			});
 
+			view.testTemplate.fetch().done(function() {
+
+				view.testTemplate.setProperty('finance', 'value', 5);
+
+				view.$saveButton.button("disable");
+
+				view.tests = new InstrumentalResearchs(null, {
+					appealId: appealId
+				});
+
+
+				view.tests.add(view.testTemplate);
+
+				view.tests.saveAll({
+					success: function(raw, status) {
+						console.log('success saveall', arguments);
+						view.close();
+						pubsub.trigger('instrumental-diagnostic:added');
+					}
+				});
+			})
+
+
 
 		},
 
-		// test: function() {
-		// 	console.log(this);
-		// 	var patientId = this.options.appeal.get('patient').get('id');
-		// 	var appealId = this.options.appeal.get('id');
-		// 	var tests = new InstrumentalResearchs(null, {
-		// 		appealId: appealId
-		// 	});
-		// 	var testTemplate = new InstrumentalResearchTemplate({}, {
-		// 		code: '20.6.5',
-		// 		patientId: patientId
-		// 	});
-		// 	console.log('test', testTemplate);
 
-
-		// 	testTemplate.fetch().done(function() {
-		// 		testTemplate.setProperty('finance', 'value', 5)
-		// 		tests.add(testTemplate);
-		// 		console.log('fetch test', arguments, tests, testTemplate);
-
-		// 		tests.saveAll({
-		// 			success: function(raw, status) {
-		// 				console.log('success saveall', arguments);
-		// 			}
-		// 		});
-
-		// 	});
-		// },
-
-		onDiagnosticTypesLoaded: function() {
-			// this.$(".EventList").empty();
-			// this.diagnosticTypes.each(function(dType) {
-			// 	this.$(".EventList").append("<li data-code='" + dType.get("code") + "'><label>" + dType.get("name") + "</label></li>");
-			// }, this);
-		},
-
-		onRootTypeSelected: function(event) {
-			// var selectedCode = $(event.currentTarget).data("code");
-			// var selectedType = this.diagnosticTypes.find(function(type) {
-			// 	return type.get("code") == selectedCode;
-			// });
-			// console.log(selectedCode, this.diagnosticTypes, selectedType);
-
-			// selectedType.subTypes = new App.Collections.DiagnosticTypes({
-			// 	type: "inst"
-			// });
-
-			// selectedType.subTypes.setParams({
-			// 	filter: {
-			// 		code: selectedCode
-			// 	}
-			// });
-
-			// this.selectedSubTypes = selectedType.subTypes;
-
-			// selectedType.subTypes.on("reset", this.onSubTypesLoaded, this);
-			// selectedType.subTypes.fetch();
-		},
-
-		onSubTypesLoaded: function() {
-			// this.$(".SelectAnalysis").empty();
-			// this.selectedSubTypes.each(function(dType) {
-			// 	// TODO: Исправить
-			// 	this.$(".SelectAnalysis").append("<li data-code='" + dType.get("code") + "'><label>" + dType.get("name") + "</label></li>");
-			// }, this);
-		},
-
-		onSelectAnalysis: function(e) {
-			// var selectedCode = $(event.currentTarget).data("code");
-			// console.log(selectedCode, event, event.currentTarget);
-
-		},
 
 		render: function() {
 			var view = this;
+			view.$instrumentalGroups = view.$('.instrumental-groups');
+			view.$instrumentalResearchs = view.$('.instrumental-researchs');
+			view.$saveButton = this.$el.closest(".ui-dialog").find('.save');
 
+			view.loadGroups();
 
-			view.groups.fetch().done(function() {
-				view.$('.EventList').dynatree({
-					onClick: function(node) {
-						if (node.data.children && node.data.children.length > 0) {
-							//console.log("группа" + node.data.code);
-							//pubsub.trigger('group:click', node.data.code);
-						} else {
-							view.loadResearch(node.data.code);
-							//console.log("исследование " + node.data.code);
-							//pubsub.trigger('parent-group:click');
-						}
-
-					},
-					children: view.groups.toJSON()
-				});
-
+			this.$("#dp").datepicker({
+				minDate: new Date()
 			});
 
-			this.$("#dp").datepicker();
-			this.$el.closest(".ui-dialog").find('.save').button("disable");
-
+			view.$saveButton.button("disable");
 			this.renderNested(this.bfView, ".bottom-form");
+
+
 
 			return this;
 		}
