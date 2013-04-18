@@ -9,6 +9,7 @@ define([
 	"text!templates/appeal/edit/pages/monitoring/patient-blood-type-row.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/patient-blood-type-history-row.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/signal-info.tmpl",
+	"text!templates/appeal/edit/pages/monitoring/assign-exec-person-dialog.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/monitoring-info.tmpl",
 	"text!templates/appeal/edit/pages/monitoring/monitoring-info-item.tmpl",
@@ -19,6 +20,7 @@ define([
 
 	"collections/moves",
 	"collections/dictionary-values",
+	"collections/doctors"
 ], function (
 	monitoringTmpl,
 	headerTmpl,
@@ -26,6 +28,7 @@ define([
 	patientBloodTypesRowTmpl,
 	patientBloodTypeHistoryRowTmpl,
 	signalInfoTmpl,
+	assignExecPersonDialogTmpl,
 	patientDiagnosesListTmpl,
 	monitoringInfoGridTmpl,
 	monitoringInfoItemTmpl,
@@ -35,7 +38,8 @@ define([
 	Card,
 
 	Moves,
-	DictionaryValues
+	DictionaryValues,
+	Doctors
 	) {
 
 	/**
@@ -256,6 +260,39 @@ define([
 		}
 	});
 
+	/**
+	 * Облегчённая коллекция персонала ЛПУ (без bb.relational)
+	 * @type {*}
+	 */
+	var Persons = Collection.extend({
+		model: Backbone.Model.extend({}),
+
+		url: function () {
+			return DATA_PATH + "dir/persons";
+		}
+	});
+
+	var AppealExecPerson = Backbone.Model.extend({
+		idAttribute: "id",
+
+		sync: function (method, model, options) {
+			options.dataType = "jsonp";
+			options.url = model.url();
+			options.contentType = 'application/json';
+
+			/*if (method == "create" || method == "update") {
+				options.data = JSON.stringify({
+					requestData: {},
+					data: model.toJSON()
+				});
+			}*/
+			return Backbone.sync(method, model, options);
+		},
+
+		url: function () {
+			return DATA_PATH + "appeals/" + appeal.get("id") + "/execPerson"
+		}
+	});
 
 	// Лэйаут
 	//////////////////////////////////////////////////////
@@ -657,6 +694,18 @@ define([
 	Monitoring.Views.SignalInfo = Monitoring.Views.BaseView.extend({
 		template: signalInfoTmpl,
 
+		data: function () {
+			return {
+				lastMove: this.moves.last(),
+				appeal: appealJSON,
+				appealExtraData: Core.Data.appealExtraData.toJSON()
+			};
+		},
+
+		events: {
+			"click .assign-exec-person": "onAssignExecPersonClick"
+		},
+
 		initialize: function () {
 			Monitoring.Views.BaseView.prototype.initialize.apply(this);
 
@@ -664,14 +713,160 @@ define([
 			this.moves.appealId = appeal.get("id");
 			console.log("fetching moves");
 			this.moves.on("reset", this.render, this).fetch();
+
+			Core.Data.appealExtraData.get("execPerson").on("change:doctor", this.onExecPersonDoctorChange, this);
 		},
 
-		data: function () {
+		onAssignExecPersonClick: function (event) {
+			event.preventDefault();
+			this.openExecPersonAssignmentDialog();
+		},
+
+		onExecPersonDoctorChange: function () {
+			this.render();
+		},
+
+		openExecPersonAssignmentDialog: function () {
+			new Monitoring.Views.ExecPersonAssignmentDialog().render().open();
+		}
+	});
+
+	/**
+	 * Диалог назначения врача
+	 * @type {*}
+	 */
+	Monitoring.Views.ExecPersonAssignmentDialog = Monitoring.Views.BaseView.extend({
+		template: assignExecPersonDialogTmpl,
+
+		/*data: function () {
 			return {
-				lastMove: this.moves.last(),
-				appeal: appealJSON,
-				appealExtraData: Core.Data.appealExtraData.toJSON()
+				allPersons: this.allPersons
 			};
+		},*/
+
+		events: {
+			"change input[name='filter-persons']": "onFilterPersonsChange",
+			"click .assign-on-me": "onAssignOnMeClick"
+		},
+
+		initialize: function (options) {
+			Monitoring.Views.BaseView.prototype.initialize.apply(this);
+			_.bindAll(this);
+
+			//Все врачи
+			this.allPersons = new Persons();
+			this.allPersons.setParams({
+				limit: 999
+			});
+			this.allPersons.on("reset", this.addAllPersons, this).fetch();
+
+			//Врачи отделения
+			this.departmentPersons = new Persons();
+			this.departmentPersons.setParams({
+				limit: 999,
+				filter: {
+					departmentId: Core.Data.appealExtraData.get("department").id
+				}
+			});
+			this.departmentPersons.on("reset", this.addDepartmentPersons, this).fetch();
+		},
+
+		open: function () {
+			this.$el.dialog({
+				title: "Назначение лечащего врача",
+				modal: true,
+				width: "50em",
+				dialogClass: "webmis",
+				resizable: false,
+				buttons: [
+					{
+						text: "Назначить",
+						click: this.assignExecPerson,
+						"class": "button-color-green"
+					},
+					{
+						text: "Отмена",
+						click: this.close
+					}
+				],
+				close: this.close
+			});
+
+			this.$el.css({"min-height": "11em"});
+		},
+
+		close: function () {
+			this.off(null, null, this).remove();
+		},
+
+		onFilterPersonsChange: function (event) {
+			this.$(".all-persons,.department-persons").select2("val", "");
+
+			var selectedFilter = this.getSelectedFilter();
+
+			if (selectedFilter === "all") {
+				this.$(".all-persons.select2-container").show();
+				this.$(".department-persons.select2-container").hide();
+			} else if (selectedFilter === "dep") {
+				this.$(".all-persons.select2-container").hide();
+				this.$(".department-persons.select2-container").show();
+			}
+		},
+
+		onAssignOnMeClick: function (event) {
+			event.preventDefault();
+
+			var currentUserId = Core.Cookies.get("userId");
+
+			this.$("input[name='filter-persons'][value='all']").prop("checked", true).change();
+			this.$(".all-persons").select2("val", currentUserId).change();
+		},
+
+		getSelectedFilter: function () {
+			return this.$("input[name='filter-persons']:checked").val();
+		},
+
+		assignExecPerson: function () {
+			var selectedFilter = this.getSelectedFilter();
+
+			var selectedExecPersonId;
+
+			if (selectedFilter === "all") {
+				selectedExecPersonId = this.$(".all-persons").select2("val");
+			} else if (selectedFilter === "dep") {
+				selectedExecPersonId = this.$(".department-persons").select2("val");
+			}
+
+			if (selectedExecPersonId) {
+				var appealExecPerson = new AppealExecPerson();
+				appealExecPerson.save({id: selectedExecPersonId});
+
+				Core.Data.appealExtraData.get("execPerson").set({doctor: this.allPersons.get(selectedExecPersonId).toJSON()});
+
+				this.close();
+			}
+		},
+
+		addAllPersons: function () {
+			this.$(".all-persons").append(this.allPersons.map(function (person) {
+				return "<option value='"+person.get('id')+"'>"+person.get("name").raw+"</option>";
+			}));
+		},
+
+		addDepartmentPersons: function () {
+			this.$(".department-persons").append(this.departmentPersons.map(function (person) {
+				return "<option value='"+person.get('id')+"'>"+person.get("name").raw+"</option>";
+			}));
+		},
+
+		render: function () {
+			Monitoring.Views.BaseView.prototype.render.apply(this);
+
+			this.$("#filter-persons-container").buttonset();
+			this.$(".all-persons, .department-persons").select2();
+			this.$(".all-persons").hide();
+
+			return this;
 		}
 	});
 

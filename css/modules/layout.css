@@ -727,8 +727,8 @@ footer a {
 }
 
 /* line 607, ../../sass/modules/layout.scss */
-.ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title {
-  font-size: 1.2em;
+.ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title, .ui-tabs-anchor {
+  font-size: 1.2em !important;
 }
 
 /* line 613, ../../sass/modules/layout.scss */
@@ -973,7 +973,7 @@ footer a {
 .monitoring-layout .blood-type {
   font-size: 100%;
   padding: 4px;
-  margin: .45em 0 0 1em;
+  margin: .2em 0 0 1em;
   width: 100%;
 }
 /* line 852, ../../sass/modules/layout.scss */
@@ -982,31 +982,35 @@ footer a {
 }
 /* line 856, ../../sass/modules/layout.scss */
 .monitoring-layout .ui-button-text {
-  font-size: 0.95em;
+  font-size: 0.8em !important;
 }
 /* line 860, ../../sass/modules/layout.scss */
 .monitoring-layout .cancel-blood {
-  padding-top: .8em;
+  margin-top: .2em;
+}
+/* line 864, ../../sass/modules/layout.scss */
+.monitoring-layout .cancel-blood {
+  padding-top: .4em;
   padding-left: .5em;
 }
-/* line 865, ../../sass/modules/layout.scss */
+/* line 869, ../../sass/modules/layout.scss */
 .monitoring-layout .blood-type-selector-controls {
   margin: 0;
 }
-/* line 870, ../../sass/modules/layout.scss */
+/* line 874, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history td:first-child {
   padding-left: 1em;
 }
-/* line 873, ../../sass/modules/layout.scss */
+/* line 877, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history ul {
   margin-top: 1em;
   padding-left: 1em;
 }
-/* line 876, ../../sass/modules/layout.scss */
+/* line 880, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history ul li span.blood-date {
   color: #414142;
 }
-/* line 882, ../../sass/modules/layout.scss */
+/* line 886, ../../sass/modules/layout.scss */
 .monitoring-layout .blood-type-selector {
   margin-top: 0.7em;
 }

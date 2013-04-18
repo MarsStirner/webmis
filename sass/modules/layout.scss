@@ -604,8 +604,8 @@ footer {
 	background:#FF9900;
 }
 
-.ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title {
-	font-size: 1.2em;
+.ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title, .ui-tabs-anchor {
+	font-size: 1.2em !important;
 }
 
 // TESTING
@@ -845,7 +845,7 @@ footer {
 	.blood-type {
 		font-size: 100%;
 		padding: 4px;
-		margin: .45em 0 0 1em;
+		margin: .2em 0 0 1em;
 		width: 100%;
 	}
 	.patient-blood-type {
@@ -854,11 +854,15 @@ footer {
 		}
 	}
 	.ui-button-text {
-		font-size: 0.95em;
+		font-size: 0.8em !important;
 	}
 
 	.cancel-blood {
-		padding-top: .8em;
+		margin-top: .2em;
+	}
+
+	.cancel-blood {
+		padding-top: .4em;
 		padding-left: .5em;
 	}
 

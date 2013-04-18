@@ -226,18 +226,11 @@ define([
 		},
 
 		save: function (event) {
-			if (!this.examEndDate.get("value")) {
-				this.examEndDate.set("value", new Date().getTime());
-			}
-
 			var datesValid = (this.examBeginDate && this.examEndDate && this.examEndDate.get("value")) ?
 				parseInt(this.examBeginDate.get("value")) < parseInt(this.examEndDate.get("value")) :
 				true;
 
-			this.$("#exam-begin-date, #exam-end-date")
-				.closest(".DateTime")
-				.find(".DatePeriod, .HourPicker")
-				.toggleClass("WrongField", !datesValid);
+			this.$("#exam-begin-date, #exam-end-date").closest(".DateTime").find(".DatePeriod, .HourPicker").toggleClass("WrongField", !datesValid);
 
 			if (!datesValid) {
 				$('html, body').animate({ scrollTop: this.$("#exam-begin-date").offset().top - 30 }, 'fast');

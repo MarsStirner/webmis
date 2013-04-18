@@ -11,5 +11,5 @@ define(["models/doctor"], function ()
 		}
 	});
 
-	//return App.Collections.Doctors;
+	return App.Collections.Doctors;
 } );
