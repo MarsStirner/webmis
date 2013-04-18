@@ -4,9 +4,14 @@ define(["text!templates/appeal/edit/popups/instrumental-bf.tmpl",
 
 	var InstrumentalPopupBottomForm = View.extend({
 		template: tmpl,
-		initialize: function() {
+		initialize: function(options) {
 
-			this.appealDiagnosis = this.options.appeal.getDiagnosis();
+			var appealFinanceId = options.appeal.get('appealType').get('finance').get('id');
+			if(options.model){
+				console.log(options.model)
+			}
+
+			this.appealDiagnosis = options.appeal.getDiagnosis();
 			this.mkb = new MKBView();
 			this.depended(this.mkb);
 		},

@@ -1,4 +1,3 @@
-
 define([
 	"text!templates/appeal/edit/popups/instrumental-edit.tmpl",
 	"mixins/PopupMixin",
@@ -7,8 +6,7 @@ define([
 
 	return View.extend({
 		template: tmpl,
-		events: {
-		},
+		events: {},
 
 		initialize: function(options) {
 			//this.constructor.__super__.initialize.apply(this, options);
@@ -25,7 +23,11 @@ define([
 				'doctor': this.doctor
 			};
 
-			this.bfView = new BFView({data: this.data, appeal: this.options.appeal});
+			this.bfView = new BFView({
+				data: this.data,
+				appeal: this.options.appeal,
+				model: this.options.model
+			});
 			this.depended(this.bfView);
 
 		},
