@@ -423,25 +423,49 @@ a.Button:active i {
   float: right;
   padding-bottom: 1.4em;
 }
-
 /* line 17, ../../sass/modules/vidget.scss */
+.DiagnosisVidget .ArrowCol {
+  border: none;
+  position: relative;
+  width: 2.9%;
+}
+/* line 23, ../../sass/modules/vidget.scss */
+.DiagnosisVidget .col1 {
+  width: 25%;
+}
+/* line 27, ../../sass/modules/vidget.scss */
+.DiagnosisVidget .col2 {
+  width: 30%;
+}
+/* line 30, ../../sass/modules/vidget.scss */
+.DiagnosisVidget .col3 {
+  width: 65%;
+}
+
+/* line 35, ../../sass/modules/vidget.scss */
+.instrumental-types .dynatree-connector {
+  width: 0;
+  height: 0;
+}
+
+/* line 40, ../../sass/modules/vidget.scss */
 .RefDiagVidget {
   margin-bottom: 3em;
 }
 
-/* line 22, ../../sass/modules/vidget.scss */
+/* line 45, ../../sass/modules/vidget.scss */
 .VidgetLine {
   margin-right: 25em;
   position: relative;
   padding-left: 0.3em;
 }
 
-/* line 27, ../../sass/modules/vidget.scss */
+/* line 50, ../../sass/modules/vidget.scss */
 .RefDiagVidget .VidgetLine {
   margin-right: 0;
 }
 
-/* line 31, ../../sass/modules/vidget.scss */
+/* line 54, ../../sass/modules/vidget.scss */
 .VidgetCol {
   display: inline-block;
   vertical-align: top;
@@ -454,181 +478,164 @@ a.Button:active i {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-/* line 42, ../../sass/modules/vidget.scss */
+/* line 65, ../../sass/modules/vidget.scss */
 .VidgetCol .EventList.NoCheck
 input {
   display: none;
 }
-/* line 45, ../../sass/modules/vidget.scss */
+/* line 68, ../../sass/modules/vidget.scss */
 .VidgetCol .EventList label {
   padding-bottom: 0.1em;
 }
-/* line 48, ../../sass/modules/vidget.scss */
+/* line 71, ../../sass/modules/vidget.scss */
 .VidgetCol .EventList .Label {
   padding-bottom: 0.1em;
 }
 
-/* line 55, ../../sass/modules/vidget.scss */
-.DiagnosisVidget .ArrowCol {
-  border: none;
-  position: relative;
-  width: 2.9%;
-}
-
-/* line 60, ../../sass/modules/vidget.scss */
+/* line 79, ../../sass/modules/vidget.scss */
 .RefDiagVidget .ArrowCol {
   border: none;
   position: relative;
   width: 2.5%;
 }
 
-/* line 66, ../../sass/modules/vidget.scss */
-.DiagnosisVidget .LeftCol {
-  width: 33%;
-}
-
-/* line 69, ../../sass/modules/vidget.scss */
+/* line 85, ../../sass/modules/vidget.scss */
 .RefDiagVidget .LeftCol {
   width: 20%;
 }
 
-/* line 73, ../../sass/modules/vidget.scss */
-.DiagnosisVidget .RightCol {
-  width: 63.5%;
-}
-
-/* line 76, ../../sass/modules/vidget.scss */
+/* line 90, ../../sass/modules/vidget.scss */
 .RefDiagVidget .RightCol {
   width: 55%;
 }
 
-/* line 81, ../../sass/modules/vidget.scss */
+/* line 95, ../../sass/modules/vidget.scss */
 .ArrowCol > i {
   margin-left: -0.4em;
 }
 
-/* line 88, ../../sass/modules/vidget.scss */
+/* line 102, ../../sass/modules/vidget.scss */
 .SelectAnalysis {
   background: url(../../images/separator.png) repeat-y 83% top;
 }
-/* line 90, ../../sass/modules/vidget.scss */
+/* line 104, ../../sass/modules/vidget.scss */
 .SelectAnalysis li {
   padding-left: 0.5em;
 }
-/* line 92, ../../sass/modules/vidget.scss */
+/* line 106, ../../sass/modules/vidget.scss */
 .SelectAnalysis li label {
   color: #000;
   padding-top: 0.2em;
   padding-bottom: 0.1em;
   margin-bottom: 1px;
 }
-/* line 98, ../../sass/modules/vidget.scss */
+/* line 112, ../../sass/modules/vidget.scss */
 .SelectAnalysis li .Label {
   color: #000;
   padding-top: 0.2em;
   padding-bottom: 0.1em;
   margin-bottom: 1px;
 }
-/* line 105, ../../sass/modules/vidget.scss */
+/* line 119, ../../sass/modules/vidget.scss */
 .SelectAnalysis > li {
   background: url(../../images/separator.png) repeat-y 91% top;
 }
-/* line 108, ../../sass/modules/vidget.scss */
+/* line 122, ../../sass/modules/vidget.scss */
 .SelectAnalysis .DDList {
   margin-top: 0.1em;
   vertical-align: top;
 }
-/* line 111, ../../sass/modules/vidget.scss */
+/* line 125, ../../sass/modules/vidget.scss */
 .SelectAnalysis .DDList .Actions {
   font-size: 1.1em;
   color: #000;
   border-bottom: 1px dashed black;
 }
-/* line 115, ../../sass/modules/vidget.scss */
+/* line 129, ../../sass/modules/vidget.scss */
 .SelectAnalysis .DDList .Actions:hover {
   border-bottom: 1px dashed transparent;
 }
-/* line 119, ../../sass/modules/vidget.scss */
+/* line 133, ../../sass/modules/vidget.scss */
 .SelectAnalysis .DDList .Content {
   font-size: 1.3em;
   min-width: 5em;
 }
 
-/* line 126, ../../sass/modules/vidget.scss */
+/* line 140, ../../sass/modules/vidget.scss */
 .VidgetSummary {
   border-top: 1px solid #d9d9d9;
   padding-top: 1em;
 }
-/* line 129, ../../sass/modules/vidget.scss */
+/* line 143, ../../sass/modules/vidget.scss */
 .VidgetSummary h3 {
   font-size: 1.2em;
   margin-bottom: 0.5em;
   color: #666666;
 }
 
-/* line 135, ../../sass/modules/vidget.scss */
+/* line 149, ../../sass/modules/vidget.scss */
 .SummaryList {
   padding-left: 0.5em;
   margin-bottom: 2em;
 }
-/* line 138, ../../sass/modules/vidget.scss */
+/* line 152, ../../sass/modules/vidget.scss */
 .SummaryList > li {
   font-size: 1.3em;
   margin-bottom: 0.4em;
 }
 
-/* line 144, ../../sass/modules/vidget.scss */
+/* line 158, ../../sass/modules/vidget.scss */
 .DatepickerHolder .Warning {
   font-size: 1.3em;
   padding-top: 1em;
   min-height: 2.4em;
 }
 
-/* line 149, ../../sass/modules/vidget.scss */
+/* line 163, ../../sass/modules/vidget.scss */
 .ReferralHeader {
   font-size: 1.3em;
   padding-bottom: 1.4em;
 }
 
-/* line 154, ../../sass/modules/vidget.scss */
+/* line 168, ../../sass/modules/vidget.scss */
 .InlineNav li {
   display: inline-block;
 }
-/* line 156, ../../sass/modules/vidget.scss */
+/* line 170, ../../sass/modules/vidget.scss */
 .InlineNav li a {
   display: block;
   border-radius: 0.3em;
   padding: 0.4em 0.8em;
 }
 
-/* line 163, ../../sass/modules/vidget.scss */
+/* line 177, ../../sass/modules/vidget.scss */
 .InlineNav li.Active a {
   background: none repeat scroll 0 0 #118cda;
   color: #FFFFFF;
   text-decoration: none;
 }
 
-/* line 168, ../../sass/modules/vidget.scss */
+/* line 182, ../../sass/modules/vidget.scss */
 .SelectTime {
   padding-top: 1.4em;
 }
-/* line 170, ../../sass/modules/vidget.scss */
+/* line 184, ../../sass/modules/vidget.scss */
 .SelectTime .Col {
   float: left;
   width: 50%;
 }
-/* line 173, ../../sass/modules/vidget.scss */
+/* line 187, ../../sass/modules/vidget.scss */
 .SelectTime .Col label {
   margin-bottom: 0.35em;
 }
 
-/* line 178, ../../sass/modules/vidget.scss */
+/* line 192, ../../sass/modules/vidget.scss */
 .RefferalWidget {
   border-top: 1px solid #d9d9d9;
   padding-top: 3em;
   margin-bottom: 3em;
 }
-/* line 182, ../../sass/modules/vidget.scss */
+/* line 196, ../../sass/modules/vidget.scss */
 .RefferalWidget .DatepickerHolder {
   float: none;
   width: 23em;
@@ -636,41 +643,41 @@ input {
   vertical-align: top;
 }
 
-/* line 190, ../../sass/modules/vidget.scss */
+/* line 204, ../../sass/modules/vidget.scss */
 .RefferalForm {
   padding-left: 3em;
   display: table-cell;
   vertical-align: top;
 }
-/* line 194, ../../sass/modules/vidget.scss */
+/* line 208, ../../sass/modules/vidget.scss */
 .RefferalForm .Col {
   width: auto;
   padding-right: 5em;
 }
-/* line 198, ../../sass/modules/vidget.scss */
+/* line 212, ../../sass/modules/vidget.scss */
 .RefferalForm .SelectTime {
   padding-top: 0;
   padding-bottom: 1em;
 }
 
-/* line 204, ../../sass/modules/vidget.scss */
+/* line 218, ../../sass/modules/vidget.scss */
 .Urgently {
   padding-bottom: 1em;
 }
 
-/* line 208, ../../sass/modules/vidget.scss */
+/* line 222, ../../sass/modules/vidget.scss */
 .FreeDoctors h4 {
   font-size: 1.1em;
   color: #6D6D71;
   margin-bottom: 0.5em;
 }
-/* line 213, ../../sass/modules/vidget.scss */
+/* line 227, ../../sass/modules/vidget.scss */
 .FreeDoctors .InlineNav {
   font-size: 1.3em;
   padding-left: 1em;
 }
 
-/* line 219, ../../sass/modules/vidget.scss */
+/* line 233, ../../sass/modules/vidget.scss */
 .AnalisLine {
   zoom: 1;
   padding: 0.1em 0 0.1em 0.5em;
@@ -684,34 +691,34 @@ input {
   height: 0;
   visibility: hidden;
 }
-/* line 223, ../../sass/modules/vidget.scss */
+/* line 237, ../../sass/modules/vidget.scss */
 .AnalisLine.Selected {
   background: #DFEFFC;
 }
-/* line 226, ../../sass/modules/vidget.scss */
+/* line 240, ../../sass/modules/vidget.scss */
 .AnalisLine .AnalisName {
   float: left;
   padding-top: 0.2em;
 }
-/* line 230, ../../sass/modules/vidget.scss */
+/* line 244, ../../sass/modules/vidget.scss */
 .AnalisLine .AnalisQuant {
   float: right;
   letter-spacing: -0.3em;
   width: 18%;
   text-align: center;
 }
-/* line 235, ../../sass/modules/vidget.scss */
+/* line 249, ../../sass/modules/vidget.scss */
 .AnalisLine .AnalisQuant span {
   display: inline-block;
   vertical-align: middle;
   width: 46%;
   padding: 0 2%;
 }
-/* line 241, ../../sass/modules/vidget.scss */
+/* line 255, ../../sass/modules/vidget.scss */
 .AnalisLine .AnalisQuant input[type="text"] {
   height: 1.75em;
 }
-/* line 244, ../../sass/modules/vidget.scss */
+/* line 258, ../../sass/modules/vidget.scss */
 .AnalisLine .AnalisQuant input[type="checkbox"] {
   top: 0;
 }

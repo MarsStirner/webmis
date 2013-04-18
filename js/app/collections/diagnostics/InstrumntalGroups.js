@@ -6,6 +6,12 @@ function(LabGroup) {
 
 		model: LabGroup,
 
+		// initialize: function(models, options){
+		//	console.log('init instrumentalgroup', options, arguments);
+		// 	//this.parents = options.parents;
+
+		// },
+
 		url: function() {
 			var path = DATA_PATH + "dir/actionTypes/instrumental/";
 
@@ -61,7 +67,11 @@ function(LabGroup) {
 			var tree = [];
 
 			tree = this.convertToTree(raw.data);
-			//var parents = this.onlyParents(tree);
+			console.log('this.parents',this.parents);
+			if(this.parents){
+				tree = this.onlyParents(tree);
+			}
+			
 
 			return tree;
 		}

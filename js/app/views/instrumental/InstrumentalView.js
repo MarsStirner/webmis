@@ -30,7 +30,7 @@ define([
 
 			this.collection.setParams({
 				sortingField: "plannedEndDate",
-				sortingMethod: "asc"
+				sortingMethod: "desc"
 			});
 
 			this.collection.extra = {
@@ -56,12 +56,17 @@ define([
 			this.depended(this.paginator);
 
 
-			this.collection.on("reset", function(collection) {
-				console.log('reset collection', collection);
-			}, this);
+			//this.collection.on("reset", function(collection) {
+			//	console.log('reset collection', collection);
+			//}, this);
 
 
 			this.collection.fetch({});
+
+			pubsub.on('instrumental-diagnostic:added', function () {
+				this.collection.fetch();
+			},this);
+
 
 
 		},
@@ -89,21 +94,23 @@ define([
 		cancelDirection: function(model) {
 			console.log('cancelDirection', model);
 			pubsub.trigger('noty', {
-				text: 'функционал ещё не реализован',
-				type: 'alert'
+				text: 'функционал ещё не реализован'
 			});
 
 		},
 
 		editDirection: function(model) {
 			console.log('editDirection', model);
+			pubsub.trigger('noty', {
+				text: 'функционал ещё не реализован'
+			});
 			var testId = model.get('id');
 			//var test = тут загрузить данные теста
-			this.newEditPopup = new InstrumentalEditPopupView({
-				appeal: this.options.appeal//,
-				//model: test
-			});
-			this.newEditPopup.render().open();
+			// this.newEditPopup = new InstrumentalEditPopupView({
+			// 	appeal: this.options.appeal//,
+			// 	//model: test
+			// });
+			// this.newEditPopup.render().open();
 
 		},
 
@@ -123,6 +130,11 @@ define([
 			this.paginator.delegateEvents();
 
 			return this;
+		},
+
+		cleanUp: function () {
+			this.collection.off(null, null, this);
+
 		}
 	});
 
