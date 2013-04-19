@@ -117,12 +117,12 @@ InstrumentalResearchTemplate) {
 						}
 						view.updateSaveButton();
 					},
-					onClick: function(node) {
+					// onClick: function(node) {
 						//if (node.data.children && node.data.children.length > 0) {
 						//} else {
 						//	console.log('instrumntalResearch',node.data.code);
 						//}
-					},
+					// },
 					children: view.instrumntalResearchs.toJSON()
 				});
 
@@ -167,23 +167,25 @@ InstrumentalResearchTemplate) {
 				//doctorLastName - фамилия врача назначившего исследование
 				view.testTemplate.setProperty('doctorLastName', 'value', view.doctor.name.last);
 
+				//assessmentDate - дата создания направления на исследование
+				var assessmentDate = moment(view.$assessmentDatepicker.datepicker("getDate")).format('YYYY-MM-DD');
+				var assessmentTime = view.$assessmentTimepicker.val() + ':00';
+				view.testTemplate.setProperty('assessmentDate', 'value', assessmentDate + ' ' + assessmentTime);
 
-
-				// var startDate = moment(view.$startDateInput.datepicker("getDate")).format('YYYY-MM-DD');
-				// var startTime = view.$startTimeInput.val() + ':00';
-				// //assessmentDate - дата создания направления на исследование
-				// view.testTemplate.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
-
-				var pDate = moment(view.$datepicker.datepicker("getDate")).format('YYYY-MM-DD');
-				var pTime = view.$timepicker.val() + ':00';
 				//plannedEndDate - планируемая дата выполнения иследования
-				view.testTemplate.setProperty('plannedEndDate', 'value', pDate + ' ' +  pTime);
+				var plannedDate = moment(view.$plannedDatepicker.datepicker("getDate")).format('YYYY-MM-DD');
+				var plannedTime = view.$plannedTimepicker.val() + ':00';
+				view.testTemplate.setProperty('plannedEndDate', 'value', plannedDate + ' ' +  plannedTime);
 
 				//finance - идентификатор типа оплаты
-				view.testTemplate.setProperty('finance', 'value', $($('#finance option:selected')[0]).val());
+				var financeId = $($('#finance option:selected')[0]).val()
+				view.testTemplate.setProperty('finance', 'value', financeId);
+
 				//urgent - срочность
-				//view.testTemplate.setProperty('urgent', 'value', true);
-				//
+				var urgent = $('input[name=urgent]:checked').prop('checked');
+				view.testTemplate.setProperty('urgent', 'value', urgent);
+
+				//идентификатор направительного диагноза
 				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
 				view.testTemplate.setProperty('Направительный диагноз', 'valueId', mkbId);
 
@@ -213,36 +215,39 @@ InstrumentalResearchTemplate) {
 
 		render: function() {
 			var view = this;
+			view.renderNested(this.bfView, ".bottom-form");
+
 			view.$instrumentalGroups = view.$('.instrumental-groups');
 			view.$instrumentalResearchs = view.$('.instrumental-researchs');
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
-			view.$datepicker = view.$("#dp");
-			view.$timepicker = view.$("#tp");
 
-			view.$startDateInput = $('#start-date');
-			view.$startTimeInput = $('#start-time');
+			view.$plannedDatepicker = view.$("#dp");
+			view.$plannedTimepicker = view.$("#tp");
+
+			view.$assessmentDatepicker = $('#start-date');
+			view.$assessmentTimepicker = $('#start-time');
 
 			view.loadGroups();
 
-			view.$datepicker.datepicker({
+			view.$plannedDatepicker.datepicker({
 				minDate: new Date(),
 				onSelect: function(dateText, inst) {
 					var day = moment(view.$(this).datepicker("getDate")).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
-					var hour = view.$timepicker.timepicker('getHour');
+					var hour = view.$plannedTimepicker.timepicker('getHour');
 					//если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
 					if (day.diff(currentDay, 'days') === 0) {
 						if (hour <= currentHour) {
-							view.$timepicker.val('');
+							view.$plannedTimepicker.val('');
 						}
 					}
 				}
 			});
 
-			view.$timepicker.timepicker({
+			view.$plannedTimepicker.timepicker({
 				onHourShow: function(hour) {
-					var day = moment(view.$datepicker.datepicker("getDate")).startOf('day');
+					var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
 					//если выбран текущий день, то часы меньше текущего нельзя выбрать
@@ -255,7 +260,7 @@ InstrumentalResearchTemplate) {
 					return true;
 				},
 				onMinuteShow: function(hour, minute) {
-					var day = moment(view.$datepicker.datepicker("getDate")).startOf('day');
+					var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
 					var currentMinute = moment().minute();
@@ -273,7 +278,7 @@ InstrumentalResearchTemplate) {
 			});
 
 			view.$saveButton.button("disable");
-			view.renderNested(this.bfView, ".bottom-form");
+
 
 
 
