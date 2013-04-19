@@ -206,7 +206,7 @@ InstrumentalResearchTemplate) {
 					var hour = view.$timepicker.timepicker('getHour');
 					//если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
 					if (day.diff(currentDay, 'days') === 0) {
-						if (hour < currentHour) {
+						if (hour <= currentHour) {
 							view.$timepicker.val('');
 						}
 					}
@@ -234,7 +234,7 @@ InstrumentalResearchTemplate) {
 					var currentMinute = moment().minute();
 					//если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
 					if (day.diff(currentDay, 'days') === 0) {
-						if (hour === currentHour && minute < currentMinute) {
+						if (hour === currentHour && minute <= currentMinute) {
 							return false;
 						}
 					}
