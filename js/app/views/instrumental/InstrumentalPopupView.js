@@ -160,8 +160,32 @@ InstrumentalResearchTemplate) {
 			});
 
 			view.testTemplate.fetch().done(function() {
+				//doctorFirstName - имя врача назначившего исследование
+				view.testTemplate.setProperty('doctorFirstName', 'value',  view.doctor.name.first);
+				//doctorMiddleName - отчество врача назначившего исследование
+				view.testTemplate.setProperty('doctorMiddleName', 'value', '');
+				//doctorLastName - фамилия врача назначившего исследование
+				view.testTemplate.setProperty('doctorLastName', 'value', view.doctor.name.last);
 
-				view.testTemplate.setProperty('finance', 'value', 5);
+
+
+				// var startDate = moment(view.$startDateInput.datepicker("getDate")).format('YYYY-MM-DD');
+				// var startTime = view.$startTimeInput.val() + ':00';
+				// //assessmentDate - дата создания направления на исследование
+				// view.testTemplate.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
+
+				var pDate = moment(view.$datepicker.datepicker("getDate")).format('YYYY-MM-DD');
+				var pTime = view.$timepicker.val() + ':00';
+				//plannedEndDate - планируемая дата выполнения иследования
+				view.testTemplate.setProperty('plannedEndDate', 'value', pDate + ' ' +  pTime);
+
+				//finance - идентификатор типа оплаты
+				view.testTemplate.setProperty('finance', 'value', $($('#finance option:selected')[0]).val());
+				//urgent - срочность
+				//view.testTemplate.setProperty('urgent', 'value', true);
+				//
+				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
+				view.testTemplate.setProperty('Направительный диагноз', 'valueId', mkbId);
 
 				view.$saveButton.button("disable");
 
@@ -194,6 +218,9 @@ InstrumentalResearchTemplate) {
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
 			view.$datepicker = view.$("#dp");
 			view.$timepicker = view.$("#tp");
+
+			view.$startDateInput = $('#start-date');
+			view.$startTimeInput = $('#start-time');
 
 			view.loadGroups();
 
