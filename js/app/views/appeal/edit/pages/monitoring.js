@@ -137,8 +137,6 @@ define([
 			//return "/monitoring-info.json";
 		},
 
-
-
 		parse: function (raw) {
 			var rawByDate = {};
 
@@ -147,37 +145,39 @@ define([
 					if (!rawByDate.hasOwnProperty(paramValue.date)) {
 						rawByDate[paramValue.date] = {};
 					}
-					rawByDate[paramValue.date][param.code] = paramValue.value;
+					rawByDate[paramValue.date][param.code] = (paramValue.value !== "0.0" ? paramValue.value : "");
 				});
 			});
 
 			var parsed = _.map(rawByDate, function (rawRow, date) {
 				return {
 					datetime: +date,
-					temperature: (rawRow["TEMPERATURE"] && rawRow["TEMPERATURE"] !== "0.0") ? rawRow["TEMPERATURE"] : "",
-					//temperature:  rawRow["TEMPERATURE"] || "",
-					bpras: rawRow["BPRAS"] || "",
-					bprad: rawRow["BPRAD"] || "",
-					heartRate: rawRow["PULS"] || "",
-					spo2: rawRow["SPO2"] || "",
-					breathRate: rawRow["RR"] || "",
-					state: rawRow["STATE"] || "",
-					health: rawRow["WB"] || ""
+					temperature: rawRow["TEMPERATURE"],
+					bpras: rawRow["BPRAS"],
+					bprad: rawRow["BPRAS"],
+					heartRate: rawRow["PULS"],
+					spo2: rawRow["SPO2"],
+					breathRate: rawRow["RR"],
+					state: rawRow["STATE"],
+					health: rawRow["WB"]
 				};
 			});
 
-			parsed.sort(function (a, b) {
-				var adt = a.datetime;
-				var bdt = b.datetime;
+			parsed = parsed
+				.sort(function (a, b) {
+					var adt = a.datetime;
+					var bdt = b.datetime;
 
-				if (adt > bdt) {
-					return 1;
-				} else if (adt < bdt) {
-					return -1;
-				} else {
-					return 0;
-				}
-			});
+					if (adt > bdt) return 1;
+					else if (adt < bdt) return -1;
+					else return 0;
+				})
+				.filter(function (row) {
+					return _.some(row, function (field, fieldName) {
+						return fieldName !== "datetime" && field && field.toString().length;
+					});
+				})
+				.slice(0, 5);
 
 			console.log(rawByDate);
 			console.log(parsed);
@@ -473,8 +473,8 @@ define([
 					return function (itemA, itemB) {
 						var a = parseFloat(itemA.get(fieldName)), b =  parseFloat(itemB.get(fieldName));
 
-						if (a > b) return sortDirection === "asc" ? 1 : -1;
-						else if (a < b) return sortDirection === "asc" ? -1 : 1;
+						if (a > b || isNaN(b)) return sortDirection === "asc" ? 1 : -1;
+						else if (a < b || isNaN(a)) return sortDirection === "asc" ? -1 : 1;
 						else return 0;
 					};
 				default:
