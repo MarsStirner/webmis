@@ -1,11 +1,20 @@
 <section class="PopUpLine">
 <div class="DiagnosisVidget">
 <div class="DatepickerHolder">
-	<div id="dp"></div>
-	<div class="Warning">
-		В 10:30 данный вид диагностики не проводится
+	<div class="Label">Дата и время исследования</div>
+	<div id="dp" style="margin-bottom:2em;"></div>
+<!-- 	<div class="Warning"> -->
+		<!-- В 10:30 данный вид диагностики не проводится -->
+<!-- 	</div> -->
+	<div class="timepicker" style="position: relative;width: 6em;">
+		<input type="text"
+			class=""
+			id="tp"
+			placeholder="чч:мм">
+		<i class="icon-time" style="position: absolute; right:0.5em; top: 0.5em"></i>
 	</div>
-	<div class="SelectTime Clearfix">
+
+<!-- 	<div class="SelectTime Clearfix">
 		<div class="Col">
 			<ul>
 				<li>
@@ -110,7 +119,7 @@
 				</li>
 			</ul>
 		</div>
-	</div>
+	</div> -->
 </div>
 <div class="VidgetLine">
 <!-- 	<div class="VidgetCol col1">

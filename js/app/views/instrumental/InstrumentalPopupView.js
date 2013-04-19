@@ -191,16 +191,62 @@ InstrumentalResearchTemplate) {
 			var view = this;
 			view.$instrumentalGroups = view.$('.instrumental-groups');
 			view.$instrumentalResearchs = view.$('.instrumental-researchs');
-			view.$saveButton = this.$el.closest(".ui-dialog").find('.save');
+			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
+			view.$datepicker = view.$("#dp");
+			view.$timepicker = view.$("#tp");
 
 			view.loadGroups();
 
-			this.$("#dp").datepicker({
-				minDate: new Date()
+			view.$datepicker.datepicker({
+				minDate: new Date(),
+				onSelect: function(dateText, inst) {
+					var day = moment(view.$(this).datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					var hour = view.$timepicker.timepicker('getHour');
+					//если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour < currentHour) {
+							view.$timepicker.val('');
+						}
+					}
+				}
+			});
+
+			view.$timepicker.timepicker({
+				onHourShow: function(hour) {
+					var day = moment(view.$datepicker.datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					//если выбран текущий день, то часы меньше текущего нельзя выбрать
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour < currentHour) {
+							return false;
+						}
+					}
+
+					return true;
+				},
+				onMinuteShow: function(hour, minute) {
+					var day = moment(view.$datepicker.datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					var currentMinute = moment().minute();
+					//если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour === currentHour && minute < currentMinute) {
+							return false;
+						}
+					}
+					return true;
+				},
+				showPeriodLabels: false,
+				showOn: 'both',
+				button: '.icon-time'
 			});
 
 			view.$saveButton.button("disable");
-			this.renderNested(this.bfView, ".bottom-form");
+			view.renderNested(this.bfView, ".bottom-form");
 
 
 

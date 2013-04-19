@@ -1939,6 +1939,11 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link {
   right: 0.6em;
 }
 
+/* line 22, ../sass/modules/_instrumental.scss */
+.instrumental-researchs ul.dynatree-container, .instrumental-groups ul.dynatree-container {
+  font-size: inherit;
+}
+
 /* line 11, ../sass/common.scss */
 html {
   height: 100%;
