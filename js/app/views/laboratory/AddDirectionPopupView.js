@@ -4,7 +4,7 @@
  */
 define([
 	"text!templates/appeal/edit/popups/laboratory.tmpl",
-
+	"mixins/PopupMixin",
 	"collections/diagnostics/Labs",
 	"views/laboratory/LabsView",
 
@@ -18,20 +18,19 @@ define([
 	"views/ui/MkbInputView"],
 
 function(
-	tmpl,
+tmpl,
+popupMixin,
+LabsCollection,
+LabsCollectionView,
 
-	LabsCollection,
-	LabsCollectionView,
+GroupsCollection,
+GroupsView,
 
-	GroupsCollection,
-	GroupsView,
+GroupTestsCollection,
+GroupTestsView,
 
-	GroupTestsCollection,
-	GroupTestsView,
-
-	SelectView,
-	MkbInputView
-	) {
+SelectView,
+MkbInputView) {
 
 	var LaboratoryPopup = View.extend({
 		template: tmpl,
@@ -54,6 +53,11 @@ function(
 					last: Core.Cookies.get("doctorLastName")
 				}
 			};
+
+			view.data = {
+				'doctor': view.doctor
+			};
+
 
 			view.appeal = view.options.appeal;
 			console.log('appeal', view.appeal);
@@ -134,10 +138,10 @@ function(
 			view.groupsCollection = new GroupsCollection();
 
 			view.groupsCollection.setParams({
-					'filter[view]': 'tree',
-					sortingField: "name",
-					sortingMethod: "asc"
-				});
+				'filter[view]': 'tree',
+				sortingField: "name",
+				sortingMethod: "asc"
+			});
 
 			view.groupsView = new GroupsView({
 				collection: view.groupsCollection
@@ -314,19 +318,21 @@ function(
 
 		},
 
-		open: function() {
-			this.$el.dialog("open");
-		},
 
-		close: function() {
-			this.$el.dialog("close");
-			this.$el.remove();
-		},
 
 		renderNested: function(view, selector) {
 			var $element = (selector instanceof $) ? selector : this.$el.find(selector);
 			view.setElement($element).render();
 		},
+
+		// open: function() {
+		// 	this.$el.dialog("open");
+		// },
+
+		// close: function() {
+		// 	this.$el.dialog("close");
+		// 	this.$el.remove();
+		// },
 
 		render: function() {
 			var view = this;
@@ -371,23 +377,23 @@ function(
 				showPeriodLabels: false
 			});
 
-			//попап
-			$(view.el).dialog({
-				autoOpen: false,
-				width: "116em",
-				modal: true,
-				dialogClass: "webmis",
-				title: "Создание направления",
-				onClose: view.close,
-				buttons: [{
-					text: "Сохранить",
-					click: this.onSave,
-					"class": "button-color-green save"
-				}, {
-					text: "Отмена",
-					click: this.close
-				}]
-			});
+			// //попап
+			// $(view.el).dialog({
+			// 	autoOpen: false,
+			// 	width: "116em",
+			// 	modal: true,
+			// 	dialogClass: "webmis",
+			// 	title: "Создание направления",
+			// 	onClose: view.close,
+			// 	buttons: [{
+			// 		text: "Сохранить",
+			// 		click: this.onSave,
+			// 		"class": "button-color-green save"
+			// 	}, {
+			// 		text: "Отмена",
+			// 		click: this.close
+			// 	}]
+			// });
 
 			//до того как выбран тест кнопка сохранить не активна
 			this.$el.closest(".ui-dialog").find('.save').button("disable");
@@ -396,7 +402,7 @@ function(
 			return view;
 		}
 
-	});
+	}).mixin([popupMixin]);
 
 	return LaboratoryPopup;
 });

@@ -89,6 +89,7 @@ define([
 				console.log('model.eventId', model.eventId);
 
 				view.editDirectionPopupView = new EditDirectionPopupView({
+					title: 'Редактирование направления',
 					model: model,
 					appeal: view.options.appeal});
 				view.editDirectionPopupView.render().open();
