@@ -89,9 +89,9 @@ define([
 			this.menu = Data.Menu = new App.Views.Menu(this.getMenuStructure());
 
 			this.menu.options.structure.on("change-page", function (step) {
-				this.setContentView(step.name);
-
 				pubsub.trigger('noty_clear');
+
+				this.setContentView(step.name);
 			}, this);
 
 			this.breadcrumbs = new App.Views.Breadcrumbs;

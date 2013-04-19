@@ -42,11 +42,15 @@
 	<td>
 		<div class="row-fluid">
 			<div class="span12" style="min-height: 0">
-				<%= appealExtraData.execPerson.doctor.name.full %>
+				<% if (appealExtraData.execPerson && appealExtraData.execPerson.doctor) { %>
+					<%= appealExtraData.execPerson.doctor.name.full %>
+				<% } else { %>
+					<span class="Warning">Врач не назначен</span>
+				<% } %>
 			</div>
 		</div>
 		<div class="row-fluid">
-			<div class="span12" style="text-align: center; min-height: 0; margin-top: .7em;">
+			<div class="span12" style="min-height: 0; margin-top: .7em;">
 				<a href="#" class="assign-exec-person">Назначить</a>
 			</div>
 		</div>

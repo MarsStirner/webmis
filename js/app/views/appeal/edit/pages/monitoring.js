@@ -19,8 +19,7 @@ define([
 	"views/appeal/edit/pages/card",
 
 	"collections/moves",
-	"collections/dictionary-values",
-	"collections/doctors"
+	"collections/dictionary-values"
 ], function (
 	monitoringTmpl,
 	headerTmpl,
@@ -38,8 +37,7 @@ define([
 	Card,
 
 	Moves,
-	DictionaryValues,
-	Doctors
+	DictionaryValues
 	) {
 
 	/**
@@ -715,6 +713,10 @@ define([
 			this.moves.on("reset", this.render, this).fetch();
 
 			Core.Data.appealExtraData.get("execPerson").on("change:doctor", this.onExecPersonDoctorChange, this);
+
+			if (!Core.Data.appealExtraData.get("execPerson").get("doctor").get("id")) {
+				pubsub.trigger("noty", {text: "Требуется назначить лечащего врача.", type: "alert"});
+			}
 		},
 
 		onAssignExecPersonClick: function (event) {
@@ -796,6 +798,8 @@ define([
 		},
 
 		close: function () {
+			this.allPersons.off(null, null, this);
+			this.departmentPersons.off(null, null, this);
 			this.off(null, null, this).remove();
 		},
 
@@ -850,20 +854,20 @@ define([
 		addAllPersons: function () {
 			this.$(".all-persons").append(this.allPersons.map(function (person) {
 				return "<option value='"+person.get('id')+"'>"+person.get("name").raw+"</option>";
-			}));
+			})).select2("enable");
 		},
 
 		addDepartmentPersons: function () {
 			this.$(".department-persons").append(this.departmentPersons.map(function (person) {
 				return "<option value='"+person.get('id')+"'>"+person.get("name").raw+"</option>";
-			}));
+			})).select2("enable");
 		},
 
 		render: function () {
 			Monitoring.Views.BaseView.prototype.render.apply(this);
 
 			this.$("#filter-persons-container").buttonset();
-			this.$(".all-persons, .department-persons").select2();
+			this.$(".all-persons, .department-persons").select2().select2("disable");
 			this.$(".all-persons").hide();
 
 			return this;
