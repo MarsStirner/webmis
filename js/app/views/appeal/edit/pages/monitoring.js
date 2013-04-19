@@ -115,16 +115,8 @@ define([
 		defaults: {
 			datetime: "",
 			temperature: "",
-			bloodPressure: {
-				left: {
-					syst: "",
-					diast: ""
-				},
-				right: {
-					syst: "",
-					diast: ""
-				}
-			},
+			bpras: "",
+			bprad: "",
 			heartRate: "",
 			spo2: "",
 			breathRate: "",
@@ -140,13 +132,57 @@ define([
 	Monitoring.Collections.MonitoringInfos = Collection.extend({
 		model: Monitoring.Models.MonitoringInfo,
 
-		sync:function (method, model, options) {
-			return Backbone.sync(method, model, options);
+		url: function () {
+			return DATA_PATH + "appeals/" + appeal.get("id") + "/monitoring";
+			//return "/monitoring-info.json";
 		},
 
-		url: function () {
-			//return DATA_PATH + "";
-			return "/monitoring-info.json";
+
+
+		parse: function (raw) {
+			var rawByDate = {};
+
+			_.each(raw.data, function (param) {
+				_.each(param.values, function (paramValue) {
+					if (!rawByDate.hasOwnProperty(paramValue.date)) {
+						rawByDate[paramValue.date] = {};
+					}
+					rawByDate[paramValue.date][param.code] = paramValue.value;
+				});
+			});
+
+			var parsed = _.map(rawByDate, function (rawRow, date) {
+				return {
+					datetime: +date,
+					temperature: (rawRow["TEMPERATURE"] && rawRow["TEMPERATURE"] !== "0.0") ? rawRow["TEMPERATURE"] : "",
+					//temperature:  rawRow["TEMPERATURE"] || "",
+					bpras: rawRow["BPRAS"] || "",
+					bprad: rawRow["BPRAD"] || "",
+					heartRate: rawRow["PULS"] || "",
+					spo2: rawRow["SPO2"] || "",
+					breathRate: rawRow["RR"] || "",
+					state: rawRow["STATE"] || "",
+					health: rawRow["WB"] || ""
+				};
+			});
+
+			parsed.sort(function (a, b) {
+				var adt = a.datetime;
+				var bdt = b.datetime;
+
+				if (adt > bdt) {
+					return 1;
+				} else if (adt < bdt) {
+					return -1;
+				} else {
+					return 0;
+				}
+			});
+
+			console.log(rawByDate);
+			console.log(parsed);
+
+			return parsed;
 		}
 	});
 
