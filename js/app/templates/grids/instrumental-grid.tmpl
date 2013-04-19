@@ -13,7 +13,7 @@
 				<a class="Actions SortCol" data-field="diagnosticName"><span>Название исследования</span></a>
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="urgent"><span>Cito</span></a>
+				<a class="Actions SortCol" data-field="cito"><span>Cito</span></a>
 			</th>
 			<th>
 				<a class="Actions SortCol" data-field="assignPerson"><span>Направивший врач</span></a>
@@ -49,7 +49,7 @@
 		${diagnosticName.name}
 	</td>
 	<td>
-		{{if urgent}}
+		{{if cito}}
 		<span class="Privilege">Срочно</span>
 		{{/if}}
 	</td>
