@@ -1,16 +1,19 @@
-define(['text!templates/reports/reports.tmpl',
+define(['text!templates/reports/reports.html',
 	"views/menu",
-	"views/reports/Form007View",
-	"views/reports/HospitalView"], function(
+	"views/reports/HospitalView",
+	"views/reports/BedsView",
+	"views/reports/Form007View"], function(
 template,
 MenuView,
-Form007View,
-HospitalView) {
+HospitalView,
+BedsView,
+Form007View) {
 
 	var ReportsMainView = View.extend({
 		template: template,
 		typeViews: {
 			"hospital": HospitalView,
+			"beds": BedsView,
 			"f007": Form007View
 		},
 
@@ -24,18 +27,25 @@ HospitalView) {
 			}, this);
 		},
 		getMenuStructure: function() {
+
 			return {
 				structure: [{
 					name: "hospital",
 					title: "Стационар",
-					uri: "reports/hospital",
+					uri: "reports/hospital/",
 					structure: [{
-						name: "f007",
+						name: "beds",
 						title: "Коечный фонд",
-						uri: "reports/hospital/007"
+						uri: "reports/hospital/beds/",
+						structure: [{
+							name: "f007",
+							title: "Форма 007",
+							uri: "reports/hospital/beds/007"
+						}]
 					}]
 				}]
 			};
+
 		},
 
 		getPageNameByPath: function(path) {
