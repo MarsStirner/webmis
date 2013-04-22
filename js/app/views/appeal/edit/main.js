@@ -6,6 +6,8 @@ define([
 	"text!templates/appeal/edit/main.tmpl",
 	"views/laboratory/LaboratoryView",
 	"views/instrumental/InstrumentalView",
+	"views/consultations/ConsultationView",
+
 	//"text!templates/cardnav.tmpl",
 
 	"models/appeal",
@@ -18,7 +20,6 @@ define([
 	//"views/appeal/edit/pages/instrumental",
 
 
-	"views/appeal/edit/pages/consultation",
 	"views/appeal/edit/pages/examinations",
 	"views/appeal/edit/pages/examination-edit",
 	"views/appeal/edit/pages/examination-primary",
@@ -28,8 +29,9 @@ define([
 ], function (
 	template,
 	LaboratoryView,
-	InstrumentalView
-	//, cardnavTemplate
+	InstrumentalView,
+	ConsultationView
+
 	) {
 
 	App.Views.Main = View.extend({
@@ -55,7 +57,7 @@ define([
 
 			"diagnostics-laboratory": LaboratoryView,
 			"diagnostics-instrumental": InstrumentalView,
-			"diagnostics-consultations": App.Views.Consultation,
+			"diagnostics-consultations": ConsultationView,
 
 			"first-examination-edit": App.Views.ExaminationEdit,
 
@@ -93,7 +95,7 @@ define([
 				pubsub.trigger('noty_clear');
 			}, this);
 
-			this.breadcrumbs = new App.Views.Breadcrumbs;
+			this.breadcrumbs = new App.Views.Breadcrumbs();
 
 			this.cardHeader = new App.Views.CardHeader({model: this.appeal});
 
@@ -329,7 +331,7 @@ define([
 						{name: "epicrisis", title: "Эпикризы", uri: ""},
 						{name: "history", title: "Титульный лист ИБ", uri: ""}
 					]
-				}
+				};
 			}, this);
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function () {
@@ -355,7 +357,7 @@ define([
 						App.Router.compile({name: "moves", title: "Движение пациента", uri: "/appeals/:id/moves"}, appealJSON)
 
 					]
-				}
+				};
 			}, this);
 
 			this.separateRoles(ROLES.DOCTOR_RECEPTIONIST, function () {
@@ -397,7 +399,7 @@ define([
 						App.Router.compile({name: "moves", title: "Движение пациента", uri: "/appeals/:id/moves"}, appealJSON)
 
 					]
-				}
+				};
 			}, this);
 
 			this.separateRoles(ROLES.NURSE_RECEPTIONIST, function () {
@@ -419,6 +421,11 @@ define([
 							title: "Инструментальные исследования",
 							uri: "/appeals/:id/diagnostics/instrumental/"
 						}, appealJSON),
+						App.Router.compile({
+							name: "diagnostics-consultations",
+							title: "Консультации",
+							uri: "/appeals/:id/diagnostics/consultations/"
+						}, appealJSON),
 //						{name: "address", title: "Диагностика"},
 //						{name: "medical-info", title: "Лечение", structure: [
 //							{name: "medical-info", title: "Медикаментозное"},
@@ -434,12 +441,12 @@ define([
 							uri: "/appeals/:id/moves"
 						}, appealJSON)
 					]
-				}
+				};
 			}, this);
 
 			return menuStructure;
 		}
 	});
 
-	return App.Views.Main
+	return App.Views.Main;
 });
