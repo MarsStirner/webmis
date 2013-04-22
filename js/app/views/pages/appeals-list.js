@@ -226,7 +226,7 @@ define([
 							collection: DocCollection,
 							elementId: "docs-dictionary",
 							getText: function(model) {
-								return model.get("name").get("raw");
+								return model.get("name").raw;
 							},
 							getValue: function(model) {
 								return model.get("id");
