@@ -604,8 +604,8 @@ footer {
 	background:#FF9900;
 }
 
-.ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title {
-	font-size: 1.2em;
+.ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title, .ui-tabs-anchor {
+	font-size: 1.2em !important;
 }
 
 // TESTING
@@ -815,6 +815,78 @@ footer {
 	}
 }
 
+.monitoring-layout {
+	display: table;
+
+	.TreatmentBlock {
+		padding-top: 2em;
+	}
+
+	h4 {
+		padding-top: 2em;
+		text-decoration: underline;
+
+	}
+
+	.row-fluid {
+		//padding-top: 2em;
+	}
+
+	.monitoring-layout-header {
+		margin-bottom: 2em;
+		.refresh-monitoring {
+			cursor: pointer;
+		}
+		.label {
+			margin-left: 1em; font-size: 100%;
+		}
+	}
+
+	.blood-type {
+		font-size: 100%;
+		padding: 4px;
+		margin: .2em 0 0 1em;
+		width: 100%;
+	}
+	.patient-blood-type {
+		.row-fluid [class*="span"] {
+			min-height: 0;
+		}
+	}
+	.ui-button-text {
+		font-size: 0.8em !important;
+	}
+
+	.cancel-blood {
+		margin-top: .2em;
+	}
+
+	.cancel-blood {
+		padding-top: .4em;
+		padding-left: .5em;
+	}
+
+	.blood-type-selector-controls {
+		margin: 0;
+	}
+
+	.patient-blood-type-history {
+		td:first-child {
+			padding-left: 1em;
+		}
+		ul {
+			margin-top: 1em;
+			padding-left: 1em;
+			li span.blood-date {
+				color: #414142;
+			}
+		}
+	}
+
+	.blood-type-selector {
+		margin-top: 0.7em;
+	}
+}
 
 /*.LineBlockHolder {
 	> li {

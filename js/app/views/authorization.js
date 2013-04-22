@@ -1,4 +1,4 @@
-define(["collections/authorization/roles", "models/authorization/authorization"], function (){
+define(["collections/authorization/roles", "models/authorization/authorization"], function () {
 	App.Views.Authorization = View.extend({
 		id: "main",
 
@@ -6,11 +6,11 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 			"click .Submit": "getRoles"
 		},
 
-		getRoles: function(event){
+		getRoles: function (event) {
 			event.preventDefault();
 
-			var login = this.$("[name='login']" ).val(),
-				password = this.$("[name='password']" ).val().trim().length ? MD5( this.$("[name='password']" ).val() ) : "";
+			var login = this.$("[name='login']").val(),
+				password = this.$("[name='password']").val().trim().length ? MD5(this.$("[name='password']").val()) : "";
 
 			this.collection.login = login;
 			this.collection.password = password;
@@ -18,17 +18,17 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 
 		},
 
-		showAvailableRoles: function(){
+		showAvailableRoles: function () {
 			var view = this;
 
 			if (this.collection.length > 1) {
-				view.$(".LoginForm" ).html( $("#authorization-page-role-form" ).tmpl( this.collection.doctor.toJSON() ) );
+				view.$(".LoginForm").html($("#authorization-page-role-form").tmpl(this.collection.doctor.toJSON()));
 
-				this.collection.each(function(model){
+				this.collection.each(function (model) {
 					var Role = new RoleView({
 						model: model
 					});
-					view.$("#roles-list").append( Role.render().el );
+					view.$("#roles-list").append(Role.render().el);
 				});
 			} else {
 				//this.redirect(this.collection.first());
@@ -65,13 +65,13 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 			this.collection.on("error", this.showErrorToolTip, this);
 		},
 		ready: function () {
-			this.$el.append( $("#authorization-page").tmpl() );
-			this.$(".LoginForm" ).html( $("#authorization-page-login-form").tmpl() );
+			this.$el.append($("#authorization-page").tmpl());
+			this.$(".LoginForm").html($("#authorization-page-login-form").tmpl());
 			this.$("#auth-error").css({"width": "100%", "margin-left": "-1.2em", "margin-bottom": "1em"}).hide();
 			this.$(".Submit").button();
 		},
-		render: function(){
-			$("#wrapper" ).html(this.el);
+		render: function () {
+			$("#wrapper").html(this.el);
 
 			return this;
 		}
@@ -79,17 +79,17 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 
 	var RoleView = View.extend({
 		events: {
-			"click .Button": "chooseRole"
+			"click .role": "chooseRole"
 		},
 
 		tagName: "li",
 
-		chooseRole: function(event){
+		chooseRole: function (event) {
 			var Authorization = new App.Models.Authorization();
 
 			Authorization.login = this.model.collection.login;
 			Authorization.password = this.model.collection.password;
-			Authorization.roleId = event ? $(event.currentTarget ).data("role-id") : this.model.get("id");
+			Authorization.roleId = event ? $(event.currentTarget).data("role-id") : this.model.get("id");
 
 
 			Authorization.on("change", this.redirect, this);
@@ -104,42 +104,47 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 			checkForErrors(model.get("authToken"), "authToken doesn't found in response");
 			checkForErrors(model.get("authToken").id, "authToken doesn't contains id");
 
-			checkForErrors(Doctor.get("name" ).get("first"), "Doctor's first name is required");
-			checkForErrors(Doctor.get("name" ).get("last"), "Doctor's last name is required");
+			checkForErrors(Doctor.get("name").get("first"), "Doctor's first name is required");
+			checkForErrors(Doctor.get("name").get("last"), "Doctor's last name is required");
 
 			var roleUnavailable = false;
 
 			// Соответствие загружаемых ролей к предопределённым ролям
-			switch ( parseInt(model.roleId) ) {
-				case 24: {
+			switch (parseInt(model.roleId)) {
+				case 24:
+				{
 					Core.Cookies.set("currentRole", ROLES.DOCTOR_DEPARTMENT);
 					break;
 				}
-				case 25: {
+				case 25:
+				{
 					Core.Cookies.set("currentRole", ROLES.NURSE_DEPARTMENT);
 					break;
 				}
 				/*case 26: {
-					// Глав врач
-					break;
-				}
-				case 27: {
-					// Зав отделением
-					break;
-				}
-				case 28: {
-					// Дежурный врач отделения
-					break;
-				}*/
-				case 29: {
+				 // Глав врач
+				 break;
+				 }
+				 case 27: {
+				 // Зав отделением
+				 break;
+				 }
+				 case 28: {
+				 // Дежурный врач отделения
+				 break;
+				 }*/
+				case 29:
+				{
 					Core.Cookies.set("currentRole", ROLES.NURSE_RECEPTIONIST);
 					break;
 				}
-				case 30: {
+				case 30:
+				{
 					Core.Cookies.set("currentRole", ROLES.DOCTOR_RECEPTIONIST);
 					break;
 				}
-				default: {
+				default:
+				{
 					roleUnavailable = true;
 
 					$("<div><p>Выбранная роль недоступна.</p></div>").dialog({
@@ -179,12 +184,14 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 			}
 		},
 
-		render: function(){
-			this.$el.html( $("#authorization-page-role").tmpl( this.model.toJSON() ) );
+		render: function () {
+			this.$el.html($("#authorization-page-role").tmpl(this.model.toJSON()));
+
+			this.$("button").button();
 
 			return this
 		}
 	});
 
 	return {};
-} );
+});

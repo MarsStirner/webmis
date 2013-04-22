@@ -12,4 +12,6 @@ define(["models/dictionary-value"], function () {
 			return DATA_PATH + "dir?dictName=" + this.name;
 		}
 	});
+
+	return App.Collections.DictionaryValues;
 });

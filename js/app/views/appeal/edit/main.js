@@ -6,6 +6,7 @@ define([
 	"text!templates/appeal/edit/main.tmpl",
 	"views/laboratory/LaboratoryView",
 	"views/instrumental/InstrumentalView",
+	"views/appeal/edit/pages/monitoring",
 	//"text!templates/cardnav.tmpl",
 
 	"models/appeal",
@@ -23,13 +24,14 @@ define([
 	"views/appeal/edit/pages/examination-edit",
 	"views/appeal/edit/pages/examination-primary",
 	"views/appeal/edit/pages/card",
+
 	"views/appeal/edit/pages/moves",
 	"views/appeal/edit/pages/HospitalBedView"
 ], function (
 	template,
 	LaboratoryView,
-	InstrumentalView
-	//, cardnavTemplate
+	InstrumentalView,
+	Monitoring
 	) {
 
 	App.Views.Main = View.extend({
@@ -60,7 +62,9 @@ define([
 			"first-examination-edit": App.Views.ExaminationEdit,
 
 			"moves": App.Views.Moves,
-			"hospitalbed": App.Views.HospitalBed
+			"hospitalbed": App.Views.HospitalBed,
+
+			"monitoring": Monitoring.Views.Layout
 		},
 
 		breadCrumbsMap: {
@@ -72,7 +76,8 @@ define([
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
 			"card": App.Router.cachedBreadcrumbs.APPEAL,
 			"moves": App.Router.cachedBreadcrumbs.MOVES,
-			"hospitalbed": App.Router.cachedBreadcrumbs.HOSPITALBED
+			"hospitalbed": App.Router.cachedBreadcrumbs.HOSPITALBED,
+			"monitoring": App.Router.cachedBreadcrumbs.APPEAL
 		},
 
 		initialize: function () {
@@ -88,9 +93,9 @@ define([
 			this.menu = Data.Menu = new App.Views.Menu(this.getMenuStructure());
 
 			this.menu.options.structure.on("change-page", function (step) {
-				this.setContentView(step.name);
-
 				pubsub.trigger('noty_clear');
+
+				this.setContentView(step.name);
 			}, this);
 
 			this.breadcrumbs = new App.Views.Breadcrumbs;
@@ -295,7 +300,7 @@ define([
 				menuStructure = {
 					structure: [
 						App.Router.compile({
-							name: "card",
+							name: "monitoring",
 							title: "Мониторинг&nbsp;состояния",
 							uri: "/appeals/:id/"
 						}, appealJSON),
