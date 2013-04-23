@@ -16,21 +16,17 @@ define(["views/filter"], function () {
 		},
 
 		renderDictionary: function () {
-			var dictionary = this,
-				element = $("#" + dictionary.elementId);
+			var dictionary = this;
+			var element = $("#" + dictionary.elementId);
 
-			//if (!dictionary.collection.isEmpty()) {
-				dictionary.collection.each(function (m) {
-					$("<option/>")
-						.attr("value", dictionary.getValue(m))
-						.text(dictionary.getText(m))
-						.appendTo(element);
-				});
+			dictionary.collection.each(function (m) {
+				$("<option/>")
+					.attr("value", dictionary.getValue(m))
+					.text(dictionary.getText(m))
+					.appendTo(element);
+			});
 
-				/*element.data( "styled-select", false );
-				 $( "div.DDList", element.parent() ).remove();*/
-				UIInitialize(element.parent());
-			//}
+			UIInitialize(element.parent());
 
 			if (this.preselectedValue) {
 				element.select2("val", this.preselectedValue);//.change();
