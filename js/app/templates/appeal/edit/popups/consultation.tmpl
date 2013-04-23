@@ -1,49 +1,62 @@
-<!--<header class="Clearfix">
-	<h2 class="PopupHeader">Создание направления</h2>
-	<div class="PopupActions">
-		<button class="Styled Button BlueBorder"><span>Создать</span></button>
-		<a href="#" class="ShowHidePopup">Отмена</a>
+<style>
+	.list li{
+	padding: 0.2em .5em;
+	}
+	.list li a{
+		text-decoration:none;
+	}
+	.list li:hover,.list li.selected {
+		background: #118EDC;
+		color: #fff;
+	}
+	.list li:hover a,.list li.selected a{
+		color: #fff;
+	}
+</style>
+
+<section style="padding-top: 1em;">
+
+	<div class="row-fluid"  style="margin-bottom:25px;">
+		<div class="offset4 span5">
+			<label for="departments">Отделение</label><br />
+			<select name="departments" id="departments" style="width: 100%;">
+				<option value="0">...</option>
+			</select>
+		</div>
 	</div>
-</header>-->
-<section>
-	<!--<div class="ReferralHeader">
-		<ul class="InlineNav">
-			<li class="Active">
-				<a href="#">К врачу</a>
-			</li>
-			<li>
-				<a href="#">На диагностику</a>
-			</li>
-		</ul>
-	</div>-->
-	<div class="EditForm">
-		<ul>
-			<li>
-				<div class="LineBlock">
-					<div class="SemiCol">
-						<span class="Label">Специальность врача</span>
-						<select class="Specs select2">
-							<option value="">...</option>
-						</select>
-					</div>
-					<div class="SemiCol">
-						<span class="Label">Врач</span>
-						<select class="Persons select2">
-							<option value="">...</option>
-						</select>
-					</div>
-				</div>
-			</li>
-		</ul>
-	</div>
-	<div class="RefferalWidget">
-		<div class="DatepickerHolder">
+
+	<div class="row-fluid" style="margin-bottom:15px;">
+		<div class="span4">
+			<label for="">Список консультаций</label>
+			<div style="height:35em; border: 1px solid #ccc; width: 100%;">
+				<div id="consultations"></div>
+			</div>
+
+		</div>
+		<div class="span3" >
+			<label for="">Список врачей</label>
+			<div style="height:35em; border: 1px solid #ccc; width: 100%;">
+				<ul class="list">
+					<li>
+						<a href="#" >Иванов Петр</a>
+					</li>
+					<li class="selected">
+						<a href="#" >Альбина Пертрова</a>
+					</li>
+					<li>
+						<a href="#" >Николай Забалуев</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="span2">
+			<label for="">&nbsp;</label>
 			<div id="dp"></div>
 		</div>
-		<div class="RefferalForm">
-			<div class="SelectTime Clearfix">
-				<div class="Col">
-					<ul>
+		<div class="span3">
+			<label for="">Расписание врача</label><br />
+			<ul>
 						<li>
 							<label>
 								<input type="radio" value="radio" id="radio1" name="radio" class="itemSelectTime">
@@ -87,70 +100,26 @@
 							</label>
 						</li>
 					</ul>
-				</div>
-				<div class="Col">
-					<ul>
-						<li>
-							<label>
-								<input type="radio" value="radio" id="radio8" name="radio" class="itemSelectTime">
-								13:00 - 13:30
-							</label>
-						</li>
-						<li>
-							<label>
-								<input type="radio" value="radio" id="radio9" name="radio" class="itemSelectTime">
-								13:30 - 14:00
-							</label>
-						</li>
-						<li>
-							<label>
-								<input type="radio" value="radio" id="radio10" name="radio" class="itemSelectTime">
-								14:00 - 14:30
-							</label>
-						</li>
-						<li>
-							<label>
-								<input type="radio" value="radio" id="radio11" name="radio" class="itemSelectTime">
-								15:00 - 15:30
-							</label>
-						</li>
-						<li>
-							<label>
-								<input type="radio" value="radio" id="radio12" name="radio" class="itemSelectTime">
-								15:30 - 16:00
-							</label>
-						</li>
-						<li>
-							<label>
-								<input type="radio" value="radio" id="radio13" name="radio" class="itemSelectTime">
-								16:00 - 16:30
-							</label>
-						</li>
-					</ul>
-				</div>
-			</div>
-			<div class="Urgently">
-				<label class="Warning">
-					<input type="checkbox" id="checkbox" name="checkbox">
-					Срочно
-				</label>
-			</div>
-			<div class="FreeDoctors Hidden">
-				<h4>
-					В это время свободны
-				</h4>
-				<ul class="InlineNav">
-					<li>
-						<a href="#" data-id="171">Иванов Петр</a>
-					</li>
-					<li>
-						<a href="#" data-id="178">Альбина Пертрова</a>
-					</li>
-					<li>
-						<a href="#" data-id="2">Николай Забалуев</a>
-					</li>
-				</ul>
-			</div>
 		</div>
 	</div>
+
+	<div class="row-fluid"  style="margin-bottom:15px;">
+		<div class="span2" >
+			<label for="assign-date">Дата и время создания</label>
+			<input type="text" id="assign-date" name="assign-date" />
+		</div>
+		<div class="span5">
+			<label for="assign-person">Направивший врач</label><br />
+			<input name="assign-person" type="text" id="assign-person" />
+		</div>
+	</div>
+		<div class="row-fluid">
+			<div class="span9" id="mkb"></div>
+			<div class="span3">
+				<label for="finance">Вид оплаты</label><br />
+				<select name="finance" id="finance" style="width:100%;">
+					<option value=""></option>
+				</select>
+			</div>
+		</div>
 </section>
