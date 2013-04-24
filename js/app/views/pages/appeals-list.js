@@ -76,6 +76,7 @@ define([
 			var sendPopUp = new App.Views.SendToDepartment({
 				previousDepartmentName: previousDepartmentName,
 				previousDepartmentDate: previousDepartmentDate,
+				showDatepicker: false,
 				appealId: appeal.get("id"),
 				clientId: appeal.get("patient").get("id"),
 				moveDatetime: appeal.get("createDatetime"),
