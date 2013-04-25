@@ -5,8 +5,7 @@
 define([
 	"text!templates/appeal/edit/popups/send-to-department.tmpl",
 	"collections/departments",
-	"models/move"
-], function (tmpl) {
+	"models/move"], function(tmpl) {
 	App.Views.SendToDepartment = Form.extend({
 		className: "popup",
 
@@ -19,30 +18,38 @@ define([
 			"click .Save": "onSaveClick"*/
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			_.bindAll(this);
 
 			this.model = new App.Models.Move();
 
 			this.previousDepartmentName = this.options.previousDepartmentName;
 			this.previousDepartmentDate = this.options.previousDepartmentDate;
+			this.showDatepicker = this.options.showDatepicker ? this.options.showDatepicker : true;
 			this.model.appealId = this.options.appealId;
 			this.model.set("clientId", this.options.clientId);
 			this.model.set("moveDatetime", this.options.moveDatetime);
 
-			console.log('move ',this.model );
-			this.model.on("sync", function () {
-				pubsub.trigger('noty', {text:'Направление в отделение создано'});
+			//console.log('move ',this.model );
+			this.model.on("sync", function() {
+				pubsub.trigger('noty', {
+					text: 'Направление в отделение создано'
+				});
 				this.close();
 			}, this);
 
-			this.model.on("error", function(){
-				pubsub.trigger('noty', {text:'Ошибка при создании нового движения',type: 'error'});
-			},this);
+			this.model.on("error", function() {
+				pubsub.trigger('noty', {
+					text: 'Ошибка при создании нового движения',
+					type: 'error'
+				});
+			}, this);
 
 			this.departments = new App.Collections.Departments();
 			this.departments.setParams({
-				filter: {hasBeds: true},
+				filter: {
+					hasBeds: true
+				},
 				limit: 0,
 				sortingField: 'name',
 				sortingMethod: 'asc'
@@ -51,29 +58,32 @@ define([
 			this.departments.fetch();
 		},
 
-		onDepartmentsReset: function (collection) {
-			this.departments.each(function (m) {
-				this.$("#department").append($("<option/>", {text:m.get("name"), value:m.get("id")}));
+		onDepartmentsReset: function(collection) {
+			this.departments.each(function(m) {
+				this.$("#department").append($("<option/>", {
+					text: m.get("name"),
+					value: m.get("id")
+				}));
 			}, this);
 		},
 
-		onCancelClick: function (event) {
+		onCancelClick: function(event) {
 			this.close();
 		},
 
-		onSaveClick: function (event) {
+		onSaveClick: function(event) {
 			var readyToSave = this.save();
 			if (readyToSave) {
 				this.$(".Save").addClass("Disable").attr("disabled", true);
 			}
 		},
 
-		open: function (opts) {
+		open: function(opts) {
 			this.$el.dialog("open");
 			return this;
 		},
 
-		close: function () {
+		close: function() {
 
 			this.$el.dialog("close");
 			this.model.unbind(null, null, this);
@@ -81,12 +91,13 @@ define([
 			return this;
 		},
 
-		render: function () {
+		render: function() {
 			if (!this.$el.hasClass("webmis")) {
 
 				this.$el.html($.tmpl(this.template, {
 					previousDepartmentName: this.previousDepartmentName,
-					previousDepartmentDate: this.previousDepartmentDate
+					previousDepartmentDate: this.previousDepartmentDate,
+					showDatepicker: this.showDatepicker
 				}));
 
 				$(this.el).dialog({
@@ -96,20 +107,17 @@ define([
 					dialogClass: "webmis",
 					resizable: false,
 					title: this.options.popupTitle,
-					buttons: [
-						{
-							text: "Сохранить",
-							"class": "button-color-green",
-							click: this.onSaveClick
-						},
-						{
-							text: "Отмена",
-							click: this.onCancelClick
-						}
-					]
+					buttons: [{
+						text: "Сохранить",
+						"class": "button-color-green",
+						click: this.onSaveClick
+					}, {
+						text: "Отмена",
+						click: this.onCancelClick
+					}]
 				});
 
-				this.$("a").click(function (event) {
+				this.$("a").click(function(event) {
 					event.preventDefault();
 				});
 
