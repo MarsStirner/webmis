@@ -11,6 +11,9 @@ Form007View) {
 
 	var ReportsMainView = View.extend({
 		template: template,
+		events: {
+			"click": "click"
+		},
 		typeViews: {
 			"hospital": HospitalView,
 			"beds": BedsView,
@@ -25,6 +28,14 @@ Form007View) {
 				console.log('change-page', step);
 				this.setContentView(step.name);
 			}, this);
+		},
+		click: function(e){
+			console.log(e)
+			if($(e.target).data('step-name')){
+				e.preventDefault();
+				this.setContentView($(e.target).data('step-name'));
+			}
+
 		},
 		getMenuStructure: function() {
 
