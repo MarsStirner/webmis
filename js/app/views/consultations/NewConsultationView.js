@@ -7,17 +7,19 @@ define([
 	"mixins/PopupMixin",
 	"views/ui/MkbInputView",
 	"views/ui/SelectView",
+	"collections/Schedule",
+	"views/consultations/TimetableView",
 	"collections/doctors",
 	"collections/doctors-free",
 	"collections/departments",
-	"collections/dictionary-values"], function(tmpl, popupMixin, MkbInputView, SelectView) {
+	"collections/dictionary-values"], function(tmpl, popupMixin, MkbInputView, SelectView, ScheduleCollection, TimetableView) {
 
 	return View.extend({
 		template: tmpl,
 		className: "popup",
 
 		events: {
-			//"click .ShowHidePopup": "close",
+			"click .test": "test",
 			// "change .Persons": "onPersonChange",
 			// "change .Specs": "onSpecChange",
 			// "click .itemSelectTime": "onTimeChange",
@@ -27,19 +29,33 @@ define([
 
 		initialize: function() {
 			_.bindAll(this);
+			this.assignPersons = new App.Collections.Doctors();
+			this.assignPersons.on("reset", this.onPersonsLoaded, this);
+			//this.assignPersons.fetch();
+
 			this.persons = new App.Collections.Doctors();
 			this.persons.on("reset", this.onPersonsLoaded, this);
-			this.persons.fetch();
+			this.persons.setParams({
+				limit: 0 //,
+				// filter:{
+				// 	departmentId: 42
+				// }
+			});
 
-			this.personsFree = new App.Collections.DoctorsFree();
-			this.personsFree.on("reset", this.onPersonsFreeLoaded, this);
+
+			// this.personsFree = new App.Collections.DoctorsFree();
+			// this.personsFree.on("reset", this.onPersonsFreeLoaded, this);
 
 			// Получаем справочник специальностей врачей
-			this.specs = new App.Collections.DictionaryValues("", {
+			this.specialities = new App.Collections.DictionaryValues("", {
 				name: "specialities"
 			});
-			this.specs.on("reset", this.onSpecsLoaded, this);
-			this.specs.fetch();
+			this.specialities.setParams({
+				sortingField: 'value',
+				sortingMethod: 'asc'
+			});
+
+			//this.specialities.fetch();
 
 			//this.availableDates = new Collection([{date: new Date}]);
 			this.currentDate = new Date();
@@ -53,7 +69,7 @@ define([
 				name: 'finance'
 			});
 
-			this.financeDictionary.fetch();
+			//this.financeDictionary.fetch();
 
 			this.departments = new App.Collections.Departments();
 			this.departments.setParams({
@@ -64,176 +80,76 @@ define([
 				sortingMethod: 'asc'
 			});
 
-			this.departments.fetch();
+			//this.departments.fetch();
+			//
+			this.timetableView = new TimetableView();
 
 		},
 
-		// onPersonsLoaded: function(coll) {
-		// 	//this.$(".Persons").append($("<option/>", {text: "...", value: ""}));
+		test: function() {
+			var self = this;
+			this.schedule = new ScheduleCollection();
+			this.schedule.fetch({
+				url: "/js/app/views/consultations/schedule.json",
+				dataType: 'json'
+			}).done(function () {
 
-		// 	// TODO: remove after backend fix
-		// 	this.persons.each(function(p) {
-		// 		p.get("specs").set("id", Math.floor((Math.random() * 4) + 1));
-		// 	});
+				console.log(self.schedule.getDates(), self.schedule.getTimetable('2012-04-13'), self.schedule, arguments);
+				self.renderCalendar();
+			});
 
-		// 	this.personsJSON = this.persons.toJSON();
-		// 	this.addPersons(this.personsJSON);
+		},
 
-		// 	this.$(".Persons").select2("enable");
-		// },
+		renderCalendar: function(){
+			var self = this;
+			var workDaysFormated = _.map(this.schedule.getDates(), function(day) {
+				return moment(day, "YYYY-MM-DD").format();
+			}, this);
 
-		// addPersons: function(persons) {
+			function noDisabledDays(date) {
+				if (!_.contains(workDaysFormated, moment(date).format())) {
+					return [0];
+				} else {
+					return [1];
+				}
+			}
 
-		// 	_(persons).each(function(p) {
 
-		// 		this.$(".Persons").append($("<option/>", {
-		// 			"text": p.name.raw,
-		// 			"value": p.id
-		// 		}).data("specs-id", p.specs.id));
-		// 	}, this);
-		// },
+			this.$("#dp").datepicker({
+				beforeShowDay: noDisabledDays,
+				//minDate: new Date(),
+				onSelect: function(dateText) {
+					var date = moment(dateText, 'DD.MM.YYYY').format('YYYY-MM-DD');
+					self.renderTimetable(date);
+					
 
-		// onPersonsFreeLoaded: function(coll) {
-		// 	this.$(".FreeDoctors li").remove();
-		// 	this.addPersonsFree(this.personsFree.toJSON());
-		// },
+				}
+			});
+		},
 
-		// addPersonsFree: function(persons) {
+		renderTimetable: function(date){
+			var timetable = this.schedule.getTimetable(date);
+			this.timetableView.setElement(this.$('#timetable'));
+			this.timetableView.render({timetable: timetable});
 
-		// 	_(persons).each(function(p) {
+		},
 
-		// 		this.$(".FreeDoctors ul").append($("<li/>", {}).append($("<a/>", {
-		// 			"text": p.name.raw,
-		// 			"href": "#"
-		// 		})).data("id", p.id));
-		// 	}, this);
-		// },
+		onPersonsLoaded: function(coll) {
+			console.log('persons', this.persons.length)
 
-		// onSpecsLoaded: function(coll) {
-		// 	//this.$(".Specs").append($("<option/>", {text: "...", value: ""}));
-		// 	_(this.specs.toJSON()).each(function(s) {
-		// 		this.$(".Specs").append($("<option/>", {
-		// 			"text": s.value,
-		// 			"value": s.id
-		// 		}));
-		// 	}, this);
+			// //this.$(".Persons").append($("<option/>", {text: "...", value: ""}));
 
-		// 	this.$(".Specs").select2("enable");
-		// },
+			// // TODO: remove after backend fix
+			// this.persons.each(function(p) {
+			// 	p.get("specs").set("id", Math.floor((Math.random() * 4) + 1));
+			// });
 
-		// // Обработчик события выбора врача
-		// onPersonChange: function(event) {
-		// 	var selectedPerson = this.$(".Persons").find("option:selected"),
-		// 		personSpec = selectedPerson.data("specs-id");
+			// this.personsJSON = this.persons.toJSON();
+			// this.addPersons(this.personsJSON);
 
-		// 	if (personSpec) {
-		// 		this.$(".Specs").select2("val", personSpec);
+			// this.$(".Persons").select2("enable");
+		},
 
-		// 		this.showPersonTime();
-		// 	}
-		// },
-
-		// // Обработчик события выбора свободного врача
-		// onPersonFreeChange: function(event) {
-		// 	var target = $(event.target).parent();
-		// 	idPerson = $(event.target).data("id");
-
-		// 	if (!target.hasClass("Active")) {
-		// 		$(".FreeDoctors .Active").removeClass("Active");
-		// 		target.addClass("Active");
-		// 		this.$(".Persons").select2("val", idPerson);
-		// 		this.showPersonTime();
-		// 	} else {
-		// 		return false;
-		// 	}
-		// },
-
-		// // Обработчик события выбора даты в календаре
-		// onDateChange: function(dateText) {
-		// 	dateText = dateText || new Date();
-		// 	this.currentDate = Core.date.toInt(dateText);
-		// 	this.showPersonTime();
-		// 	this.showPersonFree();
-		// },
-
-		// // Обработчик события выбора времени
-		// onTimeChange: function(timeText) {
-		// 	this.currentTime = timeText;
-		// 	this.showPersonFree();
-		// },
-
-		// // Метод для отображения времени врача
-		// showPersonTime: function() {
-		// 	var person;
-		// 	person = this.getSelectedPerson();
-
-		// 	if (!_.isUndefined(person)) {
-		// 		this.$(".SelectTime").fadeOut(function() {
-		// 			//Здесь реализуем логику по получению списка времени консультаций данного врача
-		// 		}).fadeIn();
-		// 	}
-
-		// 	return person;
-		// },
-
-		// // Метод для отображения списка свободных врачей
-		// showPersonFree: function() {
-		// 	var spec;
-		// 	spec = this.getSelectedSpec();
-
-		// 	if (!_.isUndefined(spec)) {
-		// 		this.personsFree.setParams({
-		// 			filter: {
-		// 				beginDate: 100000000,
-		// 				endDate: 1604606400000
-		// 			}
-		// 		});
-		// 		this.personsFree.fetch();
-
-		// 		this.$(".FreeDoctors").fadeOut(function() {
-		// 			//Здесь реализуем логику по получению списка свободных врачей
-		// 		}).fadeIn();
-		// 	}
-
-		// 	return spec;
-		// },
-
-		// onSpecChange: function(event) {
-		// 	var selectedSpec = this.$(".Specs").select2("val");
-		// 	this.$(".Persons").select2("val", "").find("option:not(:first)").remove();
-
-		// 	if (selectedSpec) {
-		// 		var personsBySpec = _(this.personsJSON).filter(function(p) {
-		// 			return parseInt(p.specs.id) === parseInt(selectedSpec);
-		// 		}, this);
-
-		// 		this.addPersons(personsBySpec);
-		// 		this.showPersonFree();
-		// 	} else {
-		// 		this.addPersons(this.personsJSON);
-		// 		this.$(".FreeDoctors").fadeOut();
-		// 	}
-		// },
-
-		// // Метод который возвращает объект типа App.Models.Doctor если врач выбран
-		// // или undefined в противном случае
-		// getSelectedPerson: function() {
-		// 	var idPerson;
-		// 	idPerson = parseInt(this.$(".Persons").find("option:selected").val());
-		// 	return this.persons.find(function(person) {
-		// 		return person.get("id") === idPerson;
-		// 	});
-		// },
-
-		// // Метод который возвращает объект типа App.Models.DictionaryValue если выбрана специальность врача
-		// // или undefined в противном случае
-		// getSelectedSpec: function() {
-		// 	var idSpec;
-		// 	idSpec = parseInt(this.$(".Specs").find("option:selected").val());
-		// 	return this.specs.find(function(spec) {
-		// 		return spec.get("id") === idSpec;
-		// 	});
-		// },
 
 		render: function() {
 
@@ -243,12 +159,15 @@ define([
 
 			this.renderNested(this.mkbInputView, "#mkb");
 
+			
 
-			this.$("#dp").datepicker({
-				onSelect: function(dateText) {
-					$(this).trigger("selectDate", dateText);
-				}
+			this.assignPersonSelect = new SelectView({
+				collection: this.assignPersons,
+				el: this.$('#assign-person'),
+				selectText: 'name.raw'
 			});
+
+			this.depended(this.assignPersonSelect);
 
 
 			this.financeSelect = new SelectView({
@@ -266,6 +185,13 @@ define([
 
 			this.depended(this.departmentSelect);
 
+			this.specialitiesSelect = new SelectView({
+				collection: this.specialities,
+				el: this.$('#specialities')
+			});
+
+			this.depended(this.specialitiesSelect);
+
 
 			this.$('#consultations').dynatree({
 				children: [{
@@ -274,17 +200,26 @@ define([
 					children: [{
 						title: 'Консультация хирурга',
 						icon: false
-					},
-					{
+					}, {
 						title: 'Консультация онколога',
 						icon: false
-					},
-					{
+					}, {
 						title: 'Консультация офтальмолога',
 						icon: false
 					}]
 				}]
 			});
+
+
+			this.persons.on('reset', function() {
+				this.persons.each(function(person) {
+					///console.log('person.get(name)', person, person.get('name').get('raw'))
+					this.$("#persons").append("<li><a href='#'>" + person.get("name").get('raw') + "</a></li>");
+
+				}, this);
+
+			}, this);
+			//this.persons.fetch();
 
 
 

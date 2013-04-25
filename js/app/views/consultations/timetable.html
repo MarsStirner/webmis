@@ -1,0 +1,13 @@
+<label for="">Расписание врача</label><br />
+<ul id="timetable-items">
+	<% _.each(timetable, function(item) { %>
+		<% if(item.busy){%> 
+			<li ><label style="color: #bbb;"><input type="radio" name="time" disabled/>
+		<%}else{%>
+			<li><label><input type="radio" name="time"/>
+		<%}%>
+		<%= item.time %></li> </label>
+
+	<% }); %>
+
+</ul>
