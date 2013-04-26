@@ -141,7 +141,7 @@ header {
 }
 /* line 123, ../../sass/modules/layout.scss */
 .SelectRole .Actions span {
-  border-bottom: 1px dashed #000;
+  border-bottom: 1px dashed black;
 }
 /* line 126, ../../sass/modules/layout.scss */
 .SelectRole .Actions::after {
@@ -156,7 +156,7 @@ header {
 /* line 136, ../../sass/modules/layout.scss */
 .SelectRole .Actions:hover span {
   color: #DD1111;
-  border-bottom: 1px dashed #DD1111;
+  border-bottom: 1px dashed #dd1111;
 }
 /* line 140, ../../sass/modules/layout.scss */
 .SelectRole .Actions:hover::after {
@@ -178,7 +178,7 @@ header {
 /* line 157, ../../sass/modules/layout.scss */
 .profile-options li {
   color: #3F3F40;
-  border-top: 1px solid #D4D4D4;
+  border-top: 1px solid #d4d4d4;
   padding: 0.6em 8px;
   cursor: pointer;
 }
@@ -317,7 +317,7 @@ header {
 }
 /* line 267, ../../sass/modules/layout.scss */
 .NotFilled .Actions span {
-  border-bottom: 1px dashed #118DDC;
+  border-bottom: 1px dashed #118ddc;
 }
 /* line 270, ../../sass/modules/layout.scss */
 .NotFilled .Actions::after {
@@ -332,7 +332,7 @@ header {
 }
 /* line 281, ../../sass/modules/layout.scss */
 .NotFilled .Actions:hover span {
-  border-bottom: 1px dashed #DD1111;
+  border-bottom: 1px dashed #dd1111;
 }
 /* line 284, ../../sass/modules/layout.scss */
 .NotFilled .Actions:hover::after {
@@ -341,7 +341,7 @@ header {
 
 /* line 290, ../../sass/modules/layout.scss */
 .CardHeader {
-  border-bottom: 1px solid #B6B6B6;
+  border-bottom: 1px solid #b6b6b6;
   padding-bottom: 1em;
   margin-bottom: 2em;
 }
@@ -475,8 +475,8 @@ header {
 .SinglePaginator {
   background: #F5F4F4;
   color: #6C6C71;
-  border-top: 1px solid #fff;
-  border-bottom: 1px solid #E4E4E4;
+  border-top: 1px solid white;
+  border-bottom: 1px solid #e4e4e4;
   margin: -2em -4em 2em -4em;
   padding: 1em 1.5em;
 }
@@ -522,7 +522,7 @@ header {
 /* line 439, ../../sass/modules/layout.scss */
 .SingleHeader {
   margin-bottom: 2.7em;
-  border-bottom: 1px solid #D4D4D4;
+  border-bottom: 1px solid #d4d4d4;
   padding-bottom: 0.5em;
 }
 /* line 443, ../../sass/modules/layout.scss */
@@ -564,7 +564,7 @@ header {
   padding-top: 2.7em;
   padding-right: 4em;
   margin-right: 19em;
-  border-right: 1px solid #D4D4D4;
+  border-right: 1px solid #d4d4d4;
 }
 
 /* line 478, ../../sass/modules/layout.scss */
@@ -695,7 +695,7 @@ footer a {
   top: -2em;
   color: #fff;
   padding: 0.5em 4em;
-  border-bottom: 1px solid #D4D4D4;
+  border-bottom: 1px solid #d4d4d4;
 }
 /* line 585, ../../sass/modules/layout.scss */
 .AlertBlock > .CloseIcon {
@@ -727,8 +727,8 @@ footer a {
 }
 
 /* line 607, ../../sass/modules/layout.scss */
-.ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title {
-  font-size: 1.2em;
+.ui-button .ui-button-text, input.ui-button, .ui-widget-content input.ui-button, .ui-datepicker .ui-datepicker-title, .ui-tabs-anchor {
+  font-size: 1.2em !important;
 }
 
 /* line 613, ../../sass/modules/layout.scss */
@@ -766,7 +766,7 @@ footer a {
 /* line 647, ../../sass/modules/layout.scss */
 .date-icon, .time-icon {
   position: absolute;
-  right: -0.6em;
+  right: -.6em;
   top: .4em;
   color: #777;
   cursor: pointer;
@@ -830,7 +830,7 @@ footer a {
   background: none !important;
   background-image: none !important;
   text-indent: 0 !important;
-  padding: .1em 0 0 .1em !important;
+  padding: 0.1em 0 0 0.1em !important;
 }
 
 /* line 712, ../../sass/modules/layout.scss */
@@ -922,7 +922,7 @@ footer a {
 /* line 795, ../../sass/modules/layout.scss */
 .select2-drop .select2-results li {
   padding: 0.2em 0.4em 0.2em 0.2em;
-  border-top: 1px solid #D4D4D4;
+  border-top: 1px solid #d4d4d4;
   /*&:first-child {
   	border-top: none;
   }*/
@@ -941,6 +941,78 @@ footer a {
   background: url("../select2.png") no-repeat 100% -22px, -o-linear-gradient(bottom, white 85%, #eeeeee 99%);
   background: url("../select2.png") no-repeat 100% -22px, -ms-linear-gradient(top, white 85%, #eeeeee 99%);
   background: url("../select2.png") no-repeat 100% -22px, linear-gradient(top, #ffffff 85%, #eeeeee 99%);
+}
+
+/* line 818, ../../sass/modules/layout.scss */
+.monitoring-layout {
+  display: table;
+}
+/* line 821, ../../sass/modules/layout.scss */
+.monitoring-layout .TreatmentBlock {
+  padding-top: 2em;
+}
+/* line 825, ../../sass/modules/layout.scss */
+.monitoring-layout h4 {
+  padding-top: 2em;
+  text-decoration: underline;
+}
+/* line 835, ../../sass/modules/layout.scss */
+.monitoring-layout .monitoring-layout-header {
+  margin-bottom: 2em;
+}
+/* line 837, ../../sass/modules/layout.scss */
+.monitoring-layout .monitoring-layout-header .refresh-monitoring {
+  cursor: pointer;
+}
+/* line 840, ../../sass/modules/layout.scss */
+.monitoring-layout .monitoring-layout-header .label {
+  margin-left: 1em;
+  font-size: 100%;
+}
+/* line 845, ../../sass/modules/layout.scss */
+.monitoring-layout .blood-type {
+  font-size: 100%;
+  padding: 4px;
+  margin: 0.2em 0 0 1em;
+  width: 100%;
+}
+/* line 852, ../../sass/modules/layout.scss */
+.monitoring-layout .patient-blood-type .row-fluid [class*="span"] {
+  min-height: 0;
+}
+/* line 856, ../../sass/modules/layout.scss */
+.monitoring-layout .ui-button-text {
+  font-size: 0.8em !important;
+}
+/* line 860, ../../sass/modules/layout.scss */
+.monitoring-layout .cancel-blood {
+  margin-top: .2em;
+}
+/* line 864, ../../sass/modules/layout.scss */
+.monitoring-layout .cancel-blood {
+  padding-top: .4em;
+  padding-left: .5em;
+}
+/* line 869, ../../sass/modules/layout.scss */
+.monitoring-layout .blood-type-selector-controls {
+  margin: 0;
+}
+/* line 874, ../../sass/modules/layout.scss */
+.monitoring-layout .patient-blood-type-history td:first-child {
+  padding-left: 1em;
+}
+/* line 877, ../../sass/modules/layout.scss */
+.monitoring-layout .patient-blood-type-history ul {
+  margin-top: 1em;
+  padding-left: 1em;
+}
+/* line 880, ../../sass/modules/layout.scss */
+.monitoring-layout .patient-blood-type-history ul li span.blood-date {
+  color: #414142;
+}
+/* line 886, ../../sass/modules/layout.scss */
+.monitoring-layout .blood-type-selector {
+  margin-top: 0.7em;
 }
 
 /*.LineBlockHolder {

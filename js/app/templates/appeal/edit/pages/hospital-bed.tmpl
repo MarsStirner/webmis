@@ -26,12 +26,16 @@
 				<option value="">...</option>
 			</select>
 		</div>
-		<div class="HalfCol">
+		<div class="QuartCol">
 			<label for="begDate">
 				Дата и время поступления
 			</label>
-
-			<div class="DateTime">
+			<div class="date">
+				<input type="text" name="move-date" id="move-date" placeholder="дд.мм.гггг" class="SelectDate"
+							 data-relation="#move-time"/>
+				<i class="icon-calendar date-icon"></i>
+			</div>
+			<!--<div class="DateTime">
 				<div class="DatePeriod SingleDate">
 					<div class="FromTo">
 						<input type="text" name="move-date" id="move-date" placeholder="дд.мм.гггг" class="SelectDate"
@@ -43,6 +47,12 @@
 					<input type="text" class="Styled HourPicker" id="move-time" data-relation="#move-date" placeholder="чч:мм"/>
 				</div>
 
+			</div>-->
+		</div>
+		<div class="DecCol WithoutName">
+			<div class="time">
+				<input type="text" class="Styled HourPicker" id="move-time" data-relation="#move-date" placeholder="чч:мм"/>
+				<i class="icon-time time-icon"></i>
 			</div>
 		</div>
 		<div class="HalfCol">

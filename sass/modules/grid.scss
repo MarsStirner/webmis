@@ -261,6 +261,56 @@ $TABLE_CELL_COLOR: #414142;
 	cursor:default;
 }
 
+.MonitoringWidget {
+	table-layout: fixed;
+
+	tr {
+		&:hover td {
+			background:none;
+			cursor:default;
+		}
+
+		&:first-child td {
+			border-top: 1px solid #D9D9D9;
+			white-space: normal;
+		}
+
+		td:first-child {
+			color: #6D6D71;
+		}
+	}
+
+	li {
+		margin-top: 1em;
+	}
+	li:first-child {
+		margin-top: 0;
+	}
+}
+
+.MonitoringGrid {
+	td, th {
+		border-right: 1px solid #D9D9D9;
+		text-align: center;
+		cursor:default;
+	}
+	td {
+		cursor: default;
+	}
+	tr {
+		&:hover td {
+			background:none;
+		}
+		th.sortable:hover {
+			background: #f5f4f4;
+			cursor:pointer;
+		}
+	}
+	.icon-caret-down, .icon-caret-up {
+		color: black;
+	}
+}
+
 .AnalisGrid {
    width:auto;
    margin:0 0 2em 0;

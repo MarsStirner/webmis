@@ -1,8 +1,7 @@
 <div class="ContentHeader">
 	<div class="PageActions">
 		<div class="CloseHistory">
-			<button class="Styled Button Actions CopyFromPrevious"><span>Копировать из предыдущего</span>
-			</button>
+			<button class="CopyFromPrevious">Копировать из предыдущего</button>
 		</div>
 		<h2>Осмотр</h2>
 	</div>
@@ -273,7 +272,7 @@
 			<span class="FieldInfo">Описание</span>
 		</div>
 		<div class="QuartCol">
-			<button class="Styled Button MKBLauncher" data-mkb-examattr-id="153"><span>МКБ-10</span></button>
+			<button class="MKBLauncher" data-mkb-examattr-id="153">МКБ-10</button>
 		</div>
 	</div>
 	<div class="LineBlock">
@@ -303,8 +302,10 @@
 </li>
 </ul>
 <div class="FormButtons">
-	<button class="Styled Button SaveBtn"><span>Сохранить</span></button>
-	<a href="/appeals/${appealId}/examinations/" class="Actions Cancel">Отмена</a>
+	<div class="PageActions">
+		<button class="SaveBtn button-color-green">Сохранить</button>
+		<a href="/appeals/${appealId}/examinations/" class="Actions Cancel">Отмена</a>
+	</div>
 </div>
 </div>
 </div>

@@ -9,7 +9,22 @@ define([
 	"collections/department-patients",
 	"views/appeal/edit/popups/send-to-department",
 	"models/print/form007",
-	"views/print"], function() {
+	"views/print"], function () {
+	/*var AppealsList = {
+		Views: {}
+	};
+
+	AppealsList.Views.Layout = View.extend({
+		initialize: function (options) {
+
+		},
+
+		render: function () {
+
+			return this;
+		}
+	});*/
+
 	App.Views.AppealsList = View.extend({
 		id: "main",
 
@@ -68,6 +83,7 @@ define([
 			this.$(".Grid thead tr").toggleClass("EditTh");
 			this.$(".Grid .Filter").toggle();
 		},
+
 		//Новое мероприятие/направление или перевод в отделение
 		newSendToDepartment: function(appeal) {
 			var previousDepartmentName = false;
@@ -76,6 +92,7 @@ define([
 			var sendPopUp = new App.Views.SendToDepartment({
 				previousDepartmentName: previousDepartmentName,
 				previousDepartmentDate: previousDepartmentDate,
+				showDatepicker: false,
 				appealId: appeal.get("id"),
 				clientId: appeal.get("patient").get("id"),
 				moveDatetime: appeal.get("createDatetime"),
@@ -86,6 +103,7 @@ define([
 				this.collection.fetch();
 			}, this);
 		},
+
 		newHospitalBed: function(appealId) {
 			this.trigger("change:viewState", {
 				type: 'hospitalbed',
@@ -214,8 +232,14 @@ define([
 					}
 				});
 
-				var DocCollection = new App.Collections.Doctors();
-				var DepCollection = new App.Collections.Departments();
+				var doctors = new App.Collections.Doctors();
+				doctors.setParams({
+					limit: 9999
+				});
+				var departments = new App.Collections.Departments();
+				departments.setParams({
+					limit: 9999
+				});
 
 				Filter = new App.Views.FilterDictionaries({
 					collection: Collection,
@@ -223,24 +247,26 @@ define([
 					path: this.options.path,
 					dictionaries: {
 						doctors: {
-							collection: DocCollection,
+							collection: doctors,
 							elementId: "docs-dictionary",
 							getText: function(model) {
-								return model.get("name").get("raw");
+								return model.get("name").raw;
 							},
 							getValue: function(model) {
 								return model.get("id");
-							}
+							},
+							preselectedValue: Core.Cookies.get("userId")
 						},
 						departments: {
-							collection: DepCollection,
+							collection: departments,
 							elementId: "deps-dictionary",
 							getText: function(model) {
 								return model.get("name");
 							},
 							getValue: function(model) {
 								return model.get("id");
-							}
+							},
+							preselectedValue: Core.Cookies.get("userDepartmentId")
 						}
 					}
 				});
