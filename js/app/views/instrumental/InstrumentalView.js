@@ -116,26 +116,28 @@ InstrumentalEditPopupView) {
 		},
 
 		editDirection: function(model) {
-			console.log('editDirection', model);
-			// pubsub.trigger('noty', {
-			// 	text: 'функционал ещё не реализован'
-			// });
+			var self = this;
+
 			var testId = model.get('id');
-			var test = new InstrumentalResearch({"id": testId },{appealId:this.options.appealId});
-			//test.appealId = this.options.appealId;
+			var test = new InstrumentalResearch({
+				"id": testId
+			}, {
+				appealId: this.options.appealId
+			});
+
 			test.fetch({
-				success: function () {
-					console.log('editDirection success', arguments)
+				success: function() {
+					console.log('editDirection success', arguments);
+					this.newEditPopup = new InstrumentalEditPopupView({
+						appeal: self.options.appeal,
+						model: test
+					});
+					this.newEditPopup.render().open();
 				},
-				error: function () {
-					console.log('editDirection error', arguments)
+				error: function() {
+					console.log('editDirection error', arguments);
 				}
 			});
-			// this.newEditPopup = new InstrumentalEditPopupView({
-			// 	appeal: this.options.appeal//,
-			// 	//model: test
-			// });
-			// this.newEditPopup.render().open();
 
 		},
 
