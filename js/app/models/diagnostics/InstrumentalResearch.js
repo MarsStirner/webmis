@@ -1,7 +1,8 @@
 define(["mixins/commonData"], function(commonData) {
 	var InstrumentalResearch = Model.extend({
+		idAttribute:"id",
 		initialize: function(attr, options) {
-			
+
 			var appealId = false;
 			if (options.appealId) {//если модель создаётся самостоятельно
 				appealId = options.appealId;
@@ -17,8 +18,12 @@ define(["mixins/commonData"], function(commonData) {
 				this.appealId = appealId;
 			}
 		},
-		url: function() {
+		urlRoot: function(){
 			return DATA_PATH + 'appeals/' + this.appealId + '/diagnostics/instrumental';
+		},
+		parse: function(raw){
+			return raw.data?raw.data[0]:raw;
+			//raw когда парсим модель в коллекции, raw.data[0] - когда получаем отдельную модель
 		}
 
 	}).mixin([commonData]);
