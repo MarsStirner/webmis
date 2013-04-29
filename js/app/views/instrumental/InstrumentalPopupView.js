@@ -2,33 +2,22 @@
  * User: FKurilov
  * Date: 25.06.12
  */
-define([
-	"text!templates/appeal/edit/popups/instrumental.tmpl",
-	"mixins/PopupMixin",
-	"views/instrumental/InstrumentalPopupBottomFormView",
-	"collections/diagnostics/InstrumntalGroups",
-	"collections/diagnostics/InstrumentalResearchs",
-	"models/diagnostics/InstrumentalResearchTemplate",
-	"collections/diagnostics/diagnostic-types"], function(
-tmpl,
-popupMixin,
-BFView,
-InstrumntalGroups,
-InstrumentalResearchs,
-InstrumentalResearchTemplate) {
+
+define(function(require) {
+	var tmpl = require('text!templates/appeal/edit/popups/instrumental.tmpl');
+	var popupMixin = require('mixins/PopupMixin');
+	var BFView = require('views/instrumental/InstrumentalPopupBottomFormView');
+	var InstrumntalGroups = require('collections/diagnostics/InstrumntalGroups');
+	var InstrumentalResearchs = require('collections/diagnostics/InstrumentalResearchs');
+	var InstrumentalResearchTemplate = require('models/diagnostics/InstrumentalResearchTemplate');
 
 
 	var InstrumentalPopup = View.extend({
 		template: tmpl,
-		events: {
-			//"click .ShowHidePopup": "close",
-			//"click .EventList li": "onRootTypeSelected",
-			//"click .SelectAnalysis li": "onSelectAnalysis",
-			//"click .test": "test"
-		},
+		events: {},
 
 		initialize: function(options) {
-			//this.constructor.__super__.initialize.apply(this, options);
+
 			_.bindAll(this);
 
 			//юзер
@@ -53,85 +42,82 @@ InstrumentalResearchTemplate) {
 
 			this.instrumntalResearchs = new InstrumntalGroups();
 
-
-
 		},
 
 		loadGroups: function(code) {
 			var view = this;
-			console.log('loadGroups', code);
 
 			view.instrumntalGroups.setParams({
 				'filter[view]': 'tree'
-				//,'filter[code]': code
 			});
 
 			view.$instrumentalGroups.html('<li>Загружается...</li>');
 			view.instrumntalGroups.fetch().done(function() {
-
-				view.$instrumentalGroups.html('');
-
-				view.$instrumentalGroups.dynatree({
-					onClick: function(node) {
-						view.$instrumentalResearchs.html('');
-						view.testCode = false;
-						view.updateSaveButton();
-
-						if (node.data.children && node.data.children.length > 0) {
-
-						} else {
-							view.$instrumentalResearchs.html('<li>Загружается...</li>');
-							view.loadResearchs(node.data.code);
-						}
-
-						view.updateSaveButton();
-					},
-					children: view.instrumntalGroups.toJSON()
-				});
-
-				if (!view.groupsTree) {
-					view.groupsTree = view.$instrumentalGroups.dynatree("getTree");
-				}
-				view.groupsTree.reload();
-
+				view.makeGroupsTree();
 			});
 
 		},
 
+		makeGroupsTree: function() {
+			var view = this;
+
+			view.$instrumentalGroups.dynatree({
+				onClick: function(node) {
+					view.$instrumentalResearchs.html('');
+					view.testCode = false;
+					view.updateSaveButton();
+
+					if (node.data.children && node.data.children.length > 0) {
+					} else {
+						view.loadResearchs(node.data.code);
+					}
+
+					view.updateSaveButton();
+				},
+				children: view.instrumntalGroups.toJSON()
+			});
+
+			if (!view.groupsTree) {
+				view.groupsTree = view.$instrumentalGroups.dynatree("getTree");
+			}
+			view.groupsTree.reload();
+		},
+
 		loadResearchs: function(code) {
 			var view = this;
+
 			view.instrumntalResearchs.setParams({
 				'filter[code]': code
 			});
 
-			view.instrumntalResearchs.fetch().done(function() {
-
-				view.$instrumentalResearchs.dynatree({
-					checkbox: true,
-					selectMode: 1,
-					onSelect: function(select, node) {
-						if (select) {
-							view.testCode = node.data.code;
-						} else {
-							view.testCode = false;
-						}
-						view.updateSaveButton();
-					},
-					// onClick: function(node) {
-						//if (node.data.children && node.data.children.length > 0) {
-						//} else {
-						//	console.log('instrumntalResearch',node.data.code);
-						//}
-					// },
-					children: view.instrumntalResearchs.toJSON()
-				});
-
-				if (!view.researchsTree) {
-					view.researchsTree = view.$instrumentalResearchs.dynatree("getTree");
-				}
-				view.researchsTree.reload();
+			view.$instrumentalResearchs.html('<li>Загружается...</li>');
+			view.instrumntalResearchs.fetch().done(function(){
+				view.makeResearchsTree();
 			});
 
+		},
+
+		makeResearchsTree: function() {
+			var view = this;
+
+			view.$instrumentalResearchs.dynatree({
+				checkbox: true,
+				selectMode: 1,
+				onSelect: function(select, node) {
+					if (select) {
+						view.testCode = node.data.code;
+					} else {
+						view.testCode = false;
+					}
+					view.updateSaveButton();
+				},
+				children: view.instrumntalResearchs.toJSON()
+			});
+
+			if (!view.researchsTree) {
+				view.researchsTree = view.$instrumentalResearchs.dynatree("getTree");
+			}
+			view.researchsTree.reload();
 		},
 
 		updateSaveButton: function() {
@@ -160,62 +146,67 @@ InstrumentalResearchTemplate) {
 			});
 
 			view.testTemplate.fetch().done(function() {
-				//doctorFirstName - имя врача назначившего исследование
-				view.testTemplate.setProperty('doctorFirstName', 'value',  view.doctor.name.first);
-				//doctorMiddleName - отчество врача назначившего исследование
-				view.testTemplate.setProperty('doctorMiddleName', 'value', '');
-				//doctorLastName - фамилия врача назначившего исследование
-				view.testTemplate.setProperty('doctorLastName', 'value', view.doctor.name.last);
-
-				//assessmentDate - дата создания направления на исследование
-				var assessmentDate = moment(view.$assessmentDatepicker.datepicker("getDate")).format('YYYY-MM-DD');
-				var assessmentTime = view.$assessmentTimepicker.val() + ':00';
-				view.testTemplate.setProperty('assessmentDate', 'value', assessmentDate + ' ' + assessmentTime);
-
-				//plannedEndDate - планируемая дата выполнения иследования
-				var plannedDate = moment(view.$plannedDatepicker.datepicker("getDate")).format('YYYY-MM-DD');
-				var plannedTime = view.$plannedTimepicker.val() + ':00';
-				view.testTemplate.setProperty('plannedEndDate', 'value', plannedDate + ' ' +  plannedTime);
-
-				//finance - идентификатор типа оплаты
-				var financeId = $($('#finance option:selected')[0]).val()
-				view.testTemplate.setProperty('finance', 'value', financeId);
-
-				//urgent - срочность
-				var urgent = $('input[name=urgent]:checked').prop('checked');
-				view.testTemplate.setProperty('urgent', 'value', urgent);
-
-				//идентификатор направительного диагноза
-				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
-				view.testTemplate.setProperty('Направительный диагноз', 'valueId', mkbId);
-
-				view.$saveButton.button("disable");
-
-				view.tests = new InstrumentalResearchs(null, {
-					appealId: appealId
-				});
-
-
-				view.tests.add(view.testTemplate);
-
-				view.tests.saveAll({
-					success: function(raw, status) {
-						console.log('success saveall', arguments);
-						view.close();
-						pubsub.trigger('instrumental-diagnostic:added');
-					}
-				});
-			})
-
-
+				view.saveTest();
+			});
 
 		},
 
+		saveTest: function() {
+			//doctorFirstName - имя врача назначившего исследование
+			view.testTemplate.setProperty('doctorFirstName', 'value', view.doctor.name.first);
+			//doctorMiddleName - отчество врача назначившего исследование
+			view.testTemplate.setProperty('doctorMiddleName', 'value', '');
+			//doctorLastName - фамилия врача назначившего исследование
+			view.testTemplate.setProperty('doctorLastName', 'value', view.doctor.name.last);
 
+			//assessmentDate - дата создания направления на исследование
+			var assessmentDate = moment(view.$assessmentDatepicker.datepicker("getDate")).format('YYYY-MM-DD');
+			var assessmentTime = view.$assessmentTimepicker.val() + ':00';
+			view.testTemplate.setProperty('assessmentDate', 'value', assessmentDate + ' ' + assessmentTime);
+
+			//plannedEndDate - планируемая дата выполнения иследования
+			var plannedDate = moment(view.$plannedDatepicker.datepicker("getDate")).format('YYYY-MM-DD');
+			var plannedTime = view.$plannedTimepicker.val() + ':00';
+			view.testTemplate.setProperty('plannedEndDate', 'value', plannedDate + ' ' + plannedTime);
+
+			//finance - идентификатор типа оплаты
+			var financeId = $($('#finance option:selected')[0]).val();
+			view.testTemplate.setProperty('finance', 'value', financeId);
+
+			//urgent - срочность
+			var urgent = $('input[name=urgent]:checked').prop('checked');
+			view.testTemplate.setProperty('urgent', 'value', urgent);
+
+			//идентификатор направительного диагноза
+			var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
+			view.testTemplate.setProperty('Направительный диагноз', 'valueId', mkbId);
+
+			view.$saveButton.button("disable");
+
+			view.tests = new InstrumentalResearchs(null, {
+				appealId: appealId
+			});
+
+
+			view.tests.add(view.testTemplate);
+
+			view.tests.saveAll({
+				success: function(raw, status) {
+					console.log('success saveall', arguments);
+					view.close();
+					pubsub.trigger('instrumental-diagnostic:added');
+				}
+			});
+
+		},
 
 		render: function() {
 			var view = this;
 			view.renderNested(this.bfView, ".bottom-form");
+			return this;
+		},
+		afterRender: function() {
+			var view = this;
 
 			view.$instrumentalGroups = view.$('.instrumental-groups');
 			view.$instrumentalResearchs = view.$('.instrumental-researchs');
@@ -246,6 +237,7 @@ InstrumentalResearchTemplate) {
 			});
 
 			view.$plannedTimepicker.timepicker({
+				defaultTime: 'now',
 				onHourShow: function(hour) {
 					var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
 					var currentDay = moment().startOf('day');
@@ -277,12 +269,9 @@ InstrumentalResearchTemplate) {
 				button: '.icon-time'
 			});
 
+			view.$plannedTimepicker.val('09:00');
+
 			view.$saveButton.button("disable");
-
-
-
-
-			return this;
 		}
 
 	}).mixin([popupMixin]);

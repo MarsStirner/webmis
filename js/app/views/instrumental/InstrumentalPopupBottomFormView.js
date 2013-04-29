@@ -1,6 +1,13 @@
-define(["text!templates/appeal/edit/popups/instrumental-bf.tmpl",
-	"views/ui/MkbInputView",
-	"views/ui/SelectView"], function(tmpl, MKBView, SelectView) {
+define(function(require) {
+	var tmpl = require('text!templates/appeal/edit/popups/instrumental-bf.tmpl');
+	var MKBView = require('views/ui/MkbInputView');
+	var SelectView = require('views/ui/SelectView');
+
+	var rivets = require('rivets');
+
+// define(["text!templates/appeal/edit/popups/instrumental-bf.tmpl",
+// 	"views/ui/MkbInputView",
+// 	"views/ui/SelectView"], function(tmpl, MKBView, SelectView) {
 
 	var InstrumentalPopupBottomForm = View.extend({
 		template: tmpl,
@@ -43,6 +50,8 @@ define(["text!templates/appeal/edit/popups/instrumental-bf.tmpl",
 
 		render: function() {
 			this.$el.html($.tmpl(this.template, this.options.data));
+
+			rivets.bind(this.el, {test: this.options.model});
 			this.renderNested(this.mkb, ".mkb");
 
 			if (this.appealDiagnosis) {

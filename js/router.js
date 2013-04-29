@@ -6,12 +6,16 @@ require.config({
 		"underscore": "../lib/underscore/underscore-1.4.2",
 		"backbone": "../lib/backbone/backbone-0.9.1",
 		"advice": "../lib/backbone.advice/advice",
+		"deep-model":"../lib/backbone.deep-model/deep-model-0.10.4",
 
 		"inputmask": "../lib/jquery.inputmask/jquery.inputmask",
-		"moment":"../lib/moment/moment-2.0.0.min",
+		"moment": "../lib/moment/moment-2.0.0.min",
 
 		"md5_crypt": "../lib/md5_crypt/md5_crypt",
-		"select2": "../lib/select2/select2-3.1"
+		"select2": "../lib/select2/select2-3.1",
+
+		"rivetsLib": "../lib/rivets/rivets-0.5.0",
+		"rivets": "../lib/rivets/adapter"
 	},
 	shim: {
 		'backbone': {
