@@ -1,34 +1,54 @@
-
 require.config({
 	baseUrl: "/js/app",
 
 	paths: {
-		"inputmask": "/js/lib/inputmask/jquery.inputmask"
+		"jquery": "../lib/jquery/jquery-1.8.2.min",
+		"underscore": "../lib/underscore/underscore-1.4.2",
+		"backbone": "../lib/backbone/backbone-0.9.1",
+		"advice": "../lib/backbone.advice/advice",
+
+		"inputmask": "../lib/jquery.inputmask/jquery.inputmask",
+		"moment":"../lib/moment/moment-2.0.0.min",
+
+		"md5_crypt": "../lib/md5_crypt/md5_crypt",
+		"select2": "../lib/select2/select2-3.1"
 	},
 	shim: {
+		'backbone': {
+			deps: ['underscore', 'jquery'],
+			exports: 'Backbone'
+		},
+		'underscore': {
+			exports: '_'
+		},
 		'inputmask': {
 			//deps: ['inputmask/jquery.inputmask.date.extensions'],
 			exports: 'jQuery.fn.inputmask'
 		}
-
+	},
+	map: {
+		'*': { //короткие алиасы
+			'b': 'backbone',
+			'_': 'underscore'
+		}
 	}
 });
 
 
 
-require(["views/FlashMessageView"], function (FlashMessage){
+require(["views/FlashMessageView"], function(FlashMessage) {
 
 	var messenger = new FlashMessage();
 });
 
-(function(){
-/*	Backbone.emulateHTTP = true;
+(function() {
+	/*	Backbone.emulateHTTP = true;
 	Backbone.emulateJSON = true;*/
 
 
 
 	var ExtendedRouter = Backbone.Router.extend({
-		navigate: function (fragment, options) {
+		navigate: function(fragment, options) {
 			this.trigger("navigate", fragment);
 			Backbone.Router.prototype.navigate.call(this, fragment, options);
 		}
@@ -36,15 +56,15 @@ require(["views/FlashMessageView"], function (FlashMessage){
 
 	var Router = ExtendedRouter.extend({
 
-		updateUrl: function ( path, params ) {
-			if ( params ) {
+		updateUrl: function(path, params) {
+			if (params) {
 				//App.Router.navigate( path + "?" + $.param(params) );
-			}else {
+			} else {
 				//App.Router.navigate( path );
 			}
-			App.Router.navigate( path );
+			App.Router.navigate(path);
 		},
-		initialize: function () {
+		initialize: function() {
 
 		},
 
@@ -97,44 +117,48 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			"widgets/": "widgets"
 		},
 
-		widgets: function () {
-			require(["text!templates/widgets.html", "views/widget"], function (tmplWidgets, Widget) {
+		widgets: function() {
+			require(["text!templates/widgets.html", "views/widget"], function(tmplWidgets, Widget) {
 				$("#wrapper").append(_.template(tmplWidgets));
 
-				var w_date = new Widget.Date({el: $(".date")}).render();
+				var w_date = new Widget.Date({
+					el: $(".date")
+				}).render();
 
-				var w_dateTime = new Widget.DateTime({el: $(".date")}).render();
+				var w_dateTime = new Widget.DateTime({
+					el: $(".date")
+				}).render();
 			});
 		},
 
-		authorization: function () {
-			require(["views/authorization"], function (){
+		authorization: function() {
+			require(["views/authorization"], function() {
 				var authView = new App.Views.Authorization;
 				authView.render();
 			});
 		},
-		checkAuthToken: function () {
-			if ( !Core.Cookies.get("authToken") ) {
+		checkAuthToken: function() {
+			if (!Core.Cookies.get("authToken")) {
 				window.location.href = "/auth/";
 				return false
 			}
 			return true
 		},
 
-		index: function () {
+		index: function() {
 			if (Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) {
 				this.patients();
-			}else {
+			} else {
 				this.appeals();
 			}
 		},
 
-		biomaterials: function(){
+		biomaterials: function() {
 			this.currentPage = "biomaterials";
 			console.log('biomaterials');
 
-			require(["views/app",  "views/pages/BiomaterialsView"], function (AppView,BiomaterialsView){
-				var view = new BiomaterialsView ();
+			require(["views/app", "views/pages/BiomaterialsView"], function(AppView, BiomaterialsView) {
+				var view = new BiomaterialsView();
 
 				if (!this.appView) {
 					this.appView = new AppView({
@@ -150,12 +174,14 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			});
 		},
 
-		reports: function (path) {
+		reports: function(path) {
 			this.currentPage = "reports";
-			console.log('router reports',arguments);
+			console.log('router reports', arguments);
 
-			require(["views/app", "views/reports/ReportsMainView"], function (AppView, ReportsMainView) {
-				var view = new ReportsMainView({path: path});
+			require(["views/app", "views/reports/ReportsMainView"], function(AppView, ReportsMainView) {
+				var view = new ReportsMainView({
+					path: path
+				});
 
 				if (!this.appView) {
 
@@ -174,17 +200,17 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			});
 		},
 
-		patients: function (){
-			if ( !this.checkAuthToken() ) {
+		patients: function() {
+			if (!this.checkAuthToken()) {
 				return false
 			}
 
 			// Используется для навигации в хедере
 			this.currentPage = "patients";
 
-			require(["views/app", "views/pages/patients-list"], function (AppView){
+			require(["views/app", "views/pages/patients-list"], function(AppView) {
 
-				var view = new App.Views.PatientsList ({
+				var view = new App.Views.PatientsList({
 					path: Backbone.history.fragment
 				});
 
@@ -202,15 +228,15 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			});
 		},
 
-		patient: function (id) {
-			if ( !this.checkAuthToken() ) {
+		patient: function(id) {
+			if (!this.checkAuthToken()) {
 				return false
 			}
 
 			this.currentPage = "patients";
 
-			require(["views/app", "views/pages/patient-card"], function (AppView){
-				var view = new App.Views.PatientCard ({
+			require(["views/app", "views/pages/patient-card"], function(AppView) {
+				var view = new App.Views.PatientCard({
 					path: Backbone.history.fragment,
 					id: id
 				});
@@ -231,16 +257,16 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			});
 		},
 
-		newPatient: function (page) {
-			if ( !this.checkAuthToken() ) {
+		newPatient: function(page) {
+			if (!this.checkAuthToken()) {
 				return false
 			}
 
 			this.currentPage = "patients";
 			var referrer = Core.Url.getReferrer();
 
-			require(["views/app", "models/patient", "views/pages/patient-edit"], function (AppView){
-				var view = new App.Views.PatientEdit ({
+			require(["views/app", "models/patient", "views/pages/patient-edit"], function(AppView) {
+				var view = new App.Views.PatientEdit({
 					page: page,
 					path: Backbone.history.fragment,
 					model: new App.Models.Patient,
@@ -261,22 +287,22 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			});
 		},
 
-		editPatient: function (id, page) {
-			if ( !this.checkAuthToken() ) {
+		editPatient: function(id, page) {
+			if (!this.checkAuthToken()) {
 				return false
 			}
 
 			this.currentPage = "patients";
 			var referrer = Core.Url.getReferrer();
 
-			require(["views/app", "models/patient", "views/pages/patient-edit"], function (AppView){
+			require(["views/app", "models/patient", "views/pages/patient-edit"], function(AppView) {
 				var Patient = new App.Models.Patient({
 					id: id
 				});
 				Patient.fetch({
-					success: function(){
+					success: function() {
 
-						var view = new App.Views.PatientEdit ({
+						var view = new App.Views.PatientEdit({
 							page: page,
 							path: Backbone.history.fragment,
 							model: Patient,
@@ -299,15 +325,15 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			});
 		},
 
-		newAppeal: function ( patientId ) {
-			if ( !this.checkAuthToken() ) {
+		newAppeal: function(patientId) {
+			if (!this.checkAuthToken()) {
 				return false
 			}
 
 			this.currentPage = "appeals";
 			var referrer = Core.Url.getReferrer();
 
-			require( ["views/app", "models/appeal", "models/patient", "views/pages/appeal-edit", "views/mkb-directory"], function (AppView) {
+			require(["views/app", "models/appeal", "models/patient", "views/pages/appeal-edit", "views/mkb-directory"], function(AppView) {
 				var Appeal = new App.Models.Appeal;
 
 				Appeal.get("patient").set("id", patientId);
@@ -328,24 +354,24 @@ require(["views/FlashMessageView"], function (FlashMessage){
 					this.appView.$el.append(newMain);
 					//this.appView.changeRenderView(view);
 				}
-			} );
+			});
 		},
 
-		editAppeal: function ( appealId ) {
-			if ( !this.checkAuthToken() ) {
+		editAppeal: function(appealId) {
+			if (!this.checkAuthToken()) {
 				return false
 			}
 
 			this.currentPage = "appeals";
 			var referrer = Core.Url.getReferrer();
 
-			require( ["views/app", "models/appeal", "models/patient", "views/pages/appeal-edit", "views/mkb-directory"], function (AppView) {
+			require(["views/app", "models/appeal", "models/patient", "views/pages/appeal-edit", "views/mkb-directory"], function(AppView) {
 				var Appeal = new App.Models.Appeal({
 					id: appealId
 				});
 
 				Appeal.fetch({
-					success: function(){
+					success: function() {
 						var view = new App.Views.AppealEdit({
 							model: Appeal,
 							referrer: referrer
@@ -365,19 +391,19 @@ require(["views/FlashMessageView"], function (FlashMessage){
 					}
 				});
 
-			} );
+			});
 		},
 
 
-		patientAppeals: function (id) {
-			if ( !this.checkAuthToken() ) {
+		patientAppeals: function(id) {
+			if (!this.checkAuthToken()) {
 				return false
 			}
 
 			this.currentPage = "patients";
 
-			require(["views/app", "views/pages/patient-appeals"], function (AppView) {
-				var view = new App.Views.PatientAppeals ({
+			require(["views/app", "views/pages/patient-appeals"], function(AppView) {
+				var view = new App.Views.PatientAppeals({
 					path: Backbone.history.fragment,
 					id: id
 				});
@@ -396,15 +422,15 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			});
 		},
 
-		appeals: function () {
-			if ( !this.checkAuthToken() ) {
+		appeals: function() {
+			if (!this.checkAuthToken()) {
 				return false
 			}
 
 			this.currentPage = "appeals";
 
-			require(["views/app", "views/pages/appeals-list"], function (AppView){
-				var view = new App.Views.AppealsList ({
+			require(["views/app", "views/pages/appeals-list"], function(AppView) {
+				var view = new App.Views.AppealsList({
 					path: Backbone.history.fragment
 				});
 
@@ -422,19 +448,24 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			});
 		},
 
-		appeal: function (id, page, subpage) {
-			if ( !this.checkAuthToken() ) {
+		appeal: function(id, page, subpage) {
+			if (!this.checkAuthToken()) {
 				return false
 			}
 
 			this.currentPage = "appeals";
 
-			if (page)
+			if (page) {
 				page = subpage ? page + "-" + subpage : page;
-			else
-				page = "card";
+			} else {
+				if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT) {
+					page = "monitoring";
+				} else {
+					page = "card";
+				}
+			}
 
-			require(["views/app", "views/appeal/edit/main"], function (AppView, AppealMainView) {
+			require(["views/app", "views/appeal/edit/main"], function(AppView, AppealMainView) {
 
 				var view = new AppealMainView({
 					path: Backbone.history.fragment,
@@ -510,8 +541,8 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			});
 		}*/
 
-		prints: function(){
-			require(["views/app", "views/pages/prints"], function (AppView) {
+		prints: function() {
+			require(["views/app", "views/pages/prints"], function(AppView) {
 				var view = new App.Views.Prints();
 
 				if (!this.appView) {
@@ -527,14 +558,14 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			});
 		},
 
-		newFirstExamination: function (id) {
-			if ( !this.checkAuthToken() ) {
+		newFirstExamination: function(id) {
+			if (!this.checkAuthToken()) {
 				return false
 			}
 
 			this.currentPage = "appeals";
 
-			require(["views/app", "views/appeal/edit/main"], function () {
+			require(["views/app", "views/appeal/edit/main"], function() {
 				var view = new App.Views.Main({
 					path: Backbone.history.fragment,
 					id: id,
@@ -554,7 +585,7 @@ require(["views/FlashMessageView"], function (FlashMessage){
 					//this.appView.changeRenderView(view);
 				}
 			});
-		}//,
+		} //,
 
 		/*newInitialExamination: function (id) {
 			if ( !this.checkAuthToken() ) {
@@ -588,7 +619,9 @@ require(["views/FlashMessageView"], function (FlashMessage){
 	});
 
 	App.Router = new Router();
-	Backbone.history.start({pushState: true});
+	Backbone.history.start({
+		pushState: true
+	});
 
 	App.Router.cachedBreadcrumbs = {
 		PATIENTS: {
@@ -648,9 +681,9 @@ require(["views/FlashMessageView"], function (FlashMessage){
 			uri: "/reports/"
 		}
 	};
-	App.Router.compile = function (link, options) {
-		if ( link.template ) {
-			link.title = $(link.template).tmpl(options ).text();
+	App.Router.compile = function(link, options) {
+		if (link.template) {
+			link.title = $(link.template).tmpl(options).text();
 		}
 		link.uri = Core.Url.compileUri(link.uri, options);
 

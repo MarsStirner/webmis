@@ -99,7 +99,8 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 						{title: "Пациенты", name: "patients", uri: "/patients/"},
 						{title: "Госпитализации", name: "appeals", uri: "/appeals/"},
 						{title: "Биоматериалы", name: "biomaterials", uri: "/biomaterials/"},
-						{title: "Амбулаторные талоны"}
+						{title: "Отчёты", name: "reports", uri: "/reports/"}
+						//,{title: "Амбулаторные талоны"}
 					);
 					break;
 			}

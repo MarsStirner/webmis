@@ -1,23 +1,30 @@
 <div id="page-head">
-	<ul class="BreadCrumb">
-		<li><a href="#">Стационар</a></li>
-		<li><a href="#">Коечный фонд</a></li>
-		<li>Форма 007</li>
-	</ul>
+			<ul class="BreadCrumb">
+				<li><a href="/reports/" >Отчёты</a></li>
+				<li><a href="/reports/hospital/" data-step-name="hospital">Стационар</a></li>
+				<li><a href="/reports/hospital/beds/" data-step-name="beds">Коечный фонд</a></li>
+				<li>Форма 007</li>
+			</ul>
 </div>
-	
-	<div><span class="Label">Период дат</span></div>
-	<div class="row-fluid">
+<h3 style="margin-bottom: 20px;">ФОРМА N 007/У ЛИСТОК УЧЕТА ДВИЖЕНИЯ БОЛЬНЫХ И КОЕЧНОГО ФОНДА СТАЦИОНАРА</h3>
+<div><span class="Label">Период дат</span></div>
+<div class="row-fluid"  style="margin-bottom: 20px;">
 		<div id="range" style="width:750px;"></div>
+</div>
+
+
+<div class="row-fluid" style="margin-bottom: 20px;">
+	<div class="span6">
+		<select id="departments" style="width:100%;"></select>
 	</div>
 
-
-<div style="margin-bottom: 20px;">
-	<select id="departments"></select>
 </div>
 
-<div  style="margin-bottom: 20px;">
-	<button class="print">Печать</button>
+<div  class="row-fluid" style="margin-bottom: 20px;">
+	<div class="span6">
+		<button class="print">Сформировать</button>
+	</div>
+
 </div>
 
 	<div id="iframe"></div>

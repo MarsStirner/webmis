@@ -1,0 +1,18 @@
+<%if (collection.length) {%>
+	<%collection.each(function (item) {%>
+		<tr>
+			<td><%=Core.Date.formatDateTime(item.get("datetime"))%></td>
+			<td><%=item.get("temperature") || '-'%></td>
+			<td><%if (item.get("bpras") && item.get("bprad")) {%><%=item.get("bpras")%>/<%=item.get("bprad")%><%} else {%>-<%}%></td>
+			<td><%=item.get("heartRate") || '-'%></td>
+			<td><%=item.get("spo2") || '-'%></td>
+			<td><%=item.get("breathRate") || '-'%></td>
+			<td><%=item.get("state") || '-'%></td>
+			<td><%=item.get("health") || '-'%></td>
+		</tr>
+	<%});%>
+<%} else {%>
+	<tr>
+		<td colspan="8">Нет данных</td>
+	</tr>
+<%}%>

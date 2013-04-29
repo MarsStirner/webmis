@@ -32,7 +32,7 @@ define([], function () {
 				'width':300,
 				'z-index':10500,
 				'right': 0,
-				'top': 38
+				'top': "3.8em"
 			});
 
 			$('body').append(noty);

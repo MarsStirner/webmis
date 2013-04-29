@@ -20,7 +20,7 @@ define([
 			"click #assign-lab-diag": "onNewDiagnosticClick"
 		},
 
-		initialize: function () {
+		initialize: function (options) {
 			var view = this;
 
 
@@ -37,8 +37,9 @@ define([
 			});
 
 			this.collection.extra = {
+				doctorId: options.appeal.get('setPerson').get('doctor').get('id'),
 				userId: Core.Cookies.get("userId")
-			}
+			};
 
 			this.grid = new App.Views.Grid({
 				popUpMode: true,

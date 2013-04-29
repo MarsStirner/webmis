@@ -1,16 +1,22 @@
-define(['text!templates/reports/reports.tmpl',
+define(['text!templates/reports/reports.html',
 	"views/menu",
-	"views/reports/Form007View",
-	"views/reports/HospitalView"], function(
+	"views/reports/HospitalView",
+	"views/reports/BedsView",
+	"views/reports/Form007View"], function(
 template,
 MenuView,
-Form007View,
-HospitalView) {
+HospitalView,
+BedsView,
+Form007View) {
 
 	var ReportsMainView = View.extend({
 		template: template,
+		events: {
+			"click": "click"
+		},
 		typeViews: {
 			"hospital": HospitalView,
+			"beds": BedsView,
 			"f007": Form007View
 		},
 
@@ -23,19 +29,34 @@ HospitalView) {
 				this.setContentView(step.name);
 			}, this);
 		},
+		click: function(e){
+			console.log(e)
+			if($(e.target).data('step-name')){
+				e.preventDefault();
+				this.setContentView($(e.target).data('step-name'));
+			}
+
+		},
 		getMenuStructure: function() {
+
 			return {
 				structure: [{
 					name: "hospital",
 					title: "Стационар",
-					uri: "reports/hospital",
+					uri: "reports/hospital/",
 					structure: [{
-						name: "f007",
+						name: "beds",
 						title: "Коечный фонд",
-						uri: "reports/hospital/007"
+						uri: "reports/hospital/beds/",
+						structure: [{
+							name: "f007",
+							title: "Форма 007",
+							uri: "reports/hospital/beds/007"
+						}]
 					}]
 				}]
 			};
+
 		},
 
 		getPageNameByPath: function(path) {
@@ -75,11 +96,11 @@ HospitalView) {
 				console.log('element[elementChildrenName]', element[options.elementChildrenName], element[options.elementChildrenName].length);
 				for (var i = 0; result === null && i < element[options.elementChildrenName].length; i++) {
 					result = searchTree({
-				element:element[options.elementChildrenName][i],
-				match: options.match,
-				elementParamName: options.elementParamName,
-				elementChildrenName: options.elementChildrenName
-			});
+						element: element[options.elementChildrenName][i],
+						match: options.match,
+						elementParamName: options.elementParamName,
+						elementChildrenName: options.elementChildrenName
+					});
 				}
 				return result;
 			}
@@ -91,16 +112,17 @@ HospitalView) {
 				if (this.typeViews[type]) {
 					this.type = type;
 
-					// if (this.contentView) {
-					// 			//this.setBreadcrumbsStructure();
-					// 			this.contentView.off(null, null, this);
-					// 			if (this.contentView.model) {
-					// 				this.contentView.model.off(null, null, this.contentView);
-					// 			}
-					// 			if (this.contentView.cleanUp) {
-					// 				this.contentView.cleanUp();
-					// 			}
-					// 		}
+					if (this.contentView) {
+						this.contentView.off(null, null, this);
+						// if (this.contentView.model) {
+						// 	this.contentView.model.off(null, null, this.contentView);
+						// }
+						if (this.contentView.cleanUp) {
+							this.contentView.cleanUp();
+						}
+						this.contentView.remove();
+						this.contentView.destroy();
+					}
 
 					this.contentView = new this.typeViews[type](_.extend({
 						//appealId: this.appealId,

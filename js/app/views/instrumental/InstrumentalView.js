@@ -37,6 +37,7 @@ InstrumentalEditPopupView) {
 			});
 
 			this.collection.extra = {
+				doctorId: options.appeal.get('setPerson').get('doctor').get('id'),
 				userId: Core.Cookies.get("userId")
 			};
 
