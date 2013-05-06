@@ -32,7 +32,7 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 
 			this.$("input[name='diagnosis[mkb][code]']").val(sd.get("code"));
 			this.$("input[name='diagnosis[mkb][diagnosis]']").val(sd.get("diagnosis"));
-			this.$("input[name='diagnosis[mkb][code]']").data('mkb-id', sd.get("id"));
+			this.$("input[name='diagnosis[mkb][code]']").data('mkb-id', sd.get("id")).trigger('change');
 		},
 
 		onMKBCodeKeyUp: function(event) {
@@ -78,7 +78,7 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 
 					view.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
 					view.$("input[name='diagnosis[mkb][code]']").val(ui.item.displayText);
-					view.$("input[name='diagnosis[mkb][code]']").data('mkb-id', ui.item.id);
+					view.$("input[name='diagnosis[mkb][code]']").data('mkb-id', ui.item.id).trigger('change');
 				}
 			}).on("keyup", function() {
 				if (!$(this).val().length) {
