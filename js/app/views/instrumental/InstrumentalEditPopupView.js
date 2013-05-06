@@ -3,6 +3,7 @@ define(function(require) {
 	var popupMixin = require('mixins/PopupMixin');
 	var BFView = require('views/instrumental/InstrumentalPopupBottomFormView');
 
+	var ViewModel = require('views/instrumental/InstrumentalEditPopupViewModel');
 	require('models/DeepModel');
 
 
@@ -12,6 +13,11 @@ define(function(require) {
 
 		initialize: function(options) {
 			_.bindAll(this);
+
+			this.viewModel = new ViewModel({}, {
+				appeal: this.options.appeal,
+				model: this.options.model
+			});
 
 			//юзер
 			this.doctor = {
