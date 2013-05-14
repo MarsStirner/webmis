@@ -85,6 +85,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 		},
 
 		openJobPopup: function (model) {
+			console.log('openJobPopup');
 			var jobPopupView = new JobPopupView({biomaterial: model});
 
 			jobPopupView.render().open();

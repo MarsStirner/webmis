@@ -2,247 +2,229 @@
  * User: FKurilov
  * Date: 25.06.12
  */
-define([
-	"text!templates/appeal/edit/popups/instrumental.tmpl",
-	"mixins/PopupMixin",
-	"views/instrumental/InstrumentalPopupBottomFormView",
-	"collections/diagnostics/InstrumntalGroups",
-	"collections/diagnostics/InstrumentalResearchs",
-	"models/diagnostics/InstrumentalResearchTemplate",
-	"collections/diagnostics/diagnostic-types"], function(
-tmpl,
-popupMixin,
-BFView,
-InstrumntalGroups,
-InstrumentalResearchs,
-InstrumentalResearchTemplate) {
 
+define(function(require) {
+	var tmpl = require('text!templates/appeal/edit/popups/instrumental.tmpl');
+	var popupMixin = require('mixins/PopupMixin');
+	var BFView = require('views/instrumental/InstrumentalPopupBottomFormView');
+	var InstrumntalGroups = require('collections/diagnostics/InstrumntalGroups');
+	var InstrumentalResearchs = require('collections/diagnostics/InstrumentalResearchs');
+	var InstrumentalResearchTemplate = require('models/diagnostics/InstrumentalResearchTemplate');
+
+
+	var ViewModel = require('views/instrumental/InstrumentalPopupViewModel');
 
 	var InstrumentalPopup = View.extend({
+
 		template: tmpl,
-		events: {
-			//"click .ShowHidePopup": "close",
-			//"click .EventList li": "onRootTypeSelected",
-			//"click .SelectAnalysis li": "onSelectAnalysis",
-			//"click .test": "test"
-		},
+		events: {},
 
 		initialize: function(options) {
-			//this.constructor.__super__.initialize.apply(this, options);
+
 			_.bindAll(this);
 
-			//юзер
-			this.doctor = {
-				name: {
-					first: Core.Cookies.get("doctorFirstName"),
-					last: Core.Cookies.get("doctorLastName")
-				}
-			};
-			this.data = {
-				'doctor': this.doctor
-			};
-
-			this.bfView = new BFView({
-				data: this.data,
+			this.instrumntalResearchs = new InstrumntalGroups();
+			this.viewModel = new ViewModel({}, {
 				appeal: this.options.appeal
 			});
+
+
+			this.bfView = new BFView({
+				data: this.viewModel.toJSON()
+			});
 			this.depended(this.bfView);
-
-			this.instrumntalGroups = new InstrumntalGroups();
-			this.instrumntalGroups.parents = true;
-
-			this.instrumntalResearchs = new InstrumntalGroups();
-
-
-
 		},
 
 		loadGroups: function(code) {
 			var view = this;
-			console.log('loadGroups', code);
-
-			view.instrumntalGroups.setParams({
-				'filter[view]': 'tree'
-				//,'filter[code]': code
-			});
 
 			view.$instrumentalGroups.html('<li>Загружается...</li>');
-			view.instrumntalGroups.fetch().done(function() {
-
-				view.$instrumentalGroups.html('');
-
-				view.$instrumentalGroups.dynatree({
-					onClick: function(node) {
-						view.$instrumentalResearchs.html('');
-						view.testCode = false;
-						view.updateSaveButton();
-
-						if (node.data.children && node.data.children.length > 0) {
-
-						} else {
-							view.$instrumentalResearchs.html('<li>Загружается...</li>');
-							view.loadResearchs(node.data.code);
-						}
-
-						view.updateSaveButton();
-					},
-					children: view.instrumntalGroups.toJSON()
-				});
-
-				if (!view.groupsTree) {
-					view.groupsTree = view.$instrumentalGroups.dynatree("getTree");
-				}
-				view.groupsTree.reload();
-
+			this.viewModel.instrumntalGroups.fetch().done(function() {
+				view.makeGroupsTree();
 			});
 
+		},
+
+		makeGroupsTree: function() {
+			var view = this;
+
+			view.$instrumentalGroups.dynatree({
+				onClick: function(node) {
+					view.$instrumentalResearchs.html('');
+					view.testCode = false;
+					view.updateSaveButton();
+
+					if (node.data.children && node.data.children.length > 0) {} else {
+						view.loadResearchs(node.data.code);
+					}
+
+					view.updateSaveButton();
+				},
+				children: this.viewModel.instrumntalGroups.toJSON()
+			});
+
+			if (!view.groupsTree) {
+				view.groupsTree = view.$instrumentalGroups.dynatree("getTree");
+			}
+			view.groupsTree.reload();
 		},
 
 		loadResearchs: function(code) {
 			var view = this;
-			view.instrumntalResearchs.setParams({
+
+			this.viewModel.instrumntalResearchs.setParams({
 				'filter[code]': code
 			});
 
-			view.instrumntalResearchs.fetch().done(function() {
-
-				view.$instrumentalResearchs.dynatree({
-					checkbox: true,
-					selectMode: 1,
-					onSelect: function(select, node) {
-						if (select) {
-							view.testCode = node.data.code;
-						} else {
-							view.testCode = false;
-						}
-						view.updateSaveButton();
-					},
-					onClick: function(node) {
-						//if (node.data.children && node.data.children.length > 0) {
-						//} else {
-						//	console.log('instrumntalResearch',node.data.code);
-						//}
-					},
-					children: view.instrumntalResearchs.toJSON()
-				});
-
-				if (!view.researchsTree) {
-					view.researchsTree = view.$instrumentalResearchs.dynatree("getTree");
-				}
-				view.researchsTree.reload();
+			view.$instrumentalResearchs.html('<li>Загружается...</li>');
+			this.viewModel.instrumntalResearchs.fetch().done(function() {
+				view.makeResearchsTree();
 			});
 
 		},
 
-		updateSaveButton: function() {
+		makeResearchsTree: function() {
 			var view = this;
 
-			if (view.testCode) {
-				view.$saveButton.button("enable");
-			} else {
-				view.$saveButton.button("disable");
-			}
+			view.$instrumentalResearchs.dynatree({
+				checkbox: true,
+				selectMode: 1,
+				onSelect: function(select, node) {
+					if (select) {
+						//view.testCode = node.data.code;
+						view.viewModel.set('code', node.data.code);
+					} else {
+						view.viewModel.set('code', false);
+					}
+					view.updateSaveButton();
+				},
+				children: this.viewModel.instrumntalResearchs.toJSON()
+			});
 
+			if (!view.researchsTree) {
+				view.researchsTree = view.$instrumentalResearchs.dynatree("getTree");
+			}
+			view.researchsTree.reload();
+		},
+
+		updateSaveButton: function() {
+			this.$saveButton.button(this.viewModel.get('saveButtonState'));
 		},
 
 		onSave: function() {
 			var view = this;
-			if (!view.testCode) {
+
+			if (!view.viewModel.get('code')) {
 				return;
 			}
 
-			var patientId = view.options.appeal.get('patient').get('id');
-			var appealId = this.options.appeal.get('id');
-
+			//шаблон данных в формате commonData
 			view.testTemplate = new InstrumentalResearchTemplate({}, {
-				code: view.testCode,
-				patientId: patientId
+				code: view.viewModel.get('code'),
+				patientId: view.viewModel.get('patientId')
 			});
 
 			view.testTemplate.fetch().done(function() {
-				//doctorFirstName - имя врача назначившего исследование
-				view.testTemplate.setProperty('doctorFirstName', 'value',  view.doctor.name.first);
-				//doctorMiddleName - отчество врача назначившего исследование
-				view.testTemplate.setProperty('doctorMiddleName', 'value', '');
-				//doctorLastName - фамилия врача назначившего исследование
-				view.testTemplate.setProperty('doctorLastName', 'value', view.doctor.name.last);
-
-
-
-				// var startDate = moment(view.$startDateInput.datepicker("getDate")).format('YYYY-MM-DD');
-				// var startTime = view.$startTimeInput.val() + ':00';
-				// //assessmentDate - дата создания направления на исследование
-				// view.testTemplate.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
-
-				var pDate = moment(view.$datepicker.datepicker("getDate")).format('YYYY-MM-DD');
-				var pTime = view.$timepicker.val() + ':00';
-				//plannedEndDate - планируемая дата выполнения иследования
-				view.testTemplate.setProperty('plannedEndDate', 'value', pDate + ' ' +  pTime);
-
-				//finance - идентификатор типа оплаты
-				view.testTemplate.setProperty('finance', 'value', $($('#finance option:selected')[0]).val());
-				//urgent - срочность
-				//view.testTemplate.setProperty('urgent', 'value', true);
-				//
-				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
-				view.testTemplate.setProperty('Направительный диагноз', 'valueId', mkbId);
-
-				view.$saveButton.button("disable");
-
-				view.tests = new InstrumentalResearchs(null, {
-					appealId: appealId
-				});
-
-
-				view.tests.add(view.testTemplate);
-
-				view.tests.saveAll({
-					success: function(raw, status) {
-						console.log('success saveall', arguments);
-						view.close();
-						pubsub.trigger('instrumental-diagnostic:added');
-					}
-				});
-			})
-
-
+				view.saveTest();
+			});
 
 		},
 
+		saveTest: function() {
+			var view = this;
 
+			//doctorFirstName - имя врача назначившего исследование
+			view.testTemplate.setProperty('doctorFirstName', 'value', view.viewModel.get('doctorFirstName'));
+			//doctorMiddleName - отчество врача назначившего исследование
+			view.testTemplate.setProperty('doctorMiddleName', 'value', view.viewModel.get('doctorMiddleName'));
+			//doctorLastName - фамилия врача назначившего исследование
+			view.testTemplate.setProperty('doctorLastName', 'value', view.viewModel.get('doctorLastName'));
+
+			//assessmentDate - дата создания направления на исследование
+			var assessmentDate = moment(view.viewModel.get('assessmentDate')).format('YYYY-MM-DD');
+			var assessmentTime = view.viewModel.get('assessmentTime') + ':00';
+			view.testTemplate.setProperty('assessmentDate', 'value', assessmentDate + ' ' + assessmentTime);
+
+			//plannedEndDate - планируемая дата выполнения иследования
+			var plannedDate = moment(view.viewModel.get('plannedDate')).format('YYYY-MM-DD');
+			var plannedTime = view.viewModel.get('plannedTime') + ':00';
+			view.testTemplate.setProperty('plannedEndDate', 'value', plannedDate + ' ' + plannedTime);
+
+			//finance - идентификатор типа оплаты
+			view.testTemplate.setProperty('finance', 'value', view.viewModel.get('finance'));
+
+			//urgent - срочность
+			view.testTemplate.setProperty('urgent', 'value', view.viewModel.get('urgent'));
+
+			//идентификатор направительного диагноза
+			view.testTemplate.setProperty('Направительный диагноз', 'valueId', view.viewModel.get('mkbId'));
+
+			view.viewModel.set('saveButtonState','disable');
+
+			//создание направления сейчас реализованно только для группы тестов.... 
+			//поэтому создаём коллекцию и добавляем в неё модель...
+			view.tests = new InstrumentalResearchs(null, {
+				appealId: view.viewModel.get('appealId')
+			});
+
+			view.tests.add(view.testTemplate);
+
+			view.tests.saveAll({
+				success: function(raw, status) {
+					view.close();
+					pubsub.trigger('instrumental-diagnostic:added');
+				},
+				error: function() {
+
+				}
+			});
+
+		},
 
 		render: function() {
 			var view = this;
+			view.renderNested(this.bfView, ".bottom-form");
+			return this;
+		},
+		afterRender: function() {
+			var view = this;
+
+			view.$assessmentDatepicker = $('#start-date');
+			view.$assessmentTimepicker = $('#start-time');
 			view.$instrumentalGroups = view.$('.instrumental-groups');
 			view.$instrumentalResearchs = view.$('.instrumental-researchs');
+			view.$plannedDatepicker = view.$("#dp");
+			view.$plannedTimepicker = view.$("#tp");
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
-			view.$datepicker = view.$("#dp");
-			view.$timepicker = view.$("#tp");
-
-			view.$startDateInput = $('#start-date');
-			view.$startTimeInput = $('#start-time');
 
 			view.loadGroups();
 
-			view.$datepicker.datepicker({
+			view.$plannedDatepicker.datepicker({
 				minDate: new Date(),
 				onSelect: function(dateText, inst) {
+					view.viewModel.set('plannedDate', moment(dateText, 'DD.MM.YYYY').toDate());
 					var day = moment(view.$(this).datepicker("getDate")).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
-					var hour = view.$timepicker.timepicker('getHour');
+					var hour = view.$plannedTimepicker.timepicker('getHour');
 					//если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
 					if (day.diff(currentDay, 'days') === 0) {
 						if (hour <= currentHour) {
-							view.$timepicker.val('');
+							view.$plannedTimepicker.val('').trigger('change');
 						}
 					}
 				}
 			});
 
-			view.$timepicker.timepicker({
+			view.$plannedDatepicker.datepicker("setDate", this.viewModel.get('plannedDate'));
+
+			view.$plannedTimepicker.timepicker({
+				onSelect: function(time) {
+					//view.viewModel.set('plannedTime', time)
+				},
+				defaultTime: 'now',
 				onHourShow: function(hour) {
-					var day = moment(view.$datepicker.datepicker("getDate")).startOf('day');
+					var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
 					//если выбран текущий день, то часы меньше текущего нельзя выбрать
@@ -255,7 +237,7 @@ InstrumentalResearchTemplate) {
 					return true;
 				},
 				onMinuteShow: function(hour, minute) {
-					var day = moment(view.$datepicker.datepicker("getDate")).startOf('day');
+					var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
 					var currentMinute = moment().minute();
@@ -272,12 +254,28 @@ InstrumentalResearchTemplate) {
 				button: '.icon-time'
 			});
 
-			view.$saveButton.button("disable");
-			view.renderNested(this.bfView, ".bottom-form");
+			view.$plannedTimepicker.val(this.viewModel.get('plannedTime'));
+
+			view.$plannedTimepicker.on('change', function() {
+				view.viewModel.set('plannedTime', view.$plannedTimepicker.val());
+			});
+
+			view.$('input[name=urgent]').on('change', function() {
+				view.viewModel.set('urgent', view.$('input[name=urgent]:checked').prop('checked'));
+			});
+			view.$('#finance').on('change', function() {
+				view.viewModel.set('finance', view.$(view.$('#finance option:selected')[0]).val());
+			});
+			this.$("input[name='diagnosis[mkb][code]']").on('change', function() {
+				view.viewModel.set('mkbId', view.$("input[name='diagnosis[mkb][code]']").data('mkb-id'));
+			});
+
+			
 
 
+			view.$saveButton.button(view.viewModel.get('saveButtonState'));
+			view.viewModel.on('change', view.updateSaveButton, view);
 
-			return this;
 		}
 
 	}).mixin([popupMixin]);

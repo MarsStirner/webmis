@@ -1286,6 +1286,7 @@ a.ScrollDay:hover {
 .ToolTip {
   background: #f9edbe;
   border: 1px solid #f0c36d;
+  color: #444;
   padding: 1em 1em;
   -moz-box-shadow: 0.3em 0.3em 0.3em rgba(0, 0, 0, 0.2);
   -webkit-box-shadow: 0.3em 0.3em 0.3em rgba(0, 0, 0, 0.2);
@@ -1293,7 +1294,7 @@ a.ScrollDay:hover {
   display: inline-block;
   position: relative;
 }
-/* line 735, ../../sass/modules/uiLib.scss */
+/* line 736, ../../sass/modules/uiLib.scss */
 .ToolTip:after {
   display: block;
   position: absolute;
@@ -1301,7 +1302,7 @@ a.ScrollDay:hover {
   background: transparent;
   overflow: hidden;
 }
-/* line 742, ../../sass/modules/uiLib.scss */
+/* line 743, ../../sass/modules/uiLib.scss */
 .ToolTip.TopTail:after {
   width: 18px;
   height: 9px;
@@ -1310,7 +1311,7 @@ a.ScrollDay:hover {
   margin-left: -9px;
   background: url(../../images/tail.png) no-repeat left top;
 }
-/* line 750, ../../sass/modules/uiLib.scss */
+/* line 751, ../../sass/modules/uiLib.scss */
 .ToolTip.BottomTail:after {
   width: 18px;
   height: 9px;
@@ -1319,7 +1320,7 @@ a.ScrollDay:hover {
   margin-left: -9px;
   background: url(../../images/tail.png) no-repeat -18px top;
 }
-/* line 758, ../../sass/modules/uiLib.scss */
+/* line 759, ../../sass/modules/uiLib.scss */
 .ToolTip.LeftTail:after {
   width: 9px;
   height: 18px;
@@ -1328,7 +1329,7 @@ a.ScrollDay:hover {
   margin-top: -9px;
   background: url(../../images/tail.png) no-repeat -9px -9px;
 }
-/* line 766, ../../sass/modules/uiLib.scss */
+/* line 767, ../../sass/modules/uiLib.scss */
 .ToolTip.RightTail:after {
   width: 9px;
   height: 18px;
@@ -1337,7 +1338,7 @@ a.ScrollDay:hover {
   margin-top: -9px;
   background: url(../../images/tail.png) no-repeat left -9px;
 }
-/* line 774, ../../sass/modules/uiLib.scss */
+/* line 775, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip {
   background: #ffffff;
   border: 1px solid #d0d0d0;
@@ -1345,47 +1346,47 @@ a.ScrollDay:hover {
   -webkit-box-shadow: 0 0 0.6em rgba(0, 0, 0, 0.3);
   box-shadow: 0 0 0.6em rgba(0, 0, 0, 0.3);
 }
-/* line 780, ../../sass/modules/uiLib.scss */
+/* line 781, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip.TopTail:after {
   background: url(../../images/tail_white.png) no-repeat left top;
   left: 2em;
 }
-/* line 784, ../../sass/modules/uiLib.scss */
+/* line 785, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip.BottomTail:after {
   background: url(../../images/tail_white.png) no-repeat -18px top;
 }
-/* line 787, ../../sass/modules/uiLib.scss */
+/* line 788, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip.LeftTail:after {
   background: url(../../images/tail_white.png) no-repeat -9px -9px;
 }
-/* line 790, ../../sass/modules/uiLib.scss */
+/* line 791, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip.RightTail:after {
   background: url(../../images/tail_white.png) no-repeat left -9px;
 }
-/* line 794, ../../sass/modules/uiLib.scss */
+/* line 795, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip .TooltipList li {
   line-height: 1.5em;
 }
-/* line 799, ../../sass/modules/uiLib.scss */
+/* line 800, ../../sass/modules/uiLib.scss */
 .ToolTip .TooltipList {
   text-align: left;
 }
-/* line 801, ../../sass/modules/uiLib.scss */
+/* line 802, ../../sass/modules/uiLib.scss */
 .ToolTip .TooltipList li {
   line-height: 2.5em;
   white-space: nowrap;
 }
-/* line 804, ../../sass/modules/uiLib.scss */
+/* line 805, ../../sass/modules/uiLib.scss */
 .ToolTip .TooltipList li dfn {
   display: inline-block;
   width: 7em;
 }
-/* line 808, ../../sass/modules/uiLib.scss */
+/* line 809, ../../sass/modules/uiLib.scss */
 .ToolTip .TooltipList li label {
   font-size: 0.9em;
   color: #000;
 }
-/* line 812, ../../sass/modules/uiLib.scss */
+/* line 813, ../../sass/modules/uiLib.scss */
 .ToolTip .TooltipList li .TimeLabel {
   display: inline-block;
   vertical-align: middle;
@@ -1393,18 +1394,18 @@ a.ScrollDay:hover {
   margin: 0 0.5em;
   background: #bfe5bf;
 }
-/* line 821, ../../sass/modules/uiLib.scss */
+/* line 822, ../../sass/modules/uiLib.scss */
 .ToolTip .ToolTipButtons {
   font-size: 0.7em;
   padding-top: 1em;
 }
 
-/* line 826, ../../sass/modules/uiLib.scss */
+/* line 827, ../../sass/modules/uiLib.scss */
 .ToolTipHolder {
   position: relative;
   cursor: pointer;
 }
-/* line 829, ../../sass/modules/uiLib.scss */
+/* line 830, ../../sass/modules/uiLib.scss */
 .ToolTipHolder .ToolTip {
   position: absolute;
   top: 100%;
@@ -1412,22 +1413,22 @@ a.ScrollDay:hover {
   left: 0;
   display: none;
 }
-/* line 836, ../../sass/modules/uiLib.scss */
+/* line 837, ../../sass/modules/uiLib.scss */
 .ToolTipHolder.Active {
   z-index: 2;
 }
-/* line 838, ../../sass/modules/uiLib.scss */
+/* line 839, ../../sass/modules/uiLib.scss */
 .ToolTipHolder.Active .ToolTip {
   display: block;
 }
 
-/* line 844, ../../sass/modules/uiLib.scss */
+/* line 845, ../../sass/modules/uiLib.scss */
 div.HasValidationToolTip {
   display: inline-block;
   padding-right: 0em;
 }
 
-/* line 850, ../../sass/modules/uiLib.scss */
+/* line 851, ../../sass/modules/uiLib.scss */
 .ClearButton {
   display: none;
   margin-left: -22px;

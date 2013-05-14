@@ -46,9 +46,9 @@ define([], function () {
 				view.val(view.options.initSelection)
 			}
 
-			view.select2.on('change', function () {
-				pubsub.trigger(id + ':change', view.select2.val());
-			});
+			// view.select2.on('change', function () {
+			// 	pubsub.trigger(id + ':change', view.select2.val());
+			// });
 
 			return view;
 		},

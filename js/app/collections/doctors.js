@@ -2,14 +2,32 @@
  * User: FKurilov
  * Date: 29.05.12
  */
-define(["models/doctor"], function ()
-{
+define(function () {
+	// Используется простая модель для быстродействия
+	var Doctor = Backbone.Model.extend({
+		defaults: {
+			name: {
+				first: "",
+				last: "",
+				middle: "",
+				raw: ""
+			},
+			specs: {
+				name: ""
+			},
+			department: {
+				name: ""
+			}
+		}
+	});
+
 	App.Collections.Doctors = Collection.extend({
-		model: App.Models.Doctor,
+		model: Doctor,
+
 		url: function () {
 			return DATA_PATH + "dir/persons/"
 		}
 	});
 
-	//return App.Collections.Doctors;
-} );
+	return App.Collections.Doctors;
+});

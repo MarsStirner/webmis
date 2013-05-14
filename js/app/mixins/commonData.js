@@ -12,7 +12,10 @@ define([], function() {
 				var groups = this._getGroups();
 				var attributes = [];
 				_.each(groups, function(group) {
-					attributes.push(group.attribute);
+					_.each(group.attribute, function(attribute) {
+						attributes.push(attribute);
+					});
+					
 				});
 
 				return attributes;
@@ -29,6 +32,7 @@ define([], function() {
 				});
 
 				if (!attribute) return false;
+				// console.log('attribute.properties',attribute.properties)
 
 				var property = _.find(attribute.properties, function(prop) {
 					return prop.name == propertyName;

@@ -5,14 +5,17 @@
 define([
 	"text!templates/appeal/edit/pages/instrumental.tmpl",
 	"collections/diagnostics/InstrumentalResearchs",
+	"models/diagnostics/InstrumentalResearch",
 	"views/instrumental/InstrumentalPopupView",
 	"views/instrumental/InstrumentalEditPopupView",
 	"views/grid",
 	"views/paginator"],
-	function(template,
-			InstrumentalResearchs,
-			InstrumentalPopupView,
-			InstrumentalEditPopupView) {
+
+function(template,
+InstrumentalResearchs,
+InstrumentalResearch,
+InstrumentalPopupView,
+InstrumentalEditPopupView) {
 
 	var InstrumentalView = View.extend({
 		className: "ContentHolder",
@@ -34,6 +37,7 @@ define([
 			});
 
 			this.collection.extra = {
+				doctorId: options.appeal.get('setPerson').get('doctor').get('id'),
 				userId: Core.Cookies.get("userId")
 			};
 
@@ -63,9 +67,9 @@ define([
 
 			this.collection.fetch({});
 
-			pubsub.on('instrumental-diagnostic:added', function () {
+			pubsub.on('instrumental-diagnostic:added', function() {
 				this.collection.fetch();
-			},this);
+			}, this);
 
 
 
@@ -92,25 +96,49 @@ define([
 		},
 
 		cancelDirection: function(model) {
-			console.log('cancelDirection', model);
-			pubsub.trigger('noty', {
-				text: 'функционал ещё не реализован'
+			var self = this;
+			model.destroy({
+				success: function(model, response) {
+					if (response === true) {
+						self.collection.trigger('reset');
+						pubsub.trigger('noty', {
+							text: 'Направление удалено'
+						});
+					} else {
+						console.log('cancelDirection error', arguments);
+					}
+				},
+				error: function() {
+					console.log('cancelDirection error', arguments);
+				}
 			});
+
 
 		},
 
 		editDirection: function(model) {
-			console.log('editDirection', model);
-			pubsub.trigger('noty', {
-				text: 'функционал ещё не реализован'
-			});
+			var self = this;
+
 			var testId = model.get('id');
-			//var test = тут загрузить данные теста
-			// this.newEditPopup = new InstrumentalEditPopupView({
-			// 	appeal: this.options.appeal//,
-			// 	//model: test
-			// });
-			// this.newEditPopup.render().open();
+			var test = new InstrumentalResearch({
+				"id": testId
+			}, {
+				appealId: this.options.appealId
+			});
+
+			test.fetch({
+				success: function() {
+					console.log('editDirection success', arguments);
+					this.newEditPopup = new InstrumentalEditPopupView({
+						appeal: self.options.appeal,
+						model: test
+					});
+					this.newEditPopup.render().open();
+				},
+				error: function() {
+					console.log('editDirection error', arguments);
+				}
+			});
 
 		},
 
@@ -132,7 +160,7 @@ define([
 			return this;
 		},
 
-		cleanUp: function () {
+		cleanUp: function() {
 			this.collection.off(null, null, this);
 
 		}

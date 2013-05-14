@@ -78,6 +78,7 @@ App.Views.Filter = View.extend({
 	},
 
 	render:function () {
+		UIInitialize(this.el);
 		return this;
 	}
 });
