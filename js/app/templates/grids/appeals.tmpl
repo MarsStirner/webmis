@@ -523,9 +523,9 @@
 
 <script id="appeals-grid-nurse-department-row" type="text/x-jquery-tmpl">
 		<td>
-			<!--<a href="/appeals/${id}/" class="open-appeal"></a>-->
-			<!--<b>в приёмном</b>-->
-			{{if hospitalBed.code}}
+			{{if (movingTo && movingTo.name)}}
+				Направлен в ${movingTo.name}
+			{{else (hospitalBed && hospitalBed.code)}}
 				${hospitalBed.code}
 			{{else}}
 			<a href="#" class="bed-registration" >Положить на койку</a>
