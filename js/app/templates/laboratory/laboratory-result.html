@@ -1,0 +1,30 @@
+<ul>
+<li><%= data.name %>
+</li>
+<li>Назначил: <%= data.doctor %> </li>
+
+<li>Назначено: <%= data.assessmentBeginDate %></li>
+<li>Срочно: <%= data.urgent %></li>
+<li>plannedEndDate: <%= data.plannedEndDate %></li>
+<li>Состояние заявки: </li>
+<li>Статус анализа: </li>
+
+<table class="Grid">
+    <tr>
+        <th>Тесты</th>
+        <th>Значение</th>
+        <th>Ед.изм</th>
+        <th>Норма</th>
+    </tr>
+<% _.each(data.tests, function(test){%>
+<tr>
+    <td><%= test.name %></td>
+    <td><%= test.value %></td>
+    <td><%= test.unit %></td>
+    <td><%= test.norm %></td>
+</tr>
+<%});%>
+</table>
+</ul>
+
+

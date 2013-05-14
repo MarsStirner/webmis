@@ -2,6 +2,8 @@
  * User: FKurilov
  * Date: 08.06.12
  */
+
+//страница со списком назначенных лабораторных исследований
 define([
 	"text!templates/appeal/edit/pages/laboratory.tmpl",
 	"views/laboratory/AddDirectionPopupView",
@@ -37,7 +39,7 @@ define([
 			});
 
 			this.collection.extra = {
-				doctorId: options.appeal.get('setPerson').get('doctor').get('id'),
+				doctorId: (options.appeal.get('execPerson')).id,
 				userId: Core.Cookies.get("userId")
 			};
 
@@ -51,6 +53,7 @@ define([
 			});
 
 			this.grid.on('grid:rowClick', this.onGridRowClick, this);
+			this.grid.on('grid:rowDbClick', this.onGridRowDbClick, this);
 
 			this.depended(this.grid);
 
@@ -75,6 +78,12 @@ define([
 			if (_.indexOf(event.target.classList, 'edit-direction') >= 0) {
 				this.editDirection(model);
 			}
+
+		},
+		onGridRowDbClick: function(model, event){
+			console.log('onGridRowDbClick', arguments, this, this.options.mainView);
+			this.trigger("change:viewState", {type: "diagnostics-laboratory-result", options: {modelId: model.get('id')}});
+
 
 		},
 

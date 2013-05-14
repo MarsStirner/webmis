@@ -2,6 +2,9 @@
  * User: FKurilov
  * Date: 25.06.12
  */
+
+//попап редактирования направления на лабисследование
+
 define(["text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl",
 	"mixins/PopupMixin",
 	"views/ui/SelectView",

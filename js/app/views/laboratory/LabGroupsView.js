@@ -1,3 +1,4 @@
+//окошко с деревом групп лабораторных исследований
 define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl'],
 	function (testsGroupTemplate) {
 

@@ -2,6 +2,7 @@
  * User: FKurilov
  * Date: 25.06.12
  */
+//попап создания направления на лабисследование
 define([
 	"text!templates/appeal/edit/popups/laboratory.tmpl",
 	"mixins/PopupMixin",

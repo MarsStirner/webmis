@@ -1,3 +1,4 @@
+//окошко с деревом лабтестов
 define(['text!templates/appeal/edit/popups/set-of-tests.tmpl',
 	'models/diagnostics/SetOfTests',
 	'text!templates/laboratory/node-test.html'],
