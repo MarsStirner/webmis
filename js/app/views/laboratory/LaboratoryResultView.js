@@ -46,16 +46,27 @@ define(function(require) {
             } else {
                 json.urgent = 'да';
             }
+
+            function emptyFalse(val) {
+                if (!val) {
+                    val = '';
+                }
+                return val;
+            }
             if (this.result.get('group')) {
                 var group_1 = (this.result.get('group'))[1].attribute;
                 json.tests = [];
                 _.each(group_1, function(item) {
-                    json.tests.push({
-                        name: item.name,
-                        value: self.result.getProperty(item.name, 'value'),
-                        unit: self.result.getProperty(item.name, 'unit'),
-                        norm: self.result.getProperty(item.name, 'norm')
-                    });
+                    if (item.type == 'String') {
+
+                        json.tests.push({
+                            name: item.name,
+                            value: emptyFalse(self.result.getProperty(item.name, 'value')),
+                            unit: emptyFalse(self.result.getProperty(item.name, 'unit')),
+                            norm: emptyFalse(self.result.getProperty(item.name, 'norm'))
+                        });
+
+                    }
                 });
             }
 
@@ -72,7 +83,9 @@ define(function(require) {
 
         render: function() {
             console.log('render LaboratoryResultView', this, this.resultData());
-            this.$el.html(_.template(this.template, this.resultData(), {variable: 'data'}));
+            this.$el.html(_.template(this.template, this.resultData(), {
+                variable: 'data'
+            }));
             return this;
         }
 
