@@ -188,7 +188,7 @@ MkbInputView) {
 				name: 'finance'
 			});
 
-			financeDictionary.fetch();
+			//financeDictionary.fetch();
 
 			view.financeSelect = new SelectView({
 				collection: financeDictionary,
