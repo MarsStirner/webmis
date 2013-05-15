@@ -35,6 +35,7 @@ define([
 			this.loadTemplate("pages/appeals-list");
 
 			_.bindAll(this, 'printForm007');
+
 		},
 
 		events: {
@@ -326,6 +327,11 @@ define([
 			}, this);
 
 			this.collection = Collection;
+
+
+			this.collection.on('reset',function(){
+				console.log('collection reset',arguments);
+			})
 
 			this.depended(Filter);
 

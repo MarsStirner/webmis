@@ -29,7 +29,7 @@ define([
 			view.canAddDirection = view.options.appeal.closed ? false : true;
 
 
-			console.log('can addd', view.options.appeal.closed,view.canAddDiagnostic,view.options.appeal);
+			//console.log('can addd', view.options.appeal.closed,view.canAddDiagnostic,view.options.appeal);
 
 			this.collection = new App.Collections.LaboratoryDiags();
 			this.collection.appealId = this.options.appealId;
