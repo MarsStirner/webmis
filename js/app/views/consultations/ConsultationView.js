@@ -53,8 +53,8 @@ define([
 			this.depended(this.paginator);
 
 			this.collection.fetch({
-				url: "/js/app/views/consultations/consultations.json",
-				dataType: 'json'
+				// url: "/js/app/views/consultations/consultations.json",
+				// dataType: 'json'
 			});
 		},
 
