@@ -368,6 +368,15 @@ function(tmpl, popupMixin, SelectView, test4EditTmpl, MkbInputView) {
 
 			console.log('setParam', attributeName, propertyName, value, group);
 
+		},
+		close: function(){
+				this.$el.dialog("close");
+				this.$el.remove();
+
+				view.mkbInputView.close();
+				view.financeSelect.close();
+
+
 		}
 
 	}).mixin([popupMixin]);

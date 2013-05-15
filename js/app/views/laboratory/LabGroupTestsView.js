@@ -188,6 +188,13 @@ function(setOfTestsViewTemplate, SetOfTests, nodeTestTmpl) {
 
 			//UIInitialize(this.el);
 			return view;
+		},
+		close: function(){
+
+			pubsub.off('lab:click parent-group:click');
+			pubsub.off('group:click');
+			view.collection.off();
+
 		}
 
 	});

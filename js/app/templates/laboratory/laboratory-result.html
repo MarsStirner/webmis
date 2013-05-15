@@ -26,6 +26,7 @@
         <th>Значение</th>
         <th>Ед.изм</th>
         <th>Норма</th>
+        <th>Замечание</th>
     </tr>
 <% _.each(data.tests, function(test){%>
 <tr>
@@ -33,6 +34,7 @@
     <td><%= test.value %></td>
     <td><%= test.unit %></td>
     <td><%= test.norm %></td>
+    <td></td>
 </tr>
 <%});%>
 </table>

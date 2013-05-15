@@ -330,10 +330,18 @@ MkbInputView) {
 		// 	this.$el.dialog("open");
 		// },
 
-		// close: function() {
-		// 	this.$el.dialog("close");
-		// 	this.$el.remove();
-		// },
+		close: function() {
+			var view = this;
+			this.$el.dialog("close");
+			this.$el.remove();
+
+			view.labsCollectionView.close();
+			view.groupsView.close();
+			view.groupTestsView.close();
+			view.mkbInputView.close();
+			view.financeSelect.close();
+
+		},
 
 		render: function() {
 			var view = this;
