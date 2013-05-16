@@ -193,7 +193,7 @@ function(setOfTestsViewTemplate, SetOfTests, nodeTestTmpl) {
 
 			pubsub.off('lab:click parent-group:click');
 			pubsub.off('group:click');
-			view.collection.off();
+			this.collection.off();
 
 		}
 

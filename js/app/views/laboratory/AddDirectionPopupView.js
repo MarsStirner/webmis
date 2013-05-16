@@ -332,14 +332,16 @@ MkbInputView) {
 
 		close: function() {
 			var view = this;
-			this.$el.dialog("close");
-			this.$el.remove();
+			view.$el.dialog("close");
+			view.remove();
 
 			view.labsCollectionView.close();
 			view.groupsView.close();
 			view.groupTestsView.close();
 			view.mkbInputView.close();
 			view.financeSelect.close();
+
+			console.log('close',view);
 
 		},
 
