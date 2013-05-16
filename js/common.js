@@ -795,7 +795,7 @@ jQuery.ajaxSetup(
 			this.showThrobberTimeout = setTimeout(showThrobber, 700);
 			showErrorTimeout = setTimeout(function () {
 				hideThrobber();
-				showError("Произошла критическая ошибка. Работа интерфейса может быть ограничена.<br/> Попробуйте перезагрузить страницу.");
+				showError("Превышено время ожидания ответа от сервера. Повторите попытку.");
 			}, 30000);
 			requestQueue.push(1);
 		},
