@@ -4,7 +4,7 @@
 			Тип
 		</label>
 		<!-- Максимальная длина серии в базе -8, номера - 16 -->
-		<select class="Styled DocType" name="idCards-${cid}-docType-id">
+		<select class="Styled DocType" name="idCards-${cid}-docType-id" data-subbind="true">
 			<option value="" selected="selected">...</option>
 			<!--<option data-series-mask="9999"     data-number-mask="9999990" value="1">Паспорт гражданина Российской Федерации</option>
 			<option data-series-mask="r-bb"     data-number-mask="999999"  value="3">Свидетельство о рождении</option>
@@ -45,14 +45,14 @@
 			Серия
 		</label>
 		<!--<input type="text" name="idCards-${cid}-series" class="DocSeries" placeholder="Серия" data-maxlength="8"/>-->
-		<input type="text" name="idCards-${cid}-series" class="DocSeries" placeholder="Серия"/>
+		<input type="text" name="idCards-${cid}-series" class="DocSeries" data-subbind="true" placeholder="Серия" data-maxlength="8" value="${series}"/>
 	</div>
 	<div class="QuartCol">
 		<label>
 			Номер
 		</label>
 		<!--<input type="text" name="idCards-${cid}-number" class="DocNumber" placeholder="Номер"  data-maxlength="16"/>-->
-		<input type="text" name="idCards-${cid}-number" class="DocNumber" placeholder="Номер"/>
+		<input type="text" name="idCards-${cid}-number" class="DocNumber" data-subbind="true" placeholder="Номер" data-maxlength="16" value="${number}"/>
 	</div>
 	<div class="QuartCol">
 		<label>
