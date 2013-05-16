@@ -43,12 +43,12 @@ define(function (require) {
 		},
 
 		sync: function (method, model, options) {
-			console.log('options1', options.success);
+			//console.log('options1', options.success);
 			options = options || {};
 			options.dataType = "jsonp";
 			options.contentType = 'application/json';
 
-			console.log('model',model);
+			//console.log('model',model);
 
 			switch (method.toLowerCase()) {
 				case 'read':

@@ -6,7 +6,7 @@ require.config({
 		"underscore": "../lib/underscore/underscore-1.4.2",
 		"backbone": "../lib/backbone/backbone-0.9.1",
 		"advice": "../lib/backbone.advice/advice",
-		"deep-model":"../lib/backbone.deep-model/deep-model-0.10.4",
+		"deep-model": "../lib/backbone.deep-model/deep-model-0.10.4",
 
 		"inputmask": "../lib/jquery.inputmask/jquery.inputmask",
 		"moment": "../lib/moment/moment-2.0.0.min",
@@ -111,6 +111,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			"appeals/:id/:page/:subpage": "appeal",
 			"appeals/:id/:page/:subpage/": "appeal",
 			"appeals/:id/:page/:subpage/:query": "appeal",
+			"appeals/:id/:page/:subpage/:subpage/:subpageId": "appeal",
 
 			"biomaterials/": "biomaterials",
 			"reports/*path": "reports",
@@ -456,11 +457,17 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			if (!this.checkAuthToken()) {
 				return false
 			}
+			var url = arguments;
 
 			this.currentPage = "appeals";
 
 			if (page) {
-				page = subpage ? page + "-" + subpage : page;
+				if (arguments[3]) {
+					page = page + "-" + subpage + "-" + arguments[3];
+
+				} else {
+					page = subpage ? page + "-" + subpage : page;
+				}
 			} else {
 				if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT) {
 					page = "monitoring";
@@ -474,7 +481,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				var view = new AppealMainView({
 					path: Backbone.history.fragment,
 					id: id,
-					type: page
+					type: page,
+					url: url
 				});
 
 				if (!this.appView) {
@@ -671,6 +679,10 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		LABORATORY: {
 			title: "Лабораторные исследования",
 			uri: "/appeals/:id/diagnostics/laboratory/"
+		},
+		LABORATORY_RESULT: {
+			title: "Результаты лабораторного исследования",
+			uri: "/appeals/:id/diagnostics/laboratory/result/:test"
 		},
 		INSTRUMENTAL: {
 			title: "Инструментальные исследования",

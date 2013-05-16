@@ -8,33 +8,31 @@ define([
 	"views/instrumental/InstrumentalView",
 	"views/appeal/edit/pages/monitoring",
 	"views/laboratory/LaboratoryResultView",
-	//"text!templates/cardnav.tmpl",
+//"text!templates/cardnav.tmpl",
 
-	"models/appeal",
+"models/appeal",
 	"collections/patient-appeals",
 
 	"views/breadcrumbs",
 	"views/menu",
 	"views/card-header",
 
-	//"views/appeal/edit/pages/instrumental",
+//"views/appeal/edit/pages/instrumental",
 
 
-	"views/appeal/edit/pages/consultation",
+"views/appeal/edit/pages/consultation",
 	"views/appeal/edit/pages/examinations",
 	"views/appeal/edit/pages/examination-edit",
 	"views/appeal/edit/pages/examination-primary",
 	"views/appeal/edit/pages/card",
 
 	"views/appeal/edit/pages/moves",
-	"views/appeal/edit/pages/HospitalBedView"
-], function (
-	template,
-	LaboratoryView,
-	InstrumentalView,
-	Monitoring,
-	LaboratoryResultView
-	) {
+	"views/appeal/edit/pages/HospitalBedView"], function(
+template,
+LaboratoryView,
+InstrumentalView,
+Monitoring,
+LaboratoryResultView) {
 
 	App.Views.Main = View.extend({
 		template: template,
@@ -72,6 +70,7 @@ define([
 
 		breadCrumbsMap: {
 			"diagnostics-laboratory": App.Router.cachedBreadcrumbs.LABORATORY,
+			"diagnostics-laboratory-result": App.Router.cachedBreadcrumbs.LABORATORY_RESULT,
 			"diagnostics-instrumental": App.Router.cachedBreadcrumbs.INSTRUMENTAL,
 			"diagnostics-consultations": App.Router.cachedBreadcrumbs.CONSULTATION,
 			"examinations": App.Router.cachedBreadcrumbs.EXAMS,
@@ -83,19 +82,22 @@ define([
 			"monitoring": App.Router.cachedBreadcrumbs.APPEAL
 		},
 
-		initialize: function () {
+		initialize: function() {
 			this.appealId = this.options.id;
 			this.type = this.options.type;
+			//console.log('main init', this);
 
 			if (!(this.appealId && this.typeViews[this.type])) {
 				throw new Error("Invalid diagnostic type or empty appeal id");
 			}
 
-			this.appeal = new App.Models.Appeal({id: this.appealId});
+			this.appeal = new App.Models.Appeal({
+				id: this.appealId
+			});
 
 			this.menu = Data.Menu = new App.Views.Menu(this.getMenuStructure());
 
-			this.menu.options.structure.on("change-page", function (step) {
+			this.menu.options.structure.on("change-page", function(step) {
 				pubsub.trigger('noty_clear');
 
 				this.setContentView(step.name);
@@ -103,14 +105,21 @@ define([
 
 			this.breadcrumbs = new App.Views.Breadcrumbs;
 
-			this.cardHeader = new App.Views.CardHeader({model: this.appeal});
+			this.cardHeader = new App.Views.CardHeader({
+				model: this.appeal
+			});
 
 			this.appeal.on("change", this.onAppealLoaded, this);
 			this.appeal.fetch();
 		},
 
 		setContentView: function(type, extraOptions) {
-			if (this.type !== type || !this.contentView) {
+			var force = false;
+			if(extraOptions && extraOptions.force){
+							var force = extraOptions.force;
+			}
+
+			if (this.type !== type || !this.contentView || extraOptions.force) {
 				if (this.typeViews[type]) {
 					this.type = type;
 
@@ -131,7 +140,8 @@ define([
 						appealId: this.appealId,
 						appeal: this.appeal,
 						path: this.options.path,
-						referrer: this.options.referrer
+						referrer: this.options.referrer,
+						url: this.options.url
 					}, extraOptions));
 
 					this.contentView.on("change:printState", this.onPrintStateChange, this);
@@ -144,16 +154,16 @@ define([
 			}
 		},
 
-		onPrintStateChange: function () {
+		onPrintStateChange: function() {
 			this.togglePrintBtn();
 		},
 
-		onViewStateChange: function (event) {
-			console.log('onViewStateChange',event);
+		onViewStateChange: function(event) {
+			//console.log('onViewStateChange',event);
 			this.setContentView(event.type, event.options);
 		},
 
-		onAppealLoaded: function () {
+		onAppealLoaded: function() {
 			var self = this;
 			var appealExtraData = new App.Collections.PatientAppeals();
 			appealExtraData.patient = this.appeal.get("patient");
@@ -168,7 +178,7 @@ define([
 			this.appeal.off("change", this.onAppealLoaded, this);
 		},
 
-		onAppealExtraDataLoaded: function (appealExtraData) {
+		onAppealExtraDataLoaded: function(appealExtraData) {
 			//TODO: Replace this fast fix (made for monitoring page)
 			Core.Data.appealExtraData = appealExtraData = appealExtraData.first();
 
@@ -181,7 +191,7 @@ define([
 			appealExtraData.off("reset", this.onAppealExtraDataLoaded, this);
 		},
 
-		onPatientLoaded: function (patient) {
+		onPatientLoaded: function(patient) {
 			Cache.Patient = patient;
 			this.setContentView(this.type);
 			this.ready();
@@ -219,19 +229,18 @@ define([
 			}
 		},*/
 
-		setBreadcrumbsStructure: function () {
+		setBreadcrumbsStructure: function() {
 			if (this.breadCrumbsMap[this.type]) {
-					this.breadcrumbs.setStructure([
-					App.Router.cachedBreadcrumbs.PATIENTS,
-					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, this.appeal.get("patient").toJSON()),
-					this.breadCrumbsMap[this.type]
-				]);
+				this.breadcrumbs.setStructure([
+				App.Router.cachedBreadcrumbs.PATIENTS,
+				App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, this.appeal.get("patient").toJSON()),
+				this.breadCrumbsMap[this.type]]);
 
 				this.$("#page-head").html(this.breadcrumbs.render().el);
 			}
 		},
 
-		ready: function(){
+		ready: function() {
 			this.$el.html($.tmpl(this.template, this.appeal.toJSON()));
 
 			this.assign({
@@ -247,7 +256,7 @@ define([
 			this.renderPageContent();
 		},
 
-		render: function () {
+		render: function() {
 			return this;
 		},
 
@@ -275,18 +284,23 @@ define([
 					})
 					.parent()
 						.buttonset();
-						*//**//*.next()
+						*/
+		/**/
+		/*.next()
 							.hide();
-							.menu();*//**//*
-			this.togglePrintBtn();*//*
+							.menu();*/
+		/**/
+		/*
+			this.togglePrintBtn();*/
+		/*
 		},*/
 
-		renderPageContent: function () {
+		renderPageContent: function() {
 			this.menu.setPage(this.type);
 			this.$(".ContentSide").html(this.contentView.render().el);
 		},
 
-		togglePrintBtn: function () {
+		togglePrintBtn: function() {
 			if (this.contentView.canPrint) {
 				this.cardHeader.showPrintBtn(this.contentView.printOptions());
 			} else {
@@ -295,153 +309,179 @@ define([
 			//this.$(".CardHeader .CardPrint")[this.contentView.canPrint ? "show" : "hide"]();
 		},
 
-		getMenuStructure: function () {
+		getMenuStructure: function() {
 			var menuStructure = {};
 
-			this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
+			this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function() {
 				var appealJSON = this.appeal.toJSON();
 				menuStructure = {
 					structure: [
-						App.Router.compile({
-							name: "monitoring",
-							title: "Мониторинг&nbsp;состояния",
-							uri: "/appeals/:id/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "examinations",
-							title: "Осмотры",
-							uri: "/appeals/:id/examinations/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-laboratory",
-							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-instrumental",
-							title: "Инструментальные исследования",
-							uri: "/appeals/:id/diagnostics/instrumental/"
-						}, appealJSON),
-						{name: "medical-info", title: "Лечение", structure: [
-							{name: "medical-info", title: "Медикаментозное"},
-							{name: "medical-info", title: "Оперативное"},
-							{name: "medical-info", title: "Восстановительное"}
-						]},
-						App.Router.compile({
-							name: "diagnostics-consultations",
-							title: "Консультации",
-							uri: "/appeals/:id/diagnostics/consultations/"
-						}, appealJSON),
-						{name: "bills", title: "Счета", uri: ""},
-						{name: "checkout", title: "Выписка", uri: ""},
-						{name: "epicrisis", title: "Эпикризы", uri: ""},
-						{name: "history", title: "Титульный лист ИБ", uri: ""}
-					]
+					App.Router.compile({
+						name: "monitoring",
+						title: "Мониторинг&nbsp;состояния",
+						uri: "/appeals/:id/"
+					}, appealJSON),
+					App.Router.compile({
+						name: "examinations",
+						title: "Осмотры",
+						uri: "/appeals/:id/examinations/"
+					}, appealJSON),
+					App.Router.compile({
+						name: "diagnostics-laboratory",
+						title: "Лабораторные исследования",
+						uri: "/appeals/:id/diagnostics/laboratory/"
+					}, appealJSON),
+					App.Router.compile({
+						name: "diagnostics-instrumental",
+						title: "Инструментальные исследования",
+						uri: "/appeals/:id/diagnostics/instrumental/"
+					}, appealJSON), {
+						name: "medical-info",
+						title: "Лечение",
+						structure: [{
+							name: "medical-info",
+							title: "Медикаментозное"
+						}, {
+							name: "medical-info",
+							title: "Оперативное"
+						}, {
+							name: "medical-info",
+							title: "Восстановительное"
+						}]
+					},
+					App.Router.compile({
+						name: "diagnostics-consultations",
+						title: "Консультации",
+						uri: "/appeals/:id/diagnostics/consultations/"
+					}, appealJSON), {
+						name: "bills",
+						title: "Счета",
+						uri: ""
+					}, {
+						name: "checkout",
+						title: "Выписка",
+						uri: ""
+					}, {
+						name: "epicrisis",
+						title: "Эпикризы",
+						uri: ""
+					}, {
+						name: "history",
+						title: "Титульный лист ИБ",
+						uri: ""
+					}]
 				}
 			}, this);
 
-			this.separateRoles(ROLES.NURSE_DEPARTMENT, function () {
+			this.separateRoles(ROLES.NURSE_DEPARTMENT, function() {
 				var appealJSON = this.appeal.toJSON();
 				menuStructure = {
 					structure: [
-						App.Router.compile({
-							name: "card",
-							title: "Основное",
-							uri: "/appeals/:id/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-laboratory",
-							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
-						}, appealJSON),
-//						{name: "medical-info", title: "Лечение", structure: [
-//							{name: "medical-info", title: "Медикаментозное"},
-//							{name: "medical-info", title: "Оперативное"},
-//							{name: "medical-info", title: "Восстановительное"}
-//						]},
-						//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
-						App.Router.compile({name: "moves", title: "Движение пациента", uri: "/appeals/:id/moves"}, appealJSON)
-
-					]
-				}
-			}, this);
-
-			this.separateRoles(ROLES.DOCTOR_RECEPTIONIST, function () {
-				var appealJSON = this.appeal.toJSON();
-				menuStructure = {
-					structure: [
-						App.Router.compile({
-							name: "card",
-							title: "Основное",
-							uri: "/appeals/:id/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "examinations",
-							title: "Осмотры",
-							uri: "/appeals/:id/examinations/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-laboratory",
-							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-instrumental",
-							title: "Инструментальные исследования",
-							uri: "/appeals/:id/diagnostics/instrumental/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-consultations",
-							title: "Консультации",
-							uri: "/appeals/:id/diagnostics/consultations/"
-						}, appealJSON),
-//						{name: "medical-info", title: "Лечение", structure: [
-//							{name: "medical-info", title: "Медикаментозное"},
-//							{name: "medical-info", title: "Оперативное"},
-//							{name: "medical-info", title: "Восстановительное"}
-//						]},
-						/*App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)*/
-
-						App.Router.compile({name: "moves", title: "Движение пациента", uri: "/appeals/:id/moves"}, appealJSON)
+					App.Router.compile({
+						name: "card",
+						title: "Основное",
+						uri: "/appeals/:id/"
+					}, appealJSON),
+					App.Router.compile({
+						name: "diagnostics-laboratory",
+						title: "Лабораторные исследования",
+						uri: "/appeals/:id/diagnostics/laboratory/"
+					}, appealJSON),
+					//						{name: "medical-info", title: "Лечение", structure: [
+					//							{name: "medical-info", title: "Медикаментозное"},
+					//							{name: "medical-info", title: "Оперативное"},
+					//							{name: "medical-info", title: "Восстановительное"}
+					//						]},
+					//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
+					App.Router.compile({
+						name: "moves",
+						title: "Движение пациента",
+						uri: "/appeals/:id/moves"
+					}, appealJSON)
 
 					]
 				}
 			}, this);
 
-			this.separateRoles(ROLES.NURSE_RECEPTIONIST, function () {
+			this.separateRoles(ROLES.DOCTOR_RECEPTIONIST, function() {
 				var appealJSON = this.appeal.toJSON();
 				menuStructure = {
 					structure: [
-						App.Router.compile({
-							name: "card",
-							title: "Основное",
-							uri: "/appeals/:id/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-laboratory",
-							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-instrumental",
-							title: "Инструментальные исследования",
-							uri: "/appeals/:id/diagnostics/instrumental/"
-						}, appealJSON),
-//						{name: "address", title: "Диагностика"},
-//						{name: "medical-info", title: "Лечение", structure: [
-//							{name: "medical-info", title: "Медикаментозное"},
-//							{name: "medical-info", title: "Оперативное"},
-//							{name: "medical-info", title: "Восстановительное"}
-//						]},
-						//App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)
-						//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
+					App.Router.compile({
+						name: "card",
+						title: "Основное",
+						uri: "/appeals/:id/"
+					}, appealJSON),
+					App.Router.compile({
+						name: "examinations",
+						title: "Осмотры",
+						uri: "/appeals/:id/examinations/"
+					}, appealJSON),
+					App.Router.compile({
+						name: "diagnostics-laboratory",
+						title: "Лабораторные исследования",
+						uri: "/appeals/:id/diagnostics/laboratory/"
+					}, appealJSON),
+					App.Router.compile({
+						name: "diagnostics-instrumental",
+						title: "Инструментальные исследования",
+						uri: "/appeals/:id/diagnostics/instrumental/"
+					}, appealJSON),
+					App.Router.compile({
+						name: "diagnostics-consultations",
+						title: "Консультации",
+						uri: "/appeals/:id/diagnostics/consultations/"
+					}, appealJSON),
+					//						{name: "medical-info", title: "Лечение", structure: [
+					//							{name: "medical-info", title: "Медикаментозное"},
+					//							{name: "medical-info", title: "Оперативное"},
+					//							{name: "medical-info", title: "Восстановительное"}
+					//						]},
+					/*App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)*/
 
-						App.Router.compile({
-							name: "moves",
-							title: "Движение по отделениям",
-							uri: "/appeals/:id/moves"
-						}, appealJSON)
+					App.Router.compile({
+						name: "moves",
+						title: "Движение пациента",
+						uri: "/appeals/:id/moves"
+					}, appealJSON)
+
 					]
+				}
+			}, this);
+
+			this.separateRoles(ROLES.NURSE_RECEPTIONIST, function() {
+				var appealJSON = this.appeal.toJSON();
+				menuStructure = {
+					structure: [
+					App.Router.compile({
+						name: "card",
+						title: "Основное",
+						uri: "/appeals/:id/"
+					}, appealJSON),
+					App.Router.compile({
+						name: "diagnostics-laboratory",
+						title: "Лабораторные исследования",
+						uri: "/appeals/:id/diagnostics/laboratory/"
+					}, appealJSON),
+					App.Router.compile({
+						name: "diagnostics-instrumental",
+						title: "Инструментальные исследования",
+						uri: "/appeals/:id/diagnostics/instrumental/"
+					}, appealJSON),
+					//						{name: "address", title: "Диагностика"},
+					//						{name: "medical-info", title: "Лечение", structure: [
+					//							{name: "medical-info", title: "Медикаментозное"},
+					//							{name: "medical-info", title: "Оперативное"},
+					//							{name: "medical-info", title: "Восстановительное"}
+					//						]},
+					//App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)
+					//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
+
+					App.Router.compile({
+						name: "moves",
+						title: "Движение по отделениям",
+						uri: "/appeals/:id/moves"
+					}, appealJSON)]
 				}
 			}, this);
 

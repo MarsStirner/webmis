@@ -11,7 +11,8 @@ define([
 	"models/diagnostics/laboratory-diag-form",
 	"collections/diagnostics/laboratory-diags",
 	"views/grid"],
-	function (template, AddDirectionPopupView, EditDirectionPopupView, laboratoryDiagsForm) {
+
+function(template, AddDirectionPopupView, EditDirectionPopupView, laboratoryDiagsForm) {
 
 	var Laboratory = View.extend({
 		className: "ContentHolder",
@@ -22,14 +23,13 @@ define([
 			"click #assign-lab-diag": "onNewDiagnosticClick"
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			var view = this;
+			//console.log('LaboratoryVIew init', this);
 
 
 			view.canAddDirection = view.options.appeal.closed ? false : true;
 
-
-			//console.log('can addd', view.options.appeal.closed,view.canAddDiagnostic,view.options.appeal);
 
 			this.collection = new App.Collections.LaboratoryDiags();
 			this.collection.appealId = this.options.appealId;
@@ -60,7 +60,7 @@ define([
 
 			///this.addDirectionPopupView = new AddDirectionPopupView({appeal: this.options.appeal});
 
-			pubsub.on('lab-diagnostic:added', function () {
+			pubsub.on('lab-diagnostic:added', function() {
 				view.collection.fetch();
 			});
 
@@ -68,88 +68,117 @@ define([
 			this.collection.fetch();
 		},
 
-		onGridRowClick: function (model, event) {
+		onGridRowClick: function(model, event) {
 			event.preventDefault();
 
 			if (_.indexOf(event.target.classList, 'cancel-direction') >= 0) {
 				this.cancelDirection(model);
-			}
-
-			if (_.indexOf(event.target.classList, 'edit-direction') >= 0) {
+			} else if (_.indexOf(event.target.classList, 'edit-direction') >= 0) {
 				this.editDirection(model);
+			} else {
+
+				var status = (model.get('status')).id;
+
+				if ((status === 1) || (status === 2)) {
+					this.trigger("change:viewState", {
+						type: "diagnostics-laboratory-result",
+						options: {
+							modelId: model.get('id')
+						}
+					});
+					App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics/laboratory/result/" + model.get('id'));
+				}
+
 			}
 
 		},
-		onGridRowDbClick: function(model, event){
-			console.log('onGridRowDbClick', arguments, this, this.options.mainView);
-			this.trigger("change:viewState", {type: "diagnostics-laboratory-result", options: {modelId: model.get('id')}});
+		onGridRowDbClick: function(model, event) {
+			//console.log('onGridRowDbClick', arguments, this, this.options.mainView);
+			//this.trigger("change:viewState", {type: "diagnostics-laboratory-result", options: {modelId: model.get('id')}});
 
 
 		},
 
-		editDirection: function (model) {
+		editDirection: function(model) {
 			var view = this;
 
 			view.ldf = new laboratoryDiagsForm();
 			view.ldf.id = model.get('id');
 			view.ldf.eventId = view.collection.appealId;
 
-			view.ldf.fetch({success: function (model) {
+			view.ldf.fetch({
+				success: function(model) {
 
-				console.log('model.eventId', model.eventId);
-
-				view.editDirectionPopupView = new EditDirectionPopupView({
-					title: 'Редактирование направления',
-					model: model,
-					appeal: view.options.appeal});
-				view.editDirectionPopupView.render().open();
-			}});
+					view.editDirectionPopupView = new EditDirectionPopupView({
+						title: 'Редактирование направления',
+						model: model,
+						appeal: view.options.appeal
+					});
+					view.editDirectionPopupView.render().open();
+				}
+			});
 
 
 		},
 
-		cancelDirection: function (model) {
+		cancelDirection: function(model) {
 			var view = this;
 
 			model.eventId = view.collection.appealId;
 
 			var id = model.get('id');
 
-			model.destroy({success: function () {
-				pubsub.trigger('noty', {text: 'Направление удалено', type: 'alert'});
-				view.collection.fetch();
-				//console.log('cancelDirection success',arguments)
-			}, error: function (x, error) {
+			model.destroy({
+				success: function() {
+					pubsub.trigger('noty', {
+						text: 'Направление удалено',
+						type: 'alert'
+					});
+					view.collection.fetch();
+					//console.log('cancelDirection success',arguments)
+				},
+				error: function(x, error) {
 
-				var response = $.parseJSON(x.responseText);
-				pubsub.trigger('noty', {text: 'Ошибка: ' + response.exception+', errorCode: '+response.errorCode+', id:' + id, type: 'error'});
-				//console.log('cancelDirection error',responce.responseText,arguments)
-			}});
+					var response = $.parseJSON(x.responseText);
+					pubsub.trigger('noty', {
+						text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode + ', id:' + id,
+						type: 'error'
+					});
+					//console.log('cancelDirection error',responce.responseText,arguments)
+				}
+			});
 
 		},
 
-		toggleFilters: function (event) {
+		toggleFilters: function(event) {
 			$(event.currentTarget).toggleClass("Pushed");
 			this.$(".Grid thead tr").toggleClass("EditTh");
 			this.$(".Grid .Filter").toggle();
 		},
 
-		onCollectionLoaded: function () {
+		onCollectionLoaded: function() {
 
 		},
 
-		render: function () {
+		render: function() {
 			var view = this;
 
 
-			view.$el.empty().html($.tmpl(view.template,{canAddDirection:view.canAddDirection}));
+			view.$el.empty().html($.tmpl(view.template, {
+				canAddDirection: view.canAddDirection
+			}));
 			view.$("#grid").html(view.grid.el);
 
-			view.$("#assign-lab-diag").button({icons: {primary: "icon-plus icon-color-green"}});
-			view.$(".ToggleFilters").button({icons: {primary: "icon-filter"}});
-
-
-			console.log('view.collection',view.collection);
+			view.$("#assign-lab-diag").button({
+				icons: {
+					primary: "icon-plus icon-color-green"
+				}
+			});
+			view.$(".ToggleFilters").button({
+				icons: {
+					primary: "icon-filter"
+				}
+			});
 
 			view.paginator = new App.Views.Paginator({
 				collection: view.collection
@@ -165,9 +194,11 @@ define([
 			return view;
 		},
 
-		onNewDiagnosticClick: function () {
+		onNewDiagnosticClick: function() {
 
-			this.addDirectionPopupView = new AddDirectionPopupView({appeal: this.options.appeal});
+			this.addDirectionPopupView = new AddDirectionPopupView({
+				appeal: this.options.appeal
+			});
 			this.addDirectionPopupView.render().open();
 		}
 	});
