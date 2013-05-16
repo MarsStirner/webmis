@@ -7,6 +7,7 @@ define([
 	"views/laboratory/LaboratoryView",
 	"views/instrumental/InstrumentalView",
 	"views/appeal/edit/pages/monitoring",
+	"views/laboratory/LaboratoryResultView",
 	//"text!templates/cardnav.tmpl",
 
 	"models/appeal",
@@ -31,7 +32,8 @@ define([
 	template,
 	LaboratoryView,
 	InstrumentalView,
-	Monitoring
+	Monitoring,
+	LaboratoryResultView
 	) {
 
 	App.Views.Main = View.extend({
@@ -56,6 +58,7 @@ define([
 			"examination-primary-repeated-preview": App.Views.ExaminationPrimaryPreview,
 
 			"diagnostics-laboratory": LaboratoryView,
+			"diagnostics-laboratory-result": LaboratoryResultView,
 			"diagnostics-instrumental": InstrumentalView,
 			"diagnostics-consultations": App.Views.Consultation,
 

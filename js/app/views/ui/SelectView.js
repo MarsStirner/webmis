@@ -26,7 +26,7 @@ define([], function () {
 		onChange: function () {
 			var view = this;
 
-			pubsub.trigger('select:change', view.select2.val())
+			//pubsub.trigger('select:change', view.select2.val())
 		},
 		render: function () {
 			var view = this;
@@ -54,6 +54,10 @@ define([], function () {
 		},
 		cleanUp: function(){
 			this.collection.off(null, null, this);
+		},
+		close: function(){
+			this.collection.off();
+
 		}
 
 	});

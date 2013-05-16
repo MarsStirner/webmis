@@ -1,3 +1,4 @@
+//окошко с деревом групп лабораторных исследований
 define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl'],
 	function (testsGroupTemplate) {
 
@@ -47,6 +48,11 @@ define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl'],
 				});
 
 
+			},
+			close: function(){
+				pubsub.off('group:click');
+				pubsub.off('parent-group:click');
+				this.collection.off();
 			}
 
 		});

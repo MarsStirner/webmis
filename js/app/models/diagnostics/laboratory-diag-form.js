@@ -1,4 +1,6 @@
-define([], function () {
+define(function (require) {
+	var commonData = require('mixins/commonData');
+
 	return  Model.extend({
 		//idAttribute: "id",
 		initialize: function () {
@@ -82,7 +84,7 @@ define([], function () {
 			Backbone.sync.call(Backbone, method, model, options);
 		}
 
-	});
+	}).mixin([commonData]);
 
 
 });

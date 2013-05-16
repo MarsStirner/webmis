@@ -1,3 +1,5 @@
+//окошко со списком лабораторий
+
 define([],
 	function () {
 
@@ -13,6 +15,7 @@ define([],
 
 			render: function () {
 				var view = this;
+				//console.log('render labs', view.collection.toJSON());
 
 				view.$el.html('<div class="labs-list"></div>');
 
@@ -22,7 +25,9 @@ define([],
 					},
 					children: view.collection.toJSON()
 				});
-
+			},
+			close: function(){
+				pubsub.off('lab:click');
 			}
 
 		});

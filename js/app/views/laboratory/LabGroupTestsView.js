@@ -1,3 +1,4 @@
+//окошко с деревом лабтестов
 define(['text!templates/appeal/edit/popups/set-of-tests.tmpl',
 	'models/diagnostics/SetOfTests',
 	'text!templates/laboratory/node-test.html'],
@@ -187,6 +188,13 @@ function(setOfTestsViewTemplate, SetOfTests, nodeTestTmpl) {
 
 			//UIInitialize(this.el);
 			return view;
+		},
+		close: function(){
+
+			pubsub.off('lab:click parent-group:click');
+			pubsub.off('group:click');
+			view.collection.off();
+
 		}
 
 	});

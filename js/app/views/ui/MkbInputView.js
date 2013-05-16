@@ -95,6 +95,9 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 
 			return view;
 
+		},
+		close: function(){
+			view.mkbDirectory.off("selectionConfirmed");
 		}
 
 	});
