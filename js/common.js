@@ -597,16 +597,8 @@ Form = View.extend({
 		 }
 		 });*/
 
-		this.$("[data-maxsize]").removeClass("WrongField").each(function () {
-			if (parseFloat($(this).val()) > parseFloat($(this).data("maxsize"))) {
-				$(this).addClass("WrongField");
-				$firstFoundedError = $firstFoundedError || $(this);
-				validity = false;
-			}
-		});
-
-		this.$("[data-minsize]").removeClass("WrongField").each(function () {
-			if (parseFloat($(this).val()) < parseFloat($(this).data("minsize"))) {
+		this.$("[data-validate-size]").removeClass("WrongField").each(function () {
+			if (parseFloat($(this).val()) > parseFloat($(this).data("maxsize")) || parseFloat($(this).val()) < parseFloat($(this).data("minsize"))) {
 				$(this).addClass("WrongField");
 				$firstFoundedError = $firstFoundedError || $(this);
 				validity = false;
@@ -803,7 +795,7 @@ jQuery.ajaxSetup(
 			this.showThrobberTimeout = setTimeout(showThrobber, 700);
 			showErrorTimeout = setTimeout(function () {
 				hideThrobber();
-				showError("Произошла критическая ошибка. Работа интерфейса может быть ограничена.<br/> Попробуйте перезагрузить страницу.");
+				showError("Превышено время ожидания ответа от сервера. Повторите попытку.");
 			}, 30000);
 			requestQueue.push(1);
 		},
