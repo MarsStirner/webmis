@@ -45,8 +45,6 @@ MkbInputView) {
 
 			var view = this;
 
-
-
 			//юзер
 			view.doctor = {
 				name: {

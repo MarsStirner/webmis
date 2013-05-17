@@ -1,9 +1,10 @@
 //окошко с деревом лабтестов
-define(['text!templates/appeal/edit/popups/set-of-tests.tmpl',
-	'models/diagnostics/SetOfTests',
-	'text!templates/laboratory/node-test.html'],
+define(function(require) {
 
-function(setOfTestsViewTemplate, SetOfTests, nodeTestTmpl) {
+	var setOfTestsViewTemplate = require('text!templates/appeal/edit/popups/set-of-tests.tmpl');
+	var SetOfTests = require('models/diagnostics/SetOfTests');
+	var nodeTestTmpl = require('text!templates/laboratory/node-test.html');
+	var template = require('text!templates/laboratory/test-list-item.html')
 
 	var SetOfTestsView = View.extend({
 		template: setOfTestsViewTemplate,
@@ -11,21 +12,15 @@ function(setOfTestsViewTemplate, SetOfTests, nodeTestTmpl) {
 		initialize: function() {
 			var view = this;
 
-			//view.collection = view.options.collection;
-
-
 			view.collection.on('reset', function() {
 				view.render();
 			});
 
-			pubsub.on('lab:click parent-group:click', function(labCode) {
+			pubsub.on('lab:click group:parent:click group:click', function() {
 				view.$el.html('');
 			});
 
 			pubsub.on('group:click', function(code) {
-				// console.log('load-group-tests')
-
-				view.$el.html('');
 				view.collection.fetch({
 					data: {
 						'patientId': view.options.patientId,
@@ -80,119 +75,111 @@ function(setOfTestsViewTemplate, SetOfTests, nodeTestTmpl) {
 
 		render: function() {
 			var view = this;
+			var treeData = view.collection.toJSON();
+
+			view.$el.html('<div class="tree"></div>');
+			view.$tests_list = view.$('.tree');
+
+			view.$tests_list.append(_.template(template, {
+				items: treeData,
+				template: template
+			}))
 			//console.log('render .lab-tests-list',view.collection.toJSON())
 
-			view.$el.html('<table><tr><td class="title-col"></td><td class="cito-col">cito</td><td class="time-col"></td></tr></table><div class="lab-tests-list2"></div>');
+			//view.$el.html('<table><tr><td class="title-col"></td><td class="cito-col">cito</td><td class="time-col"></td></tr></table><div class="lab-tests-list2"></div>');
 
 
-			view.$('.lab-tests-list2').dynatree({
-				clickFolderMode: 2,
-				generateIds: true,
-				noLink: true,
-				checkbox: true,
-				onCustomRender: function(node) {
-					var html = '';
+			// view.$('.lab-tests-list2').dynatree({
+			// 	clickFolderMode: 2,
+			// 	generateIds: true,
+			// 	noLink: true,
+			// 	checkbox: true,
+			// 	onCustomRender: function(node) {
+			// 		var html = '';
 
-					if (node.data.noCustomRender) {
-						html = _.template('<span class="title-col"><%=title%></span>', node.data);
-					} else {
-						html = _.template(nodeTestTmpl, node.data);
-					}
+			// 		if (node.data.noCustomRender) {
+			// 			html = _.template('<span class="title-col"><%=title%></span>', node.data);
+			// 		} else {
+			// 			html = _.template(nodeTestTmpl, node.data);
+			// 		}
 
-					return html;
-				},
+			// 		return html;
+			// 	},
 
-				onRender: function(node, nodeSpan) {
-					//console.log(node, nodeSpan)
-					var $nodeSpan = $(nodeSpan);
-					UIInitialize($nodeSpan);
-
-
-					$nodeSpan.find(".SelectDate").datepicker("setDate", "+1");
-
-					$nodeSpan.find(".HourPicker").mask("99:99").timepicker({
-						showPeriodLabels: false
-					});
-
-					var $citoCheckbox = $nodeSpan.find("input[name='cito']");
-
-					$citoCheckbox.on('click', function(e) {
-						//.dynatree("option", "autoCollapse", true);
-						node.data.cito = $citoCheckbox.prop('checked');
-						if (node.data.code) {
-							pubsub.trigger('test:cito:changed', node.data.code, $citoCheckbox.prop('checked'));
-						}
-					});
-				},
-				fx: {
-					height: "toggle",
-					duration: 200
-				},
-				autoFocus: false,
-				onBlur: function(node) {
+			// 	onRender: function(node, nodeSpan) {
+			// 		//console.log(node, nodeSpan)
+			// 		var $nodeSpan = $(nodeSpan);
+			// 		UIInitialize($nodeSpan);
 
 
-					setTimeout(function() {
-						var $dateInput = $(node.span).find('#date' + node.data.key);
-						var time = $(node.span).find('#time').val();
+			// 		$nodeSpan.find(".SelectDate").datepicker("setDate", "+1");
 
-						var date = $.datepicker.formatDate("yy-mm-dd", $dateInput.datepicker("getDate"));
-						pubsub.trigger('test:date:changed', node.data.code, date);
+			// 		$nodeSpan.find(".HourPicker").mask("99:99").timepicker({
+			// 			showPeriodLabels: false
+			// 		});
 
-						//console.log('onblur',date,time, arguments);
+			// 		var $citoCheckbox = $nodeSpan.find("input[name='cito']");
 
-					}, 100);
+			// 		$citoCheckbox.on('click', function(e) {
+			// 			//.dynatree("option", "autoCollapse", true);
+			// 			node.data.cito = $citoCheckbox.prop('checked');
+			// 			if (node.data.code) {
+			// 				pubsub.trigger('test:cito:changed', node.data.code, $citoCheckbox.prop('checked'));
+			// 			}
+			// 		});
+			// 	},
+			// 	fx: {
+			// 		height: "toggle",
+			// 		duration: 200
+			// 	},
+			// 	autoFocus: false,
+			// 	onBlur: function(node) {
 
 
-				},
+			// 		setTimeout(function() {
+			// 			var $dateInput = $(node.span).find('#date' + node.data.key);
+			// 			var time = $(node.span).find('#time').val();
 
-				onClick: function(node, event) {
-					//event.preventDefault();
-					//
-					//                        if(event.target.name == 'sito'){
-					//                            var $checkbox = $(event.target);
-					//                            //$checkbox.prop('checked',true)
-					//                            console.log('checkbox', $checkbox,$checkbox.prop('checked'));
-					//
-					//
-					//                            console.log('checkbox', $checkbox,$checkbox.prop('checked'));
-					////                            $checkbox.attr('checked',!$checkbox.is(':checked')).addClass('blablabla');
-					//                        }
-					//
-					//                        console.log('onclick',arguments);
-				},
+			// 			var date = $.datepicker.formatDate("yy-mm-dd", $dateInput.datepicker("getDate"));
+			// 			pubsub.trigger('test:date:changed', node.data.code, date);
 
-				onFocus: function() {
-					// console.log('onFocus',arguments);
-				},
+			// 			//console.log('onblur',date,time, arguments);
 
-				onSelect: function(select, node) {
-					var code = node.data.code;
-					//console.log('select', select, node)
+			// 		}, 100);
 
-					if (select && code) {
-						view.loadTest(code, function(tree) {
-							node.addChild(tree);
-							//node.expand(true);
-						});
-					}
 
-					if (!select && code) {
-						view.removeTest(code);
-						node.removeChildren();
-					}
-				},
+			// 	},
 
-				children: view.collection.toJSON()
-			});
+			// 	onFocus: function() {
+			// 		// console.log('onFocus',arguments);
+			// 	},
+
+			// 	onSelect: function(select, node) {
+			// 		var code = node.data.code;
+			// 		//console.log('select', select, node)
+
+			// 		if (select && code) {
+			// 			view.loadTest(code, function(tree) {
+			// 				node.addChild(tree);
+			// 				//node.expand(true);
+			// 			});
+			// 		}
+
+			// 		if (!select && code) {
+			// 			view.removeTest(code);
+			// 			node.removeChildren();
+			// 		}
+			// 	},
+
+			// 	children: view.collection.toJSON()
+			// });
 
 			//UIInitialize(this.el);
 			return view;
 		},
-		close: function(){
+		close: function() {
 
-			pubsub.off('lab:click parent-group:click');
-			pubsub.off('group:click');
+			pubsub.off('lab:click group:parent:click group:click');
 			this.collection.off();
 
 		}

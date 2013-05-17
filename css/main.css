@@ -24,152 +24,118 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link {
 }
 
 /* line 26, ../sass/modules/_labs.scss */
-.labs-list .dynatree-container {
-  white-space: normal;
-  border: none;
+.tree ul {
+  list-style-type: none;
+  padding: 0px 5px 0px 0;
+  font-size: 15px;
+  font-family: arial;
 }
-/* line 30, ../sass/modules/_labs.scss */
-.labs-list .dynatree-container span.dynatree-connector {
-  display: none;
+
+/* line 32, ../sass/modules/_labs.scss */
+.tree li {
+  padding: 2px 0 2px 8px;
+  position: relative;
+  cursor: pointer;
 }
 
 /* line 37, ../sass/modules/_labs.scss */
-.lab-tests-list .dynatree-container {
-  border: none;
+.tree .icon {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  font-size: 12px;
 }
 
 /* line 44, ../sass/modules/_labs.scss */
-.edit-tree .dynatree-container {
-  white-space: normal;
-  overflow: hidden;
-}
-/* line 48, ../sass/modules/_labs.scss */
-.edit-tree span.dynatree-node {
-  position: relative;
-  display: block;
-}
-/* line 51, ../sass/modules/_labs.scss */
-.edit-tree span.dynatree-node table {
-  width: 100%;
-  display: inline-block;
-  position: relative;
-}
-/* line 55, ../sass/modules/_labs.scss */
-.edit-tree span.dynatree-node table td {
-  vertical-align: top;
-}
-/* line 59, ../sass/modules/_labs.scss */
-.edit-tree span.dynatree-node table td.title-col {
-  padding-left: 5px;
-  width: 100%;
-}
-/* line 64, ../sass/modules/_labs.scss */
-.edit-tree span.dynatree-node table td.sito-col {
-  min-width: 25px;
-}
-/* line 67, ../sass/modules/_labs.scss */
-.edit-tree span.dynatree-node table td.time-col {
-  min-width: 14.6em;
-}
-
-/* line 78, ../sass/modules/_labs.scss */
-.group-tests table {
-  width: 100%;
-  display: inline-block;
-  position: relative;
-  top: -3px;
-}
-/* line 84, ../sass/modules/_labs.scss */
-.group-tests table td {
-  vertical-align: top;
-}
-/* line 88, ../sass/modules/_labs.scss */
-.group-tests table td.title-col {
-  padding-left: 40px;
-  width: 100%;
-}
-/* line 93, ../sass/modules/_labs.scss */
-.group-tests table td.cito-col {
-  min-width: 25px;
-}
-/* line 96, ../sass/modules/_labs.scss */
-.group-tests table td.time-col {
-  min-width: 14.6em;
-}
-
-/* line 103, ../sass/modules/_labs.scss */
-.edit-tree .dynatree-checkbox:first-child {
+li.closed > ul {
   display: none;
 }
 
-/* line 108, ../sass/modules/_labs.scss */
-.lab-tests-list2 .dynatree-container {
-  white-space: normal;
-  overflow: hidden;
-}
-/* line 112, ../sass/modules/_labs.scss */
-.lab-tests-list2 span.dynatree-node {
-  position: relative;
+/* line 48, ../sass/modules/_labs.scss */
+li.open > ul {
   display: block;
 }
-/* line 115, ../sass/modules/_labs.scss */
-.lab-tests-list2 span.dynatree-node .dynatree-connector, .lab-tests-list2 span.dynatree-node .dynatree-expander {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
-}
-/* line 121, ../sass/modules/_labs.scss */
-.lab-tests-list2 span.dynatree-node .dynatree-checkbox {
-  position: absolute;
-  top: 0;
-  left: 18px;
-  z-index: 10;
-}
-/* line 127, ../sass/modules/_labs.scss */
-.lab-tests-list2 span.dynatree-node span.title-col {
-  left: 40px;
-  position: relative;
-  top: -3px;
+
+/* line 51, ../sass/modules/_labs.scss */
+li .icon-open, li .icon-closed {
+  display: none;
 }
 
-/* line 140, ../sass/modules/_labs.scss */
+/* line 54, ../sass/modules/_labs.scss */
+li.parent.open > .icon-open {
+  display: block;
+}
+
+/* line 57, ../sass/modules/_labs.scss */
+li.parent.open > .icon-closed {
+  display: none;
+}
+
+/* line 61, ../sass/modules/_labs.scss */
+li.parent.closed > .icon-open {
+  display: none;
+}
+
+/* line 64, ../sass/modules/_labs.scss */
+li.parent.closed > .icon-closed {
+  display: block;
+}
+
+/* line 67, ../sass/modules/_labs.scss */
+li .title {
+  padding: 2px 4px;
+  border: 1px solid white;
+  display: block;
+}
+/* line 71, ../sass/modules/_labs.scss */
+li .title:hover {
+  background-color: #DFEFFC;
+  border-color: #B8D6FB;
+}
+
+/* line 76, ../sass/modules/_labs.scss */
+li.clicked > .title {
+  background-color: #DFEFFC;
+  border-color: #B8D6FB;
+}
+
+/* line 203, ../sass/modules/_labs.scss */
 .datetime .date {
   width: 8.67em;
 }
-/* line 142, ../sass/modules/_labs.scss */
+/* line 205, ../sass/modules/_labs.scss */
 .datetime .date .date-icon {
   right: 0.1em;
 }
-/* line 146, ../sass/modules/_labs.scss */
+/* line 209, ../sass/modules/_labs.scss */
 .datetime .time {
   width: 5.33em;
 }
-/* line 148, ../sass/modules/_labs.scss */
+/* line 211, ../sass/modules/_labs.scss */
 .datetime .time .HourPicker {
   vertical-align: baseline;
 }
-/* line 151, ../sass/modules/_labs.scss */
+/* line 214, ../sass/modules/_labs.scss */
 .datetime .time .time-icon {
   right: 0em;
 }
 
-/* line 160, ../sass/modules/_labs.scss */
+/* line 223, ../sass/modules/_labs.scss */
 .lab-status-0 {
   color: blue;
 }
 
-/* line 164, ../sass/modules/_labs.scss */
+/* line 227, ../sass/modules/_labs.scss */
 .lab-status-1 {
   color: black;
 }
 
-/* line 168, ../sass/modules/_labs.scss */
+/* line 231, ../sass/modules/_labs.scss */
 .lab-status-2 {
   color: green;
 }
 
-/* line 172, ../sass/modules/_labs.scss */
+/* line 235, ../sass/modules/_labs.scss */
 .lab-status-3 {
   color: #bbb;
 }

@@ -1,0 +1,34 @@
+   <ul>
+       <% _(items).each(function(item){ %>
+        <li class="<% if(item.children && item.children.length){ %>parent <%}%>closed" data-code="<%= item.code %>">
+            <span class="icon icon-closed icon-caret-right"></span>
+            <span class="icon icon-open icon-caret-down"></span>
+
+            <table><tr>
+              <td>
+                <span class="title">
+                  <input type="checkbox">
+                  <%= item.title %>
+                </span>
+              </td>
+              <td>
+                <input type="checkbox">
+              </td>
+              <td>
+                <div class="date">
+                  <input type="text" data-mindate="0" name="start-date" id="start-date" placeholder="дд.мм.гггг" class="SelectDate hasDatepicker" data-relation="#start-time" autocomplete="off">
+                  <i class="icon-calendar date-icon"></i>
+                </div>
+              </td>
+              <td>
+                <div class="time">
+                  <input type="text" class="Styled HourPicker hasTimepicker" id="start-time" data-relation="#start-date" placeholder="чч:мм">
+                  <i class="icon-time time-icon"></i>
+                </div>
+              </td>
+            </tr></table>
+
+
+        </li>
+       <% }) %>
+  </ul>
