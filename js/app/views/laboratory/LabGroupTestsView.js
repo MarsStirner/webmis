@@ -66,24 +66,68 @@ define(function(require) {
 				return model.get('code') == code;
 			});
 
-			//console.log('removeTest',model)
-
 			view.testCollection.remove(model);
-			//console.log('view.testCollection remove', view.testCollection);
+
+		},
+
+		collectionData: function() {
+			var data = this.collection.map(function(model) {
+				return _.extend(model.toJSON(), {
+					cid: model.cid
+				});
+			}, this);
+
+			return data;
 		},
 
 
 		render: function() {
 			var view = this;
-			var treeData = view.collection.toJSON();
+			var testsListJson = view.collectionData();
 
-			view.$el.html('<div class="tree"></div>');
-			view.$tests_list = view.$('.tree');
+			view.$el.html('<div class="list"></div>');
+			view.$tests_list = view.$('.list');
 
 			view.$tests_list.append(_.template(template, {
-				items: treeData,
+				items: testsListJson,
 				template: template
-			}))
+			}));
+
+			view.$tests_list.find(".select_date").each(function(index, item){
+				$(item).datepicker();
+				$(item).datepicker("setDate", "+1");
+			})
+
+			view.$tests_list.find(".select_time").mask("99:99").timepicker({
+				showPeriodLabels: false
+			});
+
+						// 		if (select && code) {
+			// 			view.loadTest(code, function(tree) {
+			// 				node.addChild(tree);
+			// 				//node.expand(true);
+			// 			});
+			// 		}
+
+			// 		if (!select && code) {
+			// 			view.removeTest(code);
+			// 			node.removeChildren();
+			// 		}
+
+			$.contextMenu({
+				autoHide: true,
+				selector: '.context-menu',
+				callback: function(key, options) {
+					//var m = "clicked: " + key + " " + options.$trigger.data("cid");
+
+					console.log(arguments, options.$trigger.data("cid"));
+				},
+				items: {
+					"edit": {
+						name: "Выбрать все"
+					}
+				}
+			});
 			//console.log('render .lab-tests-list',view.collection.toJSON())
 
 			//view.$el.html('<table><tr><td class="title-col"></td><td class="cito-col">cito</td><td class="time-col"></td></tr></table><div class="lab-tests-list2"></div>');

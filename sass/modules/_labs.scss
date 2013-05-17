@@ -25,20 +25,28 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link{
 
 .tree ul{
     list-style-type: none;
-    padding: 0px 5px 0px 0;
-    font-size: 15px;
+    padding: 0px;
+    margin: 0px;
+    font-size: 1em;
     font-family: arial;
+    ul{
+    	padding-left: 1em;
+    }
 }
 .tree li{
-    padding: 2px 0 2px 8px;
+    padding: 0px;
+    margin: 0px 0 0.1em 0;
     position: relative;
     cursor: pointer;
 }
+.tree table, .list table{
+
+}
 .tree .icon{
 position: absolute;
-top: 5px;
+top: 0.3em;
 left: 0;
-font-size: 12px;
+font-size: 0.8em;
 }
 
 li.closed > ul {
@@ -65,18 +73,29 @@ li.parent.closed > .icon-closed{
     display: block;
 }
 li .title{
-    padding: 2px 4px;
-    border: 1px solid #fff;
+    padding: 0.13em 0.5em 0.13em 1em;
+    //border: 1px solid #fff;
     display: block;
+    line-height: 1.3;
     &:hover{
-    	background-color: #DFEFFC;
-    	border-color: #B8D6FB;
+    	background-color: #118EDC;
+    	color: #fff;
     }
 }
-li.clicked > .title{
-    background-color: #DFEFFC;
-    border-color: #B8D6FB;
+.tree table:hover{
+    	background-color: #118EDC;
+    	color: #fff;
 }
+.tree td,.list td{
+	vertical-align: top;
+}
+li.clicked > .title{
+	    background-color: #118EDC;
+	    color: #fff;
+	}
+li.clicked > .icon-open,li.clicked > .icon-closed{
+		color: #fff;
+	}
 
 
 
