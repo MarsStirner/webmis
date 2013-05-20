@@ -4,34 +4,35 @@
  */
 //попап создания направления на лабисследование
 define([
-	"text!templates/appeal/edit/popups/laboratory.tmpl",
-	"mixins/PopupMixin",
-	"collections/diagnostics/Labs",
-	"views/laboratory/LabsView",
+		"text!templates/appeal/edit/popups/laboratory.tmpl",
+		"mixins/PopupMixin",
+		"collections/diagnostics/Labs",
+		"views/laboratory/LabsView",
 
 	"collections/diagnostics/LabGroups",
-	"views/laboratory/LabGroupsView",
+		"views/laboratory/LabGroupsView",
 
 	"collections/diagnostics/LabGroupTests",
-	"views/laboratory/LabGroupTestsView",
+		"views/laboratory/LabGroupTestsView",
 
 	"views/ui/SelectView",
-	"views/ui/MkbInputView"],
+		"views/ui/MkbInputView"
+],
 
 function(
-tmpl,
-popupMixin,
-LabsCollection,
-LabsCollectionView,
+	tmpl,
+	popupMixin,
+	LabsCollection,
+	LabsCollectionView,
 
 GroupsCollection,
-GroupsView,
+	GroupsView,
 
 GroupTestsCollection,
-GroupTestsView,
+	GroupTestsView,
 
 SelectView,
-MkbInputView) {
+	MkbInputView) {
 
 	var LaboratoryPopup = View.extend({
 		template: tmpl,
@@ -62,57 +63,57 @@ MkbInputView) {
 			console.log('appeal', view.appeal);
 
 
-			var TestCollection = Collection.extend({
-				url: DATA_PATH + 'appeals/' + this.appeal.get('id') + '/diagnostics/laboratory',
-				updateAll: function() {
-					var collection = this;
-					options = {
-						dataType: "jsonp",
-						contentType: 'application/json',
-						success: function(data, status) {
-							console.log('updateAll success', arguments);
-							if (status == 'success') {
-								collection.trigger('updateAll:success', arguments);
-							} else {
-								//collection.trigger('updateAll:error',status);
-							}
-						},
-						error: function(x, status) {
+			// var TestCollection = Collection.extend({
+			// 	url: DATA_PATH + 'appeals/' + this.appeal.get('id') + '/diagnostics/laboratory',
+			// 	updateAll: function() {
+			// 		var collection = this;
+			// 		options = {
+			// 			dataType: "jsonp",
+			// 			contentType: 'application/json',
+			// 			success: function(data, status) {
+			// 				console.log('updateAll success', arguments);
+			// 				if (status == 'success') {
+			// 					collection.trigger('updateAll:success', arguments);
+			// 				} else {
+			// 					//collection.trigger('updateAll:error',status);
+			// 				}
+			// 			},
+			// 			error: function(x, status) {
 
-							var response = $.parseJSON(x.responseText);
-							collection.trigger('updateAll:error', response);
-							console.log('updateAll error', response.exception, response.errorCode, response.errorMessage, arguments);
-						},
-						data: JSON.stringify({
-							data: collection.toJSON()
-						})
-					};
+			// 				var response = $.parseJSON(x.responseText);
+			// 				collection.trigger('updateAll:error', response);
+			// 				console.log('updateAll error', response.exception, response.errorCode, response.errorMessage, arguments);
+			// 			},
+			// 			data: JSON.stringify({
+			// 				data: collection.toJSON()
+			// 			})
+			// 		};
 
-					return Backbone.sync('create', this, options);
-				}
+			// 		return Backbone.sync('create', this, options);
+			// 	}
 
-			});
+			// });
 
-			view.testCollection = new TestCollection();
+			// view.testCollection = new TestCollection();
 
 
-			view.testCollection.on('add remove reset', function() {
-				view.saveButton(view.testCollection.length);
-				console.log('testCollection changed', view.testCollection);
-			}, view);
+			// view.testCollection.on('add remove reset', function() {
+			// 	view.saveButton(view.testCollection.length);
+			// 	console.log('testCollection changed', view.testCollection);
+			// }, view);
 
-			view.testCollection.on('updateAll:success', function() {
-				pubsub.trigger('lab-diagnostic:added');
+			// view.testCollection.on('updateAll:success', function() {
+			// 	pubsub.trigger('lab-diagnostic:added');
 
-				view.close();
-			});
+			// 	view.close();
+			// });
 
-			view.testCollection.on('updateAll:error', function(response) {
-				pubsub.trigger('noty', {
-					text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode,
-					type: 'error'
-				});
-			});
+			// view.testCollection.on('updateAll:error', function(response) {
+			// 	pubsub.trigger('noty', {
+			// 		text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode,
+			// 		type: 'error'
+			// 	});
+			// });
 
 
 			//диагнозы из госпитализации
@@ -171,9 +172,21 @@ MkbInputView) {
 			view.depended(view.mkbInputView);
 
 
-			pubsub.on('group:click parent-group:click', function() {
-				view.testCollection.reset();
-			}, view);
+			view.groupTestsCollection.on('change', function() {
+				var selected = view.groupTestsCollection.filter(function(model) {
+					return model.get('selected') === true;
+				});
+
+				view.saveButton(selected.length);
+
+				console.log('selected',selected);
+
+			})
+
+
+			// pubsub.on('group:click parent-group:click', function() {
+			// 	view.testCollection.reset();
+			// }, view);
 
 
 		},
@@ -339,7 +352,7 @@ MkbInputView) {
 			view.mkbInputView.close();
 			view.financeSelect.close();
 
-			console.log('close',view);
+			console.log('close', view);
 
 		},
 
@@ -362,9 +375,6 @@ MkbInputView) {
 
 			view.groupsView.setElement(this.$el.find('.groups'));
 			view.groupTestsView.setElement(this.$el.find('.group-tests'));
-
-
-
 
 
 

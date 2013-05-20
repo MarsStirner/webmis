@@ -4,7 +4,7 @@ define(function(require) {
 
     var ItemView = Backbone.View.extend({
         tagName: 'tr',
-        className: 'context-menu',
+        // className: 'context-menu-'+this.cid,
         events: {
             'change .cito': 'onCitoChange',
             'change .select': 'onSelectChange',
@@ -18,6 +18,7 @@ define(function(require) {
             var name = $target.val();
             var value = "" + $target.prop('checked');
             this.model.tests.setProperty(name, 'isAssigned', value);
+            console.log('this.model.tests',this.model.tests);
         },
 
         onCitoChange: function() {
@@ -28,13 +29,35 @@ define(function(require) {
         },
 
         onSelectChange: function() {
-            console.log('onSelect', this.ui.$select.prop('checked'), this.model.tests);
             if (!this.model.tests) {
                 this.loadTests();
+
             }
 
+            var code = this.model.get('code');
+            var select = this.ui.$select.prop('checked');
+
+            this.triggerTestSelection(code, select);
+            console.log('onSelectChange', this.collection)
+
         },
-        setPlannedEndDate: function(){
+
+
+        triggerTestSelection: function(code, select) {
+            var view = this;
+
+            var model = view.collection.filter(function(model) {
+                return model.get('code') == code;
+            });
+            model = model[0];
+
+            console.log('model', model)
+
+            model.set('selected', select);
+
+        },
+
+        setPlannedEndDate: function() {
             var rawDate = this.ui.$date.val();
             var rawTime = this.ui.$time.val();
 
@@ -48,18 +71,6 @@ define(function(require) {
                 patientId: this.options.patientId
             });
 
-            // tests.on('change', function(event, model) {
-
-            //     var tree = setOfTests.getTree();
-
-            //     callback(tree);
-            //     //console.log('tree',tree)
-
-            //     view.testCollection.add(setOfTests.toJSON());
-
-            //     // console.log('view.testCollection add', view.testCollection);
-            // });
-            //
             view.model.tests.fetch({
                 success: function() {
                     view.renderTests();
@@ -71,6 +82,7 @@ define(function(require) {
             console.log('options', options);
             this.$el.attr('data-code', this.model.get('code'));
             this.$el.attr('data-cid', this.model.cid);
+            this.$el.addClass('context-menu-' + this.cid);
 
             //this.model.on('change:')
 
@@ -123,7 +135,7 @@ define(function(require) {
 
             $.contextMenu({
                 autoHide: true,
-                selector: '.context-menu',
+                selector: '.context-menu-' + view.cid,
                 callback: function(key, options) {
                     //var m = "clicked: " + key + " " + options.$trigger.data("cid");
 
@@ -132,11 +144,21 @@ define(function(require) {
                 items: {
                     "select": {
                         name: "Выбрать все",
-                        callback: function() {}
+                        callback: function() {
+                            console.log('select all')
+                            $('.context-menu-' + view.cid + ' .tests ')
+                            .find('input:checkbox').prop('checked', true)
+                            .trigger('change');
+                        }
                     },
                     "deselect": {
                         name: "Снять выделение",
                         callback: function() {
+                            console.log('deselect all')
+
+                            $('.context-menu-' + view.cid + ' .tests ')
+                            .find('input:checkbox').prop('checked', false)
+                            .trigger('change');
 
 
 

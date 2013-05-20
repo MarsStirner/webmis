@@ -17,7 +17,13 @@ define(function(require) {
 			});
 
 			view.collection.on('fetch', function() {
+				console.log('view.collection',view.collection)
 				view.renderOnFetch();
+			});
+
+			view.collection.on('change', function() {
+				console.log('view.collection',view.collection);
+
 			});
 
 			pubsub.on('lab:click group:parent:click group:click', function() {
@@ -33,21 +39,11 @@ define(function(require) {
 				});
 			});
 
-			view.testCollection = view.options.testCollection;
+			//view.testCollection = view.options.testCollection;
 
 		},
 
 
-		removeTest: function(code) {
-			var view = this;
-
-			var model = view.testCollection.filter(function(model) {
-				return model.get('code') == code;
-			});
-
-			view.testCollection.remove(model);
-
-		},
 
 		collectionData: function() {
 			var data = this.collection.map(function(model) {
@@ -74,6 +70,7 @@ define(function(require) {
 				console.log('collection item', model);
 				var itemView = new ItemView({
 					model: model,
+					collection: view.collection,
 					patientId: view.options.patientId
 				});
 
