@@ -2,7 +2,7 @@
  * User: FKurilov
  * Date: 20.05.13
  */
-define(function () {
+define(function (require) {
 	/**
 	 * Структура модуля
 	 * @type {{Views: {}, Collections: {}, Models: {}}}
@@ -10,14 +10,26 @@ define(function () {
 	var Documents = {
 		Views: {
 			List: {},
-			Edit: {},
-			Review: {}
+			Review: {},
+			Edit: {
+				UIElement: {}
+			}
 		},
 		Collections: {},
 		Models: {}
 	};
 
+	//Коллекции
+
+	//Модели
+
 	//Представления
+
+	//Базовый класс
+	Documents.Views.Base = Backbone.View.extend({});
+
+	//Лэйаут верхнего уровня
+	Documents.Views.Layout = Backbone.View.extend({});
 
 	//Список
 	Documents.Views.List.Layout = Backbone.View.extend({});
@@ -30,7 +42,6 @@ define(function () {
 	//Элемент списка
 	Documents.Views.List.DocsTableRow = Backbone.View.extend({});
 
-
 	//Редактирование
 	Documents.Views.Edit.Layout = Backbone.View.extend({});
 	Documents.Views.Edit.NavControls = Backbone.View.extend({});
@@ -39,9 +50,9 @@ define(function () {
 	Documents.Views.Edit.GridRow = Backbone.View.extend({});
 	Documents.Views.Edit.GridRowSpan = Backbone.View.extend({});
 
-	Documents.Views.Edit.UIElement = {};
 	Documents.Views.Edit.UIElement.Base = Backbone.View.extend({});
 
+	//Shortcut
 	var UIElementBase = Documents.Views.Edit.UIElement.Base;
 
 	Documents.Views.Edit.UIElement.Constructor = UIElementBase.extend({});
@@ -55,6 +66,8 @@ define(function () {
 
 	//Просмотр
 	Documents.Views.Review.Layout = Backbone.View.extend({});
+	Documents.Views.Review.Controls = Backbone.View.extend({});
+	Documents.Views.Review.DocValues = Backbone.View.extend({});
 
 	return Documents;
 });
