@@ -8,26 +8,35 @@ define(function(require) {
         events: {
             'change .cito': 'onCitoChange',
             'change .select': 'onSelectChange',
-            'change .select_date': 'onDateChange',
-            'change .select_time': 'onTimeChange'
+            'change .select_date': 'setPlannedEndDate',
+            'change .select_time': 'setPlannedEndDate',
+            'change .tests-checkbox': 'onTestSelect'
         },
-        onCitoChange: function() {
-            console.log('onCitoChange', this.ui.$cito.prop("checked"));
 
+        onTestSelect: function(event) {
+            var $target = $(event.target);
+            var name = $target.val();
+            var value = "" + $target.prop('checked');
+            this.model.tests.setProperty(name, 'isAssigned', value);
         },
+
+        onCitoChange: function() {
+            var value = "" + this.ui.$cito.prop('checked');
+            if (this.model.tests) {
+                this.model.tests.setProperty('urgent', 'value', value);
+            }
+        },
+
         onSelectChange: function() {
-            console.log('onSelect', this.ui.$select.prop('checked'));
+            console.log('onSelect', this.ui.$select.prop('checked'), this.model.tests);
             if (!this.model.tests) {
                 this.loadTests();
             }
 
         },
-        onDateChange: function() {
-            console.log('onDataChange', this.ui.$date.val());
-
-        },
-        onTimeChange: function() {
-            console.log('onTimeChange', this.ui.$time.val());
+        setPlannedEndDate: function(){
+            var rawDate = this.ui.$date.val();
+            var rawTime = this.ui.$time.val();
 
         },
 
@@ -81,7 +90,7 @@ define(function(require) {
             view.ui.$tests.html('');
             _.each(data, function(item, key, data) {
                 console.log('item', item, key);
-                view.ui.$tests.append(_.template('<li><input class="tests-checkbox" type="checkbox" <% if(select){%>checked="checked"<%}%>/><%= title%></li>', item))
+                view.ui.$tests.append(_.template('<li><input class="tests-checkbox" type="checkbox" <% if(select){%>checked="checked"<%}%> value="<%= title%>"/><%= title%></li>', item))
 
             });
 
