@@ -121,43 +121,48 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
   color: #fff;
 }
 
-/* line 222, ../sass/modules/_labs.scss */
+/* line 101, ../sass/modules/_labs.scss */
+.VidgetLine .msg {
+  padding: 3px 8px;
+}
+
+/* line 224, ../sass/modules/_labs.scss */
 .datetime .date {
   width: 8.67em;
 }
-/* line 224, ../sass/modules/_labs.scss */
+/* line 226, ../sass/modules/_labs.scss */
 .datetime .date .date-icon {
   right: 0.1em;
 }
-/* line 228, ../sass/modules/_labs.scss */
+/* line 230, ../sass/modules/_labs.scss */
 .datetime .time {
   width: 5.33em;
 }
-/* line 230, ../sass/modules/_labs.scss */
+/* line 232, ../sass/modules/_labs.scss */
 .datetime .time .HourPicker {
   vertical-align: baseline;
 }
-/* line 233, ../sass/modules/_labs.scss */
+/* line 235, ../sass/modules/_labs.scss */
 .datetime .time .time-icon {
   right: 0em;
 }
 
-/* line 242, ../sass/modules/_labs.scss */
+/* line 244, ../sass/modules/_labs.scss */
 .lab-status-0 {
   color: blue;
 }
 
-/* line 246, ../sass/modules/_labs.scss */
+/* line 248, ../sass/modules/_labs.scss */
 .lab-status-1 {
   color: black;
 }
 
-/* line 250, ../sass/modules/_labs.scss */
+/* line 252, ../sass/modules/_labs.scss */
 .lab-status-2 {
   color: green;
 }
 
-/* line 254, ../sass/modules/_labs.scss */
+/* line 256, ../sass/modules/_labs.scss */
 .lab-status-3 {
   color: #bbb;
 }

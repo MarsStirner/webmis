@@ -1,34 +1,26 @@
-<table>
-  <tr>
-    <td>&nbsp;</td>
-    <td style="width:3em;">Cito</td>
-    <td style="width:8em;">&nbsp;</td>
-    <td style="width:5.5em;">&nbsp;</td>
-  </tr>
-<% _(items).each(function(item, idx){ %>
-<tr class="context-menu" data-code="<%= item.code %>" data-cid="<%= item.cid %>">
   <td>
     <table>
       <tr>
         <td style="width:5%;">
-          <input type="checkbox">
+          <input type="checkbox" class="select">
         </td>
         <td  style="width:95%;">
-          <span class="title2"><%= item.title %></span>
+          <span class="title2"><%= data.title %></span>
+          <ul class="tests"></ul>
         </td>
         </tr>
     </table>
   </td>
   <td style="width:3em;">
-    <input type="checkbox">
+    <input type="checkbox" class="cito">
   </td>
   <td style="width:8.5em;">
     <div class="date">
       <input type="text"
       data-mindate="0"
       class="select_date"
-      name="start-date-<%= item.cid %>"
-      id="start-date-<%= item.cid %>"
+      name="start-date-<%= data.cid %>"
+      id="start-date-<%= data.cid %>"
       placeholder="дд.мм.гггг">
       <i class="icon-calendar date-icon" style="right:0.3em;"></i>
     </div>
@@ -38,12 +30,9 @@
       <input type="text"
       value="07:00"
       class="select_time"
-      name="start-time-<%= item.cid %>"
-      id="start-time-<%= item.cid %>"
+      name="start-time-<%= data.cid %>"
+      id="start-time-<%= data.cid %>"
       placeholder="чч:мм">
       <i class="icon-time time-icon"  style="right:0.3em;"></i>
     </div>
   </td>
-</tr>
-<% }) %>
-</table>

@@ -356,15 +356,15 @@ MkbInputView) {
 
 			view.renderNested(view.labsCollectionView, ".labs");
 			view.labsCollection.fetch();
-
-			view.renderNested(view.groupsView, ".groups");
-
-			view.renderNested(view.groupTestsView, ".group-tests");
-
 			view.renderNested(view.mkbInputView, ".mbk");
-
 			//селект вида оплаты
 			view.initFinanseSelect();
+
+			view.groupsView.setElement(this.$el.find('.groups'));
+			view.groupTestsView.setElement(this.$el.find('.group-tests'));
+
+
+
 
 
 

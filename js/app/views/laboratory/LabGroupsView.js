@@ -13,19 +13,20 @@ define(function(require) {
 						'filter[code]': labCode
 					}
 				});
-
 			});
 
 			view.collection.on('reset', function() {
 				view.render();
 			});
 
+			view.collection.on('fetch', function() {
+				view.$el.html('<div class="msg">Загрузка...</div>');
+				console.log('fetch')
+			});
+
 		},
-
-
-		render: function() {
+		renderAll: function(treeData) {
 			var view = this;
-			var treeData = view.collection.toJSON();
 
 			view.$el.html('<div class="tree"></div>');
 			view.$groups_list = view.$('.tree');
@@ -44,15 +45,32 @@ define(function(require) {
 				view.$groups_list.find('.clicked').removeClass('clicked');
 				$this.addClass('clicked');
 
-				if($this.hasClass('parent')){
+				if ($this.hasClass('parent')) {
 					pubsub.trigger('group:parent:click');
-				}else{
+				} else {
 					pubsub.trigger('group:click', code);
 				}
 
 				var code = $(this).data('code');
 				console.log('code', code, treeData);
 			});
+		},
+		renderNoResult: function() {
+			var view = this;
+			view.$el.html('<div class="msg">Нет результатов</div>');
+		},
+
+		render: function() {
+			var view = this;
+			var treeData = view.collection.toJSON();
+			console.log('tree', treeData);
+			if (treeData.length > 0) {
+				view.renderAll(treeData);
+			} else {
+				view.renderNoResult();
+			}
+
+
 
 			return this;
 		},
