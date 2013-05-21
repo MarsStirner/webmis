@@ -10,36 +10,117 @@ define(function(require) {
             'change .select': 'onSelectChange',
             'change .select_date': 'setPlannedEndDate',
             'change .select_time': 'setPlannedEndDate',
-            'change .tests-checkbox': 'onTestSelect'
+            'change .tests-checkbox': 'onTestSelect',
+            'click .icon': 'onArrowClick'
         },
 
         onTestSelect: function(event) {
             var $target = $(event.target);
             var name = $target.val();
-            var value = "" + $target.prop('checked');
-            this.model.tests.setProperty(name, 'isAssigned', value);
-            console.log('this.model.tests',this.model.tests);
+            var value = $target.prop('checked');
+            this.model.tests.setProperty(name, 'isAssigned', "" + value);
+            console.log('this.model.tests', this.model.tests);
         },
 
         onCitoChange: function() {
-            var value = "" + this.ui.$cito.prop('checked');
-            if (this.model.tests) {
-                this.model.tests.setProperty('urgent', 'value', value);
+            var view = this;
+            var value = this.ui.$cito.prop('checked');
+
+            if (view.model.tests) {
+                view.model.tests.setProperty('urgent', 'value', "" + value);
+                console.log('onCitoChange', view.model.tests)
+            } else {
+                view.loadTests().done(function() {
+                    view.model.tests.setProperty('urgent', 'value', "" + value);
+                    console.log('onCitoChange load', view.model.tests)
+                });
             }
+
+            if (value && !view.ui.$select.prop('checked')) {
+                view.ui.$select.prop('checked', true).trigger('change');
+            }
+
+            if (value) {
+                view.$el.addClass('cito');
+            } else {
+                view.$el.removeClass('cito');
+            }
+
+
         },
 
         onSelectChange: function() {
             if (!this.model.tests) {
                 this.loadTests();
-
             }
 
             var code = this.model.get('code');
             var select = this.ui.$select.prop('checked');
 
             this.triggerTestSelection(code, select);
+            if (select) {
+                this.expand();
+            } else {
+                this.collapse();
+            }
+
             console.log('onSelectChange', this.collection)
 
+
+
+        },
+
+        setPlannedEndDate: function() {
+            var view = this;
+            var rawDate = this.ui.$date.val();
+            var rawTime = this.ui.$time.val();
+
+            var date = moment(rawDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
+            var time = rawTime;
+
+            if (view.model.tests) {
+                view.model.tests.setProperty('plannedEndDate', 'value', date + ' ' + time);
+            } else {
+                view.loadTests().done(function() {
+                    view.model.tests.setProperty('plannedEndDate', 'value', date + ' ' + time);
+                });
+            }
+
+            if (!view.ui.$select.prop('checked')) {
+                view.ui.$select.prop('checked', true).trigger('change');
+            }
+
+            console.log('date', rawDate, rawTime);
+
+        },
+
+        onArrowClick: function(e) {
+            var $target = $(e.target);
+
+
+            if ($target.hasClass('icon-open')) {
+                this.collapse();
+            } else {
+                this.expand();
+            }
+
+        },
+
+        triggerIcons: function(select) {
+            if (select) {
+                this.ui.$icons.removeClass('closed').addClass('open');
+            } else {
+                this.ui.$icons.removeClass('open').addClass('closed');
+            }
+        },
+
+        triggerTestsList: function(select) {
+            if (select) {
+                // $('.tests')
+                this.ui.$tests.show();
+            } else {
+                this.ui.$tests.hide();
+            }
         },
 
 
@@ -57,25 +138,37 @@ define(function(require) {
 
         },
 
-        setPlannedEndDate: function() {
-            var rawDate = this.ui.$date.val();
-            var rawTime = this.ui.$time.val();
+        expand: function() {
+            console.log('expand');
+            this.triggerTestsList(true);
+            this.triggerIcons(true);
+
+        },
+        collapse: function() {
+            console.log('collapse');
+            this.triggerTestsList(false);
+            this.triggerIcons(false);
 
         },
 
+
+
         loadTests: function() {
             var view = this;
+            if (!view.model.tests) {
+                view.model.tests = new Tests({
+                    code: this.model.get('code'),
+                    patientId: this.options.patientId
+                });
 
-            view.model.tests = new Tests({
-                code: this.model.get('code'),
-                patientId: this.options.patientId
-            });
+                view.model.tests.fetch({
+                    success: function() {
+                        view.renderTests();
+                    }
+                });
+            }
 
-            view.model.tests.fetch({
-                success: function() {
-                    view.renderTests();
-                }
-            });
+            return view.model.tests.deferred;
 
         },
         initialize: function(options) {
@@ -106,6 +199,8 @@ define(function(require) {
 
             });
 
+            view.ui.$icons.addClass('open');
+
 
         },
         render: function() {
@@ -124,6 +219,7 @@ define(function(require) {
             view.ui.$cito = view.$el.find(".cito");
             view.ui.$select = view.$el.find(".select");
             view.ui.$tests = view.$el.find(".tests");
+            view.ui.$icons = view.$el.find(".icons");
 
 
             view.ui.$date.datepicker();
@@ -147,8 +243,8 @@ define(function(require) {
                         callback: function() {
                             console.log('select all')
                             $('.context-menu-' + view.cid + ' .tests ')
-                            .find('input:checkbox').prop('checked', true)
-                            .trigger('change');
+                                .find('input:checkbox').prop('checked', true)
+                                .trigger('change');
                         }
                     },
                     "deselect": {
@@ -157,8 +253,8 @@ define(function(require) {
                             console.log('deselect all')
 
                             $('.context-menu-' + view.cid + ' .tests ')
-                            .find('input:checkbox').prop('checked', false)
-                            .trigger('change');
+                                .find('input:checkbox').prop('checked', false)
+                                .trigger('change');
 
 
 

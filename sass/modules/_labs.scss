@@ -56,20 +56,38 @@ display: none;
 li.open > ul {
     display: block;
 }
+.icons{
+    position: relative;
+}
+.icons .icon-open,, .icons .icon-closed{
+    display:none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 1em;
+}
+.icons .icon-closed{
+    left: 0.1em;
+}
+.icons .select {
+    position: absolute;
+    top: 0;
+    left: 0.8em;
+}
 li .icon-open, li .icon-closed{
     display:none;
 }
-li.parent.open > .icon-open{
+li.parent.open > .icon-open, .icons.open > .icon-open{
     display: block;
 }
-li.parent.open > .icon-closed{
+li.parent.open > .icon-closed, .icons.open > .icon-closed{
     display: none;
 }
 
-li.parent.closed > .icon-open{
+li.parent.closed > .icon-open, .icons.closed > .icon-open{
     display: none;
 }
-li.parent.closed > .icon-closed{
+li.parent.closed > .icon-closed, .icons.closed > .icon-closed{
     display: block;
 }
 li .title{
@@ -101,7 +119,10 @@ li.clicked > .icon-open,li.clicked > .icon-closed{
 .VidgetLine .msg{
     padding: 3px 8px;
 }
-
+.item-container .cito{
+    //background-color: red;
+   //color: #fff;
+}
 
 
 

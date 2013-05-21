@@ -5,6 +5,7 @@ define(function(require) {
 
             this.code = options.code;
             this.patientId = options.patientId;
+            this.deferred = this.fetch();
         },
 
         getTree: function() {
