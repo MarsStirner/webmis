@@ -11,15 +11,30 @@ define(function(require) {
             'change .select_date': 'setPlannedEndDate',
             'change .select_time': 'setPlannedEndDate',
             'change .tests-checkbox': 'onTestSelect',
-            'click .icon': 'onArrowClick'
+            'click .icon': 'onArrowClick',
+            'click .title2': 'onTitleClick'
         },
 
         onTestSelect: function(event) {
             var $target = $(event.target);
             var name = $target.val();
             var value = $target.prop('checked');
+            if (value) {
+                $target.parents('li').addClass('selected');
+            } else {
+                $target.parents('li').removeClass('selected');
+            }
             this.model.tests.setProperty(name, 'isAssigned', "" + value);
             console.log('this.model.tests', this.model.tests);
+        },
+
+        onTitleClick: function() {
+            //console.log('onTitleClick');
+            if (!this.ui.$select.prop('checked')) {
+                this.ui.$select.prop('checked', true).trigger('change');
+            } else {
+                this.ui.$select.prop('checked', false).trigger('change');
+            }
         },
 
         onCitoChange: function() {
@@ -58,9 +73,12 @@ define(function(require) {
             var select = this.ui.$select.prop('checked');
 
             this.triggerTestSelection(code, select);
+
             if (select) {
+                this.$el.addClass('selected');
                 this.expand();
             } else {
+                this.$el.removeClass('selected');
                 this.collapse();
             }
 
@@ -76,7 +94,7 @@ define(function(require) {
             var rawTime = this.ui.$time.val();
 
             var date = moment(rawDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
-            var time = rawTime;
+            var time = rawTime + ':00';
 
             if (view.model.tests) {
                 view.model.tests.setProperty('plannedEndDate', 'value', date + ' ' + time);
@@ -131,8 +149,6 @@ define(function(require) {
                 return model.get('code') == code;
             });
             model = model[0];
-
-            console.log('model', model)
 
             model.set('selected', select);
 
@@ -195,9 +211,12 @@ define(function(require) {
             view.ui.$tests.html('');
             _.each(data, function(item, key, data) {
                 console.log('item', item, key);
-                view.ui.$tests.append(_.template('<li><input class="tests-checkbox" type="checkbox" <% if(select){%>checked="checked"<%}%> value="<%= title%>"/><%= title%></li>', item))
+                view.ui.$tests.append(_.template('<li <% if(select){%>class="selected"<%}%> ><label><input class="tests-checkbox" type="checkbox" <% if(select){%>checked="checked"<%}%> value="<%= title%>"/><%= title%></label></li>', item))
 
             });
+            view.$el.find('.tests-checkbox').each(function(){
+                $(this).trigger('change');
+            })
 
             view.ui.$icons.addClass('open');
 
