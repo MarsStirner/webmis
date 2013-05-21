@@ -4,7 +4,7 @@ define([
 
 	App.Views.Bed = View.extend({
 		className: "item",
-		template: bedTemplate,
+		template: _.template(bedTemplate),
 
 		events: {
 			"click .bedBox": "onBedClick"
@@ -37,8 +37,7 @@ define([
 		},
 
 		render: function () {
-
-			this.$el.html($.tmpl(this.template, this.model.toJSON()));
+			this.$el.html(this.template(this.model.toJSON()));
 
 			return this;
 		}
