@@ -2,7 +2,11 @@
  * User: FKurilov
  * Date: 20.05.13
  */
+/*define(["text!templates/documents-layout.html"], function (documentsLayoutTmpl) {
+	var _documentsLayoutTmpl = _.template(documentsLayoutTmpl);*/
+
 define(function (require) {
+	var _documentsLayoutTmpl = _.template(require("text!templates/documents-layout.html"));
 
 	//Структура модуля
 	var Documents = {
