@@ -1,12 +1,12 @@
 
-	<div class="bedBox {{if busy == 'yes'}} disabledBed {{/if}}">
-		<input type="checkbox" class="bedCheckbox" value="${bedId}" name="beds"/>
+	<div class="bedBox <%if(busy == 'yes'){%> disabledBed <%}%>">
+		<input type="checkbox" class="bedCheckbox" value="<%= bedId %>" name="beds"/>
 		<span class="bedNumber">
-			{{if code}}
-				${code}
-			{{else}}
-						-
-			{{/if}}
+			<% if(code){ %>
+				<%= code %>
+			<%}else{%>
+				-
+			<% } %>
 		</span>
 	</div>
 

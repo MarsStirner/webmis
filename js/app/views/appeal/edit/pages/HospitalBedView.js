@@ -4,196 +4,255 @@
  */
 
 define([
-	"text!templates/appeal/edit/pages/hospital-bed.tmpl",
-	"collections/Beds",
-	"collections/moves",
-	"models/HospitalBed",
-	"models/move",
-	"collections/departments",
-	"views/appeal/edit/pages/BedsView"
-], function (template) {
+		"text!templates/appeal/edit/pages/hospital-bed.tmpl",
+		"collections/Beds",
+		"collections/moves",
+		"models/HospitalBed",
+		"models/move",
+		"collections/departments",
+		"views/appeal/edit/pages/BedView"
+], function(template) {
 
 	App.Views.HospitalBed = View.extend({
 		className: "ContentHolder",
 		template: template,
 
 		events: {
-			'change select.Departments': 'onSelectDepartment',
+			//'change select.Departments': 'setDepartment',
 			'click .save': 'onSave',
 			'click .actions.cancel': 'onCancel'
 		},
 
-		initialize: function () {
+		initialize: function() {
+			console.log('init HospitalBed', this);
 			_.bindAll(this);
-
 
 			this.model = new App.Models.HospitalBed();
 
-			this.model.appealId = this.options.appeal.get("id");
-			this.model.set({"clientId": this.options.appeal.get("patient").get("id")});
+			this.bedsCollection = new App.Collections.Beds();
+			this.bedsCollection.on('reset', this.renderBeds, this);
 
-			//Получаем список отделений со свободными койками
+
+			this.model.appealId = this.options.appeal.get("id");
+			this.model.set({
+				"clientId": this.options.appeal.get("patient").get("id")
+			});
+
+			this.setMoveDateAndMovedDepartment();
+
+
+
+			this.model.on("change:movedFromUnitId", this.onSelectDepartment, this);
+			this.model.on("change", this.validate, this);
+
+			this.model.on("change", function(m, o) {
+				console.log('model change', o.changes);
+			});
+
+
+			this.loadDepartments();
+
+
+
+		},
+
+		setMoveDateAndMovedDepartment: function() {
+			//Список движений для госпитализации
+			this.moves = new App.Collections.Moves();
+			this.moves.appealId = this.options.appeal.get("id");
+			this.moves.on("reset", function() {
+				this.moves.off(null, null, this);
+
+				var previousMove = this.moves.at(this.moves.length - 2);
+				var lastMove = this.moves.last();
+
+				//ид отделения из последнего движения
+				var movedFromUnitId = lastMove.get("unitId");
+
+				//время предпоследнего движения, если нет в последнем то берём из предидущего движения
+				var moveDatetime = lastMove.get('admission') || previousMove.get('leave') || previousMove.get('admission');
+
+				this.model.set({
+					'movedFromUnitId': movedFromUnitId
+				});
+				this.ui.$department.select2('val', movedFromUnitId);
+				this.model.set({
+					'moveDatetime': moveDatetime
+				});
+
+			}, this);
+
+			this.moves.fetch();
+		},
+
+		loadDepartments: function() {
+			//Получаем список отделений с койками
 			this.departments = new App.Collections.Departments();
 			this.departments.setParams({
-				filter: {hasBeds: true},
+				filter: {
+					hasBeds: true
+				},
 				limit: 0,
 				sortingField: 'name',
 				sortingMethod: 'asc'
 			});
 			this.departments.on("reset", this.onDepartmentsLoaded, this);
 			this.departments.fetch();
-
-			this.model.on("change:movedFromUnitId", this.onSelectDepartment, this);
-			this.model.on("change", this.validate, this);
-			this.on("valid", this.enableSaveButton, this);
-			this.on("invalid", this.disableSaveButton, this);
-
-			//Список движений для госпитализации
-			this.moves = new App.Collections.Moves();
-			this.moves.appealId = this.options.appeal.get("id");
-			this.moves.on("reset", function () {
-				this.moves.off(null, null, this);
-
-				//ид последнего движения
-				var movedFromUnitId = this.moves.last().get("unitId");
-				this.model.set({'movedFromUnitId': movedFromUnitId});
-
-				//this.model.set({'movedFromUnitIdBackup': movedFromUnitId});
-
-				//время предпоследнего движения
-				var previousMove = this.moves.at(this.moves.length - 2);
-				var lastMove = this.moves.at(this.moves.length - 1);
-				var moveDatetime = lastMove.get('admission') || previousMove.get('leave') || previousMove.get('admission');
-				//var previousDepartment = previousMove.get('unit');
-				this.model.set({'moveDatetime': moveDatetime});
-				//this.model.previousDepartment = previousDepartment ? previousDepartment : '';
-
-			}, this);
-
-			this.moves.fetch();
-
-
 		},
-		validate: function () {
-			var errors1 = [];
-			if (!this.model.get('movedFromUnitId')) {
-				errors1.push('movedFromUnitId');
-			}
-			if (!this.model.get('bedId')) {
-				errors1.push('bedId');
-			}
-
-			if (errors1.length) {
-				this.trigger('invalid');
-			} else {
-				this.trigger('valid');
-			}
-		},
-		enableSaveButton: function () {
-			this.$('.save').removeClass('Disabled').attr('disabled', false);
-			$('.save').on('click', this.onSave);
-
-		},
-		disableSaveButton: function () {
-			this.$('.save').addClass('Disabled').attr('disabled', true);
-
-		},
-
 		//рисуем выпадающий список отделений
-		onDepartmentsLoaded: function (departments) {
-			this.departmentsJSON = departments.toJSON();
+		onDepartmentsLoaded: function(departments) {
 			var view = this;
-			_(this.departmentsJSON).each(function (d, index) {
-				this.$(".Departments").append($("<option/>", {
+
+			_(departments.toJSON()).each(function(d, index) {
+				view.ui.$department.append($("<option/>", {
 					"text": d.name,
 					"value": d.id
 				}));
 
 			}, this);
 
-			this.$(".Departments").select2('val', view.model.get('movedFromUnitId'));
+			console.log('onDepartmentsLoaded', view.model.get('movedFromUnitId'));
+
+			// view.once('change:movedFromUnitId',function(){
+
+			// 	view.ui.$department.select2('val', view.model.get('movedFromUnitId'));
+			// })
+
+
+			view.ui.$department.on('change', function() {
+				var val = $(this).val();
+				console.log('department change', val);
+
+				view.setDepartment(val);
+			})
 
 		},
-		onSelectDepartment: function (event) {
-			var view = this;
-			view.renderBeds();
-			view.model.set('bedId', '');
+
+		setDepartment: function(id) {
+
+			this.model.set('movedFromUnitId', id);
+
+			console.log('setDepartment', id, this.model);
 
 
 		},
-		renderBeds: function () {
+
+		onSelectDepartment: function(event) {
 			var view = this;
 			var departmentId = view.model.get('movedFromUnitId');
+			this.bedsCollection.departmentId = departmentId;
+			this.bedsCollection.fetch();
+			//view.renderBeds();
+			view.model.set('bedId', '');
 
-			if (departmentId) {//если выбрано отделение
-				$('.beds').empty();
-				var bedsView = new App.Views.Beds({el: view.$('.beds'), departmentId: departmentId});
-				bedsView.collection.on("reset", function () {
-					$('.beds').empty();
+		},
 
-					_.each(bedsView.collection.models, function (model) {
-						var bedView = new App.Views.Bed({ model: model });
-						$('.beds').append(bedView.render().el);
+		validate: function() {
 
-						bedView.on('bedChecked', function (bedId) {
-							this.model.set({'bedId': bedId});
-						}, view);
-
-					});
-
-					view.justifyBeds();
-				});
-				bedsView.collection.fetch();
+			if (!this.model.get('movedFromUnitId') || !this.model.get('bedId')) {
+				this.disableSaveButton();
+			}else{
+				this.enableSaveButton();
 			}
 
 		},
-		justifyBeds: function () {
-			var maxWidth = Math.max.apply(Math, this.$('.bedBox').map(function () {
+		enableSaveButton: function() {
+			this.ui.$saveButton.removeClass('Disabled').attr('disabled', false);//.on('click', this.onSave);
+
+		},
+		disableSaveButton: function() {
+			this.ui.$saveButton.addClass('Disabled').attr('disabled', true);//.unbind('click', this.onSave);
+		},
+
+
+		renderBeds: function() {
+			console.log('renderBeds');
+			var view = this;
+
+			view.ui.$beds.html('');
+
+			view.bedsCollection.each(function(model) {
+				var bedView = new App.Views.Bed({
+					model: model,
+					hb:view.model
+				});
+
+				view.ui.$beds.append(bedView.render().el);
+
+			});
+
+			view.justifyBeds();
+
+
+		},
+		justifyBeds: function() {
+			var maxWidth = Math.max.apply(Math, this.$('.bedBox').map(function() {
 				return $(this).width();
 			}).get());
-			this.$('.bedBox').each(function () {
+			this.$('.bedBox').each(function() {
 				$(this).width(maxWidth);
 			})
 		},
-		redirectToMoves: function () {
+		redirectToMoves: function() {
 			var view = this;
-			view.trigger("change:viewState", {type: 'moves', options: {}});
+			view.trigger("change:viewState", {
+				type: 'moves',
+				options: {}
+			});
 			App.Router.updateUrl("appeals/" + view.model.appealId + "/moves/");
+			this.close();
 
 		},
-		onSave: function () {
+		onSave: function() {
 			var view = this;
-			console.log('onSave view.model',view.model);
+			console.log('onSave view.model', view.model);
 
 			if (!view.model.get("moveDatetime")) {
-				view.model.set({"moveDatetime": new Date().getTime()});
+				view.model.set({
+					"moveDatetime": new Date().getTime()
+				});
 			}
 
 
 			view.model.save({}, {
-				success: function () {
-					pubsub.trigger('noty', {text: 'Пациент зарегистрирован на койке'});
+				success: function() {
+					pubsub.trigger('noty', {
+						text: 'Пациент зарегистрирован на койке'
+					});
 					view.redirectToMoves();
-				}});
+				}
+			});
 
 
 		},
-		onCancel: function (e) {
+		onCancel: function(e) {
 			var view = this;
 			e.preventDefault();
 			view.redirectToMoves();
 		},
+		close: function() {
+			this.off();
+			this.model.off();
+			this.moves.off();
+			this.departments.off();
+			this.bedsCollection.off();
+		},
 
-		render: function () {
+		render: function() {
 			var view = this;
 
-			var modelJSON = view.model.toJSON();
+			view.$el.html($.tmpl(view.template, view.model.toJSON()));
 
-			view.$el.html($.tmpl(view.template, modelJSON));
+			view.ui = {};
+			view.ui.$saveButton = view.$el.find('.save');
+			view.ui.$department = view.$el.find('.Departments');
+			view.ui.$beds = view.$el.find('.beds');
+
 
 			UIInitialize(view.el);
+			this.disableSaveButton();
 
-			view.model.connect("movedFromUnitId", "departments", view.$el);
+			//view.model.connect("movedFromUnitId", "departments", view.$el);
 			view.model.connect("patronage", "patronage", view.$el);
 			view.model.connect("moveDatetime", view.$("#move-date"), view.$el);
 			view.model.connect("moveDatetime", view.$("#move-time"), view.$el);
