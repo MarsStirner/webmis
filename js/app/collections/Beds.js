@@ -6,7 +6,7 @@ define(["models/Bed"], function () {
 	App.Collections.Beds = Collection.extend({
 		model: App.Models.Bed,
 		initialize: function (models, options) {
-			this.departmentId = options.departmentId;
+			//this.departmentId = options.departmentId;
 		},
 		url: function () {
 			if (this.departmentId) {
