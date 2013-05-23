@@ -1,13 +1,9 @@
 define(function(require) {
-	var tmpl = require('text!templates/appeal/edit/popups/instrumental-bf.tmpl');
+	var tmpl = require('text!templates/diagnostics/instrumental/instrumental-bottom-partial.tmpl');
 	var MKBView = require('views/ui/MkbInputView');
 	var SelectView = require('views/ui/SelectView');
 
 	var rivets = require('rivets');
-
-// define(["text!templates/appeal/edit/popups/instrumental-bf.tmpl",
-// 	"views/ui/MkbInputView",
-// 	"views/ui/SelectView"], function(tmpl, MKBView, SelectView) {
 
 	var InstrumentalPopupBottomForm = View.extend({
 		template: tmpl,
@@ -66,7 +62,7 @@ define(function(require) {
 			});
 
 
-			
+
 
 			return this;
 		}

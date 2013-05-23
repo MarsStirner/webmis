@@ -4,28 +4,51 @@
  */
 
 define(function(require) {
-	var tmpl = require('text!templates/appeal/edit/popups/instrumental.tmpl');
-	var popupMixin = require('mixins/PopupMixin');
-	var BFView = require('views/instrumental/InstrumentalPopupBottomFormView');
-	var InstrumntalGroups = require('collections/diagnostics/InstrumntalGroups');
 	var InstrumentalResearchs = require('collections/diagnostics/InstrumentalResearchs');
 	var InstrumentalResearchTemplate = require('models/diagnostics/InstrumentalResearchTemplate');
-
-
+	var InstrumntalGroups = require('collections/diagnostics/InstrumntalGroups');
+	var popupMixin = require('mixins/PopupMixin');
 	var ViewModel = require('views/instrumental/InstrumentalPopupViewModel');
+
+	var BFView = require('views/instrumental/InstrumentalPopupBottomFormView');
+	var ResearchGroupsListView = require('views/instrumental/ResearchGroupsListView');
+	var ResearchListView = require('views/instrumental/ResearchsListView');
+
+
+
+	var popupTmpl = require('text!templates/diagnostics/instrumental/instrumental-popup.tmpl');
+
 
 	var InstrumentalPopup = View.extend({
 
-		template: tmpl,
+		template: popupTmpl,
 		events: {},
 
 		initialize: function(options) {
+			var view = this;
 
 			_.bindAll(this);
 
-			this.instrumntalResearchs = new InstrumntalGroups();
+
 			this.viewModel = new ViewModel({}, {
 				appeal: this.options.appeal
+			});
+
+			this.viewModel.on('change:saveButtonState', this.updateSaveButton, this)
+
+			//список групп исследований
+			this.instrumntalResearchs = new InstrumntalGroups();
+
+			this.researchGroupsListView = new ResearchGroupsListView({
+				collection: this.viewModel.instrumntalGroups
+			});
+
+			this.viewModel.instrumntalGroups.fetch();
+
+			//список исследований в выбранной группе
+			this.researchListView = new ResearchListView({
+				collection: this.instrumntalResearchs
+
 			});
 
 
@@ -33,79 +56,21 @@ define(function(require) {
 				data: this.viewModel.toJSON()
 			});
 			this.depended(this.bfView);
-		},
 
-		loadGroups: function(code) {
-			var view = this;
 
-			view.$instrumentalGroups.html('<li>Загружается...</li>');
-			this.viewModel.instrumntalGroups.fetch().done(function() {
-				view.makeGroupsTree();
+			pubsub.on('research:selected', function(code) {
+				view.viewModel.set('code', code);
+				console.log('research:selected', code);
 			});
 
-		},
-
-		makeGroupsTree: function() {
-			var view = this;
-
-			view.$instrumentalGroups.dynatree({
-				onClick: function(node) {
-					view.$instrumentalResearchs.html('');
-					view.testCode = false;
-					view.updateSaveButton();
-
-					if (node.data.children && node.data.children.length > 0) {} else {
-						view.loadResearchs(node.data.code);
-					}
-
-					view.updateSaveButton();
-				},
-				children: this.viewModel.instrumntalGroups.toJSON()
-			});
-
-			if (!view.groupsTree) {
-				view.groupsTree = view.$instrumentalGroups.dynatree("getTree");
-			}
-			view.groupsTree.reload();
-		},
-
-		loadResearchs: function(code) {
-			var view = this;
-
-			this.viewModel.instrumntalResearchs.setParams({
-				'filter[code]': code
-			});
-
-			view.$instrumentalResearchs.html('<li>Загружается...</li>');
-			this.viewModel.instrumntalResearchs.fetch().done(function() {
-				view.makeResearchsTree();
-			});
+			pubsub.on('research:deselected', function(code) {
+				view.viewModel.set('code', '');
+				console.log('research:deselected', code);
+			})
 
 		},
 
-		makeResearchsTree: function() {
-			var view = this;
 
-			view.$instrumentalResearchs.dynatree({
-				checkbox: true,
-				selectMode: 1,
-				onSelect: function(select, node) {
-					if (select) {
-						//view.testCode = node.data.code;
-						view.viewModel.set('code', node.data.code);
-					} else {
-						view.viewModel.set('code', false);
-					}
-					view.updateSaveButton();
-				},
-				children: this.viewModel.instrumntalResearchs.toJSON()
-			});
-
-			if (!view.researchsTree) {
-				view.researchsTree = view.$instrumentalResearchs.dynatree("getTree");
-			}
-			view.researchsTree.reload();
-		},
 
 		updateSaveButton: function() {
 			this.$saveButton.button(this.viewModel.get('saveButtonState'));
@@ -159,9 +124,9 @@ define(function(require) {
 			//идентификатор направительного диагноза
 			view.testTemplate.setProperty('Направительный диагноз', 'valueId', view.viewModel.get('mkbId'));
 
-			view.viewModel.set('saveButtonState','disable');
+			view.viewModel.set('saveButtonState', 'disable');
 
-			//создание направления сейчас реализованно только для группы тестов.... 
+			//создание направления сейчас реализованно только для группы тестов....
 			//поэтому создаём коллекцию и добавляем в неё модель...
 			view.tests = new InstrumentalResearchs(null, {
 				appealId: view.viewModel.get('appealId')
@@ -184,6 +149,9 @@ define(function(require) {
 		render: function() {
 			var view = this;
 			view.renderNested(this.bfView, ".bottom-form");
+			view.researchGroupsListView.setElement(this.$el.find('.instrumental-groups'));
+			view.researchListView.setElement(this.$el.find('.instrumental-researchs'));
+
 			return this;
 		},
 		afterRender: function() {
@@ -197,7 +165,7 @@ define(function(require) {
 			view.$plannedTimepicker = view.$("#tp");
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
 
-			view.loadGroups();
+
 
 			view.$plannedDatepicker.datepicker({
 				minDate: new Date(),
@@ -270,7 +238,6 @@ define(function(require) {
 				view.viewModel.set('mkbId', view.$("input[name='diagnosis[mkb][code]']").data('mkb-id'));
 			});
 
-			
 
 
 			view.$saveButton.button(view.viewModel.get('saveButtonState'));
