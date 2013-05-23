@@ -77,15 +77,21 @@ define(function (require) {
 
 		data: function () { return {}; },
 
+		subViews: {},
+
 		render: function (subViews) {
 			this.$el.html(this.template(this.data()));
-			if (subViews) this.assign(subViews);
+			if (subViews) {
+				this.subViews = subViews;
+				this.assign(subViews);
+			}
 			return this;
 		},
 
-		cleanUp: function () {
+		tearDown: function () {
 			if (this.model) this.model.off(null, null, this);
 			if (this.collection) this.collection.off(null, null, this);
+			if (this.subViews) _.each(this.subViews, function (subView) { subView.tearDown(); });
 			this.undelegateEvents();
 			this.remove();
 		}
