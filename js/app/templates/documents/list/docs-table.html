@@ -1,0 +1,17 @@
+<table>
+	<thead></thead>
+	<tbody>
+		<%if (documents.length) {%>
+			<%documents.each(function (document) {%>
+				<tr>
+					<td><%=document.id%></td>
+					<td><%=document.get('name')%></td>
+				</tr>
+			<%});%>
+		<%} else {%>
+			<tr>
+				<td colspan="2">Нет данных</td>
+			</tr>
+		<%}%>
+	</tbody>
+</table>

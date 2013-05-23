@@ -8,12 +8,21 @@
 define(function (require) {
 	var Backbone = window.Backbone;
 	var _ = window._;
+	var appealId = 123;
+
+	/*var docsRouter = new (Backbone.Router.extend({
+		routes: {
+
+		}
+	}));*/
 
 	var templates = {
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
-		_docTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
-		_docsTable: _.template(require("text!templates/documents/list/docs-table.html")),
-		_docsTableRow: _.template(require("text!templates/documents/list/docs-table-row.html"))
+		_listControls: _.template(require("text!templates/documents/list/controls.html")),
+		_documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
+		_docsTable: _.template(require("text!templates/documents/list/docs-table.html"))/*,
+		_docsTableRow: _.template(require("text!templates/documents/list/docs-table-row.html")),
+		_docsTableBody: _.template(require("text!templates/documents/list/docs-table-body.html"))*/
 	};
 
 	//Структура модуля
@@ -29,13 +38,34 @@ define(function (require) {
 		Models: {}
 	};
 
+	//Модели
+	//---------------------
+	//---------------------
+
+	Documents.Models.DocumentBase = Backbone.Model.extend({});
+	Documents.Models.Document = Documents.Models.DocumentBase.extend({});
+	Documents.Models.DocumentTemplate = Documents.Models.DocumentBase.extend({});
+
+	Documents.Models.DocumentType = Backbone.Model.extend({});
+
 	//Коллекции
 	//---------------------
 	//---------------------
 
-	//Модели
-	//---------------------
-	//---------------------
+	Documents.Collections.Documents = Collection.extend({
+		model: Documents.Models.Document,
+		urlRoot: DATA_PATH + "appeals/" + appealId + "/documents/"
+	});
+
+	Documents.Collections.DocumentTemplates = Collection.extend({
+		model: Documents.Models.DocumentTemplate,
+		urlRoot: DATA_PATH + "/dir/actionTypes/"
+	});
+
+	Documents.Collections.DocumentTypes = Collection.extend({
+		model: Documents.Models.DocumentType,
+		url: function () { return DATA_PATH + "/dir/actionTypes/"; }
+	});
 
 	//Представления
 	//---------------------
@@ -43,11 +73,16 @@ define(function (require) {
 
 	//Базовый класс
 	var BaseView = Documents.Views.Base = Backbone.View.extend({
-		template: "",
+		template: _.template(""),
+
 		data: function () { return {}; },
-		render: function () {
-			this.$el.html(this.template(this.data())); return this;
+
+		render: function (subViews) {
+			this.$el.html(this.template(this.data()));
+			if (subViews) this.assign(subViews);
+			return this;
 		},
+
 		cleanUp: function () {
 			if (this.model) this.model.off(null, null, this);
 			if (this.collection) this.collection.off(null, null, this);
@@ -69,29 +104,135 @@ define(function (require) {
 	//Список
 	//---------------------
 
+	var documents = new Documents.Collections.Documents([
+		{id: 1, name: "Документ 1", createDate: 1369315701540},
+		{id: 2, name: "Документ 2", createDate: 1369315701545},
+		{id: 3, name: "Документ 3", createDate: 1369315701546},
+		{id: 4, name: "Документ 4", createDate: 1369315701547},
+		{id: 5, name: "Документ 5", createDate: 1369315701548}
+	]);
+
 	Documents.Views.List.Layout = BaseView.extend({
 		template: templates._listLayout,
+
 		render: function () {
-			BaseView.prototype.render.apply(this);
-			this.assign({
-				".documents-controls": new Documents.Views.List.Controls(),
-				".documents-table": new Documents.Views.List.DocsTable()
+			return BaseView.prototype.render.call(this, {
+				".documents-controls": new Documents.Views.List.Controls({collection: documents}),
+				".documents-table": new Documents.Views.List.DocsTable({collection: documents})
 			});
-			return this;
 		}
 	});
 
 	//Элементы управления (кнопка "Новый документ" и пр.)
-	Documents.Views.List.Controls = BaseView.extend({});
+	Documents.Views.List.Controls = BaseView.extend({
+		template: templates._listControls,
+
+		events: {
+			"click .new-document": "onNewDocumentClick",
+			"click .new-duty-doc-exam": "onNewDutyDocExamClick",
+			"change .document-type-filter": "onDocumentTypeFilterChange",
+			"change [name='document-create-date-filter']": "onDocumentCreateDateFilterChange"
+		},
+
+		onNewDocumentClick: function () {
+			this.showDocumentTypeSelector();
+		},
+
+		onNewDutyDocExamClick: function () {
+			this.openDutyDocExamTemplate();
+		},
+
+		onDocumentTypeFilterChange: function () {
+			var type = 'EXAM';
+			this.applyDocumentTypeFilter(type);
+		},
+
+		onDocumentCreateDateFilterChange: function () {
+			var date = new Date();
+			this.applyDocumentCreateDateFilter(date);
+		},
+
+		showDocumentTypeSelector: function () { console.log("stub:showDocumentTypeSelector", arguments); },
+
+		openDutyDocExamTemplate: function () { console.log("stub:openDutyDocExamTemplate", arguments); },
+
+		applyDocumentTypeFilter: function (type) { console.log("stub:applyDocumentTypeFilter", arguments); },
+
+		applyDocumentCreateDateFilter: function (date) { console.log("stub:applyDocumentCreateDateFilter", arguments); }
+	});
 
 	//Выбор шаблона документа
-	Documents.Views.List.DocTypeSelector = BaseView.extend({});
+	Documents.Views.List.DocumentTypeSelector = BaseView.extend({
+		template: templates._documentTypeSelector,
+
+		data: function () {
+			return {documentTypes: this.collection}
+		},
+
+		events: {
+			"change .document-type-search-field": "onDocumentTypeSearchFieldChange",
+			"click .document-type-node": "onDocumentTypeNodeClick"
+		},
+
+		initialize: function () {
+			this.collection = new Documents.Collections.DocumentTypes([
+				{id:1, name: "Документ 1"},
+				{id:2, name: "Документ 2", children: [
+					{id:1, name: "Документ 3"}
+				]}
+			]);
+		},
+
+		onDocumentTypeSearchFieldChange: function () {
+			this.applySearchFilter();
+		},
+
+		onDocumentTypeNodeClick: function () {
+			var nodeHasChildren;
+			if (nodeHasChildren) {
+				this.toggleNodeCollapse();
+			}
+			else {
+				this.markNodeSelected();
+			}
+		},
+
+		applySearchFilter: function () { console.log("stub:applySearchFilter"); },
+
+		toggleNodeCollapse: function (collapse) { console.log("stub:toggleNodeCollapse"); },
+
+		markNodeSelected: function () { console.log("stub:markNodeSelected"); }
+	});
 
 	//Список созданных документов
-	Documents.Views.List.DocsTable = BaseView.extend({});
+	Documents.Views.List.DocsTable = BaseView.extend({
+		template: templates._docsTable,
 
-	//Элемент списка
-	Documents.Views.List.DocsTableRow = BaseView.extend({});
+		data: function () {
+			return {documents: this.collection};
+		},
+
+		initialize: function () {
+			this.collection.on("reset", this.render, this)
+		}
+		/*,
+
+		render: function () {
+			return BaseView.prototype.call(this, {
+				"tbody": new Documents.Views.List.DocsTableBody({collection: this.collection})
+			});
+		}*/
+	});
+
+	/*//Элемент списка
+	Documents.Views.List.DocsTableRow = BaseView.extend({
+		template: templates._docsTableRow
+	});
+
+	//Тело таблицы
+	Documents.Views.List.DocsTableBody = BaseView.extend({
+		template: templates._docsTableBody
+	});*/
 
 
 	//Редактирование

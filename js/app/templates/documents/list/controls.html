@@ -1,0 +1,16 @@
+<button type="button" class="new-document">Новый документ</button>
+<button type="button" class="new-duty-doc-exam">Осмотр дежурного врача</button>
+<label>
+	тип документа:
+	<select class="document-type-filter" id="document-type-filter">
+		<option value="_ALL" selected>Любой</option>
+		<option value="EXAM">Осмотры</option>
+		<option value="EPI">Эпикризы</option>
+		<option value="ORD">ОРД</option>
+		<option value="JOUR">Журналы</option>
+	</select>
+</label>
+<label><input type="radio" name="document-create-date-filter" checked/>все</label>
+<label><input type="radio" name="document-create-date-filter"/>сегодня</label>
+<label><input type="radio" name="document-create-date-filter"/>вчера</label>
+<label><input type="radio" name="document-create-date-filter"/>за 5 дней</label>
