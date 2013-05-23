@@ -2065,14 +2065,15 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
 
 /* line 125, ../sass/modules/_instrumental.scss */
 .instrumental-researchs .item label {
+  font-size: inherit;
   margin: 0.2em;
   cursor: pointer;
 }
-/* line 131, ../sass/modules/_instrumental.scss */
+/* line 132, ../sass/modules/_instrumental.scss */
 .instrumental-researchs .selected {
   background-color: #118EDC;
 }
-/* line 133, ../sass/modules/_instrumental.scss */
+/* line 134, ../sass/modules/_instrumental.scss */
 .instrumental-researchs .selected label {
   color: #fff;
 }

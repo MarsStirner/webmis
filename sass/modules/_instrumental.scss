@@ -123,6 +123,7 @@ li.clicked > .icon-open,li.clicked > .icon-closed{
     .item{
 
         label{
+            font-size: inherit;
             margin: 0.2em;
             cursor: pointer;
         }
