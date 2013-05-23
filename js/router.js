@@ -118,7 +118,15 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 			"prints/": "prints",
 
-			"widgets/": "widgets"
+			"widgets/": "widgets",
+
+			"test/": "test"
+		},
+
+		test: function () {
+			require(["views/documents/documents"], function (Documents) {
+				$("#wrapper").html((new Documents.Views.List.Layout()).render().el);
+			});
 		},
 
 		widgets: function() {

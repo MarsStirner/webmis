@@ -8,7 +8,7 @@ define([
 	"views/instrumental/InstrumentalView",
 	"views/appeal/edit/pages/monitoring",
 	"views/laboratory/LaboratoryResultView",
-	//"text!templates/cardnav.tmpl",
+	"views/documents/documents",
 
 	"models/appeal",
 	"collections/patient-appeals",
@@ -33,7 +33,8 @@ define([
 	LaboratoryView,
 	InstrumentalView,
 	Monitoring,
-	LaboratoryResultView
+	LaboratoryResultView,
+	Documents
 	) {
 
 	App.Views.Main = View.extend({
@@ -67,7 +68,9 @@ define([
 			"moves": App.Views.Moves,
 			"hospitalbed": App.Views.HospitalBed,
 
-			"monitoring": Monitoring.Views.Layout
+			"monitoring": Monitoring.Views.Layout,
+
+			"documents": Documents.Views.List.Layout
 		},
 
 		breadCrumbsMap: {
@@ -80,7 +83,8 @@ define([
 			"card": App.Router.cachedBreadcrumbs.APPEAL,
 			"moves": App.Router.cachedBreadcrumbs.MOVES,
 			"hospitalbed": App.Router.cachedBreadcrumbs.HOSPITALBED,
-			"monitoring": App.Router.cachedBreadcrumbs.APPEAL
+			"monitoring": App.Router.cachedBreadcrumbs.APPEAL,
+			"documents": App.Router.cachedBreadcrumbs.APPEAL
 		},
 
 		initialize: function () {
@@ -313,6 +317,11 @@ define([
 							uri: "/appeals/:id/examinations/"
 						}, appealJSON),
 						App.Router.compile({
+							name: "documents",
+							title: "Документы",
+							uri: "/appeals/:id/documents/"
+						}, appealJSON),
+						App.Router.compile({
 							name: "diagnostics-laboratory",
 							title: "Лабораторные исследования",
 							uri: "/appeals/:id/diagnostics/laboratory/"
@@ -379,6 +388,11 @@ define([
 							name: "examinations",
 							title: "Осмотры",
 							uri: "/appeals/:id/examinations/"
+						}, appealJSON),
+						App.Router.compile({
+							name: "documents",
+							title: "Документы",
+							uri: "/appeals/:id/documents/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-laboratory",
