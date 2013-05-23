@@ -10,7 +10,10 @@ define(function (require) {
 	var _ = window._;
 
 	var templates = {
-		_listLayout: _.template(require("text!templates/documents/list/layout.html"))
+		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
+		_docTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
+		_docsTable: _.template(require("text!templates/documents/list/docs-table.html")),
+		_docsTableRow: _.template(require("text!templates/documents/list/docs-table-row.html"))
 	};
 
 	//Структура модуля
@@ -27,16 +30,20 @@ define(function (require) {
 	};
 
 	//Коллекции
+	//---------------------
+	//---------------------
 
 	//Модели
+	//---------------------
+	//---------------------
 
 	//Представления
 	//---------------------
 	//---------------------
 
 	//Базовый класс
-	Documents.Views.Base = Backbone.View.extend({
-		template: _.template(""),
+	var BaseView = Documents.Views.Base = Backbone.View.extend({
+		template: "",
 		data: function () { return {}; },
 		render: function () {
 			this.$el.html(this.template(this.data())); return this;
@@ -50,37 +57,42 @@ define(function (require) {
 	});
 
 	//Базовый класс для лэйаутов
-	Documents.Views.Layout = Documents.Views.Base.extend({
+	/*Documents.Views.Layout = Documents.Views.Base.extend({
 		views: {},
 		render: function () {
 			Documents.Views.Base.prototype.render.apply(this);
 			this.assign(this.views);
 			return this;
 		}
-	});
+	});*/
 
 	//Список
 	//---------------------
 
-	Documents.Views.List.Layout = Documents.Views.Base.extend({
+	Documents.Views.List.Layout = BaseView.extend({
 		template: templates._listLayout,
-		views: {
-			".documents-controls": new Documents.Views.List.Controls(),
-			".documents-table": new Documents.Views.List.DocsTable()
+		render: function () {
+			BaseView.prototype.render.apply(this);
+			this.assign({
+				".documents-controls": new Documents.Views.List.Controls(),
+				".documents-table": new Documents.Views.List.DocsTable()
+			});
+			return this;
 		}
 	});
 
 	//Элементы управления (кнопка "Новый документ" и пр.)
-	Documents.Views.List.Controls = Backbone.View.extend({});
+	Documents.Views.List.Controls = BaseView.extend({});
 
-	//Выбор шаблона
-	Documents.Views.List.DocTypeSelector = Backbone.View.extend({});
+	//Выбор шаблона документа
+	Documents.Views.List.DocTypeSelector = BaseView.extend({});
 
 	//Список созданных документов
-	Documents.Views.List.DocsTable = Backbone.View.extend({});
+	Documents.Views.List.DocsTable = BaseView.extend({});
 
 	//Элемент списка
-	Documents.Views.List.DocsTableRow = Backbone.View.extend({});
+	Documents.Views.List.DocsTableRow = BaseView.extend({});
+
 
 	//Редактирование
 	//---------------------
@@ -134,6 +146,7 @@ define(function (require) {
 
 	//Поле типа FlatDirectory
 	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({});
+
 
 	//Просмотр
 	//---------------------
