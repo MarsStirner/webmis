@@ -105,8 +105,11 @@ define(["models/Biomaterial"], function (Biomaterial) {
 			_.each(labTests, function (labTest, index) {
 
 				var orgStructure = '';
-				if(labTest.bed && labTest.bed.name){
-					orgStructure = labTest.bed.name;
+				if(labTest.department && labTest.department.name){
+					orgStructure = labTest.department.name;
+				}
+				if(labTest.bed && labTest.bed.code){
+					orgStructure = orgStructure+'/'+labTest.bed.code;
 				}
 
 				var tissueTypeName = '';

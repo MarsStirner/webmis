@@ -1265,7 +1265,8 @@ define([
 			"click .AddIcon"   : "onAddIconClick",
 			"click .RemoveIcon": "onRemoveIconClick",
 
-			"change .DocType": "onDocTypeChange"
+			"change select.DocType": "onDocTypeChange",
+			"change .DocSeries,.DocNumber": "onDocNumberOrSeriesChange"
 		},
 
 		initialize: function (options) {
@@ -1294,7 +1295,15 @@ define([
 		},
 
 		onDocTypeChange: function (event) {
-			this.applyMasks();
+			this.$(".DocSeries,.DocNumber").val("").change();
+			this.model.get("docType").set({id: this.$("select.DocType").val()});
+		},
+
+		onDocNumberOrSeriesChange: function () {
+			this.model.set({
+				series: this.$(".DocSeries").val(),
+				number: this.$(".DocNumber").val()
+			});
 		},
 
 		applyMasks: function () {
@@ -1349,11 +1358,13 @@ define([
 
 			this.$el.html($.tmpl(this.template, idCardJSON));
 
+			this.$(".DocType").val(this.model.get("docType").get("id"));
+
 			UIInitialize(this.el);
 
 			// TODO: REMOVE!!!
-			this.$(".DocSeries").mask("?********");
-			this.$(".DocNumber").mask("?****************");
+			/*this.$(".DocSeries").mask("?********");
+			this.$(".DocNumber").mask("?****************");*/
 
 			this.toggleRemoveIcon();
 

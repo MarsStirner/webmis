@@ -26,7 +26,7 @@ define([], function() {
 		onChange: function() {
 			var view = this;
 
-			pubsub.trigger('select:change', view.select2.val())
+			//pubsub.trigger('select:change', view.select2.val())
 		},
 		render: function() {
 			var view = this;
@@ -70,14 +70,24 @@ define([], function() {
 				view.val(view.options.initSelection)
 			}
 
+<<<<<<< HEAD
 			view.select2.on('change', function() {
 				pubsub.trigger(id + ':change', view.select2.val());
 			});
+=======
+			// view.select2.on('change', function () {
+			// 	pubsub.trigger(id + ':change', view.select2.val());
+			// });
+>>>>>>> develop
 
 			return view;
 		},
 		cleanUp: function() {
 			this.collection.off(null, null, this);
+		},
+		close: function(){
+			this.collection.off();
+
 		}
 
 	});

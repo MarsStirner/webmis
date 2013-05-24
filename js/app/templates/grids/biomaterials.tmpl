@@ -68,9 +68,9 @@
 	<td class="status-code-${status} HasToolTip open-popup" data-tooltip-content="#tooltip_${id}">
 
 		{{if status == 0}}
-			<b><u>${biomaterial.tissueType.name} (${actions.length})</u></b>
+			<b class="open-popup"><u class="open-popup">${biomaterial.tissueType.name} (${actions.length})</u></b>
 		{{else}}
-			${biomaterial.tissueType.name} (${actions.length})
+			<u class="open-popup">${biomaterial.tissueType.name} (${actions.length})</u>
 		{{/if}}
 
 		<div id="tooltip_${id}" class="ToolTip TopTail">

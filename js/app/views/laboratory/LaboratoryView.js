@@ -2,6 +2,8 @@
  * User: FKurilov
  * Date: 08.06.12
  */
+
+//страница со списком назначенных лабораторных исследований
 define([
 	"text!templates/appeal/edit/pages/laboratory.tmpl",
 	"views/laboratory/AddDirectionPopupView",
@@ -27,7 +29,7 @@ define([
 			view.canAddDirection = view.options.appeal.closed ? false : true;
 
 
-			console.log('can addd', view.options.appeal.closed,view.canAddDiagnostic,view.options.appeal);
+			//console.log('can addd', view.options.appeal.closed,view.canAddDiagnostic,view.options.appeal);
 
 			this.collection = new App.Collections.LaboratoryDiags();
 			this.collection.appealId = this.options.appealId;
@@ -37,7 +39,7 @@ define([
 			});
 
 			this.collection.extra = {
-				doctorId: options.appeal.get('setPerson').get('doctor').get('id'),
+				doctorId: (options.appeal.get('execPerson')).id,
 				userId: Core.Cookies.get("userId")
 			};
 
@@ -51,6 +53,7 @@ define([
 			});
 
 			this.grid.on('grid:rowClick', this.onGridRowClick, this);
+			this.grid.on('grid:rowDbClick', this.onGridRowDbClick, this);
 
 			this.depended(this.grid);
 
@@ -77,6 +80,12 @@ define([
 			}
 
 		},
+		onGridRowDbClick: function(model, event){
+			console.log('onGridRowDbClick', arguments, this, this.options.mainView);
+			this.trigger("change:viewState", {type: "diagnostics-laboratory-result", options: {modelId: model.get('id')}});
+
+
+		},
 
 		editDirection: function (model) {
 			var view = this;
@@ -90,6 +99,7 @@ define([
 				console.log('model.eventId', model.eventId);
 
 				view.editDirectionPopupView = new EditDirectionPopupView({
+					title: 'Редактирование направления',
 					model: model,
 					appeal: view.options.appeal});
 				view.editDirectionPopupView.render().open();

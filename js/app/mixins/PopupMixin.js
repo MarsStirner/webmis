@@ -27,11 +27,19 @@ define([], function() {
 
 			onSave: function() {
 				//console.log('onSave');
+			},
+
+			beforeRender: function(){
+
+			},
+			afterRender: function(){
+
 			}
 
 		});
 
 		this.before('render', function() {
+			this.beforeRender();
 			this.$el.html($.tmpl(this.template, this.data));
 
 			$(this.el).dialog({
@@ -50,6 +58,10 @@ define([], function() {
 					click: this.close
 				}]
 			});
+		});
+
+		this.after('render', function() {
+			this.afterRender();
 		});
 
 	}

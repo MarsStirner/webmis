@@ -1,3 +1,5 @@
+//окошко со списком лабораторий
+
 define([],
 	function () {
 
@@ -13,16 +15,22 @@ define([],
 
 			render: function () {
 				var view = this;
+				//console.log('render labs', view.collection.toJSON());
 
 				view.$el.html('<div class="labs-list"></div>');
+
+				var tree = view.collection.toJSON();
+				console.log('tree',tree);
 
 				view.$('.labs-list').dynatree({
 					onClick: function(node) {
 						pubsub.trigger('lab:click', node.data.code);
 					},
-					children: view.collection.toJSON()
+					children: tree
 				});
-
+			},
+			close: function(){
+				pubsub.off('lab:click');
 			}
 
 		});
