@@ -1,5 +1,5 @@
 define(function(require) {
-	var tmpl = require('text!templates/appeal/edit/popups/instrumental-edit.tmpl');
+	var tmpl = require('text!templates/diagnostics/instrumental/instrumental-edit-popup.tmpl');
 	var popupMixin = require('mixins/PopupMixin');
 	var BFView = require('views/instrumental/InstrumentalPopupBottomFormView');
 
@@ -20,6 +20,7 @@ define(function(require) {
 			});
 
 			this.model = this.options.model;
+			this.data = this.model.toJSON();
 
 			// //юзер
 			// this.doctor = {
@@ -56,10 +57,12 @@ define(function(require) {
 		render: function() {
 			var view = this;
 
-			this.$('.instrumental-researchs').dynatree({
-				checkbox: true,
-				children: view.modelToTree()
-			});
+
+
+			// this.$('.instrumental-researchs').dynatree({
+			// 	checkbox: true,
+			// 	children: view.modelToTree()
+			// });
 
 			this.renderNested(this.bfView, ".bottom-form");
 
@@ -144,7 +147,7 @@ define(function(require) {
 			view.model.setProperty('doctorMiddleName', 'value', view.viewModel.get('doctorMiddleName'));
 			//doctorLastName - фамилия врача назначившего исследование
 			view.model.setProperty('doctorLastName', 'value', view.viewModel.get('doctorLastName'));
-			
+
 			//assessmentDate - дата создания направления на исследование
 			var assessmentDay = view.viewModel.get('assessmentDay');
 			var assessmentTime = view.viewModel.get('assessmentTime') + ':00';
