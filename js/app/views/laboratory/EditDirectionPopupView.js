@@ -7,10 +7,10 @@
 
 define(function(require) {
 	var tmpl = require('text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl');
-	var popupMixin = 'mixins/PopupMixin';
-	var SelectView = "views/ui/SelectView";
-	var test4EditTmpl = 'text!templates/laboratory/node-test4edit.html';
-	var MkbInputView = "views/ui/MkbInputView"
+	var popupMixin = require('mixins/PopupMixin');
+	var SelectView = require("views/ui/SelectView");
+	var test4EditTmpl = require('text!templates/laboratory/node-test4edit.html');
+	var MkbInputView = require("views/ui/MkbInputView");
 
 	return View.extend({
 		template: tmpl,

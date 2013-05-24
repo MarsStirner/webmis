@@ -60,7 +60,7 @@ SelectView,
 
 
 			view.appeal = view.options.appeal;
-			console.log('appeal', view.appeal);
+			//console.log('appeal', view.appeal);
 
 
 			var TestsCollection = Collection.extend({
@@ -71,7 +71,7 @@ SelectView,
 						dataType: "jsonp",
 						contentType: 'application/json',
 						success: function(data, status) {
-							console.log('updateAll success', arguments);
+							//console.log('updateAll success', arguments);
 							if (status == 'success') {
 								collection.trigger('updateAll:success', arguments);
 							} else {
@@ -82,7 +82,7 @@ SelectView,
 
 							var response = $.parseJSON(x.responseText);
 							collection.trigger('updateAll:error', response);
-							console.log('updateAll error', response.exception, response.errorCode, response.errorMessage, arguments);
+							//console.log('updateAll error', response.exception, response.errorCode, response.errorMessage, arguments);
 						},
 						data: JSON.stringify({
 							data: collection.toJSON()
@@ -177,7 +177,7 @@ SelectView,
 
 				view.saveButton(selected.length);
 
-				console.log('selected', selected);
+				//console.log('selected', selected);
 
 			})
 
@@ -230,57 +230,17 @@ SelectView,
 			var startDate = moment(view.ui.$startDate.datepicker("getDate")).format('YYYY-MM-DD');
 			var startTime = view.ui.$startTime.val() + ':00';
 
-
-			// //console.log('onSave tree selected', selected);
-
-
 			view.testsCollection.forEach(function(model) {
 
 
-				// 	var modelTree = _.find(selected, function(node) {
-				// 		return node.code == model.get('code');
-				// 	});
+				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
 
-				// 	var $dateInput = view.$('#date' + modelTree.key);
-				// 	var date = moment($dateInput.datepicker("getDate")).format('YYYY-MM-DD');
-
-				// 	var $timeInput = view.$('#time' + modelTree.key);
-				// 	var time = $timeInput.val() + ':00';
-
-				// 	var $citoInput = view.$('#cito' + modelTree.key);
-				// 	var cito = $citoInput.prop('checked');
-
-				// 	//console.log('node inputs', date, time, cito);
-
-				// 	var selected_params = _.filter(modelTree.children, function(node) {
-				// 		return node.select === true;
-				// 	});
-
-				// 	var group = model.get('group');
-
-
-				// 	//выбранные тесты
-				// 	//console.log('modelTree ', model.get('group'), modelTree, selected_params);
-				// 	_.each(selected_params, function(param) {
-				// 		_.each(group[1].attribute, function(attribute, index) {
-				// 			if (attribute.name == param.title) {
-				// 				group[1].attribute[index].properties[1].value = 'true';
-				// 			}
-				// 		});
-				// 	});
-
+				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
 				model.setProperty('doctorFirstName', 'value', view.doctor.name.first);
 				model.setProperty('doctorLastName', 'value', view.doctor.name.last);
 				model.setProperty('doctorMiddleName', 'value', '');
-				// 	view.setParam(model, 'urgent', 'value', cito);
-				// 	view.setParam(model, 'plannedEndDate', 'value', date + ' ' + time);
-				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
-				var mkbId = view.ui.$mbkCode.data('mkb-id');
-				model.setProperty('Направительный диагноз', 'value', mkbId);
 				model.setProperty('finance', 'value', view.ui.$finance.val());
-
-
-				// 	model.set('group', group);
+				model.setProperty('Направительный диагноз', 'valueId', mkbId);
 
 			});
 			view.testsCollection.updateAll();
@@ -304,7 +264,7 @@ SelectView,
 			view.mkbInputView.close();
 			view.financeSelect.close();
 
-			console.log('close', view);
+			//console.log('close', view);
 
 		},
 
