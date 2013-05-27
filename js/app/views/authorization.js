@@ -65,8 +65,8 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 			this.collection.on("error", this.showErrorToolTip, this);
 		},
 		ready: function () {
-			this.$el.append($("#authorization-page").tmpl({useTextForPassword: navigator.appVersion.indexOf("Mac") != -1}));
-			this.$(".LoginForm").html($("#authorization-page-login-form").tmpl());
+			this.$el.append($("#authorization-page").tmpl());
+			this.$(".LoginForm").html($("#authorization-page-login-form").tmpl({useTextForPassword: navigator.appVersion.indexOf("Mac") != -1}));
 			this.$("#auth-error").css({"width": "100%", "margin-left": "-1.2em", "margin-bottom": "1em"}).hide();
 			this.$(".Submit").button();
 		},
