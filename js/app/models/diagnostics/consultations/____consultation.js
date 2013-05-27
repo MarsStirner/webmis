@@ -44,6 +44,7 @@ define(["models/doctor"], function () {
 			}
 		],
 
+
 		parse: function ( data ) {
 			var consult = new Consultation();
 			data = data.data ? data.data : data;

@@ -6,7 +6,7 @@ define([
 	"text!templates/appeal/edit/main.tmpl",
 	"views/laboratory/LaboratoryView",
 	"views/instrumental/InstrumentalView",
-	"views/consultations/ConsultationView",
+	"views/consultations/ConsultationsListView",
 	"views/appeal/edit/pages/monitoring",
 
 	"views/laboratory/LaboratoryResultView",

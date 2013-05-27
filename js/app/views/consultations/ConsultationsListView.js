@@ -4,7 +4,7 @@
  */
 define([
 	"text!templates/appeal/edit/pages/consultations.tmpl",
-	"collections/diagnostics/consultations",
+	"collections/diagnostics/consultations/Consultations",
 	"views/grid",
 	"views/consultations/NewConsultationView"], function(template, Consultations, Grid, NewConsultationView) {
 
@@ -86,7 +86,7 @@ define([
 		},
 
 		onNewConsultClick: function() {
-			this.newConsultationView = new NewConsultationView();
+			this.newConsultationView = new NewConsultationView(this.options);
 			this.newConsultationView.render().open();
 		},
 
