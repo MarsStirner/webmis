@@ -36,8 +36,8 @@ define([], function() {
 			 * byString(someObj, 'part.name');
 			 * возвращает свойство объекта по пути указонному в строке
 			 *
-			 * @param   {object}  o    
-			 * @param   {string}  s    
+			 * @param   {object}  o
+			 * @param   {string}  s
 			 *
 			 * @return  {[type]}  [description]
 			 */
@@ -70,15 +70,11 @@ define([], function() {
 				view.val(view.options.initSelection)
 			}
 
-<<<<<<< HEAD
-			view.select2.on('change', function() {
-				pubsub.trigger(id + ':change', view.select2.val());
-			});
-=======
+
 			// view.select2.on('change', function () {
 			// 	pubsub.trigger(id + ':change', view.select2.val());
 			// });
->>>>>>> develop
+
 
 			return view;
 		},

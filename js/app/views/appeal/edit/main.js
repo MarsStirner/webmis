@@ -8,11 +8,9 @@ define([
 	"views/instrumental/InstrumentalView",
 	"views/consultations/ConsultationView",
 	"views/appeal/edit/pages/monitoring",
-<<<<<<< HEAD
 
-=======
 	"views/laboratory/LaboratoryResultView",
->>>>>>> develop
+
 	//"text!templates/cardnav.tmpl",
 
 	"models/appeal",
@@ -36,14 +34,11 @@ define([
 	template,
 	LaboratoryView,
 	InstrumentalView,
-<<<<<<< HEAD
 	ConsultationView,
-	Monitoring
 
-=======
 	Monitoring,
 	LaboratoryResultView
->>>>>>> develop
+
 	) {
 
 	App.Views.Main = View.extend({
