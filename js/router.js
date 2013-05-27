@@ -125,12 +125,9 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 		test: function () {
 			require(["views/documents/documents"], function (Documents) {
-				var docsLayout = new Documents.Views.List.Layout();
-				$("#wrapper")
-					.html(docsLayout.render().el)
-					.on("click", function () {
-						docsLayout.tearDown();
-					});
+				//var docsLayout = new Documents.Views.List.Layout();
+				$("#wrapper").html(new Documents.Views.List.Layout().render().el);
+				$("#dinputest").dPassword({});
 			});
 		},
 

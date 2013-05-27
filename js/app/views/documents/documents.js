@@ -10,12 +10,6 @@ define(function (require) {
 	var _ = window._;
 	var appealId = 123;
 
-	/*var docsRouter = new (Backbone.Router.extend({
-		routes: {
-
-		}
-	}));*/
-
 	var templates = {
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
 		_listControls: _.template(require("text!templates/documents/list/controls.html")),
@@ -24,6 +18,47 @@ define(function (require) {
 		_docsTableRow: _.template(require("text!templates/documents/list/docs-table-row.html")),
 		_docsTableBody: _.template(require("text!templates/documents/list/docs-table-body.html"))*/
 	};
+
+	var rootEl = $('#wrapper');
+
+	var prefix = "test/" + appealId;
+
+	var DocsRouter = Backbone.Router.extend({
+		navigate: function (path) {
+			return Backbone.Router.prototype.navigate.call(this);
+		},
+
+		routes: {
+			"": "list",
+			"new/:typeId/": "new",
+			":id/": "review",
+			":id/edit/": "edit"
+		},
+
+		list: function () {
+			rootEl.html(new Documents.Views.List.Layout().render().el);
+		},
+
+		new: function () {
+			rootEl.html(new Documents.Views.Edit.Layout().render().el);
+		},
+
+		review: function () {
+			rootEl.html(new Documents.Views.Review.Layout().render().el);
+		},
+
+		edit: function () {
+			rootEl.html(new Documents.Views.List.Layout().render().el);
+		}
+	});
+
+	var docsRouter = new DocsRouter();
+
+	$(".documents-layout a").on("click", function (event) {
+		event.preventDefault();
+		docsRouter.navigate($(this).prop("href"));
+	});
+
 
 	//Структура модуля
 	var Documents = {
@@ -97,6 +132,20 @@ define(function (require) {
 		}
 	});
 
+	var BasePopUp = BaseView.extend({
+		tearDown: function () {
+			console.log("tearing down popup");
+			this.$el.dialog("close");
+			BaseView.prototype.tearDown.call(this);
+		},
+
+		render: function (subViews) {
+			BaseView.prototype.render.call(this, subViews);
+			this.$el.dialog({close: _.bind(this.tearDown, this)}).dialog("open");
+			return this;
+		}
+	});
+
 	//Базовый класс для лэйаутов
 	/*Documents.Views.Layout = Documents.Views.Base.extend({
 		views: {},
@@ -119,6 +168,8 @@ define(function (require) {
 	]);
 
 	Documents.Views.List.Layout = BaseView.extend({
+		class: "documents-layout",
+
 		template: templates._listLayout,
 
 		render: function () {
@@ -158,9 +209,15 @@ define(function (require) {
 			this.applyDocumentCreateDateFilter(date);
 		},
 
-		showDocumentTypeSelector: function () { console.log("stub:showDocumentTypeSelector", arguments); },
+		showDocumentTypeSelector: function () {
+			console.log("stub:showDocumentTypeSelector", arguments);
+			new Documents.Views.List.DocumentTypeSelector().render();
+		},
 
-		openDutyDocExamTemplate: function () { console.log("stub:openDutyDocExamTemplate", arguments); },
+		openDutyDocExamTemplate: function () {
+			console.log("stub:openDutyDocExamTemplate", arguments);
+			docsRouter.navigate(prefix+"123")
+		},
 
 		applyDocumentTypeFilter: function (type) { console.log("stub:applyDocumentTypeFilter", arguments); },
 
@@ -168,7 +225,7 @@ define(function (require) {
 	});
 
 	//Выбор шаблона документа
-	Documents.Views.List.DocumentTypeSelector = BaseView.extend({
+	Documents.Views.List.DocumentTypeSelector = BasePopUp.extend({
 		template: templates._documentTypeSelector,
 
 		data: function () {
@@ -244,7 +301,7 @@ define(function (require) {
 	//Редактирование
 	//---------------------
 
-	Documents.Views.Edit.Layout = Backbone.View.extend({});
+	Documents.Views.Edit.Layout = BaseView.extend({});
 
 	//Верхний блок элементов управления и навигации
 	Documents.Views.Edit.NavControls = Backbone.View.extend({});
@@ -298,7 +355,7 @@ define(function (require) {
 	//Просмотр
 	//---------------------
 
-	Documents.Views.Review.Layout = Backbone.View.extend({});
+	Documents.Views.Review.Layout = BaseView.extend({});
 
 	//Элементы управления
 	Documents.Views.Review.Controls = Backbone.View.extend({});
