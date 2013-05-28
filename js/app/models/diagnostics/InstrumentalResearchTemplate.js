@@ -20,7 +20,7 @@ define(["mixins/commonData"], function(commonData) {
 		},
 
 		url: function() {
-			return DATA_PATH + "dir/actionTypes/instrumental/?filter[code]=" + this.code + "&patientId=" + this.patientId;
+			return DATA_PATH + "dir/actionTypes?filter[mnem]=DIAG&filter[code]=" + this.code + "&patientId=" + this.patientId;
 		}
 	}).mixin([commonData]);
 

@@ -11,13 +11,13 @@ define(["models/diagnostics/diagnostic-type"], function () {
 
 			switch (options.type) {
 				case "lab":
-					this.typePath = "dir/actionTypes/laboratory/";
+					this.typePath = "dir/actionTypes?filter[mnem]=LAB";
 					break;
 				case "inst":
-					this.typePath = "dir/actionTypes/instrumental/";
+					this.typePath = "dir/actionTypes?filter[mnem]=DIAG";
 					break;
 				default:
-					this.typePath = "dir/actionTypes/";
+					this.typePath = "dir/actionTypes";
 			}
 		},
 

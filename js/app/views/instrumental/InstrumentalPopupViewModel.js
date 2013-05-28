@@ -39,6 +39,7 @@ define(function(require) {
 			this.instrumntalGroups = new InstrumntalGroups();
 			this.instrumntalGroups.parents = true;
 			this.instrumntalGroups.setParams({
+				'filter[code]':3,
 				'filter[view]': 'tree'
 			});
 

@@ -124,6 +124,7 @@ MkbInputView) {
 			view.labsCollection = new LabsCollection();
 
 			view.labsCollection.setParams({
+				'filter[code]':2,
 				sortingField: "name",
 				sortingMethod: "asc"
 			});

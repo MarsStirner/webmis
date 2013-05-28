@@ -7,7 +7,7 @@ function(LabGroup) {
 		model: LabGroup,
 
 		url: function() {
-			var path = DATA_PATH + "dir/actionTypes/laboratory/";
+			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=LAB";
 
 			return path;
 		},

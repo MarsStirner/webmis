@@ -7,7 +7,7 @@ define(["models/diagnostics/LabTest"], function (LabTest) {
 		model: LabTest,
 
 		url: function () {
-			var path = DATA_PATH + "dir/actionTypes/laboratory/";
+			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=LAB";
 
 			return path;
 		},

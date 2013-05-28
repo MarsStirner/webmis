@@ -13,7 +13,7 @@ function(LabGroup) {
 		// },
 
 		url: function() {
-			var path = DATA_PATH + "dir/actionTypes/instrumental/";
+			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=DIAG";
 
 			return path;
 		},
@@ -71,7 +71,7 @@ function(LabGroup) {
 			if(this.parents){
 				tree = this.onlyParents(tree);
 			}
-			
+
 
 			return tree;
 		}
