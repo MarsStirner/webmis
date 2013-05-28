@@ -1,31 +1,36 @@
 //окошко с деревом лабтестов
-define(['text!templates/appeal/edit/popups/set-of-tests.tmpl',
-	'models/diagnostics/SetOfTests',
-	'text!templates/laboratory/node-test.html'],
+define(function(require) {
 
-function(setOfTestsViewTemplate, SetOfTests, nodeTestTmpl) {
+	//var setOfTestsViewTemplate = require('text!templates/appeal/edit/popups/set-of-tests.tmpl');
+	//var SetOfTests = require('models/diagnostics/SetOfTests');
+	var nodeTestTmpl = require('text!templates/laboratory/node-test.html');
+	var listTemplate = require('text!templates/laboratory/test-list.html');
+	var ItemView = require('views/laboratory/LabGroupTestView');
 
 	var SetOfTestsView = View.extend({
-		template: setOfTestsViewTemplate,
 		el: 'ul',
 		initialize: function() {
 			var view = this;
-
-			//view.collection = view.options.collection;
-
 
 			view.collection.on('reset', function() {
 				view.render();
 			});
 
-			pubsub.on('lab:click parent-group:click', function(labCode) {
+			view.collection.on('fetch', function() {
+				console.log('view.collection',view.collection)
+				view.renderOnFetch();
+			});
+
+			view.collection.on('change', function() {
+				console.log('view.collection',view.collection);
+
+			});
+
+			pubsub.on('lab:click group:parent:click group:click', function() {
 				view.$el.html('');
 			});
 
 			pubsub.on('group:click', function(code) {
-				// console.log('load-group-tests')
-
-				view.$el.html('');
 				view.collection.fetch({
 					data: {
 						'patientId': view.options.patientId,
@@ -34,165 +39,70 @@ function(setOfTestsViewTemplate, SetOfTests, nodeTestTmpl) {
 				});
 			});
 
-
-			view.testCollection = view.options.testCollection;
-
+			//view.testCollection = view.options.testCollection;
 
 		},
 
-		loadTest: function(code, callback) {
+
+
+		collectionData: function() {
+			var data = this.collection.map(function(model) {
+				return _.extend(model.toJSON(), {
+					cid: model.cid
+				});
+			}, this);
+
+			return data;
+		},
+
+
+
+		renderAll: function(testsData) {
 			var view = this;
+			console.log('renderAll', testsData, view);
 
-			var setOfTests = new SetOfTests({
-				code: code,
-				patientId: view.options.patientId
-			});
+			view.$el.html(_.template(listTemplate, {}));
+			view.$tests_list = view.$el.find('tbody.item-container');
 
-			setOfTests.on('change', function(event, model) {
+			//view.$tests_list.append(_.template(listTemplate , {}));
 
-				var tree = setOfTests.getTree();
+			this.collection.each(function(model) {
+				console.log('collection item', model);
+				var itemView = new ItemView({
+					model: model,
+					collection: view.collection,
+					patientId: view.options.patientId
+				});
 
-				callback(tree);
-				//console.log('tree',tree)
+				view.$tests_list.append(itemView.render().el)
+			}, this);
 
-				view.testCollection.add(setOfTests.toJSON());
 
-				// console.log('view.testCollection add', view.testCollection);
-			});
-			//
-			setOfTests.fetch();
 
 		},
 
-		removeTest: function(code) {
-			var view = this;
-
-			var model = view.testCollection.filter(function(model) {
-				return model.get('code') == code;
-			});
-
-			//console.log('removeTest',model)
-
-			view.testCollection.remove(model);
-			//console.log('view.testCollection remove', view.testCollection);
+		renderNoData: function() {
+			this.$el.html('<div class="msg">Нет результатов.</div>');
 		},
-
+		renderOnFetch: function() {
+			this.$el.html('<div class="msg">Загрузка...</div>');
+		},
 
 		render: function() {
 			var view = this;
-			//console.log('render .lab-tests-list',view.collection.toJSON())
+			var testsData = view.collectionData();
 
-			view.$el.html('<table><tr><td class="title-col"></td><td class="cito-col">cito</td><td class="time-col"></td></tr></table><div class="lab-tests-list2"></div>');
+			if (testsData.length > 0) {
+				view.renderAll(testsData);
+			} else {
+				view.renderNoData();
+			}
 
-
-			view.$('.lab-tests-list2').dynatree({
-				clickFolderMode: 2,
-				generateIds: true,
-				noLink: true,
-				checkbox: true,
-				onCustomRender: function(node) {
-					var html = '';
-
-					if (node.data.noCustomRender) {
-						html = _.template('<span class="title-col"><%=title%></span>', node.data);
-					} else {
-						html = _.template(nodeTestTmpl, node.data);
-					}
-
-					return html;
-				},
-
-				onRender: function(node, nodeSpan) {
-					//console.log(node, nodeSpan)
-					var $nodeSpan = $(nodeSpan);
-					UIInitialize($nodeSpan);
-
-
-					$nodeSpan.find(".SelectDate").datepicker("setDate", "+1");
-
-					$nodeSpan.find(".HourPicker").mask("99:99").timepicker({
-						showPeriodLabels: false
-					});
-
-					var $citoCheckbox = $nodeSpan.find("input[name='cito']");
-
-					$citoCheckbox.on('click', function(e) {
-						//.dynatree("option", "autoCollapse", true);
-						node.data.cito = $citoCheckbox.prop('checked');
-						if (node.data.code) {
-							pubsub.trigger('test:cito:changed', node.data.code, $citoCheckbox.prop('checked'));
-						}
-					});
-				},
-				fx: {
-					height: "toggle",
-					duration: 200
-				},
-				autoFocus: false,
-				onBlur: function(node) {
-
-
-					setTimeout(function() {
-						var $dateInput = $(node.span).find('#date' + node.data.key);
-						var time = $(node.span).find('#time').val();
-
-						var date = $.datepicker.formatDate("yy-mm-dd", $dateInput.datepicker("getDate"));
-						pubsub.trigger('test:date:changed', node.data.code, date);
-
-						//console.log('onblur',date,time, arguments);
-
-					}, 100);
-
-
-				},
-
-				onClick: function(node, event) {
-					//event.preventDefault();
-					//
-					//                        if(event.target.name == 'sito'){
-					//                            var $checkbox = $(event.target);
-					//                            //$checkbox.prop('checked',true)
-					//                            console.log('checkbox', $checkbox,$checkbox.prop('checked'));
-					//
-					//
-					//                            console.log('checkbox', $checkbox,$checkbox.prop('checked'));
-					////                            $checkbox.attr('checked',!$checkbox.is(':checked')).addClass('blablabla');
-					//                        }
-					//
-					//                        console.log('onclick',arguments);
-				},
-
-				onFocus: function() {
-					// console.log('onFocus',arguments);
-				},
-
-				onSelect: function(select, node) {
-					var code = node.data.code;
-					//console.log('select', select, node)
-
-					if (select && code) {
-						view.loadTest(code, function(tree) {
-							node.addChild(tree);
-							//node.expand(true);
-						});
-					}
-
-					if (!select && code) {
-						view.removeTest(code);
-						node.removeChildren();
-					}
-				},
-
-				children: view.collection.toJSON()
-			});
-
-			//UIInitialize(this.el);
 			return view;
 		},
-		close: function(){
+		close: function() {
 
-			pubsub.off('lab:click parent-group:click');
-			pubsub.off('group:click');
+			pubsub.off('lab:click group:parent:click group:click');
 			this.collection.off();
 
 		}

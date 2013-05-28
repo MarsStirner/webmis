@@ -1,63 +1,88 @@
 //окошко с деревом групп лабораторных исследований
-define(['text!templates/appeal/edit/popups/lab-tests-list.tmpl'],
-	function (testsGroupTemplate) {
+define(function(require) {
+	var template = require('text!templates/laboratory/labs-list-item.html');
 
-		var GroupOfTestsListView = View.extend({
-			template: testsGroupTemplate,
+	var GroupOfTestsListView = View.extend({
+		initialize: function() {
+			var view = this;
 
-			el: 'ul',
-
-			initialize: function () {
-				var view = this;
-				//	console.log('init LabTestsListView');
-
-				pubsub.on('lab:click', function (labCode) {
-					view.$el.html('');
-					view.collection.fetch({data: {'filter[code]': labCode}});
-
+			pubsub.on('lab:click', function(labCode) {
+				view.$el.html('');
+				view.collection.fetch({
+					data: {
+						'filter[code]': labCode
+					}
 				});
+			});
 
+			view.collection.on('reset', function() {
+				view.render();
+			});
 
-				view.collection.on('reset', function () {
-					view.render();
-				});
+			view.collection.on('fetch', function() {
+				view.$el.html('<div class="msg">Загрузка...</div>');
+				console.log('fetch')
+			});
 
+		},
+		renderAll: function(treeData) {
+			var view = this;
 
-			},
+			view.$el.html('<div class="tree"></div>');
+			view.$groups_list = view.$('.tree');
 
+			view.$groups_list.append(_.template(template, {
+				items: treeData,
+				template: template
+			})).on('click', 'li', function(event) {
+				event.stopPropagation();
+				var $this = $(this);
+				var code = $this.data('code');
 
-			render: function () {
-				var view = this;
+				$this.siblings().removeClass('open').addClass('closed');
+				$this.toggleClass('open').toggleClass('closed').addClass('clicked');
 
-				view.$el.html($.tmpl(view.template));
+				view.$groups_list.find('.clicked').removeClass('clicked');
+				$this.addClass('clicked');
 
-				view.$('.lab-tests-list').dynatree({
-					onClick: function (node) {
-						// A DynaTreeNode object is passed to the activation handler
-						// Note: we also get this event, if persistence is on, and the page is reloaded.
-						if (!node.data.children.length) {
-							console.log("load-group-tests " + node.data.code);
+				if ($this.hasClass('parent')) {
+					pubsub.trigger('group:parent:click');
+				} else {
+					pubsub.trigger('group:click', code);
+				}
 
-							pubsub.trigger('group:click', node.data.code);
-						} else {
-							pubsub.trigger('parent-group:click');
-						}
+				var code = $(this).data('code');
+				console.log('code', code, treeData);
+			});
+		},
+		renderNoResult: function() {
+			var view = this;
+			view.$el.html('<div class="msg">Нет результатов</div>');
+		},
 
-					},
-					children: view.collection.toJSON()
-				});
-
-
-			},
-			close: function(){
-				pubsub.off('group:click');
-				pubsub.off('parent-group:click');
-				this.collection.off();
+		render: function() {
+			var view = this;
+			var treeData = view.collection.toJSON();
+			console.log('tree', treeData);
+			if (treeData.length > 0) {
+				view.renderAll(treeData);
+			} else {
+				view.renderNoResult();
 			}
 
-		});
 
 
-		return GroupOfTestsListView;
+			return this;
+		},
+		close: function() {
+			pubsub.off('group:click');
+			pubsub.off('group:parent:click');
+			this.collection.off();
+		}
 
 	});
+
+
+	return GroupOfTestsListView;
+
+});

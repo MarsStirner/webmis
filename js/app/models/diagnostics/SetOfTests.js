@@ -1,9 +1,11 @@
-define([], function() {
+define(function(require) {
+    var commonData = require('mixins/commonData');
     var SetOffTests = Model.extend({
         initialize: function(options) {
 
             this.code = options.code;
             this.patientId = options.patientId;
+            this.deferred = this.fetch();
         },
 
         getTree: function() {
@@ -65,7 +67,7 @@ define([], function() {
         parse: function(raw) {
             return raw.data[0];
         }
-    });
+    }).mixin([commonData]);
 
     return SetOffTests;
 

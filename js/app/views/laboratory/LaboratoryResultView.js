@@ -9,19 +9,24 @@ define(function(require) {
         template: template,
         initialize: function() {
             var self = this;
-            console.log('init LaboratoryResultView', arguments, this);
-            this.getResult();
-
-
         },
-        getResult: function() {
+        events: {
+            "click .first": "first",
+            "click .prev": "prev",
+            "click .next": "next",
+            "click .last": "last",
+            "click .extra": "extra",
+            "click .print": "print",
+        },
+        getResult: function(success, error) {
             var self = this;
             this.result = new Result();
             this.result.eventId = this.options.appealId;
-            this.result.id = this.options.modelId;
+            this.result.id = this.options.modelId ? this.options.modelId : this.options.url[4]; //;
+
             this.result.fetch({
                 success: function(model, response, options) {
-                    self.render();
+                    success(model, response, options);
                 },
                 error: function() {
 
@@ -29,12 +34,28 @@ define(function(require) {
             });
         },
         resultData: function() {
+            var appeal = this.options.appeal;
+            console.log('options', this.options.appeal)
             var self = this;
             var json = this.result.toJSON();
             var doctorSpecs = this.result.getProperty('doctorSpecs');
             var doctorFirstName = this.result.getProperty('doctorFirstName');
             var doctorMiddleName = this.result.getProperty('doctorMiddleName');
             var doctorLastName = this.result.getProperty('doctorLastName');
+
+            json.patientName = appeal.get('patient').get('name').get('raw');
+            json.appealNumber = appeal.get('number');
+            var sex = appeal.get('patient').get('sex');
+            if (sex === 'female') {
+                json.sex = 'Ж';
+            }
+            if (sex === 'male') {
+                json.sex = 'М';
+            }
+            var birthDate = appeal.get('patient').get('birthDate');
+            //ageString
+            json.age = Core.Date.format(birthDate) +' '+Core.Date.getAgeString(birthDate);
+
 
             json.doctor = doctorFirstName + ' ' + doctorMiddleName + ' ' + doctorLastName + ', ' + doctorSpecs;
 
@@ -70,23 +91,57 @@ define(function(require) {
                 });
             }
 
-            //name
-            //value = this.result.getProperty(name,'value');
-            //unit = this.result.getProperty(name,'unit');
-            //norm = this.result.getProperty(name,'norm');
-
-
-
             return json;
+        },
+        navigate: function(id) {
+
+            this.trigger("change:viewState", {
+                type: "diagnostics-laboratory-result",
+                options: {
+                    modelId: id,
+                    force: true
+                }
+            });
+            App.Router.navigate("/appeals/" + this.options.appealId + "/diagnostics/laboratory/result/" + id, {
+                trigger: false
+            });
+        },
+        first: function() {
+            this.navigate(335108);
+        },
+        prev: function(id) {
+            this.navigate(335110);
+        },
+        next: function() {
+            this.navigate(335111);
+        },
+        last: function() {
+            this.navigate(335112);
+        },
+        extra: function() {
+            this.$('.extra-info').toggle();
+
+        },
+        print: function() {
+
+            alert(JSON.stringify(this.resultData()));
         },
 
 
         render: function() {
-            console.log('render LaboratoryResultView', this, this.resultData());
-            this.$el.html(_.template(this.template, this.resultData(), {
-                variable: 'data'
-            }));
-            return this;
+            var self = this;
+            self.getResult(function() {
+                console.log('render LaboratoryResultView', self, self.resultData());
+                self.$el.html(_.template(self.template, self.resultData(), {
+                    variable: 'data'
+                }));
+
+
+                self.$('.actions button').button();
+            });
+
+
+            return self;
         }
 
     });
