@@ -1,3 +1,33 @@
+/* line 1, ../sass/modules/_instrumental.scss */
+.instrumental-status-0 {
+  color: blue;
+}
+
+/* line 3, ../sass/modules/_instrumental.scss */
+.instrumental-status-1 {
+  color: #000;
+}
+
+/* line 7, ../sass/modules/_instrumental.scss */
+.instrumental-status-2 {
+  color: green;
+}
+
+/* line 11, ../sass/modules/_instrumental.scss */
+.instrumental-status-3 {
+  color: #bbb;
+}
+
+/* line 16, ../sass/modules/_instrumental.scss */
+.bottom-form .date .date-icon, .bottom-form .time .time-icon {
+  right: 0.6em;
+}
+
+/* line 22, ../sass/modules/_instrumental.scss */
+.instrumental-researchs ul.dynatree-container, .instrumental-groups ul.dynatree-container {
+  font-size: inherit;
+}
+
 /* line 3, ../sass/modules/_labs.scss */
 .labs .dynatree-container,
 .groups .dynatree-container,
@@ -222,6 +252,26 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
 
 /* line 300, ../sass/modules/_labs.scss */
 .lab-status-3 {
+  color: #bbb;
+}
+
+/* line 1, ../sass/modules/_consultations.scss */
+.consultation-status-0 {
+  color: blue;
+}
+
+/* line 3, ../sass/modules/_consultations.scss */
+.consultation-status-1 {
+  color: #000;
+}
+
+/* line 7, ../sass/modules/_consultations.scss */
+.consultation-status-2 {
+  color: green;
+}
+
+/* line 11, ../sass/modules/_consultations.scss */
+.consultation-status-3 {
   color: #bbb;
 }
 
