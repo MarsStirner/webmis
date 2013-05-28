@@ -25,24 +25,24 @@ define(function(require) {
                 "parent": null
             }
         },
-        validate: function(attrs, options) {
-            console.log('validate', arguments);
-            if (!attrs.eventId) {
-                return "Не задан идентификатор госпитализации";
-            }
-            if (!attrs.plannedTime && !attrs.plannedTime.time) {
-                return "Не задано время консультации";
-            }
-            if (!attrs.plannedEndDate) {
-                return "Не задана дата консультации";
-            }
-            if (!attrs.executorId) {
-                return "Не задана специалист который будет консультировать";
-            }
-            if (!attrs.patientId) {
-                return "Не задана идентификатор пациента";
-            }
-        },
+        // validate: function(attrs, options) {
+        //     console.log('validate', arguments);
+        //     if (!attrs.eventId) {
+        //         return "Не задан идентификатор госпитализации";
+        //     }
+        //     if (!attrs.plannedTime && !attrs.plannedTime.time) {
+        //         return "Не задано время консультации";
+        //     }
+        //     if (!attrs.plannedEndDate) {
+        //         return "Не задана дата консультации";
+        //     }
+        //     if (!attrs.executorId) {
+        //         return "Не задана специалист который будет консультировать";
+        //     }
+        //     if (!attrs.patientId) {
+        //         return "Не задана идентификатор пациента";
+        //     }
+        // },
         sync: function(method, model, options) {
             options = options || {};
             options.dataType = "jsonp";

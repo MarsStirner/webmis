@@ -28,7 +28,7 @@ define(function(require) {
                 $(this).addClass('clicked');
 
                 var code = $(this).data('code');
-                pubsub.trigger('consultation:click', code);
+                pubsub.trigger('consultation:selected', code);
             })
         },
         renderNoResults: function() {
@@ -40,7 +40,7 @@ define(function(require) {
         },
         render: function() {
             var treeData = this.collection.toJSON();
-            console.log('render',treeData);
+            // console.log('render',treeData);
             if (_.isArray(treeData) && treeData.length > 0) {
                 this.renderAll(treeData);
             } else {
