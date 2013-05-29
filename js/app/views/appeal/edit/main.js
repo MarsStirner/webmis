@@ -23,7 +23,7 @@ define([
 
 	//"views/appeal/edit/pages/instrumental",
 
-	"views/appeal/edit/pages/consultation",
+	//"views/appeal/edit/pages/consultation",
 		"views/appeal/edit/pages/examinations",
 		"views/appeal/edit/pages/examination-edit",
 		"views/appeal/edit/pages/examination-primary",
