@@ -70,7 +70,9 @@ define([
 
 			"monitoring": Monitoring.Views.Layout,
 
-			"documents": Documents.Views.List.Layout
+			"documents": Documents.Views.List.Layout,
+
+			"document-edit": Documents.Views.Edit.Layout
 		},
 
 		breadCrumbsMap: {
@@ -126,6 +128,9 @@ define([
 						}
 						if (this.contentView.cleanUp) {
 							this.contentView.cleanUp();
+						}
+						if (this.contentView.tearDown) {
+							this.contentView.tearDown();
 						}
 					}
 

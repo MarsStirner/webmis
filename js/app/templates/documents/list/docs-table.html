@@ -5,7 +5,7 @@
 			<%documents.each(function (document) {%>
 				<tr>
 					<td><%=document.id%></td>
-					<td><%=document.get('name')%></td>
+					<td><%=document.get('assessmentName').name%></td>
 				</tr>
 			<%});%>
 		<%} else {%>

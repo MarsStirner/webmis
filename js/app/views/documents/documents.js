@@ -10,6 +10,8 @@ define(function (require) {
 	var _ = window._;
 	var appealId = 123;
 
+	var dispatcher = _.extend({}, Backbone.Events);
+
 	var templates = {
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
 		_listControls: _.template(require("text!templates/documents/list/controls.html")),
@@ -19,7 +21,7 @@ define(function (require) {
 		_docsTableBody: _.template(require("text!templates/documents/list/docs-table-body.html"))*/
 	};
 
-	var rootEl = $('#wrapper');
+	/*var rootEl = $('#wrapper');
 
 	var prefix = "test/" + appealId;
 
@@ -52,12 +54,12 @@ define(function (require) {
 		}
 	});
 
-	var docsRouter = new DocsRouter();
+	var docsRouter = new DocsRouter();*/
 
-	$(".documents-layout a").on("click", function (event) {
+	/*$(".documents-layout a").on("click", function (event) {
 		event.preventDefault();
 		docsRouter.navigate($(this).prop("href"));
-	});
+	});*/
 
 
 	//Структура модуля
@@ -79,7 +81,9 @@ define(function (require) {
 
 	Documents.Models.DocumentBase = Backbone.Model.extend({});
 	Documents.Models.Document = Documents.Models.DocumentBase.extend({});
-	Documents.Models.DocumentTemplate = Documents.Models.DocumentBase.extend({});
+	Documents.Models.DocumentTemplate = Documents.Models.DocumentBase.extend({
+		urlRoot: DATA_PATH + "dir/actionTypes/"
+	});
 
 	Documents.Models.DocumentType = Backbone.Model.extend({});
 
@@ -89,17 +93,43 @@ define(function (require) {
 
 	Documents.Collections.Documents = Collection.extend({
 		model: Documents.Models.Document,
-		urlRoot: DATA_PATH + "appeals/" + appealId + "/documents/"
+		mnems: ["EXAM", "EPI", "JOUR", "ORD"],
+		dateRange: null,
+		initialize: function (models, options) {
+			Collection.prototype.initialize.call(this);
+			this.appealId = options.appealId;
+		},
+		url: function () {
+			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?";
+
+			var params = [];
+
+			if (this.mnems.length) {
+				this.mnems.map(function (mnem) { return params.push("filter[mnem]=" + mnem); });
+			}
+
+			if (this.dateRange) {
+				params.push("filter[begDate]=" + this.dateRange.start);
+				params.push("filter[endDate]=" + this.dateRange.end);
+			}
+
+			return url + params.join("&");
+		}
 	});
 
 	Documents.Collections.DocumentTemplates = Collection.extend({
 		model: Documents.Models.DocumentTemplate,
-		urlRoot: DATA_PATH + "/dir/actionTypes/"
+		url: function () {
+			return DATA_PATH + "dir/actionTypes/";
+		}
 	});
 
 	Documents.Collections.DocumentTypes = Collection.extend({
 		model: Documents.Models.DocumentType,
-		url: function () { return DATA_PATH + "/dir/actionTypes/"; }
+
+		url: function () {
+			return DATA_PATH + "dir/actionTypes/?filter[view]=tree&filter[mnem]=EXAM&filter[mnem]=EPI&filter[mnem]=JOUR&filter[mnem]=ORD";
+		}
 	});
 
 	//Представления
@@ -156,26 +186,80 @@ define(function (require) {
 		}
 	});*/
 
+	/*Documents.Views.Layout = BaseView.extend({
+		initialize: function () {
+			dispatcher.on("setState", this.setState, this);
+		},
+
+		tearDown: function () {
+			dispatcher.off(null);
+			BaseView.prototype.tearDown.call(this);
+		},
+
+		setState: function (event) {
+			this.tearDown();
+
+			switch (event.state) {
+				case "LIST":
+					this.render();
+					break;
+				case "EDIT":
+					this.render({".right-container": new Documents.Views.Edit.Layout(this.options)});
+					break;
+				case "LIST_AND_EDIT":
+					this.render({
+						".right-container": new Documents.Views.Edit.Layout(this.options),
+						".left-container": new Documents.Views.Edit.Layout(this.options)
+					});
+					break;
+				case "REVIEW":
+					this.render({".right-container": new Documents.Views.Review.Layout(this.options)});
+					break;
+			}
+		},
+
+		render: function (stateViews) {
+			if (stateViews) {
+				return BaseView.prototype.render.call(this, stateViews);
+			} else {
+				return BaseView.prototype.render.call(this, {
+					".right-container": new Documents.Views.List.Layout(this.options)
+				});
+			}
+		}
+	});*/
+
 	//Список
 	//---------------------
-
-	var documents = new Documents.Collections.Documents([
-		{id: 1, name: "Документ 1", createDate: 1369315701540},
-		{id: 2, name: "Документ 2", createDate: 1369315701545},
-		{id: 3, name: "Документ 3", createDate: 1369315701546},
-		{id: 4, name: "Документ 4", createDate: 1369315701547},
-		{id: 5, name: "Документ 5", createDate: 1369315701548}
-	]);
 
 	Documents.Views.List.Layout = BaseView.extend({
 		class: "documents-layout",
 
+		attributes: {style: "display: table;"},
+
 		template: templates._listLayout,
+
+		initialize: function () {
+			this.documents = new Documents.Collections.Documents([], {appealId: this.options.appealId});
+			this.documents.fetch();
+
+			this.documentTypes = new Documents.Collections.DocumentTypes();
+			this.documentTypes.fetch();
+
+			dispatcher.on("change:viewState", function (event) {
+				this.trigger("change:viewState", event);
+			}, this);
+		},
+
+		tearDown: function () {
+			dispatcher.off("change:viewState");
+			BaseView.prototype.tearDown.call(this);
+		},
 
 		render: function () {
 			return BaseView.prototype.render.call(this, {
-				".documents-controls": new Documents.Views.List.Controls({collection: documents}),
-				".documents-table": new Documents.Views.List.DocsTable({collection: documents})
+				".documents-controls": new Documents.Views.List.Controls({collection: this.documents, documentTypes: this.documentTypes}),
+				".documents-table": new Documents.Views.List.DocsTable({collection: this.documents})
 			});
 		}
 	});
@@ -191,6 +275,18 @@ define(function (require) {
 			"change [name='document-create-date-filter']": "onDocumentCreateDateFilterChange"
 		},
 
+		initialize: function () {
+			if (this.options.documentTypes) {
+				this.documentTypes = this.options.documentTypes;
+			} else {
+				this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.fetch();
+			}
+			this.documentTypes.on("reset", function () {
+				this.$(".new-document,.new-duty-doc-exam").prop("disabled", false);
+			}, this);
+		},
+
 		onNewDocumentClick: function () {
 			this.showDocumentTypeSelector();
 		},
@@ -199,29 +295,87 @@ define(function (require) {
 			this.openDutyDocExamTemplate();
 		},
 
-		onDocumentTypeFilterChange: function () {
-			var type = 'EXAM';
+		onDocumentTypeFilterChange: function (event) {
+			var type = $(event.currentTarget).val();
+			console.log(type);
 			this.applyDocumentTypeFilter(type);
 		},
 
-		onDocumentCreateDateFilterChange: function () {
-			var date = new Date();
-			this.applyDocumentCreateDateFilter(date);
+		onDocumentCreateDateFilterChange: function (event) {
+			var rangeMnem = $(event.currentTarget).val();
+
+			this.applyDocumentCreateDateFilter(rangeMnem);
 		},
 
 		showDocumentTypeSelector: function () {
-			console.log("stub:showDocumentTypeSelector", arguments);
-			new Documents.Views.List.DocumentTypeSelector().render();
+			new Documents.Views.List.DocumentTypeSelector({collection: this.documentTypes}).render();
 		},
 
 		openDutyDocExamTemplate: function () {
-			console.log("stub:openDutyDocExamTemplate", arguments);
-			docsRouter.navigate(prefix+"123")
+			//TODO: HARCODED
+			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: 139}});
 		},
 
-		applyDocumentTypeFilter: function (type) { console.log("stub:applyDocumentTypeFilter", arguments); },
+		applyDocumentTypeFilter: function (type) {
+			var mnems = [];
 
-		applyDocumentCreateDateFilter: function (date) { console.log("stub:applyDocumentCreateDateFilter", arguments); }
+			switch (type) {
+				case "ALL":
+					mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH"];
+					break;
+				case "EXAM":
+					mnems = ["EXAM"];
+					break;
+				case "EPI":
+					mnems = ["EPI"];
+					break;
+				case "ORD":
+					mnems = ["ORD"];
+					break;
+				case "JOUR":
+					mnems = ["JOUR"];
+					break;
+				case "NOT":
+					mnems = ["NOT"];
+					break;
+				case "OTH":
+					mnems = ["OTH"];
+					break;
+			}
+			this.collection.mnems = mnems;
+			this.collection.fetch();
+		},
+
+		applyDocumentCreateDateFilter: function (rangeMnem) {
+			var dateRange;
+
+			switch (rangeMnem) {
+				case "ALL":
+					dateRange = null;
+					break;
+				case "TODAY":
+					dateRange = {
+						start: moment().hours(0).minutes(0).seconds(0).toDate().getTime(),
+						end: moment().hours(23).minutes(59).seconds(59).toDate().getTime()
+					};
+					break;
+				case "YESTERDAY":
+					dateRange = {
+						start: moment().subtract("d", 1).hours(0).minutes(0).seconds(0).toDate().getTime(),
+						end: moment().subtract("d", 1).hours(23).minutes(59).seconds(59).toDate().getTime()
+					};
+					break;
+				case "FIVE_DAYS":
+					dateRange = {
+						start: moment().subtract("d", 5).hours(0).minutes(0).seconds(0).toDate().getTime(),
+						end: moment().hours(23).minutes(59).seconds(59).toDate().getTime()
+					};
+					break;
+			}
+
+			this.collection.dateRange = dateRange;
+			this.collection.fetch();
+		}
 	});
 
 	//Выбор шаблона документа
@@ -235,15 +389,6 @@ define(function (require) {
 		events: {
 			"change .document-type-search-field": "onDocumentTypeSearchFieldChange",
 			"click .document-type-node": "onDocumentTypeNodeClick"
-		},
-
-		initialize: function () {
-			this.collection = new Documents.Collections.DocumentTypes([
-				{id:1, name: "Документ 1"},
-				{id:2, name: "Документ 2", children: [
-					{id:1, name: "Документ 3"}
-				]}
-			]);
 		},
 
 		onDocumentTypeSearchFieldChange: function () {
@@ -276,7 +421,11 @@ define(function (require) {
 		},
 
 		initialize: function () {
-			this.collection.on("reset", this.render, this)
+			this.collection.on("reset", this.onCollectionReset, this)
+		},
+
+		onCollectionReset: function () {
+			this.render();
 		}
 		/*,
 
@@ -301,25 +450,41 @@ define(function (require) {
 	//Редактирование
 	//---------------------
 
-	Documents.Views.Edit.Layout = BaseView.extend({});
+	Documents.Views.Edit.Layout = BaseView.extend({
+		attributes: {style: "display: table;"},
+
+		initialize: function () {
+			this.model = new Documents.Models.DocumentTemplate();
+			this.model.id = this.options.templateId;
+			this.model.fetch();
+		},
+
+		render: function () {
+			return BaseView.prototype.render.call(this, {
+				".nav-controls": new Documents.Views.Edit.NavControls({model: this.model}),
+				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
+				".document-controls": new Documents.Views.Edit.DocControls({model: this.model})
+			});
+		}
+	});
 
 	//Верхний блок элементов управления и навигации
-	Documents.Views.Edit.NavControls = Backbone.View.extend({});
+	Documents.Views.Edit.NavControls = BaseView.extend({});
 
 	//Управление сохранением документа
-	Documents.Views.Edit.DocControls = Backbone.View.extend({});
+	Documents.Views.Edit.DocControls = BaseView.extend({});
 
 	//Сетка (12 колонок по умолчанию)
-	Documents.Views.Edit.Grid = Backbone.View.extend({});
+	Documents.Views.Edit.Grid = BaseView.extend({});
 
 	//Ряд в сетке
-	Documents.Views.Edit.GridRow = Backbone.View.extend({});
+	Documents.Views.Edit.GridRow = BaseView.extend({});
 
 	//Ячейка в сетке
-	Documents.Views.Edit.GridRowSpan = Backbone.View.extend({});
+	Documents.Views.Edit.GridRowSpan = BaseView.extend({});
 
 	//Базовый класс UI элемента для поля документа
-	Documents.Views.Edit.UIElement.Base = Backbone.View.extend({});
+	Documents.Views.Edit.UIElement.Base = BaseView.extend({});
 
 	//Shortcut
 	var UIElementBase = Documents.Views.Edit.UIElement.Base;
@@ -358,10 +523,10 @@ define(function (require) {
 	Documents.Views.Review.Layout = BaseView.extend({});
 
 	//Элементы управления
-	Documents.Views.Review.Controls = Backbone.View.extend({});
+	Documents.Views.Review.Controls = BaseView.extend({});
 
 	//Значения полей из документа
-	Documents.Views.Review.DocValues = Backbone.View.extend({});
+	Documents.Views.Review.DocumentValues = BaseView.extend({});
 
 	return Documents;
 });
