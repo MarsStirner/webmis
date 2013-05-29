@@ -40,7 +40,7 @@ function(tmpl, popupMixin, SelectView, test4EditTmpl, MkbInputView) {
 
 			view.model = this.options.model;
 			view.model.eventId = view.options.appeal.get('id');
-			console.log('popup init', view.model);
+			//console.log('popup init', view.model);
 
 			//инпут классификатора диагнозов
 			view.mkbInputView = new MkbInputView();
@@ -63,7 +63,7 @@ function(tmpl, popupMixin, SelectView, test4EditTmpl, MkbInputView) {
 			});
 			var modelFinanceId = modelFinanceAttr.properties[0].value;
 
-			console.log('modelFinanceId', modelFinanceId, appealFinanceId);
+			//console.log('modelFinanceId', modelFinanceId, appealFinanceId);
 
 			view.financeSelect = new SelectView({
 				collection: view.financeDictionary,
@@ -124,7 +124,7 @@ function(tmpl, popupMixin, SelectView, test4EditTmpl, MkbInputView) {
 			root.select = true;
 			root.unselectable = true;
 			var plannedEndDate = moment(view.getProperty('plannedEndDate'), "YYYY-MM-DD HH:mm:ss"); //2013-03-30 07:00:00
-			console.log('plannedEndDate', plannedEndDate);
+			//console.log('plannedEndDate', plannedEndDate);
 			root.date = moment(plannedEndDate).format('DD.MM.YYYY');
 			root.time = moment(plannedEndDate).format('HH:mm');
 
@@ -149,7 +149,7 @@ function(tmpl, popupMixin, SelectView, test4EditTmpl, MkbInputView) {
 
 
 			//
-			console.log('modelToTree', root);
+			//console.log('modelToTree', root);
 			return [root];
 		},
 
@@ -311,7 +311,7 @@ function(tmpl, popupMixin, SelectView, test4EditTmpl, MkbInputView) {
 			view.setParam(view.model, 'assessmentBeginDate', 'value', startDate + ' ' + startTime);
 
 			var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
-			console.log('mkbId', mkbId);
+			//console.log('mkbId', mkbId);
 			view.setParam(view.model, 'Направительный диагноз', 'valueId', mkbId);
 
 			view.setParam(view.model, 'finance', 'value', $($('#finance option:selected')[0]).val());
@@ -327,7 +327,7 @@ function(tmpl, popupMixin, SelectView, test4EditTmpl, MkbInputView) {
 				}
 			});
 
-			console.log('model111', view.model.toJSON());
+			//console.log('model111', view.model.toJSON());
 
 
 		},
@@ -357,7 +357,7 @@ function(tmpl, popupMixin, SelectView, test4EditTmpl, MkbInputView) {
 								name: propertyName,
 								value: value
 							});
-							console.log('не нашли', groupIndex, attributeIndex, group[groupIndex].attribute[attributeIndex].properties);
+							//console.log('не нашли', groupIndex, attributeIndex, group[groupIndex].attribute[attributeIndex].properties);
 						}
 
 					}
@@ -366,15 +366,15 @@ function(tmpl, popupMixin, SelectView, test4EditTmpl, MkbInputView) {
 
 			model.set('group', group);
 
-			console.log('setParam', attributeName, propertyName, value, group);
+			//console.log('setParam', attributeName, propertyName, value, group);
 
 		},
 		close: function(){
 				this.$el.dialog("close");
 				this.$el.remove();
 
-				view.mkbInputView.close();
-				view.financeSelect.close();
+				this.mkbInputView.close();
+				this.financeSelect.close();
 
 
 		}
