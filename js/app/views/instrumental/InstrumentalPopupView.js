@@ -4,25 +4,28 @@
  */
 
 define(function(require) {
+	var popupMixin = require('mixins/PopupMixin');
+
 	var InstrumentalResearchs = require('collections/diagnostics/InstrumentalResearchs');
 	var InstrumentalResearchTemplate = require('models/diagnostics/InstrumentalResearchTemplate');
 	var InstrumntalGroups = require('collections/diagnostics/InstrumntalGroups');
-	var popupMixin = require('mixins/PopupMixin');
-	var ViewModel = require('views/instrumental/InstrumentalPopupViewModel');
 
 	var BFView = require('views/instrumental/InstrumentalPopupBottomFormView');
+	var PersonDialogView = require('views/ui/PersonDialog');
 	var ResearchGroupsListView = require('views/instrumental/ResearchGroupsListView');
 	var ResearchListView = require('views/instrumental/ResearchsListView');
-
-
+	var ViewModel = require('views/instrumental/InstrumentalPopupViewModel');
 
 	var popupTmpl = require('text!templates/diagnostics/instrumental/instrumental-popup.tmpl');
+
 
 
 	var InstrumentalPopup = View.extend({
 
 		template: popupTmpl,
-		events: {},
+		events: {
+			'click #doctor-outer': 'openDoctorSelectPopup'
+		},
 
 		initialize: function(options) {
 			var view = this;
@@ -66,11 +69,30 @@ define(function(require) {
 			pubsub.on('research:deselected', function(code) {
 				view.viewModel.set('code', '');
 				console.log('research:deselected', code);
-			})
+			});
+
+			pubsub.on('person:changed', function(doctor) {
+				console.log('assign-person: changed', doctor);
+
+				view.viewModel.set('doctorFirstName',doctor.name.first);
+				view.viewModel.set('doctorMiddleName',doctor.name.middle);
+				view.viewModel.set('doctorLastName',doctor.name.last)
+				view.$doctor.val(doctor.name.raw);
+
+			});
+
 
 		},
 
+		openDoctorSelectPopup: function() {
+			console.log('openDoctorSelectPopup');
+			this.personDialogView = new PersonDialogView({
+				appeal: this.options.appeal
+			});
 
+			this.personDialogView.render().open();
+
+		},
 
 		updateSaveButton: function() {
 			this.$saveButton.button(this.viewModel.get('saveButtonState'));
@@ -122,7 +144,10 @@ define(function(require) {
 			view.testTemplate.setProperty('urgent', 'value', view.viewModel.get('urgent'));
 
 			//идентификатор направительного диагноза
-			view.testTemplate.setProperty('Направительный диагноз', 'valueId', view.viewModel.get('mkbId'));
+			if(view.viewModel.get('mkbId')){
+				view.testTemplate.setProperty('Направительный диагноз', 'valueId', view.viewModel.get('mkbId'));
+			}
+
 
 			view.viewModel.set('saveButtonState', 'disable');
 
@@ -164,6 +189,7 @@ define(function(require) {
 			view.$plannedDatepicker = view.$("#dp");
 			view.$plannedTimepicker = view.$("#tp");
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
+			view.$doctor = view.$("#doctor");
 
 
 

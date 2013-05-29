@@ -11,10 +11,12 @@ define(function(require) {
 	var SelectView = require("views/ui/SelectView");
 	var test4EditTmpl = require('text!templates/laboratory/node-test4edit.html');
 	var MkbInputView = require("views/ui/MkbInputView");
+	var PersonDialogView = require('views/ui/PersonDialog');
 
 	return View.extend({
 		template: tmpl,
 		events: {
+			'click #doctor-outer': 'openDoctorSelectPopup'
 		},
 		initialize: function() {
 			_.bindAll(this);
@@ -38,6 +40,22 @@ define(function(require) {
 			//инпут классификатора диагнозов
 			view.mkbInputView = new MkbInputView();
 			view.depended(view.mkbInputView);
+
+			pubsub.on('person:changed', function(doctor) {
+				console.log('assign-person: changed', doctor);
+				view.doctor = doctor;
+				view.ui.$doctor.val(doctor.name.raw);
+
+			});
+
+		},
+		openDoctorSelectPopup: function() {
+			console.log('openDoctorSelectPopup');
+			this.personDialogView = new PersonDialogView({
+				appeal: this.options.appeal
+			});
+
+			this.personDialogView.render().open();
 
 		},
 
@@ -66,11 +84,13 @@ define(function(require) {
 
 			var doctorLastName = view.model.getProperty('doctorLastName');
 			var doctorFirstName = view.model.getProperty('doctorFirstName');
+			var doctorMiddleName = view.model.getProperty('doctorMiddleName');
 
 			return {
 				name: {
 					first: doctorFirstName ? doctorFirstName : Core.Cookies.get("doctorFirstName"),
-					last: doctorLastName ? doctorLastName : Core.Cookies.get("doctorLastName")
+					last: doctorLastName ? doctorLastName : Core.Cookies.get("doctorLastName"),
+					middle: doctorMiddleName ? doctorMiddleName : ''
 				}
 			};
 
@@ -131,6 +151,7 @@ define(function(require) {
 			view.ui.$startDate = view.$("#start-date");
 			view.ui.$startTime = view.$("#start-time");
 			view.ui.$finance = view.$('#finance');
+			view.ui.$doctor = view.$('#doctor');
 
 			view.$('.edit-tree').dynatree({
 				clickFolderMode: 2,
@@ -215,7 +236,7 @@ define(function(require) {
 
 
 			var startDate = moment(view.ui.$startDate.datepicker("getDate")).format('YYYY-MM-DD');
-			var startTime =view.ui.$startTime.val() + ':00';
+			var startTime = view.ui.$startTime.val() + ':00';
 
 
 			var modelTree = tree.toDict().children[0];
@@ -267,7 +288,10 @@ define(function(require) {
 			view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 			view.model.setProperty('assessmentBeginDate', 'value', startDate + ' ' + startTime);
 			view.model.setProperty('finance', 'value', view.ui.$finance.val());
-			view.model.setProperty('Направительный диагноз', 'valueId', view.ui.$mkbCode.data('mkb-id'));
+			//if(view.ui.$mkbCode.data('mkb-id')){
+				view.model.setProperty('Направительный диагноз', 'valueId', view.ui.$mkbCode.data('mkb-id'));
+			//}
+
 
 
 			//console.log(model.get('group'))

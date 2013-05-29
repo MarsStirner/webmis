@@ -18,7 +18,9 @@
 
 			<div class="span6">
 				<span class="Label">Направивший врач</span>
-				<input name="doctor" type="text" style="color: #777;" disabled value="${doctorFirstName} ${doctorLastName}">
+				<div id="doctor-outer">
+				<input name="doctor" id="doctor" type="text" style="color: #777;" disabled value="${doctorFirstName} ${doctorMiddleName} ${doctorLastName}">
+			</div>
 			</div>
 
 			<div class="span3">

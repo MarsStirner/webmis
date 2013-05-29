@@ -24,8 +24,23 @@ define(function(require) {
 				this.set('mkbId', mkb.get('id'));
 			}
 
-			this.set('doctorFirstName', Core.Cookies.get("doctorFirstName"));
-			this.set('doctorLastName', Core.Cookies.get("doctorLastName"));
+
+			var appealDoctor = options.appeal.get('execPerson');
+
+			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
+				//юзер не врач,назначивший доктор = лечащий врач
+
+				this.set('doctorFirstName', appealDoctor.name.first);
+				this.set('doctorLastName', appealDoctor.name.last);
+				this.set('doctorMiddleName', appealDoctor.name.middle);
+
+			} else {
+				//юзер врач ,назначивший доктор = врач
+
+				this.set('doctorFirstName', Core.Cookies.get("doctorFirstName"));
+				this.set('doctorLastName', Core.Cookies.get("doctorLastName"));
+				this.set('doctorMiddleName', '');
+			}
 
 			this.set('patientId', options.appeal.get('patient').get('id'));
 			this.set('appealId', options.appeal.get('id'));
@@ -39,7 +54,7 @@ define(function(require) {
 			this.instrumntalGroups = new InstrumntalGroups();
 			this.instrumntalGroups.parents = true;
 			this.instrumntalGroups.setParams({
-				'filter[code]':3,
+				'filter[code]': 3,
 				'filter[view]': 'tree'
 			});
 

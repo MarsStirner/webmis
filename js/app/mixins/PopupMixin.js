@@ -15,6 +15,7 @@ define([], function() {
 			},
 
 			close: function() {
+				console.log('popup view close')
 				this.$el.dialog("close");
 				this.$el.remove();
 			},

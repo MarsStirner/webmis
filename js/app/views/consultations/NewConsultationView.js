@@ -7,18 +7,19 @@ define(function(require) {
 	var popupMixin = require('mixins/PopupMixin');
 	var tmpl = require('text!templates/diagnostics/consultations/consultation-popup.html');
 
-	var MkbInputView = require('views/ui/MkbInputView');
-	var SelectView = require('views/ui/SelectView');
 	require('collections/doctors');
-
-	var ConsultationsGroups = require('collections/diagnostics/consultations/ConsultationsGroups');
-	var ConsultationsGroupsView = require('views/consultations/ConsultationsGroupsView');
-
 	var ConsultantsFree = require('collections/doctors-free');
-	var ConsultantsFreeView = require('views/consultations/ConsultantsFreeView');
-	var ScheduleView = require('views/consultations/ScheduleView');
-
 	var Consultation = require('models/diagnostics/consultations/Consultation');
+	var ConsultationsGroups = require('collections/diagnostics/consultations/ConsultationsGroups');
+
+
+	var ConsultantsFreeView = require('views/consultations/ConsultantsFreeView');
+	var ConsultationsGroupsView = require('views/consultations/ConsultationsGroupsView');
+	var MkbInputView = require('views/ui/MkbInputView');
+	var PersonDialogView = require('views/ui/PersonDialog');
+	var ScheduleView = require('views/consultations/ScheduleView');
+	var SelectView = require('views/ui/SelectView');
+
 
 
 	return View.extend({
@@ -28,7 +29,8 @@ define(function(require) {
 		events: {
 			'change #finance': 'onChangeFinance',
 			'change input[name="diagnosis[mkb][code]"]': 'onMKBChange',
-			'change #assign-person': 'onChangeAssignPerson'
+			//'change #assign-person': 'onChangeAssignPerson',
+			'click #doctor-outer': 'openDoctorSelectPopup'
 
 		},
 
@@ -38,14 +40,35 @@ define(function(require) {
 			_.bindAll(this);
 
 			this.appealDiagnosis = this.options.appeal.getDiagnosis();
+			var appealDoctor = this.options.appeal.get('execPerson');
 
-			//список "Направивший врач"
-			this.assignPersons = new App.Collections.Doctors();
-			this.assignPersons.on("reset", this.onPersonsLoaded, this);
-			this.assignPersons.setParams({
-				limit: 0
-			});
-			this.assignPersons.fetch();
+			//"Направивший врач"
+			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
+				//юзер не врач
+				this.doctor = {
+					name: {
+						first: appealDoctor.name.first,
+						last: appealDoctor.name.last,
+						middle: appealDoctor.name.middle
+					}
+				};
+
+			} else {
+				//юзер врач
+
+				this.doctor = {
+					name: {
+						first: Core.Cookies.get("doctorFirstName"),
+						last: Core.Cookies.get("doctorLastName"),
+						middle: ''
+					}
+				};
+			}
+
+			this.data = {
+				'doctor': this.doctor
+			};
+
 
 			//список доступных консультаций
 			this.consultationsGroups = new ConsultationsGroups({});
@@ -61,7 +84,6 @@ define(function(require) {
 			this.consultation.get('finance').id = this.options.appeal.get('appealType').get('finance').get('id');
 			this.consultation.set('eventId', this.options.appealId);
 			this.consultation.set('patientId', this.options.appeal.get('patient').get('id'));
-
 
 
 			//список специалистов которые могут оказать консультацию
@@ -89,6 +111,14 @@ define(function(require) {
 			this.consultation.on('change:actionTypeId', this.loadConsultants, this);
 			this.consultation.on('change:plannedEndDate', this.loadConsultants, this);
 			this.consultation.on('change:plannedTime', this.updateSaveButton, this);
+
+			pubsub.on('person:changed', function(doctor) {
+				console.log('assign-person: changed', doctor);
+				//this.consultation.set('assignerId', doctor.id)
+
+				this.ui.$doctor.val(doctor.name.raw);
+
+			}, this);
 
 		},
 
@@ -139,6 +169,7 @@ define(function(require) {
 		//при изменении диагноза
 		onMKBChange: function(e) {
 			var $target = this.$(e.target);
+			this.consultation.set('diagnosis', {})
 
 			this.consultation.get('diagnosis').code = $target.val();
 		},
@@ -147,6 +178,16 @@ define(function(require) {
 			var $target = this.$(e.target);
 
 			this.consultation.set('assignPersonId').code = $target.val();
+		},
+
+		openDoctorSelectPopup: function() {
+			console.log('openDoctorSelectPopup');
+			this.personDialogView = new PersonDialogView({
+				appeal: this.options.appeal
+			});
+
+			this.personDialogView.render().open();
+
 		},
 
 		//загрузка списка консультантов
@@ -167,8 +208,27 @@ define(function(require) {
 		},
 		//при клике на кнопку "Сохранить"
 		onSave: function() {
+			var self = this;
 			console.log('onSave', this.consultation);
-			this.consultation.save();
+			this.consultation.save({}, {
+				success: function() {
+
+					pubsub.trigger('noty', {
+						text: 'Направление сохранено',
+						type: 'success'
+					});
+					self.close();
+					pubsub.trigger('consultation:added', this.consultation);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					pubsub.trigger('noty', {
+						text: (JSON.parse(textStatus.responseText)).exception,
+						type: 'error'
+					});
+					self.close();
+					pubsub.trigger('consultation:added', this.consultation);
+				}
+			});
 		},
 		//измение статуса кнопки "Сохранить"
 		updateSaveButton: function() {
@@ -192,6 +252,7 @@ define(function(require) {
 			this.ui.$assignPerson = this.$el.find('#assign-person');
 			this.ui.$assignDatepicker = this.$el.find('#assign-date');
 			this.ui.$assignTimepicker = this.$el.find('#assign-time');
+			this.ui.$doctor = this.$el.find('#doctor');
 
 			//календарь
 			this.ui.$datepicker.datepicker({
@@ -210,7 +271,7 @@ define(function(require) {
 			this.ui.$assignDatepicker.datepicker('setDate', new Date())
 
 			this.ui.$assignTimepicker.timepicker();
-			this.ui.$assignTimepicker.timepicker('setTime',new Date());
+			this.ui.$assignTimepicker.timepicker('setTime', new Date());
 
 			//диагнозы
 			this.renderNested(this.mkbInputView, "#mkb");
@@ -227,14 +288,14 @@ define(function(require) {
 			//расписание на день
 			this.scheduleView.setElement(this.$el.find("#schedule"));
 
-			//назначивший врач
-			this.assignPersonSelect = new SelectView({
-				collection: this.assignPersons,
-				el: this.ui.$assignPerson,
-				selectText: 'name.raw',
-				initSelection: Core.Cookies.get('userId')
-			});
-			this.depended(this.assignPersonSelect);
+			// //назначивший врач
+			// this.assignPersonSelect = new SelectView({
+			// 	collection: this.assignPersons,
+			// 	el: this.ui.$assignPerson,
+			// 	selectText: 'name.raw',
+			// 	initSelection: Core.Cookies.get('userId')
+			// });
+			// this.depended(this.assignPersonSelect);
 
 			//вид оплаты
 			this.financeSelect = new SelectView({

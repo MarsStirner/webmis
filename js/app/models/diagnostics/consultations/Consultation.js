@@ -16,14 +16,14 @@ define(function(require) {
             },
             "urgent": false,
             "finance": {
-                "id": null,
-                "name": ""
+                "id": null//,
+                //"name": ""
             },
             "diagnosis": {
-                "code": "",
-                "diagnosis": "",
+                "code": '',//null,
+                "diagnosis": null,
                 "parent": null
-            }
+           }
         },
         // validate: function(attrs, options) {
         //     console.log('validate', arguments);
@@ -83,6 +83,9 @@ define(function(require) {
         url: function() {
             return DATA_PATH + 'appeals/' + this.get('eventId') + '/diagnostics/consultations';
             //return DATA_PATH + "dir/actionTypes/?filter[mnem]=CONS&filter[code]=" + this.code + "&patientId=" + this.patientId;
+        },
+        urlRoot: function(){
+            this.url();
         }
 
     }).mixin([commonData]);

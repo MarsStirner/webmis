@@ -86,4 +86,6 @@ define(["models/doctor", "models/date", "models/department", "models/diagnosis"]
 			]
 		})
 	});
+
+	return App.Collections.PatientAppeals;
 });

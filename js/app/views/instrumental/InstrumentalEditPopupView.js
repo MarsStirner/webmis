@@ -1,15 +1,19 @@
 define(function(require) {
 	var tmpl = require('text!templates/diagnostics/instrumental/instrumental-edit-popup.tmpl');
 	var popupMixin = require('mixins/PopupMixin');
-	var BFView = require('views/instrumental/InstrumentalPopupBottomFormView');
 
+	var BFView = require('views/instrumental/InstrumentalPopupBottomFormView');
+	var PersonDialogView = require('views/ui/PersonDialog');
 	var ViewModel = require('views/instrumental/InstrumentalEditPopupViewModel');
-	require('models/DeepModel');
+
+	//require('models/DeepModel');
 
 
 	return View.extend({
 		template: tmpl,
-		events: {},
+		events: {
+			'click #doctor-outer': 'openDoctorSelectPopup'
+		},
 
 		initialize: function(options) {
 			_.bindAll(this);
@@ -39,6 +43,26 @@ define(function(require) {
 
 
 			this.depended(this.bfView);
+
+			pubsub.on('person:changed', function(doctor) {
+				console.log('assign-person: changed', doctor);
+
+				this.viewModel.set('doctorFirstName',doctor.name.first);
+				this.viewModel.set('doctorMiddleName',doctor.name.middle);
+				this.viewModel.set('doctorLastName',doctor.name.last)
+				this.$doctor.val(doctor.name.raw);
+
+			},this);
+
+		},
+
+		openDoctorSelectPopup: function() {
+			console.log('openDoctorSelectPopup');
+			this.personDialogView = new PersonDialogView({
+				appeal: this.options.appeal
+			});
+
+			this.personDialogView.render().open();
 
 		},
 
@@ -83,7 +107,7 @@ define(function(require) {
 
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
 
-			view.$assessmentDatepicker.datepicker("setDate", moment(view.viewModel.get('assessmentDay'),'YYYY-MM-DD').toDate());
+			view.$assessmentDatepicker.datepicker("setDate", moment(view.viewModel.get('assessmentDay'), 'YYYY-MM-DD').toDate());
 			view.$assessmentTimepicker.val(this.viewModel.get('assessmentTime'));
 
 			view.$plannedDatepicker.datepicker();
@@ -92,7 +116,7 @@ define(function(require) {
 				showOn: 'both',
 				button: '.icon-time'
 			});
-			view.$plannedDatepicker.datepicker("setDate", moment(view.viewModel.get('plannedEndDay'),'YYYY-MM-DD').toDate());
+			view.$plannedDatepicker.datepicker("setDate", moment(view.viewModel.get('plannedEndDay'), 'YYYY-MM-DD').toDate());
 			view.$plannedTimepicker.val(this.viewModel.get('plannedEndTime'));
 
 			if (this.viewModel.get('urgent') == 'true') {
@@ -105,11 +129,11 @@ define(function(require) {
 			view.$mkbCode.val(view.viewModel.get('mkbCode'));
 			view.$mkbCode.data('mkb-id', view.viewModel.get('mkbId'));
 
-//console.log('finance',view.viewModel.get('finance'));
+			//console.log('finance',view.viewModel.get('finance'));
 			view.$finance.select2("val", parseInt(view.viewModel.get('finance')));
 
 			view.$assessmentDatepicker.on('change', function() {
-				view.viewModel.set('assessmentDay', moment(view.$assessmentDatepicker.val(),'DD.MM.YYYY').format('YYYY-MM-DD'));
+				view.viewModel.set('assessmentDay', moment(view.$assessmentDatepicker.val(), 'DD.MM.YYYY').format('YYYY-MM-DD'));
 			});
 
 			view.$assessmentTimepicker.on('change', function() {
@@ -117,7 +141,7 @@ define(function(require) {
 			});
 
 			view.$plannedDatepicker.on('change', function() {
-				view.viewModel.set('plannedEndDay', moment(view.$plannedDatepicker.val(),'DD.MM.YYYY').format('YYYY-MM-DD'));
+				view.viewModel.set('plannedEndDay', moment(view.$plannedDatepicker.val(), 'DD.MM.YYYY').format('YYYY-MM-DD'));
 			});
 
 			view.$plannedTimepicker.on('change', function() {
@@ -125,7 +149,7 @@ define(function(require) {
 			});
 
 			view.$urgent.on('change', function() {
-				view.viewModel.set('urgent', ''+view.$urgent.prop('checked'));
+				view.viewModel.set('urgent', '' + view.$urgent.prop('checked'));
 			});
 			view.$finance.on('change', function() {
 				view.viewModel.set('finance', view.$(view.$('#finance option:selected')[0]).val());
@@ -168,7 +192,7 @@ define(function(require) {
 			view.model.setProperty('Направительный диагноз', 'valueId', view.viewModel.get('mkbId'));
 
 
-			view.model.save({},{
+			view.model.save({}, {
 				success: function(raw, status) {
 					view.close();
 					pubsub.trigger('instrumental-diagnostic:added');

@@ -2,11 +2,13 @@
  * User: FKurilov
  * Date: 08.06.12
  */
-define([
-	"text!templates/appeal/edit/pages/consultations.tmpl",
-	"collections/diagnostics/consultations/Consultations",
-	"views/grid",
-	"views/consultations/NewConsultationView"], function(template, Consultations, Grid, NewConsultationView) {
+define(function(require) {
+
+
+	var template = require('text!templates/appeal/edit/pages/consultations.tmpl')
+	var Consultations = require('collections/diagnostics/consultations/Consultations')
+	var Grid = require('views/grid')
+	var NewConsultationView = require('views/consultations/NewConsultationView')
 
 	ConsultationView = View.extend({
 		className: "ContentHolder",
@@ -56,6 +58,10 @@ define([
 				// url: "/js/app/views/consultations/consultations.json",
 				// dataType: 'json'
 			});
+
+			pubsub.on('consultation:added', function() {
+				this.collection.fetch();
+			}, this);
 		},
 
 		onGridRowClick: function(model, event) {
@@ -80,9 +86,25 @@ define([
 
 		cancelDirection: function(model) {
 			console.log('cancelDirection', model);
-			pubsub.trigger('noty', {
-				text: 'функционал ещё не реализован'
+			model.destroy({
+				wait: true,
+				success: function(model, response) {
+					pubsub.trigger('noty', {
+						text: 'Направление удалено',
+						type: 'alert'
+					});
+					// this.collection.fetch();
+				},
+				error: function(x, error) {
+
+					var response = $.parseJSON(x.responseText);
+					pubsub.trigger('noty', {
+						text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode + ', id:' + id,
+						type: 'error'
+					});
+				}
 			});
+
 		},
 
 		onNewConsultClick: function() {

@@ -3,56 +3,64 @@
  * Date: 25.06.12
  */
 //попап создания направления на лабисследование
-define([
-		"text!templates/appeal/edit/popups/laboratory.tmpl",
-		"mixins/PopupMixin",
-		"collections/diagnostics/Labs",
-		"views/laboratory/LabsView",
+define(function(require) {
 
-	"collections/diagnostics/LabGroups",
-		"views/laboratory/LabGroupsView",
+	var popupMixin = require('mixins/PopupMixin');
+	var tmpl = require('text!templates/appeal/edit/popups/laboratory.tmpl');
 
-	"collections/diagnostics/LabGroupTests",
-		"views/laboratory/LabGroupTestsView",
+	var GroupsCollection = require('collections/diagnostics/LabGroups');
+	var GroupTestsCollection = require('collections/diagnostics/LabGroupTests');
+	var LabsCollection = require('collections/diagnostics/Labs');
 
-	"views/ui/SelectView",
-		"views/ui/MkbInputView"
-],
+	var GroupsView = require('views/laboratory/LabGroupsView');
+	var GroupTestsView = require('views/laboratory/LabGroupTestsView');
+	var LabsCollectionView = require('views/laboratory/LabsView');
+	var MkbInputView = require('views/ui/MkbInputView');
+	var PersonDialogView = require('views/ui/PersonDialog');
+	var SelectView = require('views/ui/SelectView');
 
-function(
-	tmpl,
-	popupMixin,
-	LabsCollection,
-	LabsCollectionView,
 
-GroupsCollection,
-	GroupsView,
-
-GroupTestsCollection,
-	GroupTestsView,
-
-SelectView,
-	MkbInputView) {
 
 	var LaboratoryPopup = View.extend({
 		template: tmpl,
 		className: "popup",
 
 		events: {
-			"click .ShowHidePopup": "close"
+			"click .ShowHidePopup": "close",
+			"click #doctor-outer": "openDoctorSelectPopup"
 		},
 		initialize: function() {
 			_.bindAll(this);
+			console.log('initialize add lab popup', this.options.appeal.toJSON());
 
 			var view = this;
+			var appealDoctor = this.options.appeal.get('execPerson');
 
-			//юзер
-			view.doctor = {
-				name: {
-					first: Core.Cookies.get("doctorFirstName"),
-					last: Core.Cookies.get("doctorLastName")
-				}
-			};
+			console.log('Core.Cookies.get("currentRole")', Core.Cookies.get("currentRole"));
+
+			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
+				//юзер не врач
+				view.doctor = {
+					name: {
+						first: appealDoctor.name.first,
+						last: appealDoctor.name.last,
+						middle: appealDoctor.name.middle
+					}
+				};
+
+			} else {
+				//юзер врач
+
+				view.doctor = {
+					name: {
+						first: Core.Cookies.get("doctorFirstName"),
+						last: Core.Cookies.get("doctorLastName"),
+						middle: ''
+					}
+				};
+			}
+
+
 
 			view.data = {
 				'doctor': view.doctor
@@ -121,7 +129,7 @@ SelectView,
 			view.labsCollection = new LabsCollection();
 
 			view.labsCollection.setParams({
-				'filter[code]':2,
+				'filter[code]': 2,
 				sortingField: "name",
 				sortingMethod: "asc"
 			});
@@ -180,9 +188,30 @@ SelectView,
 
 				//console.log('selected', selected);
 
-			})
+			});
+
+			pubsub.on('person:changed', function(doctor) {
+				console.log('assign-person: changed', doctor);
+				view.doctor = doctor;
+				// view.doctor.name.first = doctor.name.first;
+				// view.doctor.name.middle = doctor.name.middle;
+				// view.doctor.name.last = doctor.name.last;
+
+				view.ui.$doctor.val(doctor.name.raw);
+
+			});
 
 
+
+		},
+
+		openDoctorSelectPopup: function() {
+			console.log('openDoctorSelectPopup');
+			this.personDialogView = new PersonDialogView({
+				appeal: this.options.appeal
+			});
+
+			this.personDialogView.render().open();
 
 		},
 
@@ -239,9 +268,12 @@ SelectView,
 				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
 				model.setProperty('doctorFirstName', 'value', view.doctor.name.first);
 				model.setProperty('doctorLastName', 'value', view.doctor.name.last);
-				model.setProperty('doctorMiddleName', 'value', '');
+				model.setProperty('doctorMiddleName', 'value', view.doctor.name.middle);
 				model.setProperty('finance', 'value', view.ui.$finance.val());
-				model.setProperty('Направительный диагноз', 'valueId', mkbId);
+				if (mkbId) {
+					model.setProperty('Направительный диагноз', 'valueId', mkbId);
+				}
+
 
 			});
 			view.testsCollection.updateAll();
@@ -265,6 +297,8 @@ SelectView,
 			view.mkbInputView.close();
 			view.financeSelect.close();
 
+			pubsub.off('person:changed');
+
 			//console.log('close', view);
 
 		},
@@ -284,6 +318,7 @@ SelectView,
 			view.ui.$mbkCode = view.$("input[name='diagnosis[mkb][code]']");
 			view.ui.$mbkDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
 			view.ui.$finance = view.$('#finance');
+			view.ui.$doctor = view.$('#doctor');
 
 
 
