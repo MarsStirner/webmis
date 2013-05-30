@@ -288,19 +288,27 @@ define(function(require) {
 			view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 			view.model.setProperty('assessmentBeginDate', 'value', startDate + ' ' + startTime);
 			view.model.setProperty('finance', 'value', view.ui.$finance.val());
-			//if(view.ui.$mkbCode.data('mkb-id')){
+			if(view.ui.$mkbCode.data('mkb-id')){
 				view.model.setProperty('Направительный диагноз', 'valueId', view.ui.$mkbCode.data('mkb-id'));
-			//}
+			}
 
 
 
-			//console.log(model.get('group'))
+			console.log(view.model.get('group'))
 			view.model.set('group', group);
 
 			view.model.save({}, {
 				success: function() {
 					pubsub.trigger('lab-diagnostic:added');
+					//pubsub.trigger('noty', {text:'Направление обновлено'});
 					view.close();
+				},
+				error: function(a,b,c){
+					var errorMessage = (JSON.parse(b.responseText)).errorMessage;
+
+					pubsub.trigger('noty', {text:errorMessage,type:'error'});
+					//console.log('save error', (JSON.parse(b.responseText)).errorMessage);
+
 				}
 			});
 

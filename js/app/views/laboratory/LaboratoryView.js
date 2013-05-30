@@ -39,7 +39,7 @@ function(template, AddDirectionPopupView, EditDirectionPopupView, laboratoryDiag
 			});
 
 			this.collection.extra = {
-				doctorId: 612,//(options.appeal.get('execPerson')).id,
+				doctorId: (this.options.appeal.get('execPerson')).id,
 				userId: Core.Cookies.get("userId")
 			};
 
