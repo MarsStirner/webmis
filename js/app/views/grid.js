@@ -18,7 +18,7 @@ define(["views/grid-row"], function () {
 				], this.ready, this);
 
 				this.loadTemplate(this.options.template);
-				this.collection.on("reset add remove", this.refresh, this);
+				this.collection.on("reset", this.refresh, this);
 				this.collection.on("reset", this.showDefaultSorting, this);
 
 				this.collection.on("fetch", this.onFetch, this);
