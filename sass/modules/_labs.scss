@@ -168,37 +168,37 @@ cursor: pointer;
 // 	}
 // }
 
-// .edit-tree{
-// 	.dynatree-container{
-// 		white-space: normal;
-// 		overflow: hidden;
-// 	}
-// 	span.dynatree-node{
-// 		position: relative;
-// 		display: block;
-// 		table{
-// 			width: 100%;
-// 			display: inline-block;
-// 			position: relative;
-// 			td{
-// 				vertical-align: top;
-// 				//border: 1px solid;
+.edit-tree{
+	.dynatree-container{
+		white-space: normal;
+		overflow: hidden;
+	}
+	span.dynatree-node{
+		position: relative;
+		display: block;
+		table{
+			width: 100%;
+			display: inline-block;
+			position: relative;
+			td{
+				vertical-align: top;
+				//border: 1px solid;
 
-// 				&.title-col{
-// 					padding-left: 5px;
-// 					// width: 370px;
-// 					width: 100%;
-// 				}
-// 				&.sito-col{
-// 					min-width: 25px;
-// 				}
-// 				&.time-col{
-// 					min-width: 14.6em;
-// 				}
-// 			}
-// 		}
-// 	}
-// }
+				&.title-col{
+					padding-left: 5px;
+					// width: 370px;
+					width: 100%;
+				}
+				&.sito-col{
+					min-width: 25px;
+				}
+				&.time-col{
+					min-width: 14.6em;
+				}
+			}
+		}
+	}
+}
 
 
 
@@ -228,9 +228,9 @@ cursor: pointer;
 // 	}
 // }
 
-// .edit-tree .dynatree-checkbox:first-child{
-// 		display: none;
-// 	}
+.edit-tree .dynatree-checkbox:first-child{
+		display: none;
+	}
 
 // .lab-tests-list2{
 // 	.dynatree-container{
