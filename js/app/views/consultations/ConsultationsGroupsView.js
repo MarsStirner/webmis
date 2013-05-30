@@ -47,6 +47,11 @@ define(function(require) {
                 this.renderNoResults();
             }
             return this;
+        },
+        close: function(){
+            pubsub.off('consultation:selected');
+            this.collection.off();
+
         }
     });
 });

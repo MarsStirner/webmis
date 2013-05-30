@@ -48,6 +48,9 @@ define(function(require) {
             }
             return this;
 
+        },
+        close: function(){
+
         }
     });
 });

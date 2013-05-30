@@ -8,7 +8,8 @@ define(function(require) {
 	var template = require('text!templates/appeal/edit/pages/consultations.tmpl')
 	var Consultations = require('collections/diagnostics/consultations/Consultations')
 	var Grid = require('views/grid')
-	var NewConsultationView = require('views/consultations/NewConsultationView')
+	var NewConsultationView = require('views/consultations/NewConsultationView');
+	var EditConsultationView = require('views/consultations/EditConsultationView');
 
 	ConsultationView = View.extend({
 		className: "ContentHolder",
@@ -59,6 +60,10 @@ define(function(require) {
 				// dataType: 'json'
 			});
 
+			this.collection.on('remove', function() {
+				this.collection.fetch({});
+			}, this);
+
 			pubsub.on('consultation:added', function() {
 				this.collection.fetch();
 			}, this);
@@ -79,27 +84,30 @@ define(function(require) {
 
 		editDirection: function(model) {
 			console.log('editDirection', model);
-			pubsub.trigger('noty', {
-				text: 'функционал ещё не реализован'
-			});
+			this.editConsultationView = new EditConsultationView(_.extend(this.options, {
+				title: 'Редактирование направления',
+				id: model.get('id')
+			}));
+			//this.editConsultationView.render().open();
 		},
 
 		cancelDirection: function(model) {
-			console.log('cancelDirection', model);
+			console.log('cancelDirection ', model);
 			model.destroy({
 				wait: true,
 				success: function(model, response) {
 					pubsub.trigger('noty', {
-						text: 'Направление удалено',
+						text: 'Направлениеудалено',
 						type: 'alert'
 					});
 					// this.collection.fetch();
 				},
 				error: function(x, error) {
+					//console.log(arguments);
 
-					var response = $.parseJSON(x.responseText);
+					var response = $.parseJSON(error.responseText);
 					pubsub.trigger('noty', {
-						text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode + ', id:' + id,
+						text: 'Ошибка: ' + response.errorMessage,
 						type: 'error'
 					});
 				}

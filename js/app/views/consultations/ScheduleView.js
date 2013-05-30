@@ -19,8 +19,15 @@ define(function(require) {
         template: template,
 
         timeSelected: function(e) {
-            var time = this.$(e.target).val();
-            pubsub.trigger('time:selected', time);
+            var $target = this.$(e.target);
+            var time = $target.val();
+            var id = $target.data('id');
+            var index = $target.data('index');
+            pubsub.trigger('time:selected', {
+                time: time,
+                id:id,
+                index:index
+            });
 
         },
 
@@ -31,6 +38,12 @@ define(function(require) {
             }));
 
             return this;
+        },
+        close: function() {
+            pubsub.off('date:selected');
+            pubsub.off('time:selected');
+            this.collection.off();
+
         }
     })
 });

@@ -5,7 +5,7 @@
 define(function(require) {
 
 	var popupMixin = require('mixins/PopupMixin');
-	var tmpl = require('text!templates/diagnostics/consultations/consultation-popup.html');
+	var tmpl = require('text!templates/diagnostics/consultations/new-consultation-popup.html');
 
 	require('collections/doctors');
 	var ConsultantsFree = require('collections/doctors-free');
@@ -131,6 +131,7 @@ define(function(require) {
 			this.consultation.set('actionTypeId', consultation.get('id'));
 			this.ui.$datepicker.datepicker('enable');
 			var date = this.ui.$datepicker.datepicker("getDate");
+			console.log('date', date)
 			var timestamp = moment(date).valueOf();
 			this.consultation.set('plannedEndDate', timestamp);
 		},
@@ -152,11 +153,9 @@ define(function(require) {
 		},
 
 		//при выборе времени
-		onTimeSelect: function(time) {
-			console.log('onTimeSelect', time);
-			this.consultation.set('plannedTime', {
-				'time': time
-			});
+		onTimeSelect: function(plannedTime) {
+			console.log('onTimeSelect', plannedTime);
+			this.consultation.set('plannedTime', plannedTime);
 		},
 
 		//при выборе вида оплаты
@@ -307,6 +306,16 @@ define(function(require) {
 
 			return this;
 		},
+		close: function() {
+			console.log('popup view close');
+			this.mkbInputView.close();
+			this.consultationsGroupsView.close();
+			this.consultantsFreeView.close();
+			this.scheduleView.close();
+
+			this.$el.dialog("close");
+			this.$el.remove();
+		}
 
 	}).mixin([popupMixin]);
 

@@ -2,7 +2,7 @@
 <ul id="timetable-items">
 	<% _.each(items, function(item) { %>
     <li>
-        <label><input type="radio" name="time" value="<%= item.time %>"/>
+        <label><input type="radio" name="time" value="<%= item.time %>" data-id="<%= item.id %>" data-index="<%= item.index %>"/>
         <%= item.parsedTime %>
         </label>
     </li>
