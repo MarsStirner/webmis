@@ -18,7 +18,7 @@ define([
 
 	"views/appeal/edit/pages/card",
 
-	"collections/moves",
+	"collections/moves/moves",
 	"collections/dictionary-values"
 ], function (
 	monitoringTmpl,

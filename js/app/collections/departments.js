@@ -11,5 +11,5 @@ define(["models/department"], function ()
 		}
 	});
 
-	//return App.Collections.Departments;
+	return App.Collections.Departments;
 });

@@ -3,43 +3,45 @@
  * Date: 08.06.12
  */
 define([
-		"text!templates/appeal/edit/main.tmpl",
-		"views/laboratory/LaboratoryView",
-		"views/instrumental/InstrumentalView",
-		"views/consultations/ConsultationsListView",
-		"views/appeal/edit/pages/monitoring",
+	"text!templates/appeal/edit/main.tmpl",
+	"views/diagnostics/laboratory/LaboratoryView",
+	"views/diagnostics/laboratory/LaboratoryResultView",
+	"views/diagnostics/instrumental/InstrumentalView",
+	"views/diagnostics/consultations/ConsultationsListView",
+	"views/appeal/edit/pages/monitoring",
 
-	"views/laboratory/LaboratoryResultView",
+	"views/moves/moves",
+	"views/moves/HospitalBedView",
 
 	//"text!templates/cardnav.tmpl",
 
 
 	"models/appeal",
-		"collections/patient-appeals",
+	"collections/patient-appeals",
 
 	"views/breadcrumbs",
-		"views/menu",
-		"views/card-header",
+	"views/menu",
+	"views/card-header",
 
 	//"views/appeal/edit/pages/instrumental",
 
 	//"views/appeal/edit/pages/consultation",
-		"views/appeal/edit/pages/examinations",
-		"views/appeal/edit/pages/examination-edit",
-		"views/appeal/edit/pages/examination-primary",
-		"views/appeal/edit/pages/card",
+	"views/appeal/edit/pages/examinations",
+	"views/appeal/edit/pages/examination-edit",
+	"views/appeal/edit/pages/examination-primary",
+	"views/appeal/edit/pages/card"
 
-	"views/appeal/edit/pages/moves",
 
-	"views/appeal/edit/pages/HospitalBedView"
 ], function(
 	template,
 	LaboratoryView,
+	LaboratoryResultView,
 	InstrumentalView,
 	ConsultationView,
 
-Monitoring,
-	LaboratoryResultView
+	Monitoring,
+	Moves,
+	HospitalBed
 
 ) {
 
@@ -71,8 +73,8 @@ Monitoring,
 
 			"first-examination-edit": App.Views.ExaminationEdit,
 
-			"moves": App.Views.Moves,
-			"hospitalbed": App.Views.HospitalBed,
+			"moves": Moves,
+			"hospitalbed": HospitalBed,
 
 			"monitoring": Monitoring.Views.Layout
 		},

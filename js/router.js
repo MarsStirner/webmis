@@ -162,7 +162,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			this.currentPage = "biomaterials";
 			console.log('biomaterials');
 
-			require(["views/app", "views/pages/BiomaterialsView"], function(AppView, BiomaterialsView) {
+			require(["views/app", "views/biomaterials/BiomaterialsView"], function(AppView, BiomaterialsView) {
 				var view = new BiomaterialsView();
 
 				if (!this.appView) {

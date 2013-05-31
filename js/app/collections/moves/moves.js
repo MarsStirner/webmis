@@ -2,8 +2,10 @@
  * Author: FKurilov
  * Date: 23.05.12
  */
-define(["models/move"], function () {
-	App.Collections.Moves = Collection.extend({
+define(function(require) {
+
+
+	var Moves = Collection.extend({
 		model: Model.extend({
 			defaults: {
 				unitId: "",
@@ -17,14 +19,14 @@ define(["models/move"], function () {
 			}
 		}),
 
-		parse: function (raw) {
+		parse: function(raw) {
 			return raw.data.moves;
 		},
 
-		url: function () {
+		url: function() {
 			return DATA_PATH + "appeals/" + this.appealId + "/hospitalbed/"
 		}
 	});
 
-	return App.Collections.Moves;
-} );
+	return Moves;
+});
