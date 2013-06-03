@@ -15,6 +15,7 @@ define(function (require) {
 	var templates = {
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
 		_listControls: _.template(require("text!templates/documents/list/controls.html")),
+		_listTableControls: _.template(require("text!templates/documents/list/table-controls.html")),
 		_documentFilters: _.template(require("text!templates/documents/list/filters.html")),
 		_documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
 		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html"))/*,
@@ -177,7 +178,7 @@ define(function (require) {
 	//---------------------
 	//---------------------
 
-	//Базовый класс
+	//Базовые классы
 	var ViewBase = Documents.Views.Base = Backbone.View.extend({
 		template: _.template(""),
 
@@ -236,13 +237,21 @@ define(function (require) {
 
 		attributes: {style: "display: table; width: 100%;"},
 
+		topLevel: false,
+
+		initialize: function () {
+			this.topLevel = !this.options.included;
+		},
+
 		tearDown: function () {
-			dispatcher.off();
+			if (this.topLevel) dispatcher.off();
 			ViewBase.prototype.tearDown.call(this);
 		}
 	});
 	
-	
+	var RepeaterBase = Documents.Views.RepeaterBase = ViewBase.extend({
+
+	});
 
 	//Список
 	//---------------------
@@ -261,34 +270,50 @@ define(function (require) {
 
 			this.selectedDocuments = new Backbone.Collection();
 			this.selectedDocuments.on("enteredReviewState", this.onEnteredReviewState, this);
+			this.selectedDocuments.on("quitReviewState", this.onQuitReviewState, this);
 		},
 
 		onEnteredReviewState: function () {
 			this.toggleReviewState(true);
+		},
 
-			this.showSelectedDocuments();
+		onQuitReviewState: function () {
+			this.toggleReviewState(false);
 		},
 
 		toggleReviewState: function (enabled) {
-			this.$(".documents-table, .documents-filters").toggle(!!enabled);
+			this.$(".documents-table, .documents-filters, .table-controls").toggle(!enabled);
+
+			if (enabled) {
+				this.$el.append('<div class="row-fluid review-area-row"><div class="span12 review-area"></div></div>');
+				this.reviewLayout = new Documents.Views.Review.Layout({collection: this.selectedDocuments, included: true});
+				this.assign({
+					".review-area": this.reviewLayout
+				});
+			} else {
+				this.reviewLayout.tearDown();
+				this.$(".review-area-row").remove();
+			}
 		},
 
 		showSelectedDocuments: function () {
-			this.selectedDocuments.each(function (selectedDocument) {
+
+			/*this.selectedDocuments.each(function (selectedDocument) {
 				this.$el.append('<div class="row-fluid review-sheet-' + selectedDocument.id + '"></div>');
 
 				var subView = {};
 				subView[".review-sheet-" + selectedDocument.id] = new Documents.Views.Review.Sheet({model: selectedDocument});
 
 				this.assign(subView);
-			}, this);
+			}, this);*/
 		},
 
 		render: function (subViews) {
 			return LayoutBase.prototype.render.call(this, _.extend({
 				".documents-table": new Documents.Views.List.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
 				".documents-filters": new Documents.Views.List.Filters({collection: this.documents}),
-				".review-controls": new Documents.Views.Review.Controls({collection: this.documents, selectedDocuments: this.selectedDocuments})
+				".table-controls": new Documents.Views.List.TableControls({collection: this.selectedDocuments})
+				//".review-area": new Documents.Views.Review.Layout({collection: this.selectedDocuments, included: true})
 			}, subViews));
 		}
 	});
@@ -301,9 +326,9 @@ define(function (require) {
 			this.documentTypes.fetch();
 		},
 
-		onEnteredReviewState: function () {
-			Documents.Views.List.LayoutLight.prototype.onEnteredReviewState.call(this);
-			this.$(".documents-controls").hide();
+		toggleReviewState: function (enabled) {
+			Documents.Views.List.LayoutLight.prototype.toggleReviewState.call(this, enabled);
+			this.$(".documents-controls").toggle(!enabled);
 		},
 
 		render: function () {
@@ -353,6 +378,39 @@ define(function (require) {
 			//TODO: HARCODED
 			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: 139}});
 		}
+	});
+
+	Documents.Views.List.TableControls = ViewBase.extend({
+		template: templates._listTableControls,
+
+		events: {
+			"click .review-selected": "onReviewSelectedClick"
+		},
+
+		initialize: function () {
+			this.collection.on("add", this.onSelectedDocumentsAdd, this);
+			this.collection.on("remove", this.onSelectedDocumentsRemove, this);
+		},
+
+		onReviewSelectedClick: function (event) {
+			this.collection.trigger("enteredReviewState");
+		 },
+
+		onSelectedDocumentsAdd: function () {
+			this.toggleReviewSelectedDisabled(this.collection.length > 0);
+		},
+
+		onSelectedDocumentsRemove: function () {
+			this.toggleReviewSelectedDisabled(this.collection.length > 0);
+		},
+
+		toggleReviewSelectedDisabled: function (enabled) {
+			this.$(".review-selected").prop("disabled", !enabled);
+		}
+
+		/*toggleControls: function () {
+			this.$(".review-selected").toggle();
+		}*/
 	});
 
 	Documents.Views.List.Filters = ViewBase.extend({
@@ -571,14 +629,14 @@ define(function (require) {
 					"</div>"
 				);
 
-				this.listLayout =  new Documents.Views.List.LayoutLight();
+				this.listLayoutLight =  new Documents.Views.List.LayoutLight({included: true});
 
-				this.assign({".document-list": this.listLayout});
+				this.assign({".document-list": this.listLayoutLight});
 
-				this.listLayout.$(".documents-controls").remove();
-				this.listLayout.$(".documents-filters").removeClass("span6").addClass("span12");
+				this.listLayoutLight.$(".documents-controls").remove();
+				this.listLayoutLight.$(".documents-filters").removeClass("span6").addClass("span12");
 			} else {
-				if (this.listLayout) ViewBase.prototype.tearDown.call(this.listLayout);
+				if (this.listLayoutLight) this.listLayoutLight.tearDown(); //ViewBase.prototype.tearDown.call(this.listLayoutLight);
 				this.$el.parent().css({"margin-left": "20em"});
 
 				this.$(".document-list-side").remove();
@@ -687,7 +745,14 @@ define(function (require) {
 	//---------------------
 
 	Documents.Views.Review.Layout = LayoutBase.extend({
-		template: templates._reviewLayout
+		template: templates._reviewLayout,
+
+		render: function () {
+			return LayoutBase.prototype.render.call(this, {
+				".review-controls": new Documents.Views.Review.Controls({collection: this.collection}),
+				".sheets": new Documents.Views.Review.SheetList({collection: this.collection})
+			});
+		}
 	});
 
 	//Элементы управления
@@ -695,46 +760,34 @@ define(function (require) {
 		template: templates._reviewControls,
 
 		events: {
-			"click .review-selected": "onReviewSelectedClick",
 			"click .back-to-document-list": "onBackToDocumentListClick"
 		},
 
-		initialize: function () {
-			this.options.selectedDocuments.on("add", this.onSelectedDocumentsAdd, this);
-			this.options.selectedDocuments.on("remove", this.onSelectedDocumentsRemove, this);
-		},
-
-		onReviewSelectedClick: function (event) {
-			this.toggleControls();
-
-			this.options.selectedDocuments.trigger("enteredReviewState");
-		},
-
 		onBackToDocumentListClick: function () {
-			this.toggleControls();
+			//this.toggleControls();
+			this.collection.trigger("quitReviewState");
+		}//,
 
-			this.options.selectedDocuments.trigger("quitReviewState");
-		},
-
-		onSelectedDocumentsAdd: function () {
-			this.toggleReviewSelectedDisabled(this.options.selectedDocuments.length > 0);
-		},
-
-		onSelectedDocumentsRemove: function () {
-			this.toggleReviewSelectedDisabled(this.options.selectedDocuments.length > 0);
-		},
-
-		toggleReviewSelectedDisabled: function (enabled) {
-			this.$(".review-selected").prop("disabled", !enabled);
-		},
-
-		toggleControls: function () {
-			this.$(".review-nav, .review-selected").toggle();
-		}
+		/*toggleControls: function () {
+			this.$(".review-nav").toggle();
+		}*/
 	});
 
 	//Значения полей из документа
-	Documents.Views.Review.SheetList = ViewBase.extend({});
+	Documents.Views.Review.SheetList = RepeaterBase.extend({
+		initialize: function () {
+			this.repeatView = Documents.Views.Review.Sheet;
+			this.subViews = [];
+		},
+
+		render: function () {
+			this.$el.html(this.collection.map(function (item) {
+				var itemView = new this.repeatView({model: item});
+				this.subViews.push(itemView);
+				return itemView.render().el;
+			}, this));
+		}
+	});
 
 	//Значения полей из документа
 	Documents.Views.Review.Sheet = ViewBase.extend({
