@@ -1,13 +1,13 @@
-define(function (require) {
+define(function(require) {
 
 	var Biomaterial = require('models/biomaterials/Biomaterial');
 
 	var Biomaterials = Collection.extend({
 		model: Biomaterial,
-		url: function () {
-			return DATA_PATH + "biomaterial/info?";//filter[beginDate]=1354305600000&filter[endDate]=1354478400000"
+		url: function() {
+			return DATA_PATH + "biomaterial/info?"; //filter[beginDate]=1354305600000&filter[endDate]=1354478400000"
 		},
-		initialize: function () {
+		initialize: function() {
 			var collection = this;
 
 			collection.countSelected();
@@ -20,11 +20,11 @@ define(function (require) {
 		/***
 		 * подсчёт статусов
 		 */
-		countStatuses: function () {
+		countStatuses: function() {
 			var collection = this;
 
 			function countByStatus(status) {
-				return collection.reduce(function (memo, model) {
+				return collection.reduce(function(memo, model) {
 					var i = 0;
 
 					if (model.get('status') == status) {
@@ -36,7 +36,10 @@ define(function (require) {
 			}
 
 			collection.count = {
-				status_0: countByStatus(0), status_1: countByStatus(1), status_2: countByStatus(2), all: collection.length
+				status_0: countByStatus(0),
+				status_1: countByStatus(1),
+				status_2: countByStatus(2),
+				all: collection.length
 			};
 
 		},
@@ -44,27 +47,36 @@ define(function (require) {
 		/***
 		 * Считает выбранные джоб тикеты с разными статусами
 		 */
-		countSelected: function () {
+		countSelected: function() {
 			var collection = this;
 
 			function filterSelectedByStatus(status) {
-				return collection.filter(function (model) {
+				return collection.filter(function(model) {
 					return ((model.get("selected") == true) && (model.get('status') == status));
 				});
 			}
 
 			collection.selected = {
-				status_0: filterSelectedByStatus(0), status_1: filterSelectedByStatus(1), status_2: filterSelectedByStatus(2)
+				status_0: filterSelectedByStatus(0),
+				status_1: filterSelectedByStatus(1),
+				status_2: filterSelectedByStatus(2)
 			};
 
 
 		},
 
-		getSelectedModels: function () {
+		getSelectedModels: function() {
 			var collection = this;
 
-			return collection.filter(function (model) {
+			return collection.filter(function(model) {
 				return model.get('selected');
+			});
+		},
+		getSelectedModelsWithStatus0: function() {
+			var collection = this;
+
+			return collection.filter(function(model) {
+				return (model.get('selected') && (model.get('status')===0));
 			});
 		},
 
@@ -76,7 +88,7 @@ define(function (require) {
 		 * @returns {Array} - массив лаб.исследований
 		 */
 
-		getLabTests: function (filterFunction) {
+		getLabTests: function(filterFunction) {
 			var collection = this;
 			var labTests = [];
 
@@ -84,10 +96,10 @@ define(function (require) {
 				throw new Error("No 'filterFunction' for 'Biomaterials.getLabTests'");
 			}
 
-			collection.each(function (model) {
+			collection.each(function(model) {
 
 				if (filterFunction(model)) {
-					_.each(model.get('actions'), function (labTest) {
+					_.each(model.get('actions'), function(labTest) {
 						labTests.push(labTest);
 					});
 				}
@@ -101,27 +113,27 @@ define(function (require) {
 		 * Готовит данные для печати журнала выполнения работ
 		 * @returns {Array}
 		 */
-		makeWorkList: function (labTests) {
+		makeWorkList: function(labTests) {
 			var collection = this;
 			var workList = [];
 
-			_.each(labTests, function (labTest, index) {
+			_.each(labTests, function(labTest, index) {
 
 				var orgStructure = '';
-				if(labTest.department && labTest.department.name){
+				if (labTest.department && labTest.department.name) {
 					orgStructure = labTest.department.name;
 				}
-				if(labTest.bed && labTest.bed.code){
-					orgStructure = orgStructure+'/'+labTest.bed.code;
+				if (labTest.bed && labTest.bed.code) {
+					orgStructure = orgStructure + '/' + labTest.bed.code;
 				}
 
 				var tissueTypeName = '';
-				if(labTest.biomaterial && labTest.biomaterial.tissueType && labTest.biomaterial.tissueType.name){
+				if (labTest.biomaterial && labTest.biomaterial.tissueType && labTest.biomaterial.tissueType.name) {
 					tissueTypeName = labTest.biomaterial.tissueType.name;
 				}
 
 				var tubeTypeName = '';
-				if(labTest.tubeType && labTest.tubeType.name){
+				if (labTest.tubeType && labTest.tubeType.name) {
 					tubeTypeName = labTest.tubeType.name;
 				}
 
@@ -150,11 +162,11 @@ define(function (require) {
 		 * @param labTests - массив с лабораторными исследованиями
 		 * @returns {Array}
 		 */
-		makeBarcodes: function (labTests) {
+		makeBarcodes: function(labTests) {
 			var collection = this;
 			var barcodes = [];
 
-			_.each(labTests, function (labTest) {
+			_.each(labTests, function(labTest) {
 
 				barcodes.push({
 					datetime: labTest.jobTicket.date,
@@ -168,7 +180,7 @@ define(function (require) {
 			return barcodes;
 		},
 
-		parse: function (response) {
+		parse: function(response) {
 			checkForWarnings(response.requestData, "requestData was not found in the JSON");
 			this.requestData = response.requestData || {};
 			this.requestData.filter = this.requestData.filter || {};
@@ -176,14 +188,14 @@ define(function (require) {
 			return this.normilize(response.data);
 		},
 
-		normilize: function (response) {
-			return _.map(response, function (model) {
+		normilize: function(response) {
+			return _.map(response, function(model) {
 
 				model.urgent = model.actions[0].urgent ? model.actions[0].urgent : false;
 
 				var volume = 0;
 
-				_.each(model.actions, function (action, key, list) {
+				_.each(model.actions, function(action, key, list) {
 					var sexShortName = '';
 
 					switch (action.patient.sex) {
@@ -194,7 +206,7 @@ define(function (require) {
 							sexShortName = 'Ж';
 							break;
 						default:
-						//sexShortName = 'не определён!';
+							//sexShortName = 'не определён!';
 					}
 					action.patient.sexShortName = sexShortName;
 
