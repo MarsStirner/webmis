@@ -1,6 +1,6 @@
 define(function(require) {
 
-	var Biomaterial = require('models/biomaterials/Biomaterial');
+	var Biomaterial = require('models/Biomaterial');
 
 	var Biomaterials = Collection.extend({
 		model: Biomaterial,
