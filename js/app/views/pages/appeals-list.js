@@ -176,6 +176,16 @@ define([
 				});*/
 
 				var DepCollection = new App.Collections.Departments();
+				DepCollection.setParams({
+					filter: {
+						hasBeds: true
+					},
+					limit: 0,
+					sortingField: 'name',
+					sortingMethod: 'asc'
+				});
+
+
 				Collection.on("reset", function resetHandler() {
 					Collection.off("reset", resetHandler);
 
@@ -239,7 +249,12 @@ define([
 				});
 				var departments = new App.Collections.Departments();
 				departments.setParams({
-					limit: 9999
+					filter: {
+						hasBeds: true
+					},
+					limit: 0,
+					sortingField: 'name',
+					sortingMethod: 'asc'
 				});
 
 				Filter = new App.Views.FilterDictionaries({
@@ -329,8 +344,8 @@ define([
 			this.collection = Collection;
 
 
-			this.collection.on('reset',function(){
-				console.log('collection reset',arguments);
+			this.collection.on('reset', function() {
+				console.log('collection reset', arguments);
 			})
 
 			this.depended(Filter);

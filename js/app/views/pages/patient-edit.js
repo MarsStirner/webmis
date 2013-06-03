@@ -1,43 +1,43 @@
 define([
-	"text!templates/patient-edit/main.tmpl",
-	"text!templates/patient-edit/general.tmpl",
-	"text!templates/patient-edit/relation.tmpl",
-	"text!templates/patient-edit/documents.tmpl",
-	"text!templates/patient-edit/policy.tmpl",
-	"text!templates/patient-edit/id-card.tmpl",
-	"text!templates/patient-edit/medical-info.tmpl",
-	"text!templates/patient-edit/drug-intolerance.tmpl",
-	"text!templates/patient-edit/allergy.tmpl",
-	"text!templates/patient-edit/other.tmpl",
-	"text!templates/patient-edit/address.tmpl",
-	"text!templates/patient-edit/contact.tmpl",
-	"text!templates/patient-edit/quotes.tmpl",
-	"models/patient",
-	"collections/flat-directories",
-	"collections/dictionary-values",
-	"collections/departments",
-	"collections/quotes",
-	"collections/patient-appeals",
-	"views/form/abstract-line",
-	"views/form/kladr-new",
-	"views/mkb-directory",
-	"views/menu",
-	"views/grid",
-	"views/paginator",
-	"views/breadcrumbs"
-], function (tmplMain,
-						 tmplGeneral,
-						 tmplRelation,
-						 tmplDocuments,
-						 tmplPolicy,
-						 tmplIdCard,
-						 tmplMedInfo,
-						 tmplDrugIntolerance,
-						 tmplAllergy,
-						 tmplOther,
-						 tmplAddress,
-						 tmplContact,
-						 tmplQuotes) {
+		"text!templates/patient-edit/main.tmpl",
+		"text!templates/patient-edit/general.tmpl",
+		"text!templates/patient-edit/relation.tmpl",
+		"text!templates/patient-edit/documents.tmpl",
+		"text!templates/patient-edit/policy.tmpl",
+		"text!templates/patient-edit/id-card.tmpl",
+		"text!templates/patient-edit/medical-info.tmpl",
+		"text!templates/patient-edit/drug-intolerance.tmpl",
+		"text!templates/patient-edit/allergy.tmpl",
+		"text!templates/patient-edit/other.tmpl",
+		"text!templates/patient-edit/address.tmpl",
+		"text!templates/patient-edit/contact.tmpl",
+		"text!templates/patient-edit/quotes.tmpl",
+		"models/patient",
+		"collections/flat-directories",
+		"collections/dictionary-values",
+		"collections/departments",
+		"collections/quotes",
+		"collections/patient-appeals",
+		"views/form/abstract-line",
+		"views/form/kladr-new",
+		"views/mkb-directory",
+		"views/menu",
+		"views/grid",
+		"views/paginator",
+		"views/breadcrumbs"
+], function(tmplMain,
+	tmplGeneral,
+	tmplRelation,
+	tmplDocuments,
+	tmplPolicy,
+	tmplIdCard,
+	tmplMedInfo,
+	tmplDrugIntolerance,
+	tmplAllergy,
+	tmplOther,
+	tmplAddress,
+	tmplContact,
+	tmplQuotes) {
 
 	/**
 	 * //////////////////////////////////
@@ -68,13 +68,13 @@ define([
 		model: App.Models.Patient,
 
 		events: {
-			"click  .Actions.Save"  : "onSaveClick",
+			"click  .Actions.Save": "onSaveClick",
 			"click  .Actions.Cancel": "onCancelClick",
-			"click  .Next"  : "onNextStepClick",
-			"click  .Prev"  : "onPrevStepClick",
-			"keyup  :input:not(.select2-input)"         : "onFieldChange",
-			"change :input:not(.select2-input)"         : "onFieldChange",
-			"change select"         : "onFieldChange"
+			"click  .Next": "onNextStepClick",
+			"click  .Prev": "onPrevStepClick",
+			"keyup  :input:not(.select2-input)": "onFieldChange",
+			"change :input:not(.select2-input)": "onFieldChange",
+			"change select": "onFieldChange"
 		},
 
 		template: tmplMain,
@@ -84,7 +84,7 @@ define([
 
 		currentStep: "general",
 
-		initialize: function () {
+		initialize: function() {
 			this.clearAll();
 
 			var self = this;
@@ -99,12 +99,24 @@ define([
 
 			//this.model.on("change:id", this.render, this);
 
-			this.steps.general     = new GeneralView({model: self.model});
-			this.steps.documents   = new DocumentsView({model: self.model});
-			this.steps.address     = new AddressView({model: self.model});
-			this.steps.medicalInfo = new MedicalInfoView({model: self.model.get("medicalInfo")});
-			this.steps.other       = new OtherView({model: self.model});
-			this.steps.quotes      = new QuotesView({patient: self.model});
+			this.steps.general = new GeneralView({
+				model: self.model
+			});
+			this.steps.documents = new DocumentsView({
+				model: self.model
+			});
+			this.steps.address = new AddressView({
+				model: self.model
+			});
+			this.steps.medicalInfo = new MedicalInfoView({
+				model: self.model.get("medicalInfo")
+			});
+			this.steps.other = new OtherView({
+				model: self.model
+			});
+			this.steps.quotes = new QuotesView({
+				patient: self.model
+			});
 
 			/////////////////////////////////
 			/// var newMenu = new NewMenuView({items: self.getMenuStructure()});
@@ -112,7 +124,9 @@ define([
 
 			this.menuStructure = self.getMenuStructure();
 
-			this.menu = new MenuView({structure: this.menuStructure});
+			this.menu = new MenuView({
+				structure: this.menuStructure
+			});
 
 			this.menu.on("step:change", this.changeCurrentStep, this);
 
@@ -137,7 +151,7 @@ define([
 			this.steps.other       = model;
 		},*/
 
-		changeCurrentStep: function (step) {
+		changeCurrentStep: function(step) {
 			this.validationErrors = this.checkModelValid(this.currentStep);
 			if (this.validationErrors) {
 				this.render(true);
@@ -153,28 +167,34 @@ define([
 			}
 		},
 
-		setBreadcrumbsStructure: function () {
+		setBreadcrumbsStructure: function() {
 			var self = this;
 
 			if (this.model.isNew()) {
 				this.breadCrumbs.setStructure([
 					App.Router.cachedBreadcrumbs.PATIENTS,
-					App.Router.cachedBreadcrumbs.PATIENTS_NEW,
-					{title: self.stepTitle, uri: self.stepUri}
+					App.Router.cachedBreadcrumbs.PATIENTS_NEW, {
+						title: self.stepTitle,
+						uri: self.stepUri
+					}
 				]);
 			} else {
 				this.breadCrumbs.setStructure([
 					App.Router.cachedBreadcrumbs.PATIENTS,
 					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, self.model.toJSON()),
-					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENTS_EDIT, {id: self.model.id}),
-					{title: self.stepTitle, uri: self.stepUri}
+					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENTS_EDIT, {
+						id: self.model.id
+					}), {
+						title: self.stepTitle,
+						uri: self.stepUri
+					}
 				]);
 			}
 			this.breadCrumbs.$("a").addClass("AllowDefault");
 			this.$("#page-head").html(this.breadCrumbs.render().el);
 		},
 
-		onFieldChange: function (event) {
+		onFieldChange: function(event) {
 			var self = this;
 			var $field = $(event.currentTarget);
 
@@ -184,7 +204,7 @@ define([
 				} else {
 					$field.next().removeClass("WrongField");
 				}
-			//} else if ($field.hasClass("hasDatepicker")) {
+				//} else if ($field.hasClass("hasDatepicker")) {
 				//$field.parents(".DatePeriod").removeClass("WrongField");
 			} else {
 				$field.removeClass("WrongField");
@@ -204,8 +224,7 @@ define([
 						if (typeof destination === 'undefined') {
 							console.error("Invalid Property Chain: ", inputName);
 							break;
-						}
-						else if (destination instanceof Backbone.Collection)
+						} else if (destination instanceof Backbone.Collection)
 							destination = destination.getByCid(propertyChain.shift());
 						else
 							destination = destination.get(propertyChain.shift());
@@ -237,9 +256,9 @@ define([
 			//console.log(destination.toJSON());
 		},
 
-		setFieldValues: function () {
+		setFieldValues: function() {
 			var self = this;
-			this.$("input:not(.select2-input),select,textarea").each(function () {
+			this.$("input:not(.select2-input),select,textarea").each(function() {
 				if (!$(this).data("subbind") && $(this).attr("name")) {
 					var inputName = $(this).attr("name");
 					var propertyChain = inputName.split("-");
@@ -252,8 +271,7 @@ define([
 							if (typeof source === 'undefined') {
 								console.error("Invalid Property Chain: ", inputName);
 								break;
-							}
-							else if (source instanceof Backbone.Collection)
+							} else if (source instanceof Backbone.Collection)
 								source = source.getByCid(propertyChain.shift());
 							else
 								source = source.get(propertyChain.shift());
@@ -281,7 +299,7 @@ define([
 							$(this).val(value);
 						}
 
-						if ($(this).is(":checkbox")) $(this).attr("checked", !!value);
+						if ($(this).is(":checkbox")) $(this).attr("checked", !! value);
 						//TODO: WAT?
 						if ($(this).is("select")) $(this).change();
 					} else {
@@ -291,46 +309,50 @@ define([
 			});
 		},
 
-		onSaveClick: function (event) {
+		onSaveClick: function(event) {
 			this.validationErrors = this.checkModelValid("all");
 			if (this.validationErrors) {
 				this.render(true);
 			} else {
 				$(event.currentTarget).prop("disabled", true);
 
-				this.model.save({error: function () {
-					$(event.currentTarget).prop("disabled", false);
-					console.log(arguments);
-				}});
+				this.model.save({
+					error: function() {
+						$(event.currentTarget).prop("disabled", false);
+						console.log(arguments);
+					}
+				});
 			}
 		},
 
-		checkModelValid: function (section) {
-			return this.model.validate({section: section});
+		checkModelValid: function(section) {
+			return this.model.validate({
+				section: section
+			});
 		},
 
-		toggleValidState: function () {
+		toggleValidState: function() {
 			//this.$(".WrongField").removeClass("WrongField");
 
 			if (this.validationErrors) {
-				var wrongFieldsSelector = _(this.validationErrors).map(function (e) {
+				var wrongFieldsSelector = _(this.validationErrors).map(function(e) {
 					return "[name='" + e.property + "']";
 				}).join(",");
 				console.log(wrongFieldsSelector);
-				this.$(wrongFieldsSelector).each(function () {
+				this.$(wrongFieldsSelector).each(function() {
 					//if (!$(this).data("subbind")) {
-						//if ($(this).hasClass("hasDatepicker")) {
-							//$(this).parents(".DatePeriod").addClass("WrongField");
-						//} else
-						if ($(this).is("select")) {
-							if ($(this).is(".select2")) {
-								$(this).prev().addClass("WrongField");
-							} else {
-								$(this).next().addClass("WrongField");
-							}
+					//if ($(this).hasClass("hasDatepicker")) {
+					//$(this).parents(".DatePeriod").addClass("WrongField");
+					//} else
+					if ($(this).is("select")) {
+						if ($(this).is(".select2")) {
+							$(this).prev().addClass("WrongField");
 						} else {
-							$(this).addClass("WrongField");
+							$(this).next().addClass("WrongField");
 						}
+					} else {
+						$(this).addClass("WrongField");
+					}
 					//}
 				});
 
@@ -338,19 +360,23 @@ define([
 			}
 		},
 
-		onCancelClick: function (event) {
+		onCancelClick: function(event) {
 			if (this.options.popUpMode) {
 				this.trigger("patient:canceled");
 			} else {
 				if (this.model.isNew()) {
-					App.Router.navigate("patients/", {trigger:true});
+					App.Router.navigate("patients/", {
+						trigger: true
+					});
 				} else {
-					App.Router.navigate("patients/" + this.model.get("id") + "/", {trigger:true});
+					App.Router.navigate("patients/" + this.model.get("id") + "/", {
+						trigger: true
+					});
 				}
 			}
 		},
 
-		onNextStepClick: function (event) {
+		onNextStepClick: function(event) {
 			this.validationErrors = this.checkModelValid(this.currentStep);
 			if (this.validationErrors) {
 				this.render(true);
@@ -363,7 +389,7 @@ define([
 			}
 		},
 
-		onPrevStepClick: function (event) {
+		onPrevStepClick: function(event) {
 			this.validationErrors = this.checkModelValid(this.currentStep);
 			if (this.validationErrors) {
 				this.render(true);
@@ -376,23 +402,23 @@ define([
 			}
 		},
 
-		getCurrentMenuStructureItemIndex: function () {
-			var currentMenuStructureItem = _(this.menuStructure).find(function (mi) {
+		getCurrentMenuStructureItemIndex: function() {
+			var currentMenuStructureItem = _(this.menuStructure).find(function(mi) {
 				return mi.name === this.currentStep;
 			}, this);
 
 			return this.menuStructure.indexOf(currentMenuStructureItem);
 		},
 
-		isOnFirstPage: function () {
+		isOnFirstPage: function() {
 			return this.getCurrentMenuStructureItemIndex() === 0;
 		},
 
-		isOnLastPage: function () {
+		isOnLastPage: function() {
 			return this.getCurrentMenuStructureItemIndex() === this.menuStructure.length - 1;
 		},
 
-		render: function (modelValidChecked) {
+		render: function(modelValidChecked) {
 			var self = this;
 
 			if (!this.mainIsRendered) {
@@ -441,33 +467,33 @@ define([
 			this.$(".Prev").toggle(!this.isOnFirstPage());
 			this.$(".Next").toggle(!this.isOnLastPage());
 
-			this.$("a:not(.AllowDefault), button:not(.AllowDefault)").live("click", function (event) {
+			this.$("a:not(.AllowDefault), button:not(.AllowDefault)").live("click", function(event) {
 				event.preventDefault();
 			});
 
 			this.$("input[data-type='snils']").mask("999-999-999 99");
 
-			this.$("input[data-type='phone']").live("keypress", function (event) {
+			this.$("input[data-type='phone']").live("keypress", function(event) {
 				if (!$(this).data("doNotValidate")) {
 					// allow input for [space, (, ), +, -] and digits
-					if ([32,40,41,43,45].indexOf(event.which) == -1 && (event.which < 48 || event.which > 57)) {
+					if ([32, 40, 41, 43, 45].indexOf(event.which) == -1 && (event.which < 48 || event.which > 57)) {
 						event.preventDefault();
 						event.stopPropagation();
 					}
 				}
 			});
 
-			this.$(":input").each(function () {
+			this.$(":input").each(function() {
 				if ($(this).data("maxlength")) {
 					//console.log($(this));
-					$(this).on("keypress", function (event) {
+					$(this).on("keypress", function(event) {
 						//console.log($(this));
 						if ($(this).val().length == $(this).data("maxlength")) {
 							event.preventDefault();
 							event.stopPropagation();
 						}
 					});
-					$(this).on("change", function (event) {
+					$(this).on("change", function(event) {
 						if ($(this).val().length > $(this).data("maxlength")) {
 							$(this).val($(this).val().substr(0, $(this).data("maxlength")))
 						}
@@ -481,11 +507,11 @@ define([
 
 			this.toggleValidState();
 
-			this.$(".WrongField").live("focus", function () {
+			this.$(".WrongField").live("focus", function() {
 				self.errorToolTip.showAt(this);
 			});
 
-			this.$("input,select").live("blur", function () {
+			this.$("input,select").live("blur", function() {
 				self.errorToolTip.hide();
 			});
 
@@ -503,42 +529,88 @@ define([
 			return this;
 		},
 
-		getMenuStructure: function () {
+		getMenuStructure: function() {
 			var menuStructure;
 			if (this.model.isNew()) {
-				menuStructure = [
-					{name: "general", title: "Основное", uri: "/patients/new/"},
-					{name: "documents", title: "Документы", uri: "/patients/new/documents/"},
-					{name: "address", title: "Адреса", uri: "/patients/new/address/"},
-					{name: "medicalInfo", title: "Мед. особенности", uri: "/patients/new/medicalInfo/"},
-					{name: "other", title: "Прочее", uri: "/patients/new/other/"},
-					{name: "quotes", title: "Квоты", uri: "/patients/new/quotes/"}
+				menuStructure = [{
+						name: "general",
+						title: "Основное",
+						uri: "/patients/new/"
+					}, {
+						name: "documents",
+						title: "Документы",
+						uri: "/patients/new/documents/"
+					}, {
+						name: "address",
+						title: "Адреса",
+						uri: "/patients/new/address/"
+					}, {
+						name: "medicalInfo",
+						title: "Мед. особенности",
+						uri: "/patients/new/medicalInfo/"
+					}, {
+						name: "other",
+						title: "Прочее",
+						uri: "/patients/new/other/"
+					}, {
+						name: "quotes",
+						title: "Квоты",
+						uri: "/patients/new/quotes/"
+					}
 				];
 			} else {
 				menuStructure = [
-					App.Router.compile({name: "general", title: "Основное", uri: "/patients/:id/edit/"}, this.model.toJSON()),
-					App.Router.compile({name: "documents", title: "Документы", uri: "/patients/:id/edit/documents/"}, this.model.toJSON()),
-					App.Router.compile({name: "address", title: "Адреса", uri: "/patients/:id/edit/address/"}, this.model.toJSON()),
-					App.Router.compile({name: "medicalInfo", title: "Мед. особенности", uri: "/patients/:id/edit/medicalInfo/"}, this.model.toJSON()),
-					App.Router.compile({name: "other", title: "Прочее", uri: "/patients/:id/edit/other/"}, this.model.toJSON()),
-					App.Router.compile({name: "quotes", title: "Квоты", uri: "/patients/:id/edit/quotes/"}, this.model.toJSON())
+					App.Router.compile({
+						name: "general",
+						title: "Основное",
+						uri: "/patients/:id/edit/"
+					}, this.model.toJSON()),
+					App.Router.compile({
+						name: "documents",
+						title: "Документы",
+						uri: "/patients/:id/edit/documents/"
+					}, this.model.toJSON()),
+					App.Router.compile({
+						name: "address",
+						title: "Адреса",
+						uri: "/patients/:id/edit/address/"
+					}, this.model.toJSON()),
+					App.Router.compile({
+						name: "medicalInfo",
+						title: "Мед. особенности",
+						uri: "/patients/:id/edit/medicalInfo/"
+					}, this.model.toJSON()),
+					App.Router.compile({
+						name: "other",
+						title: "Прочее",
+						uri: "/patients/:id/edit/other/"
+					}, this.model.toJSON()),
+					App.Router.compile({
+						name: "quotes",
+						title: "Квоты",
+						uri: "/patients/:id/edit/quotes/"
+					}, this.model.toJSON())
 				];
 			}
 
 			return menuStructure;
 		},
 
-		attachModelHandlers: function () {
+		attachModelHandlers: function() {
 			var self = this;
 
-			this.model.on("sync", function(data){
+			this.model.on("sync", function(data) {
 				//console.log("synced", data);
 
 				if (this.options.popUpMode) {
 					this.trigger("patient:created", this.model);
 				} else {
-					pubsub.trigger('noty', {text:'Карточка пациента ' + (self.modelIsNew ? 'создана' : 'изменена')});
-					App.Router.navigate("/patients/"+ this.model.id +"/", {trigger: true});
+					pubsub.trigger('noty', {
+						text: 'Карточка пациента ' + (self.modelIsNew ? 'создана' : 'изменена')
+					});
+					App.Router.navigate("/patients/" + this.model.id + "/", {
+						trigger: true
+					});
 				}
 			}, this);
 		}
@@ -553,22 +625,24 @@ define([
 			"change input[name='name-middle']": "onMiddleNameChange"
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			var self = this;
 			//this.relationsView = new RelationsView({collection: self.model.get("relations")});
 
-			this.contactsView = new ContactsView({collection: self.model.get("phones")});
+			this.contactsView = new ContactsView({
+				collection: self.model.get("phones")
+			});
 		},
 
 		/*onSexChange: function (event) {
 			this.relationsView.onSexChange($(event.currentTarget).val());
 		},*/
 
-		onMiddleNameChange: function (event) {
+		onMiddleNameChange: function(event) {
 			var middleName = this.$("input[name='name-middle']").val();
 
 			if (middleName.length) {
-				if(middleName[middleName.length - 1] === "а") {
+				if (middleName[middleName.length - 1] === "а") {
 					this.$("select[name='sex']").val("female").change();
 				} else {
 					this.$("select[name='sex']").val("male").change();
@@ -576,7 +650,7 @@ define([
 			}
 		},
 
-		render: function () {
+		render: function() {
 			var beautyJSON = this.model.toJSON();
 
 			this.$el.html($.tmpl(this.template, beautyJSON));
@@ -595,21 +669,27 @@ define([
 	});
 
 	var ContactsView = View.extend({
-		initialize: function (options) {
+		initialize: function(options) {
 			this.collection.on("add", this.addOne, this);
 
 			if (this.collection.isEmpty()) {
-				this.collection.add({}, {silent: true});
+				this.collection.add({}, {
+					silent: true
+				});
 			}
 		},
 
-		onItemAdd: function (itemView) {
+		onItemAdd: function(itemView) {
 			this.triggerView = itemView;
-			this.collection.add({}, {at: this.collection.indexOf(this.triggerView.model) + 1});
+			this.collection.add({}, {
+				at: this.collection.indexOf(this.triggerView.model) + 1
+			});
 		},
 
-		addOne: function (item) {
-			var itemView = new ContactView({model: item});
+		addOne: function(item) {
+			var itemView = new ContactView({
+				model: item
+			});
 
 			itemView
 				.on("item:add", this.onItemAdd, this)
@@ -622,7 +702,7 @@ define([
 			}
 		},
 
-		render: function () {
+		render: function() {
 			this.$el.empty();
 			this.triggerView = undefined;
 
@@ -638,37 +718,37 @@ define([
 		template: tmplContact,
 
 		events: {
-			"click .AddIcon"     : "onAddIconClick",
-			"click .RemoveIcon"  : "onRemoveIconClick",
+			"click .AddIcon": "onAddIconClick",
+			"click .RemoveIcon": "onRemoveIconClick",
 			"change .ContactType": "onContactTypeChange"
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			this.model.collection.on("add", this.toggleRemoveIcon, this);
 			this.model.collection.on("remove", this.toggleRemoveIcon, this);
 		},
 
-		toggleRemoveIcon: function (event) {
+		toggleRemoveIcon: function(event) {
 			if (this.model.collection)
 				this.$(".RemoveIcon").css("display", (this.model.collection.length > 1 ? "inline-block" : "none"));
 		},
 
-		onAddIconClick: function (event) {
+		onAddIconClick: function(event) {
 			this.trigger("item:add", this);
 		},
 
-		onRemoveIconClick: function (event) {
+		onRemoveIconClick: function(event) {
 			var self = this;
 
 			this.model.collection.remove(this.model);
 
-			this.$el.hide("fast", function () {
+			this.$el.hide("fast", function() {
 				self.remove();
 				self.unbind();
 			});
 		},
 
-		onContactTypeChange: function (event) {
+		onContactTypeChange: function(event) {
 			switch ($(event.currentTarget).val()) {
 				case "9":
 					this.$(".ContactNumber").prop("placeholder", "name@example.com").data("doNotValidate", true);
@@ -682,7 +762,7 @@ define([
 			}
 		},
 
-		render: function () {
+		render: function() {
 			var JSON = this.model.toJSON();
 			JSON.cid = this.model.cid;
 
@@ -928,7 +1008,7 @@ define([
 			"change select[name='tfoms']": "onTfomsChange"
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			// Коллекции используемые в дочерних вью
 			this.paymentsCollection = this.model.get("payments");
 			this.idCardsCollection = this.model.get("idCards");
@@ -936,32 +1016,51 @@ define([
 			this.paymentsCollection.on("dictionaries-change", this.onPaymentsDictionariesChange, this);
 
 			// Дочерние вью
-			this.idCardsView = new IdCardsView({collection: this.idCardsCollection});
-			this.policiesOmsView = new PoliciesView({type: "oms", collection: this.paymentsCollection});
-			this.policiesDmsView = new PoliciesView({type: "dms", collection: this.paymentsCollection});
+			this.idCardsView = new IdCardsView({
+				collection: this.idCardsCollection
+			});
+			this.policiesOmsView = new PoliciesView({
+				type: "oms",
+				collection: this.paymentsCollection
+			});
+			this.policiesDmsView = new PoliciesView({
+				type: "dms",
+				collection: this.paymentsCollection
+			});
 
 			// Загрузка справочников
-			var docDicts = [
-				{name: "tfomses", pathPart: "TFOMS"},
-				{name: "insuranceCompanies", pathPart: "insurance"},
-				{name: "policyTypes", pathPart: "policyTypes&filter[name]=омс"},
-				{name: "docTypes", pathPart: "clientDocument&filter[groupId]=1"}
+			var docDicts = [{
+					name: "tfomses",
+					pathPart: "TFOMS"
+				}, {
+					name: "insuranceCompanies",
+					pathPart: "insurance"
+				}, {
+					name: "policyTypes",
+					pathPart: "policyTypes&filter[name]=омс"
+				}, {
+					name: "docTypes",
+					pathPart: "clientDocument&filter[groupId]=1"
+				}
 			];
 
 			this.initWithDictionaries(docDicts, this.onDictionariesLoaded, this, true);
 		},
 
-		onTfomsChange: function (event) {
+		onTfomsChange: function(event) {
 			var unsetConfirmed = confirm("Страховые компании будут сброшены, продолжить?");
 			if (unsetConfirmed) {
-				this.paymentsCollection.setSelectedTfoms({tfomsId: $(event.currentTarget).val(), unsetSmo: true});
+				this.paymentsCollection.setSelectedTfoms({
+					tfomsId: $(event.currentTarget).val(),
+					unsetSmo: true
+				});
 			} else {
 				$(event.currentTarget).select2("val", this.paymentsCollection.getSelectedTfoms());
 			}
 		},
 
-		onDictionariesLoaded: function (dictionaries) {
-			var dictValueAlphabeticComparator = function (a, b) {
+		onDictionariesLoaded: function(dictionaries) {
+			var dictValueAlphabeticComparator = function(a, b) {
 				if (a.value < b.value) return -1;
 				if (a.value > b.value) return 1;
 				return 0;
@@ -987,22 +1086,30 @@ define([
 			$tfoms.find("option:not(:first)").remove();
 
 
-			$tfoms.append(_.map(dictionaries.tfomses, function (tfoms) {
-				return $("<option></option>", {text: tfoms.value, value: tfoms.id});
+			$tfoms.append(_.map(dictionaries.tfomses, function(tfoms) {
+				return $("<option></option>", {
+					text: tfoms.value,
+					value: tfoms.id
+				});
 			}));
 
-			this.paymentsCollection.setSelectedTfoms({tfomsId: guessedTfomsId, unsetSmo: false});
+			this.paymentsCollection.setSelectedTfoms({
+				tfomsId: guessedTfomsId,
+				unsetSmo: false
+			});
 
 			$tfoms.select2("val", guessedTfomsId);
 		},
 
-		guessTfoms: function (insuranceCompanies) {
+		guessTfoms: function(insuranceCompanies) {
 			var ic;
-			var someSmo = this.paymentsCollection.find(function (payment) { return payment.get("smo").get("id"); });
+			var someSmo = this.paymentsCollection.find(function(payment) {
+				return payment.get("smo").get("id");
+			});
 
 			if (someSmo) {
 				var smoId = someSmo.get("smo").get("id");
-				ic = _.find(insuranceCompanies, function (ic) {
+				ic = _.find(insuranceCompanies, function(ic) {
 					return ic.id == smoId;
 				}, this);
 			}
@@ -1020,7 +1127,7 @@ define([
 			}));
 		},*/
 
-		render: function () {
+		render: function() {
 			//////////////
 			/*var ic;
 			var tfomsId;
@@ -1057,14 +1164,17 @@ define([
 				"#policiesDms": this.policiesDmsView
 			});
 
-			this.paymentsCollection.setSelectedTfoms({tfomsId: this.$("select[name='tfoms']").select2("val"), unsetSmo: false});
+			this.paymentsCollection.setSelectedTfoms({
+				tfomsId: this.$("select[name='tfoms']").select2("val"),
+				unsetSmo: false
+			});
 
 			return this;
 		}
 	});
 
 	var PoliciesView = View.extend({
-		initialize: function (options) {
+		initialize: function(options) {
 			this.collection.on("add", this.addOne, this);
 
 			if (this.options.type === "oms") {
@@ -1080,19 +1190,25 @@ define([
 			}
 		},
 
-		onModelAdd: function (view) {
+		onModelAdd: function(view) {
 			this.triggerView = view;
 			var NewModel = new App.Models.Payment();
 			if (this.options.type === "dms") {
 				NewModel.get("policyType").set("id", 3);
 			}
-			this.collection.add(NewModel, {at: this.collection.indexOf(this.triggerView.model) + 1});
+			this.collection.add(NewModel, {
+				at: this.collection.indexOf(this.triggerView.model) + 1
+			});
 		},
 
-		addOne: function (model) {
+		addOne: function(model) {
 			if (this.options.type == "dms" && model.get("policyType").get("id") == 3 ||
-				  this.options.type == "oms" && model.get("policyType").get("id") != 3) {
-				var view = new PolicyView({model: model, type: this.options.type, dictionaries: this.dictionaries || {}});
+				this.options.type == "oms" && model.get("policyType").get("id") != 3) {
+				var view = new PolicyView({
+					model: model,
+					type: this.options.type,
+					dictionaries: this.dictionaries || {}
+				});
 
 				view
 					.on("model:add", this.onModelAdd, this)
@@ -1106,7 +1222,7 @@ define([
 			}
 		},
 
-		render: function () {
+		render: function() {
 			this.$el.empty();
 			this.triggerView = undefined;
 
@@ -1122,12 +1238,12 @@ define([
 		template: tmplPolicy,
 
 		events: {
-			"click .AddIcon"   : "onAddIconClick",
+			"click .AddIcon": "onAddIconClick",
 			"click .RemoveIcon": "onRemoveIconClick",
 			"change .SMO": "onSMOChange"
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			this.model.collection.on("add", this.toggleRemoveIcon, this);
 			this.model.collection.on("remove", this.toggleRemoveIcon, this);
 
@@ -1137,26 +1253,28 @@ define([
 			console.log(this.model.toJSON())
 		},
 
-		onAddIconClick: function (event) {
+		onAddIconClick: function(event) {
 			this.trigger("model:add", this);
 		},
 
-		onRemoveIconClick: function (event) {
+		onRemoveIconClick: function(event) {
 			var self = this;
 
 			this.model.collection.remove(this.model);
 
-			this.$el.hide("fast", function () {
+			this.$el.hide("fast", function() {
 				self.remove();
 				self.unbind();
 			});
 		},
 
-		onSMOChange: function (event) {
-			this.model.get("smo").set({id: $(event.currentTarget).select2("val")});
+		onSMOChange: function(event) {
+			this.model.get("smo").set({
+				id: $(event.currentTarget).select2("val")
+			});
 		},
 
-		onDictionariesChange: function () {
+		onDictionariesChange: function() {
 			/*var $smo = this.$(".SMO");
 
 			$smo.find("option:not(:first)").remove();
@@ -1168,13 +1286,16 @@ define([
 			//$smo.select2("val", this.model.get("smo").get("id"));
 		},
 
-		onSelectedTfomsChange: function (event) {
+		onSelectedTfomsChange: function(event) {
 			var $smo = this.$(".SMO");
 
 			$smo.find("option:not(:first)").remove();
 
-			$smo.append(_.map(this.model.collection.getDictionaries().insuranceCompanies, function (ic) {
-				return $("<option></option>", {text: ic.value, value: ic.id});
+			$smo.append(_.map(this.model.collection.getDictionaries().insuranceCompanies, function(ic) {
+				return $("<option></option>", {
+					text: ic.value,
+					value: ic.id
+				});
 			}));
 
 			if (event.unsetSmo) {
@@ -1184,7 +1305,7 @@ define([
 			}
 		},
 
-		toggleRemoveIcon: function (event) {
+		toggleRemoveIcon: function(event) {
 			if (this.model.collection) {
 				var vis = false;
 				if (this.options.type == "dms") {
@@ -1196,7 +1317,7 @@ define([
 			}
 		},
 
-		render: function () {
+		render: function() {
 			var json = {};
 
 			json.model = this.model.toJSON();
@@ -1223,17 +1344,21 @@ define([
 	});
 
 	var IdCardsView = View.extend({
-		initialize: function (options) {
+		initialize: function(options) {
 			this.collection.on("add", this.addOne, this);
 		},
 
-		onIdCardAdd: function (idCardView) {
+		onIdCardAdd: function(idCardView) {
 			this.triggerView = idCardView;
-			this.collection.add({}, {at: this.collection.indexOf(this.triggerView.model) + 1});
+			this.collection.add({}, {
+				at: this.collection.indexOf(this.triggerView.model) + 1
+			});
 		},
 
-		addOne: function (idCard) {
-			var idCardView = new IdCardView({model: idCard});
+		addOne: function(idCard) {
+			var idCardView = new IdCardView({
+				model: idCard
+			});
 
 			idCardView
 				.on("idCard:add", this.onIdCardAdd, this)
@@ -1246,7 +1371,7 @@ define([
 			}
 		},
 
-		render: function () {
+		render: function() {
 			this.$el.empty();
 			this.triggerView = undefined;
 
@@ -1262,51 +1387,53 @@ define([
 		template: tmplIdCard,
 
 		events: {
-			"click .AddIcon"   : "onAddIconClick",
+			"click .AddIcon": "onAddIconClick",
 			"click .RemoveIcon": "onRemoveIconClick",
 
 			"change select.DocType": "onDocTypeChange",
 			"change .DocSeries,.DocNumber": "onDocNumberOrSeriesChange"
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			this.model.collection.on("add", this.toggleRemoveIcon, this);
 			this.model.collection.on("remove", this.toggleRemoveIcon, this);
 		},
 
-		toggleRemoveIcon: function (event) {
+		toggleRemoveIcon: function(event) {
 			if (this.model.collection)
 				this.$(".RemoveIcon").css("display", (this.model.collection.length > 1 ? "inline-block" : "none"));
 		},
 
-		onAddIconClick: function (event) {
+		onAddIconClick: function(event) {
 			this.trigger("idCard:add", this);
 		},
 
-		onRemoveIconClick: function (event) {
+		onRemoveIconClick: function(event) {
 			var self = this;
 
 			this.model.collection.remove(this.model);
 
-			this.$el.hide("fast", function () {
+			this.$el.hide("fast", function() {
 				self.remove();
 				self.unbind();
 			});
 		},
 
-		onDocTypeChange: function (event) {
+		onDocTypeChange: function(event) {
 			this.$(".DocSeries,.DocNumber").val("").change();
-			this.model.get("docType").set({id: this.$("select.DocType").val()});
+			this.model.get("docType").set({
+				id: this.$("select.DocType").val()
+			});
 		},
 
-		onDocNumberOrSeriesChange: function () {
+		onDocNumberOrSeriesChange: function() {
 			this.model.set({
 				series: this.$(".DocSeries").val(),
 				number: this.$(".DocNumber").val()
 			});
 		},
 
-		applyMasks: function () {
+		applyMasks: function() {
 			/*var $docType = this.$(".DocType");
 			var $series  = this.$(".DocSeries");
 			var $number  = this.$(".DocNumber");
@@ -1336,21 +1463,21 @@ define([
 			}*/
 		},
 
-		onSeriesKeypress: function (event) {
+		onSeriesKeypress: function(event) {
 			if (this.$("input[name$='series']").val().length == this.seriesLength) {
 				event.preventDefault();
 				event.stopPropagation();
 			}
 		},
 
-		onNumberKeypress: function (event) {
+		onNumberKeypress: function(event) {
 			if (this.$("input[name$='number']").val().length == this.numberLength) {
 				event.preventDefault();
 				event.stopPropagation();
 			}
 		},
 
-		render: function () {
+		render: function() {
 			var idCardJSON = this.model.toJSON();
 			idCardJSON.cid = this.model.cid;
 
@@ -1384,7 +1511,7 @@ define([
 			"change #addresses-equal": "onAddressesEqualChange"
 		},
 
-		initialize: function () {
+		initialize: function() {
 			var residential = this.model.get("address").get("residential");
 			var registered = this.model.get("address").get("registered");
 
@@ -1418,7 +1545,7 @@ define([
 			}, this);*/
 		},
 
-		onAddressesEqualChange: function (event) {
+		onAddressesEqualChange: function(event) {
 			var addressesEqual = Boolean($(event.currentTarget).is(":checked"));
 
 			this.model.get("address").setAddressesEqual(addressesEqual);
@@ -1428,12 +1555,12 @@ define([
 			this.toggleAddressesEqual(addressesEqual);
 		},
 
-		toggleAddressesEqual: function (addressesEqual) {
+		toggleAddressesEqual: function(addressesEqual) {
 			this.registeredAddress.$el.parent().toggle(!addressesEqual);
 			this.residentialAddress.$el.parent().find("legend").text(addressesEqual ? "Адрес проживания и регистрации" : "Адрес проживания");
 		},
 
-		render: function () {
+		render: function() {
 			var self = this;
 
 			//this.addressesEqual = this.model.isNew() ? false : this.model.get("address").getIsEqual();
@@ -1441,13 +1568,15 @@ define([
 			//this.model.get("address").addressesEqual = this.addressesEqual;
 
 
-			this.$el.html($.tmpl(tmplAddress, {addressesEqual: self.addressesEqual}));
+			this.$el.html($.tmpl(tmplAddress, {
+				addressesEqual: self.addressesEqual
+			}));
 
 			UIInitialize(this.el);
 
 			this.assign({
 				"#residentialAddress": this.residentialAddress,
-				"#registeredAddress" : this.registeredAddress
+				"#registeredAddress": this.registeredAddress
 			});
 
 			this.toggleAddressesEqual(this.addressesEqual);
@@ -1461,31 +1590,41 @@ define([
 	var MedicalInfoView = View.extend({
 		template: tmplMedInfo,
 
-		initialize: function (options) {
-			this.drugIntolerances = new DrugIntolerancesView({collection: this.model.get("drugIntolerances")});
-			this.allergies = new AllergiesView({collection: this.model.get("allergies")});
+		initialize: function(options) {
+			this.drugIntolerances = new DrugIntolerancesView({
+				collection: this.model.get("drugIntolerances")
+			});
+			this.allergies = new AllergiesView({
+				collection: this.model.get("allergies")
+			});
 
 			var blood = this.model.get("blood");
 
-			blood.on("change", function (b) {
+			blood.on("change", function(b) {
 				if (!blood.get("id")) {
 					blood.set("group", "");
 				}
 				//console.log("blood", blood)
 			}, this);
 
-			this.initWithDictionaries([{name: "bloodTypes", pathPart: "bloodTypes"}], this.onDictionariesLoaded, this, true);
+			this.initWithDictionaries([{
+					name: "bloodTypes",
+					pathPart: "bloodTypes"
+				}
+			], this.onDictionariesLoaded, this, true);
 		},
 
-		onDictionariesLoaded: function (dicts) {
+		onDictionariesLoaded: function(dicts) {
 			this.bloodTypes = dicts.bloodTypes;
 			this.render();
 		},
 
-		render: function () {
+		render: function() {
 			var self = this;
 
-			this.$el.html($.tmpl(this.template, {bloodTypes: self.bloodTypes}));
+			this.$el.html($.tmpl(this.template, {
+				bloodTypes: self.bloodTypes
+			}));
 
 			this.assign({
 				"#drug-intolerances": this.drugIntolerances,
@@ -1499,21 +1638,27 @@ define([
 	});
 
 	var DrugIntolerancesView = View.extend({
-		initialize: function (options) {
+		initialize: function(options) {
 			this.collection.on("add", this.addOne, this);
 
 			if (this.collection.isEmpty()) {
-				this.collection.add({}, {silent: true});
+				this.collection.add({}, {
+					silent: true
+				});
 			}
 		},
 
-		onDrugIntoleranceAdd: function (drugIntoleranceView) {
+		onDrugIntoleranceAdd: function(drugIntoleranceView) {
 			this.triggerView = drugIntoleranceView;
-			this.collection.add({}, {at: this.collection.indexOf(this.triggerView.model) + 1});
+			this.collection.add({}, {
+				at: this.collection.indexOf(this.triggerView.model) + 1
+			});
 		},
 
-		addOne: function (drugIntolerance) {
-			var drugIntoleranceView = new DrugIntoleranceView({model: drugIntolerance});
+		addOne: function(drugIntolerance) {
+			var drugIntoleranceView = new DrugIntoleranceView({
+				model: drugIntolerance
+			});
 
 			drugIntoleranceView
 				.on("drugIntolerance:add", this.onDrugIntoleranceAdd, this)
@@ -1526,7 +1671,7 @@ define([
 			}
 		},
 
-		render: function () {
+		render: function() {
 			this.$el.empty();
 			this.triggerView = undefined;
 
@@ -1542,36 +1687,36 @@ define([
 		template: tmplDrugIntolerance,
 
 		events: {
-			"click .AddIcon"   : "onAddIconClick",
+			"click .AddIcon": "onAddIconClick",
 			"click .RemoveIcon": "onRemoveIconClick"
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			this.model.collection.on("add", this.toggleRemoveIcon, this);
 			this.model.collection.on("remove", this.toggleRemoveIcon, this);
 		},
 
-		toggleRemoveIcon: function (event) {
+		toggleRemoveIcon: function(event) {
 			if (this.model.collection)
 				this.$(".RemoveIcon").css("display", (this.model.collection.length > 1 ? "inline-block" : "none"));
 		},
 
-		onAddIconClick: function (event) {
+		onAddIconClick: function(event) {
 			this.trigger("drugIntolerance:add", this);
 		},
 
-		onRemoveIconClick: function (event) {
+		onRemoveIconClick: function(event) {
 			var self = this;
 
 			this.model.collection.remove(this.model);
 
-			this.$el.hide("fast", function () {
+			this.$el.hide("fast", function() {
 				self.remove();
 				self.unbind();
 			});
 		},
 
-		render: function () {
+		render: function() {
 			var drugIntoleranceJSON = this.model.toJSON();
 			drugIntoleranceJSON.cid = this.model.cid;
 
@@ -1590,21 +1735,27 @@ define([
 	});
 
 	var AllergiesView = View.extend({
-		initialize: function (options) {
+		initialize: function(options) {
 			this.collection.on("add", this.addOne, this);
 
 			if (this.collection.isEmpty()) {
-				this.collection.add({}, {silent: true});
+				this.collection.add({}, {
+					silent: true
+				});
 			}
 		},
 
-		onItemAdd: function (itemView) {
+		onItemAdd: function(itemView) {
 			this.triggerView = itemView;
-			this.collection.add({}, {at: this.collection.indexOf(this.triggerView.model) + 1});
+			this.collection.add({}, {
+				at: this.collection.indexOf(this.triggerView.model) + 1
+			});
 		},
 
-		addOne: function (item) {
-			var itemView = new AllergyView({model: item});
+		addOne: function(item) {
+			var itemView = new AllergyView({
+				model: item
+			});
 
 			itemView
 				.on("item:add", this.onItemAdd, this)
@@ -1617,7 +1768,7 @@ define([
 			}
 		},
 
-		render: function () {
+		render: function() {
 			this.$el.empty();
 			this.triggerView = undefined;
 
@@ -1633,36 +1784,36 @@ define([
 		template: tmplAllergy,
 
 		events: {
-			"click .AddIcon"   : "onAddIconClick",
+			"click .AddIcon": "onAddIconClick",
 			"click .RemoveIcon": "onRemoveIconClick"
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			this.model.collection.on("add", this.toggleRemoveIcon, this);
 			this.model.collection.on("remove", this.toggleRemoveIcon, this);
 		},
 
-		toggleRemoveIcon: function (event) {
+		toggleRemoveIcon: function(event) {
 			if (this.model.collection)
 				this.$(".RemoveIcon").css("display", (this.model.collection.length > 1 ? "inline-block" : "none"));
 		},
 
-		onAddIconClick: function (event) {
+		onAddIconClick: function(event) {
 			this.trigger("item:add", this);
 		},
 
-		onRemoveIconClick: function (event) {
+		onRemoveIconClick: function(event) {
 			var self = this;
 
 			this.model.collection.remove(this.model);
 
-			this.$el.hide("fast", function () {
+			this.$el.hide("fast", function() {
 				self.remove();
 				self.unbind();
 			});
 		},
 
-		render: function () {
+		render: function() {
 			var allergyJSON = this.model.toJSON();
 			allergyJSON.cid = this.model.cid;
 
@@ -1687,11 +1838,11 @@ define([
 
 		events: {
 			"change select[name$='socialStatus-id']": "onSocialStatusChange",
-			"change select[name|='citizenship']"    : "onCitizenshipChange"
+			"change select[name|='citizenship']": "onCitizenshipChange"
 
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			if (this.model.get("occupations").isEmpty()) {
 				this.model.get("occupations").add({});
 			}
@@ -1715,40 +1866,62 @@ define([
 			var firstCitizenship = this.model.get("citizenship").get("first");
 			var secondCitizenship = this.model.get("citizenship").get("second");
 
-			firstCitizenship.get("socStatusType").on("change", function (sst) {
+			firstCitizenship.get("socStatusType").on("change", function(sst) {
 				if (!sst.get("id")) {
 					firstCitizenship.unset("id");
 					//console.log(firstCitizenship);
 				}
 			}, this);
 
-			secondCitizenship.get("socStatusType").on("change", function (sst) {
+			secondCitizenship.get("socStatusType").on("change", function(sst) {
 				if (!sst.get("id")) {
 					secondCitizenship.unset("id");
 					//console.log(secondCitizenship);
 				}
 			}, this);
 
-			var otherDicts = [
-				{name: "disabilityTypes", pathPart: "disabilityTypes"},
-				{name: "disabilityApprovalDocs", pathPart: "clientDocument&filter[groupId]=7"},
-				{name: "citizenships", pathPart: "citizenships"},
-				{name: "benefitCategoriesFederal", fd: true, id: 10},
-				{name: "benefitCategoriesRegional", fd: true, id: 11},
+			var otherDicts = [{
+					name: "disabilityTypes",
+					pathPart: "disabilityTypes"
+				}, {
+					name: "disabilityApprovalDocs",
+					pathPart: "clientDocument&filter[groupId]=7"
+				}, {
+					name: "citizenships",
+					pathPart: "citizenships"
+				}, {
+					name: "benefitCategoriesFederal",
+					fd: true,
+					id: 10
+				}, {
+					name: "benefitCategoriesRegional",
+					fd: true,
+					id: 11
+				},
 				//{name: "socialStatuses", fd: true, id: 1},
-				{name: "socialStatuses", pathPart: "socStatus"},
-				{name: "ranks", fd: true, id: 7},
-				{name: "forceBranches", fd: true, id: 6}
+				{
+					name: "socialStatuses",
+					pathPart: "socStatus"
+				}, {
+					name: "ranks",
+					fd: true,
+					id: 7
+				}, {
+					name: "forceBranches",
+					fd: true,
+					id: 6
+				}
 			];
 
 			this.initWithDictionaries(otherDicts, this.onDictionariesLoaded, this, true);
 		},
 
-		onDictionariesLoaded: function (dicts) {
+		onDictionariesLoaded: function(dicts) {
 			this.dicts = {};
 
-			this.dicts.citizenships   = dicts.citizenships.sort(function (a, b) {
-				var nameA = a.value.toLowerCase(), nameB = b.value.toLowerCase();
+			this.dicts.citizenships = dicts.citizenships.sort(function(a, b) {
+				var nameA = a.value.toLowerCase(),
+					nameB = b.value.toLowerCase();
 				if (nameA < nameB)
 					return -1;
 				if (nameA > nameB)
@@ -1756,10 +1929,10 @@ define([
 				return 0;
 			});
 			this.dicts.socialStatuses = dicts.socialStatuses;
-			this.dicts.ranks          = dicts.ranks;
-			this.dicts.forceBranches  = dicts.forceBranches;
+			this.dicts.ranks = dicts.ranks;
+			this.dicts.forceBranches = dicts.forceBranches;
 
-			_(this.dicts.socialStatuses).each(function (socialStatus) {
+			_(this.dicts.socialStatuses).each(function(socialStatus) {
 				switch (socialStatus.id) {
 					case 310:
 						//Работающий
@@ -1796,9 +1969,9 @@ define([
 				}
 			});
 
-			this.dicts.disabilityTypes           = dicts.disabilityTypes;
-			this.dicts.disabilityApprovalDocs    = dicts.disabilityApprovalDocs;
-			this.dicts.benefitCategoriesFederal  = dicts.benefitCategoriesFederal;
+			this.dicts.disabilityTypes = dicts.disabilityTypes;
+			this.dicts.disabilityApprovalDocs = dicts.disabilityApprovalDocs;
+			this.dicts.benefitCategoriesFederal = dicts.benefitCategoriesFederal;
 			this.dicts.benefitCategoriesRegional = dicts.benefitCategoriesRegional;
 
 			//this.benefitCategories = _(dicts.benefitCategoriesFederal).union(dicts.benefitCategoriesRegional);
@@ -1806,7 +1979,7 @@ define([
 			this.render();
 		},
 
-		onSocialStatusChange: function (event) {
+		onSocialStatusChange: function(event) {
 			var $sel = this.$("select[name$='socialStatus-id']");
 			var relation = this.$("select[name$='socialStatus-id']").find(":selected").data("relation");
 
@@ -1818,14 +1991,14 @@ define([
 			this.$(relation).show();
 		},
 
-		onCitizenshipChange: function (event) {
+		onCitizenshipChange: function(event) {
 			//this.$("")
 			if (!$(event.currentTarget).val()) {
 				this.model.get($(event.currentTarget));
 			}
 		},
 
-		render: function () {
+		render: function() {
 			var self = this;
 
 			var json = {
@@ -1868,18 +2041,9 @@ define([
 
 		//noSaveBtn: true,
 
-		template:
-			'<li>' +
-				'<div class="ContentHeader Clearfix">' +
-					'<div class="PageActions">' +
-						'<button id="new-quota">Добавить талон</button>' +
-					'</div>' +
-				'</div>' +
-				'<div id="quotes-grid"></div>' +
-				'<div id="empty-alert" class="Hidden"><h4>Не найдено талонов</h4></div>' +
-			'</li>',
+		template: '<li>' + '<div class="ContentHeader Clearfix">' + '<div class="PageActions">' + '<button id="new-quota">Добавить талон</button>' + '</div>' + '</div>' + '<div id="quotes-grid"></div>' + '<div id="empty-alert" class="Hidden"><h4>Не найдено талонов</h4></div>' + '</li>',
 
-		initialize: function (options) {
+		initialize: function(options) {
 			this.collection = new App.Collections.Quotes();
 			this.grid = new App.Views.Grid({
 				collection: this.collection,
@@ -1893,12 +2057,12 @@ define([
 				this.patientAppeals = new App.Collections.PatientAppeals();
 				this.patientAppeals.patient = this.options.patient;
 
-				this.patientAppeals.on("reset", function () {
+				this.patientAppeals.on("reset", function() {
 					if (this.patientAppeals.length) {
 						this.collection.patientId = this.options.patient.get("id");
 						this.collection.appealId = this.patientAppeals.first().get("id");
 
-						this.collection.on("reset", function () {
+						this.collection.on("reset", function() {
 							this.$("#empty-alert").toggle(!this.collection.length);
 							//this.grid.$(".EditQuota").button({text: "false", icons: {primary: "icon-edit"}});
 						}, this);
@@ -1909,7 +2073,10 @@ define([
 						this.departments.setParams({
 							filter: {
 								hasBeds: true
-							}
+							},
+							limit: 0,
+							sortingField: 'name',
+							sortingMethod: 'asc'
 						});
 						this.departments.on("reset", this.onDepartmentsReset, this);
 						this.departments.fetch();
@@ -1917,9 +2084,14 @@ define([
 						this.quotaTypes = new App.Collections.QuotaTypes();
 						this.quotaTypes.fetch();
 
-						this.initWithDictionaries([
-							{name: "stages", fd: true, id: 32},
-							{name: "statuses", pathPart: "quotaStatus"}
+						this.initWithDictionaries([{
+								name: "stages",
+								fd: true,
+								id: 32
+							}, {
+								name: "statuses",
+								pathPart: "quotaStatus"
+							}
 						], this.onDictionariesLoaded, this, true);
 
 						Cache.Patient = this.options.patient;
@@ -1930,9 +2102,9 @@ define([
 			}
 		},
 
-		onDictionariesLoaded: function (dictionaries) {
+		onDictionariesLoaded: function(dictionaries) {
 			this.dictionaries = dictionaries;
-			this.dictionaries.stages = _(this.dictionaries.stages).filter(function (stage) {
+			this.dictionaries.stages = _(this.dictionaries.stages).filter(function(stage) {
 				return (["1", "3", "4"].indexOf(stage["74"]) !== -1);
 			});
 			console.log(dictionaries);
@@ -1940,13 +2112,13 @@ define([
 			UIInitialize(this.el);*/
 		},
 
-		onDepartmentsReset: function () {
+		onDepartmentsReset: function() {
 			console.log(this.departments.toJSON());
 			/*this.render();
 			UIInitialize(this.el);*/
 		},
 
-		onNewQuotaClick: function () {
+		onNewQuotaClick: function() {
 			console.log("new quota");
 			var addQuotaDialog = new AddQuotaView({
 				dicts: this.dictionaries,
@@ -1956,12 +2128,12 @@ define([
 				patientSex: this.options.patient.get("sex")
 			}).render();
 
-			addQuotaDialog.on("save", function (options) {
+			addQuotaDialog.on("save", function(options) {
 				this.collection.fetch();
 			}, this);
 		},
 
-		openQuota: function (quotaId) {
+		openQuota: function(quotaId) {
 			console.log(quotaId);
 
 			var addQuotaDialog = new AddQuotaView({
@@ -1973,22 +2145,26 @@ define([
 				model: this.collection.get(quotaId)
 			}).render();
 
-			addQuotaDialog.on("save", function (options) {
+			addQuotaDialog.on("save", function(options) {
 				this.collection.fetch();
 			}, this);
 		},
 
-		render: function () {
+		render: function() {
 			var self = this;
 
 			if (!this.options.patient.isNew()) {
 				this.$el.html($.tmpl(this.template));
 
-				this.$("#new-quota").button({icons: {primary: "icon-plus icon-color-green"}});
+				this.$("#new-quota").button({
+					icons: {
+						primary: "icon-plus icon-color-green"
+					}
+				});
 
 				this.$("#quotes-grid").empty().append(this.grid.el);
 
-				this.grid.$(".EditQuota").button().live("click", function (event) {
+				this.grid.$(".EditQuota").button().live("click", function(event) {
 					event.preventDefault();
 					event.stopPropagation();
 
@@ -2030,7 +2206,7 @@ define([
 
 		template: tmplQuotes,
 
-		initialize: function (options) {
+		initialize: function(options) {
 			_.bindAll(this);
 
 			if (!this.model) this.model = new App.Models.Quota();
@@ -2042,24 +2218,24 @@ define([
 				this.selectedMkb = event.selectedDiagnosis;
 			}, this);*/
 
-			this.mkbDir.on("selectionConfirmed", function (event) {
+			this.mkbDir.on("selectionConfirmed", function(event) {
 				mkb.set({
 					code: event.selectedDiagnosis.get("code") || event.selectedDiagnosis.get("id"),
 					diagnosis: event.selectedDiagnosis.get("diagnosis")
 				});
 			}, this);
 
-			mkb.on("change", function () {
+			mkb.on("change", function() {
 				this.$("#quota-diagnosis-code").val(mkb.get("code"));
 				this.$("#quota-diagnosis-desc").val(mkb.get("diagnosis"));
 			}, this);
 		},
 
-		launchMKB: function () {
+		launchMKB: function() {
 			this.mkbDir.open();
 		},
 
-		onTalonNumberChange: function (event) {
+		onTalonNumberChange: function(event) {
 			var talonNumber = $(event.currentTarget).val().replace(/[^\d.]/g, "");
 
 			console.log(talonNumber.length);
@@ -2073,7 +2249,7 @@ define([
 			}
 		},
 
-		render: function () {
+		render: function() {
 			var self = this;
 			this.$el.html($.tmpl(this.template, {
 				model: this.model.toJSON(),
@@ -2090,8 +2266,7 @@ define([
 				resizable: false,
 				dialogClass: "webmis",
 				modal: true,
-				buttons: [
-					{
+				buttons: [{
 						text: self.model.isNew() ? "Добавить" : "Сохранить",
 						//class: "Styled Button buttonOK",
 						//id: "confirmSelection",
@@ -2103,7 +2278,7 @@ define([
 				]
 			});
 
-			this.$("a").click(function (event) {
+			this.$("a").click(function(event) {
 				event.preventDefault();
 			});
 
@@ -2111,14 +2286,18 @@ define([
 
 			//this.$(".select2").width("100%").select2();
 			this.$("#quota-talonNumber").mask("99.9999.99999.999");
-			this.$(".MKBLauncher").button({icons: {primary: "icon-book"}});
+			this.$(".MKBLauncher").button({
+				icons: {
+					primary: "icon-book"
+				}
+			});
 
 			this.mkbDir.render();
 
 			var patientSex = self.options.patientSex.length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
 
 			this.$("#quota-diagnosis-code").autocomplete({
-				source: function (request, response) {
+				source: function(request, response) {
 					$.ajax({
 						url: "/data/dir/mkbs/",
 						dataType: "jsonp",
@@ -2129,8 +2308,8 @@ define([
 								sex: patientSex
 							}
 						},
-						success: function (raw) {
-							response($.map(raw.data, function (item) {
+						success: function(raw) {
+							response($.map(raw.data, function(item) {
 								return {
 									label: item.code + " " + item.diagnosis,
 									value: item.code,
@@ -2142,12 +2321,14 @@ define([
 					});
 				},
 				minLength: 2,
-				select: function (event, ui) {
+				select: function(event, ui) {
 					self.model.get("mkb").set({
 						id: ui.item.id,
 						code: ui.item.value,
 						diagnosis: ui.item.diagnosis
-					}, {silent: true});
+					}, {
+						silent: true
+					});
 
 					self.$("#quota-diagnosis-desc").val(ui.item.diagnosis);
 
@@ -2155,22 +2336,24 @@ define([
 						"Selected: " + ui.item.label :
 						"Nothing selected, input was " + this.value);
 				}
-			}).on("keyup", function () {
-					if (!$(this).val().length) {
-						self.model.get("mkb").set({
-							id: "",
-							code: "",
-							diagnosis: ""
-						}, {silent: true});
+			}).on("keyup", function() {
+				if (!$(this).val().length) {
+					self.model.get("mkb").set({
+						id: "",
+						code: "",
+						diagnosis: ""
+					}, {
+						silent: true
+					});
 
-						self.$("#quota-diagnosis-desc").val("");
-					}
-				});
+					self.$("#quota-diagnosis-desc").val("");
+				}
+			});
 
 			return this;
 		},
 
-		onAddClick: function () {
+		onAddClick: function() {
 			if (this.validate()) {
 				this.model.set({
 					"appealNumber": this.$("#quota-appealNumber").val(),
@@ -2199,61 +2382,59 @@ define([
 
 				var self = this;
 
-				self.model.save(null, {success: function () {
-					console.log("quota saved");
-					self.trigger("save");
-					self.close();
-				}});
+				self.model.save(null, {
+					success: function() {
+						console.log("quota saved");
+						self.trigger("save");
+						self.close();
+					}
+				});
 			}
 		},
 
-		validate: function () {
+		validate: function() {
 			var talonNumberLength = this.$("#quota-talonNumber").val().replace(/[^\d.]/g, "").length;
 			var talonNumberValid = (talonNumberLength == 17) || (talonNumberLength == 0);
 
 			return Form.prototype.validate.apply(this) && talonNumberValid;
 		},
 
-		onMKBCodeKeyUp: function (event) {
+		onMKBCodeKeyUp: function(event) {
 			$(event.currentTarget).val(Core.Strings.toLatin($(event.currentTarget).val()));
 		},
 
-		open: function () {
+		open: function() {
 			this.$el.dialog("open");
 		},
 
-		close: function () {
+		close: function() {
 			this.unbind().remove();
 		}
 	});
 
 
 	var MenuView = View.extend({
-		template: "<ul class='AsideNav'>" +
-			"{{each(i, item) structure}}" +
-			"<li id='menu-item-${item.name}' data-step='${item.name}' data-uri='${item.uri}' data-title='${item.title}'>" +
-			"<a href=''><span>${item.title}</span></a>" +
-			"</li>" +
-			"{{/each}}" +
-			"</ul>",
+		template: "<ul class='AsideNav'>" + "{{each(i, item) structure}}" + "<li id='menu-item-${item.name}' data-step='${item.name}' data-uri='${item.uri}' data-title='${item.title}'>" + "<a href=''><span>${item.title}</span></a>" + "</li>" + "{{/each}}" + "</ul>",
 
 		events: {
 			"click li": "onMenuItemClick"
 		},
 
-		onMenuItemClick: function (event) {
+		onMenuItemClick: function(event) {
 			event.preventDefault();
 			//if ($(event.currentTarget).data("step") != "address") {
-				this.trigger("step:change", {
-					name: $(event.currentTarget).data("step"),
-					uri: $(event.currentTarget).data("uri"),
-					title: $(event.currentTarget).data("title")
-				});
+			this.trigger("step:change", {
+				name: $(event.currentTarget).data("step"),
+				uri: $(event.currentTarget).data("uri"),
+				title: $(event.currentTarget).data("title")
+			});
 			//}
 		},
 
-		render: function () {
-			this.$el.html($.tmpl(this.template, {structure: this.options.structure}));
+		render: function() {
+			this.$el.html($.tmpl(this.template, {
+				structure: this.options.structure
+			}));
 
 			return this;
 		}
