@@ -178,7 +178,7 @@ define(function (require) {
 	//---------------------
 
 	//Базовый класс
-	var BaseView = Documents.Views.Base = Backbone.View.extend({
+	var ViewBase = Documents.Views.Base = Backbone.View.extend({
 		template: _.template(""),
 
 		data: function () { return {}; },
@@ -217,35 +217,37 @@ define(function (require) {
 		}
 	});
 
-	var BasePopUp = Documents.Views.BasePopUp =  BaseView.extend({
+	var PopUpBase = Documents.Views.PopUpBase =  ViewBase.extend({
 		tearDown: function () {
 			console.log("tearing down popup");
 			this.$el.dialog("close");
-			BaseView.prototype.tearDown.call(this);
+			ViewBase.prototype.tearDown.call(this);
 		},
 
 		render: function (subViews) {
-			BaseView.prototype.render.call(this, subViews);
+			ViewBase.prototype.render.call(this, subViews);
 			this.$el.dialog({close: _.bind(this.tearDown, this)}).dialog("open");
 			return this;
 		}
 	});
 
-	var BaseLayout = Documents.Views.BaseLayout = BaseView.extend({
+	var LayoutBase = Documents.Views.LayoutBase = ViewBase.extend({
 		className: "container-fluid",
 
 		attributes: {style: "display: table; width: 100%;"},
 
 		tearDown: function () {
 			dispatcher.off();
-			BaseView.prototype.tearDown.call(this);
+			ViewBase.prototype.tearDown.call(this);
 		}
 	});
+	
+	
 
 	//Список
 	//---------------------
 
-	Documents.Views.List.LayoutLight = BaseLayout.extend({
+	Documents.Views.List.LayoutLight = LayoutBase.extend({
 		template: templates._listLayout,
 
 		initialize: function () {
@@ -283,7 +285,7 @@ define(function (require) {
 		},
 
 		render: function (subViews) {
-			return BaseLayout.prototype.render.call(this, _.extend({
+			return LayoutBase.prototype.render.call(this, _.extend({
 				".documents-table": new Documents.Views.List.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
 				".documents-filters": new Documents.Views.List.Filters({collection: this.documents}),
 				".review-controls": new Documents.Views.Review.Controls({collection: this.documents, selectedDocuments: this.selectedDocuments})
@@ -314,7 +316,7 @@ define(function (require) {
 	});
 
 	//Элементы управления (кнопка "Новый документ" и пр.)
-	Documents.Views.List.Controls = BaseView.extend({
+	Documents.Views.List.Controls = ViewBase.extend({
 		template: templates._listControls,
 
 		events: {
@@ -353,7 +355,7 @@ define(function (require) {
 		}
 	});
 
-	Documents.Views.List.Filters = BaseView.extend({
+	Documents.Views.List.Filters = ViewBase.extend({
 		template: templates._documentFilters,
 
 		events: {
@@ -436,7 +438,7 @@ define(function (require) {
 	});
 
 	//Выбор шаблона документа
-	Documents.Views.List.DocumentTypeSelector = BasePopUp.extend({
+	Documents.Views.List.DocumentTypeSelector = PopUpBase.extend({
 		template: templates._documentTypeSelector,
 
 		data: function () {
@@ -469,7 +471,7 @@ define(function (require) {
 	});
 
 	//Список созданных документов
-	Documents.Views.List.DocumentsTable = BaseView.extend({
+	Documents.Views.List.DocumentsTable = ViewBase.extend({
 		template: templates._documentsTable,
 
 		events: {
@@ -518,19 +520,19 @@ define(function (require) {
 		/*,
 
 		render: function () {
-			return BaseView.prototype.call(this, {
+			return ViewBase.prototype.call(this, {
 				"tbody": new Documents.Views.List.DocumentsTableBody({collection: this.collection})
 			});
 		}*/
 	});
 
 	/*//Элемент списка
-	Documents.Views.List.DocumentsTableRow = BaseView.extend({
+	Documents.Views.List.DocumentsTableRow = ViewBase.extend({
 		template: templates._documentsTableRow
 	});
 
 	//Тело таблицы
-	Documents.Views.List.DocumentsTableBody = BaseView.extend({
+	Documents.Views.List.DocumentsTableBody = ViewBase.extend({
 		template: templates._documentsTableBody
 	});*/
 
@@ -538,7 +540,7 @@ define(function (require) {
 	//Редактирование
 	//---------------------
 
-	Documents.Views.Edit.Layout = BaseLayout.extend({
+	Documents.Views.Edit.Layout = LayoutBase.extend({
 		template: templates._editLayout,
 
 		dividedStateEnabled: false,
@@ -576,7 +578,7 @@ define(function (require) {
 				this.listLayout.$(".documents-controls").remove();
 				this.listLayout.$(".documents-filters").removeClass("span6").addClass("span12");
 			} else {
-				if (this.listLayout) BaseView.prototype.tearDown.call(this.listLayout);
+				if (this.listLayout) ViewBase.prototype.tearDown.call(this.listLayout);
 				this.$el.parent().css({"margin-left": "20em"});
 
 				this.$(".document-list-side").remove();
@@ -587,7 +589,7 @@ define(function (require) {
 		},
 
 		render: function () {
-			return BaseView.prototype.render.call(this, {
+			return ViewBase.prototype.render.call(this, {
 				".nav-controls": new Documents.Views.Edit.NavControls({model: this.model}),
 				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
 				".document-controls": new Documents.Views.Edit.DocControls({model: this.model})
@@ -596,7 +598,7 @@ define(function (require) {
 	});
 
 	//Верхний блок элементов управления и навигации
-	Documents.Views.Edit.NavControls = BaseView.extend({
+	Documents.Views.Edit.NavControls = ViewBase.extend({
 		template: templates._editNavControls,
 
 		events: {
@@ -609,7 +611,7 @@ define(function (require) {
 	});
 
 	//Управление сохранением документа
-	Documents.Views.Edit.DocControls = BaseView.extend({
+	Documents.Views.Edit.DocControls = ViewBase.extend({
 		template: templates._editDocumentControls,
 
 		events: {
@@ -633,7 +635,7 @@ define(function (require) {
 	});
 
 	//Сетка (12 колонок по умолчанию)
-	Documents.Views.Edit.Grid = BaseView.extend({
+	Documents.Views.Edit.Grid = ViewBase.extend({
 		template: templates._editGrid,
 
 		initialize: function () {
@@ -642,13 +644,13 @@ define(function (require) {
 	});
 
 	//Ряд в сетке
-	Documents.Views.Edit.GridRow = BaseView.extend({});
+	Documents.Views.Edit.GridRow = ViewBase.extend({});
 
 	//Ячейка в сетке
-	Documents.Views.Edit.GridRowSpan = BaseView.extend({});
+	Documents.Views.Edit.GridRowSpan = ViewBase.extend({});
 
 	//Базовый класс UI элемента для поля документа
-	Documents.Views.Edit.UIElement.Base = BaseView.extend({});
+	Documents.Views.Edit.UIElement.Base = ViewBase.extend({});
 
 	//Shortcut
 	var UIElementBase = Documents.Views.Edit.UIElement.Base;
@@ -684,12 +686,12 @@ define(function (require) {
 	//Просмотр
 	//---------------------
 
-	Documents.Views.Review.Layout = BaseLayout.extend({
+	Documents.Views.Review.Layout = LayoutBase.extend({
 		template: templates._reviewLayout
 	});
 
 	//Элементы управления
-	Documents.Views.Review.Controls = BaseView.extend({
+	Documents.Views.Review.Controls = ViewBase.extend({
 		template: templates._reviewControls,
 
 		events: {
@@ -732,10 +734,10 @@ define(function (require) {
 	});
 
 	//Значения полей из документа
-	Documents.Views.Review.SheetList = BaseView.extend({});
+	Documents.Views.Review.SheetList = ViewBase.extend({});
 
 	//Значения полей из документа
-	Documents.Views.Review.Sheet = BaseView.extend({
+	Documents.Views.Review.Sheet = ViewBase.extend({
 		template: templates._reviewSheet,
 
 		data: function () {
