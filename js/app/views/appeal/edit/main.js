@@ -49,6 +49,8 @@ define([
 			//,"click .SectionNav a": "onSectionClick"
 		},
 
+		documentEditorMode: false,
+
 		typeViews: {
 			"card": App.Views.Card,
 
@@ -145,6 +147,7 @@ define([
 
 					this.contentView.on("change:printState", this.onPrintStateChange, this);
 					this.contentView.on("change:viewState", this.onViewStateChange, this);
+					this.contentView.on("change:mainState", this.onMainStateChange, this);
 
 					//this.togglePrintBtn();
 					this.cardHeader.hidePrintBtn();
@@ -160,6 +163,17 @@ define([
 		onViewStateChange: function (event) {
 			console.log('onViewStateChange',event);
 			this.setContentView(event.type, event.options);
+		},
+
+		onMainStateChange: function (event) {
+			switch (event.stateName) {
+				case "default":
+					this.toggleMenu(true);
+					break;
+				case "documentEditor":
+					this.toggleMenu(false);
+					break;
+			}
 		},
 
 		onAppealLoaded: function () {
@@ -302,6 +316,10 @@ define([
 				this.cardHeader.hidePrintBtn();
 			}
 			//this.$(".CardHeader .CardPrint")[this.contentView.canPrint ? "show" : "hide"]();
+		},
+
+		toggleMenu: function (visible) {
+			this.menu.$el.parent().toggle(!!visible);
 		},
 
 		getMenuStructure: function () {

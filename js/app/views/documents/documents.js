@@ -8,17 +8,25 @@
 define(function (require) {
 	var Backbone = window.Backbone;
 	var _ = window._;
-	var appealId = 123;
+	var appealId = 0;
 
 	var dispatcher = _.extend({}, Backbone.Events);
 
 	var templates = {
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
 		_listControls: _.template(require("text!templates/documents/list/controls.html")),
+		_documentFilters: _.template(require("text!templates/documents/list/filters.html")),
 		_documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
-		_docsTable: _.template(require("text!templates/documents/list/docs-table.html"))/*,
-		_docsTableRow: _.template(require("text!templates/documents/list/docs-table-row.html")),
-		_docsTableBody: _.template(require("text!templates/documents/list/docs-table-body.html"))*/
+		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html"))/*,
+		_documentsTableRow: _.template(require("text!templates/documents/list/docs-table-row.html")),
+		_documentsTableBody: _.template(require("text!templates/documents/list/docs-table-body.html"))*/,
+		_editLayout: _.template(require("text!templates/documents/edit/layout.html")),
+		_editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
+		_editDocumentControls: _.template(require("text!templates/documents/edit/document-controls.html")),
+		_editGrid: _.template(require("text!templates/documents/edit/grid.html")),
+		_reviewLayout: _.template(require("text!templates/documents/review/layout.html")),
+		_reviewControls: _.template(require("text!templates/documents/review/controls.html")),
+		_reviewSheet: _.template(require("text!templates/documents/review/sheet.html"))
 	};
 
 	/*var rootEl = $('#wrapper');
@@ -80,19 +88,51 @@ define(function (require) {
 	//---------------------
 
 	Documents.Models.DocumentBase = Backbone.Model.extend({});
-	Documents.Models.Document = Documents.Models.DocumentBase.extend({});
+	Documents.Models.DocumentBase.prototype.sync = Model.prototype.sync;
+
+	Documents.Models.Document = Documents.Models.DocumentBase.extend({
+		urlRoot: function () {
+			return DATA_PATH + "appeals/" + this.appealId + "/documents/";
+		},
+
+		initialize: function (options) {
+			this.id = options.id;
+			this.appealId = options.appealId || appealId;
+		},
+
+		parse: function (raw) {
+			var data = Documents.Models.DocumentBase.prototype.parse.call(this, raw);
+			return data[0];
+		}
+	});
+
 	Documents.Models.DocumentTemplate = Documents.Models.DocumentBase.extend({
 		urlRoot: DATA_PATH + "dir/actionTypes/"
 	});
 
 	Documents.Models.DocumentType = Backbone.Model.extend({});
 
+	Documents.Models.DocumentListItem = Backbone.Model.extend({
+		initialize: function (options) {
+			if (options && options.appealId) {
+				this.appealId = options.appealId
+			} else {
+				this.appealId = appealId;
+			}
+		}/*,
+
+		parse: function (raw) {
+			var data = Documents.Models.DocumentBase.prototype.parse.call(this, raw);
+			return data[0];
+		}*/
+	});
+
 	//Коллекции
 	//---------------------
 	//---------------------
 
-	Documents.Collections.Documents = Collection.extend({
-		model: Documents.Models.Document,
+	Documents.Collections.DocumentList = Collection.extend({
+		model: Documents.Models.DocumentListItem,
 		mnems: ["EXAM", "EPI", "JOUR", "ORD"],
 		dateRange: null,
 		initialize: function (models, options) {
@@ -128,7 +168,8 @@ define(function (require) {
 		model: Documents.Models.DocumentType,
 
 		url: function () {
-			return DATA_PATH + "dir/actionTypes/?filter[view]=tree&filter[mnem]=EXAM&filter[mnem]=EPI&filter[mnem]=JOUR&filter[mnem]=ORD";
+			//filter[view]=tree
+			return DATA_PATH + "dir/actionTypes/?&filter[mnem]=EXAM&filter[mnem]=EPI&filter[mnem]=JOUR&filter[mnem]=ORD";
 		}
 	});
 
@@ -142,27 +183,41 @@ define(function (require) {
 
 		data: function () { return {}; },
 
-		subViews: {},
+		//subViews: {},
+
+		assign: function (subViews) {
+			this.subViews = _.extend(this.subViews || {}, subViews);
+			Backbone.View.prototype.assign.call(this, subViews);
+		},
 
 		render: function (subViews) {
 			this.$el.html(this.template(this.data()));
 			if (subViews) {
-				this.subViews = subViews;
+				this.subViews = {};
 				this.assign(subViews);
 			}
+			//this.$("button").button();
 			return this;
 		},
 
 		tearDown: function () {
 			if (this.model) this.model.off(null, null, this);
 			if (this.collection) this.collection.off(null, null, this);
-			if (this.subViews) _.each(this.subViews, function (subView) { subView.tearDown(); });
+			this.tearDownSubviews();
 			this.undelegateEvents();
 			this.remove();
+		},
+
+		tearDownSubviews: function () {
+			if (this.subViews) _.each(this.subViews, function (subView) { subView.tearDown(); });
+		},
+
+		on: function (event, callback, context) {
+			return dispatcher.on(event, callback, context);
 		}
 	});
 
-	var BasePopUp = BaseView.extend({
+	var BasePopUp = Documents.Views.BasePopUp =  BaseView.extend({
 		tearDown: function () {
 			console.log("tearing down popup");
 			this.$el.dialog("close");
@@ -176,90 +231,84 @@ define(function (require) {
 		}
 	});
 
-	//Базовый класс для лэйаутов
-	/*Documents.Views.Layout = Documents.Views.Base.extend({
-		views: {},
-		render: function () {
-			Documents.Views.Base.prototype.render.apply(this);
-			this.assign(this.views);
-			return this;
-		}
-	});*/
+	var BaseLayout = Documents.Views.BaseLayout = BaseView.extend({
+		className: "container-fluid",
 
-	/*Documents.Views.Layout = BaseView.extend({
-		initialize: function () {
-			dispatcher.on("setState", this.setState, this);
-		},
+		attributes: {style: "display: table; width: 100%;"},
 
 		tearDown: function () {
-			dispatcher.off(null);
+			dispatcher.off();
 			BaseView.prototype.tearDown.call(this);
-		},
-
-		setState: function (event) {
-			this.tearDown();
-
-			switch (event.state) {
-				case "LIST":
-					this.render();
-					break;
-				case "EDIT":
-					this.render({".right-container": new Documents.Views.Edit.Layout(this.options)});
-					break;
-				case "LIST_AND_EDIT":
-					this.render({
-						".right-container": new Documents.Views.Edit.Layout(this.options),
-						".left-container": new Documents.Views.Edit.Layout(this.options)
-					});
-					break;
-				case "REVIEW":
-					this.render({".right-container": new Documents.Views.Review.Layout(this.options)});
-					break;
-			}
-		},
-
-		render: function (stateViews) {
-			if (stateViews) {
-				return BaseView.prototype.render.call(this, stateViews);
-			} else {
-				return BaseView.prototype.render.call(this, {
-					".right-container": new Documents.Views.List.Layout(this.options)
-				});
-			}
 		}
-	});*/
+	});
 
 	//Список
 	//---------------------
 
-	Documents.Views.List.Layout = BaseView.extend({
-		class: "documents-layout",
-
-		attributes: {style: "display: table;"},
-
+	Documents.Views.List.LayoutLight = BaseLayout.extend({
 		template: templates._listLayout,
 
 		initialize: function () {
-			this.documents = new Documents.Collections.Documents([], {appealId: this.options.appealId});
+			if (this.options.appealId) {
+				appealId = this.options.appealId;
+			}
+			this.appealId = appealId;
+
+			this.documents = new Documents.Collections.DocumentList([], {appealId: this.appealId});
 			this.documents.fetch();
 
-			this.documentTypes = new Documents.Collections.DocumentTypes();
-			this.documentTypes.fetch();
+			this.selectedDocuments = new Backbone.Collection();
+			this.selectedDocuments.on("enteredReviewState", this.onEnteredReviewState, this);
+		},
 
-			dispatcher.on("change:viewState", function (event) {
-				this.trigger("change:viewState", event);
+		onEnteredReviewState: function () {
+			this.toggleReviewState(true);
+
+			this.showSelectedDocuments();
+		},
+
+		toggleReviewState: function (enabled) {
+			this.$(".documents-table, .documents-filters").toggle(!!enabled);
+		},
+
+		showSelectedDocuments: function () {
+			this.selectedDocuments.each(function (selectedDocument) {
+				this.$el.append('<div class="row-fluid review-sheet-' + selectedDocument.id + '"></div>');
+
+				var subView = {};
+				subView[".review-sheet-" + selectedDocument.id] = new Documents.Views.Review.Sheet({model: selectedDocument});
+
+				this.assign(subView);
 			}, this);
 		},
 
-		tearDown: function () {
-			dispatcher.off("change:viewState");
-			BaseView.prototype.tearDown.call(this);
+		render: function (subViews) {
+			return BaseLayout.prototype.render.call(this, _.extend({
+				".documents-table": new Documents.Views.List.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
+				".documents-filters": new Documents.Views.List.Filters({collection: this.documents}),
+				".review-controls": new Documents.Views.Review.Controls({collection: this.documents, selectedDocuments: this.selectedDocuments})
+			}, subViews));
+		}
+	});
+
+	Documents.Views.List.Layout = Documents.Views.List.LayoutLight.extend({
+		initialize: function () {
+			Documents.Views.List.LayoutLight.prototype.initialize.call(this, this.options);
+
+			this.documentTypes = new Documents.Collections.DocumentTypes();
+			this.documentTypes.fetch();
+		},
+
+		onEnteredReviewState: function () {
+			Documents.Views.List.LayoutLight.prototype.onEnteredReviewState.call(this);
+			this.$(".documents-controls").hide();
 		},
 
 		render: function () {
-			return BaseView.prototype.render.call(this, {
-				".documents-controls": new Documents.Views.List.Controls({collection: this.documents, documentTypes: this.documentTypes}),
-				".documents-table": new Documents.Views.List.DocsTable({collection: this.documents})
+			//this.$(".top-row").prepend('<div class="span6 documents-controls"></div>');
+
+			return Documents.Views.List.LayoutLight.prototype.render.call(this, {
+				".documents-controls": new Documents.Views.List.Controls({collection: this.documents, documentTypes: this.documentTypes})
 			});
 		}
 	});
@@ -270,9 +319,7 @@ define(function (require) {
 
 		events: {
 			"click .new-document": "onNewDocumentClick",
-			"click .new-duty-doc-exam": "onNewDutyDocExamClick",
-			"change .document-type-filter": "onDocumentTypeFilterChange",
-			"change [name='document-create-date-filter']": "onDocumentCreateDateFilterChange"
+			"click .new-duty-doc-exam": "onNewDutyDocExamClick"
 		},
 
 		initialize: function () {
@@ -282,6 +329,7 @@ define(function (require) {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.fetch();
 			}
+
 			this.documentTypes.on("reset", function () {
 				this.$(".new-document,.new-duty-doc-exam").prop("disabled", false);
 			}, this);
@@ -295,6 +343,24 @@ define(function (require) {
 			this.openDutyDocExamTemplate();
 		},
 
+		showDocumentTypeSelector: function () {
+			new Documents.Views.List.DocumentTypeSelector({collection: this.documentTypes}).render();
+		},
+
+		openDutyDocExamTemplate: function () {
+			//TODO: HARCODED
+			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: 139}});
+		}
+	});
+
+	Documents.Views.List.Filters = BaseView.extend({
+		template: templates._documentFilters,
+
+		events: {
+			"change .document-type-filter": "onDocumentTypeFilterChange",
+			"change [name='document-create-date-filter']": "onDocumentCreateDateFilterChange"
+		},
+
 		onDocumentTypeFilterChange: function (event) {
 			var type = $(event.currentTarget).val();
 			console.log(type);
@@ -305,15 +371,6 @@ define(function (require) {
 			var rangeMnem = $(event.currentTarget).val();
 
 			this.applyDocumentCreateDateFilter(rangeMnem);
-		},
-
-		showDocumentTypeSelector: function () {
-			new Documents.Views.List.DocumentTypeSelector({collection: this.documentTypes}).render();
-		},
-
-		openDutyDocExamTemplate: function () {
-			//TODO: HARCODED
-			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: 139}});
 		},
 
 		applyDocumentTypeFilter: function (type) {
@@ -399,8 +456,7 @@ define(function (require) {
 			var nodeHasChildren;
 			if (nodeHasChildren) {
 				this.toggleNodeCollapse();
-			}
-			else {
+			} else {
 				this.markNodeSelected();
 			}
 		},
@@ -413,50 +469,121 @@ define(function (require) {
 	});
 
 	//Список созданных документов
-	Documents.Views.List.DocsTable = BaseView.extend({
-		template: templates._docsTable,
+	Documents.Views.List.DocumentsTable = BaseView.extend({
+		template: templates._documentsTable,
+
+		events: {
+			"change .selected-flag": "onSelectedFlagChange"//,
+			//"click .document-item-row td": "onDocumentItemRowClick"
+		},
 
 		data: function () {
 			return {documents: this.collection};
 		},
 
 		initialize: function () {
-			this.collection.on("reset", this.onCollectionReset, this)
+			this.collection.on("reset", this.onCollectionReset, this);
 		},
 
 		onCollectionReset: function () {
+			this.options.selectedDocuments.reset();
 			this.render();
+		},
+
+		onSelectedFlagChange: function (event) {
+			this.updatedSelectedItems($(event.currentTarget).is(":checked"), parseInt($(event.currentTarget).val()));
+		},
+
+		/*onDocumentItemRowClick: function (event) {
+			console.log("ROW");
+			//event.stopPropagation();
+			var check = $(event.currentTarget).find(".selected-flag");
+			var isChecked = check.prop("checked");
+
+			check.prop("checked", !isChecked);
+
+			this.updatedSelectedItems(check.is(":checked"), check.val());
+		},*/
+
+		updatedSelectedItems: function (selected, itemId) {
+			if (selected) {
+				this.options.selectedDocuments.add(new Documents.Models.Document({id: itemId}));
+			} else {
+				this.options.selectedDocuments.remove(this.options.selectedDocuments.get(itemId));
+			}
+			console.log(this.options.selectedDocuments);
 		}
+
+
 		/*,
 
 		render: function () {
 			return BaseView.prototype.call(this, {
-				"tbody": new Documents.Views.List.DocsTableBody({collection: this.collection})
+				"tbody": new Documents.Views.List.DocumentsTableBody({collection: this.collection})
 			});
 		}*/
 	});
 
 	/*//Элемент списка
-	Documents.Views.List.DocsTableRow = BaseView.extend({
-		template: templates._docsTableRow
+	Documents.Views.List.DocumentsTableRow = BaseView.extend({
+		template: templates._documentsTableRow
 	});
 
 	//Тело таблицы
-	Documents.Views.List.DocsTableBody = BaseView.extend({
-		template: templates._docsTableBody
+	Documents.Views.List.DocumentsTableBody = BaseView.extend({
+		template: templates._documentsTableBody
 	});*/
 
 
 	//Редактирование
 	//---------------------
 
-	Documents.Views.Edit.Layout = BaseView.extend({
-		attributes: {style: "display: table;"},
+	Documents.Views.Edit.Layout = BaseLayout.extend({
+		template: templates._editLayout,
+
+		dividedStateEnabled: false,
 
 		initialize: function () {
 			this.model = new Documents.Models.DocumentTemplate();
 			this.model.id = this.options.templateId;
 			this.model.fetch();
+
+			this.model.on("toggle:dividedState", this.toggleDividedState, this);
+		},
+
+		toggleDividedState: function (enabled) {
+			enabled = _.isUndefined(enabled) ? !this.dividedStateEnabled : enabled;
+			this.dividedStateEnabled = enabled;
+
+			if (enabled) {
+				this.$el.parent().css({"margin-left": "0"});
+				dispatcher.trigger("change:mainState", {stateName: "documentEditor"});
+
+				this.$(".document-edit-side").removeClass("span12").addClass("span6");
+
+				this.$(".divided").prepend(
+					"<div class='document-list-side span6'>" +
+						"<div class='row-fluid'>" +
+							"<div class='span12 document-list'></div>" +
+						"</div>" +
+					"</div>"
+				);
+
+				this.listLayout =  new Documents.Views.List.LayoutLight();
+
+				this.assign({".document-list": this.listLayout});
+
+				this.listLayout.$(".documents-controls").remove();
+				this.listLayout.$(".documents-filters").removeClass("span6").addClass("span12");
+			} else {
+				if (this.listLayout) BaseView.prototype.tearDown.call(this.listLayout);
+				this.$el.parent().css({"margin-left": "20em"});
+
+				this.$(".document-list-side").remove();
+				this.$(".document-edit-side").removeClass("span6").addClass("span12");
+
+				dispatcher.trigger("change:mainState", {stateName: "default"});
+			}
 		},
 
 		render: function () {
@@ -469,13 +596,50 @@ define(function (require) {
 	});
 
 	//Верхний блок элементов управления и навигации
-	Documents.Views.Edit.NavControls = BaseView.extend({});
+	Documents.Views.Edit.NavControls = BaseView.extend({
+		template: templates._editNavControls,
+
+		events: {
+			"click .toggleDividedState": "onToggleDividedStateClick"
+		},
+
+		onToggleDividedStateClick: function () {
+			this.model.trigger("toggle:dividedState");
+		}
+	});
 
 	//Управление сохранением документа
-	Documents.Views.Edit.DocControls = BaseView.extend({});
+	Documents.Views.Edit.DocControls = BaseView.extend({
+		template: templates._editDocumentControls,
+
+		events: {
+			"click .save": "onSaveClick",
+			"click .cancel": "onCancelClick"
+		},
+
+		initialize: function () {
+			this.model.on("change", function () { this.$("button").prop("disabled", false); }, this);
+		},
+
+		onSaveClick: function (event) {
+			this.model.trigger("toggle:dividedState", false);
+			dispatcher.trigger("change:viewState", {type: "documents"});
+		},
+
+		onCancelClick: function (event) {
+			this.model.trigger("toggle:dividedState", false);
+			dispatcher.trigger("change:viewState", {type: "documents"});
+		}
+	});
 
 	//Сетка (12 колонок по умолчанию)
-	Documents.Views.Edit.Grid = BaseView.extend({});
+	Documents.Views.Edit.Grid = BaseView.extend({
+		template: templates._editGrid,
+
+		initialize: function () {
+			this.model.on("change", function () { this.$el.html("Готово"); }, this);
+		}
+	});
 
 	//Ряд в сетке
 	Documents.Views.Edit.GridRow = BaseView.extend({});
@@ -520,13 +684,73 @@ define(function (require) {
 	//Просмотр
 	//---------------------
 
-	Documents.Views.Review.Layout = BaseView.extend({});
+	Documents.Views.Review.Layout = BaseLayout.extend({
+		template: templates._reviewLayout
+	});
 
 	//Элементы управления
-	Documents.Views.Review.Controls = BaseView.extend({});
+	Documents.Views.Review.Controls = BaseView.extend({
+		template: templates._reviewControls,
+
+		events: {
+			"click .review-selected": "onReviewSelectedClick",
+			"click .back-to-document-list": "onBackToDocumentListClick"
+		},
+
+		initialize: function () {
+			this.options.selectedDocuments.on("add", this.onSelectedDocumentsAdd, this);
+			this.options.selectedDocuments.on("remove", this.onSelectedDocumentsRemove, this);
+		},
+
+		onReviewSelectedClick: function (event) {
+			this.toggleControls();
+
+			this.options.selectedDocuments.trigger("enteredReviewState");
+		},
+
+		onBackToDocumentListClick: function () {
+			this.toggleControls();
+
+			this.options.selectedDocuments.trigger("quitReviewState");
+		},
+
+		onSelectedDocumentsAdd: function () {
+			this.toggleReviewSelectedDisabled(this.options.selectedDocuments.length > 0);
+		},
+
+		onSelectedDocumentsRemove: function () {
+			this.toggleReviewSelectedDisabled(this.options.selectedDocuments.length > 0);
+		},
+
+		toggleReviewSelectedDisabled: function (enabled) {
+			this.$(".review-selected").prop("disabled", !enabled);
+		},
+
+		toggleControls: function () {
+			this.$(".review-nav, .review-selected").toggle();
+		}
+	});
 
 	//Значения полей из документа
-	Documents.Views.Review.DocumentValues = BaseView.extend({});
+	Documents.Views.Review.SheetList = BaseView.extend({});
+
+	//Значения полей из документа
+	Documents.Views.Review.Sheet = BaseView.extend({
+		template: templates._reviewSheet,
+
+		data: function () {
+			return {document: this.model};
+		},
+
+		initialize: function () {
+			this.model.on("reset", this.onModelReset, this);
+			this.model.fetch();
+		},
+
+		onModelReset: function () {
+			this.render();
+		}
+	});
 
 	return Documents;
 });

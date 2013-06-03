@@ -3,7 +3,8 @@
 	<tbody>
 		<%if (documents.length) {%>
 			<%documents.each(function (document) {%>
-				<tr>
+				<tr class="document-item-row">
+					<td><input type="checkbox" class="selected-flag" value="<%=document.id%>"></td>
 					<td><%=document.id%></td>
 					<td><%=document.get('assessmentName').name%></td>
 				</tr>
