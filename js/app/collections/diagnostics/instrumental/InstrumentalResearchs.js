@@ -1,6 +1,6 @@
-define(["models/diagnostics/instrumental/InstrumentalResearch"],
+define(function(require) {
 
-function(InstrumentalResearch) {
+	var InstrumentalResearch = require('models/diagnostics/instrumental/InstrumentalResearch');
 
 	var InstrumentalResearchs = Collection.extend({
 		model: InstrumentalResearch,

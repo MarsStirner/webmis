@@ -12,4 +12,6 @@ define(function () {
 			code: ""
 		}
 	});
+
+    return App.Models.Bed;
 });

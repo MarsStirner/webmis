@@ -1,19 +1,22 @@
 //список лабораторий
 
-define(["models/diagnostics/laboratory/LabTest"], function (LabTest) {
+define(function(require) {
+
+
+	var LabTest = Model.extend();
 
 	var LabsTests = Collection.extend({
 
 		model: LabTest,
 
-		url: function () {
+		url: function() {
 			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=LAB";
 
 			return path;
 		},
 
-		convertToTree: function (list) {
-			return _.map(list, function (item) {
+		convertToTree: function(list) {
+			return _.map(list, function(item) {
 
 				var node = {};
 				node.title = item.name;
@@ -30,11 +33,11 @@ define(["models/diagnostics/laboratory/LabTest"], function (LabTest) {
 			});
 		},
 
-		parse: function (raw) {
+		parse: function(raw) {
 			var tree = [];
 
 			tree = this.convertToTree(raw.data);
-			return  tree;
+			return tree;
 		}
 
 	});

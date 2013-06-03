@@ -8,7 +8,7 @@ define(function(require) {
 		var Beds = require('collections/moves/Beds');
 		var Moves = require('collections/moves/moves');
 		var HospitalBed = require('models/moves/HospitalBed');
-		var Move = require('models/moves/move');
+		//var Move = require('models/moves/move');
 		var Departments = require('collections/departments');
 		var BedView = require('views/moves/BedView');
 

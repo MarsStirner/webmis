@@ -2,20 +2,18 @@
  * User: FKurilov
  * Date: 08.06.12
  */
-define([
-	"text!templates/diagnostics/instrumental/instrumental-page.tmpl",
-	"collections/diagnostics/instrumental/InstrumentalResearchs",
-	"models/diagnostics/instrumental/InstrumentalResearch",
-	"views/diagnostics/instrumental/InstrumentalPopupView",
-	"views/diagnostics/instrumental/InstrumentalEditPopupView",
-	"views/grid",
-	"views/paginator"],
+define(function(require) {
+	var template = require('text!templates/diagnostics/instrumental/instrumental-page.tmpl');
 
-function(template,
-InstrumentalResearchs,
-InstrumentalResearch,
-InstrumentalPopupView,
-InstrumentalEditPopupView) {
+	var InstrumentalResearch = require('models/diagnostics/instrumental/InstrumentalResearch');
+	var InstrumentalResearchs = require('collections/diagnostics/instrumental/InstrumentalResearchs');
+
+	var GridView = require('views/grid');
+	var InstrumentalEditPopupView = require('views/diagnostics/instrumental/InstrumentalEditPopupView');
+	var InstrumentalPopupView= require('views/diagnostics/instrumental/InstrumentalPopupView');
+	var PaginatorView = require('views/paginator');
+
+
 
 	var InstrumentalView = View.extend({
 		className: "ContentHolder",
@@ -41,7 +39,7 @@ InstrumentalEditPopupView) {
 				userId: Core.Cookies.get("userId")
 			};
 
-			this.grid = new App.Views.Grid({
+			this.grid = new GridView({
 				popUpMode: true,
 				collection: this.collection,
 				template: "diagnostics/instrumental/instrumental-grid",
@@ -54,7 +52,7 @@ InstrumentalEditPopupView) {
 			this.depended(this.grid);
 
 
-			this.paginator = new App.Views.Paginator({
+			this.paginator = new PaginatorView({
 				collection: this.collection
 			});
 			this.depended(this.paginator);

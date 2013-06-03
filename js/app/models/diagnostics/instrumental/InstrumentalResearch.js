@@ -1,4 +1,7 @@
-define(["mixins/commonData"], function(commonData) {
+define(function(require) {
+
+	var commonData = require('mixins/commonData');
+
 	var InstrumentalResearch = Model.extend({
 		idAttribute: "id",
 		initialize: function(attr, options) {

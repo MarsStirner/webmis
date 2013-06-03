@@ -1,6 +1,14 @@
 //список лабораторий
 
-define(["models/diagnostics/laboratory/Lab"], function(Lab) {
+define(function(require) {
+
+	var Lab = Model.extend({
+		defaults: {
+			groupId: "",
+			code: '',
+			name: ""
+		}
+	});
 
 	var Labs = Collection.extend({
 

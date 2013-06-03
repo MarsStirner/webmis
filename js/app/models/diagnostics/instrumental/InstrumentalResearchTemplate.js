@@ -1,4 +1,7 @@
-define(["mixins/commonData"], function(commonData) {
+define(function(require) {
+
+	var commonData = require('mixins/commonData');
+
 	return Model.extend({
 		initialize: function(attr, options) {
 

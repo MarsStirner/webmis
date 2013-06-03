@@ -4,15 +4,17 @@
  */
 
 //страница со списком назначенных лабораторных исследований
-define([
-	"text!templates/diagnostics/laboratory/laboratory-page.tmpl",
-	"views/diagnostics/laboratory/AddDirectionPopupView",
-	"views/diagnostics/laboratory/EditDirectionPopupView",
-	"models/diagnostics/laboratory/laboratory-diag-form",
-	"collections/diagnostics/laboratory/laboratory-diags",
-	"views/grid"],
+define(function(require) {
 
-function(template, AddDirectionPopupView, EditDirectionPopupView, laboratoryDiagsForm) {
+	require('collections/diagnostics/laboratory/laboratory-diags');
+	var laboratoryDiagsForm = require('models/diagnostics/laboratory/laboratory-diag-form');
+
+	var GridView = require('views/grid');
+	var AddDirectionPopupView = require('views/diagnostics/laboratory/AddDirectionPopupView');
+	var EditDirectionPopupView = require('views/diagnostics/laboratory/EditDirectionPopupView');
+
+	var template = require('text!templates/diagnostics/laboratory/laboratory-page.tmpl');
+
 
 	var Laboratory = View.extend({
 		className: "ContentHolder",
@@ -43,7 +45,7 @@ function(template, AddDirectionPopupView, EditDirectionPopupView, laboratoryDiag
 				userId: Core.Cookies.get("userId")
 			};
 
-			this.grid = new App.Views.Grid({
+			this.grid = new GridView({
 				popUpMode: true,
 				collection: this.collection,
 				template: "diagnostics/laboratory/laboratory-grid",

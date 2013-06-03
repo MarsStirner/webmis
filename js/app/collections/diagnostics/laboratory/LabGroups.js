@@ -1,6 +1,7 @@
-define(["models/diagnostics/laboratory/LabGroup"],
+define(function(require) {
 
-function(LabGroup) {
+
+	var LabGroup = Model.extend();
 
 	var LabGroups = Collection.extend({
 
