@@ -283,6 +283,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 				filter: {
 					hasBeds: true
 				},
+				limit: 0,
 				sortingField: 'name',
 				sortingMethod: 'asc'
 			});
