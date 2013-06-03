@@ -311,6 +311,7 @@ define(function(require) {
 				filter: {
 					hasBeds: true
 				},
+				limit: 0,
 				sortingField: 'name',
 				sortingMethod: 'asc'
 			});
