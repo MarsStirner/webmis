@@ -202,8 +202,9 @@ define(function (require) {
 		},
 
 		tearDown: function () {
-			if (this.model) this.model.off(null, null, this);
-			if (this.collection) this.collection.off(null, null, this);
+			/*if (this.model) this.model.off(null, null, this);
+			if (this.collection) this.collection.off(null, null, this);*/
+			this.stopListening();
 			this.tearDownSubviews();
 			this.undelegateEvents();
 			this.remove();
@@ -244,7 +245,10 @@ define(function (require) {
 		},
 
 		tearDown: function () {
-			if (this.topLevel) dispatcher.off();
+			if (this.topLevel) {
+				console.log("dispatcher off");
+				dispatcher.off();
+			}
 			ViewBase.prototype.tearDown.call(this);
 		}
 	});
@@ -260,6 +264,8 @@ define(function (require) {
 		template: templates._listLayout,
 
 		initialize: function () {
+			LayoutBase.prototype.initialize.call(this, this.options);
+
 			if (this.options.appealId) {
 				appealId = this.options.appealId;
 			}
@@ -269,8 +275,11 @@ define(function (require) {
 			this.documents.fetch();
 
 			this.selectedDocuments = new Backbone.Collection();
-			this.selectedDocuments.on("enteredReviewState", this.onEnteredReviewState, this);
-			this.selectedDocuments.on("quitReviewState", this.onQuitReviewState, this);
+			//TODO: listenTo
+			//this.selectedDocuments.on("enteredReviewState", this.onEnteredReviewState, this);
+			//this.selectedDocuments.on("quitReviewState", this.onQuitReviewState, this);
+			this.listenTo(this.selectedDocuments, "enteredReviewState", this.onEnteredReviewState);
+			this.listenTo(this.selectedDocuments,"quitReviewState", this.onQuitReviewState);
 		},
 
 		onEnteredReviewState: function () {
@@ -296,17 +305,17 @@ define(function (require) {
 			}
 		},
 
-		showSelectedDocuments: function () {
+		/*showSelectedDocuments: function () {
 
-			/*this.selectedDocuments.each(function (selectedDocument) {
+			*//*this.selectedDocuments.each(function (selectedDocument) {
 				this.$el.append('<div class="row-fluid review-sheet-' + selectedDocument.id + '"></div>');
 
 				var subView = {};
 				subView[".review-sheet-" + selectedDocument.id] = new Documents.Views.Review.Sheet({model: selectedDocument});
 
 				this.assign(subView);
-			}, this);*/
-		},
+			}, this);*//*
+		},*/
 
 		render: function (subViews) {
 			return LayoutBase.prototype.render.call(this, _.extend({
@@ -357,9 +366,9 @@ define(function (require) {
 				this.documentTypes.fetch();
 			}
 
-			this.documentTypes.on("reset", function () {
+			this.listenTo(this.documentTypes, "reset", function () {
 				this.$(".new-document,.new-duty-doc-exam").prop("disabled", false);
-			}, this);
+			});
 		},
 
 		onNewDocumentClick: function () {
@@ -378,39 +387,6 @@ define(function (require) {
 			//TODO: HARCODED
 			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: 139}});
 		}
-	});
-
-	Documents.Views.List.TableControls = ViewBase.extend({
-		template: templates._listTableControls,
-
-		events: {
-			"click .review-selected": "onReviewSelectedClick"
-		},
-
-		initialize: function () {
-			this.collection.on("add", this.onSelectedDocumentsAdd, this);
-			this.collection.on("remove", this.onSelectedDocumentsRemove, this);
-		},
-
-		onReviewSelectedClick: function (event) {
-			this.collection.trigger("enteredReviewState");
-		 },
-
-		onSelectedDocumentsAdd: function () {
-			this.toggleReviewSelectedDisabled(this.collection.length > 0);
-		},
-
-		onSelectedDocumentsRemove: function () {
-			this.toggleReviewSelectedDisabled(this.collection.length > 0);
-		},
-
-		toggleReviewSelectedDisabled: function (enabled) {
-			this.$(".review-selected").prop("disabled", !enabled);
-		}
-
-		/*toggleControls: function () {
-			this.$(".review-selected").toggle();
-		}*/
 	});
 
 	Documents.Views.List.Filters = ViewBase.extend({
@@ -542,7 +518,8 @@ define(function (require) {
 		},
 
 		initialize: function () {
-			this.collection.on("reset", this.onCollectionReset, this);
+			//TODO: listenTo
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
 		},
 
 		onCollectionReset: function () {
@@ -554,17 +531,6 @@ define(function (require) {
 			this.updatedSelectedItems($(event.currentTarget).is(":checked"), parseInt($(event.currentTarget).val()));
 		},
 
-		/*onDocumentItemRowClick: function (event) {
-			console.log("ROW");
-			//event.stopPropagation();
-			var check = $(event.currentTarget).find(".selected-flag");
-			var isChecked = check.prop("checked");
-
-			check.prop("checked", !isChecked);
-
-			this.updatedSelectedItems(check.is(":checked"), check.val());
-		},*/
-
 		updatedSelectedItems: function (selected, itemId) {
 			if (selected) {
 				this.options.selectedDocuments.add(new Documents.Models.Document({id: itemId}));
@@ -573,26 +539,39 @@ define(function (require) {
 			}
 			console.log(this.options.selectedDocuments);
 		}
-
-
-		/*,
-
-		render: function () {
-			return ViewBase.prototype.call(this, {
-				"tbody": new Documents.Views.List.DocumentsTableBody({collection: this.collection})
-			});
-		}*/
 	});
 
-	/*//Элемент списка
-	Documents.Views.List.DocumentsTableRow = ViewBase.extend({
-		template: templates._documentsTableRow
-	});
+	Documents.Views.List.TableControls = ViewBase.extend({
+		template: templates._listTableControls,
 
-	//Тело таблицы
-	Documents.Views.List.DocumentsTableBody = ViewBase.extend({
-		template: templates._documentsTableBody
-	});*/
+		events: {
+			"click .review-selected": "onReviewSelectedClick"
+		},
+
+		initialize: function () {
+			//TODO: listenTo
+			/*this.collection.on("add", this.onSelectedDocumentsAdd, this);
+			 this.collection.on("remove", this.onSelectedDocumentsRemove, this);*/
+			this.listenTo(this.collection, "add", this.onSelectedDocumentsAdd);
+			this.listenTo(this.collection, "remove", this.onSelectedDocumentsRemove);
+		},
+
+		onReviewSelectedClick: function (event) {
+			this.collection.trigger("enteredReviewState");
+		},
+
+		onSelectedDocumentsAdd: function () {
+			this.toggleReviewSelectedDisabled(this.collection.length > 0);
+		},
+
+		onSelectedDocumentsRemove: function () {
+			this.toggleReviewSelectedDisabled(this.collection.length > 0);
+		},
+
+		toggleReviewSelectedDisabled: function (enabled) {
+			this.$(".review-selected").prop("disabled", !enabled);
+		}
+	});
 
 
 	//Редактирование
@@ -604,11 +583,13 @@ define(function (require) {
 		dividedStateEnabled: false,
 
 		initialize: function () {
+			LayoutBase.prototype.initialize.call(this, this.options);
+
 			this.model = new Documents.Models.DocumentTemplate();
 			this.model.id = this.options.templateId;
 			this.model.fetch();
 
-			this.model.on("toggle:dividedState", this.toggleDividedState, this);
+			this.listenTo(this.model, "toggle:dividedState", this.toggleDividedState);
 		},
 
 		toggleDividedState: function (enabled) {
@@ -678,7 +659,7 @@ define(function (require) {
 		},
 
 		initialize: function () {
-			this.model.on("change", function () { this.$("button").prop("disabled", false); }, this);
+			this.listenTo(this.model, "change", function () { this.$("button").prop("disabled", false); });
 		},
 
 		onSaveClick: function (event) {
@@ -697,7 +678,7 @@ define(function (require) {
 		template: templates._editGrid,
 
 		initialize: function () {
-			this.model.on("change", function () { this.$el.html("Готово"); }, this);
+			this.listenTo(this.model, "change", function () { this.$el.html("Готово"); });
 		}
 	});
 
@@ -778,6 +759,7 @@ define(function (require) {
 		initialize: function () {
 			this.repeatView = Documents.Views.Review.Sheet;
 			this.subViews = [];
+
 		},
 
 		render: function () {
@@ -798,7 +780,7 @@ define(function (require) {
 		},
 
 		initialize: function () {
-			this.model.on("reset", this.onModelReset, this);
+			this.listenTo(this.model, "reset", this.onModelReset);
 			this.model.fetch();
 		},
 
