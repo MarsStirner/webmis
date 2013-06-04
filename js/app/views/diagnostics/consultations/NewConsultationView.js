@@ -31,8 +31,8 @@ define(function(require) {
 			'change input[name="diagnosis[mkb][code]"]': 'onMKBChange',
 			//'change #assign-person': 'onChangeAssignPerson',
 			'click #doctor-outer': 'openDoctorSelectPopup',
-			//'change #assign-date': 'onChangeAssignDate',
-			//'change #assign-time': 'onChangeAssignDate'
+			'change #assign-date': 'onChangeAssignDate',
+			'change #assign-time': 'onChangeAssignDate'
 
 		},
 
@@ -52,7 +52,8 @@ define(function(require) {
 						first: appealDoctor.name.first,
 						last: appealDoctor.name.last,
 						middle: appealDoctor.name.middle
-					}
+					},
+					id: appealDoctor.id
 				};
 
 			} else {
@@ -63,7 +64,8 @@ define(function(require) {
 						first: Core.Cookies.get("doctorFirstName"),
 						last: Core.Cookies.get("doctorLastName"),
 						middle: ''
-					}
+					},
+					id: Core.Cookies.get("userId")
 				};
 			}
 
@@ -88,7 +90,8 @@ define(function(require) {
 			this.consultation.set('eventId', this.options.appealId);
 			this.consultation.eventId = this.options.appealId;
 			this.consultation.set('patientId', this.options.appeal.get('patient').get('id'));
-			//this.consultation.set('assessmentDate', moment().format('YYYY-MM-DD HH:mm:ss'));
+			this.consultation.set('createDateTime', moment().valueOf());
+			this.consultation.set('createPerson', this.doctor.id);
 
 
 
@@ -120,7 +123,7 @@ define(function(require) {
 
 			pubsub.on('person:changed', function(doctor) {
 				console.log('assign-person: changed', doctor);
-				//this.consultation.set('assignerId', doctor.id)
+				this.consultation.set('createPerson', doctor.id)
 
 				this.ui.$doctor.val(doctor.name.raw);
 
@@ -166,9 +169,9 @@ define(function(require) {
 		onChangeAssignDate: function() {
 			var date = this.ui.$assignDatepicker.val();
 			var time = this.ui.$assignTimepicker.val();
-			var datetime = moment(date + ' ' + time, 'DD.MM.YYYY HH:mm').format('YYYY-MM-DD HH:mm:ss')
+			var datetime = moment(date + ' ' + time, 'DD.MM.YYYY HH:mm').valueOf()
 
-			this.consultation.set('assessmentDate', datetime);
+			this.consultation.set('createDateTime', datetime);
 
 		},
 
@@ -190,7 +193,7 @@ define(function(require) {
 		onChangeAssignPerson: function(e) {
 			var $target = this.$(e.target);
 
-			this.consultation.set('assignPersonId').code = $target.val();
+			this.consultation.set('createPerson').code = $target.val();
 		},
 
 		openDoctorSelectPopup: function() {
@@ -278,13 +281,16 @@ define(function(require) {
 			});
 			this.ui.$datepicker.datepicker('disable');
 
+
+			var createDate = moment(this.consultation.get('createDateTime')).toDate();
 			this.ui.$assignDatepicker.datepicker({
 				minDate: 0
 			});
-			this.ui.$assignDatepicker.datepicker('setDate', new Date())
+
+			this.ui.$assignDatepicker.datepicker('setDate', createDate)
 
 			this.ui.$assignTimepicker.timepicker();
-			this.ui.$assignTimepicker.timepicker('setTime', new Date());
+			this.ui.$assignTimepicker.timepicker('setTime', createDate);
 
 			//диагнозы
 			this.renderNested(this.mkbInputView, "#mkb");
