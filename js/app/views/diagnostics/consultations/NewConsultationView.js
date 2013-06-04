@@ -30,7 +30,9 @@ define(function(require) {
 			'change #finance': 'onChangeFinance',
 			'change input[name="diagnosis[mkb][code]"]': 'onMKBChange',
 			//'change #assign-person': 'onChangeAssignPerson',
-			'click #doctor-outer': 'openDoctorSelectPopup'
+			'click #doctor-outer': 'openDoctorSelectPopup',
+			//'change #assign-date': 'onChangeAssignDate',
+			//'change #assign-time': 'onChangeAssignDate'
 
 		},
 
@@ -84,8 +86,10 @@ define(function(require) {
 			this.consultation.set('finance', {});
 			this.consultation.get('finance').id = this.options.appeal.get('appealType').get('finance').get('id');
 			this.consultation.set('eventId', this.options.appealId);
-			this.consultation.eventId =  this.options.appealId;
+			this.consultation.eventId = this.options.appealId;
 			this.consultation.set('patientId', this.options.appeal.get('patient').get('id'));
+			//this.consultation.set('assessmentDate', moment().format('YYYY-MM-DD HH:mm:ss'));
+
 
 
 			//список специалистов которые могут оказать консультацию
@@ -158,6 +162,14 @@ define(function(require) {
 		onTimeSelect: function(plannedTime) {
 			console.log('onTimeSelect', plannedTime);
 			this.consultation.set('plannedTime', plannedTime);
+		},
+		onChangeAssignDate: function() {
+			var date = this.ui.$assignDatepicker.val();
+			var time = this.ui.$assignTimepicker.val();
+			var datetime = moment(date + ' ' + time, 'DD.MM.YYYY HH:mm').format('YYYY-MM-DD HH:mm:ss')
+
+			this.consultation.set('assessmentDate', datetime);
+
 		},
 
 		//при выборе вида оплаты
