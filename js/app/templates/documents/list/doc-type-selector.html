@@ -1,5 +1,10 @@
 <ul>
-	<%documentTypes.each(function (documentType) {%>
-	<li><%=documentType.id%> <%=documentType.get('name')%></li>
+	<%_(documentTypes).each(function (documentType) {%>
+	<li class="document-type-node">
+		<span><%=documentType.id%> <%=documentType.name%></span>
+		<%if (documentType.groups && documentType.groups.length) {%>
+			<%=template({documentTypes: documentType.groups, template: template})%>
+		<%}%>
+	</li>
 	<%});%>
 </ul>

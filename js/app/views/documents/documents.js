@@ -103,7 +103,32 @@ define(function (require) {
 
 		parse: function (raw) {
 			var data = Documents.Models.DocumentBase.prototype.parse.call(this, raw);
-			return data[0];
+			return data.data[0];
+		},
+
+		getFilledAttrs: function () {
+			if (this.get("group").length) {
+				var examAttributes = this.get("group")[1].attribute;
+				var examFlatJSON = [];
+				if (examAttributes) {
+					_(examAttributes).each(function (a) {
+						var valueProp = _(a.properties).find(function (p) {
+							return p.name === "value";
+						});
+
+						if (valueProp && valueProp.value && valueProp.value !== "0.0") {
+							examFlatJSON.push({
+								id: a.typeId,
+								name: a.name,
+								value: valueProp.value
+							});
+						}
+					});
+				}
+				return examFlatJSON;
+			} else {
+				return [];
+			}
 		}
 	});
 
@@ -134,7 +159,7 @@ define(function (require) {
 
 	Documents.Collections.DocumentList = Collection.extend({
 		model: Documents.Models.DocumentListItem,
-		mnems: ["EXAM", "EPI", "JOUR", "ORD"],
+		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
 		dateRange: null,
 		initialize: function (models, options) {
 			Collection.prototype.initialize.call(this);
@@ -170,7 +195,7 @@ define(function (require) {
 
 		url: function () {
 			//filter[view]=tree
-			return DATA_PATH + "dir/actionTypes/?&filter[mnem]=EXAM&filter[mnem]=EPI&filter[mnem]=JOUR&filter[mnem]=ORD";
+			return DATA_PATH + "dir/actionTypes/?filter[view]=tree&filter[mnem]=EXAM&filter[mnem]=EPI&filter[mnem]=JOUR&filter[mnem]=ORD";
 		}
 	});
 
@@ -220,15 +245,16 @@ define(function (require) {
 	});
 
 	var PopUpBase = Documents.Views.PopUpBase =  ViewBase.extend({
+		dialogOptions: {},
+
 		tearDown: function () {
-			console.log("tearing down popup");
 			this.$el.dialog("close");
 			ViewBase.prototype.tearDown.call(this);
 		},
 
 		render: function (subViews) {
 			ViewBase.prototype.render.call(this, subViews);
-			this.$el.dialog({close: _.bind(this.tearDown, this)}).dialog("open");
+			this.$el.dialog(this.dialogOptions).dialog("open");
 			return this;
 		}
 	});
@@ -368,6 +394,7 @@ define(function (require) {
 
 			this.listenTo(this.documentTypes, "reset", function () {
 				this.$(".new-document,.new-duty-doc-exam").prop("disabled", false);
+				console.log(this.documentTypes);
 			});
 		},
 
@@ -475,8 +502,10 @@ define(function (require) {
 	Documents.Views.List.DocumentTypeSelector = PopUpBase.extend({
 		template: templates._documentTypeSelector,
 
+		className: "Tree popup",
+
 		data: function () {
-			return {documentTypes: this.collection}
+			return {documentTypes: this.collection.toJSON(), template: this.template}
 		},
 
 		events: {
@@ -484,24 +513,49 @@ define(function (require) {
 			"click .document-type-node": "onDocumentTypeNodeClick"
 		},
 
+		initialize: function () {
+			this.dialogOptions = {
+				modal: true,
+				width: 800,
+				height: 800,
+				resizable: false,
+				close: _.bind(this.tearDown, this),
+				buttons: [
+					{
+						text: "Создать"
+					},
+					{
+						text: "Отмена"
+					}
+				]
+			};
+		},
+
 		onDocumentTypeSearchFieldChange: function () {
 			this.applySearchFilter();
 		},
 
-		onDocumentTypeNodeClick: function () {
-			var nodeHasChildren;
+		onDocumentTypeNodeClick: function (event) {
+			event.stopPropagation();
+			$(event.currentTarget).toggleClass("Opened");
+			/*var nodeHasChildren;
 			if (nodeHasChildren) {
 				this.toggleNodeCollapse();
 			} else {
 				this.markNodeSelected();
-			}
+			}*/
 		},
 
 		applySearchFilter: function () { console.log("stub:applySearchFilter"); },
 
 		toggleNodeCollapse: function (collapse) { console.log("stub:toggleNodeCollapse"); },
 
-		markNodeSelected: function () { console.log("stub:markNodeSelected"); }
+		markNodeSelected: function () { console.log("stub:markNodeSelected"); },
+
+		render: function () {
+			PopUpBase.prototype.render.call(this);
+			this.$("ul").first().show();
+		}
 	});
 
 	//Список созданных документов
@@ -759,7 +813,6 @@ define(function (require) {
 		initialize: function () {
 			this.repeatView = Documents.Views.Review.Sheet;
 			this.subViews = [];
-
 		},
 
 		render: function () {
@@ -776,11 +829,47 @@ define(function (require) {
 		template: templates._reviewSheet,
 
 		data: function () {
-			return {document: this.model};
+			var tmplData = {
+				attributes  : [],
+				name        : "",
+				endDate     : "",
+				doctorName  : "",
+				doctorSpecs : ""
+			};
+
+			var examJSON = this.model.toJSON();
+
+			if (examJSON.version) {
+				var summaryAttrs = examJSON["group"][0]["attribute"];
+
+				var examName       = summaryAttrs[1]["properties"][0]["value"];
+				var examEndDate    = summaryAttrs[3]["properties"][0]["value"];
+				var examDoctorName = [
+					summaryAttrs[4]["properties"][0]["value"],
+					summaryAttrs[5]["properties"][0]["value"],
+					summaryAttrs[6]["properties"][0]["value"]
+				].join(" ");
+				var examDoctorSpecs = summaryAttrs[7]["properties"][0]["value"];
+
+				//var typeId = examJSON.typeId;
+
+				tmplData = {
+					attributes  : this.model.getFilledAttrs(),
+					name        : examName,
+					endDate     : examEndDate,
+					doctorName  : examDoctorName,
+					doctorSpecs : examDoctorSpecs//,
+					//appealId:        self.model.appealId,
+					//isClosed:        self.options.appeal.isClosed()
+				};
+			}
+
+
+			return {document: tmplData};
 		},
 
 		initialize: function () {
-			this.listenTo(this.model, "reset", this.onModelReset);
+			this.listenTo(this.model, "change:version", this.onModelReset);
 			this.model.fetch();
 		},
 
