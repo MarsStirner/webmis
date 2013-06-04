@@ -205,42 +205,14 @@ define([
 		},
 
 		onPatientLoaded: function (patient) {
-			Cache.Patient = patient;
-			this.setContentView(this.type);
-			this.ready();
-			this.setBreadcrumbsStructure();
-
 			patient.off("change", this.onPatientLoaded, this);
-			//this.renderCardnav();
+
+			Cache.Patient = patient;
+			this.ready();
+			this.setContentView(this.type);
+
+			this.setBreadcrumbsStructure();
 		},
-
-		/*onPrintClick: function (event) {
-			event.preventDefault();
-			this.contentView.showPrint({
-				template: $(event.currentTarget).data("print-template"),
-				data: $(event.currentTarget).data("print-data")
-			});
-		},*/
-
-		/*onStaticPrintsClick: function (event) {
-			event.preventDefault();
-			window.open($(event.currentTarget).attr("href"), "printWindow", "menubar=0,toolbar=0,status=0,location=0");
-		},*/
-
-		/*onSectionClick: function (event) {
-			event.preventDefault();
-			event.stopPropagation()
-			this.updateUrl(event);
-		},
-
-		updateUrl: function ( event ) {
-			var $target = $(event.currentTarget ),
-				href = $target.attr("href");
-
-			if ( href ) {
-				App.Router.navigate ( href, {trigger:true} );
-			}
-		},*/
 
 		setBreadcrumbsStructure: function () {
 			if (this.breadCrumbsMap[this.type]) {
@@ -264,45 +236,11 @@ define([
 			this.$("#page-head").html(this.breadcrumbs.render().el);
 
 			this.$(".LeftSideBar").html(this.menu.render().el);
-
-			//this.menu.delegateEvents();
-
-			this.renderPageContent();
 		},
 
 		render: function () {
 			return this;
 		},
-
-		/*renderCardnav: function () {
-			this.$(".CardHeader").html($.tmpl(cardnavTemplate, this.appeal.toJSON()));
-			this.$("#printBtn")
-				.button()
-				.next()
-					.button({
-						text: false,
-						icons: {
-							primary: "ui-icon-triangle-1-s"
-						}
-					})
-					.click(function () {
-						$(this).parent().next().position({
-							my: "right top",
-							at: "right bottom",
-							of: this
-						}).toggleClass("Active");
-
-						//event.stopPropagation();
-
-						return false;
-					})
-					.parent()
-						.buttonset();
-						*//**//*.next()
-							.hide();
-							.menu();*//**//*
-			this.togglePrintBtn();*//*
-		},*/
 
 		renderPageContent: function () {
 			this.menu.setPage(this.type);
@@ -315,7 +253,6 @@ define([
 			} else {
 				this.cardHeader.hidePrintBtn();
 			}
-			//this.$(".CardHeader .CardPrint")[this.contentView.canPrint ? "show" : "hide"]();
 		},
 
 		toggleMenu: function (visible) {
