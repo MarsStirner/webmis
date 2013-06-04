@@ -1,16 +1,21 @@
-<%=document.id%>
-<div class="Inspection Clearfix">
-	<div class="SingleHeader Clearfix">
-		<h2><%= document.name %></h2>
-		<div class="SingleInfo">
-			<span class="Date"><%= Core.Date.formatDateTime(document.endDate) %></span> | <span class="Doctor"><%= document.doctorName +', ' + document.doctorSpecs %></span>
+<%if (document.loaded) {%>
+	<div class="Inspection Clearfix">
+		<div class="SingleHeader Clearfix">
+			<h2><%= document.name %></h2>
+			<div class="SingleInfo">
+				<span class="Date"><%= Core.Date.formatDateTime(document.endDate) %></span> | <span class="Doctor"><%= document.doctorName +', ' + document.doctorSpecs %></span>
+			</div>
 		</div>
+		<ul>
+			<% _.each(document.attributes, function (attr) { %>
+			<li>
+				<strong><%= attr.name %>:</strong> <%= attr.value %>
+			</li>
+			<% }); %>
+		</ul>
 	</div>
-	<ul>
-		<% _.each(document.attributes, function (attr) { %>
-		<li>
-			<strong><%= attr.name %>:</strong> <%= attr.value %>
-		</li>
-		<% }); %>
-	</ul>
-</div>
+<%} else {%>
+	<div class="SingleHeader Clearfix">
+		<h3>Загрузка...</h3>
+	</div>
+<%}%>

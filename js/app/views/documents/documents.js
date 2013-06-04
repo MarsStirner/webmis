@@ -30,6 +30,8 @@ define(function (require) {
 		_reviewSheet: _.template(require("text!templates/documents/review/sheet.html"))
 	};
 
+	var CommonDataMixin = require("mixins/commonData");
+
 	/*var rootEl = $('#wrapper');
 
 	var prefix = "test/" + appealId;
@@ -88,7 +90,13 @@ define(function (require) {
 	//---------------------
 	//---------------------
 
-	Documents.Models.DocumentBase = Backbone.Model.extend({});
+	Documents.Models.DocumentBase = Backbone.Model.extend({
+		parse: function (raw) {
+			console.log(raw);
+			return raw.data[0];
+		}
+	}).mixin([CommonDataMixin]);
+
 	Documents.Models.DocumentBase.prototype.sync = Model.prototype.sync;
 
 	Documents.Models.Document = Documents.Models.DocumentBase.extend({
@@ -99,11 +107,6 @@ define(function (require) {
 		initialize: function (options) {
 			this.id = options.id;
 			this.appealId = options.appealId || appealId;
-		},
-
-		parse: function (raw) {
-			var data = Documents.Models.DocumentBase.prototype.parse.call(this, raw);
-			return data.data[0];
 		},
 
 		getFilledAttrs: function () {
@@ -517,15 +520,17 @@ define(function (require) {
 			this.dialogOptions = {
 				modal: true,
 				width: 800,
-				height: 800,
+				height: 600,
 				resizable: false,
 				close: _.bind(this.tearDown, this),
 				buttons: [
 					{
-						text: "Создать"
+						text: "Создать",
+						click: _.bind(this.tearDown, this)
 					},
 					{
-						text: "Отмена"
+						text: "Отмена",
+						click: _.bind(this.tearDown, this)
 					}
 				]
 			};
@@ -713,7 +718,9 @@ define(function (require) {
 		},
 
 		initialize: function () {
-			this.listenTo(this.model, "change", function () { this.$("button").prop("disabled", false); });
+			this.listenTo(this.model, "change", function () {
+				this.$("button").prop("disabled", false);
+			});
 		},
 
 		onSaveClick: function (event) {
@@ -731,8 +738,19 @@ define(function (require) {
 	Documents.Views.Edit.Grid = ViewBase.extend({
 		template: templates._editGrid,
 
+		data: function () {
+			return {
+				documentTemplate: this.model.toJSON()
+			}
+		},
+
 		initialize: function () {
-			this.listenTo(this.model, "change", function () { this.$el.html("Готово"); });
+			this.listenTo(this.model, "change", this.onModelReset);
+		},
+
+		onModelReset: function () {
+			console.log(this.data());
+			this.render();
 		}
 	});
 
@@ -830,37 +848,34 @@ define(function (require) {
 
 		data: function () {
 			var tmplData = {
-				attributes  : [],
+				/*attributes  : [],
 				name        : "",
 				endDate     : "",
 				doctorName  : "",
-				doctorSpecs : ""
+				doctorSpecs : "",
+				loaded      : false*/
 			};
 
-			var examJSON = this.model.toJSON();
+			var documentJSON = this.model.toJSON();
 
-			if (examJSON.version) {
-				var summaryAttrs = examJSON["group"][0]["attribute"];
-
-				var examName       = summaryAttrs[1]["properties"][0]["value"];
-				var examEndDate    = summaryAttrs[3]["properties"][0]["value"];
-				var examDoctorName = [
-					summaryAttrs[4]["properties"][0]["value"],
-					summaryAttrs[5]["properties"][0]["value"],
-					summaryAttrs[6]["properties"][0]["value"]
-				].join(" ");
-				var examDoctorSpecs = summaryAttrs[7]["properties"][0]["value"];
-
-				//var typeId = examJSON.typeId;
+			if (documentJSON.version) {
+				var summaryAttrs = documentJSON["group"][0]["attribute"];
 
 				tmplData = {
 					attributes  : this.model.getFilledAttrs(),
-					name        : examName,
-					endDate     : examEndDate,
-					doctorName  : examDoctorName,
-					doctorSpecs : examDoctorSpecs//,
-					//appealId:        self.model.appealId,
-					//isClosed:        self.options.appeal.isClosed()
+					name        : summaryAttrs[1]["properties"][0]["value"],
+					endDate     : summaryAttrs[3]["properties"][0]["value"],
+					doctorName  : [
+						summaryAttrs[4]["properties"][0]["value"],
+						summaryAttrs[5]["properties"][0]["value"],
+						summaryAttrs[6]["properties"][0]["value"]
+					].join(" "),
+					doctorSpecs : summaryAttrs[7]["properties"][0]["value"],
+					loaded      : true
+				};
+			} else {
+				tmplData = {
+					loaded: false
 				};
 			}
 
