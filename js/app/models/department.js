@@ -9,5 +9,5 @@ define(function () {
 		}
 	});
 
-	//return App.Models.Department;
+	return App.Models.Department;
 });

@@ -15,7 +15,7 @@ define([], function() {
 					_.each(group.attribute, function(attribute) {
 						attributes.push(attribute);
 					});
-					
+
 				});
 
 				return attributes;
@@ -47,6 +47,7 @@ define([], function() {
 			setProperty: function(attributeName, propertyName, value) {
 				var model = this;
 
+
 				var group = model.get('group');
 
 				var find = false;
@@ -74,7 +75,7 @@ define([], function() {
 
 				model.set('group', group);
 
-				//console.log('setParam', attributeName, propertyName, value, group);
+				console.log('setProperty', attributeName, propertyName, value, group);
 
 			}
 

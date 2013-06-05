@@ -4,7 +4,7 @@ define([], function() {
 
 		this.setDefaults({
 
-			className: "popup",
+			className: "popup qewrerytiu",
 
 			template: '',
 
@@ -15,6 +15,7 @@ define([], function() {
 			},
 
 			close: function() {
+				console.log('popup view close')
 				this.$el.dialog("close");
 				this.$el.remove();
 			},
@@ -39,6 +40,7 @@ define([], function() {
 		});
 
 		this.before('render', function() {
+			var self = this;
 			this.beforeRender();
 			this.$el.html($.tmpl(this.template, this.data));
 
@@ -48,14 +50,14 @@ define([], function() {
 				modal: true,
 				dialogClass: "webmis",
 				title: this.options.title ? this.options.title : "Создание направления",
-				onClose: this.close,
+				onClose: self.close,
 				buttons: [{
 					text: "Сохранить",
-					click: this.onSave,
+					click: self.onSave,
 					"class": "button-color-green save"
 				}, {
 					text: "Отмена",
-					click: this.close
+					click: self.close
 				}]
 			});
 		});

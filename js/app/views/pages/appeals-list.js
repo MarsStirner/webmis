@@ -1,15 +1,16 @@
 define([
-	"collections/appeals",
-	"collections/doctors",
-	"collections/departments",
-	"views/grid",
-	"views/filter",
-	"views/filter-dictionaries",
-	"views/paginator",
-	"collections/department-patients",
-	"views/appeal/edit/popups/send-to-department",
-	"models/print/form007",
-	"views/print"], function () {
+		"views/moves/send-to-department",
+		"collections/appeals",
+		"collections/doctors",
+		"collections/departments",
+		"views/grid",
+		"views/filter",
+		"views/filter-dictionaries",
+		"views/paginator",
+		"collections/department-patients",
+		"models/print/form007",
+		"views/print"
+], function(SendToDepartment) {
 	/*var AppealsList = {
 		Views: {}
 	};
@@ -90,7 +91,7 @@ define([
 			var previousDepartmentName = false;
 			var previousDepartmentDate = false;
 
-			var sendPopUp = new App.Views.SendToDepartment({
+			var sendPopUp = new SendToDepartment({
 				previousDepartmentName: previousDepartmentName,
 				previousDepartmentDate: previousDepartmentDate,
 				showDatepicker: false,

@@ -56,7 +56,9 @@
 			</div>
 			<div class="ColHalf">
 				<span class="Label">Направивший врач</span>
-				<input name="doctor" type="text" style="color: #777;" disabled value="${doctor.name.first} ${doctor.name.last}">
+				<div id="doctor-outer">
+					<input name="doctor" id="doctor" type="text" style="color: #777;cursor: pointer;" disabled value="${doctor.name.first} ${doctor.name.middle} ${doctor.name.last}">
+				</div>
 			</div>
 			<div class="HalfCol">
 				<span class="Label">Вид оплаты</span><br/>
