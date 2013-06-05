@@ -749,8 +749,17 @@ define(function (require) {
 		},
 
 		onModelReset: function () {
-			console.log(this.data());
 			this.render();
+		},
+
+		compileGrid: function () {
+			var documentTemplate = this.model.get("group")[1].attribute;
+
+			var rows = [];
+
+			_(documentTemplate).each(function (item) {
+				var itemName = item.name;
+			});
 		}
 	});
 
