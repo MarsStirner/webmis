@@ -44,7 +44,7 @@
 
 <script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
 	<td class="status-code-${status}">
-		{{if status!=2}}
+		{{if status<=2}}
 		<input type="checkbox" class="id" name="id" value="${id}"/>
 		{{/if}}
 		<!-- ${id} -->

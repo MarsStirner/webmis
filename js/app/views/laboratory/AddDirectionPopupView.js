@@ -61,7 +61,7 @@ MkbInputView) {
 
 
 			view.appeal = view.options.appeal;
-			console.log('appeal', view.appeal);
+			//console.log('appeal', view.appeal);
 
 
 			var TestCollection = Collection.extend({
@@ -72,7 +72,7 @@ MkbInputView) {
 						dataType: "jsonp",
 						contentType: 'application/json',
 						success: function(data, status) {
-							console.log('updateAll success', arguments);
+							//console.log('updateAll success', arguments);
 							if (status == 'success') {
 								collection.trigger('updateAll:success', arguments);
 							} else {
@@ -83,7 +83,7 @@ MkbInputView) {
 
 							var response = $.parseJSON(x.responseText);
 							collection.trigger('updateAll:error', response);
-							console.log('updateAll error', response.exception, response.errorCode, response.errorMessage, arguments);
+							//console.log('updateAll error', response.exception, response.errorCode, response.errorMessage, arguments);
 						},
 						data: JSON.stringify({
 							data: collection.toJSON()
@@ -100,7 +100,7 @@ MkbInputView) {
 
 			view.testCollection.on('add remove reset', function() {
 				view.saveButton(view.testCollection.length);
-				console.log('testCollection changed', view.testCollection);
+				//console.log('testCollection changed', view.testCollection);
 			}, view);
 
 			view.testCollection.on('updateAll:success', function() {
@@ -228,7 +228,7 @@ MkbInputView) {
 			var startTime = $startTimeInput.val() + ':00';
 
 
-			//console.log('onSave tree selected', selected);
+			////console.log('onSave tree selected', selected);
 
 
 			view.testCollection.forEach(function(model) {
@@ -247,7 +247,7 @@ MkbInputView) {
 				var $citoInput = view.$('#cito' + modelTree.key);
 				var cito = $citoInput.prop('checked');
 
-				//console.log('node inputs', date, time, cito);
+				////console.log('node inputs', date, time, cito);
 
 				var selected_params = _.filter(modelTree.children, function(node) {
 					return node.select === true;
@@ -257,7 +257,7 @@ MkbInputView) {
 
 
 				//выбранные тесты
-				//console.log('modelTree ', model.get('group'), modelTree, selected_params);
+				////console.log('modelTree ', model.get('group'), modelTree, selected_params);
 				_.each(selected_params, function(param) {
 					_.each(group[1].attribute, function(attribute, index) {
 						if (attribute.name == param.title) {
@@ -294,7 +294,7 @@ MkbInputView) {
 					if (a.name == attributeName) {
 						_.each(a.properties, function(p, propertyIndex) {
 							if (p.name == propertyName) {
-								console.log('нашли', groupIndex, attributeIndex, propertyIndex);
+								//console.log('нашли', groupIndex, attributeIndex, propertyIndex);
 								group[groupIndex].attribute[attributeIndex].properties[propertyIndex]['value'] = value;
 								find = true;
 							}
@@ -306,7 +306,7 @@ MkbInputView) {
 								name: propertyName,
 								value: value
 							});
-							//console.log('не нашли', groupIndex, attributeIndex, group[groupIndex].attribute[attributeIndex].properties);
+							////console.log('не нашли', groupIndex, attributeIndex, group[groupIndex].attribute[attributeIndex].properties);
 						}
 
 					}
@@ -315,7 +315,7 @@ MkbInputView) {
 
 			model.set('group', group);
 
-			//console.log('setParam', attributeName, propertyName, value, group);
+			////console.log('setParam', attributeName, propertyName, value, group);
 
 		},
 
@@ -341,7 +341,7 @@ MkbInputView) {
 			view.mkbInputView.close();
 			view.financeSelect.close();
 
-			console.log('close',view);
+			//console.log('close',view);
 
 		},
 

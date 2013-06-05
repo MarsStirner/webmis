@@ -178,12 +178,18 @@ define(['text!templates/pages/biomaterials.tmpl',
 			}
 		},
 
+		selectedAndStatus012: function(model) {
+			if (model.get('selected') && (model.get('status') <= 2)) {
+				return true;
+			}
+		},
+
 		/***
 		 * Запускает печать журнала выполнения работ
 		 */
 		printWorkList: function () {
 			var view = this;
-			var labTests = view.collection.getLabTests(view.selectedAndStatus10);
+			var labTests = view.collection.getLabTests(view.selectedAndStatus012);
 			var workList = view.collection.makeWorkList(labTests);
 
 			if (workList.length) {
@@ -201,12 +207,12 @@ define(['text!templates/pages/biomaterials.tmpl',
 
 		printBarcodes: function () {
 			var view = this;
-			var labTests = view.collection.getLabTests(view.selectedAndStatus10);
+			var labTests = view.collection.getLabTests(view.selectedAndStatus012);
 			var barcodes = view.collection.makeBarcodes(labTests);
 
 			if (barcodes.length) {
 				//статус заборов биоматериала для которых начали печатать штрихкод меняется на "Выполняется"
-				view.setStatus(view.collection.getSelectedModels(), 1);
+				view.setStatus(view.collection.getSelectedModelsWithStatus0(), 1);
 
 				new App.Views.Print({
 					data: {'barcodes': barcodes},
@@ -277,6 +283,7 @@ define(['text!templates/pages/biomaterials.tmpl',
 				filter: {
 					hasBeds: true
 				},
+				limit: 0,
 				sortingField: 'name',
 				sortingMethod: 'asc'
 			});
