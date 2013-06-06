@@ -3,33 +3,33 @@
  * Date: 08.06.12
  */
 define([
-	"text!templates/appeal/edit/main.tmpl",
-	"views/diagnostics/laboratory/LaboratoryView",
-	"views/diagnostics/laboratory/LaboratoryResultView",
-	"views/diagnostics/instrumental/InstrumentalView",
-	"views/diagnostics/consultations/ConsultationsListView",
-	"views/appeal/edit/pages/monitoring",
+		"text!templates/appeal/edit/main.tmpl",
+		"views/diagnostics/laboratory/LaboratoryView",
+		"views/diagnostics/laboratory/LaboratoryResultView",
+		"views/diagnostics/instrumental/InstrumentalView",
+		"views/diagnostics/consultations/ConsultationsListView",
+		"views/appeal/edit/pages/monitoring",
 
 	"views/moves/moves",
-	"views/moves/HospitalBedView",
+		"views/moves/HospitalBedView",
 
 	//"text!templates/cardnav.tmpl",
 
 
 	"models/appeal",
-	"collections/patient-appeals",
+		"collections/patient-appeals",
 
 	"views/breadcrumbs",
-	"views/menu",
-	"views/card-header",
+		"views/menu",
+		"views/card-header",
 
 	//"views/appeal/edit/pages/instrumental",
 
 	//"views/appeal/edit/pages/consultation",
 	"views/appeal/edit/pages/examinations",
-	"views/appeal/edit/pages/examination-edit",
-	"views/appeal/edit/pages/examination-primary",
-	"views/appeal/edit/pages/card"
+		"views/appeal/edit/pages/examination-edit",
+		"views/appeal/edit/pages/examination-primary",
+		"views/appeal/edit/pages/card"
 
 
 ], function(
@@ -39,7 +39,7 @@ define([
 	InstrumentalView,
 	ConsultationView,
 
-	Monitoring,
+Monitoring,
 	Moves,
 	HospitalBed
 
@@ -106,13 +106,7 @@ define([
 				id: this.appealId
 			});
 
-			this.menu = Data.Menu = new App.Views.Menu(this.getMenuStructure());
 
-			this.menu.options.structure.on("change-page", function(step) {
-				pubsub.trigger('noty_clear');
-
-				this.setContentView(step.name);
-			}, this);
 
 			this.breadcrumbs = new App.Views.Breadcrumbs();
 
@@ -198,6 +192,14 @@ define([
 			var patient = this.appeal.get("patient");
 			patient.on("change", this.onPatientLoaded, this);
 			patient.fetch();
+
+			this.menu = Data.Menu = new App.Views.Menu(this.getMenuStructure());
+
+			this.menu.options.structure.on("change-page", function(step) {
+				pubsub.trigger('noty_clear');
+
+				this.setContentView(step.name);
+			}, this);
 
 			appealExtraData.off("reset", this.onAppealExtraDataLoaded, this);
 		},
@@ -323,6 +325,7 @@ define([
 
 		getMenuStructure: function() {
 			var menuStructure = {};
+			var self = this;
 
 			this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function() {
 				var appealJSON = this.appeal.toJSON();
@@ -347,42 +350,33 @@ define([
 							name: "diagnostics-instrumental",
 							title: "Инструментальные исследования",
 							uri: "/appeals/:id/diagnostics/instrumental/"
-						}, appealJSON), {
-							name: "medical-info",
-							title: "Лечение",
-							structure: [{
-									name: "medical-info",
-									title: "Медикаментозное"
-								}, {
-									name: "medical-info",
-									title: "Оперативное"
-								}, {
-									name: "medical-info",
-									title: "Восстановительное"
-								}
-							]
-						},
+						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-consultations",
 							title: "Консультации",
 							uri: "/appeals/:id/diagnostics/consultations/"
-						}, appealJSON), {
-							name: "bills",
-							title: "Счета",
-							uri: ""
-						}, {
-							name: "checkout",
-							title: "Выписка",
-							uri: ""
-						}, {
-							name: "epicrisis",
-							title: "Эпикризы",
-							uri: ""
-						}, {
-							name: "history",
+						}, appealJSON), (function() {
+							var appeal = self.appeal;
+							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (appeal.get('appealType').get('finance').get('name') === 'ВМП')) {
+								return {
+									name: "quotеs",
+									title: "Квоты",
+									uri: ""
+								};
+							} else {
+								return false;
+							}
+						}()),
+						App.Router.compile({
+							name: "card",
 							title: "Титульный лист ИБ",
-							uri: ""
-						}
+							uri: "/appeals/:id/"
+						}, appealJSON),
+						App.Router.compile({
+							name: "moves",
+							title: "Движение пациента",
+							uri: "/appeals/:id/moves"
+						}, appealJSON)
 					]
 				}
 			},
@@ -504,6 +498,8 @@ define([
 					]
 				};
 			}, this);
+
+			menuStructure.structure = _.compact(menuStructure.structure)
 
 			return menuStructure;
 		}
