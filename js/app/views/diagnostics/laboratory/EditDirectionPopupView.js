@@ -35,7 +35,7 @@ define(function(require) {
 
 			view.model = this.options.model;
 			view.model.eventId = view.options.appeal.get('id');
-			console.log('popup init', view.model);
+			//console.log('popup init', view.model);
 
 			//инпут классификатора диагнозов
 			view.mkbInputView = new MkbInputView();
