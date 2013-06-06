@@ -343,6 +343,7 @@ define([
 		initialize: function () {
 			appeal = this.model = this.options.appeal;
 			appealJSON = appeal.toJSON();
+			this.canPrint = false;
 		},
 
 		render: function () {
@@ -679,6 +680,8 @@ define([
 			this.$(".blood-type-selector").hide();
 
 			this.$(".save-blood").button();
+
+			this.$(".edit-blood").button();
 
 			return this;
 		}
