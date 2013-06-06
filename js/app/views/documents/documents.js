@@ -91,14 +91,16 @@ define(function (require) {
 	//---------------------
 	//---------------------
 
-	Documents.Models.DocumentBase = Backbone.Model.extend({
+	Documents.Models.FetchableModelBase = Backbone.Model.extend({});
+
+	Documents.Models.FetchableModelBase.prototype.sync = Model.prototype.sync;
+
+	Documents.Models.DocumentBase = Documents.Models.FetchableModelBase.extend({
 		parse: function (raw) {
 			console.log(raw);
 			return raw.data[0];
 		}
 	}).mixin([CommonDataMixin]);
-
-	Documents.Models.DocumentBase.prototype.sync = Model.prototype.sync;
 
 	Documents.Models.Document = Documents.Models.DocumentBase.extend({
 		urlRoot: function () {
@@ -157,6 +159,16 @@ define(function (require) {
 		}*/
 	});
 
+	Documents.Models.LayoutAttributesDir = Documents.Models.FetchableModelBase.extend({
+		url: function () {
+			return DATA_PATH + "dir/layoutAttributes/";
+		},
+
+		parse: function (raw) {
+			return _(raw.data).groupBy("typeName");
+		}
+	});
+
 	//Коллекции
 	//---------------------
 	//---------------------
@@ -202,6 +214,16 @@ define(function (require) {
 			return DATA_PATH + "dir/actionTypes/?filter[view]=tree&filter[mnem]=EXAM&filter[mnem]=EPI&filter[mnem]=JOUR&filter[mnem]=ORD";
 		}
 	});
+
+	/*Documents.Collections.LayoutAttributesDir = Collection.extend({
+		url: function () {
+			return DATA_PATH + "dir/layoutAttributes/";
+		},
+
+		parse: function (raw) {
+
+		}
+	});*/
 
 	//Представления
 	//---------------------
@@ -659,6 +681,8 @@ define(function (require) {
 	//Редактирование
 	//---------------------
 
+	var layoutAttributesDir = new Documents.Models.LayoutAttributesDir();
+
 	Documents.Views.Edit.Layout = LayoutBase.extend({
 		template: templates._editLayout,
 
@@ -669,7 +693,10 @@ define(function (require) {
 
 			this.model = new Documents.Models.DocumentTemplate();
 			this.model.id = this.options.templateId;
-			this.model.fetch();
+			$.when(layoutAttributesDir.fetch()).then(_.bind(function () {
+				console.log(layoutAttributesDir.toJSON());
+				this.model.fetch();
+			}, this));
 
 			this.listenTo(this.model, "toggle:dividedState", this.toggleDividedState);
 		},
@@ -792,7 +819,7 @@ define(function (require) {
 		template: templates._editGridSpan,
 
 		data: function () {
-			return {templateItem: this.model.toJSON()}
+			return {templateItem: this.model.toJSON()};
 		},
 
 		render: function () {
@@ -838,8 +865,17 @@ define(function (require) {
 		},
 
 		groupRows: function () {
+			var templateItems = this.model.get("group")[1].attribute;
+
+			var mapped = this.mapLayoutAttributes(templateItems);
+
+			console.log(mapped);
+
+			debugger;
+
 			var groupedByRow = _(this.model.get("group")[1].attribute).groupBy(function (item) {
 				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
+				//var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
 				return "UNDEFINED";
 			}, this);
 
@@ -858,6 +894,22 @@ define(function (require) {
 			return rows;
 		},
 
+		mapLayoutAttributes: function (templateItems) {
+			return _(templateItems).map(function (templateItem) {
+					var rawLayoutAttributeValues = _(templateItem.layoutAttributeValues).clone();
+
+					templateItem.layoutAttributeValues = {};
+
+					_(rawLayoutAttributeValues).each(function (value) {
+						var layoutAttributeId = value.layoutAttribute_id;
+						var layoutAttributeParams = _(layoutAttributesDir.get(templateItem.type)).where({id: layoutAttributeId})[0];
+						templateItem.layoutAttributeValues[layoutAttributeParams.code] = value.value;
+					});
+
+					return templateItem;
+				});
+		},
+
 		onCollectionReset: function () {
 			this.tearDownSubviews();
 			this.render();
@@ -871,7 +923,9 @@ define(function (require) {
 	var UIElementBase = Documents.Views.Edit.UIElement.Base;
 
 	//Поле типа Constructor
-	Documents.Views.Edit.UIElement.Constructor = UIElementBase.extend({});
+	Documents.Views.Edit.UIElement.Constructor = UIElementBase.extend({
+
+	});
 
 	//Поле типа String
 	Documents.Views.Edit.UIElement.String = UIElementBase.extend({});
