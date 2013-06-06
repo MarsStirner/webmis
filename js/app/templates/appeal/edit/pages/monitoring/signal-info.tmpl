@@ -11,7 +11,7 @@
 		<% if (appealExtraData.rangeAppealDateTime.end) { %>
 			<%= Core.Date.format(appealExtraData.rangeAppealDateTime.end) %>
 		<% } else { %>
-			<%= moment().diff(moment(appealExtraData.rangeAppealDateTime.start), "days") + 1 %>
+			<%= days %>
 		<% } %>
 	</td>
 </tr>

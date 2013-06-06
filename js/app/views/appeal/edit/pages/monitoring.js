@@ -735,7 +735,8 @@ define([
 			return {
 				lastMove: this.moves.last(),
 				appeal: appealJSON,
-				appealExtraData: Core.Data.appealExtraData.toJSON()
+				appealExtraData: Core.Data.appealExtraData.toJSON(),
+				days: this.days
 			};
 		},
 
@@ -750,6 +751,15 @@ define([
 			this.moves.appealId = appeal.get("id");
 			console.log("fetching moves");
 			this.moves.on("reset", this.render, this).fetch();
+			//продолжительность лечения
+			if(appealJSON.appealType.requestType.id === 1){
+				//дневной стационар
+				this.days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days") + 1;
+			}else if(appealJSON.appealType.requestType.id === 2){
+				//круглосуточный стационар
+				this.days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days");
+			}
+
 
 			Core.Data.appealExtraData.get("execPerson").on("change:doctor", this.onExecPersonDoctorChange, this);
 
