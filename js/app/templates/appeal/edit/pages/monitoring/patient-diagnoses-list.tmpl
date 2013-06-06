@@ -7,7 +7,7 @@
 					<%= diagnosis.get("mkb").code %> &mdash; <%= diagnosis.get("mkb").diagnosis %>
 				</p>
 				<p>
-					<%= diagnosis.get("doctor").name.raw %>
+					<%= Core.Date.format(diagnosis.get("datetime")) %> <%= diagnosis.get("doctor").name.raw %>
 				</p>
 				<!--<dl>
 					<dt><%= diagnosis.get("mkb").code %></dt>
