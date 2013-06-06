@@ -749,7 +749,7 @@ define([
 
 			this.moves = new Moves();
 			this.moves.appealId = appeal.get("id");
-			console.log("fetching moves");
+			//console.log("fetching moves");
 			this.moves.on("reset", this.render, this).fetch();
 			//продолжительность лечения
 			if(appealJSON.appealType.requestType.id === 1){
@@ -779,6 +779,13 @@ define([
 
 		openExecPersonAssignmentDialog: function () {
 			new Monitoring.Views.ExecPersonAssignmentDialog().render().open();
+		},
+
+		render: function () {
+			this.$el.empty().append(this._template(this.data()));
+
+			this.$('.assign-exec-person').button();
+			return this;
 		}
 	});
 
