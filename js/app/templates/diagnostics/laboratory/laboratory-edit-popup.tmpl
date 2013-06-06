@@ -47,8 +47,9 @@
 
 			<div class="ColHalf">
 				<span class="Label">Направивший врач</span>
-				<div id="doctor-outer">
-					<input name="doctor" id="doctor" type="text" style="color: #777;cursor: pointer;" disabled value="${doctor.name.first} ${doctor.name.middle} ${doctor.name.last}">
+				<div id="doctor-outer" style="position:relative;">
+					<input name="doctor" id="doctor" type="text" style="" disabled value="${doctor.name.first} ${doctor.name.middle} ${doctor.name.last}">
+					<button class="change-doctor" style=""><i class="icon-user-md"></i></button>
 				</div>
 			</div>
 			<div class="HalfCol">

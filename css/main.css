@@ -428,6 +428,19 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
   color: #bbb;
 }
 
+/* line 305, ../sass/modules/_labs.scss */
+#doctor-outer #doctor {
+  color: #777;
+  cursor: pointer;
+  display: inline-block;
+  width: 88%;
+}
+
+/* line 308, ../sass/modules/_labs.scss */
+#doctor-outer .change-doctor {
+  display: inline-block;
+}
+
 /* line 1, ../sass/modules/_consultations.scss */
 .consultation-status-0 {
   color: blue;

@@ -190,6 +190,7 @@ define(function(require) {
 			view.$plannedTimepicker = view.$("#tp");
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
 			view.$doctor = view.$("#doctor");
+			this.$('.change-doctor').button();
 
 
 

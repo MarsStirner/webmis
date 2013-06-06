@@ -269,6 +269,7 @@ define(function(require) {
 			this.ui.$assignDatepicker = this.$el.find('#assign-date');
 			this.ui.$assignTimepicker = this.$el.find('#assign-time');
 			this.ui.$doctor = this.$el.find('#doctor');
+			this.$el.find('.change-doctor').button();
 
 			//календарь
 			this.ui.$datepicker.datepicker({

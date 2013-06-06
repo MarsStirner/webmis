@@ -6,7 +6,7 @@
 //попап редактирования направления на лабисследование
 
 define(function(require) {
-	var tmpl = require('text!templates/appeal/edit/popups/laboratory-edit-popup.tmpl');
+	var tmpl = require('text!templates/diagnostics/laboratory/laboratory-edit-popup.tmpl');
 	var popupMixin = require('mixins/PopupMixin');
 	var SelectView = require("views/ui/SelectView");
 	var test4EditTmpl = require('text!templates/diagnostics/laboratory/node-test4edit.html');
@@ -152,6 +152,8 @@ define(function(require) {
 			view.ui.$startTime = view.$("#start-time");
 			view.ui.$finance = view.$('#finance');
 			view.ui.$doctor = view.$('#doctor');
+
+			this.$('.change-doctor').button();
 
 			view.$('.edit-tree').dynatree({
 				clickFolderMode: 2,

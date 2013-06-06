@@ -6,7 +6,7 @@
 define(function(require) {
 
 	var popupMixin = require('mixins/PopupMixin');
-	var tmpl = require('text!templates/appeal/edit/popups/laboratory.tmpl');
+	var tmpl = require('text!templates/diagnostics/laboratory/laboratory-popup.tmpl');
 
 	var GroupsCollection = require('collections/diagnostics/laboratory/LabGroups');
 	var GroupTestsCollection = require('collections/diagnostics/laboratory/LabGroupTests');
@@ -319,6 +319,8 @@ define(function(require) {
 			view.ui.$mbkDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
 			view.ui.$finance = view.$('#finance');
 			view.ui.$doctor = view.$('#doctor');
+
+			this.$('.change-doctor').button();
 
 
 

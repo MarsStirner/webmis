@@ -321,6 +321,7 @@ define(function(require) {
             this.ui.$assignDate = this.$el.find('#assign-date');
             this.ui.$assignTime = this.$el.find('#assign-time');
             this.ui.$assignPerson = this.$el.find('#doctor');
+            this.$el.find('.change-doctor').button();
 
             //календарь
             this.ui.$planedDate.datepicker({

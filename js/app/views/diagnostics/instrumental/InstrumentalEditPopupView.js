@@ -104,6 +104,7 @@ define(function(require) {
 			view.$finance = view.$('#finance');
 			view.$mkbDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
 			view.$mkbCode = view.$("input[name='diagnosis[mkb][code]']");
+			this.$('.change-doctor').button();
 
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
 
