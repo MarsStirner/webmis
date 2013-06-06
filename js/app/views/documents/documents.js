@@ -25,6 +25,7 @@ define(function (require) {
 		_editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
 		_editDocumentControls: _.template(require("text!templates/documents/edit/document-controls.html")),
 		_editGrid: _.template(require("text!templates/documents/edit/grid.html")),
+		_editGridSpan: _.template(require("text!templates/documents/edit/span.html")),
 		_reviewLayout: _.template(require("text!templates/documents/review/layout.html")),
 		_reviewControls: _.template(require("text!templates/documents/review/controls.html")),
 		_reviewSheet: _.template(require("text!templates/documents/review/sheet.html"))
@@ -232,8 +233,9 @@ define(function (require) {
 		tearDown: function () {
 			/*if (this.model) this.model.off(null, null, this);
 			if (this.collection) this.collection.off(null, null, this);*/
-			this.stopListening();
+			console.log("tearing down " + this.$el.attr("class"));
 			this.tearDownSubviews();
+			this.stopListening();
 			this.undelegateEvents();
 			this.remove();
 		},
@@ -283,7 +285,28 @@ define(function (require) {
 	});
 	
 	var RepeaterBase = Documents.Views.RepeaterBase = ViewBase.extend({
+		repeat: ViewBase,
 
+		initialize: function () {
+			//this.repeatView = this.options.repeat;
+			this.subViews = [];
+		},
+
+		render: function () {
+			this.$el.html(this.collection.map(function (item) {
+				var options;
+				if (this.repeat instanceof Documents.Views.RepeaterBase) {
+					options = {collection: item};
+				} else {
+					options = {model: item};
+				}
+				var itemView = new this.repeat(options);
+				this.subViews.push(itemView);
+				return itemView.render().el;
+			}, this));
+
+			return this;
+		}
 	});
 
 	//Список
@@ -734,8 +757,8 @@ define(function (require) {
 		}
 	});
 
-	//Сетка (12 колонок по умолчанию)
-	Documents.Views.Edit.Grid = ViewBase.extend({
+
+	/*Documents.Views.Edit.Grid = ViewBase.extend({
 		template: templates._editGrid,
 
 		data: function () {
@@ -759,15 +782,87 @@ define(function (require) {
 
 			_(documentTemplate).each(function (item) {
 				var itemName = item.name;
+				var itemType = item.name;
 			});
+		}
+	});*/
+
+	//Ячейка в сетке
+	Documents.Views.Edit.GridSpan = ViewBase.extend({
+		template: templates._editGridSpan,
+
+		data: function () {
+			return {templateItem: this.model.toJSON()}
+		},
+
+		render: function () {
+			this.$el.addClass("span" + 12 / this.model.collection.length);
+
+			return ViewBase.prototype.render.call(this);
 		}
 	});
 
-	//Ряд в сетке
-	Documents.Views.Edit.GridRow = ViewBase.extend({});
+	Documents.Views.Edit.GridSpanList = RepeaterBase.extend({
+		repeat: Documents.Views.Edit.GridSpan
+	});
 
-	//Ячейка в сетке
-	Documents.Views.Edit.GridRowSpan = ViewBase.extend({});
+	//Ряд в сетке
+	Documents.Views.Edit.GridRow = ViewBase.extend({
+		className: "row-fluid",
+
+		render: function () {
+			console.log("GridRow", this);
+			var gridSpanList = new Documents.Views.Edit.GridSpanList({collection: this.model.get("spans")});
+			this.subViews = [gridSpanList];
+			gridSpanList.setElement(this.el);
+			gridSpanList.render();
+			return this;
+		}
+	});
+
+	//Сетка (12 колонок по умолчанию)
+	Documents.Views.Edit.Grid = RepeaterBase.extend({
+		repeat: Documents.Views.Edit.GridRow,
+
+		initialize: function () {
+			this.collection = new Backbone.Collection();
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+			this.listenTo(this.model, "change", this.onModelReset);
+			RepeaterBase.prototype.initialize.call(this, this.options);
+		},
+
+		onModelReset: function () {
+			this.stopListening(this.model, "change", this.onModelReset);
+
+			this.collection.reset(this.groupRows());
+		},
+
+		groupRows: function () {
+			var groupedByRow = _(this.model.get("group")[1].attribute).groupBy(function (item) {
+				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
+				return "UNDEFINED";
+			}, this);
+
+			var rows = [];
+
+			for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
+				if (i == 0 || i%2 == 0) {
+					rows.push({spans: new Backbone.Collection()});
+				}
+
+				rows[rows.length-1].spans.add(new Backbone.Model(groupedByRow.UNDEFINED[i]));
+			}
+
+			console.log("rows", rows);
+
+			return rows;
+		},
+
+		onCollectionReset: function () {
+			this.tearDownSubviews();
+			this.render();
+		}
+	});
 
 	//Базовый класс UI элемента для поля документа
 	Documents.Views.Edit.UIElement.Base = ViewBase.extend({});
@@ -812,7 +907,7 @@ define(function (require) {
 		render: function () {
 			return LayoutBase.prototype.render.call(this, {
 				".review-controls": new Documents.Views.Review.Controls({collection: this.collection}),
-				".sheets": new Documents.Views.Review.SheetList({collection: this.collection})
+				".sheets": new Documents.Views.Review.SheetList({collection: this.collection, repeat: Documents.Views.Review.Sheet})
 			});
 		}
 	});
@@ -833,22 +928,6 @@ define(function (require) {
 		/*toggleControls: function () {
 			this.$(".review-nav").toggle();
 		}*/
-	});
-
-	//Значения полей из документа
-	Documents.Views.Review.SheetList = RepeaterBase.extend({
-		initialize: function () {
-			this.repeatView = Documents.Views.Review.Sheet;
-			this.subViews = [];
-		},
-
-		render: function () {
-			this.$el.html(this.collection.map(function (item) {
-				var itemView = new this.repeatView({model: item});
-				this.subViews.push(itemView);
-				return itemView.render().el;
-			}, this));
-		}
 	});
 
 	//Значения полей из документа
@@ -900,6 +979,11 @@ define(function (require) {
 		onModelReset: function () {
 			this.render();
 		}
+	});
+
+	//Значения полей из документа
+	Documents.Views.Review.SheetList = RepeaterBase.extend({
+		repeat: Documents.Views.Review.Sheet
 	});
 
 	return Documents;
