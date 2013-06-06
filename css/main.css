@@ -221,7 +221,7 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link {
   padding: 2px 4px;
   background-color: #fff;
   margin-bottom: -4px;
-  border: 1px solid #bbbbbb;
+  border: 1px solid #bbb;
 }
 
 /* line 13, ../sass/modules/_biomaterials.scss */

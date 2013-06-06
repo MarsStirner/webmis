@@ -2,8 +2,6 @@
  * User: FKurilov
  * Date: 20.05.13
  */
-/*define(["text!templates/documents-layout.html"], function (documentsLayoutTmpl) {
-	var _documentsLayoutTmpl = _.template(documentsLayoutTmpl);*/
 
 define(function (require) {
 	var Backbone = window.Backbone;
@@ -25,54 +23,19 @@ define(function (require) {
 		_editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
 		_editDocumentControls: _.template(require("text!templates/documents/edit/document-controls.html")),
 		_editGrid: _.template(require("text!templates/documents/edit/grid.html")),
-		_editGridSpan: _.template(require("text!templates/documents/edit/span.html")),
+		//_editGridSpan: _.template(require("text!templates/documents/edit/span.html")),
 		_reviewLayout: _.template(require("text!templates/documents/review/layout.html")),
 		_reviewControls: _.template(require("text!templates/documents/review/controls.html")),
-		_reviewSheet: _.template(require("text!templates/documents/review/sheet.html"))
-	};
-
-	var CommonDataMixin = require("mixins/commonData");
-
-	/*var rootEl = $('#wrapper');
-
-	var prefix = "test/" + appealId;
-
-	var DocsRouter = Backbone.Router.extend({
-		navigate: function (path) {
-			return Backbone.Router.prototype.navigate.call(this);
-		},
-
-		routes: {
-			"": "list",
-			"new/:typeId/": "new",
-			":id/": "review",
-			":id/edit/": "edit"
-		},
-
-		list: function () {
-			rootEl.html(new Documents.Views.List.Layout().render().el);
-		},
-
-		new: function () {
-			rootEl.html(new Documents.Views.Edit.Layout().render().el);
-		},
-
-		review: function () {
-			rootEl.html(new Documents.Views.Review.Layout().render().el);
-		},
-
-		edit: function () {
-			rootEl.html(new Documents.Views.List.Layout().render().el);
+		_reviewSheet: _.template(require("text!templates/documents/review/sheet.html")),
+		uiElements: {
+			_base: _.template(require("text!templates/documents/edit/ui-elements/base.html")),
+			_constructor: _.template(require("text!templates/documents/edit/ui-elements/constructor.html")),
+			_text: _.template(require("text!templates/documents/edit/ui-elements/text.html")),
+			_double: _.template(require("text!templates/documents/edit/ui-elements/double.html")),
+			_string: _.template(require("text!templates/documents/edit/ui-elements/string.html")),
+			_mkb: _.template(require("text!templates/documents/edit/ui-elements/mkb.html"))
 		}
-	});
-
-	var docsRouter = new DocsRouter();*/
-
-	/*$(".documents-layout a").on("click", function (event) {
-		event.preventDefault();
-		docsRouter.navigate($(this).prop("href"));
-	});*/
-
+	};
 
 	//Структура модуля
 	var Documents = {
@@ -100,7 +63,7 @@ define(function (require) {
 			console.log(raw);
 			return raw.data[0];
 		}
-	}).mixin([CommonDataMixin]);
+	});//.mixin([CommonDataMixin]);
 
 	Documents.Models.Document = Documents.Models.DocumentBase.extend({
 		urlRoot: function () {
@@ -151,12 +114,7 @@ define(function (require) {
 			} else {
 				this.appealId = appealId;
 			}
-		}/*,
-
-		parse: function (raw) {
-			var data = Documents.Models.DocumentBase.prototype.parse.call(this, raw);
-			return data[0];
-		}*/
+		}
 	});
 
 	Documents.Models.LayoutAttributesDir = Documents.Models.FetchableModelBase.extend({
@@ -214,16 +172,6 @@ define(function (require) {
 			return DATA_PATH + "dir/actionTypes/?filter[view]=tree&filter[mnem]=EXAM&filter[mnem]=EPI&filter[mnem]=JOUR&filter[mnem]=ORD";
 		}
 	});
-
-	/*Documents.Collections.LayoutAttributesDir = Collection.extend({
-		url: function () {
-			return DATA_PATH + "dir/layoutAttributes/";
-		},
-
-		parse: function (raw) {
-
-		}
-	});*/
 
 	//Представления
 	//---------------------
@@ -289,7 +237,7 @@ define(function (require) {
 	var LayoutBase = Documents.Views.LayoutBase = ViewBase.extend({
 		className: "container-fluid",
 
-		attributes: {style: "display: table; width: 100%;"},
+		//attributes: {style: "display: table; width: 100%;"},
 
 		topLevel: false,
 
@@ -307,24 +255,38 @@ define(function (require) {
 	});
 	
 	var RepeaterBase = Documents.Views.RepeaterBase = ViewBase.extend({
-		repeat: ViewBase,
-
 		initialize: function () {
-			//this.repeatView = this.options.repeat;
 			this.subViews = [];
+		},
+
+		getRepeatOptions: function (item) {
+			var options;
+			if (this.repeat instanceof Documents.Views.RepeaterBase) {
+				options = {collection: item};
+			} else {
+				options = {model: item};
+			}
+			return options;
+		},
+
+		/**
+		 * OVERRIDE THIS METHOD to return instance of repeat view
+		 * @param repeatOptions
+		 * @returns {www.js.app.views.documents.documents.Views.Base}
+		 */
+		getRepeatView: function (repeatOptions) {
+			return new ViewBase(repeatOptions);
 		},
 
 		render: function () {
 			this.$el.html(this.collection.map(function (item) {
-				var options;
-				if (this.repeat instanceof Documents.Views.RepeaterBase) {
-					options = {collection: item};
-				} else {
-					options = {model: item};
-				}
-				var itemView = new this.repeat(options);
-				this.subViews.push(itemView);
-				return itemView.render().el;
+				var repeatOptions = this.getRepeatOptions(item);
+
+				var repeatView = this.getRepeatView(repeatOptions);
+
+				this.subViews.push(repeatView);
+
+				return repeatView.render().el;
 			}, this));
 
 			return this;
@@ -349,9 +311,6 @@ define(function (require) {
 			this.documents.fetch();
 
 			this.selectedDocuments = new Backbone.Collection();
-			//TODO: listenTo
-			//this.selectedDocuments.on("enteredReviewState", this.onEnteredReviewState, this);
-			//this.selectedDocuments.on("quitReviewState", this.onQuitReviewState, this);
 			this.listenTo(this.selectedDocuments, "enteredReviewState", this.onEnteredReviewState);
 			this.listenTo(this.selectedDocuments,"quitReviewState", this.onQuitReviewState);
 		},
@@ -379,18 +338,6 @@ define(function (require) {
 			}
 		},
 
-		/*showSelectedDocuments: function () {
-
-			*//*this.selectedDocuments.each(function (selectedDocument) {
-				this.$el.append('<div class="row-fluid review-sheet-' + selectedDocument.id + '"></div>');
-
-				var subView = {};
-				subView[".review-sheet-" + selectedDocument.id] = new Documents.Views.Review.Sheet({model: selectedDocument});
-
-				this.assign(subView);
-			}, this);*//*
-		},*/
-
 		render: function (subViews) {
 			return LayoutBase.prototype.render.call(this, _.extend({
 				".documents-table": new Documents.Views.List.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
@@ -402,6 +349,8 @@ define(function (require) {
 	});
 
 	Documents.Views.List.Layout = Documents.Views.List.LayoutLight.extend({
+		attributes: {style: "display: table; width: 100%;"},
+
 		initialize: function () {
 			Documents.Views.List.LayoutLight.prototype.initialize.call(this, this.options);
 
@@ -654,8 +603,6 @@ define(function (require) {
 
 		initialize: function () {
 			//TODO: listenTo
-			/*this.collection.on("add", this.onSelectedDocumentsAdd, this);
-			 this.collection.on("remove", this.onSelectedDocumentsRemove, this);*/
 			this.listenTo(this.collection, "add", this.onSelectedDocumentsAdd);
 			this.listenTo(this.collection, "remove", this.onSelectedDocumentsRemove);
 		},
@@ -784,53 +731,15 @@ define(function (require) {
 		}
 	});
 
-
-	/*Documents.Views.Edit.Grid = ViewBase.extend({
-		template: templates._editGrid,
-
-		data: function () {
-			return {
-				documentTemplate: this.model.toJSON()
-			}
-		},
-
-		initialize: function () {
-			this.listenTo(this.model, "change", this.onModelReset);
-		},
-
-		onModelReset: function () {
-			this.render();
-		},
-
-		compileGrid: function () {
-			var documentTemplate = this.model.get("group")[1].attribute;
-
-			var rows = [];
-
-			_(documentTemplate).each(function (item) {
-				var itemName = item.name;
-				var itemType = item.name;
-			});
-		}
-	});*/
-
-	//Ячейка в сетке
-	Documents.Views.Edit.GridSpan = ViewBase.extend({
-		template: templates._editGridSpan,
-
-		data: function () {
-			return {templateItem: this.model.toJSON()};
-		},
-
-		render: function () {
-			this.$el.addClass("span" + 12 / this.model.collection.length);
-
-			return ViewBase.prototype.render.call(this);
-		}
-	});
-
 	Documents.Views.Edit.GridSpanList = RepeaterBase.extend({
-		repeat: Documents.Views.Edit.GridSpan
+		initialize: function () {
+			this.UIElementFactory = new UIElementFactory();
+			RepeaterBase.prototype.initialize.call(this, this.options);
+		},
+
+		getRepeatView: function (repeatOptions) {
+			return this.UIElementFactory.make(repeatOptions);
+		}
 	});
 
 	//Ряд в сетке
@@ -849,13 +758,17 @@ define(function (require) {
 
 	//Сетка (12 колонок по умолчанию)
 	Documents.Views.Edit.Grid = RepeaterBase.extend({
-		repeat: Documents.Views.Edit.GridRow,
+		//repeat: Documents.Views.Edit.GridRow,
 
 		initialize: function () {
 			this.collection = new Backbone.Collection();
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
 			this.listenTo(this.model, "change", this.onModelReset);
 			RepeaterBase.prototype.initialize.call(this, this.options);
+		},
+
+		getRepeatView: function (repeatOptions) {
+			return new Documents.Views.Edit.GridRow(repeatOptions);
 		},
 
 		onModelReset: function () {
@@ -865,14 +778,6 @@ define(function (require) {
 		},
 
 		groupRows: function () {
-			var templateItems = this.model.get("group")[1].attribute;
-
-			var mapped = this.mapLayoutAttributes(templateItems);
-
-			console.log(mapped);
-
-			debugger;
-
 			var groupedByRow = _(this.model.get("group")[1].attribute).groupBy(function (item) {
 				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
 				//var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
@@ -894,22 +799,6 @@ define(function (require) {
 			return rows;
 		},
 
-		mapLayoutAttributes: function (templateItems) {
-			return _(templateItems).map(function (templateItem) {
-					var rawLayoutAttributeValues = _(templateItem.layoutAttributeValues).clone();
-
-					templateItem.layoutAttributeValues = {};
-
-					_(rawLayoutAttributeValues).each(function (value) {
-						var layoutAttributeId = value.layoutAttribute_id;
-						var layoutAttributeParams = _(layoutAttributesDir.get(templateItem.type)).where({id: layoutAttributeId})[0];
-						templateItem.layoutAttributeValues[layoutAttributeParams.code] = value.value;
-					});
-
-					return templateItem;
-				});
-		},
-
 		onCollectionReset: function () {
 			this.tearDownSubviews();
 			this.render();
@@ -917,21 +806,76 @@ define(function (require) {
 	});
 
 	//Базовый класс UI элемента для поля документа
-	Documents.Views.Edit.UIElement.Base = ViewBase.extend({});
+	var UIElementBase = Documents.Views.Edit.UIElement.Base = ViewBase.extend({
+		template: templates.uiElements._base,
 
-	//Shortcut
-	var UIElementBase = Documents.Views.Edit.UIElement.Base;
+		data: function () {
+			return {model: this.model}
+		},
+
+		layoutAttributes: {
+			width: 6
+		},
+
+		initialize: function () {
+			this.mapLayoutAttributes();
+			//common attrs to fit into grid
+			this.$el.addClass("span" + this.layoutAttributes.width);
+		},
+
+		mapLayoutAttributes: function () {
+			_(this.model.get('layoutAttributeValues')).each(function (value) {
+				var layoutAttributeParams = _(layoutAttributesDir.get(this.model.get('type'))).where({id: value.layoutAttribute_id})[0];
+				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
+			}, this);
+		}
+	});
+
+	//Поле типа Text
+	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({
+		template: templates.uiElements._text
+	});
 
 	//Поле типа Constructor
-	Documents.Views.Edit.UIElement.Constructor = UIElementBase.extend({
-
+	Documents.Views.Edit.UIElement.Constructor = Documents.Views.Edit.UIElement.Text.extend({
+		template: templates.uiElements._constructor
 	});
 
 	//Поле типа String
-	Documents.Views.Edit.UIElement.String = UIElementBase.extend({});
+	Documents.Views.Edit.UIElement.String = UIElementBase.extend({
+		template: templates.uiElements._string,
 
-	//Поле типа Text
-	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({});
+		render: function () {
+			UIElementBase.prototype.render.call(this);
+
+			this.$(".Combo").each(function () {
+				var $comboInput = $(this).wrap('<div class="DDList DDSelect ComboWrapper"><div class="Title"><span class="Actions"></span></div></div>');
+				var $wrapper = $comboInput.parents(".DDList").append('<div class="Content"><ul></ul></div>');
+
+				if ($comboInput.hasClass("Mandatory")) $wrapper.addClass("Mandatory");
+
+				$wrapper.find("ul").append($comboInput.data("options").split("|").map(function (opt) {
+					return $('<li>' + opt + '</li>');
+				}));
+
+				$wrapper.on("click", function (event) {
+					event.stopPropagation();
+					$(".DDList.Active").not ($wrapper).removeClass ( "Active" );
+					$(this).toggleClass("Active");
+				});
+
+				$wrapper.find("li").on("click", function () {
+					$comboInput.val($(this).html()).change();
+				});
+
+				$comboInput.on("keyup", function () {
+					$wrapper.removeClass("Active");
+				});
+			});
+
+			return this;
+		}
+	});
 
 	//Поле типа Time
 	Documents.Views.Edit.UIElement.Time = UIElementBase.extend({});
@@ -943,13 +887,60 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.Integer = UIElementBase.extend({});
 
 	//Поле типа Double
-	Documents.Views.Edit.UIElement.Double = UIElementBase.extend({});
+	Documents.Views.Edit.UIElement.Double = UIElementBase.extend({
+		template: templates.uiElements._double
+	});
 
 	//Поле типа MKB
-	Documents.Views.Edit.UIElement.MKB = UIElementBase.extend({});
+	Documents.Views.Edit.UIElement.MKB = UIElementBase.extend({
+		template: templates.uiElements._mkb
+	});
 
 	//Поле типа FlatDirectory
 	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({});
+
+	/**
+	 * Фабрика для создания элементов шаблона соответсвующего типа
+	 * @type {Function}
+	 */
+	var UIElementFactory = Documents.Views.Edit.UIElementFactory = function () {};
+	UIElementFactory.prototype.UIElementClass = Documents.Views.Edit.UIElement.Base;
+	UIElementFactory.prototype.make = function (options) {
+		//Регистрация типов
+		switch (options.model.get('type').toLowerCase()) {
+			case "constructor":
+				this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
+				break;
+			case "string":
+				this.UIElementClass = Documents.Views.Edit.UIElement.String;
+				break;
+			case "text":
+				this.UIElementClass = Documents.Views.Edit.UIElement.Text;
+				break;
+			case "time":
+				this.UIElementClass = Documents.Views.Edit.UIElement.Time;
+				break;
+			case "date":
+				this.UIElementClass = Documents.Views.Edit.UIElement.Date;
+				break;
+			case "integer":
+				this.UIElementClass = Documents.Views.Edit.UIElement.Integer;
+				break;
+			case "double":
+				this.UIElementClass = Documents.Views.Edit.UIElement.Double;
+				break;
+			case "mkb":
+				this.UIElementClass = Documents.Views.Edit.UIElement.MKB;
+				break;
+			case "flatdirectory":
+				this.UIElementClass = Documents.Views.Edit.UIElement.FlatDirectory;
+				break;
+			default:
+				this.UIElementClass = Documents.Views.Edit.UIElement.Base;
+				break;
+		}
+		return new this.UIElementClass(options);
+	};
 
 
 	//Просмотр
@@ -975,13 +966,8 @@ define(function (require) {
 		},
 
 		onBackToDocumentListClick: function () {
-			//this.toggleControls();
 			this.collection.trigger("quitReviewState");
-		}//,
-
-		/*toggleControls: function () {
-			this.$(".review-nav").toggle();
-		}*/
+		}
 	});
 
 	//Значения полей из документа
@@ -989,14 +975,7 @@ define(function (require) {
 		template: templates._reviewSheet,
 
 		data: function () {
-			var tmplData = {
-				/*attributes  : [],
-				name        : "",
-				endDate     : "",
-				doctorName  : "",
-				doctorSpecs : "",
-				loaded      : false*/
-			};
+			var tmplData = {};
 
 			var documentJSON = this.model.toJSON();
 
@@ -1037,7 +1016,9 @@ define(function (require) {
 
 	//Значения полей из документа
 	Documents.Views.Review.SheetList = RepeaterBase.extend({
-		repeat: Documents.Views.Review.Sheet
+		getRepeatView: function (repeatOptions) {
+			return new Documents.Views.Review.Sheet(repeatOptions);
+		}
 	});
 
 	return Documents;
