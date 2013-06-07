@@ -1,5 +1,12 @@
 <table>
-	<thead></thead>
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th>id</th>
+			<th>name</th>
+			<th>&nbsp;</th>
+		</tr>
+	</thead>
 	<tbody>
 		<%if (documents.length) {%>
 			<%documents.each(function (document) {%>
@@ -7,6 +14,7 @@
 					<td><input type="checkbox" class="selected-flag" value="<%=document.id%>"></td>
 					<td><%=document.id%></td>
 					<td><%=document.get('assessmentName').name%></td>
+					<td><button type="button" class="edit-document" data-document-id="<%=document.id%>">Редактировать</button></td>
 				</tr>
 			<%});%>
 		<%} else {%>

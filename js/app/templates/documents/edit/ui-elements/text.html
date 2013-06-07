@@ -4,6 +4,6 @@
 		<%=model.get('name')%>
 	</label>
 	<div class="RichTextWrapper field">
-		<div contenteditable="true" class="RichText attribute-value" style="min-height: 8em;"><br></div>
+		<div contenteditable="true" class="RichText attribute-value" style="min-height: 8em;"><%=model.getValue() || '<br>'%></div>
 	</div>
 </div>

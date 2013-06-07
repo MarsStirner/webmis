@@ -7,10 +7,7 @@ define(function (require) {
 	var Backbone = window.Backbone;
 	var _ = window._;
 	var appealId = 0;
-
 	var dispatcher = _.extend({}, Backbone.Events);
-
-	var Thesaurus = require("views/appeal/edit/popups/thesaurus");
 
 	var templates = {
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
@@ -39,6 +36,8 @@ define(function (require) {
 		}
 	};
 
+	var Thesaurus = require("views/appeal/edit/popups/thesaurus");
+
 	//Структура модуля
 	var Documents = {
 		Views: {
@@ -57,7 +56,6 @@ define(function (require) {
 	//---------------------
 
 	Documents.Models.FetchableModelBase = Backbone.Model.extend({});
-
 	Documents.Models.FetchableModelBase.prototype.sync = Model.prototype.sync;
 
 	Documents.Models.DocumentBase = Documents.Models.FetchableModelBase.extend({
@@ -153,24 +151,12 @@ define(function (require) {
 
 		getValue: function () {
 			return this.getValueProperty().value;
-
-			/*if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
-				return _(this.get("properties")).find(function (prop) { return prop.name = "valueId"; }).value;
-			} else {
-				return _(this.get("properties")).find(function (prop) { return prop.name = "value"; }).value;
-			}*/
 		},
 
 		setValue: function (value) {
 			this.getValueProperty().value = value;
-
-			/*if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
-				_(this.get("properties")).find(function (prop) { return prop.name = "valueId"; }).value = value;
-			} else {
-				_(this.get("properties")).find(function (prop) { return prop.name = "value"; }).value = value;
-			}*/
-
 			this.trigger("change:value");
+			return this;
 		}
 	});
 
@@ -243,13 +229,10 @@ define(function (require) {
 				this.subViews = {};
 				this.assign(subViews);
 			}
-			//this.$("button").button();
 			return this;
 		},
 
 		tearDown: function () {
-			/*if (this.model) this.model.off(null, null, this);
-			if (this.collection) this.collection.off(null, null, this);*/
 			console.log("tearing down " + this.$el.attr("class"));
 			this.tearDownSubviews();
 			this.stopListening();
@@ -283,8 +266,6 @@ define(function (require) {
 
 	var LayoutBase = Documents.Views.LayoutBase = ViewBase.extend({
 		className: "container-fluid",
-
-		//attributes: {style: "display: table; width: 100%;"},
 
 		topLevel: false,
 
@@ -411,8 +392,6 @@ define(function (require) {
 		},
 
 		render: function () {
-			//this.$(".top-row").prepend('<div class="span6 documents-controls"></div>');
-
 			return Documents.Views.List.LayoutLight.prototype.render.call(this, {
 				".documents-controls": new Documents.Views.List.Controls({collection: this.documents, documentTypes: this.documentTypes})
 			});
@@ -609,8 +588,8 @@ define(function (require) {
 		template: templates._documentsTable,
 
 		events: {
-			"change .selected-flag": "onSelectedFlagChange"//,
-			//"click .document-item-row td": "onDocumentItemRowClick"
+			"change .selected-flag": "onSelectedFlagChange",
+			"click .edit-document": "onEditDocumentClick"
 		},
 
 		data: function () {
@@ -631,6 +610,10 @@ define(function (require) {
 			this.updatedSelectedItems($(event.currentTarget).is(":checked"), parseInt($(event.currentTarget).val()));
 		},
 
+		onEditDocumentClick: function (event) {
+			dispatcher.trigger("change:viewState", {type: "document-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+		},
+
 		updatedSelectedItems: function (selected, itemId) {
 			if (selected) {
 				this.options.selectedDocuments.add(new Documents.Models.Document({id: itemId}));
@@ -649,7 +632,6 @@ define(function (require) {
 		},
 
 		initialize: function () {
-			//TODO: listenTo
 			this.listenTo(this.collection, "add", this.onSelectedDocumentsAdd);
 			this.listenTo(this.collection, "remove", this.onSelectedDocumentsRemove);
 		},
@@ -685,10 +667,20 @@ define(function (require) {
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
 
-			this.model = new Documents.Models.DocumentTemplate();
-			this.model.id = this.options.templateId;
+			if (!this.model) {
+				if (this.options.templateId) {
+					this.model = new Documents.Models.DocumentTemplate();
+					this.model.id = this.options.templateId;
+				} else if (this.options.documentId) {
+					this.model = new Documents.Models.Document({id: this.options.documentId});
+					//this.model.id = this.options.documentId;
+				} else {
+					console.error("no doc or tmpl id!");
+					dispatcher.trigger("change:viewState", {type: "documents"});
+				}
+			}
+
 			$.when(layoutAttributesDir.fetch()).then(_.bind(function () {
-				console.log(layoutAttributesDir.toJSON());
 				this.model.fetch();
 			}, this));
 
@@ -805,8 +797,6 @@ define(function (require) {
 
 	//Сетка (12 колонок по умолчанию)
 	Documents.Views.Edit.Grid = RepeaterBase.extend({
-		//repeat: Documents.Views.Edit.GridRow,
-
 		initialize: function () {
 			this.collection = new Backbone.Collection();
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
@@ -944,6 +934,8 @@ define(function (require) {
 
 		render: function () {
 			UIElementBase.prototype.render.call(this);
+
+			//TODO: move this shit to the template
 
 			this.$(".Combo").each(function () {
 				var $comboInput = $(this).wrap('<div class="DDList DDSelect ComboWrapper"><div class="Title"><span class="Actions"></span></div></div>');
@@ -1146,7 +1138,6 @@ define(function (require) {
 
 		data: function () {
 			var tmplData = {};
-
 			var documentJSON = this.model.toJSON();
 
 			if (documentJSON.version) {
@@ -1169,7 +1160,6 @@ define(function (require) {
 					loaded: false
 				};
 			}
-
 
 			return {document: tmplData};
 		},
