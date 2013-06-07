@@ -10,6 +10,8 @@ define(function (require) {
 
 	var dispatcher = _.extend({}, Backbone.Events);
 
+	var Thesaurus = require("views/appeal/edit/popups/thesaurus");
+
 	var templates = {
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
 		_listControls: _.template(require("text!templates/documents/list/controls.html")),
@@ -124,6 +126,24 @@ define(function (require) {
 
 		parse: function (raw) {
 			return _(raw.data).groupBy("typeName");
+		}
+	});
+
+	Documents.Models.TemplateAttribute = Backbone.Model.extend({
+		getValue: function () {
+			if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
+				return _(this.get("properties")).find(function (prop) { return prop.name = "valueId"; }).value;
+			} else {
+				return _(this.get("properties")).find(function (prop) { return prop.name = "value"; }).value;
+			}
+		},
+
+		setValue: function (value) {
+			if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
+				_(this.get("properties")).find(function (prop) { return prop.name = "valueId"; }).value = value;
+			} else {
+				_(this.get("properties")).find(function (prop) { return prop.name = "value"; }).value = value;
+			}
 		}
 	});
 
@@ -791,7 +811,7 @@ define(function (require) {
 					rows.push({spans: new Backbone.Collection()});
 				}
 
-				rows[rows.length-1].spans.add(new Backbone.Model(groupedByRow.UNDEFINED[i]));
+				rows[rows.length-1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
 			}
 
 			console.log("rows", rows);
@@ -838,7 +858,29 @@ define(function (require) {
 
 	//Поле типа Constructor
 	Documents.Views.Edit.UIElement.Constructor = Documents.Views.Edit.UIElement.Text.extend({
-		template: templates.uiElements._constructor
+		template: templates.uiElements._constructor,
+
+		events: {
+			"click .thesaurus-open": "onThesaurusOpenClick"
+		},
+
+		onThesaurusOpenClick: function (event) {
+			event.preventDefault();
+			//var thesaurusCode = $(event.currentTarget).parent().find(".ExamAttr").data("thesaurus-code");
+
+			this.thesaurus = new ThesaurusPopUp().render().open({
+				code: this.model.get("scope"),
+				terms: this.model.getValue(),
+				attrId: this.model.get("typeId"),
+				propertyType: "value"
+			});
+
+			this.listenTo(this.thesaurus, "thesaurus:confirmed", this.onThesaurusConfirmed);
+		},
+
+		onThesaurusConfirmed: function (event) {
+			this.model.setValue(event.selectedTerms);
+		}
 	});
 
 	//Поле типа String
@@ -942,6 +984,79 @@ define(function (require) {
 		return new this.UIElementClass(options);
 	};
 
+	//Patched thesaurus view, supporting safe tear down
+	var ThesaurusPopUp = Documents.Views.Edit.ThesaurusPopUp = Thesaurus.Thesaurus.extend({
+		initialize: function () {
+			this.model = new (Backbone.Model.extend({
+				rootCode: "",
+				selectedTerms: "",
+				attrId: ""
+			}))();
+
+			this.model.on("change:rootCode", this.onRootCodeChange, this);
+			this.model.on("change:selectedTerms", this.onSelectedTermsChange, this);
+
+			this.termTree = new Documents.Views.Edit.ThesaurusPopUpTree({
+				collection: new App.Collections.ThesaurusTerms(),
+				className: "Tree",
+				isRoot: true
+			});
+
+			Thesaurus.termDispatcher.on("term:selected", this.appendTerm, this);
+
+			this.subViews = [this.termTree];
+		},
+		tearDown: function () {
+			this.model.off();
+			Thesaurus.termDispatcher.off();
+			this.close();
+			ViewBase.prototype.tearDown.call(this);
+		},
+		open: function (options) {
+			Thesaurus.Thesaurus.prototype.open.call(this, options);
+			return this;
+		},
+		onCancel: function () {
+			this.tearDown();
+		},
+		onConfirm: function () {
+			this.trigger("thesaurus:confirmed", this.model.toJSON());
+			this.tearDown();
+		}
+	});
+	Documents.Views.Edit.ThesaurusPopUp.prototype.tearDownSubviews = ViewBase.prototype.tearDownSubviews;
+
+	Documents.Views.Edit.ThesaurusPopUpTree = Thesaurus.ThesaurusTree.extend({
+		tearDown: function () {
+			this.collection.off("reset", this.onTermTreeReset, this);
+			ViewBase.prototype.tearDown.call(this);
+		},
+		render: function () {
+			if (!this.subViews) this.subViews = [];
+			this.$el.html(this.collection.map(function (term) {
+				var termTreeItem = new Documents.Views.Edit.ThesaurusPopUpTreeNode({model: term, parent: this.options.parent});
+				termTreeItem.on("term:selected", this.onTermSelected, this);
+				this.subViews.push(termTreeItem);
+				return termTreeItem.render().el;
+			}, this));
+			return this;
+		}
+	});
+	Documents.Views.Edit.ThesaurusPopUpTree.prototype.tearDownSubviews = ViewBase.prototype.tearDownSubviews;
+
+	Documents.Views.Edit.ThesaurusPopUpTreeNode = Thesaurus.ThesaurusTreeNode.extend({
+		tearDown: function () {
+			this.model.get("childrenTerms").off("reset", this.onChildrenTermsReset, this);
+			ViewBase.prototype.tearDown.call(this);
+		},
+		createBranch: function () {
+			if (!this.subViews) this.subViews = [];
+			var branch = new Documents.Views.Edit.ThesaurusPopUpTree({collection: this.model.get("childrenTerms"), parent: this});
+			this.subViews.push(branch);
+			branch.render().$el.appendTo(this.$el.addClass("Opened"));
+		}
+	});
+	Documents.Views.Edit.ThesaurusPopUpTreeNode.prototype.tearDownSubviews = ViewBase.prototype.tearDownSubviews;
 
 	//Просмотр
 	//---------------------
