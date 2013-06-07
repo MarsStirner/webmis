@@ -60,7 +60,7 @@ define(function (require) {
 
 	Documents.Models.DocumentBase = Documents.Models.FetchableModelBase.extend({
 		parse: function (raw) {
-			console.log(raw);
+			//console.log(raw);
 			return raw.data[0];
 		}
 	});//.mixin([CommonDataMixin]);
@@ -233,7 +233,7 @@ define(function (require) {
 		},
 
 		tearDown: function () {
-			console.log("tearing down " + this.$el.attr("class"));
+			//console.log("tearing down " + this.$el.attr("class"));
 			this.tearDownSubviews();
 			this.stopListening();
 			this.undelegateEvents();
@@ -275,7 +275,7 @@ define(function (require) {
 
 		tearDown: function () {
 			if (this.topLevel) {
-				console.log("dispatcher off");
+				//console.log("dispatcher off");
 				dispatcher.off();
 			}
 			ViewBase.prototype.tearDown.call(this);
@@ -417,7 +417,7 @@ define(function (require) {
 
 			this.listenTo(this.documentTypes, "reset", function () {
 				this.$(".new-document,.new-duty-doc-exam").prop("disabled", false);
-				console.log(this.documentTypes);
+				//console.log(this.documentTypes);
 			});
 		},
 
@@ -449,7 +449,7 @@ define(function (require) {
 
 		onDocumentTypeFilterChange: function (event) {
 			var type = $(event.currentTarget).val();
-			console.log(type);
+			//console.log(type);
 			this.applyDocumentTypeFilter(type);
 		},
 
@@ -620,7 +620,7 @@ define(function (require) {
 			} else {
 				this.options.selectedDocuments.remove(this.options.selectedDocuments.get(itemId));
 			}
-			console.log(this.options.selectedDocuments);
+			//console.log(this.options.selectedDocuments);
 		}
 	});
 
@@ -786,7 +786,7 @@ define(function (require) {
 		className: "row-fluid",
 
 		render: function () {
-			console.log("GridRow", this);
+			//console.log("GridRow", this);
 			var gridSpanList = new Documents.Views.Edit.GridSpanList({collection: this.model.get("spans")});
 			this.subViews = [gridSpanList];
 			gridSpanList.setElement(this.el);
@@ -831,7 +831,7 @@ define(function (require) {
 				rows[rows.length-1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
 			}
 
-			console.log("rows", rows);
+			//console.log("rows", rows);
 
 			return rows;
 		},
@@ -883,7 +883,7 @@ define(function (require) {
 
 		onAttributeValueChange: function (event) {
 			this.model.setValue(this.getAttributeValue());
-			console.log(this.model.getValue());
+			//console.log(this.model.getValue());
 		}
 	});
 
