@@ -1069,9 +1069,9 @@ define(function (require) {
 		onConfirm: function () {
 			this.trigger("thesaurus:confirmed", this.model.toJSON());
 			this.tearDown();
-		}
+		},
+		tearDownSubviews: ViewBase.prototype.tearDownSubviews
 	});
-	Documents.Views.Edit.ThesaurusPopUp.prototype.tearDownSubviews = ViewBase.prototype.tearDownSubviews;
 
 	Documents.Views.Edit.ThesaurusPopUpTree = Thesaurus.ThesaurusTree.extend({
 		tearDown: function () {
@@ -1087,9 +1087,9 @@ define(function (require) {
 				return termTreeItem.render().el;
 			}, this));
 			return this;
-		}
+		},
+		tearDownSubviews: ViewBase.prototype.tearDownSubviews
 	});
-	Documents.Views.Edit.ThesaurusPopUpTree.prototype.tearDownSubviews = ViewBase.prototype.tearDownSubviews;
 
 	Documents.Views.Edit.ThesaurusPopUpTreeNode = Thesaurus.ThesaurusTreeNode.extend({
 		tearDown: function () {
@@ -1101,9 +1101,9 @@ define(function (require) {
 			var branch = new Documents.Views.Edit.ThesaurusPopUpTree({collection: this.model.get("childrenTerms"), parent: this});
 			this.subViews.push(branch);
 			branch.render().$el.appendTo(this.$el.addClass("Opened"));
-		}
+		},
+		tearDownSubviews: ViewBase.prototype.tearDownSubviews
 	});
-	Documents.Views.Edit.ThesaurusPopUpTreeNode.prototype.tearDownSubviews = ViewBase.prototype.tearDownSubviews;
 
 	//Просмотр
 	//---------------------
