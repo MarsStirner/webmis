@@ -130,20 +130,47 @@ define(function (require) {
 	});
 
 	Documents.Models.TemplateAttribute = Backbone.Model.extend({
+		getValueProperty: function () {
+			if (!this.valuePropertyIndex) {
+				var props =  this.get("properties");
+				var propName;
+
+				if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
+					propName = "valueId";
+				} else {
+					propName = "value";
+				}
+
+				for (var i = 0; i < props.length; i++) {
+					if (props[i].name == propName) {
+						this.valuePropertyIndex = i;
+						break;
+					}
+				}
+			}
+			return this.get("properties")[this.valuePropertyIndex];
+		},
+
 		getValue: function () {
-			if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
+			return this.getValueProperty().value;
+
+			/*if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
 				return _(this.get("properties")).find(function (prop) { return prop.name = "valueId"; }).value;
 			} else {
 				return _(this.get("properties")).find(function (prop) { return prop.name = "value"; }).value;
-			}
+			}*/
 		},
 
 		setValue: function (value) {
-			if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
+			this.getValueProperty().value = value;
+
+			/*if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
 				_(this.get("properties")).find(function (prop) { return prop.name = "valueId"; }).value = value;
 			} else {
 				_(this.get("properties")).find(function (prop) { return prop.name = "value"; }).value = value;
-			}
+			}*/
+
+			this.trigger("change:value");
 		}
 	});
 
@@ -829,6 +856,11 @@ define(function (require) {
 	var UIElementBase = Documents.Views.Edit.UIElement.Base = ViewBase.extend({
 		template: templates.uiElements._base,
 
+		events: {
+			"change .attribute-value": "onAttributeValueChange",
+			"input [contenteditable].attribute-value": "onAttributeValueChange"
+		},
+
 		data: function () {
 			return {model: this.model}
 		},
@@ -848,21 +880,43 @@ define(function (require) {
 				var layoutAttributeParams = _(layoutAttributesDir.get(this.model.get('type'))).where({id: value.layoutAttribute_id})[0];
 				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
 			}, this);
+		},
+
+		getAttributeValue: function () {
+			var $attributeValueEl = this.$(".attribute-value");
+			if ($attributeValueEl.is(".RichText")) {
+				return $attributeValueEl.html();
+			} else {
+				return $attributeValueEl.val();
+			}
+		},
+
+		onAttributeValueChange: function (event) {
+			this.model.setValue(this.getAttributeValue());
+			console.log(this.model.getValue());
 		}
 	});
 
 	//Поле типа Text
 	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({
-		template: templates.uiElements._text
+		template: templates.uiElements._text,
+
+		events: _.extend({
+			"change .field-toggle": "onFieldToggleChange"
+		}, UIElementBase.prototype.events),
+
+		onFieldToggleChange: function (event) {
+			this.$(".field").toggle($(event.currentTarget).is(":checked"));
+		}
 	});
 
 	//Поле типа Constructor
 	Documents.Views.Edit.UIElement.Constructor = Documents.Views.Edit.UIElement.Text.extend({
 		template: templates.uiElements._constructor,
 
-		events: {
+		events: _.extend({
 			"click .thesaurus-open": "onThesaurusOpenClick"
-		},
+		}, Documents.Views.Edit.UIElement.Text.prototype.events),
 
 		onThesaurusOpenClick: function (event) {
 			event.preventDefault();
@@ -880,6 +934,7 @@ define(function (require) {
 
 		onThesaurusConfirmed: function (event) {
 			this.model.setValue(event.selectedTerms);
+			this.$(".attribute-value").html(event.selectedTerms);
 		}
 	});
 
