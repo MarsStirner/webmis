@@ -234,13 +234,18 @@ define(function(require) {
 			view.depended(view.financeSelect);
 		},
 
-		saveButton: function(enabled) {
+		saveButton: function(enabled, msg) {
 			var $saveButton = this.$el.closest(".ui-dialog").find('.save');
 
 			if (enabled) {
 				$saveButton.button("enable");
 			} else {
 				$saveButton.button("disable");
+			}
+			if (msg) {
+				$saveButton.button("option", "label", msg);
+			} else {
+				$saveButton.button("option", "label", 'Сохранить');
 			}
 
 		},
@@ -276,6 +281,7 @@ define(function(require) {
 
 
 			});
+			view.saveButton(false, 'Сохраняем...');
 			view.testsCollection.updateAll();
 
 		},
