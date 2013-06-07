@@ -280,7 +280,8 @@ define(function(require) {
 
 				}
 			});
-			this.ui.$datepicker.datepicker('disable');
+			this.ui.$datepicker.datepicker('setDate', new Date());
+			//this.ui.$datepicker.datepicker('disable');
 
 
 			var createDate = moment(this.consultation.get('createDateTime')).toDate();
