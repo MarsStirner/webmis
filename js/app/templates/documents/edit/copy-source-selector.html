@@ -1,0 +1,24 @@
+<table class="Grid">
+	<thead>
+	<tr>
+		<th>&nbsp;</th>
+		<th>id</th>
+		<th>name</th>
+	</tr>
+	</thead>
+	<tbody>
+	<%if (documents.length) {%>
+	<%documents.each(function (document) {%>
+	<tr class="document-item-row" data-document-id="<%=document.id%>">
+		<td><i class="icon-check transparent"> </i></td>
+		<td><%=document.id%></td>
+		<td><%=document.get('assessmentName').name%></td>
+	</tr>
+	<%});%>
+	<%} else {%>
+	<tr>
+		<td colspan="2">Нет данных</td>
+	</tr>
+	<%}%>
+	</tbody>
+</table>

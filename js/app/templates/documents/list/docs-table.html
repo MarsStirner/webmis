@@ -1,4 +1,4 @@
-<table>
+<table class="Grid">
 	<thead>
 		<tr>
 			<th>&nbsp;</th>
@@ -14,12 +14,12 @@
 					<td><input type="checkbox" class="selected-flag" value="<%=document.id%>"></td>
 					<td><%=document.id%></td>
 					<td><%=document.get('assessmentName').name%></td>
-					<td><button type="button" class="edit-document" data-document-id="<%=document.id%>">Редактировать</button></td>
+					<td><a class="edit-document Actions" data-document-id="<%=document.id%>">Редактировать</a></td>
 				</tr>
 			<%});%>
 		<%} else {%>
 			<tr>
-				<td colspan="2">Нет данных</td>
+				<td colspan="4">Нет данных</td>
 			</tr>
 		<%}%>
 	</tbody>

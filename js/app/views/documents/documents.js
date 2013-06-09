@@ -21,6 +21,7 @@ define(function (require) {
 		_editLayout: _.template(require("text!templates/documents/edit/layout.html")),
 		_editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
 		_editDocumentControls: _.template(require("text!templates/documents/edit/document-controls.html")),
+		_editCopySourceSelector: _.template(require("text!templates/documents/edit/copy-source-selector.html")),
 		_editGrid: _.template(require("text!templates/documents/edit/grid.html")),
 		//_editGridSpan: _.template(require("text!templates/documents/edit/span.html")),
 		_reviewLayout: _.template(require("text!templates/documents/review/layout.html")),
@@ -250,9 +251,10 @@ define(function (require) {
 		model: Documents.Models.DocumentListItem,
 		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
 		dateRange: null,
+    typeId: null,
 		initialize: function (models, options) {
 			Collection.prototype.initialize.call(this);
-			this.appealId = options.appealId;
+      this.appealId = options.appealId || appealId;
 		},
 		url: function () {
 			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?";
@@ -267,6 +269,10 @@ define(function (require) {
 				params.push("filter[begDate]=" + this.dateRange.start);
 				params.push("filter[endDate]=" + this.dateRange.end);
 			}
+
+      if (this.typeId) {
+        params.push("filter[actionTypeId]=" + this.typeId);
+      }
 
 			return url + params.join("&");
 		}
@@ -311,6 +317,8 @@ define(function (require) {
 				this.subViews = {};
 				this.assign(subViews);
 			}
+      this.$("button").button();
+      //this.$("select").select2();
 			return this;
 		},
 
@@ -498,10 +506,16 @@ define(function (require) {
 			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
-				this.$(".new-document,.new-duty-doc-exam").prop("disabled", false);
+				this.$(".new-document,.new-duty-doc-exam").button("enable");
 				//console.log(this.documentTypes);
 			});
+
+      this.listenTo(this.documentTypes, "document-type:selected", this.onDocumentTypeSelected);
 		},
+
+    onDocumentTypeSelected: function (event) {
+      dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: event.selectedType}});
+    },
 
 		onNewDocumentClick: function () {
 			this.showDocumentTypeSelector();
@@ -614,12 +628,13 @@ define(function (require) {
 		},
 
 		events: {
-			"change .document-type-search-field": "onDocumentTypeSearchFieldChange",
+			//"change .document-type-search-field": "onDocumentTypeSearchFieldChange",
 			"click .document-type-node": "onDocumentTypeNodeClick"
 		},
 
 		initialize: function () {
 			this.dialogOptions = {
+        title: "Выберите тип документа",
 				modal: true,
 				width: 800,
 				height: 600,
@@ -628,7 +643,7 @@ define(function (require) {
 				buttons: [
 					{
 						text: "Создать",
-						click: _.bind(this.tearDown, this)
+						click: _.bind(this.onCreateDocumentClick, this)
 					},
 					{
 						text: "Отмена",
@@ -638,13 +653,28 @@ define(function (require) {
 			};
 		},
 
-		onDocumentTypeSearchFieldChange: function () {
+		/*onDocumentTypeSearchFieldChange: function () {
 			this.applySearchFilter();
-		},
+		},*/
 
 		onDocumentTypeNodeClick: function (event) {
 			event.stopPropagation();
-			$(event.currentTarget).toggleClass("Opened");
+      var $node = $(event.currentTarget);
+      if ($node.is(".Opened")) {
+        $node.removeClass("Opened").siblings().removeClass("Opened");
+        $node.children().removeClass("Opened");
+        $node.find(".icon-minus").addClass("icon-plus").removeClass("icon-minus");
+      } else {
+        $node.addClass("Opened").siblings().removeClass("Opened");
+        $node.children().removeClass("Opened");
+        $node.find(".icon-plus").addClass("icon-minus").removeClass("icon-plus");
+      }
+
+      this.selectedType = $node.data("document-type-id");
+
+			/*$(event.currentTarget).toggleClass("Opened").siblings().removeClass("Opened");
+      $(event.currentTarget).find(".icon-plus,icon-minus").toggleClass("icon-plus icon-minus");*/
+			//$(event.currentTarget).addClass("Opened");
 			/*var nodeHasChildren;
 			if (nodeHasChildren) {
 				this.toggleNodeCollapse();
@@ -653,11 +683,16 @@ define(function (require) {
 			}*/
 		},
 
-		applySearchFilter: function () { console.log("stub:applySearchFilter"); },
+    onCreateDocumentClick: function () {
+    	this.collection.trigger("document-type:selected", {selectedType: this.selectedType});
+      this.tearDown();
+    },
 
-		toggleNodeCollapse: function (collapse) { console.log("stub:toggleNodeCollapse"); },
+		/*applySearchFilter: function () { console.log("stub:applySearchFilter"); },*/
 
-		markNodeSelected: function () { console.log("stub:markNodeSelected"); },
+		/*toggleNodeCollapse: function (collapse) { console.log("stub:toggleNodeCollapse"); },
+
+		markNodeSelected: function () { console.log("stub:markNodeSelected"); },*/
 
 		render: function () {
 			PopUpBase.prototype.render.call(this);
@@ -679,7 +714,6 @@ define(function (require) {
 		},
 
 		initialize: function () {
-			//TODO: listenTo
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
 		},
 
@@ -731,7 +765,7 @@ define(function (require) {
 		},
 
 		toggleReviewSelectedDisabled: function (enabled) {
-			this.$(".review-selected").prop("disabled", !enabled);
+			this.$(".review-selected").button(!!enabled ? "enable" : "disable");
 		}
 	});
 
@@ -828,6 +862,32 @@ define(function (require) {
 		},
 
     onCopyFromPrevClick: function () {
+      var documentLastByType = new Documents.Models.DocumentLastByType({id: this.getDocumentTypeId()});
+      this.fetchCopySource(documentLastByType);
+    },
+
+    onCopyFromClick: function () {
+      this.copySourceList = new Documents.Collections.DocumentList([], {});
+      this.listenTo(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
+      new Documents.Views.Edit.CopySourceSelector({typeId: this.getDocumentTypeId(), collection: this.copySourceList});
+    },
+
+    onCopySourceSelected: function (event) {
+      this.stopListening(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
+    	this.fetchCopySource(new Documents.Models.Document({id: event.documentId}));
+    },
+
+    fetchCopySource: function (copySource) {
+      this.listenTo(copySource, "change", this.onCopySourceReset);
+      copySource.fetch();
+    },
+
+    onCopySourceReset: function (copySource) {
+      this.stopListening(copySource, "change", this.onCopySourceReset);
+      this.model.copyAttributes(copySource);
+    },
+
+    getDocumentTypeId: function () {
       var documentTypeId;
       if (this.model instanceof Documents.Models.DocumentTemplate) {
         documentTypeId = this.model.id;
@@ -837,21 +897,76 @@ define(function (require) {
         console.error("can't resolve documentTypeId for ", this.model);
       }
 
-      var documentLastByType = new Documents.Models.DocumentLastByType({id: documentTypeId});
-
-      this.listenTo(documentLastByType, "change", this.onDocumentLastByTypeReset);
-
-      documentLastByType.fetch();
-    },
-
-    onCopyFromClick: function () {
-
-    },
-
-    onDocumentLastByTypeReset: function (documentLastByType) {
-    	this.model.copyAttributes(documentLastByType);
+      return documentTypeId;
     }
 	});
+
+  Documents.Views.Edit.CopySourceSelector = PopUpBase.extend({
+    template: templates._editCopySourceSelector,
+
+    events: {
+      "click .document-item-row": "onDocumentItemRowClick"
+    },
+
+    data: function () {
+      return {documents: this.collection};
+    },
+
+    initialize: function () {
+      this.dialogOptions = {
+        title: "Выберите документ для копирования",
+        modal: true,
+        width: 900,
+        height: 600,
+        resizable: false,
+        close: _.bind(this.tearDown, this),
+        buttons: [
+          {
+            text: "Копировать",
+            click: _.bind(this.onDoumentSelectedClick, this)
+          },
+          {
+            text: "Отмена",
+            click: _.bind(this.tearDown, this)
+          }
+        ]
+      };
+
+      PopUpBase.prototype.initialize.apply(this);
+      //this.collection = new Documents.Collections.DocumentList([], {});
+      this.collection.typeId = this.options.typeId;
+      this.collection.fetch();
+      this.listenTo(this.collection, "reset", this.onCollectionReset);
+    },
+
+    onCollectionReset: function () {
+    	this.render();
+    },
+
+    onDocumentItemRowClick: function (event) {
+      var $row = $(event.currentTarget);
+    	this.selectedDocumentId = $row.data("document-id");
+
+      this.$(".document-item-row icon-check").addClass("transparent");
+      $row.find(".icon-check").removeClass("transparent");
+    },
+
+    onDoumentSelectedClick: function () {
+      if (this.selectedDocumentId) {
+        this.collection.trigger("copy-source:selected", {documentId: this.selectedDocumentId});
+        this.tearDown();
+      }
+    }
+
+    //,
+
+    /*render: function () {
+      PopUpBase.prototype.render.call(this);
+      var documentsTable = new Documents.Views.List.DocumentsTable({collection: this.collection});
+      this.subViews = [documentsTable];
+      documentsTable.setElement(this.el).render();
+    }*/
+  });
 
 	//Управление сохранением документа
 	Documents.Views.Edit.DocControls = ViewBase.extend({
@@ -864,7 +979,7 @@ define(function (require) {
 
 		initialize: function () {
 			this.listenTo(this.model, "change", function () {
-				this.$("button").prop("disabled", false);
+				this.$("button").button("enable");
 			});
 		},
 
