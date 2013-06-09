@@ -59,20 +59,66 @@ define(function (require) {
 	Documents.Models.FetchableModelBase.prototype.sync = Model.prototype.sync;
 
 	Documents.Models.DocumentBase = Documents.Models.FetchableModelBase.extend({
+    initialize: function (options) {
+      this.id = options.id;
+      this.appealId = options.appealId || appealId;
+    },
+
+    groupedByRow: null,
+
+    groupByRow: function () {
+      var groupedByRow = _(this.get("group")[1].attribute).groupBy(function (item) {
+        //return item.layoutAttributes[]; //TODO: groupBy ROW attr
+        //var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
+        return "UNDEFINED";
+      }, this);
+
+      var rows = [];
+
+      for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
+        if (i == 0 || i%2 == 0) {
+          rows.push({spans: new Backbone.Collection()});
+        }
+
+        rows[rows.length-1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
+      }
+
+      //console.log("rows", rows);
+
+      return rows;
+    },
+
+    getGroupedByRow: function () {
+      if (!this.groupedByRow) {
+        this.groupedByRow = this.groupByRow();
+      }
+
+      return this.groupedByRow;
+    },
+
+    copyAttributes: function (document) {
+      _(document.get("group")[1].attribute).each(function (copyAttr) {
+        _(this.getGroupedByRow()).each(function (row) {
+          row.spans.each(function (attr) {
+            if (attr.get("typeId") == copyAttr.typeId) {
+              attr.copyValue(copyAttr);
+            }
+          });
+        });
+      }, this);
+
+      return this;
+    },
+
 		parse: function (raw) {
 			//console.log(raw);
 			return raw.data[0];
 		}
-	});//.mixin([CommonDataMixin]);
+	});
 
 	Documents.Models.Document = Documents.Models.DocumentBase.extend({
 		urlRoot: function () {
 			return DATA_PATH + "appeals/" + this.appealId + "/documents/";
-		},
-
-		initialize: function (options) {
-			this.id = options.id;
-			this.appealId = options.appealId || appealId;
 		},
 
 		getFilledAttrs: function () {
@@ -102,8 +148,29 @@ define(function (require) {
 	});
 
 	Documents.Models.DocumentTemplate = Documents.Models.DocumentBase.extend({
-		urlRoot: DATA_PATH + "dir/actionTypes/"
+		urlRoot: DATA_PATH + "dir/actionTypes/",
+
+    save: function (attrs, options) {
+      options.dataType = "jsonp";
+      options.url = Documents.Models.Document.prototype.urlRoot.apply(this);
+      options.contentType = 'application/json';
+
+      var method = "create";
+
+      options.data = JSON.stringify({
+        requestData: {},
+        data: this.toJSON()
+      });
+
+      return Backbone.sync(method, this, options);
+    }
 	});
+
+  Documents.Models.DocumentLastByType = Documents.Models.DocumentBase.extend({
+    urlRoot: function () {
+      return DATA_PATH + "appeals/" + this.appealId + "/documents/lastByType/";
+    }
+  });
 
 	Documents.Models.DocumentType = Backbone.Model.extend({});
 
@@ -128,23 +195,29 @@ define(function (require) {
 	});
 
 	Documents.Models.TemplateAttribute = Backbone.Model.extend({
+    getValuePropertyIndex: function (props, type) {
+      var propName;
+      var valuePropertyIndex;
+
+      if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
+        propName = "valueId";
+      } else {
+        propName = "value";
+      }
+
+      for (var i = 0; i < props.length; i++) {
+        if (props[i].name == propName) {
+          valuePropertyIndex = i;
+          break;
+        }
+      }
+
+      return valuePropertyIndex;
+    },
+
 		getValueProperty: function () {
 			if (!this.valuePropertyIndex) {
-				var props =  this.get("properties");
-				var propName;
-
-				if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
-					propName = "valueId";
-				} else {
-					propName = "value";
-				}
-
-				for (var i = 0; i < props.length; i++) {
-					if (props[i].name == propName) {
-						this.valuePropertyIndex = i;
-						break;
-					}
-				}
+        this.valuePropertyIndex = this.getValuePropertyIndex(this.get("properties"), this.get("type"));
 			}
 			return this.get("properties")[this.valuePropertyIndex];
 		},
@@ -157,7 +230,16 @@ define(function (require) {
 			this.getValueProperty().value = value;
 			this.trigger("change:value");
 			return this;
-		}
+		},
+
+    copyValue: function (copyAttr) {
+      this.setValue(this.getCopyValueProperty(copyAttr));
+      this.trigger("copy");
+    },
+
+    getCopyValueProperty: function (copyAttr) {
+      return copyAttr.properties[this.getValuePropertyIndex(copyAttr.properties, copyAttr.type)].value;
+    }
 	});
 
 	//Коллекции
@@ -669,8 +751,8 @@ define(function (require) {
 
 			if (!this.model) {
 				if (this.options.templateId) {
-					this.model = new Documents.Models.DocumentTemplate();
-					this.model.id = this.options.templateId;
+					this.model = new Documents.Models.DocumentTemplate({id: this.options.templateId});
+					//this.model.id = this.options.templateId;
 				} else if (this.options.documentId) {
 					this.model = new Documents.Models.Document({id: this.options.documentId});
 					//this.model.id = this.options.documentId;
@@ -736,12 +818,39 @@ define(function (require) {
 		template: templates._editNavControls,
 
 		events: {
-			"click .toggleDividedState": "onToggleDividedStateClick"
+			"click .toggle-divided-state": "onToggleDividedStateClick",
+			"click .copy-from-prev": "onCopyFromPrevClick",
+			"click .copy-from": "onCopyFromClick"
 		},
 
 		onToggleDividedStateClick: function () {
 			this.model.trigger("toggle:dividedState");
-		}
+		},
+
+    onCopyFromPrevClick: function () {
+      var documentTypeId;
+      if (this.model instanceof Documents.Models.DocumentTemplate) {
+        documentTypeId = this.model.id;
+      } else if (this.model instanceof Documents.Models.Document) {
+        documentTypeId = this.model.get("typeId");
+      } else {
+        console.error("can't resolve documentTypeId for ", this.model);
+      }
+
+      var documentLastByType = new Documents.Models.DocumentLastByType({id: documentTypeId});
+
+      this.listenTo(documentLastByType, "change", this.onDocumentLastByTypeReset);
+
+      documentLastByType.fetch();
+    },
+
+    onCopyFromClick: function () {
+
+    },
+
+    onDocumentLastByTypeReset: function (documentLastByType) {
+    	this.model.copyAttributes(documentLastByType);
+    }
 	});
 
 	//Управление сохранением документа
@@ -760,14 +869,29 @@ define(function (require) {
 		},
 
 		onSaveClick: function (event) {
-			this.model.trigger("toggle:dividedState", false);
-			dispatcher.trigger("change:viewState", {type: "documents"});
+      this.saveDocument();
 		},
 
 		onCancelClick: function (event) {
-			this.model.trigger("toggle:dividedState", false);
-			dispatcher.trigger("change:viewState", {type: "documents"});
-		}
+      this.returnToList();
+    },
+
+    onSaveDocumentSuccess: function () {
+    	this.returnToList();
+    },
+
+    onSaveDocumentError: function () {
+      console.log(arguments);
+    },
+
+    saveDocument: function () {
+      this.model.save({},{success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
+    },
+
+    returnToList: function () {
+      this.model.trigger("toggle:dividedState", false);
+      dispatcher.trigger("change:viewState", {type: "documents"});
+    }
 	});
 
 	Documents.Views.Edit.GridSpanList = RepeaterBase.extend({
@@ -811,10 +935,11 @@ define(function (require) {
 		onModelReset: function () {
 			this.stopListening(this.model, "change", this.onModelReset);
 
-			this.collection.reset(this.groupRows());
+			//this.collection.reset(this.groupRows());
+			this.collection.reset(this.model.getGroupedByRow());
 		},
 
-		groupRows: function () {
+		/*groupRows: function () {
 			var groupedByRow = _(this.model.get("group")[1].attribute).groupBy(function (item) {
 				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
 				//var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
@@ -834,7 +959,7 @@ define(function (require) {
 			//console.log("rows", rows);
 
 			return rows;
-		},
+		},*/
 
 		onCollectionReset: function () {
 			this.tearDownSubviews();
@@ -861,6 +986,7 @@ define(function (require) {
 
 		initialize: function () {
 			this.mapLayoutAttributes();
+      this.listenTo(this.model, "copy", this.setAttributeValue);
 			//common attrs to fit into grid
 			this.$el.addClass("span" + this.layoutAttributes.width);
 		},
@@ -880,6 +1006,16 @@ define(function (require) {
 				return $attributeValueEl.val();
 			}
 		},
+
+    setAttributeValue: function () {
+      var $attributeValueEl = this.$(".attribute-value");
+      var value = this.model.getValue();
+      if ($attributeValueEl.is(".RichText")) {
+        return $attributeValueEl.html(value);
+      } else {
+        return $attributeValueEl.val(value);
+      }
+    },
 
 		onAttributeValueChange: function (event) {
 			this.model.setValue(this.getAttributeValue());
