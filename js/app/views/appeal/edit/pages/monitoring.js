@@ -2,60 +2,63 @@
  * User: FKurilov
  * Date: 09.04.13
  */
-define([
-	"text!templates/appeal/edit/pages/monitoring/layout.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/header.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/patient-info.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/patient-blood-type-row.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/patient-blood-type-history-row.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/signal-info.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/assign-exec-person-dialog.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/monitoring-info.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/monitoring-info-item.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/express-analyses.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl",
+ define([
+ 	"text!templates/appeal/edit/pages/monitoring/layout.tmpl",
+ 	"text!templates/appeal/edit/pages/monitoring/header.tmpl",
+ 	"text!templates/appeal/edit/pages/monitoring/patient-info.tmpl",
+ 	"text!templates/appeal/edit/pages/monitoring/patient-blood-type-row.tmpl",
+ 	"text!templates/appeal/edit/pages/monitoring/patient-blood-type-history-row.tmpl",
+ 	"text!templates/appeal/edit/pages/monitoring/signal-info.tmpl",
+ 	"text!templates/appeal/edit/pages/monitoring/assign-exec-person-dialog.tmpl",
+ 	"text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl",
+ 	"text!templates/appeal/edit/pages/monitoring/monitoring-info.tmpl",
+ 	"text!templates/appeal/edit/pages/monitoring/monitoring-info-item.tmpl",
+ 	"text!templates/appeal/edit/pages/monitoring/express-analyses.tmpl",
+ 	"text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl",
 
-	"views/appeal/edit/pages/card",
+ 	"views/appeal/edit/pages/card",
 
-	"collections/moves/moves",
-	"collections/dictionary-values"
-], function (
-	monitoringTmpl,
-	headerTmpl,
-	patientInfoTmpl,
-	patientBloodTypesRowTmpl,
-	patientBloodTypeHistoryRowTmpl,
-	signalInfoTmpl,
-	assignExecPersonDialogTmpl,
-	patientDiagnosesListTmpl,
-	monitoringInfoGridTmpl,
-	monitoringInfoItemTmpl,
-	expressAnalysesTmpl,
-	expressAnalysesItemTmpl,
+ 	"collections/moves/moves",
+ 	"collections/dictionary-values",
+ 	"views/appeal/edit/popups/CloseAppealView"
 
-	Card,
+ 	], function (
+ 		monitoringTmpl,
+ 		headerTmpl,
+ 		patientInfoTmpl,
+ 		patientBloodTypesRowTmpl,
+ 		patientBloodTypeHistoryRowTmpl,
+ 		signalInfoTmpl,
+ 		assignExecPersonDialogTmpl,
+ 		patientDiagnosesListTmpl,
+ 		monitoringInfoGridTmpl,
+ 		monitoringInfoItemTmpl,
+ 		expressAnalysesTmpl,
+ 		expressAnalysesItemTmpl,
 
-	Moves,
-	DictionaryValues
-	) {
+ 		Card,
+
+ 		Moves,
+ 		DictionaryValues,
+ 		CloseAppealView
+ 		) {
 
 	/**
 	 * Структура модуля
 	 * @type {{Views: {}, Collections: {}, Models: {}}}
 	 */
-	var Monitoring = {
-		Views: {},
-		Collections: {},
-		Models: {}
-	};
+	 var Monitoring = {
+	 	Views: {},
+	 	Collections: {},
+	 	Models: {}
+	 };
 
 	/**
 	 * Экземпляры моделей/коллекций общих для нескольких классов
 	 */
-	var appeal;
-	var appealJSON;
-	var bloodTypes;
+	 var appeal;
+	 var appealJSON;
+	 var bloodTypes;
 
 	// Коллекции
 	//////////////////////////////////////////////////////
@@ -64,7 +67,7 @@ define([
 	 * Группа крови пациента
 	 * @type {*}
 	 */
-	Monitoring.Models.PatientBloodType = Model.extend({
+	 Monitoring.Models.PatientBloodType = Model.extend({
 		/*idAttribute: "id",
 
 		defaults: {
@@ -82,58 +85,58 @@ define([
 	 * История изменения группы крови пациента
 	 * @type {*}
 	 */
-	Monitoring.Collections.PatientBloodTypes = Collection.extend({
-		model: Monitoring.Models.PatientBloodType,
+	 Monitoring.Collections.PatientBloodTypes = Collection.extend({
+	 	model: Monitoring.Models.PatientBloodType,
 
-		initialize: function (models, options) {
-			this.patientId = options.patientId;
-		},
+	 	initialize: function (models, options) {
+	 		this.patientId = options.patientId;
+	 	},
 
-		comparator: function (a, b) {
-			var aDatetime = parseInt(a.get("id"));
-			var bDatetime = parseInt(b.get("id"));
+	 	comparator: function (a, b) {
+	 		var aDatetime = parseInt(a.get("id"));
+	 		var bDatetime = parseInt(b.get("id"));
 
-			if (aDatetime < bDatetime) {
-				return 1;
-			} else if (aDatetime > bDatetime) {
-				return -1;
-			} else {
-				return 0;
-			}
-		},
+	 		if (aDatetime < bDatetime) {
+	 			return 1;
+	 		} else if (aDatetime > bDatetime) {
+	 			return -1;
+	 		} else {
+	 			return 0;
+	 		}
+	 	},
 
-		url: function () {
-			return DATA_PATH + "patients/" + this.patientId + "/bloodtypes";
-		}
-	});
+	 	url: function () {
+	 		return DATA_PATH + "patients/" + this.patientId + "/bloodtypes";
+	 	}
+	 });
 
 	/**
 	 * Модель для таблицы "Мониторинг"
 	 * @type {*}
 	 */
-	Monitoring.Models.MonitoringInfo = Model.extend({
-		defaults: {
-			datetime: "",
-			temperature: "",
-			bpras: "",
-			bprad: "",
-			heartRate: "",
-			spo2: "",
-			breathRate: "",
-			state: "",
-			health: ""
-		}
-	});
+	 Monitoring.Models.MonitoringInfo = Model.extend({
+	 	defaults: {
+	 		datetime: "",
+	 		temperature: "",
+	 		bpras: "",
+	 		bprad: "",
+	 		heartRate: "",
+	 		spo2: "",
+	 		breathRate: "",
+	 		state: "",
+	 		health: ""
+	 	}
+	 });
 
 	/**
 	 * Коллекция для таблицы "Мониторинг"
 	 * @type {*}
 	 */
-	Monitoring.Collections.MonitoringInfos = Collection.extend({
-		model: Monitoring.Models.MonitoringInfo,
+	 Monitoring.Collections.MonitoringInfos = Collection.extend({
+	 	model: Monitoring.Models.MonitoringInfo,
 
-		url: function () {
-			return DATA_PATH + "appeals/" + appeal.get("id") + "/monitoring";
+	 	url: function () {
+	 		return DATA_PATH + "appeals/" + appeal.get("id") + "/monitoring";
 			//return "/monitoring-info.json";
 		},
 
@@ -164,20 +167,20 @@ define([
 			});
 
 			parsed = parsed
-				.sort(function (a, b) {
-					var adt = a.datetime;
-					var bdt = b.datetime;
+			.sort(function (a, b) {
+				var adt = a.datetime;
+				var bdt = b.datetime;
 
-					if (adt > bdt) return 1;
-					else if (adt < bdt) return -1;
-					else return 0;
-				})
-				.filter(function (row) {
-					return _.some(row, function (field, fieldName) {
-						return fieldName !== "datetime" && field && field.toString().length;
-					});
-				})
-				.slice(0, 5);
+				if (adt > bdt) return 1;
+				else if (adt < bdt) return -1;
+				else return 0;
+			})
+			.filter(function (row) {
+				return _.some(row, function (field, fieldName) {
+					return fieldName !== "datetime" && field && field.toString().length;
+				});
+			})
+			.slice(0, 5);
 
 			console.log(rawByDate);
 			console.log(parsed);
@@ -190,32 +193,32 @@ define([
 	 * Модель для таблицы "Экспресс-анализы"
 	 * @type {*}
 	 */
-	Monitoring.Models.ExpressAnalysis = Model.extend({
-		defaults: {
-			"datetime": "",
-			"k": "",
-			"na": "",
-			"ca": "",
-			"glucose": "",
-			"protein": "",
-			"urea": "",
-			"bilubrinOb": "",
-			"bilubrinPr": ""
-		}
-	});
+	 Monitoring.Models.ExpressAnalysis = Model.extend({
+	 	defaults: {
+	 		"datetime": "",
+	 		"k": "",
+	 		"na": "",
+	 		"ca": "",
+	 		"glucose": "",
+	 		"protein": "",
+	 		"urea": "",
+	 		"bilubrinOb": "",
+	 		"bilubrinPr": ""
+	 	}
+	 });
 
 	/**
 	 * Коллекция для таблицы "Экспресс-анализы"
 	 * @type {*}
 	 */
-	Monitoring.Collections.ExpressAnalyses = Collection.extend({
-		model: Monitoring.Models.MonitoringInfo,
+	 Monitoring.Collections.ExpressAnalyses = Collection.extend({
+	 	model: Monitoring.Models.MonitoringInfo,
 
-		sync:function (method, model, options) {
-			return Backbone.sync(method, model, options);
-		},
+	 	sync:function (method, model, options) {
+	 		return Backbone.sync(method, model, options);
+	 	},
 
-		url: function () {
+	 	url: function () {
 			//return DATA_PATH + "";
 			return "/express-analyses.json";
 		}
@@ -225,108 +228,108 @@ define([
 	 * Модель диагноза пациента
 	 * @type {*}
 	 */
-	Monitoring.Models.PatientDiagnosis = Model.extend({
-		defaults: {
-			"diagnosticId": "",
-			"diagnosisKind": "",
-			"datetime": "",
-			"description": "",
-			"injury": "",
-			"doctor": {
-				"name": {
-					"first": "",
-					"last": "",
-					"middle": "",
-					"raw": ""
-				}
-			},
-			"mkb": {
-				"id": "",
-				"code": "",
-				"diagnosis": ""
-			}
-		}
-	});
+	 Monitoring.Models.PatientDiagnosis = Model.extend({
+	 	defaults: {
+	 		"diagnosticId": "",
+	 		"diagnosisKind": "",
+	 		"datetime": "",
+	 		"description": "",
+	 		"injury": "",
+	 		"doctor": {
+	 			"name": {
+	 				"first": "",
+	 				"last": "",
+	 				"middle": "",
+	 				"raw": ""
+	 			}
+	 		},
+	 		"mkb": {
+	 			"id": "",
+	 			"code": "",
+	 			"diagnosis": ""
+	 		}
+	 	}
+	 });
 
 	/**
 	 * Коллекция диагнозов пациента
 	 * @type {*}
 	 */
-	Monitoring.Collections.PatientDiagnoses = Collection.extend({
-		model: Monitoring.Models.PatientDiagnosis,
+	 Monitoring.Collections.PatientDiagnoses = Collection.extend({
+	 	model: Monitoring.Models.PatientDiagnosis,
 
-		diagKinds: {
-			"assignment": {priority: 0, title: "Направительный диагноз"},
-			"admission": {priority: 1, title: "Диагноз при поступлении"},
-			"clinical": {priority: 2, title: "Клинический"},
-			"final": {priority: 3, title: "Заключительный"},
-			"aftereffect": {priority: 4, title: "Сопутствующий к направительному"},
-			"attendant": {priority: 5, title: "Осложнения к направительному"},
-			"secondaryToClinical": {priority: 6, title: "Сопутствующий к клиническому"},
-			"complicateToClinical": {priority: 7, title: "Осложнения к клиническому"}
-		},
+	 	diagKinds: {
+	 		"assignment": {priority: 0, title: "Направительный диагноз"},
+	 		"admission": {priority: 1, title: "Диагноз при поступлении"},
+	 		"clinical": {priority: 2, title: "Клинический"},
+	 		"final": {priority: 3, title: "Заключительный"},
+	 		"aftereffect": {priority: 4, title: "Сопутствующий к направительному"},
+	 		"attendant": {priority: 5, title: "Осложнения к направительному"},
+	 		"secondaryToClinical": {priority: 6, title: "Сопутствующий к клиническому"},
+	 		"complicateToClinical": {priority: 7, title: "Осложнения к клиническому"}
+	 	},
 
-		url: function () {
-			return DATA_PATH + "appeals/" + appeal.get("id") +  "/diagnoses/";
-		},
+	 	url: function () {
+	 		return DATA_PATH + "appeals/" + appeal.get("id") +  "/diagnoses/";
+	 	},
 
-		comparator: function (a, b) {
-			var apr = this.diagKinds[a.get("diagnosisKind")].priority;
-			var bpr = this.diagKinds[b.get("diagnosisKind")].priority;
+	 	comparator: function (a, b) {
+	 		var apr = this.diagKinds[a.get("diagnosisKind")].priority;
+	 		var bpr = this.diagKinds[b.get("diagnosisKind")].priority;
 
-			if (apr > bpr) {
-				return 1;
-			} else if (apr < bpr) {
-				return -1;
-			} else {
-				return 0;
-			}
-		},
+	 		if (apr > bpr) {
+	 			return 1;
+	 		} else if (apr < bpr) {
+	 			return -1;
+	 		} else {
+	 			return 0;
+	 		}
+	 	},
 
-		parse: function (raw) {
-			var data = Collection.prototype.parse.call(this, raw);
+	 	parse: function (raw) {
+	 		var data = Collection.prototype.parse.call(this, raw);
 
-			_.each(data, function (diag) {
-				diag.diagnosisKindLabel = this.diagKinds[diag.diagnosisKind].title;
-			}, this);
+	 		_.each(data, function (diag) {
+	 			diag.diagnosisKindLabel = this.diagKinds[diag.diagnosisKind].title;
+	 		}, this);
 
-			return data;
-		}
-	});
+	 		return data;
+	 	}
+	 });
 
 	/**
 	 * Облегчённая коллекция персонала ЛПУ (без bb.relational)
 	 * @type {*}
 	 */
-	var Persons = Collection.extend({
-		model: Backbone.Model.extend({}),
+	 var Persons = Collection.extend({
+	 	model: Backbone.Model.extend({}),
 
-		url: function () {
-			return DATA_PATH + "dir/persons";
-		}
-	});
+	 	url: function () {
+	 		return DATA_PATH + "dir/persons";
+	 	}
+	 });
 
-	var AppealExecPerson = Backbone.Model.extend({
-		idAttribute: "id",
+	 var AppealExecPerson = Backbone.Model.extend({
+	 	idAttribute: "id",
 
-		sync: function (method, model, options) {
-			options.dataType = "jsonp";
-			options.url = model.url();
-			options.contentType = 'application/json';
+	 	sync: function (method, model, options) {
+	 		options.dataType = "jsonp";
+	 		options.url = model.url();
+	 		options.contentType = 'application/json';
 
 			/*if (method == "create" || method == "update") {
 				options.data = JSON.stringify({
 					requestData: {},
 					data: model.toJSON()
 				});
-			}*/
-			return Backbone.sync(method, model, options);
-		},
+	}*/
+	return Backbone.sync(method, model, options);
+},
 
-		url: function () {
-			return DATA_PATH + "appeals/" + appeal.get("id") + "/execPerson"
-		}
-	});
+url: function () {
+	return DATA_PATH + "appeals/" + appeal.get("id") + "/execPerson"
+}
+});
 
 	// Лэйаут
 	//////////////////////////////////////////////////////
@@ -335,38 +338,40 @@ define([
 	 * Главная вьюха, контейнер для виджетов
 	 * @type {*}
 	 */
-	Monitoring.Views.Layout = Card.extend({
-		className: "monitoring-layout",
+	 Monitoring.Views.Layout = Card.extend({
+	 	className: "monitoring-layout",
 
-		template: monitoringTmpl,
+	 	template: monitoringTmpl,
 
-		initialize: function () {
-			appeal = this.model = this.options.appeal;
-			appealJSON = appeal.toJSON();
-			this.canPrint = false;
-		},
+	 	initialize: function () {
+	 		appeal = this.model = this.options.appeal;
+	 		appealJSON = appeal.toJSON();
+	 		this.canPrint = false;
+	 	},
 
-		render: function () {
-			this.trigger("change:printState");
+	 	render: function () {
+	 		this.trigger("change:printState");
 
-			console.time("layout render time");
+	 		console.time("layout render time");
 
-			this.$el.html(_.template(this.template));
+	 		this.$el.html(_.template(this.template));
 
-			this.assign({
-				".monitoring-layout-header": new Monitoring.Views.Header(),
-				".patient-info": new Monitoring.Views.PatientInfo(),
-				".signal-info": new Monitoring.Views.SignalInfo(),
-				".patient-diagnoses-list": new Monitoring.Views.PatientDiagnosesList(),
-				".monitoring-info": new Monitoring.Views.MonitoringInfoGrid(),
-				".express-analyses": new Monitoring.Views.ExpressAnalyses()
-			});
 
-			console.timeEnd("layout render time");
 
-			return this;
-		}
-	});
+	 		this.assign({
+	 			".monitoring-layout-header": new Monitoring.Views.Header(),
+	 			".patient-info": new Monitoring.Views.PatientInfo(),
+	 			".signal-info": new Monitoring.Views.SignalInfo(),
+	 			".patient-diagnoses-list": new Monitoring.Views.PatientDiagnosesList(),
+	 			".monitoring-info": new Monitoring.Views.MonitoringInfoGrid(),
+	 			".express-analyses": new Monitoring.Views.ExpressAnalyses()
+	 		});
+
+	 		console.timeEnd("layout render time");
+
+	 		return this;
+	 	}
+	 });
 
 
 	// Базовые вью для виджетов
@@ -376,33 +381,33 @@ define([
 	 * Базовый класс для простых вьюшек
 	 * @type {*}
 	 */
-	Monitoring.Views.BaseView = Backbone.View.extend({
-		template: "",
+	 Monitoring.Views.BaseView = Backbone.View.extend({
+	 	template: "",
 
-		data: function () {
-			return {};
-		},
+	 	data: function () {
+	 		return {};
+	 	},
 
-		initialize: function () {
-			this._template = _.template(this.template);
-		},
+	 	initialize: function () {
+	 		this._template = _.template(this.template);
+	 	},
 
-		render: function () {
-			this.$el.empty().append(this._template(this.data()));
-			return this;
-		}
-	});
+	 	render: function () {
+	 		this.$el.empty().append(this._template(this.data()));
+	 		return this;
+	 	}
+	 });
 
 	/**
 	 * Базовый класс для виджетов-таблиц сортируемых на клиенте
 	 * @type {*}
 	 */
-	Monitoring.Views.ClientSortableGrid = Backbone.View.extend({
-		events: {
-			"click th.sortable": "onThSortableClick"
-		},
+	 Monitoring.Views.ClientSortableGrid = Backbone.View.extend({
+	 	events: {
+	 		"click th.sortable": "onThSortableClick"
+	 	},
 
-		initialize: function () {
+	 	initialize: function () {
 			//вызывается и после фетча и после сорта
 			this.collection.on("reset", this.render, this).fetch();
 			//в нашей версии бэкбона - нету :(
@@ -420,45 +425,45 @@ define([
 		 * Применяет сортировку коллекции по переданным памметрам
 		 * @param sortConditions {{sortField: string, sortType: string, sortDirection: "desc" || "asc"}}
 		 */
-		applySort: function (sortConditions) {
-			this.collection.comparator = this.getComparator(sortConditions.sortField, sortConditions.sortType, sortConditions.sortDirection);
-			this.collection.sort({sortRequest: true});
-		},
+		 applySort: function (sortConditions) {
+		 	this.collection.comparator = this.getComparator(sortConditions.sortField, sortConditions.sortType, sortConditions.sortDirection);
+		 	this.collection.sort({sortRequest: true});
+		 },
 
 		/**
 		 * Добавляет визуальную индикацию текущей сортировки, извлекает и возвращает выбранные параметры сортировки
 		 * @param $targetTh
 		 * @returns {{sortField: string, sortType: string, sortDirection: "desc" || "asc"}}
 		 */
-		updateSortConditions: function ($targetTh) {
-			if (!this.$caret) {
-				this.$caret = $('<i/>');
-			}
+		 updateSortConditions: function ($targetTh) {
+		 	if (!this.$caret) {
+		 		this.$caret = $('<i/>');
+		 	}
 
-			this.$caret.detach().removeClass();
+		 	this.$caret.detach().removeClass();
 
-			if ($targetTh.hasClass("sorted")) {
-				if ($targetTh.hasClass("asc")) {
-					$targetTh.removeClass("asc").addClass("desc");
-					this.$caret.addClass("icon-caret-down");
-				} else if ($targetTh.hasClass("desc")) {
-					$targetTh.removeClass("desc").addClass("asc");
-					this.$caret.addClass("icon-caret-up");
-				}
-			} else {
-				this.$("th").removeClass("sorted asc desc");
-				$targetTh.addClass("sorted asc");
-				this.$caret.addClass("icon-caret-up");
-			}
+		 	if ($targetTh.hasClass("sorted")) {
+		 		if ($targetTh.hasClass("asc")) {
+		 			$targetTh.removeClass("asc").addClass("desc");
+		 			this.$caret.addClass("icon-caret-down");
+		 		} else if ($targetTh.hasClass("desc")) {
+		 			$targetTh.removeClass("desc").addClass("asc");
+		 			this.$caret.addClass("icon-caret-up");
+		 		}
+		 	} else {
+		 		this.$("th").removeClass("sorted asc desc");
+		 		$targetTh.addClass("sorted asc");
+		 		this.$caret.addClass("icon-caret-up");
+		 	}
 
-			this.$caret.appendTo($targetTh);
+		 	this.$caret.appendTo($targetTh);
 
-			return {
-				sortField: $targetTh.data("sort-field"),
-				sortType: $targetTh.data("sort-type"),
-				sortDirection: ($targetTh.hasClass("desc") ? "desc" : "asc")
-			};
-		},
+		 	return {
+		 		sortField: $targetTh.data("sort-field"),
+		 		sortType: $targetTh.data("sort-type"),
+		 		sortDirection: ($targetTh.hasClass("desc") ? "desc" : "asc")
+		 	};
+		 },
 
 		/**
 		 * Возвращает фукцию сортировки коллекции по заданным параметрам
@@ -467,39 +472,39 @@ define([
 		 * @param sortDirection
 		 * @returns {Function}
 		 */
-		getComparator: function (fieldName, sortType, sortDirection) {
-			switch (sortType) {
-				case "datetime":
-				case "numeric":
-					return function (itemA, itemB) {
-						var a = parseFloat(itemA.get(fieldName)), b =  parseFloat(itemB.get(fieldName));
+		 getComparator: function (fieldName, sortType, sortDirection) {
+		 	switch (sortType) {
+		 		case "datetime":
+		 		case "numeric":
+		 		return function (itemA, itemB) {
+		 			var a = parseFloat(itemA.get(fieldName)), b =  parseFloat(itemB.get(fieldName));
 
-						if (a > b || isNaN(b)) return sortDirection === "asc" ? 1 : -1;
-						else if (a < b || isNaN(a)) return sortDirection === "asc" ? -1 : 1;
-						else return 0;
-					};
-				default:
-					return function (itemA, itemB) {
-						var a = itemA.get(fieldName).toString(), b = itemB.get(fieldName).toString();
+		 			if (a > b || isNaN(b)) return sortDirection === "asc" ? 1 : -1;
+		 			else if (a < b || isNaN(a)) return sortDirection === "asc" ? -1 : 1;
+		 			else return 0;
+		 		};
+		 		default:
+		 		return function (itemA, itemB) {
+		 			var a = itemA.get(fieldName).toString(), b = itemB.get(fieldName).toString();
 
-						if (a > b) return sortDirection === "asc" ? 1 : -1;
-						else if (a < b) return sortDirection === "asc" ? -1 : 1;
-						else return 0;
-					};
-			}
-		},
+		 			if (a > b) return sortDirection === "asc" ? 1 : -1;
+		 			else if (a < b) return sortDirection === "asc" ? -1 : 1;
+		 			else return 0;
+		 		};
+		 	}
+		 },
 
 		/**
 		 * Перерисовывает только ряды таблицы
 		 */
-		renderItems: function () {
+		 renderItems: function () {
 			/*this.$("tbody").empty().append(this.collection.map(function (item) {
 				return _.template(this.itemTemplate, {item: item});
 			}, this));*/
-			this.$("tbody").empty().append(_.template(this.itemTemplate, {collection: this.collection}));
-		},
+this.$("tbody").empty().append(_.template(this.itemTemplate, {collection: this.collection}));
+},
 
-		render: function (c, options) {
+render: function (c, options) {
 			//этот параметр передаётся только при сортировке, и в этом случае
 			//мы хотим отрендерить только ряды
 			options = options || {sortRequest: false};
@@ -523,113 +528,132 @@ define([
 	 * Заголовок страницы
 	 * @type {*}
 	 */
-	Monitoring.Views.Header = Monitoring.Views.BaseView.extend({
-		template: headerTmpl,
+	 Monitoring.Views.Header = Monitoring.Views.BaseView.extend({
+	 	template: headerTmpl,
+	 	events:{
+	 		'click .close-appeal': 'openCloseAppealPopup'
+	 	},
 
-		data: function () {
-			return {
-				appealNumber: appeal.get("number"),
-				appealIsUrgent: appeal.get("urgent"),
-				appealIsClosed: appeal.closed
-			};
-		}
-	});
+	 	openCloseAppealPopup: function(){
+	 		console.log('openCloseAppealPopup');
+	 		this.closeAppealView = new CloseAppealView({
+	 			title: 'Закрытие истории болезни',
+	 			width: '50em',
+	 			saveText: 'Да'
+	 		});
+	 		this.closeAppealView.render().open();
+	 	},
+
+	 	data: function () {
+	 		return {
+	 			appealNumber: appeal.get("number"),
+	 			appealIsUrgent: appeal.get("urgent"),
+	 			appealIsClosed: appeal.closed
+	 		};
+	 	},
+
+	 	render: function(){
+	 		Monitoring.Views.BaseView.prototype.render.apply(this);
+	 		this.$('.close-appeal').button();
+	 		return this;
+	 	}
+	 });
 
 	/**
 	 * Сведения о пациенте
 	 * @type {*}
 	 */
-	Monitoring.Views.PatientInfo = Monitoring.Views.BaseView.extend({
-		template: patientInfoTmpl,
+	 Monitoring.Views.PatientInfo = Monitoring.Views.BaseView.extend({
+	 	template: patientInfoTmpl,
 
-		data: function () {
-			return {
-				appeal: appealJSON,
-				patient: appealJSON.patient
-			};
-		},
+	 	data: function () {
+	 		return {
+	 			appeal: appealJSON,
+	 			patient: appealJSON.patient
+	 		};
+	 	},
 
-		render: function () {
-			Monitoring.Views.BaseView.prototype.render.apply(this);
+	 	render: function () {
+	 		Monitoring.Views.BaseView.prototype.render.apply(this);
 
-			this.assign({
-				".patient-blood-type": new Monitoring.Views.PatientBloodTypeRow(),
-				".patient-blood-type-history": new Monitoring.Views.PatientBloodTypeHistoryRow()
-			});
+	 		this.assign({
+	 			".patient-blood-type": new Monitoring.Views.PatientBloodTypeRow(),
+	 			".patient-blood-type-history": new Monitoring.Views.PatientBloodTypeHistoryRow()
+	 		});
 
-			this.$(".patient-blood-type-history").hide();
+	 		this.$(".patient-blood-type-history").hide();
 
-			return this;
-		}
-	});
+	 		return this;
+	 	}
+	 });
 
 	/**
 	 * Текущая группа крови пациента
 	 * @type {*}
 	 */
-	Monitoring.Views.PatientBloodTypeRow = Monitoring.Views.BaseView.extend({
-		template: patientBloodTypesRowTmpl,
+	 Monitoring.Views.PatientBloodTypeRow = Monitoring.Views.BaseView.extend({
+	 	template: patientBloodTypesRowTmpl,
 
-		data: function () {
-			return {
-				currentBloodType: appeal.get("patient").get("medicalInfo").get("blood"),
-				bloodTypes: this.bloodTypesDict
-			};
-		},
+	 	data: function () {
+	 		return {
+	 			currentBloodType: appeal.get("patient").get("medicalInfo").get("blood"),
+	 			bloodTypes: this.bloodTypesDict
+	 		};
+	 	},
 
-		events: {
-			"click .edit-blood": "onEditBloodClick",
-			"click .save-blood": "onSaveBloodClick",
-			"click .cancel-blood": "onCancelBloodClick",
-			"click .show-patient-blood-history": "onShowPatientBloodHistory"
-		},
+	 	events: {
+	 		"click .edit-blood": "onEditBloodClick",
+	 		"click .save-blood": "onSaveBloodClick",
+	 		"click .cancel-blood": "onCancelBloodClick",
+	 		"click .show-patient-blood-history": "onShowPatientBloodHistory"
+	 	},
 
-		historyShown: false,
+	 	historyShown: false,
 
-		initialize: function (options) {
-			Monitoring.Views.BaseView.prototype.initialize.apply(this);
+	 	initialize: function (options) {
+	 		Monitoring.Views.BaseView.prototype.initialize.apply(this);
 
-			if (!bloodTypes) {
-				bloodTypes = new Monitoring.Collections.PatientBloodTypes([], {patientId: appeal.get("patient").get("id")});
-			}
-			this.collection = bloodTypes;
+	 		if (!bloodTypes) {
+	 			bloodTypes = new Monitoring.Collections.PatientBloodTypes([], {patientId: appeal.get("patient").get("id")});
+	 		}
+	 		this.collection = bloodTypes;
 
-			this.bloodTypesDict = new DictionaryValues([], {name: "bloodTypes"});
+	 		this.bloodTypesDict = new DictionaryValues([], {name: "bloodTypes"});
 
-			this.bloodTypesDict.on("reset", this.render, this).fetch();
-		},
+	 		this.bloodTypesDict.on("reset", this.render, this).fetch();
+	 	},
 
-		onEditBloodClick: function (event) {
-			event.preventDefault();
+	 	onEditBloodClick: function (event) {
+	 		event.preventDefault();
 
-			this.toggleEditState(true);
-		},
+	 		this.toggleEditState(true);
+	 	},
 
-		onSaveBloodClick: function (event) {
-			event.preventDefault();
+	 	onSaveBloodClick: function (event) {
+	 		event.preventDefault();
 
-			var self = this;
-			var newBloodId = parseInt(this.$(".blood-type").val());
-			var newBloodName = this.$(".blood-type option:selected").text();
+	 		var self = this;
+	 		var newBloodId = parseInt(this.$(".blood-type").val());
+	 		var newBloodName = this.$(".blood-type option:selected").text();
 
-			if (newBloodId != this.data().currentBloodType.get("id")) {
-				this.collection.create({
-					"bloodDate": new Date().getTime(),
-					"bloodType": {
-						"id": newBloodId,
-						"name": newBloodName
-					}
-				}, {
-					success: function () {
-						pubsub.trigger("noty", {text: "Группа крови пациента изменена."});
-						self.collection.fetch();
-					},
-					error: function () {
-						pubsub.trigger("noty", {text: "Ошибка при изменении группы крови."});
-						self.collection.fetch();
-					}
-				});
-			}
+	 		if (newBloodId != this.data().currentBloodType.get("id")) {
+	 			this.collection.create({
+	 				"bloodDate": new Date().getTime(),
+	 				"bloodType": {
+	 					"id": newBloodId,
+	 					"name": newBloodName
+	 				}
+	 			}, {
+	 				success: function () {
+	 					pubsub.trigger("noty", {text: "Группа крови пациента изменена."});
+	 					self.collection.fetch();
+	 				},
+	 				error: function () {
+	 					pubsub.trigger("noty", {text: "Ошибка при изменении группы крови."});
+	 					self.collection.fetch();
+	 				}
+	 			});
+	 		}
 
 			//this.$(".show-patient-blood-history").text(this.$(".blood-type option:selected").html());
 			appeal.get("patient").get("medicalInfo").get("blood").set({
@@ -691,64 +715,64 @@ define([
 	 * Истрория изменения группы крови
 	 * @type {*}
 	 */
-	Monitoring.Views.PatientBloodTypeHistoryRow = Monitoring.Views.BaseView.extend({
-		template: patientBloodTypeHistoryRowTmpl,
+	 Monitoring.Views.PatientBloodTypeHistoryRow = Monitoring.Views.BaseView.extend({
+	 	template: patientBloodTypeHistoryRowTmpl,
 
-		data: function () {
-			return {
-				bloodTypeHistory: this.collection
-			};
-		},
+	 	data: function () {
+	 		return {
+	 			bloodTypeHistory: this.collection
+	 		};
+	 	},
 
-		events: {
+	 	events: {
 
-		},
+	 	},
 
-		initialize: function (options) {
-			Monitoring.Views.BaseView.prototype.initialize.apply(this);
+	 	initialize: function (options) {
+	 		Monitoring.Views.BaseView.prototype.initialize.apply(this);
 
-			if (!bloodTypes) {
-				bloodTypes = new Monitoring.Collections.PatientBloodTypes([], {patientId: appeal.get("patient").get("id")});
-			}
-			this.collection = bloodTypes;
-			this.collection
-				.on("request:show", this.toggleVisible, this)
-				.on("request:hide", this.toggleVisible, this)
+	 		if (!bloodTypes) {
+	 			bloodTypes = new Monitoring.Collections.PatientBloodTypes([], {patientId: appeal.get("patient").get("id")});
+	 		}
+	 		this.collection = bloodTypes;
+	 		this.collection
+	 		.on("request:show", this.toggleVisible, this)
+	 		.on("request:hide", this.toggleVisible, this)
 				//.on("add", this.render, this)
 				.on("reset", this.render, this)
 				.fetch();
-		},
+			},
 
-		toggleVisible: function (event) {
-			this.$el.toggle();
-		}
-	});
+			toggleVisible: function (event) {
+				this.$el.toggle();
+			}
+		});
 
 	/**
 	 * Блок сигнальной информации о пациенте
 	 * @type {*}
 	 */
-	Monitoring.Views.SignalInfo = Monitoring.Views.BaseView.extend({
-		template: signalInfoTmpl,
+	 Monitoring.Views.SignalInfo = Monitoring.Views.BaseView.extend({
+	 	template: signalInfoTmpl,
 
-		data: function () {
-			return {
-				lastMove: this.moves.last(),
-				appeal: appealJSON,
-				appealExtraData: Core.Data.appealExtraData.toJSON(),
-				days: this.days
-			};
-		},
+	 	data: function () {
+	 		return {
+	 			lastMove: this.moves.last(),
+	 			appeal: appealJSON,
+	 			appealExtraData: Core.Data.appealExtraData.toJSON(),
+	 			days: this.days
+	 		};
+	 	},
 
-		events: {
-			"click .assign-exec-person": "onAssignExecPersonClick"
-		},
+	 	events: {
+	 		"click .assign-exec-person": "onAssignExecPersonClick"
+	 	},
 
-		initialize: function () {
-			Monitoring.Views.BaseView.prototype.initialize.apply(this);
+	 	initialize: function () {
+	 		Monitoring.Views.BaseView.prototype.initialize.apply(this);
 
-			this.moves = new Moves();
-			this.moves.appealId = appeal.get("id");
+	 		this.moves = new Moves();
+	 		this.moves.appealId = appeal.get("id");
 			//console.log("fetching moves");
 			this.moves.on("reset", this.render, this).fetch();
 			//продолжительность лечения
@@ -793,8 +817,8 @@ define([
 	 * Диалог назначения врача
 	 * @type {*}
 	 */
-	Monitoring.Views.ExecPersonAssignmentDialog = Monitoring.Views.BaseView.extend({
-		template: assignExecPersonDialogTmpl,
+	 Monitoring.Views.ExecPersonAssignmentDialog = Monitoring.Views.BaseView.extend({
+	 	template: assignExecPersonDialogTmpl,
 
 		/*data: function () {
 			return {
@@ -837,15 +861,15 @@ define([
 				dialogClass: "webmis",
 				resizable: false,
 				buttons: [
-					{
-						text: "Назначить",
-						click: this.assignExecPerson,
-						"class": "button-color-green"
-					},
-					{
-						text: "Отмена",
-						click: this.close
-					}
+				{
+					text: "Назначить",
+					click: this.assignExecPerson,
+					"class": "button-color-green"
+				},
+				{
+					text: "Отмена",
+					click: this.close
+				}
 				],
 				close: this.close
 			});
@@ -934,31 +958,31 @@ define([
 	 * Список диагнозов пациента
 	 * @type {*}
 	 */
-	Monitoring.Views.PatientDiagnosesList = Monitoring.Views.BaseView.extend({
-		template: patientDiagnosesListTmpl,
+	 Monitoring.Views.PatientDiagnosesList = Monitoring.Views.BaseView.extend({
+	 	template: patientDiagnosesListTmpl,
 
-		data: function () {
-			return {
-				diagnoses: this.collection
-			};
-		},
+	 	data: function () {
+	 		return {
+	 			diagnoses: this.collection
+	 		};
+	 	},
 
-		initialize: function (options) {
-			Monitoring.Views.BaseView.prototype.initialize.apply(this);
+	 	initialize: function (options) {
+	 		Monitoring.Views.BaseView.prototype.initialize.apply(this);
 
-			this.collection = new Monitoring.Collections.PatientDiagnoses();
-			console.log("fetching diagnoses");
-			this.collection.on("reset", this.render, this).fetch();
-		}
-	});
+	 		this.collection = new Monitoring.Collections.PatientDiagnoses();
+	 		console.log("fetching diagnoses");
+	 		this.collection.on("reset", this.render, this).fetch();
+	 	}
+	 });
 
 	/**
 	 * Вью таблицы-виджета "Мониторинг"
 	 * @type {*}
 	 */
-	Monitoring.Views.MonitoringInfoGrid = Monitoring.Views.ClientSortableGrid.extend({
-		template: monitoringInfoGridTmpl,
-		itemTemplate: monitoringInfoItemTmpl,
+	 Monitoring.Views.MonitoringInfoGrid = Monitoring.Views.ClientSortableGrid.extend({
+	 	template: monitoringInfoGridTmpl,
+	 	itemTemplate: monitoringInfoItemTmpl,
 
 		/*data: function () {
 			return {infos: this.collection};
@@ -974,9 +998,9 @@ define([
 	 * Вью таблицы-виджета "Экспресс-анализы"
 	 * @type {*}
 	 */
-	Monitoring.Views.ExpressAnalyses = Monitoring.Views.ClientSortableGrid.extend({
-		template: expressAnalysesTmpl,
-		itemTemplate: expressAnalysesItemTmpl,
+	 Monitoring.Views.ExpressAnalyses = Monitoring.Views.ClientSortableGrid.extend({
+	 	template: expressAnalysesTmpl,
+	 	itemTemplate: expressAnalysesItemTmpl,
 
 		/*data: function () {
 			return {analyses: this.collection};
@@ -988,5 +1012,5 @@ define([
 		}
 	});
 
-	return Monitoring;
-});
+	 return Monitoring;
+	});

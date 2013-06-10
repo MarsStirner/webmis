@@ -1,12 +1,11 @@
-define([
-	//"text!templates/appeal/edit/pages/monitoring.tmpl",
-	"text!templates/appeal/edit/pages/card.tmpl",
-	"collections/moves/moves",
-	"views/print",
-	"models/print/appeal"
-], function(
-//cardMonitoringTemplate,
-cardTemplate, Moves) {
+define(function(require){
+
+	//var require('text!templates/appeal/edit/pages/monitoring.tmpl');
+	var cardTemplate = require('text!templates/appeal/edit/pages/card.tmpl');
+	var Moves = require('collections/moves/moves');
+	require('views/print');
+	require('models/print/appeal');
+
 
 	App.Views.Card = View.extend({
 		events: {

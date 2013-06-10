@@ -3,49 +3,22 @@ DirectoryIndex index.shtml index.html
 AddCharset utf-8 .tmpl
 
 #ExpiresActive On
-
 #ExpiresByType text/plain A1
-
-
 # Включение SSI
-Options +Includes
-AddOutputFilter INCLUDES .tmpl
+#Options +Includes
+#AddOutputFilter INCLUDES .tmpl
 
 Options +FollowSymlinks
 RewriteBase /
 RewriteEngine on
 
 
-#RewriteRule   ^login/?$ login.html [L]
-
-#RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteRule   ^data/patients/.*?/appeals/?$			data/appeals.php [QSA,L]
-#RewriteRule   ^data/patients/?$						data/patients.php [QSA,L]
-#RewriteRule   ^data/patients/.*?/?$					data/patient.php [QSA,L]
-#RewriteRule   ^data/print/appeals/.*?/?$					data/appeal.php [QSA,L]
-#RewriteRule   ^data/print/seventhform/.*?/?$					data/seventhform.php [QSA,L]
-#RewriteRule   ^data/appeals/.*?/examinations/?$		data/examinations.php [QSA,L]
-#RewriteRule   ^data/appeals/.*?/diagnostics/laboratory/?$		data/diagnostics/laboratory.php [QSA,L]
-#RewriteRule   ^data/appeals/.*?/diagnostics/instrumental/?$		data/diagnostics/instrumental.php [QSA,L]
-#RewriteRule   ^data/appeals/.*?/diagnostics/consultations/?$	data/diagnostics/consultations.php [QSA,L]
-#RewriteRule   ^data/appeals/.*?/?$					data/appeal.php [QSA,L]
-#RewriteRule   ^data/appeals/?$						data/appeals.php [QSA,L]
-#RewriteRule   ^data/persons/?$						data/persons/persons.php [QSA,L]
-#RewriteRule   ^data/departments/?$					data/departments/departments.php [QSA,L]
-#RewriteRule   ^data/departments/patients/?$			data/departments/patients/doctor.php [QSA,L]
-#RewriteRule   ^data/departments/patients/nurse/?$	data/departments/patients/nurse/nurse.php [QSA,L]
-#RewriteRule   ^data/examinations/.*?/?$	            data/examinations/examination.php [QSA,L]
-#RewriteRule   ^data/flatdirectory/?$				data/flatdirectory.php [QSA,L]
-#RewriteRule   ^data/actiontypes/instrumental/?$		data/instrumental.php [QSA,L]
-#RewriteRule   ^data/actionTypes/instrumental/?$		data/instrumental.php [QSA,L]
-RewriteRule   ^data/biomaterials/?$					data/biomaterials.php [QSA,L]
-
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule   ^data/(.*)$	proxy.php [QSA,L]
 
-# Исключение шаблоныов из rewrite, чтобы не получать index.html вместо несуществующих шаблонов
-#RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteRule ^templates/?.*$ / [G]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^api/(.*)$ api/web/index.php [QSA,L]
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f

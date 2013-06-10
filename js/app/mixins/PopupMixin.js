@@ -4,7 +4,7 @@ define([], function() {
 
 		this.setDefaults({
 
-			className: "popup qewrerytiu",
+			className: "popup",
 
 			template: '',
 
@@ -15,13 +15,14 @@ define([], function() {
 			},
 
 			close: function() {
-				console.log('popup view close')
-				this.$el.dialog("close");
-				this.$el.remove();
+				var self = this;
+				console.log('popup view close',self)
+				self.$el.dialog("close");
+				self.$el.remove();
 			},
 
 			renderNested: function(view, selector) {
-				console.log('renderNested', view);
+				//console.log('renderNested', view);
 				var $element = (selector instanceof $) ? selector : this.$el.find(selector);
 				view.setElement($element).render();
 			},
@@ -39,20 +40,24 @@ define([], function() {
 
 		});
 
+		this.before('initialize', function(){
+			_.bindAll(this);
+		});
+
 		this.before('render', function() {
 			var self = this;
 			this.beforeRender();
 			this.$el.html($.tmpl(this.template, this.data));
 
-			$(this.el).dialog({
+			this.$el.dialog({
 				autoOpen: false,
-				width: "116em",
+				width: self.options.width ? self.options.width: "116em",
 				modal: true,
 				dialogClass: "webmis",
-				title: this.options.title ? this.options.title : "Создание направления",
+				title: self.options.title ? self.options.title : "Создание направления",
 				onClose: self.close,
 				buttons: [{
-					text: "Сохранить",
+					text: self.options.saveText ? self.options.saveText : "Сохранить",
 					click: self.onSave,
 					"class": "button-color-green save"
 				}, {
