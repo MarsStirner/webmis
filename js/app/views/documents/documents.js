@@ -20,6 +20,7 @@ define(function (require) {
 		_documentsTableBody: _.template(require("text!templates/documents/list/docs-table-body.html"))*/,
 		_editLayout: _.template(require("text!templates/documents/edit/layout.html")),
 		_editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
+		_editHeading: _.template(require("text!templates/documents/edit/heading.html")),
 		_editDocumentControls: _.template(require("text!templates/documents/edit/document-controls.html")),
 		_editCopySourceSelector: _.template(require("text!templates/documents/edit/copy-source-selector.html")),
 		_editGrid: _.template(require("text!templates/documents/edit/grid.html")),
@@ -841,6 +842,7 @@ define(function (require) {
 		render: function () {
 			return ViewBase.prototype.render.call(this, {
 				".nav-controls": new Documents.Views.Edit.NavControls({model: this.model}),
+				".heading": new Documents.Views.Edit.Heading({model: this.model}),
 				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
 				".document-controls": new Documents.Views.Edit.DocControls({model: this.model})
 			});
@@ -899,6 +901,20 @@ define(function (require) {
 
       return documentTypeId;
     }
+	});
+
+	Documents.Views.Edit.Heading = ViewBase.extend({
+		template: templates._editHeading,
+		data: function () {
+			return {name: this.model.get("name")};
+		},
+		initialize: function () {
+			this.listenTo(this.model, "change", this.onModelReset);
+		},
+		onModelReset: function () {
+			this.stopListening(this.model, "change", this.onModelReset);
+			this.render();
+		}
 	});
 
   Documents.Views.Edit.CopySourceSelector = PopUpBase.extend({
