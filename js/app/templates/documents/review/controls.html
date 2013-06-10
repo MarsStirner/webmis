@@ -1,5 +1,11 @@
 <div class="span12">
-	<button type="button" class="back-to-document-list review-nav">Вернуться к списку</button>
-	<button type="button" class="prev-document review-nav">Предыдущий документ</button>
-	<button type="button" class="next-document review-nav">Следующий документ</button>
+	<div class="pull-left">
+		<button type="button" class="back-to-document-list review-nav" data-icon-primary="icon-list">Вернуться к списку</button>
+	</div>
+	<%if (selectedDocuments.length == 1) {%>
+	<div class="pull-right">
+		<button type="button" class="prev-document review-nav" data-icon-primary="icon-chevron-left">Предыдущий документ</button>
+		<button type="button" class="next-document review-nav" data-icon-secondary="icon-chevron-right">Следующий документ</button>
+	</div>
+	<%}%>
 </div>

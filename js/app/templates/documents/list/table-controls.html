@@ -1,1 +1,3 @@
-<button type="button" class="review-selected" disabled="disabled">Просмотр выбранных</button>
+<button type="button" class="review-selected" <%if (!selectedDocuments.length) {%> disabled="disabled"<%}%>>
+Просмотр выбранных (<%=selectedDocuments.length%>)
+</button>

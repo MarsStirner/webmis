@@ -318,7 +318,17 @@ define(function (require) {
 				this.subViews = {};
 				this.assign(subViews);
 			}
-      this.$("button").button();
+      this.$("button").each(function () {
+				var $this = $(this);
+				var icons = {};
+				if ($this.data("icon-primary")) {
+					icons.primary = $this.data("icon-primary");
+				}
+				if ($this.data("icon-secondary")) {
+					icons.secondary = $this.data("icon-secondary");
+				}
+				$this.button({icons: icons});
+			});
       //this.$("select").select2();
 			return this;
 		},
@@ -443,7 +453,7 @@ define(function (require) {
 		},
 
 		toggleReviewState: function (enabled) {
-			this.$(".documents-table, .documents-filters, .table-controls").toggle(!enabled);
+			this.$(".documents-table, .controls-filters").toggle(!enabled);
 
 			if (enabled) {
 				this.$el.append('<div class="row-fluid review-area-row"><div class="span12 review-area"></div></div>');
@@ -615,6 +625,11 @@ define(function (require) {
 
 			this.collection.dateRange = dateRange;
 			this.collection.fetch();
+		},
+
+		render: function () {
+			ViewBase.prototype.render.apply(this);
+			this.$(".document-create-date-filter-buttonset").buttonset();
 		}
 	});
 
@@ -707,7 +722,8 @@ define(function (require) {
 
 		events: {
 			"change .selected-flag": "onSelectedFlagChange",
-			"click .edit-document": "onEditDocumentClick"
+			"click .edit-document": "onEditDocumentClick",
+			"click .single-item-select": "onItemClick"
 		},
 
 		data: function () {
@@ -725,10 +741,17 @@ define(function (require) {
 
 		onSelectedFlagChange: function (event) {
 			this.updatedSelectedItems($(event.currentTarget).is(":checked"), parseInt($(event.currentTarget).val()));
+			$(event.currentTarget).parent().siblings().toggleClass("selected", $(event.currentTarget).is(":checked"));
 		},
 
 		onEditDocumentClick: function (event) {
 			dispatcher.trigger("change:viewState", {type: "document-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+		},
+
+		onItemClick: function (event) {
+			console.log($(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
+			this.updatedSelectedItems(true, $(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
+			this.options.selectedDocuments.trigger("enteredReviewState");
 		},
 
 		updatedSelectedItems: function (selected, itemId) {
@@ -744,30 +767,39 @@ define(function (require) {
 	Documents.Views.List.TableControls = ViewBase.extend({
 		template: templates._listTableControls,
 
+		data: function () {
+			return {selectedDocuments: this.collection};
+		},
+
 		events: {
 			"click .review-selected": "onReviewSelectedClick"
 		},
 
 		initialize: function () {
-			this.listenTo(this.collection, "add", this.onSelectedDocumentsAdd);
-			this.listenTo(this.collection, "remove", this.onSelectedDocumentsRemove);
+			this.listenTo(this.collection, "add remove reset", this.onCollectionChange);
 		},
 
 		onReviewSelectedClick: function (event) {
 			this.collection.trigger("enteredReviewState");
 		},
 
-		onSelectedDocumentsAdd: function () {
-			this.toggleReviewSelectedDisabled(this.collection.length > 0);
+		onCollectionChange: function () {
+			this.render();
+		}
+
+		/*onSelectedDocumentsAdd: function () {
+			this.render();
+			//this.toggleReviewSelectedDisabled(this.collection.length > 0);
 		},
 
 		onSelectedDocumentsRemove: function () {
-			this.toggleReviewSelectedDisabled(this.collection.length > 0);
+			this.render();
+			//this.toggleReviewSelectedDisabled(this.collection.length > 0);
 		},
 
 		toggleReviewSelectedDisabled: function (enabled) {
-			this.$(".review-selected").button(!!enabled ? "enable" : "disable");
-		}
+			//this.$(".review-selected").button(!!enabled ? "enable" : "disable");
+		}*/
 	});
 
 
@@ -812,7 +844,7 @@ define(function (require) {
 				this.$el.parent().css({"margin-left": "0"});
 				dispatcher.trigger("change:mainState", {stateName: "documentEditor"});
 
-				this.$(".document-edit-side").removeClass("span12").addClass("span6");
+				this.$(".document-edit-side").removeClass("span12").addClass("span6 vertical-delim");
 
 				this.$(".divided").prepend(
 					"<div class='document-list-side span6'>" +
@@ -833,7 +865,7 @@ define(function (require) {
 				this.$el.parent().css({"margin-left": "20em"});
 
 				this.$(".document-list-side").remove();
-				this.$(".document-edit-side").removeClass("span6").addClass("span12");
+				this.$(".document-edit-side").removeClass("span6 vertical-delim").addClass("span12");
 
 				dispatcher.trigger("change:mainState", {stateName: "default"});
 			}
@@ -1390,12 +1422,26 @@ define(function (require) {
 	Documents.Views.Review.Controls = ViewBase.extend({
 		template: templates._reviewControls,
 
+		data: function () {
+			return {selectedDocuments: this.collection};
+		},
+
 		events: {
-			"click .back-to-document-list": "onBackToDocumentListClick"
+			"click .back-to-document-list": "onBackToDocumentListClick",
+			"click .prev-document": "onPrevDocumentClick",
+			"click .nex-document": "onNextDocumentClick"
 		},
 
 		onBackToDocumentListClick: function () {
 			this.collection.trigger("quitReviewState");
+		},
+
+		onPrevDocumentClick: function () {
+
+		},
+
+		onNextDocumentClick: function () {
+
 		}
 	});
 

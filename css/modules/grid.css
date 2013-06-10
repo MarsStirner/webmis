@@ -517,3 +517,8 @@
 .serious {
   color: red;
 }
+
+/* line 457, ../../sass/modules/grid.scss */
+td.selected {
+  background-color: whitesmoke;
+}

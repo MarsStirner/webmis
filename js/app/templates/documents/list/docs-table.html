@@ -2,8 +2,10 @@
 	<thead>
 		<tr>
 			<th>&nbsp;</th>
-			<th>id</th>
-			<th>name</th>
+			<th>Дата и время</th>
+			<th>Название</th>
+			<th>Врач</th>
+			<th>Специальность</th>
 			<th>&nbsp;</th>
 		</tr>
 	</thead>
@@ -11,15 +13,17 @@
 		<%if (documents.length) {%>
 			<%documents.each(function (document) {%>
 				<tr class="document-item-row">
-					<td><input type="checkbox" class="selected-flag" value="<%=document.id%>"></td>
-					<td><%=document.id%></td>
-					<td><%=document.get('assessmentName').name%></td>
-					<td><a class="edit-document Actions" data-document-id="<%=document.id%>">Редактировать</a></td>
+					<td class="selected-flag-col" style="background-color: white;"><input type="checkbox" class="selected-flag" value="<%=document.id%>"></td>
+					<td class="single-item-select"><%=Core.Date.format(document.get('assessmentDate'))%></td>
+					<td class="single-item-select"><%=document.get('assessmentName').name%></td>
+					<td class="single-item-select"><%=document.get('doctor').name.raw%></td>
+					<td class="single-item-select"><%=document.get('doctor').specs.name%></td>
+					<td><a class="edit-document Actions" data-document-id="<%=document.id%>"><i class="icon-pencil"></i></a></td>
 				</tr>
 			<%});%>
 		<%} else {%>
 			<tr>
-				<td colspan="4">Нет данных</td>
+				<td colspan="6">Нет данных</td>
 			</tr>
 		<%}%>
 	</tbody>
