@@ -50,11 +50,16 @@ $apiRouts->get('/appeals/{appealId}/bed/vacate', function($appealId) {//
 $apiRouts->get('/appeals/{appealId}/close', function($appealId) use ($app){
 
     $sql = "UPDATE Event SET Event.execDate = ? WHERE Event.id = ?";
-    $count = $app['db']->executeUpdate($sql, array(date('2013-06-11 10:10:10'),(int) $appealId));
+    $date = new \DateTime('2013-06-11 10:10:10');
+    $stmt = $app['db']->prepare($sql);
+    $stmt->bindValue(1, $date, "datetime");
+    $stmt->bindValue(2, $appealId, "integer");
+    $stmt->execute();
+    //$count = $app['db']->executeUpdate($sql, array(new \DateTime('2013-06-11 10:10:10'),(int) $appealId));
     //$sql = "UPDATE Person SET Person.firstName = ? WHERE Person.id = ?";
     //$count = $app['db']->executeUpdate($sql, array('blablabla',(int) $appealId));
 
-    return '/api/v1/appeals/{appealId}/close '.$appealId.'  '.$count;
+    return '/api/v1/appeals/{appealId}/close '.$appealId;
 })->assert('appealId', '\d+');
 
 
