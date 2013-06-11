@@ -52,6 +52,7 @@ define(["text!templates/reports/f007.html",
 				filter: {
 					hasBeds: true
 				},
+				limit: 0,
 				sortingField: 'name',
 				sortingMethod: 'asc'
 			});

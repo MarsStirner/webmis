@@ -184,3 +184,5 @@ htmltemplates/
 *sublime-workspace
 node_modules
 build
+
+.allow-devtools-edit

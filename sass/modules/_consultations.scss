@@ -1,0 +1,31 @@
+.consultation-status-0 {
+	color: blue;
+}.consultation-status-1 {
+	color: #000;
+}
+
+.consultation-status-2{
+	color: green;
+}
+
+.consultation-status-3{
+	color: #bbb;
+}
+
+
+
+
+.twocol {
+    -moz-column-count: 2;
+    -moz-column-gap: 20px;
+    -webkit-column-count: 2;
+    -webkit-column-gap: 20px;
+    column-count: 2;
+    column-gap: 20px;
+    width: 100%;
+}
+
+    #timetable-items{
+        @extend .twocol
+
+    }

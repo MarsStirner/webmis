@@ -1,26 +1,140 @@
 .instrumental-status-0 {
 	color: blue;
-}.instrumental-status-1 {
-	color: #000;
+    }.instrumental-status-1 {
+       color: #000;
+   }
+
+   .instrumental-status-2{
+       color: green;
+   }
+
+   .instrumental-status-3{
+       color: #bbb;
+   }
+
+   .bottom-form  {
+       .date .date-icon, .time .time-icon {
+          right: 0.6em;
+      }
+  }
+
+// .instrumental-researchs, .instrumental-groups{
+// 	ul.dynatree-container{
+// 	font-size: inherit;
+// }
+
+// }
+
+
+
+.tree ul{
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+    font-size: 1em;
+    font-family: arial;
+    ul{
+        padding-left: 1em;
+    }
+}
+.tree li{
+    padding: 0px;
+    margin: 0px 0 0.1em 0;
+    position: relative;
+    cursor: pointer;
+}
+.tree table, .list table{
+
+}
+.tree .icon{
+    position: absolute;
+    top: 0.3em;
+    left: 0;
+    font-size: 0.8em;
 }
 
-.instrumental-status-2{
-	color: green;
+li.closed > ul {
+    display: none;
 }
 
-.instrumental-status-3{
-	color: #bbb;
+li.open > ul {
+    display: block;
+}
+.icons{
+    position: relative;
+}
+.icons .icon-open,, .icons .icon-closed{
+    display:none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 1em;
+}
+.icons .icon-closed{
+    left: 0.1em;
+}
+.icons .select {
+    position: absolute;
+    top: 0;
+    left: 0.8em;
+}
+li .icon-open, li .icon-closed{
+    display:none;
+}
+li.parent.open > .icon-open, .icons.open > .icon-open{
+    display: block;
+}
+li.parent.open > .icon-closed, .icons.open > .icon-closed{
+    display: none;
 }
 
-.bottom-form  {
-	.date .date-icon, .time .time-icon {
-		right: 0.6em;
-	}
+li.parent.closed > .icon-open, .icons.closed > .icon-open{
+    display: none;
+}
+li.parent.closed > .icon-closed, .icons.closed > .icon-closed{
+    display: block;
+}
+li .title{
+    padding: 0.13em 0.5em 0.13em 1em;
+    //border: 1px solid #fff;
+    display: block;
+    line-height: 1.3;
+    &:hover{
+        background-color: #118EDC;
+        color: #fff;
+    }
+}
+.tree table:hover{
+    background-color: #118EDC;
+    color: #fff;
+}
+.tree td,.list td{
+    vertical-align: top;
+}
+li.clicked > .title{
+    background-color: #118EDC;
+    color: #fff;
+}
+li.clicked > .icon-open,li.clicked > .icon-closed{
+    color: #fff;
 }
 
-.instrumental-researchs, .instrumental-groups{
-	ul.dynatree-container{
-	font-size: inherit;
-}
+.instrumental-researchs{
+    .item{
 
-} 
+        label{
+            font-size: inherit;
+            margin: 0.2em;
+            cursor: pointer;
+        }
+
+    }
+    .selected{
+        background-color: #118EDC;
+        label{
+            color: #fff;
+        }
+    }
+
+
+}

@@ -23,7 +23,11 @@
 			</li>
 			<li>
 				<label>Пароль</label>
-				<input type="password" name="password" placeholder="Пароль" />
+				{{if (useTextForPassword)}}
+				<input type="text" name="password" placeholder="Пароль" style="-webkit-text-security: disc;"/>
+				{{else}}
+				<input type="password" name="password" placeholder="Пароль"/>
+				{{/if}}
 			</li>
 
 		</ul>

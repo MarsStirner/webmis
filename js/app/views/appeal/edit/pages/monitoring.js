@@ -18,7 +18,7 @@ define([
 
 	"views/appeal/edit/pages/card",
 
-	"collections/moves",
+	"collections/moves/moves",
 	"collections/dictionary-values"
 ], function (
 	monitoringTmpl,
@@ -343,6 +343,7 @@ define([
 		initialize: function () {
 			appeal = this.model = this.options.appeal;
 			appealJSON = appeal.toJSON();
+			this.canPrint = false;
 		},
 
 		render: function () {
@@ -680,6 +681,8 @@ define([
 
 			this.$(".save-blood").button();
 
+			this.$(".edit-blood").button();
+
 			return this;
 		}
 	});
@@ -732,7 +735,8 @@ define([
 			return {
 				lastMove: this.moves.last(),
 				appeal: appealJSON,
-				appealExtraData: Core.Data.appealExtraData.toJSON()
+				appealExtraData: Core.Data.appealExtraData.toJSON(),
+				days: this.days
 			};
 		},
 
@@ -745,8 +749,17 @@ define([
 
 			this.moves = new Moves();
 			this.moves.appealId = appeal.get("id");
-			console.log("fetching moves");
+			//console.log("fetching moves");
 			this.moves.on("reset", this.render, this).fetch();
+			//продолжительность лечения
+			if(appealJSON.appealType.requestType.id === 1){
+				//дневной стационар
+				this.days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days") + 1;
+			}else if(appealJSON.appealType.requestType.id === 2){
+				//круглосуточный стационар
+				this.days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days");
+			}
+
 
 			Core.Data.appealExtraData.get("execPerson").on("change:doctor", this.onExecPersonDoctorChange, this);
 
@@ -766,6 +779,13 @@ define([
 
 		openExecPersonAssignmentDialog: function () {
 			new Monitoring.Views.ExecPersonAssignmentDialog().render().open();
+		},
+
+		render: function () {
+			this.$el.empty().append(this._template(this.data()));
+
+			this.$('.assign-exec-person').button();
+			return this;
 		}
 	});
 

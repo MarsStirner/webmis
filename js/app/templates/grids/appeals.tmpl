@@ -440,7 +440,7 @@
 			{{/if}}
 		</td>
 		<td>
-			{{if hospitalBed.room || hospitalBed.bed}}
+			{{if hospitalBed }}
 				{{if hospitalBed.room && hospitalBed.bed}}
 					${hospitalBed.room} / ${hospitalBed.bed}
 				{{/if}}
@@ -454,11 +454,12 @@
 				-
 			{{/if}}
 		</td>
-		<td>
+		<td>{{if hospitalBed && hospitalBed.department }}
 			${hospitalBed.department.name}
+			{{/if}}
 		</td>
 		<td>
-			{{if doctor.name.first || doctor.name.last || doctor.name.middle}}
+			{{if doctor && doctor.name}}
 				{{if doctor.name.last}}
 					{{decorate(doctor.name.last, requestData.filter.fullName)}}
 				{{/if}}
