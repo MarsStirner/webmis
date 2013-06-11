@@ -105,12 +105,7 @@ define([
 		},
 
 		setContentView: function(type, extraOptions) {
-			var force = false;
-			if (extraOptions && extraOptions.force) {
-				var force = extraOptions.force;
-			}
-
-			if (this.type !== type || !this.contentView || extraOptions.force) {
+			if (this.type !== type || !this.contentView || (extraOptions && extraOptions.force)) {
 				if (this.typeViews[type]) {
 					this.type = type;
 

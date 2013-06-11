@@ -295,7 +295,7 @@ define(function (require) {
 			this.appealId = options.appealId || appealId;
 		},
 		url: function () {
-			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?";
+			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?limit=0&";
 
 			var params = [];
 
