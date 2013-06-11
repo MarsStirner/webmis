@@ -9,7 +9,7 @@ define([
 	"views/diagnostics/instrumental/InstrumentalView",
 	"views/diagnostics/consultations/ConsultationsListView",
 	"views/appeal/edit/pages/monitoring",
-	"views/documents/documents",		
+	"views/documents/documents",
 	"views/moves/moves",
 	"views/moves/HospitalBedView",
 	"models/appeal",
@@ -27,7 +27,7 @@ define([
 	LaboratoryResultView,
 	InstrumentalView,
 	ConsultationView,
-	Monitoring,	
+	Monitoring,
 	Documents,
 	Moves,
 	HospitalBed
@@ -268,11 +268,11 @@ define([
 							title: "Мониторинг&nbsp;состояния",
 							uri: "/appeals/:id/monitoring"
 						}, appealJSON),
-						App.Router.compile({
-							name: "examinations",
-							title: "Осмотры",
-							uri: "/appeals/:id/examinations/"
-						}, appealJSON),
+						// App.Router.compile({
+						// 	name: "examinations",
+						// 	title: "Осмотры",
+						// 	uri: "/appeals/:id/examinations/"
+						// }, appealJSON),
 						App.Router.compile({
 							name: "documents",
 							title: "Документы",
