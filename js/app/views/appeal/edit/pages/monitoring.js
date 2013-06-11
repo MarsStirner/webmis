@@ -3,24 +3,24 @@
  * Date: 09.04.13
  */
 define([
-	"text!templates/appeal/edit/pages/monitoring/layout.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/header.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/patient-info.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/patient-blood-type-row.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/patient-blood-type-history-row.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/signal-info.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/assign-exec-person-dialog.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/monitoring-info.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/monitoring-info-item.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/express-analyses.tmpl",
-	"text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/layout.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/header.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/patient-info.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/patient-blood-type-row.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/patient-blood-type-history-row.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/signal-info.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/assign-exec-person-dialog.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/monitoring-info.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/monitoring-info-item.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/express-analyses.tmpl",
+		"text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl",
 
 	"views/appeal/edit/pages/card",
 
 	"collections/moves/moves",
-	"collections/dictionary-values"
-], function (
+		"collections/dictionary-values"
+], function(
 	monitoringTmpl,
 	headerTmpl,
 	patientInfoTmpl,
@@ -34,9 +34,9 @@ define([
 	expressAnalysesTmpl,
 	expressAnalysesItemTmpl,
 
-	Card,
+Card,
 
-	Moves,
+Moves,
 	DictionaryValues
 	) {
 
@@ -85,11 +85,11 @@ define([
 	Monitoring.Collections.PatientBloodTypes = Collection.extend({
 		model: Monitoring.Models.PatientBloodType,
 
-		initialize: function (models, options) {
+		initialize: function(models, options) {
 			this.patientId = options.patientId;
 		},
 
-		comparator: function (a, b) {
+		comparator: function(a, b) {
 			var aDatetime = parseInt(a.get("id"));
 			var bDatetime = parseInt(b.get("id"));
 
@@ -102,7 +102,7 @@ define([
 			}
 		},
 
-		url: function () {
+		url: function() {
 			return DATA_PATH + "patients/" + this.patientId + "/bloodtypes";
 		}
 	});
@@ -132,16 +132,16 @@ define([
 	Monitoring.Collections.MonitoringInfos = Collection.extend({
 		model: Monitoring.Models.MonitoringInfo,
 
-		url: function () {
+		url: function() {
 			return DATA_PATH + "appeals/" + appeal.get("id") + "/monitoring";
 			//return "/monitoring-info.json";
 		},
 
-		parse: function (raw) {
+		parse: function(raw) {
 			var rawByDate = {};
 
-			_.each(raw.data, function (param) {
-				_.each(param.values, function (paramValue) {
+			_.each(raw.data, function(param) {
+				_.each(param.values, function(paramValue) {
 					if (!rawByDate.hasOwnProperty(paramValue.date)) {
 						rawByDate[paramValue.date] = {};
 					}
@@ -149,7 +149,7 @@ define([
 				});
 			});
 
-			var parsed = _.map(rawByDate, function (rawRow, date) {
+			var parsed = _.map(rawByDate, function(rawRow, date) {
 				return {
 					datetime: +date,
 					temperature: rawRow["TEMPERATURE"],
@@ -164,19 +164,19 @@ define([
 			});
 
 			parsed = parsed
-				.sort(function (a, b) {
-					var adt = a.datetime;
-					var bdt = b.datetime;
+				.sort(function(a, b) {
+				var adt = a.datetime;
+				var bdt = b.datetime;
 
-					if (adt > bdt) return 1;
-					else if (adt < bdt) return -1;
-					else return 0;
-				})
-				.filter(function (row) {
-					return _.some(row, function (field, fieldName) {
-						return fieldName !== "datetime" && field && field.toString().length;
-					});
-				})
+				if (adt > bdt) return 1;
+				else if (adt < bdt) return -1;
+				else return 0;
+			})
+				.filter(function(row) {
+				return _.some(row, function(field, fieldName) {
+					return fieldName !== "datetime" && field && field.toString().length;
+				});
+			})
 				.slice(0, 5);
 
 			console.log(rawByDate);
@@ -211,11 +211,11 @@ define([
 	Monitoring.Collections.ExpressAnalyses = Collection.extend({
 		model: Monitoring.Models.MonitoringInfo,
 
-		sync:function (method, model, options) {
+		sync: function(method, model, options) {
 			return Backbone.sync(method, model, options);
 		},
 
-		url: function () {
+		url: function() {
 			//return DATA_PATH + "";
 			return "/express-analyses.json";
 		}
@@ -256,21 +256,45 @@ define([
 		model: Monitoring.Models.PatientDiagnosis,
 
 		diagKinds: {
-			"assignment": {priority: 0, title: "Направительный диагноз"},
-			"admission": {priority: 1, title: "Диагноз при поступлении"},
-			"clinical": {priority: 2, title: "Клинический"},
-			"final": {priority: 3, title: "Заключительный"},
-			"aftereffect": {priority: 4, title: "Сопутствующий к направительному"},
-			"attendant": {priority: 5, title: "Осложнения к направительному"},
-			"secondaryToClinical": {priority: 6, title: "Сопутствующий к клиническому"},
-			"complicateToClinical": {priority: 7, title: "Осложнения к клиническому"}
+			"assignment": {
+				priority: 0,
+				title: "Направительный диагноз"
+			},
+			"admission": {
+				priority: 1,
+				title: "Диагноз при поступлении"
+			},
+			"clinical": {
+				priority: 2,
+				title: "Клинический"
+			},
+			"final": {
+				priority: 3,
+				title: "Заключительный"
+			},
+			"aftereffect": {
+				priority: 4,
+				title: "Сопутствующий к направительному"
+			},
+			"attendant": {
+				priority: 5,
+				title: "Осложнения к направительному"
+			},
+			"secondaryToClinical": {
+				priority: 6,
+				title: "Сопутствующий к клиническому"
+			},
+			"complicateToClinical": {
+				priority: 7,
+				title: "Осложнения к клиническому"
+			}
 		},
 
-		url: function () {
-			return DATA_PATH + "appeals/" + appeal.get("id") +  "/diagnoses/";
+		url: function() {
+			return DATA_PATH + "appeals/" + appeal.get("id") + "/diagnoses/";
 		},
 
-		comparator: function (a, b) {
+		comparator: function(a, b) {
 			var apr = this.diagKinds[a.get("diagnosisKind")].priority;
 			var bpr = this.diagKinds[b.get("diagnosisKind")].priority;
 
@@ -283,10 +307,10 @@ define([
 			}
 		},
 
-		parse: function (raw) {
+		parse: function(raw) {
 			var data = Collection.prototype.parse.call(this, raw);
 
-			_.each(data, function (diag) {
+			_.each(data, function(diag) {
 				diag.diagnosisKindLabel = this.diagKinds[diag.diagnosisKind].title;
 			}, this);
 
@@ -301,7 +325,7 @@ define([
 	var Persons = Collection.extend({
 		model: Backbone.Model.extend({}),
 
-		url: function () {
+		url: function() {
 			return DATA_PATH + "dir/persons";
 		}
 	});
@@ -309,7 +333,7 @@ define([
 	var AppealExecPerson = Backbone.Model.extend({
 		idAttribute: "id",
 
-		sync: function (method, model, options) {
+		sync: function(method, model, options) {
 			options.dataType = "jsonp";
 			options.url = model.url();
 			options.contentType = 'application/json';
@@ -323,7 +347,7 @@ define([
 			return Backbone.sync(method, model, options);
 		},
 
-		url: function () {
+		url: function() {
 			return DATA_PATH + "appeals/" + appeal.get("id") + "/execPerson"
 		}
 	});
@@ -340,13 +364,13 @@ define([
 
 		template: monitoringTmpl,
 
-		initialize: function () {
+		initialize: function() {
 			appeal = this.model = this.options.appeal;
 			appealJSON = appeal.toJSON();
 			this.canPrint = false;
 		},
 
-		render: function () {
+		render: function() {
 			this.trigger("change:printState");
 
 			console.time("layout render time");
@@ -379,15 +403,15 @@ define([
 	Monitoring.Views.BaseView = Backbone.View.extend({
 		template: "",
 
-		data: function () {
+		data: function() {
 			return {};
 		},
 
-		initialize: function () {
+		initialize: function() {
 			this._template = _.template(this.template);
 		},
 
-		render: function () {
+		render: function() {
 			this.$el.empty().append(this._template(this.data()));
 			return this;
 		}
@@ -402,14 +426,14 @@ define([
 			"click th.sortable": "onThSortableClick"
 		},
 
-		initialize: function () {
+		initialize: function() {
 			//вызывается и после фетча и после сорта
 			this.collection.on("reset", this.render, this).fetch();
 			//в нашей версии бэкбона - нету :(
 			//this.collection.on("sort", this.renderItems, this);
 		},
 
-		onThSortableClick: function (event) {
+		onThSortableClick: function(event) {
 			var $target = $(event.currentTarget);
 
 			var sortConditions = this.updateSortConditions($target);
@@ -420,9 +444,11 @@ define([
 		 * Применяет сортировку коллекции по переданным памметрам
 		 * @param sortConditions {{sortField: string, sortType: string, sortDirection: "desc" || "asc"}}
 		 */
-		applySort: function (sortConditions) {
+		applySort: function(sortConditions) {
 			this.collection.comparator = this.getComparator(sortConditions.sortField, sortConditions.sortType, sortConditions.sortDirection);
-			this.collection.sort({sortRequest: true});
+			this.collection.sort({
+				sortRequest: true
+			});
 		},
 
 		/**
@@ -430,7 +456,7 @@ define([
 		 * @param $targetTh
 		 * @returns {{sortField: string, sortType: string, sortDirection: "desc" || "asc"}}
 		 */
-		updateSortConditions: function ($targetTh) {
+		updateSortConditions: function($targetTh) {
 			if (!this.$caret) {
 				this.$caret = $('<i/>');
 			}
@@ -467,20 +493,22 @@ define([
 		 * @param sortDirection
 		 * @returns {Function}
 		 */
-		getComparator: function (fieldName, sortType, sortDirection) {
+		getComparator: function(fieldName, sortType, sortDirection) {
 			switch (sortType) {
 				case "datetime":
 				case "numeric":
-					return function (itemA, itemB) {
-						var a = parseFloat(itemA.get(fieldName)), b =  parseFloat(itemB.get(fieldName));
+					return function(itemA, itemB) {
+						var a = parseFloat(itemA.get(fieldName)),
+							b = parseFloat(itemB.get(fieldName));
 
 						if (a > b || isNaN(b)) return sortDirection === "asc" ? 1 : -1;
 						else if (a < b || isNaN(a)) return sortDirection === "asc" ? -1 : 1;
 						else return 0;
 					};
 				default:
-					return function (itemA, itemB) {
-						var a = itemA.get(fieldName).toString(), b = itemB.get(fieldName).toString();
+					return function(itemA, itemB) {
+						var a = itemA.get(fieldName).toString(),
+							b = itemB.get(fieldName).toString();
 
 						if (a > b) return sortDirection === "asc" ? 1 : -1;
 						else if (a < b) return sortDirection === "asc" ? -1 : 1;
@@ -492,17 +520,21 @@ define([
 		/**
 		 * Перерисовывает только ряды таблицы
 		 */
-		renderItems: function () {
+		renderItems: function() {
 			/*this.$("tbody").empty().append(this.collection.map(function (item) {
 				return _.template(this.itemTemplate, {item: item});
 			}, this));*/
-			this.$("tbody").empty().append(_.template(this.itemTemplate, {collection: this.collection}));
+			this.$("tbody").empty().append(_.template(this.itemTemplate, {
+				collection: this.collection
+			}));
 		},
 
-		render: function (c, options) {
+		render: function(c, options) {
 			//этот параметр передаётся только при сортировке, и в этом случае
 			//мы хотим отрендерить только ряды
-			options = options || {sortRequest: false};
+			options = options || {
+				sortRequest: false
+			};
 			if (!options.sortRequest) {
 				//сейчас в теле таблицы данных нет
 				//this.$el.html(_.template(this.template, this.data()));
@@ -526,7 +558,7 @@ define([
 	Monitoring.Views.Header = Monitoring.Views.BaseView.extend({
 		template: headerTmpl,
 
-		data: function () {
+		data: function() {
 			return {
 				appealNumber: appeal.get("number"),
 				appealIsUrgent: appeal.get("urgent"),
@@ -542,14 +574,14 @@ define([
 	Monitoring.Views.PatientInfo = Monitoring.Views.BaseView.extend({
 		template: patientInfoTmpl,
 
-		data: function () {
+		data: function() {
 			return {
 				appeal: appealJSON,
 				patient: appealJSON.patient
 			};
 		},
 
-		render: function () {
+		render: function() {
 			Monitoring.Views.BaseView.prototype.render.apply(this);
 
 			this.assign({
@@ -570,7 +602,7 @@ define([
 	Monitoring.Views.PatientBloodTypeRow = Monitoring.Views.BaseView.extend({
 		template: patientBloodTypesRowTmpl,
 
-		data: function () {
+		data: function() {
 			return {
 				currentBloodType: appeal.get("patient").get("medicalInfo").get("blood"),
 				bloodTypes: this.bloodTypesDict
@@ -586,26 +618,30 @@ define([
 
 		historyShown: false,
 
-		initialize: function (options) {
+		initialize: function(options) {
 			Monitoring.Views.BaseView.prototype.initialize.apply(this);
 
 			if (!bloodTypes) {
-				bloodTypes = new Monitoring.Collections.PatientBloodTypes([], {patientId: appeal.get("patient").get("id")});
+				bloodTypes = new Monitoring.Collections.PatientBloodTypes([], {
+					patientId: appeal.get("patient").get("id")
+				});
 			}
 			this.collection = bloodTypes;
 
-			this.bloodTypesDict = new DictionaryValues([], {name: "bloodTypes"});
+			this.bloodTypesDict = new DictionaryValues([], {
+				name: "bloodTypes"
+			});
 
 			this.bloodTypesDict.on("reset", this.render, this).fetch();
 		},
 
-		onEditBloodClick: function (event) {
+		onEditBloodClick: function(event) {
 			event.preventDefault();
 
 			this.toggleEditState(true);
 		},
 
-		onSaveBloodClick: function (event) {
+		onSaveBloodClick: function(event) {
 			event.preventDefault();
 
 			var self = this;
@@ -620,12 +656,16 @@ define([
 						"name": newBloodName
 					}
 				}, {
-					success: function () {
-						pubsub.trigger("noty", {text: "Группа крови пациента изменена."});
+					success: function() {
+						pubsub.trigger("noty", {
+							text: "Группа крови пациента изменена."
+						});
 						self.collection.fetch();
 					},
-					error: function () {
-						pubsub.trigger("noty", {text: "Ошибка при изменении группы крови."});
+					error: function() {
+						pubsub.trigger("noty", {
+							text: "Ошибка при изменении группы крови."
+						});
 						self.collection.fetch();
 					}
 				});
@@ -640,13 +680,13 @@ define([
 			this.toggleEditState(false);
 		},
 
-		onCancelBloodClick: function (event) {
+		onCancelBloodClick: function(event) {
 			event.preventDefault();
 
 			this.toggleEditState(false);
 		},
 
-		onShowPatientBloodHistory: function (event) {
+		onShowPatientBloodHistory: function(event) {
 			event.preventDefault();
 			var $target = $(event.currentTarget);
 
@@ -657,7 +697,7 @@ define([
 			this.collection.trigger(this.historyShown ? "request:show" : "request:hide");
 		},
 
-		toggleEditState: function (enabled) {
+		toggleEditState: function(enabled) {
 			if (enabled) {
 				this.$("td").first().prop("colspan", 2);
 				this.$("td").last().hide();
@@ -665,16 +705,20 @@ define([
 				this.$(".blood-type-selector").show();
 				this.$(".blood-type").focus();
 
-				this.$el.css({"background-color": "whitesmoke"});
+				this.$el.css({
+					"background-color": "whitesmoke"
+				});
 			} else {
 				this.$("td").first().prop("colspan", 1);
 				this.$("td").last().show();
-				this.$el.css({"background-color": "white"});
+				this.$el.css({
+					"background-color": "white"
+				});
 				this.render();
 			}
 		},
 
-		render: function () {
+		render: function() {
 			Monitoring.Views.BaseView.prototype.render.apply(this);
 
 			this.$(".blood-type-selector").hide();
@@ -694,7 +738,7 @@ define([
 	Monitoring.Views.PatientBloodTypeHistoryRow = Monitoring.Views.BaseView.extend({
 		template: patientBloodTypeHistoryRowTmpl,
 
-		data: function () {
+		data: function() {
 			return {
 				bloodTypeHistory: this.collection
 			};
@@ -704,22 +748,24 @@ define([
 
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			Monitoring.Views.BaseView.prototype.initialize.apply(this);
 
 			if (!bloodTypes) {
-				bloodTypes = new Monitoring.Collections.PatientBloodTypes([], {patientId: appeal.get("patient").get("id")});
+				bloodTypes = new Monitoring.Collections.PatientBloodTypes([], {
+					patientId: appeal.get("patient").get("id")
+				});
 			}
 			this.collection = bloodTypes;
 			this.collection
 				.on("request:show", this.toggleVisible, this)
 				.on("request:hide", this.toggleVisible, this)
-				//.on("add", this.render, this)
-				.on("reset", this.render, this)
+			//.on("add", this.render, this)
+			.on("reset", this.render, this)
 				.fetch();
 		},
 
-		toggleVisible: function (event) {
+		toggleVisible: function(event) {
 			this.$el.toggle();
 		}
 	});
@@ -731,7 +777,7 @@ define([
 	Monitoring.Views.SignalInfo = Monitoring.Views.BaseView.extend({
 		template: signalInfoTmpl,
 
-		data: function () {
+		data: function() {
 			return {
 				lastMove: this.moves.last(),
 				appeal: appealJSON,
@@ -744,7 +790,7 @@ define([
 			"click .assign-exec-person": "onAssignExecPersonClick"
 		},
 
-		initialize: function () {
+		initialize: function() {
 			Monitoring.Views.BaseView.prototype.initialize.apply(this);
 
 			this.moves = new Moves();
@@ -752,10 +798,10 @@ define([
 			//console.log("fetching moves");
 			this.moves.on("reset", this.render, this).fetch();
 			//продолжительность лечения
-			if(appealJSON.appealType.requestType.id === 1){
+			if (appealJSON.appealType.requestType.id === 1) {
 				//дневной стационар
 				this.days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days") + 1;
-			}else if(appealJSON.appealType.requestType.id === 2){
+			} else if (appealJSON.appealType.requestType.id === 2) {
 				//круглосуточный стационар
 				this.days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days");
 			}
@@ -764,24 +810,27 @@ define([
 			Core.Data.appealExtraData.get("execPerson").on("change:doctor", this.onExecPersonDoctorChange, this);
 
 			if (!Core.Data.appealExtraData.get("execPerson").get("doctor").get("id")) {
-				pubsub.trigger("noty", {text: "Требуется назначить лечащего врача.", type: "alert"});
+				pubsub.trigger("noty", {
+					text: "Требуется назначить лечащего врача.",
+					type: "alert"
+				});
 			}
 		},
 
-		onAssignExecPersonClick: function (event) {
+		onAssignExecPersonClick: function(event) {
 			event.preventDefault();
 			this.openExecPersonAssignmentDialog();
 		},
 
-		onExecPersonDoctorChange: function () {
+		onExecPersonDoctorChange: function() {
 			this.render();
 		},
 
-		openExecPersonAssignmentDialog: function () {
+		openExecPersonAssignmentDialog: function() {
 			new Monitoring.Views.ExecPersonAssignmentDialog().render().open();
 		},
 
-		render: function () {
+		render: function() {
 			this.$el.empty().append(this._template(this.data()));
 
 			this.$('.assign-exec-person').button();
@@ -796,18 +845,18 @@ define([
 	Monitoring.Views.ExecPersonAssignmentDialog = Monitoring.Views.BaseView.extend({
 		template: assignExecPersonDialogTmpl,
 
-		/*data: function () {
+		data: function () {
 			return {
-				allPersons: this.allPersons
+				assignMe: this.assignMe
 			};
-		},*/
+		},
 
 		events: {
 			"change input[name='filter-persons']": "onFilterPersonsChange",
 			"click .assign-on-me": "onAssignOnMeClick"
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			Monitoring.Views.BaseView.prototype.initialize.apply(this);
 			_.bindAll(this);
 
@@ -827,22 +876,27 @@ define([
 				}
 			});
 			this.departmentPersons.on("reset", this.addDepartmentPersons, this).fetch();
+
+			this.assignMe = true;
+
+			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
+				this.assignMe = false;
+			}
+
 		},
 
-		open: function () {
+		open: function() {
 			this.$el.dialog({
 				title: "Назначение лечащего врача",
 				modal: true,
 				width: "50em",
 				dialogClass: "webmis",
 				resizable: false,
-				buttons: [
-					{
+				buttons: [{
 						text: "Назначить",
 						click: this.assignExecPerson,
 						"class": "button-color-green"
-					},
-					{
+					}, {
 						text: "Отмена",
 						click: this.close
 					}
@@ -850,16 +904,18 @@ define([
 				close: this.close
 			});
 
-			this.$el.css({"min-height": "11em"});
+			this.$el.css({
+				"min-height": "11em"
+			});
 		},
 
-		close: function () {
+		close: function() {
 			this.allPersons.off(null, null, this);
 			this.departmentPersons.off(null, null, this);
 			this.off(null, null, this).remove();
 		},
 
-		onFilterPersonsChange: function (event) {
+		onFilterPersonsChange: function(event) {
 			this.$(".all-persons,.department-persons").select2("val", "");
 
 			var selectedFilter = this.getSelectedFilter();
@@ -873,7 +929,7 @@ define([
 			}
 		},
 
-		onAssignOnMeClick: function (event) {
+		onAssignOnMeClick: function(event) {
 			event.preventDefault();
 
 			var currentUserId = Core.Cookies.get("userId");
@@ -882,11 +938,11 @@ define([
 			this.$(".all-persons").select2("val", currentUserId).change();
 		},
 
-		getSelectedFilter: function () {
+		getSelectedFilter: function() {
 			return this.$("input[name='filter-persons']:checked").val();
 		},
 
-		assignExecPerson: function () {
+		assignExecPerson: function() {
 			var selectedFilter = this.getSelectedFilter();
 
 			var selectedExecPersonId;
@@ -899,27 +955,31 @@ define([
 
 			if (selectedExecPersonId) {
 				var appealExecPerson = new AppealExecPerson();
-				appealExecPerson.save({id: selectedExecPersonId});
+				appealExecPerson.save({
+					id: selectedExecPersonId
+				});
 
-				Core.Data.appealExtraData.get("execPerson").set({doctor: this.allPersons.get(selectedExecPersonId).toJSON()});
+				Core.Data.appealExtraData.get("execPerson").set({
+					doctor: this.allPersons.get(selectedExecPersonId).toJSON()
+				});
 
 				this.close();
 			}
 		},
 
-		addAllPersons: function () {
-			this.$(".all-persons").append(this.allPersons.map(function (person) {
-				return "<option value='"+person.get('id')+"'>"+person.get("name").raw+"</option>";
+		addAllPersons: function() {
+			this.$(".all-persons").append(this.allPersons.map(function(person) {
+				return "<option value='" + person.get('id') + "'>" + person.get("name").raw + "</option>";
 			})).select2("enable");
 		},
 
-		addDepartmentPersons: function () {
-			this.$(".department-persons").append(this.departmentPersons.map(function (person) {
-				return "<option value='"+person.get('id')+"'>"+person.get("name").raw+"</option>";
+		addDepartmentPersons: function() {
+			this.$(".department-persons").append(this.departmentPersons.map(function(person) {
+				return "<option value='" + person.get('id') + "'>" + person.get("name").raw + "</option>";
 			})).select2("enable");
 		},
 
-		render: function () {
+		render: function() {
 			Monitoring.Views.BaseView.prototype.render.apply(this);
 
 			this.$("#filter-persons-container").buttonset();
@@ -937,13 +997,13 @@ define([
 	Monitoring.Views.PatientDiagnosesList = Monitoring.Views.BaseView.extend({
 		template: patientDiagnosesListTmpl,
 
-		data: function () {
+		data: function() {
 			return {
 				diagnoses: this.collection
 			};
 		},
 
-		initialize: function (options) {
+		initialize: function(options) {
 			Monitoring.Views.BaseView.prototype.initialize.apply(this);
 
 			this.collection = new Monitoring.Collections.PatientDiagnoses();
@@ -964,7 +1024,7 @@ define([
 			return {infos: this.collection};
 		},*/
 
-		initialize: function (options) {
+		initialize: function(options) {
 			this.collection = new Monitoring.Collections.MonitoringInfos();
 			Monitoring.Views.ClientSortableGrid.prototype.initialize.apply(this);
 		}
@@ -982,7 +1042,7 @@ define([
 			return {analyses: this.collection};
 		},*/
 
-		initialize: function (options) {
+		initialize: function(options) {
 			this.collection = new Monitoring.Collections.ExpressAnalyses();
 			Monitoring.Views.ClientSortableGrid.prototype.initialize.apply(this);
 		}
