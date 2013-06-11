@@ -391,11 +391,11 @@ Monitoring,
 							title: "Основное",
 							uri: "/appeals/:id/"
 						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-laboratory",
-							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
-						}, appealJSON),
+						// App.Router.compile({
+						// 	name: "diagnostics-laboratory",
+						// 	title: "Лабораторные исследования",
+						// 	uri: "/appeals/:id/diagnostics/laboratory/"
+						// }, appealJSON),
 						//						{name: "medical-info", title: "Лечение", structure: [
 						//							{name: "medical-info", title: "Медикаментозное"},
 						//							{name: "medical-info", title: "Оперативное"},
@@ -466,21 +466,21 @@ Monitoring,
 							title: "Основное",
 							uri: "/appeals/:id/"
 						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-laboratory",
-							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-instrumental",
-							title: "Инструментальные исследования",
-							uri: "/appeals/:id/diagnostics/instrumental/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-consultations",
-							title: "Консультации",
-							uri: "/appeals/:id/diagnostics/consultations/"
-						}, appealJSON),
+						// App.Router.compile({
+						// 	name: "diagnostics-laboratory",
+						// 	title: "Лабораторные исследования",
+						// 	uri: "/appeals/:id/diagnostics/laboratory/"
+						// }, appealJSON),
+						// App.Router.compile({
+						// 	name: "diagnostics-instrumental",
+						// 	title: "Инструментальные исследования",
+						// 	uri: "/appeals/:id/diagnostics/instrumental/"
+						// }, appealJSON),
+						// App.Router.compile({
+						// 	name: "diagnostics-consultations",
+						// 	title: "Консультации",
+						// 	uri: "/appeals/:id/diagnostics/consultations/"
+						// }, appealJSON),
 						//						{name: "address", title: "Диагностика"},
 						//						{name: "medical-info", title: "Лечение", structure: [
 						//							{name: "medical-info", title: "Медикаментозное"},
