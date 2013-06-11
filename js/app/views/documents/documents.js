@@ -180,7 +180,7 @@ define(function (require) {
 
 		save: function (attrs, options) {
 			this.setCloseDate();
-			Documents.Models.DocumentBase.prototype.apply(this, [attrs, options]);
+			Documents.Models.DocumentBase.prototype.save.call(this, attrs, options);
 		}
 	});
 
@@ -295,7 +295,7 @@ define(function (require) {
 			this.appealId = options.appealId || appealId;
 		},
 		url: function () {
-			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?limit=0&";
+			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?limit=9999&sortingField=assessmentDate&sortingMethod=desc&";
 
 			var params = [];
 
@@ -1013,6 +1013,10 @@ define(function (require) {
 		},
 		onModelReset: function () {
 			this.stopListening(this.model, "change", this.onModelReset);
+			if (!this.model.getDates().begin.getValue()) {
+				this.model.getDates().begin.setValue(moment().format("YYYY-MM-DD HH:mm:ss"))
+			}
+			this.model.shouldBeClosed = !!this.model.getDates().end.getValue();
 			this.render();
 		},
 		onDocumentCreateDateChange: function () {
@@ -1382,6 +1386,7 @@ define(function (require) {
 			this.directoryEntries = new FlatDirectory();
 			this.directoryEntries.set({id: this.model.get("scope")});
 			$.when(this.directoryEntries.fetch()).then(_.bind(function () {
+				this.model.setValue(this.directoryEntries.toBeautyJSON()[0].id);
 				this.render();
 			}, this));
 			UIElementBase.prototype.initialize.apply(this);
@@ -1571,7 +1576,8 @@ define(function (require) {
 				tmplData = {
 					attributes: this.model.getFilledAttrs(),
 					name: summaryAttrs[1]["properties"][0]["value"],
-					endDate: summaryAttrs[3]["properties"][0]["value"],
+					//endDate: summaryAttrs[3]["properties"][0]["value"],
+					endDate: moment(this.model.getDates().begin.getValue(), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss"),
 					doctorName: [
 						summaryAttrs[4]["properties"][0]["value"],
 						summaryAttrs[5]["properties"][0]["value"],
