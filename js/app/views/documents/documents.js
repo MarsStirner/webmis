@@ -16,11 +16,12 @@ define(function (require) {
 		_documentFilters: _.template(require("text!templates/documents/list/filters.html")),
 		_documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
 		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html"))/*,
-		_documentsTableRow: _.template(require("text!templates/documents/list/docs-table-row.html")),
-		_documentsTableBody: _.template(require("text!templates/documents/list/docs-table-body.html"))*/,
+		 _documentsTableRow: _.template(require("text!templates/documents/list/docs-table-row.html")),
+		 _documentsTableBody: _.template(require("text!templates/documents/list/docs-table-body.html"))*/,
 		_editLayout: _.template(require("text!templates/documents/edit/layout.html")),
 		_editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
 		_editHeading: _.template(require("text!templates/documents/edit/heading.html")),
+		_editDates: _.template(require("text!templates/documents/edit/dates.html")),
 		_editDocumentControls: _.template(require("text!templates/documents/edit/document-controls.html")),
 		_editCopySourceSelector: _.template(require("text!templates/documents/edit/copy-source-selector.html")),
 		_editGrid: _.template(require("text!templates/documents/edit/grid.html")),
@@ -34,11 +35,13 @@ define(function (require) {
 			_text: _.template(require("text!templates/documents/edit/ui-elements/text.html")),
 			_double: _.template(require("text!templates/documents/edit/ui-elements/double.html")),
 			_string: _.template(require("text!templates/documents/edit/ui-elements/string.html")),
-			_mkb: _.template(require("text!templates/documents/edit/ui-elements/mkb.html"))
+			_mkb: _.template(require("text!templates/documents/edit/ui-elements/mkb.html")),
+			_flatDirectory: _.template(require("text!templates/documents/edit/ui-elements/flat-directory.html"))
 		}
 	};
 
 	var Thesaurus = require("views/appeal/edit/popups/thesaurus");
+	var FlatDirectory = require("models/flat-directory");
 
 	//Структура модуля
 	var Documents = {
@@ -61,60 +64,87 @@ define(function (require) {
 	Documents.Models.FetchableModelBase.prototype.sync = Model.prototype.sync;
 
 	Documents.Models.DocumentBase = Documents.Models.FetchableModelBase.extend({
-    initialize: function (options) {
-      this.id = options.id;
-      this.appealId = options.appealId || appealId;
-    },
+		initialize: function (options) {
+			this.id = options.id;
+			this.appealId = options.appealId || appealId;
+		},
 
-    groupedByRow: null,
+		groupedByRow: null,
 
-    groupByRow: function () {
-      var groupedByRow = _(this.get("group")[1].attribute).groupBy(function (item) {
-        //return item.layoutAttributes[]; //TODO: groupBy ROW attr
-        //var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
-        return "UNDEFINED";
-      }, this);
+		groupByRow: function () {
+			var groupedByRow = _(this.get("group")[1].attribute).groupBy(function (item) {
+				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
+				//var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
+				return "UNDEFINED";
+			}, this);
 
-      var rows = [];
+			var rows = [];
 
-      for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
-        if (i == 0 || i%2 == 0) {
-          rows.push({spans: new Backbone.Collection()});
-        }
+			for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
+				if (i == 0 || i % 2 == 0) {
+					rows.push({spans: new Backbone.Collection()});
+				}
 
-        rows[rows.length-1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
-      }
+				rows[rows.length - 1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
+			}
 
-      //console.log("rows", rows);
+			//console.log("rows", rows);
 
-      return rows;
-    },
+			return rows;
+		},
 
-    getGroupedByRow: function () {
-      if (!this.groupedByRow) {
-        this.groupedByRow = this.groupByRow();
-      }
+		getGroupedByRow: function () {
+			if (!this.groupedByRow) {
+				this.groupedByRow = this.groupByRow();
+			}
 
-      return this.groupedByRow;
-    },
+			return this.groupedByRow;
+		},
 
-    copyAttributes: function (document) {
-      _(document.get("group")[1].attribute).each(function (copyAttr) {
-        _(this.getGroupedByRow()).each(function (row) {
-          row.spans.each(function (attr) {
-            if (attr.get("typeId") == copyAttr.typeId) {
-              attr.copyValue(copyAttr);
-            }
-          });
-        });
-      }, this);
+		copyAttributes: function (document) {
+			_(document.get("group")[1].attribute).each(function (copyAttr) {
+				_(this.getGroupedByRow()).each(function (row) {
+					row.spans.each(function (attr) {
+						if (attr.get("typeId") == copyAttr.typeId) {
+							attr.copyValue(copyAttr);
+						}
+					});
+				});
+			}, this);
 
-      return this;
-    },
+			return this;
+		},
+
+		getDates: function () {
+			if (this.get("group")) {
+				if (!this.dates) {
+					this.dates = {
+						begin: new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
+							return attr.name == 'assessmentBeginDate';
+						})),
+						end: new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
+							return attr.name == 'assessmentEndDate';
+						}))
+					};
+				}
+				return this.dates;
+			} else {
+				return {};
+			}
+
+		},
 
 		parse: function (raw) {
 			//console.log(raw);
 			return raw.data[0];
+		},
+
+		toJSON: function () {
+			return [Model.prototype.toJSON.apply(this)];
+		},
+
+		setCloseDate: function () {
+			this.getDates().end.setValue(this.shouldBeClosed ? moment().format("YYYY-MM-DD HH:mm:ss") : "");
 		}
 	});
 
@@ -146,33 +176,40 @@ define(function (require) {
 			} else {
 				return [];
 			}
+		},
+
+		save: function (attrs, options) {
+			this.setCloseDate();
+			Documents.Models.DocumentBase.prototype.apply(this, [attrs, options]);
 		}
 	});
 
 	Documents.Models.DocumentTemplate = Documents.Models.DocumentBase.extend({
 		urlRoot: DATA_PATH + "dir/actionTypes/",
 
-    save: function (attrs, options) {
-      options.dataType = "jsonp";
-      options.url = Documents.Models.Document.prototype.urlRoot.apply(this);
-      options.contentType = 'application/json';
+		save: function (attrs, options) {
+			options.dataType = "jsonp";
+			options.url = Documents.Models.Document.prototype.urlRoot.apply(this);
+			options.contentType = 'application/json';
 
-      var method = "create";
+			var method = "create";
 
-      options.data = JSON.stringify({
-        requestData: {},
-        data: this.toJSON()
-      });
+			this.setCloseDate();
 
-      return Backbone.sync(method, this, options);
-    }
+			options.data = JSON.stringify({
+				requestData: {},
+				data: this.toJSON()
+			});
+
+			return Backbone.sync(method, this, options);
+		}
 	});
 
-  Documents.Models.DocumentLastByType = Documents.Models.DocumentBase.extend({
-    urlRoot: function () {
-      return DATA_PATH + "appeals/" + this.appealId + "/documents/lastByType/";
-    }
-  });
+	Documents.Models.DocumentLastByType = Documents.Models.DocumentBase.extend({
+		urlRoot: function () {
+			return DATA_PATH + "appeals/" + this.appealId + "/documents/lastByType/";
+		}
+	});
 
 	Documents.Models.DocumentType = Backbone.Model.extend({});
 
@@ -197,29 +234,29 @@ define(function (require) {
 	});
 
 	Documents.Models.TemplateAttribute = Backbone.Model.extend({
-    getValuePropertyIndex: function (props, type) {
-      var propName;
-      var valuePropertyIndex;
+		getValuePropertyIndex: function (props, type) {
+			var propName;
+			var valuePropertyIndex;
 
-      if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
-        propName = "valueId";
-      } else {
-        propName = "value";
-      }
+			if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
+				propName = "valueId";
+			} else {
+				propName = "value";
+			}
 
-      for (var i = 0; i < props.length; i++) {
-        if (props[i].name == propName) {
-          valuePropertyIndex = i;
-          break;
-        }
-      }
+			for (var i = 0; i < props.length; i++) {
+				if (props[i].name == propName) {
+					valuePropertyIndex = i;
+					break;
+				}
+			}
 
-      return valuePropertyIndex;
-    },
+			return valuePropertyIndex;
+		},
 
 		getValueProperty: function () {
 			if (!this.valuePropertyIndex) {
-        this.valuePropertyIndex = this.getValuePropertyIndex(this.get("properties"), this.get("type"));
+				this.valuePropertyIndex = this.getValuePropertyIndex(this.get("properties"), this.get("type"));
 			}
 			return this.get("properties")[this.valuePropertyIndex];
 		},
@@ -234,14 +271,14 @@ define(function (require) {
 			return this;
 		},
 
-    copyValue: function (copyAttr) {
-      this.setValue(this.getCopyValueProperty(copyAttr));
-      this.trigger("copy");
-    },
+		copyValue: function (copyAttr) {
+			this.setValue(this.getCopyValueProperty(copyAttr));
+			this.trigger("copy");
+		},
 
-    getCopyValueProperty: function (copyAttr) {
-      return copyAttr.properties[this.getValuePropertyIndex(copyAttr.properties, copyAttr.type)].value;
-    }
+		getCopyValueProperty: function (copyAttr) {
+			return copyAttr.properties[this.getValuePropertyIndex(copyAttr.properties, copyAttr.type)].value;
+		}
 	});
 
 	//Коллекции
@@ -252,10 +289,10 @@ define(function (require) {
 		model: Documents.Models.DocumentListItem,
 		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
 		dateRange: null,
-    typeId: null,
+		typeId: null,
 		initialize: function (models, options) {
 			Collection.prototype.initialize.call(this);
-      this.appealId = options.appealId || appealId;
+			this.appealId = options.appealId || appealId;
 		},
 		url: function () {
 			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?";
@@ -263,7 +300,9 @@ define(function (require) {
 			var params = [];
 
 			if (this.mnems.length) {
-				this.mnems.map(function (mnem) { return params.push("filter[mnem]=" + mnem); });
+				this.mnems.map(function (mnem) {
+					return params.push("filter[mnem]=" + mnem);
+				});
 			}
 
 			if (this.dateRange) {
@@ -271,9 +310,9 @@ define(function (require) {
 				params.push("filter[endDate]=" + this.dateRange.end);
 			}
 
-      if (this.typeId) {
-        params.push("filter[actionTypeId]=" + this.typeId);
-      }
+			if (this.typeId) {
+				params.push("filter[actionTypeId]=" + this.typeId);
+			}
 
 			return url + params.join("&");
 		}
@@ -303,7 +342,9 @@ define(function (require) {
 	var ViewBase = Documents.Views.Base = Backbone.View.extend({
 		template: _.template(""),
 
-		data: function () { return {}; },
+		data: function () {
+			return {};
+		},
 
 		//subViews: {},
 
@@ -318,7 +359,7 @@ define(function (require) {
 				this.subViews = {};
 				this.assign(subViews);
 			}
-      this.$("button").each(function () {
+			this.$("button").each(function () {
 				var $this = $(this);
 				var icons = {};
 				if ($this.data("icon-primary")) {
@@ -329,7 +370,7 @@ define(function (require) {
 				}
 				$this.button({icons: icons});
 			});
-      //this.$("select").select2();
+			//this.$("select").select2();
 			return this;
 		},
 
@@ -342,7 +383,9 @@ define(function (require) {
 		},
 
 		tearDownSubviews: function () {
-			if (this.subViews) _.each(this.subViews, function (subView) { subView.tearDown(); });
+			if (this.subViews) _.each(this.subViews, function (subView) {
+				subView.tearDown();
+			});
 		},
 
 		on: function (event, callback, context) {
@@ -350,7 +393,7 @@ define(function (require) {
 		}
 	});
 
-	var PopUpBase = Documents.Views.PopUpBase =  ViewBase.extend({
+	var PopUpBase = Documents.Views.PopUpBase = ViewBase.extend({
 		dialogOptions: {},
 
 		tearDown: function () {
@@ -382,7 +425,7 @@ define(function (require) {
 			ViewBase.prototype.tearDown.call(this);
 		}
 	});
-	
+
 	var RepeaterBase = Documents.Views.RepeaterBase = ViewBase.extend({
 		initialize: function () {
 			this.subViews = [];
@@ -441,7 +484,7 @@ define(function (require) {
 
 			this.selectedDocuments = new Backbone.Collection();
 			this.listenTo(this.selectedDocuments, "enteredReviewState", this.onEnteredReviewState);
-			this.listenTo(this.selectedDocuments,"quitReviewState", this.onQuitReviewState);
+			this.listenTo(this.selectedDocuments, "quitReviewState", this.onQuitReviewState);
 		},
 
 		onEnteredReviewState: function () {
@@ -521,12 +564,12 @@ define(function (require) {
 				//console.log(this.documentTypes);
 			});
 
-      this.listenTo(this.documentTypes, "document-type:selected", this.onDocumentTypeSelected);
+			this.listenTo(this.documentTypes, "document-type:selected", this.onDocumentTypeSelected);
 		},
 
-    onDocumentTypeSelected: function (event) {
-      dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: event.selectedType}});
-    },
+		onDocumentTypeSelected: function (event) {
+			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: event.selectedType}});
+		},
 
 		onNewDocumentClick: function () {
 			this.showDocumentTypeSelector();
@@ -650,7 +693,7 @@ define(function (require) {
 
 		initialize: function () {
 			this.dialogOptions = {
-        title: "Выберите тип документа",
+				title: "Выберите тип документа",
 				modal: true,
 				width: 800,
 				height: 600,
@@ -670,45 +713,45 @@ define(function (require) {
 		},
 
 		/*onDocumentTypeSearchFieldChange: function () {
-			this.applySearchFilter();
-		},*/
+		 this.applySearchFilter();
+		 },*/
 
 		onDocumentTypeNodeClick: function (event) {
 			event.stopPropagation();
-      var $node = $(event.currentTarget);
-      if ($node.is(".Opened")) {
-        $node.removeClass("Opened").siblings().removeClass("Opened");
-        $node.children().removeClass("Opened");
-        $node.find(".icon-minus").addClass("icon-plus").removeClass("icon-minus");
-      } else {
-        $node.addClass("Opened").siblings().removeClass("Opened");
-        $node.children().removeClass("Opened");
-        $node.find(".icon-plus").addClass("icon-minus").removeClass("icon-plus");
-      }
+			var $node = $(event.currentTarget);
+			if ($node.is(".Opened")) {
+				$node.removeClass("Opened").siblings().removeClass("Opened");
+				$node.children().removeClass("Opened");
+				$node.find(".icon-minus").addClass("icon-plus").removeClass("icon-minus");
+			} else {
+				$node.addClass("Opened").siblings().removeClass("Opened");
+				$node.children().removeClass("Opened");
+				$node.find(".icon-plus").addClass("icon-minus").removeClass("icon-plus");
+			}
 
-      this.selectedType = $node.data("document-type-id");
+			this.selectedType = $node.data("document-type-id");
 
 			/*$(event.currentTarget).toggleClass("Opened").siblings().removeClass("Opened");
-      $(event.currentTarget).find(".icon-plus,icon-minus").toggleClass("icon-plus icon-minus");*/
+			 $(event.currentTarget).find(".icon-plus,icon-minus").toggleClass("icon-plus icon-minus");*/
 			//$(event.currentTarget).addClass("Opened");
 			/*var nodeHasChildren;
-			if (nodeHasChildren) {
-				this.toggleNodeCollapse();
-			} else {
-				this.markNodeSelected();
-			}*/
+			 if (nodeHasChildren) {
+			 this.toggleNodeCollapse();
+			 } else {
+			 this.markNodeSelected();
+			 }*/
 		},
 
-    onCreateDocumentClick: function () {
-    	this.collection.trigger("document-type:selected", {selectedType: this.selectedType});
-      this.tearDown();
-    },
+		onCreateDocumentClick: function () {
+			this.collection.trigger("document-type:selected", {selectedType: this.selectedType});
+			this.tearDown();
+		},
 
 		/*applySearchFilter: function () { console.log("stub:applySearchFilter"); },*/
 
 		/*toggleNodeCollapse: function (collapse) { console.log("stub:toggleNodeCollapse"); },
 
-		markNodeSelected: function () { console.log("stub:markNodeSelected"); },*/
+		 markNodeSelected: function () { console.log("stub:markNodeSelected"); },*/
 
 		render: function () {
 			PopUpBase.prototype.render.call(this);
@@ -732,9 +775,15 @@ define(function (require) {
 
 		initialize: function () {
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
+			this.listenTo(this.options.selectedDocuments, "quitReviewState", this.onCollectionReset);
 		},
 
 		onCollectionReset: function () {
+			this.options.selectedDocuments.reset();
+			this.render();
+		},
+
+		onQuitReviewState: function () {
 			this.options.selectedDocuments.reset();
 			this.render();
 		},
@@ -788,18 +837,18 @@ define(function (require) {
 		}
 
 		/*onSelectedDocumentsAdd: function () {
-			this.render();
-			//this.toggleReviewSelectedDisabled(this.collection.length > 0);
-		},
+		 this.render();
+		 //this.toggleReviewSelectedDisabled(this.collection.length > 0);
+		 },
 
-		onSelectedDocumentsRemove: function () {
-			this.render();
-			//this.toggleReviewSelectedDisabled(this.collection.length > 0);
-		},
+		 onSelectedDocumentsRemove: function () {
+		 this.render();
+		 //this.toggleReviewSelectedDisabled(this.collection.length > 0);
+		 },
 
-		toggleReviewSelectedDisabled: function (enabled) {
-			//this.$(".review-selected").button(!!enabled ? "enable" : "disable");
-		}*/
+		 toggleReviewSelectedDisabled: function (enabled) {
+		 //this.$(".review-selected").button(!!enabled ? "enable" : "disable");
+		 }*/
 	});
 
 
@@ -849,12 +898,12 @@ define(function (require) {
 				this.$(".divided").prepend(
 					"<div class='document-list-side span6'>" +
 						"<div class='row-fluid'>" +
-							"<div class='span12 document-list'></div>" +
+						"<div class='span12 document-list'></div>" +
 						"</div>" +
-					"</div>"
+						"</div>"
 				);
 
-				this.listLayoutLight =  new Documents.Views.List.LayoutLight({included: true});
+				this.listLayoutLight = new Documents.Views.List.LayoutLight({included: true});
 
 				this.assign({".document-list": this.listLayoutLight});
 
@@ -875,6 +924,7 @@ define(function (require) {
 			return ViewBase.prototype.render.call(this, {
 				".nav-controls": new Documents.Views.Edit.NavControls({model: this.model}),
 				".heading": new Documents.Views.Edit.Heading({model: this.model}),
+				".dates": new Documents.Views.Edit.Dates({model: this.model}),
 				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
 				".document-controls": new Documents.Views.Edit.DocControls({model: this.model})
 			});
@@ -895,44 +945,44 @@ define(function (require) {
 			this.model.trigger("toggle:dividedState");
 		},
 
-    onCopyFromPrevClick: function () {
-      var documentLastByType = new Documents.Models.DocumentLastByType({id: this.getDocumentTypeId()});
-      this.fetchCopySource(documentLastByType);
-    },
+		onCopyFromPrevClick: function () {
+			var documentLastByType = new Documents.Models.DocumentLastByType({id: this.getDocumentTypeId()});
+			this.fetchCopySource(documentLastByType);
+		},
 
-    onCopyFromClick: function () {
-      this.copySourceList = new Documents.Collections.DocumentList([], {});
-      this.listenTo(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
-      new Documents.Views.Edit.CopySourceSelector({typeId: this.getDocumentTypeId(), collection: this.copySourceList});
-    },
+		onCopyFromClick: function () {
+			this.copySourceList = new Documents.Collections.DocumentList([], {});
+			this.listenTo(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
+			new Documents.Views.Edit.CopySourceSelector({typeId: this.getDocumentTypeId(), collection: this.copySourceList});
+		},
 
-    onCopySourceSelected: function (event) {
-      this.stopListening(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
-    	this.fetchCopySource(new Documents.Models.Document({id: event.documentId}));
-    },
+		onCopySourceSelected: function (event) {
+			this.stopListening(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
+			this.fetchCopySource(new Documents.Models.Document({id: event.documentId}));
+		},
 
-    fetchCopySource: function (copySource) {
-      this.listenTo(copySource, "change", this.onCopySourceReset);
-      copySource.fetch();
-    },
+		fetchCopySource: function (copySource) {
+			this.listenTo(copySource, "change", this.onCopySourceReset);
+			copySource.fetch();
+		},
 
-    onCopySourceReset: function (copySource) {
-      this.stopListening(copySource, "change", this.onCopySourceReset);
-      this.model.copyAttributes(copySource);
-    },
+		onCopySourceReset: function (copySource) {
+			this.stopListening(copySource, "change", this.onCopySourceReset);
+			this.model.copyAttributes(copySource);
+		},
 
-    getDocumentTypeId: function () {
-      var documentTypeId;
-      if (this.model instanceof Documents.Models.DocumentTemplate) {
-        documentTypeId = this.model.id;
-      } else if (this.model instanceof Documents.Models.Document) {
-        documentTypeId = this.model.get("typeId");
-      } else {
-        console.error("can't resolve documentTypeId for ", this.model);
-      }
+		getDocumentTypeId: function () {
+			var documentTypeId;
+			if (this.model instanceof Documents.Models.DocumentTemplate) {
+				documentTypeId = this.model.id;
+			} else if (this.model instanceof Documents.Models.Document) {
+				documentTypeId = this.model.get("typeId");
+			} else {
+				console.error("can't resolve documentTypeId for ", this.model);
+			}
 
-      return documentTypeId;
-    }
+			return documentTypeId;
+		}
 	});
 
 	Documents.Views.Edit.Heading = ViewBase.extend({
@@ -949,72 +999,107 @@ define(function (require) {
 		}
 	});
 
-  Documents.Views.Edit.CopySourceSelector = PopUpBase.extend({
-    template: templates._editCopySourceSelector,
+	Documents.Views.Edit.Dates = ViewBase.extend({
+		template: templates._editDates,
+		events: {
+			"change .document-create-date,.document-create-time": "onDocumentCreateDateChange",
+			"change .document-set-close-date": "onDocumentSetCloseDateChange"
+		},
+		data: function () {
+			return {dates: this.model.getDates()};
+		},
+		initialize: function () {
+			this.listenTo(this.model, "change", this.onModelReset);
+		},
+		onModelReset: function () {
+			this.stopListening(this.model, "change", this.onModelReset);
+			this.render();
+		},
+		onDocumentCreateDateChange: function () {
+			this.model.getDates().begin.setValue(
+				moment(this.$(".document-create-date").datepicker("getDate"))
+					.hour(this.$(".time-input").timepicker("getHour"))
+					.minute(this.$(".time-input").timepicker("getMinute"))
+					.format("YYYY-MM-DD HH:mm:ss")
+			);
+			console.log(this.model.getDates().begin.getValue());
+		},
+		onDocumentSetCloseDateChange: function () {
+			this.model.shouldBeClosed = this.$(".document-set-close-date").is(":checked");
+		},
+		render: function () {
+			ViewBase.prototype.render.call(this);
+			this.$(".date-input").datepicker();
+			this.$(".time-input").timepicker({showPeriodLabels: false, defaultTime: 'now'});
+		}
+	});
 
-    events: {
-      "click .document-item-row": "onDocumentItemRowClick"
-    },
+	Documents.Views.Edit.CopySourceSelector = PopUpBase.extend({
+		template: templates._editCopySourceSelector,
 
-    data: function () {
-      return {documents: this.collection};
-    },
+		events: {
+			"click .document-item-row": "onDocumentItemRowClick"
+		},
 
-    initialize: function () {
-      this.dialogOptions = {
-        title: "Выберите документ для копирования",
-        modal: true,
-        width: 900,
-        height: 600,
-        resizable: false,
-        close: _.bind(this.tearDown, this),
-        buttons: [
-          {
-            text: "Копировать",
-            click: _.bind(this.onDoumentSelectedClick, this)
-          },
-          {
-            text: "Отмена",
-            click: _.bind(this.tearDown, this)
-          }
-        ]
-      };
+		data: function () {
+			return {documents: this.collection};
+		},
 
-      PopUpBase.prototype.initialize.apply(this);
-      //this.collection = new Documents.Collections.DocumentList([], {});
-      this.collection.typeId = this.options.typeId;
-      this.collection.fetch();
-      this.listenTo(this.collection, "reset", this.onCollectionReset);
-    },
+		initialize: function () {
+			this.dialogOptions = {
+				title: "Выберите документ для копирования",
+				modal: true,
+				width: 900,
+				height: 600,
+				resizable: false,
+				close: _.bind(this.tearDown, this),
+				buttons: [
+					{
+						text: "Копировать",
+						click: _.bind(this.onDoumentSelectedClick, this)
+					},
+					{
+						text: "Отмена",
+						click: _.bind(this.tearDown, this)
+					}
+				]
+			};
 
-    onCollectionReset: function () {
-    	this.render();
-    },
+			PopUpBase.prototype.initialize.apply(this);
+			//this.collection = new Documents.Collections.DocumentList([], {});
+			this.collection.typeId = this.options.typeId;
+			this.collection.fetch();
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+		},
 
-    onDocumentItemRowClick: function (event) {
-      var $row = $(event.currentTarget);
-    	this.selectedDocumentId = $row.data("document-id");
+		onCollectionReset: function () {
+			this.render();
+		},
 
-      this.$(".document-item-row icon-check").addClass("transparent");
-      $row.find(".icon-check").removeClass("transparent");
-    },
+		onDocumentItemRowClick: function (event) {
+			var $row = $(event.currentTarget);
+			this.selectedDocumentId = $row.data("document-id");
 
-    onDoumentSelectedClick: function () {
-      if (this.selectedDocumentId) {
-        this.collection.trigger("copy-source:selected", {documentId: this.selectedDocumentId});
-        this.tearDown();
-      }
-    }
+			this.$(".icon-check").addClass("transparent");
+			$row.find(".icon-check").removeClass("transparent");
+		},
 
-    //,
+		onDoumentSelectedClick: function () {
+			if (this.selectedDocumentId) {
+				this.collection.trigger("copy-source:selected", {documentId: this.selectedDocumentId});
+				this.tearDown();
+			}
+		}
 
-    /*render: function () {
-      PopUpBase.prototype.render.call(this);
-      var documentsTable = new Documents.Views.List.DocumentsTable({collection: this.collection});
-      this.subViews = [documentsTable];
-      documentsTable.setElement(this.el).render();
-    }*/
-  });
+		//,
+
+		/*render: function () {
+		 PopUpBase.prototype.render.call(this);
+		 var documentsTable = new Documents.Views.List.DocumentsTable({collection: this.collection});
+		 this.subViews = [documentsTable];
+		 documentsTable.setElement(this.el).render();
+		 }*/
+	});
 
 	//Управление сохранением документа
 	Documents.Views.Edit.DocControls = ViewBase.extend({
@@ -1026,35 +1111,37 @@ define(function (require) {
 		},
 
 		initialize: function () {
+			_.bindAll(this);
 			this.listenTo(this.model, "change", function () {
 				this.$("button").button("enable");
 			});
 		},
 
 		onSaveClick: function (event) {
-      this.saveDocument();
+			//debugger;
+			this.saveDocument();
 		},
 
 		onCancelClick: function (event) {
-      this.returnToList();
-    },
+			this.returnToList();
+		},
 
-    onSaveDocumentSuccess: function () {
-    	this.returnToList();
-    },
+		onSaveDocumentSuccess: function () {
+			this.returnToList();
+		},
 
-    onSaveDocumentError: function () {
-      console.log(arguments);
-    },
+		onSaveDocumentError: function () {
+			console.log(arguments);
+		},
 
-    saveDocument: function () {
-      this.model.save({},{success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
-    },
+		saveDocument: function () {
+			this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
+		},
 
-    returnToList: function () {
-      this.model.trigger("toggle:dividedState", false);
-      dispatcher.trigger("change:viewState", {type: "documents"});
-    }
+		returnToList: function () {
+			this.model.trigger("toggle:dividedState", false);
+			dispatcher.trigger("change:viewState", {type: "documents"});
+		}
 	});
 
 	Documents.Views.Edit.GridSpanList = RepeaterBase.extend({
@@ -1103,26 +1190,26 @@ define(function (require) {
 		},
 
 		/*groupRows: function () {
-			var groupedByRow = _(this.model.get("group")[1].attribute).groupBy(function (item) {
-				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
-				//var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
-				return "UNDEFINED";
-			}, this);
+		 var groupedByRow = _(this.model.get("group")[1].attribute).groupBy(function (item) {
+		 //return item.layoutAttributes[]; //TODO: groupBy ROW attr
+		 //var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
+		 return "UNDEFINED";
+		 }, this);
 
-			var rows = [];
+		 var rows = [];
 
-			for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
-				if (i == 0 || i%2 == 0) {
-					rows.push({spans: new Backbone.Collection()});
-				}
+		 for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
+		 if (i == 0 || i%2 == 0) {
+		 rows.push({spans: new Backbone.Collection()});
+		 }
 
-				rows[rows.length-1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
-			}
+		 rows[rows.length-1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
+		 }
 
-			//console.log("rows", rows);
+		 //console.log("rows", rows);
 
-			return rows;
-		},*/
+		 return rows;
+		 },*/
 
 		onCollectionReset: function () {
 			this.tearDownSubviews();
@@ -1149,7 +1236,7 @@ define(function (require) {
 
 		initialize: function () {
 			this.mapLayoutAttributes();
-      this.listenTo(this.model, "copy", this.setAttributeValue);
+			this.listenTo(this.model, "copy", this.setAttributeValue);
 			//common attrs to fit into grid
 			this.$el.addClass("span" + this.layoutAttributes.width);
 		},
@@ -1170,15 +1257,15 @@ define(function (require) {
 			}
 		},
 
-    setAttributeValue: function () {
-      var $attributeValueEl = this.$(".attribute-value");
-      var value = this.model.getValue();
-      if ($attributeValueEl.is(".RichText")) {
-        return $attributeValueEl.html(value);
-      } else {
-        return $attributeValueEl.val(value);
-      }
-    },
+		setAttributeValue: function () {
+			var $attributeValueEl = this.$(".attribute-value");
+			var value = this.model.getValue();
+			if ($attributeValueEl.is(".RichText")) {
+				return $attributeValueEl.html(value);
+			} else {
+				return $attributeValueEl.val(value);
+			}
+		},
 
 		onAttributeValueChange: function (event) {
 			this.model.setValue(this.getAttributeValue());
@@ -1248,7 +1335,7 @@ define(function (require) {
 
 				$wrapper.on("click", function (event) {
 					event.stopPropagation();
-					$(".DDList.Active").not ($wrapper).removeClass ( "Active" );
+					$(".DDList.Active").not($wrapper).removeClass("Active");
 					$(this).toggleClass("Active");
 				});
 
@@ -1285,13 +1372,31 @@ define(function (require) {
 	});
 
 	//Поле типа FlatDirectory
-	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({});
+	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({
+		template: templates.uiElements._flatDirectory,
+		data: function () {
+			//debugger;
+			return {model: this.model, directoryEntries: _(this.directoryEntries.toBeautyJSON())}
+		},
+		initialize: function () {
+			this.directoryEntries = new FlatDirectory();
+			this.directoryEntries.set({id: this.model.get("scope")});
+			$.when(this.directoryEntries.fetch()).then(_.bind(function () {
+				this.render();
+			}, this));
+			UIElementBase.prototype.initialize.apply(this);
+		}
+	});
+
+	//Поле типа Html
+	Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({});
 
 	/**
 	 * Фабрика для создания элементов шаблона соответсвующего типа
 	 * @type {Function}
 	 */
-	var UIElementFactory = Documents.Views.Edit.UIElementFactory = function () {};
+	var UIElementFactory = Documents.Views.Edit.UIElementFactory = function () {
+	};
 	UIElementFactory.prototype.UIElementClass = Documents.Views.Edit.UIElement.Base;
 	UIElementFactory.prototype.make = function (options) {
 		//Регистрация типов
@@ -1322,6 +1427,9 @@ define(function (require) {
 				break;
 			case "flatdirectory":
 				this.UIElementClass = Documents.Views.Edit.UIElement.FlatDirectory;
+				break;
+			case "html":
+				this.UIElementClass = Documents.Views.Edit.UIElement.Html;
 				break;
 			default:
 				this.UIElementClass = Documents.Views.Edit.UIElement.Base;
@@ -1410,6 +1518,10 @@ define(function (require) {
 	Documents.Views.Review.Layout = LayoutBase.extend({
 		template: templates._reviewLayout,
 
+		/*initialize: function () {
+
+		},*/
+
 		render: function () {
 			return LayoutBase.prototype.render.call(this, {
 				".review-controls": new Documents.Views.Review.Controls({collection: this.collection}),
@@ -1429,7 +1541,7 @@ define(function (require) {
 		events: {
 			"click .back-to-document-list": "onBackToDocumentListClick",
 			"click .prev-document": "onPrevDocumentClick",
-			"click .nex-document": "onNextDocumentClick"
+			"click .next-document": "onNextDocumentClick"
 		},
 
 		onBackToDocumentListClick: function () {
@@ -1451,22 +1563,22 @@ define(function (require) {
 
 		data: function () {
 			var tmplData = {};
-			var documentJSON = this.model.toJSON();
+			var documentJSON = this.model.toJSON()[0];
 
 			if (documentJSON.version) {
 				var summaryAttrs = documentJSON["group"][0]["attribute"];
 
 				tmplData = {
-					attributes  : this.model.getFilledAttrs(),
-					name        : summaryAttrs[1]["properties"][0]["value"],
-					endDate     : summaryAttrs[3]["properties"][0]["value"],
-					doctorName  : [
+					attributes: this.model.getFilledAttrs(),
+					name: summaryAttrs[1]["properties"][0]["value"],
+					endDate: summaryAttrs[3]["properties"][0]["value"],
+					doctorName: [
 						summaryAttrs[4]["properties"][0]["value"],
 						summaryAttrs[5]["properties"][0]["value"],
 						summaryAttrs[6]["properties"][0]["value"]
 					].join(" "),
-					doctorSpecs : summaryAttrs[7]["properties"][0]["value"],
-					loaded      : true
+					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
+					loaded: true
 				};
 			} else {
 				tmplData = {
