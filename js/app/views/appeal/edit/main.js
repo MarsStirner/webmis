@@ -209,8 +209,9 @@ define([
 			Cache.Patient = patient;
 			this.ready();
 			this.setContentView(this.type);
-
 			this.setBreadcrumbsStructure();
+
+			patient.off("change", this.onPatientLoaded, this);
 		},
 
 		setBreadcrumbsStructure: function() {
@@ -270,7 +271,7 @@ define([
 						App.Router.compile({
 							name: "monitoring",
 							title: "Мониторинг&nbsp;состояния",
-							uri: "/appeals/:id/"
+							uri: "/appeals/:id/monitoring"
 						}, appealJSON),
 						App.Router.compile({
 							name: "examinations",
@@ -309,14 +310,14 @@ define([
 							}
 						}()),
 						App.Router.compile({
-							name: "card",
-							title: "Титульный лист ИБ",
-							uri: "/appeals/:id/"
-						}, appealJSON),
-						App.Router.compile({
 							name: "moves",
 							title: "Движение пациента",
 							uri: "/appeals/:id/moves"
+						}, appealJSON),
+						App.Router.compile({
+							name: "card",
+							title: "Титульный лист ИБ",
+							uri: "/appeals/:id/"
 						}, appealJSON)
 					]
 				}
@@ -328,20 +329,19 @@ define([
 				menuStructure = {
 					structure: [
 						App.Router.compile({
-							name: "card",
-							title: "Основное",
-							uri: "/appeals/:id/"
+							name: "monitoring",
+							title: "Мониторинг&nbsp;состояния",
+							uri: "/appeals/:id/monitoring"
 						}, appealJSON),
-						//						{name: "medical-info", title: "Лечение", structure: [
-						//							{name: "medical-info", title: "Медикаментозное"},
-						//							{name: "medical-info", title: "Оперативное"},
-						//							{name: "medical-info", title: "Восстановительное"}
-						//						]},
-						//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
 						App.Router.compile({
 							name: "moves",
 							title: "Движение пациента",
 							uri: "/appeals/:id/moves"
+						}, appealJSON),
+						App.Router.compile({
+							name: "card",
+							title: "Титульный лист ИБ",
+							uri: "/appeals/:id/"
 						}, appealJSON)
 
 					]
@@ -382,13 +382,6 @@ define([
 							title: "Консультации",
 							uri: "/appeals/:id/diagnostics/consultations/"
 						}, appealJSON),
-						//						{name: "medical-info", title: "Лечение", structure: [
-						//							{name: "medical-info", title: "Медикаментозное"},
-						//							{name: "medical-info", title: "Оперативное"},
-						//							{name: "medical-info", title: "Восстановительное"}
-						//						]},
-						/*App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)*/
-
 						App.Router.compile({
 							name: "moves",
 							title: "Движение пациента",
@@ -407,29 +400,6 @@ define([
 							title: "Основное",
 							uri: "/appeals/:id/"
 						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-laboratory",
-							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-instrumental",
-							title: "Инструментальные исследования",
-							uri: "/appeals/:id/diagnostics/instrumental/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-consultations",
-							title: "Консультации",
-							uri: "/appeals/:id/diagnostics/consultations/"
-						}, appealJSON),
-						//						{name: "address", title: "Диагностика"},
-						//						{name: "medical-info", title: "Лечение", structure: [
-						//							{name: "medical-info", title: "Медикаментозное"},
-						//							{name: "medical-info", title: "Оперативное"},
-						//							{name: "medical-info", title: "Восстановительное"}
-						//						]},
-						//App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)
-						//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
 
 						App.Router.compile({
 							name: "moves",

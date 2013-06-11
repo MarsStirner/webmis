@@ -245,7 +245,7 @@ function UIInitialize (context) {
 
 	$("select.Styled", context).each(function () {
 		//new UI.CustomSelect($(this));
-		$(this).width("100%").addClass("select2").select2({minimumResultsForSearch: 6});
+		$(this).width("100%").addClass("select2").select2({minimumResultsForSearch: 6,allowClear: true});
 	});
 
 	$(".Combo", context).each(function () {
@@ -276,7 +276,7 @@ function UIInitialize (context) {
 
 	$(".DDList:not(.ComboWrapper)", context).each(function () {
 		var $title = $(this).children (".Title");
-		
+
 		if ( $title.data ( "show-dd-list" ) )
 		{
 			return true
@@ -532,16 +532,16 @@ $(document).ready(function(){
 		$(".popup").toggle();
 		//$("body").toggleClass("NoScroll");
 	});
-	
+
 	$(".ToolTipHolder").click(function () {
 		$(".ToolTipHolder").not($(this)).removeClass("Active");
 		$(this).toggleClass("Active");
 	});
-	
-	
-	
-	
-/*	
+
+
+
+
+/*
 	$(".DrugList td.Active").click(function () {
 		$(this).toggleClass("Selected");
 		$(".DrugList td.Active").not(this).removeClass("Selected");
@@ -552,13 +552,13 @@ $(document).ready(function(){
 	$(".ChangeTheme").click(function () {
 			$("html").toggleClass("VarColor");
 	});
-	
+
 /*Тезаурус*/
-	
+
 	$(".TezList a").click(function () {
 		$(this).toggleClass("Selected");
 	});
-	
+
 	$(".EventList input").change(function () {
 		$(this).parent("label").toggleClass("Selected");
 	});
