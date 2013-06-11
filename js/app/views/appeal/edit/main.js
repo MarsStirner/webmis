@@ -323,7 +323,7 @@ Monitoring,
 			//this.$(".CardHeader .CardPrint")[this.contentView.canPrint ? "show" : "hide"]();
 		},
 
-		getMenuStructure: function() {
+		getMenuStructure: function () {
 			var menuStructure = {};
 			var self = this;
 
