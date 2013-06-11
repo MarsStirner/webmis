@@ -214,33 +214,6 @@ Monitoring,
 			//this.renderCardnav();
 		},
 
-		/*onPrintClick: function (event) {
-			event.preventDefault();
-			this.contentView.showPrint({
-				template: $(event.currentTarget).data("print-template"),
-				data: $(event.currentTarget).data("print-data")
-			});
-		},*/
-
-		/*onStaticPrintsClick: function (event) {
-			event.preventDefault();
-			window.open($(event.currentTarget).attr("href"), "printWindow", "menubar=0,toolbar=0,status=0,location=0");
-		},*/
-
-		/*onSectionClick: function (event) {
-			event.preventDefault();
-			event.stopPropagation()
-			this.updateUrl(event);
-		},
-
-		updateUrl: function ( event ) {
-			var $target = $(event.currentTarget ),
-				href = $target.attr("href");
-
-			if ( href ) {
-				App.Router.navigate ( href, {trigger:true} );
-			}
-		},*/
 
 		setBreadcrumbsStructure: function() {
 			if (this.breadCrumbsMap[this.type]) {
@@ -274,40 +247,7 @@ Monitoring,
 			return this;
 		},
 
-		/*renderCardnav: function () {
-			this.$(".CardHeader").html($.tmpl(cardnavTemplate, this.appeal.toJSON()));
-			this.$("#printBtn")
-				.button()
-				.next()
-					.button({
-						text: false,
-						icons: {
-							primary: "ui-icon-triangle-1-s"
-						}
-					})
-					.click(function () {
-						$(this).parent().next().position({
-							my: "right top",
-							at: "right bottom",
-							of: this
-						}).toggleClass("Active");
 
-						//event.stopPropagation();
-
-						return false;
-					})
-					.parent()
-						.buttonset();
-						*/
-		/**/
-		/*.next()
-							.hide();
-							.menu();*/
-		/**/
-		/*
-			this.togglePrintBtn();*/
-		/*
-		},*/
 
 		renderPageContent: function() {
 			this.menu.setPage(this.type);
@@ -334,7 +274,7 @@ Monitoring,
 						App.Router.compile({
 							name: "monitoring",
 							title: "Мониторинг&nbsp;состояния",
-							uri: "/appeals/:id/"
+							uri: "/appeals/:id/monitoring"
 						}, appealJSON),
 						App.Router.compile({
 							name: "examinations",
@@ -368,14 +308,14 @@ Monitoring,
 							}
 						}()),
 						App.Router.compile({
-							name: "card",
-							title: "Титульный лист ИБ",
-							uri: "/appeals/:id/"
-						}, appealJSON),
-						App.Router.compile({
 							name: "moves",
 							title: "Движение пациента",
 							uri: "/appeals/:id/moves"
+						}, appealJSON),
+						App.Router.compile({
+							name: "card",
+							title: "Титульный лист ИБ",
+							uri: "/appeals/:id/"
 						}, appealJSON)
 					]
 				}
@@ -387,25 +327,19 @@ Monitoring,
 				menuStructure = {
 					structure: [
 						App.Router.compile({
-							name: "card",
-							title: "Основное",
-							uri: "/appeals/:id/"
+							name: "monitoring",
+							title: "Мониторинг&nbsp;состояния",
+							uri: "/appeals/:id/monitoring"
 						}, appealJSON),
-						// App.Router.compile({
-						// 	name: "diagnostics-laboratory",
-						// 	title: "Лабораторные исследования",
-						// 	uri: "/appeals/:id/diagnostics/laboratory/"
-						// }, appealJSON),
-						//						{name: "medical-info", title: "Лечение", structure: [
-						//							{name: "medical-info", title: "Медикаментозное"},
-						//							{name: "medical-info", title: "Оперативное"},
-						//							{name: "medical-info", title: "Восстановительное"}
-						//						]},
-						//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
 						App.Router.compile({
 							name: "moves",
 							title: "Движение пациента",
 							uri: "/appeals/:id/moves"
+						}, appealJSON),
+						App.Router.compile({
+							name: "card",
+							title: "Титульный лист ИБ",
+							uri: "/appeals/:id/"
 						}, appealJSON)
 
 					]
@@ -441,13 +375,6 @@ Monitoring,
 							title: "Консультации",
 							uri: "/appeals/:id/diagnostics/consultations/"
 						}, appealJSON),
-						//						{name: "medical-info", title: "Лечение", structure: [
-						//							{name: "medical-info", title: "Медикаментозное"},
-						//							{name: "medical-info", title: "Оперативное"},
-						//							{name: "medical-info", title: "Восстановительное"}
-						//						]},
-						/*App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)*/
-
 						App.Router.compile({
 							name: "moves",
 							title: "Движение пациента",
@@ -466,29 +393,6 @@ Monitoring,
 							title: "Основное",
 							uri: "/appeals/:id/"
 						}, appealJSON),
-						// App.Router.compile({
-						// 	name: "diagnostics-laboratory",
-						// 	title: "Лабораторные исследования",
-						// 	uri: "/appeals/:id/diagnostics/laboratory/"
-						// }, appealJSON),
-						// App.Router.compile({
-						// 	name: "diagnostics-instrumental",
-						// 	title: "Инструментальные исследования",
-						// 	uri: "/appeals/:id/diagnostics/instrumental/"
-						// }, appealJSON),
-						// App.Router.compile({
-						// 	name: "diagnostics-consultations",
-						// 	title: "Консультации",
-						// 	uri: "/appeals/:id/diagnostics/consultations/"
-						// }, appealJSON),
-						//						{name: "address", title: "Диагностика"},
-						//						{name: "medical-info", title: "Лечение", structure: [
-						//							{name: "medical-info", title: "Медикаментозное"},
-						//							{name: "medical-info", title: "Оперативное"},
-						//							{name: "medical-info", title: "Восстановительное"}
-						//						]},
-						//App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)
-						//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
 
 						App.Router.compile({
 							name: "moves",
