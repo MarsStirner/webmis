@@ -86,7 +86,18 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
     }
 
     //Данные для онко диагнозов
-    $select_sql = "";
+    $select_sql = "SELECT rbDiagnosisType.name as 'diagnosisTypeName',"
+."MKB.DiagId,"
+." MKB.DiagName as 'diagnosisName',"
+." rbDiseaseCharacter.name as 'diseaseCharacterName',"
+." rbDiseaseStage.name as 'diseaseSstage'"
+." FROM Diagnostic"
+." join Diagnosis on Diagnostic.diagnosis_id = Diagnosis.id"
+." join rbDiagnosisType on Diagnostic.diagnosisType_id = rbDiagnosisType.id"
+." join MKB on Diagnosis.MKB = MKB.DiagID"
+." join rbDiseaseCharacter on Diagnostic. character_id = rbDiseaseCharacter.id"
+." left join rbDiseaseStage on Diagnostic.stage_id = rbDiseaseStage.id"
+." where Diagnostic.event_id = 174427#173803 ";
 
 
 
