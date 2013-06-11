@@ -4,6 +4,8 @@ define(function(require) {
     var template = require('text!templates/diagnostics/laboratory/laboratory-result.html');
     var Result = require('models/diagnostics/laboratory/laboratory-diag-form');
 
+    require('views/print');
+
 
     var LaboratoryResultView = Backbone.View.extend({
         template: template,
@@ -17,6 +19,132 @@ define(function(require) {
             "click .last": "last",
             "click .extra": "extra",
             "click .print": "print",
+            "click .all": "openLabs"
+        },
+
+
+        printOptions: function() {
+            var self = this;
+
+            return {
+                label: "Печать",
+                scope: self,
+                handler: self.printResultOfLaboratory,
+                dropDownItems: [{
+                        label: "Результат исследования",
+                        handler: self.printResultOfLaboratory
+                    }, {
+                        label: "Направление на исследование",
+                        handler: self.printDirectionForLaboratory
+                    }, {
+                        label: "Направление на исследование (без показателей)",
+                        handler: self.printDirectionForLaboratorySimple
+                    }
+                ]
+            }
+        },
+
+        printResultOfLaboratory: function() {
+            var result = this.resultData();
+            new App.Views.Print({
+                data: {
+                    id: result.id,
+                    name: result.name,
+                    patientName: result.patientName,
+                    patientBirthday: result.patientBirthday,
+                    age: result.age2,
+                    appealNumber: result.appealNumber,
+                    payments: result.payments,
+                    department: result.department,
+                    rbTissueTypeName: '',
+                    rbTestTubeTypeNamе: '',
+                    tests: result.tests,
+                    assignDoctor: result.doctor,
+                    jobTicketDatetime: ''
+                },
+                template: "resultOfLaboratory"
+            });
+        },
+
+        printDirectionForLaboratory: function() {
+            new App.Views.Print({
+                data: {},
+                template: "directionForLaboratory"
+            });
+        },
+
+        printDirectionForLaboratorySimple: function() {
+            new App.Views.Print({
+                data: {},
+                template: "directionForLaboratorySimple"
+            });
+        },
+
+        showPrintBtn: function(options) {
+            console.log('showPrintBtn', options, this.$el);
+            if (options) {
+                var $printBtnHolder = $("<div/>");
+                var $printBtn = $('<button class="PrintBtn"/>');
+
+                $printBtn.button({
+                    label: options.label
+                }).click(function(event) {
+                    event.preventDefault();
+                    options.handler.apply(options.scope);
+                });
+
+                $printBtnHolder.append($printBtn);
+
+                if (options.dropDownItems && options.dropDownItems.length) {
+                    var $dropDown = $(
+                        '<div class="DDList" style="display: block; left: -200px;">' +
+                        '<div class="Content ButtonContent" style="top: 0; max-height: 30em; width: 20em;">' +
+                        '<ul></ul>' +
+                        '</div>');
+                    var $list = $dropDown.find("ul");
+
+                    _(options.dropDownItems).each(function(ddi) {
+                        $list.append($("<li><a href='#' class='SubPrint'>" + ddi.label + "</a></li>").click(function() {
+                            event.preventDefault();
+                            ddi.handler.apply(options.scope);
+                        }));
+                    });
+
+                    var $dropDownTrigger = $("<button/>").button({
+                        text: false,
+                        label: "Выбор формы",
+                        icons: {
+                            primary: "ui-icon-triangle-1-s"
+                        }
+                    }).click(function() {
+                        $dropDown.position({
+                            my: "right top",
+                            at: "left bottom",
+                            of: $(this).parent().parent()
+                        }).toggleClass("Active");
+
+                        return false;
+                    });
+
+
+
+                    $printBtnHolder.append($dropDownTrigger).buttonset();
+                    $printBtnHolder.after($dropDown);
+                }
+
+                this.$("#print-button").empty().append($printBtnHolder).show();
+
+            } else {
+
+            }
+        },
+
+        openLabs: function() {
+            this.trigger("change:viewState", {
+                type: "diagnostics-laboratory"
+            });
+            App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics/laboratory/");
+
         },
         getResult: function(success, error) {
             var self = this;
@@ -35,13 +163,17 @@ define(function(require) {
         },
         resultData: function() {
             var appeal = this.options.appeal;
-            console.log('options', this.options.appeal)
+
             var self = this;
             var json = this.result.toJSON();
+
             var doctorSpecs = this.result.getProperty('doctorSpecs');
             var doctorFirstName = this.result.getProperty('doctorFirstName');
             var doctorMiddleName = this.result.getProperty('doctorMiddleName');
             var doctorLastName = this.result.getProperty('doctorLastName');
+
+            json.payments = appeal.get('patient').get('payments').toJSON();
+            json.department = appeal.get('currentDepartment').name;
 
             json.patientName = appeal.get('patient').get('name').get('raw');
             json.appealNumber = appeal.get('number');
@@ -54,7 +186,9 @@ define(function(require) {
             }
             var birthDate = appeal.get('patient').get('birthDate');
             //ageString
-            json.age = Core.Date.format(birthDate) +' '+Core.Date.getAgeString(birthDate);
+            json.patientBirthday = Core.Date.format(birthDate);
+            json.age = Core.Date.format(birthDate) + ' ' + Core.Date.getAgeString(birthDate);
+            json.age2 = Core.Date.getAgeString(birthDate);
 
 
             json.doctor = doctorFirstName + ' ' + doctorMiddleName + ' ' + doctorLastName + ', ' + doctorSpecs;
@@ -90,7 +224,7 @@ define(function(require) {
                     }
                 });
             }
-
+            console.log('resultData options', json, this.options.appeal)
             return json;
         },
         navigate: function(id) {
@@ -138,7 +272,9 @@ define(function(require) {
 
 
                 self.$('.actions button').button();
+                self.showPrintBtn(self.printOptions());
             });
+
 
 
             return self;
