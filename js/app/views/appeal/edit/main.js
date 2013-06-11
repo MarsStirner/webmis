@@ -39,12 +39,6 @@ define([
 		appeal: {},
 		patient: {},
 
-		events: {
-			//"click .Print": "onPrintClick"//,
-			//"click #staticPrints a" : "onStaticPrintsClick"
-			//,"click .SectionNav a": "onSectionClick"
-		},
-
 		documentEditorMode: false,
 
 		typeViews: {
@@ -99,11 +93,6 @@ define([
 			this.appeal = new App.Models.Appeal({
 				id: this.appealId
 			});
-
-			this.menu = Data.Menu = new App.Views.Menu(this.getMenuStructure());
-
-			this.menu.options.structure.on("change-page", function (step) {
-				pubsub.trigger('noty_clear');
 
 			this.breadcrumbs = new App.Views.Breadcrumbs();
 
@@ -224,34 +213,6 @@ define([
 			this.setBreadcrumbsStructure();
 		},
 
-		/*onPrintClick: function (event) {
-			event.preventDefault();
-			this.contentView.showPrint({
-				template: $(event.currentTarget).data("print-template"),
-				data: $(event.currentTarget).data("print-data")
-			});
-		},*/
-
-		/*onStaticPrintsClick: function (event) {
-			event.preventDefault();
-			window.open($(event.currentTarget).attr("href"), "printWindow", "menubar=0,toolbar=0,status=0,location=0");
-		},*/
-
-		/*onSectionClick: function (event) {
-			event.preventDefault();
-			event.stopPropagation()
-			this.updateUrl(event);
-		},
-
-		updateUrl: function ( event ) {
-			var $target = $(event.currentTarget ),
-				href = $target.attr("href");
-
-			if ( href ) {
-				App.Router.navigate ( href, {trigger:true} );
-			}
-		},*/
-
 		setBreadcrumbsStructure: function() {
 			if (this.breadCrumbsMap[this.type]) {
 				this.breadcrumbs.setStructure([
@@ -280,42 +241,6 @@ define([
 			return this;
 		},
 
-		renderPageContent: function () {
-		/*renderCardnav: function () {
-			this.$(".CardHeader").html($.tmpl(cardnavTemplate, this.appeal.toJSON()));
-			this.$("#printBtn")
-				.button()
-				.next()
-					.button({
-						text: false,
-						icons: {
-							primary: "ui-icon-triangle-1-s"
-						}
-					})
-					.click(function () {
-						$(this).parent().next().position({
-							my: "right top",
-							at: "right bottom",
-							of: this
-						}).toggleClass("Active");
-
-						//event.stopPropagation();
-
-						return false;
-					})
-					.parent()
-						.buttonset();
-						*/
-		/**/
-		/*.next()
-							.hide();
-							.menu();*/
-		/**/
-		/*
-			this.togglePrintBtn();*/
-		/*
-		},*/
-
 		renderPageContent: function() {
 			this.menu.setPage(this.type);
 			this.$(".ContentSide").html(this.contentView.render().el);
@@ -335,7 +260,6 @@ define([
 		},
 
 		getMenuStructure: function () {
-		getMenuStructure: function() {
 			var menuStructure = {};
 			var self = this;
 
@@ -407,11 +331,6 @@ define([
 							name: "card",
 							title: "Основное",
 							uri: "/appeals/:id/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-laboratory",
-							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
 						}, appealJSON),
 						//						{name: "medical-info", title: "Лечение", structure: [
 						//							{name: "medical-info", title: "Медикаментозное"},
