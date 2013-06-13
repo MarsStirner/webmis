@@ -41,9 +41,9 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
 
     //Если тип финансирования ВМП, то проверяем есть ли тикет для ВМП?
     $vmpTicket = '';
-    $select_sql = "SELECT Client_Quoting.* FROM Client_Quoting "
-    ."JOIN Event ON Event.externalId = Client_Quoting.Identifier "
-    ."WHERE Event.id = 173803 ";
+    $select_sql = "SELECT Client_Quoting.* FROM Event "
+    ."JOIN Client_Quoting ON Event.externalId = Client_Quoting.Identifier "
+    ."WHERE Event.id = ? ";
     if($financeTypeName == 'ВМП'){
         $vmpTicket = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
     }
@@ -52,7 +52,7 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
     //есть ли эпикриз?
     $select_sql = "SELECT ActionType.* FROM Action "
     ."JOIN ActionType ON Action.actionType_id = ActionType.id "
-    ."WHERE Action.event_id = 58618 "
+    ."WHERE Action.event_id = ? "
     ."AND (ActionType.code = 4504 OR ActionType.code = 4507 OR ActionType.code = 4511) "
     ."AND ActionType.mnem = 'EPI' ";
 
@@ -60,7 +60,7 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
 
 
     //есть ли выписка
-    $select_sql = "SELECT * FROM Action "
+    $select_sql = "SELECT Action.actionType_id FROM Action "
     ."JOIN ActionType ON Action.actionType_id = ActionType.id "
     ."WHERE Action.event_id = ? "
     ."AND ActionType.flatCode = 'leaved' "
@@ -70,7 +70,7 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
 
 
     //проверка на онко диагноз
-    $select_sql = "SELECT COUNT(*) "//MKB.DiagId "
+    $select_sql = "SELECT COUNT(*) "
     ."FROM Diagnostic "
     ."JOIN Diagnosis ON Diagnosis.id = Diagnostic.diagnosis_id "
     ."JOIN MKB ON Diagnosis.MKB = MKB.DiagID "
@@ -87,17 +87,30 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
 
     //Данные для онко диагнозов
     $select_sql = "SELECT rbDiagnosisType.name as 'diagnosisTypeName',"
-."MKB.DiagId,"
-." MKB.DiagName as 'diagnosisName',"
-." rbDiseaseCharacter.name as 'diseaseCharacterName',"
-." rbDiseaseStage.name as 'diseaseSstage'"
-." FROM Diagnostic"
-." join Diagnosis on Diagnostic.diagnosis_id = Diagnosis.id"
-." join rbDiagnosisType on Diagnostic.diagnosisType_id = rbDiagnosisType.id"
-." join MKB on Diagnosis.MKB = MKB.DiagID"
-." join rbDiseaseCharacter on Diagnostic. character_id = rbDiseaseCharacter.id"
-." left join rbDiseaseStage on Diagnostic.stage_id = rbDiseaseStage.id"
-." where Diagnostic.event_id = 174427#173803 ";
+    ." MKB.DiagId,"
+    ." MKB.DiagName AS 'diagnosisName',"
+    ." rbDiseaseCharacter.name AS 'diseaseCharacterName',"
+    ." rbDiseaseStage.code,"
+    ." rbDiseaseStage.name AS 'diseaseSstage'"
+    ." FROM Diagnostic"
+    ." JOIN Diagnosis ON Diagnostic.diagnosis_id = Diagnosis.id"
+    ." LEFT JOIN rbDiagnosisType ON Diagnostic.diagnosisType_id = rbDiagnosisType.id"
+    ." LEFT JOIN MKB ON Diagnosis.MKB = MKB.DiagID"
+    ." LEFT JOIN rbDiseaseCharacter ON Diagnostic.character_id = rbDiseaseCharacter.id"
+    ." LEFT JOIN rbDiseaseStage ON Diagnostic.stage_id = rbDiseaseStage.id"
+    ." where Diagnostic.event_id = ? ";
+
+    $onkoData = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+
+    //извещение 090/у
+    $select_sql = "SELECT COUNT(*) FROM Action "
+    ." JOIN ActionType ON Action.actionType_id = ActionType.id "
+    ." WHERE Action.event_id = ? "
+    ." AND ActionType.code= '1_7_2'"
+    ." AND ActionType.mnem = 'NOT' ";
+
+    $notice_090y = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+
 
 
 
@@ -105,7 +118,9 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
         'vmpTicket' => $vmpTicket,
         'discharge' => $discharge,
         'epicrisis' => $epicrisis,
-        'oncology' => $oncology
+        'oncology' => $oncology,
+        'onkoData' => $onkoData,
+        'notice_090y' => $notice_090y
         ));
 
 })->assert('appealId', '\d+');
