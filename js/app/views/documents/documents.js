@@ -33,6 +33,7 @@ define(function (require) {
 			_constructor: _.template(require("text!templates/documents/edit/ui-elements/constructor.html")),
 			_text: _.template(require("text!templates/documents/edit/ui-elements/text.html")),
 			_double: _.template(require("text!templates/documents/edit/ui-elements/double.html")),
+			_integer: _.template(require("text!templates/documents/edit/ui-elements/integer.html")),
 			_string: _.template(require("text!templates/documents/edit/ui-elements/string.html")),
 			_mkb: _.template(require("text!templates/documents/edit/ui-elements/mkb.html")),
 			_flatDirectory: _.template(require("text!templates/documents/edit/ui-elements/flat-directory.html"))
@@ -1415,7 +1416,9 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.Date = UIElementBase.extend({});
 
 	//Поле типа Integer
-	Documents.Views.Edit.UIElement.Integer = UIElementBase.extend({});
+	Documents.Views.Edit.UIElement.Integer = UIElementBase.extend({
+		template: templates.uiElements._integer
+	});
 
 	//Поле типа Double
 	Documents.Views.Edit.UIElement.Double = UIElementBase.extend({
