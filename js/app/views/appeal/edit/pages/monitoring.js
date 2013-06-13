@@ -605,7 +605,8 @@ Moves,
 		data: function() {
 			return {
 				currentBloodType: appeal.get("patient").get("medicalInfo").get("blood"),
-				bloodTypes: this.bloodTypesDict
+				bloodTypes: this.bloodTypesDict,
+				canChangeBloodType:this.canChangeBloodType
 			};
 		},
 
@@ -633,6 +634,12 @@ Moves,
 			});
 
 			this.bloodTypesDict.on("reset", this.render, this).fetch();
+
+			if (appeal.closed) {
+				this.canChangeBloodType = false;
+			}else{
+				this.canChangeBloodType = true;
+			}
 		},
 
 		onEditBloodClick: function(event) {
@@ -782,7 +789,8 @@ Moves,
 				lastMove: this.moves.last(),
 				appeal: appealJSON,
 				appealExtraData: Core.Data.appealExtraData.toJSON(),
-				days: this.days
+				days: this.days,
+				canAssign:this.canAssign
 			};
 		},
 
@@ -804,6 +812,13 @@ Moves,
 			} else if (appealJSON.appealType.requestType.id === 2) {
 				//круглосуточный стационар
 				this.days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days");
+			}
+
+
+			if (appeal.closed) {
+				this.canAssign = false;
+			}else{
+				this.canAssign = true;
 			}
 
 
