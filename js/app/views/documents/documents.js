@@ -15,9 +15,8 @@ define(function (require) {
 		_listTableControls: _.template(require("text!templates/documents/list/table-controls.html")),
 		_documentFilters: _.template(require("text!templates/documents/list/filters.html")),
 		_documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
-		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html"))/*,
-		 _documentsTableRow: _.template(require("text!templates/documents/list/docs-table-row.html")),
-		 _documentsTableBody: _.template(require("text!templates/documents/list/docs-table-body.html"))*/,
+		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
+		_documentsTablePaging: _.template(require("text!templates/documents/list/paging.html")),
 		_editLayout: _.template(require("text!templates/documents/edit/layout.html")),
 		_editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
 		_editHeading: _.template(require("text!templates/documents/edit/heading.html")),
@@ -251,14 +250,27 @@ define(function (require) {
 				}
 			}
 
+			if (_.isUndefined(valuePropertyIndex)) {
+				console.log("value property added to attribute");
+				valuePropertyIndex = props.push({name: propName, value: ""}) - 1;
+			}
+
 			return valuePropertyIndex;
 		},
 
 		getValueProperty: function () {
-			if (!this.valuePropertyIndex) {
+			//TODO: Выяснить почему так падает хром....
+			if (_.isUndefined(this.valuePropertyIndex)) {
 				this.valuePropertyIndex = this.getValuePropertyIndex(this.get("properties"), this.get("type"));
 			}
 			return this.get("properties")[this.valuePropertyIndex];
+
+			/*if (_.isUndefined(this.valuePropertyIndex)) {
+				this.valuePropertyIndex = this.getValuePropertyIndex(this.get("properties"), this.get("type"));
+				return this.get("properties")[this.valuePropertyIndex];
+			} else {
+				return this.get("properties")[this.valuePropertyIndex];
+			}*/
 		},
 
 		getValue: function () {
@@ -290,12 +302,13 @@ define(function (require) {
 		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
 		dateRange: null,
 		typeId: null,
+		pageNumber: 1,
 		initialize: function (models, options) {
 			Collection.prototype.initialize.call(this);
 			this.appealId = options.appealId || appealId;
 		},
 		url: function () {
-			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?limit=9999&sortingField=assessmentDate&sortingMethod=desc&";
+			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?sortingField=assessmentDate&sortingMethod=desc&";
 
 			var params = [];
 
@@ -312,6 +325,10 @@ define(function (require) {
 
 			if (this.typeId) {
 				params.push("filter[actionTypeId]=" + this.typeId);
+			}
+
+			if (this.pageNumber) {
+				params.push("page=" + this.pageNumber);
 			}
 
 			return url + params.join("&");
@@ -514,7 +531,8 @@ define(function (require) {
 			return LayoutBase.prototype.render.call(this, _.extend({
 				".documents-table": new Documents.Views.List.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
 				".documents-filters": new Documents.Views.List.Filters({collection: this.documents}),
-				".table-controls": new Documents.Views.List.TableControls({collection: this.selectedDocuments})
+				".table-controls": new Documents.Views.List.TableControls({collection: this.selectedDocuments}),
+				".documents-paging": new Documents.Views.List.Paging({collection: this.documents})
 				//".review-area": new Documents.Views.Review.Layout({collection: this.selectedDocuments, included: true})
 			}, subViews));
 		}
@@ -851,6 +869,40 @@ define(function (require) {
 		 }*/
 	});
 
+
+	Documents.Views.List.Paging = ViewBase.extend({
+		template: templates._documentsTablePaging,
+		data: function () {
+			console.log(this.collection);
+			if (this.collection.requestData) {
+				return {
+					currentPage: this.collection.requestData.page,
+					pageCount: Math.ceil(this.collection.requestData.recordsCount / this.collection.requestData.limit)
+				};
+			} else {
+				return {
+					currentPage: 0,
+					pageCount: 0
+				}
+			}
+
+		},
+		events: {
+			"click .page-number": "onPageNumberClick"
+		},
+		initialize: function () {
+			ViewBase.prototype.initialize.call(this, this.options);
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+		},
+		onCollectionReset: function () {
+			this.render();
+		},
+		onPageNumberClick: function (event) {
+			event.preventDefault();
+			this.collection.pageNumber = $(event.currentTarget).data("page-number");
+			this.collection.fetch();
+		}
+	});
 
 	//Редактирование
 	//---------------------
