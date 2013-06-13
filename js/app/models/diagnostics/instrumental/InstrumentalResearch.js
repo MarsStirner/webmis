@@ -6,6 +6,7 @@ define(function(require) {
 		idAttribute: "id",
 		initialize: function(attr, options) {
 
+			console.log('instrumental-research', arguments);
 			var appealId = false;
 			if (options.appealId) { //если модель создаётся самостоятельно
 				appealId = options.appealId;

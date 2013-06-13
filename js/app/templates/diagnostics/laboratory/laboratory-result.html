@@ -1,11 +1,5 @@
 
-<div class=""><h3 class="s1pan12" style="margin-bottom:.5em;"><%= data.name %></h3></div>
-<!-- <div class="row-fluid">
-    <h3 class="span12">
-        Пациент: <%= data.patientName %> Дата рождения: <%= data.age %> Пол: <%= data.sex %> ИБ: <%= data.appealNumber %>
-    </h3>
-</div> -->
-<div class="actions" style="margin-bottom:1em;height:3.5em;">
+<div class="actions" style="margin-bottom:2em;height:3.5em;">
 <!--     <div class="span8">overflow: hidden;
         <button class="first1">Первое</button>
         <button class="prev1">Предыдущее</button>
@@ -13,8 +7,7 @@
         <button class="last1">Последнее</button>
     </div> -->
     <!-- <div class="offset8 span4"> -->
-    <button class="all"  style="float:left;">Все исследования</button>
-        <!-- <button class="print"  style="float:right;">Печать</button> -->
+    <button class="all"  style="float:left;"><i class="icon-list"></i> Вернуться к списку</button>
         <div id="print-button" style="float:right;"></div>
         <button class="extra" style="float:right;">Дополнительно</button>
 
@@ -22,6 +15,7 @@
    <!--  </div> -->
 </div>
 
+<div class=""><h3 style="margin-bottom:.5em;"><%= data.name %></h3></div>
 
 <div class="extra-info" style="display: none;">
     <div class="s11pan">Назначено: <%= data.assessmentBeginDate %></div>

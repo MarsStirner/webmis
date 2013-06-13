@@ -75,11 +75,24 @@ define(function(require) {
 
 			if (_.indexOf(event.target.classList, 'cancel-direction') >= 0) {
 				this.cancelDirection(model);
+			}else if (_.indexOf(event.target.classList, 'edit-direction') >= 0) {
+				this.editDirection(model);
+			}else{
+				this.openResult(model);
 			}
 
-			if (_.indexOf(event.target.classList, 'edit-direction') >= 0) {
-				this.editDirection(model);
-			}
+		},
+		openResult: function(model) {
+			console.log('openResult', model);
+			var self = this;
+			this.trigger("change:viewState", {
+				type: "diagnostics-consultations-result",
+				options: {
+					modelId: model.get('id'),
+					appealId: self.options.appealId
+				}
+			});
+			App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics/consultations/result/" + model.get('id'));
 
 		},
 
