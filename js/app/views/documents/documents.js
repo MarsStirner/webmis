@@ -42,6 +42,7 @@ define(function (require) {
 
 	var Thesaurus = require("views/appeal/edit/popups/thesaurus");
 	var FlatDirectory = require("models/flat-directory");
+	var MKB = require("views/mkb-directory");
 
 	//Структура модуля
 	var Documents = {
@@ -514,7 +515,7 @@ define(function (require) {
 		},
 
 		toggleReviewState: function (enabled) {
-			this.$(".documents-table, .controls-filters").toggle(!enabled);
+			this.$(".documents-table, .controls-filters, .documents-paging").toggle(!enabled);
 
 			if (enabled) {
 				this.$el.append('<div class="row-fluid review-area-row"><div class="span12 review-area"></div></div>');
@@ -1427,7 +1428,21 @@ define(function (require) {
 
 	//Поле типа MKB
 	Documents.Views.Edit.UIElement.MKB = UIElementBase.extend({
-		template: templates.uiElements._mkb
+		template: templates.uiElements._mkb,
+		events: {
+			"click .MKBLauncher": "onMKBLauncherClick"
+		},
+		onMKBLauncherClick: function () {
+			this.mkbDirectory = new App.Views.MkbDirectory();
+			this.mkbDirectory.render().open();
+			this.mkbDirectory.on("selectionConfirmed", this.onMKBConfirmed, this);
+		},
+		onMKBConfirmed: function (event) {
+			var sd = event.selectedDiagnosis;
+			this.model.setValue(sd.get("id") || sd.get("code"));
+			this.$(".mkb-diagnosis").val(sd.get("diagnosis"));
+			this.$(".mkb-code").val(sd.get("code") || sd.get("id"));
+		}
 	});
 
 	//Поле типа FlatDirectory
