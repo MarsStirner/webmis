@@ -585,7 +585,7 @@ define(function (require) {
 
 		openDutyDocExamTemplate: function () {
 			//TODO: HARCODED
-			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: 139}});
+			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: 2844}});
 		}
 	});
 
