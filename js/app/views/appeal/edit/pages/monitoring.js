@@ -190,7 +190,7 @@ Moves,
 	 * Модель для таблицы "Экспресс-анализы"
 	 * @type {*}
 	 */
-	Monitoring.Models.ExpressAnalysis = Model.extend({
+	Monitoring.Models.ExpressAnalysis = Monitoring.Models.MonitoringInfo.extend({
 		defaults: {
 			"datetime": "",
 			"k": "",
@@ -208,16 +208,11 @@ Moves,
 	 * Коллекция для таблицы "Экспресс-анализы"
 	 * @type {*}
 	 */
-	Monitoring.Collections.ExpressAnalyses = Collection.extend({
-		model: Monitoring.Models.MonitoringInfo,
-
-		sync: function(method, model, options) {
-			return Backbone.sync(method, model, options);
-		},
+	Monitoring.Collections.ExpressAnalyses = Monitoring.Collections.MonitoringInfos.extend({
+		model: Monitoring.Models.ExpressAnalysis,
 
 		url: function() {
-			//return DATA_PATH + "";
-			return "/express-analyses.json";
+			return DATA_PATH + "appeals/" + appeal.get("id") + "/analyzes";
 		}
 	});
 
