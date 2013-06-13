@@ -1,11 +1,12 @@
 <div class="row-fluid">
 	<div class="span5">
 		<span class="Label">Диагноз при поступлении</span>
-		<input class="attribute-value" type="text" value="<%=model.getValue()%>">
+		<input class="mkb-code" type="text" value="<%=model.getValue()%>">
+		<input type="hidden" class="attribute-value" type="text" value="<%=(model.getValue()||' ').split(' ')[0]%>">
 		<span class="FieldInfo">Код по МКБ</span>
 	</div>
 	<div class="span5" style="padding-top: 1.9em;">
-		<input class="Disabled NotEditable" disabled="disabled" type="text" placeholder=""/>
+		<input class="Disabled NotEditable mkb-diagnosis" disabled="disabled" type="text" placeholder="" value=""/>
 		<span class="FieldInfo">Описание</span>
 	</div>
 	<div class="span2" style="padding-top: 1.9em;">
