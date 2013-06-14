@@ -30,22 +30,35 @@ $apiRouts = $app['controllers_factory'];
 //проверить необходимые документы перед закрытием
 $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
 
-    //тип финансирования
+    $json = [];
+
+    //тип финансирования ВМП?
     $select_sql = "SELECT f.code,f.name FROM Event as e "
     ."JOIN EventType as et ON e.eventType_id = et.id "
     ."JOIN rbFinance as f ON et.finance_id = f.id "
     ."WHERE e.id = ? LIMIT 1";
 
     $financeType = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
-    $financeTypeName = $financeType['name'];
+
+    if($financeType['name'] == 'ВМП'){
+        $vmp = true;
+    }else{
+        $vmp = false;
+    }
+
+    $json['vmp'] = $vmp;
+
 
     //Если тип финансирования ВМП, то проверяем есть ли тикет для ВМП?
-    $vmpTicket = '';
-    $select_sql = "SELECT Client_Quoting.* FROM Event "
+    if($vmp){
+
+    $select_sql = "SELECT Client_Quoting.id FROM Event "
     ."JOIN Client_Quoting ON Event.externalId = Client_Quoting.Identifier "
     ."WHERE Event.id = ? ";
-    if($financeTypeName == 'ВМП'){
-        $vmpTicket = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+
+    $vmpTicket = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+    $json['vmpTicket'] = $vmpTicket;
+
     }
 
 
@@ -56,7 +69,9 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
     ."AND (ActionType.code = 4504 OR ActionType.code = 4507 OR ActionType.code = 4511) "
     ."AND ActionType.mnem = 'EPI' ";
 
-    $epicrisis = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+    $epicrisis = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+
+    $json['epicrisis'] = $epicrisis;
 
 
     //есть ли выписка
@@ -70,20 +85,16 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
 
 
     //проверка на онко диагноз
-    $select_sql = "SELECT COUNT(*) "
+    $select_sql = "SELECT Diagnostic.id "
     ."FROM Diagnostic "
     ."JOIN Diagnosis ON Diagnosis.id = Diagnostic.diagnosis_id "
     ."JOIN MKB ON Diagnosis.MKB = MKB.DiagID "
     ."WHERE Diagnostic.event_id = ? "
     ."AND MKB.DiagId LIKE 'C%' ";
 
-    $results = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+    $oncology = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
 
-    if($results > 0){
-        $oncology = true;
-    }else{
-        $oncology = false;
-    }
+
 
     //Данные для онко диагнозов
     $select_sql = "SELECT rbDiagnosisType.name as 'diagnosisTypeName',"
@@ -103,25 +114,61 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
     $onkoData = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
 
     //извещение 090/у
-    $select_sql = "SELECT COUNT(*) FROM Action "
+    $select_sql = "SELECT Action.id FROM Action "
     ." JOIN ActionType ON Action.actionType_id = ActionType.id "
-    ." WHERE Action.event_id = ? "
+    ." WHERE Action.event_id = :appealId "
     ." AND ActionType.code= '1_7_2'"
     ." AND ActionType.mnem = 'NOT' ";
 
-    $notice_090y = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+    $statement =  $app['db']->prepare($select_sql);
+    $statement->bindValue('appealId', $appealId, "integer");
+    $statement->execute();
+
+    $notice_090y = (bool) ($statement->fetch());
+
+
+    //извещение 027/у-2
+    $select_sql = "SELECT Action.id FROM Action "
+    ." JOIN ActionType ON Action.actionType_id = ActionType.id "
+    ." WHERE Action.event_id = :appealId "
+    ." AND ActionType.code= '1_7_1'"
+    ." AND ActionType.mnem = 'NOT' ";
+
+    $statement =  $app['db']->prepare($select_sql);
+    $statement->bindValue('appealId', $appealId, "integer");
+    $statement->execute();
+
+    $notice_027y_2 = (bool) ($statement->fetch());
+
+
+    //извещение 027/у-1
+    $select_sql = "SELECT Action.id FROM Action "
+    ." JOIN ActionType ON Action.actionType_id = ActionType.id "
+    ." WHERE Action.event_id = :appealId "
+    ." AND ActionType.code= '1_8_5'"
+    ." AND ActionType.mnem = 'OTH' ";
+
+    $statement =  $app['db']->prepare($select_sql);
+    $statement->bindValue('appealId', $appealId, "integer");
+    $statement->execute();
+
+    $notice_027y_1 = (bool) ($statement->fetch());
 
 
 
 
-    return $app->json(array('financeTypeName'=>$financeTypeName,
-        'vmpTicket' => $vmpTicket,
-        'discharge' => $discharge,
-        'epicrisis' => $epicrisis,
-        'oncology' => $oncology,
-        'onkoData' => $onkoData,
-        'notice_090y' => $notice_090y
-        ));
+
+    // return $app->json(array('vmp'=>$vmp,
+    //     'vmpTicket' => $vmpTicket,
+    //     'discharge' => $discharge,
+    //     'epicrisis' => $epicrisis,
+    //     'oncology' => $oncology,
+    //     'onkoData' => $onkoData,
+    //     'notice_090y' => $notice_090y,
+    //     'notice_027y_2' => $notice_027y_2,
+    //     'notice_027y_1' => $notice_027y_1
+    //     ));
+    return $app->json($json);
 
 })->assert('appealId', '\d+');
 
