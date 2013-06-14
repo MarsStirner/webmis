@@ -17,7 +17,7 @@
 					<td class="single-item-select"><%=Core.Date.format(document.get('assessmentDate'))%></td>
 					<td class="single-item-select"><%=document.get('assessmentName').name%></td>
 					<td class="single-item-select"><%=document.get('doctor').name.raw%></td>
-					<td class="single-item-select"><%=document.get('doctor').specs.name%></td>
+					<td class="single-item-select"><%=document.get('doctor').specs ? document.get('doctor').specs.name : ''%></td>
 					<td><a class="edit-document Actions" data-document-id="<%=document.id%>"><i class="icon-pencil"></i></a></td>
 				</tr>
 			<%});%>
