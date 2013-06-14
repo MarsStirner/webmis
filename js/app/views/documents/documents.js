@@ -519,7 +519,7 @@ define(function (require) {
 
 			if (enabled) {
 				this.$el.append('<div class="row-fluid review-area-row"><div class="span12 review-area"></div></div>');
-				this.reviewLayout = new Documents.Views.Review.Layout({collection: this.selectedDocuments, included: true});
+				this.reviewLayout = new Documents.Views.Review.Layout({collection: this.selectedDocuments, documents: this.documents, included: true});
 				this.assign({
 					".review-area": this.reviewLayout
 				});
@@ -535,7 +535,6 @@ define(function (require) {
 				".documents-filters": new Documents.Views.List.Filters({collection: this.documents}),
 				".table-controls": new Documents.Views.List.TableControls({collection: this.selectedDocuments}),
 				".documents-paging": new Documents.Views.List.Paging({collection: this.documents})
-				//".review-area": new Documents.Views.Review.Layout({collection: this.selectedDocuments, included: true})
 			}, subViews));
 		}
 	});
@@ -1599,9 +1598,22 @@ define(function (require) {
 	Documents.Views.Review.Layout = LayoutBase.extend({
 		template: templates._reviewLayout,
 
-		/*initialize: function () {
+		initialize: function () {
+			LayoutBase.prototype.initialize.call(this, this.options);
+			this.listenTo(this.collection, "review:next", this.onDocumentsReviewNext);
+		},
 
-		},*/
+		onDocumentsReviewNext: function (event) {
+			var currentDocument = this.collection.first();
+
+			var currentDocumentListItem = this.options.documents.get(currentDocument.id);
+			var currentDocumentListItemIndex = this.options.documents.indexOf(currentDocumentListItem);
+
+			var nextDocumentListItem = this.options.documents.at(currentDocumentListItemIndex + 1);
+			var nextDocument = new Documents.Models.Document({id: nextDocumentListItem.id});
+
+			this.collection.reset([nextDocument]);
+		},
 
 		render: function () {
 			return LayoutBase.prototype.render.call(this, {
@@ -1634,7 +1646,7 @@ define(function (require) {
 		},
 
 		onNextDocumentClick: function () {
-
+			this.collection.trigger("review:next");
 		}
 	});
 
@@ -1683,8 +1695,16 @@ define(function (require) {
 
 	//Значения полей из документа
 	Documents.Views.Review.SheetList = RepeaterBase.extend({
+		initialize: function () {
+			RepeaterBase.prototype.initialize.call(this, this.options);
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+		},
 		getRepeatView: function (repeatOptions) {
 			return new Documents.Views.Review.Sheet(repeatOptions);
+		},
+		onCollectionReset: function () {
+			this.tearDownSubviews();
+			this.render();
 		}
 	});
 
