@@ -28,9 +28,13 @@ $apiRouts = $app['controllers_factory'];
 
 
 //проверить необходимые документы перед закрытием
-$apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
+$apiRouts->get('/appeals/{appealId}/docs4closing', function($appealId, Request $request)  use ($app) {
 
     $json = [];
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
+
+    $json['allDocs'] = true;//есть все документы для закрытия истории болезни
 
     //тип финансирования ВМП?
     $select_sql = "SELECT f.code,f.name FROM Event as e "
@@ -52,18 +56,20 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
     //Если тип финансирования ВМП, то проверяем есть ли тикет для ВМП?
     if($vmp){
 
-    $select_sql = "SELECT Client_Quoting.id FROM Event "
-    ."JOIN Client_Quoting ON Event.externalId = Client_Quoting.Identifier "
-    ."WHERE Event.id = ? ";
+        $select_sql = "SELECT Client_Quoting.id FROM Event "
+        ."JOIN Client_Quoting ON Event.externalId = Client_Quoting.Identifier "
+        ."WHERE Event.id = ? ";
 
-    $vmpTicket = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
-    $json['vmpTicket'] = $vmpTicket;
+        $vmpTicket = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+
+        $json['vmpTicket'] = $vmpTicket;
+        $json['allDocs'] = $vmpTicket;
 
     }
 
 
     //есть ли эпикриз?
-    $select_sql = "SELECT ActionType.* FROM Action "
+    $select_sql = "SELECT ActionType.id FROM Action "
     ."JOIN ActionType ON Action.actionType_id = ActionType.id "
     ."WHERE Action.event_id = ? "
     ."AND (ActionType.code = 4504 OR ActionType.code = 4507 OR ActionType.code = 4511) "
@@ -72,17 +78,19 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
     $epicrisis = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
 
     $json['epicrisis'] = $epicrisis;
+    $json['allDocs'] = $json['allDocs'] && $json['epicrisis'];
 
 
     //есть ли выписка
-    $select_sql = "SELECT Action.actionType_id FROM Action "
+    $select_sql = "SELECT Action.id FROM Action "
     ."JOIN ActionType ON Action.actionType_id = ActionType.id "
     ."WHERE Action.event_id = ? "
     ."AND ActionType.flatCode = 'leaved' "
     ."AND ActionType.mnem = 'ORD' ";
 
-    $discharge = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
-
+    $discharge = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+    $json['discharge'] = $discharge;
+    $json['allDocs'] = $json['allDocs'] && $json['discharge'];
 
     //проверка на онко диагноз
     $select_sql = "SELECT Diagnostic.id "
@@ -93,82 +101,83 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
     ."AND MKB.DiagId LIKE 'C%' ";
 
     $oncology = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+    $json['oncology'] = $oncology;
 
 
+    if($oncology){
+        //Данные для онко диагнозов
+        $select_sql = "SELECT rbDiagnosisType.name as 'diagnosisTypeName',"
+        ." MKB.DiagId,"
+        ." MKB.DiagName AS 'diagnosisName',"
+        ." rbDiseaseCharacter.name AS 'diseaseCharacterName',"
+        ." rbDiseaseStage.code,"
+        ." rbDiseaseStage.name AS 'diseaseSstage'"
+        ." FROM Diagnostic"
+        ." JOIN Diagnosis ON Diagnostic.diagnosis_id = Diagnosis.id"
+        ." LEFT JOIN rbDiagnosisType ON Diagnostic.diagnosisType_id = rbDiagnosisType.id"
+        ." LEFT JOIN MKB ON Diagnosis.MKB = MKB.DiagID"
+        ." LEFT JOIN rbDiseaseCharacter ON Diagnostic.character_id = rbDiseaseCharacter.id"
+        ." LEFT JOIN rbDiseaseStage ON Diagnostic.stage_id = rbDiseaseStage.id"
+        ." where Diagnostic.event_id = ? ";
 
-    //Данные для онко диагнозов
-    $select_sql = "SELECT rbDiagnosisType.name as 'diagnosisTypeName',"
-    ." MKB.DiagId,"
-    ." MKB.DiagName AS 'diagnosisName',"
-    ." rbDiseaseCharacter.name AS 'diseaseCharacterName',"
-    ." rbDiseaseStage.code,"
-    ." rbDiseaseStage.name AS 'diseaseSstage'"
-    ." FROM Diagnostic"
-    ." JOIN Diagnosis ON Diagnostic.diagnosis_id = Diagnosis.id"
-    ." LEFT JOIN rbDiagnosisType ON Diagnostic.diagnosisType_id = rbDiagnosisType.id"
-    ." LEFT JOIN MKB ON Diagnosis.MKB = MKB.DiagID"
-    ." LEFT JOIN rbDiseaseCharacter ON Diagnostic.character_id = rbDiseaseCharacter.id"
-    ." LEFT JOIN rbDiseaseStage ON Diagnostic.stage_id = rbDiseaseStage.id"
-    ." where Diagnostic.event_id = ? ";
+        $onkoData = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+        $json['onkoData'] = $onkoData;
+    }
 
-    $onkoData = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+    if($oncology){
+        //проверка наличия извещения 090/у
+        $select_sql = "SELECT Action.id FROM Action "
+        ." JOIN ActionType ON Action.actionType_id = ActionType.id "
+        ." WHERE Action.event_id = ? "
+        ." AND ActionType.code= '1_7_2'"
+        ." AND ActionType.mnem = 'NOT' ";
 
-    //извещение 090/у
+        $notice_090y = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+
+        $json['notice_090y'] = $notice_090y;
+        $json['allDocs'] = $json['allDocs'] && $json['notice_090y'];
+    }
+
+    if($oncology){
+        //проверка наличия извещения 027/у-2
+        $select_sql = "SELECT Action.id FROM Action "
+        ." JOIN ActionType ON Action.actionType_id = ActionType.id "
+        ." WHERE Action.event_id = ? "
+        ." AND ActionType.code= '1_7_1'"
+        ." AND ActionType.mnem = 'NOT' ";
+
+        $notice_027y_2 = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+
+        $json['notice_027y_2'] = $notice_027y_2;
+        $json['allDocs'] = $json['allDocs'] && $json['notice_027y_2'];
+    }
+
+    if($oncology){
+        //проверка наличия извещения 027/у-1
+        $select_sql = "SELECT Action.id FROM Action "
+        ." JOIN ActionType ON Action.actionType_id = ActionType.id "
+        ." WHERE Action.event_id = ? "
+        ." AND ActionType.code= '1_8_5'"
+        ." AND ActionType.mnem = 'OTH' ";
+
+        $notice_027y_1 = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+
+        $json['notice_027y_1'] = $notice_027y_1;
+        $json['allDocs'] = $json['allDocs'] && $json['notice_027y_1'];
+    }
+
+    //незакрытые документы
     $select_sql = "SELECT Action.id FROM Action "
     ." JOIN ActionType ON Action.actionType_id = ActionType.id "
-    ." WHERE Action.event_id = :appealId "
-    ." AND ActionType.code= '1_7_2'"
-    ." AND ActionType.mnem = 'NOT' ";
+    ." WHERE Action.event_id = ? "
+    ." AND Action.endDate IS NULL";
 
-    $statement =  $app['db']->prepare($select_sql);
-    $statement->bindValue('appealId', $appealId, "integer");
-    $statement->execute();
+    $openDocs = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
 
-    $notice_090y = (bool) ($statement->fetch());
+    $json['openDocs'] = $openDocs;
 
 
-    //извещение 027/у-2
-    $select_sql = "SELECT Action.id FROM Action "
-    ." JOIN ActionType ON Action.actionType_id = ActionType.id "
-    ." WHERE Action.event_id = :appealId "
-    ." AND ActionType.code= '1_7_1'"
-    ." AND ActionType.mnem = 'NOT' ";
-
-    $statement =  $app['db']->prepare($select_sql);
-    $statement->bindValue('appealId', $appealId, "integer");
-    $statement->execute();
-
-    $notice_027y_2 = (bool) ($statement->fetch());
-
-
-    //извещение 027/у-1
-    $select_sql = "SELECT Action.id FROM Action "
-    ." JOIN ActionType ON Action.actionType_id = ActionType.id "
-    ." WHERE Action.event_id = :appealId "
-    ." AND ActionType.code= '1_8_5'"
-    ." AND ActionType.mnem = 'OTH' ";
-
-    $statement =  $app['db']->prepare($select_sql);
-    $statement->bindValue('appealId', $appealId, "integer");
-    $statement->execute();
-
-    $notice_027y_1 = (bool) ($statement->fetch());
-
-
-
-
-
-    // return $app->json(array('vmp'=>$vmp,
-    //     'vmpTicket' => $vmpTicket,
-    //     'discharge' => $discharge,
-    //     'epicrisis' => $epicrisis,
-    //     'oncology' => $oncology,
-    //     'onkoData' => $onkoData,
-    //     'notice_090y' => $notice_090y,
-    //     'notice_027y_2' => $notice_027y_2,
-    //     'notice_027y_1' => $notice_027y_1
-    //     ));
-    return $app->json($json);
+    return $app->json(array('data' => $json))->setCallback($callback);
 
 })->assert('appealId', '\d+');
 
@@ -177,12 +186,33 @@ $apiRouts->get('/appeals/{appealId}/docs', function($appealId)  use ($app) {
 
 
 //закрыть незакрытые документы для госпитализации
-$apiRouts->get('/appeals/{appealId}/docs/close', function($appealId)  use ($app){
+$apiRouts->get('/appeals/{appealId}/docs/close', function($appealId, Request $request)  use ($app){
 
-    $sql = "SELECT * FROM Person WHERE id = ?";
-    $person = $app['db']->fetchAssoc($sql, array((int) $appealId));
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
 
-    return $app->json($person);
+    //Дата закрытия
+    $execDate = $app['request']->get('execDate');
+    if($execDate){
+        $timestamp = $execDate/1000;
+        $date = new \DateTime();
+        $date->setTimestamp($timestamp);
+    }else{
+        $date = new \DateTime('NOW');
+    }
+
+    $update_sql = "UPDATE Action "
+        ." JOIN ActionType ON Action.actionType_id = ActionType.id "
+        ." SET Action.endDate = :endDate "
+        ." WHERE Action.event_id = :appealId "
+        ." AND Action.endDate IS NULL";
+
+    $statment = $app['db']->prepare($update_sql);
+    $statment->bindValue('endDate', $date, "datetime");
+    $statment->bindValue('appealId', $appealId, "integer");
+    $count = $statment->execute();
+
+    return $app->json(array('count'=>$count))->setCallback($callback);
 
 })->assert('appealId', '\d+');
 
@@ -190,7 +220,10 @@ $apiRouts->get('/appeals/{appealId}/docs/close', function($appealId)  use ($app)
 
 
 //освободить койку
-$apiRouts->get('/appeals/{appealId}/bed/vacate', function($appealId) use ($app){
+$apiRouts->get('/appeals/{appealId}/bed/vacate', function($appealId, Request $request) use ($app){
+
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
 
     //Дата закрытия
     $execDate = $app['request']->get('execDate');
@@ -216,15 +249,15 @@ $apiRouts->get('/appeals/{appealId}/bed/vacate', function($appealId) use ($app){
     $stmt = $app['db']->prepare($update_sql);
     $stmt->bindValue('endDate', $date, "datetime");
     $stmt->bindValue('lastMoveId', $lastMoveId, "integer");
-    $stmt->execute();
+    $count = $stmt->execute();
 
-    $select_sql_2 = "SELECT * FROM Action "
-    ."WHERE Action.event_id = ?"
-    ."ORDER BY Action.directionDate DESC LIMIT 1";
+    // $select_sql_2 = "SELECT * FROM Action "
+    // ."WHERE Action.event_id = ?"
+    // ."ORDER BY Action.directionDate DESC LIMIT 1";
 
-    $updatedLastMove = $app['db']->fetchAssoc($select_sql_2, array((int) $appealId));
+    // $updatedLastMove = $app['db']->fetchAssoc($select_sql_2, array((int) $appealId));
 
-    return $app->json($updatedLastMove);
+    return $app->json($count)->setCallback($callback);
 
 })->assert('appealId', '\d+');
 
@@ -232,7 +265,10 @@ $apiRouts->get('/appeals/{appealId}/bed/vacate', function($appealId) use ($app){
 
 
 //закрыть госпитализацию
-$apiRouts->get('/appeals/{appealId}/close', function($appealId) use ($app){
+$apiRouts->get('/appeals/{appealId}/close', function($appealId, Request $request) use ($app){
+
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
 
     //Дата закрытия
     $execDate = $app['request']->get('execDate');
@@ -254,7 +290,7 @@ $apiRouts->get('/appeals/{appealId}/close', function($appealId) use ($app){
     $select_sql = "SELECT * FROM Event WHERE id = ?";
     $event = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
 
-    return $app->json($event);
+    return $app->json($event)->setCallback($callback);
 
 })->assert('appealId', '\d+');
 

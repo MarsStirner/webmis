@@ -1,0 +1,58 @@
+<% if(allDocs){%>
+<h3>Нет документов:</h3>
+    <ul>
+        <% if(vmp && !vmpTicket){ %>
+            <li>Талон-направление на ВМП.</li>
+        <% } %>
+
+        <% if(!epicrisis){ %>
+            <li>Эпикриз.</li>
+        <% } %>
+
+        <% if(!discharge){ %>
+            <li>Выписка.</li>
+        <% } %>
+
+        <% if(oncology){%>
+            <% if(!_.isUndefined(notice_090y) && !notice_090y){%>
+                <li>Извещение о больном с впервые в жизни установленным диагнозом злокачественного новообразования.</li>
+            <% } %>
+
+            <% if(!_.isUndefined(notice_027y_2) && !notice_027y_2){%>
+                <li>Протокол на случай выявления у больного запущенной формы злокачественного новообразования.</li>
+            <% } %>
+
+            <% if(!_.isUndefined(notice_027y_1) && !notice_027y_1){%>
+                <li>Выписка из медицинской карты стационарного больного злокачественным новообразованием.</li>
+            <% } %>
+
+        <% } %>
+
+    </ul>
+<%}else{%>
+
+
+<div class="SetComment">
+    <label>Дата и время закрытия ИБ</label>
+    <div style="display: block;margin-bottom:2em;">
+        <div class="date" style="width: 10em;">
+            <input type="text" placeholder="дд.мм.гггг" class="SelectDate date-input appeal-close-date" autocomplete="off" value="">
+            <i class="icon-calendar date-icon" style="right: .4em;"></i>
+        </div>
+        <div class="time" style="width: 6em;">
+            <input type="text" placeholder="чч:мм" class="SelectDate time-input appeal-close-time" autocomplete="off" value="">
+            <i class="icon-time time-icon" style="right: .4em;"></i>
+        </div>
+
+    </div>
+
+    <% if(openDocs){ %>
+
+    <% } %>
+
+            <div style="display: block;margin-bottom:1em;">
+            <label><input type="checkbox" name="close-docs" checked="checked" class="close-docs"> Закрывать документы</label>
+        </div>
+
+</div>
+<% } %>

@@ -20,7 +20,8 @@ define([
 	"views/appeal/edit/pages/card",
 
 	"collections/moves/moves",
-		"collections/dictionary-values"
+		"collections/dictionary-values",
+		"views/appeal/edit/popups/CloseAppealView"
 ], function(
 	monitoringTmpl,
 	headerTmpl,
@@ -38,25 +39,25 @@ define([
 Card,
 
 Moves,
-	DictionaryValues
-	) {
+	DictionaryValues,
+	CloseAppealView) {
 
 	/**
 	 * Структура модуля
 	 * @type {{Views: {}, Collections: {}, Models: {}}}
 	 */
-	 var Monitoring = {
-	 	Views: {},
-	 	Collections: {},
-	 	Models: {}
-	 };
+	var Monitoring = {
+		Views: {},
+		Collections: {},
+		Models: {}
+	};
 
 	/**
 	 * Экземпляры моделей/коллекций общих для нескольких классов
 	 */
-	 var appeal;
-	 var appealJSON;
-	 var bloodTypes;
+	var appeal;
+	var appealJSON;
+	var bloodTypes;
 
 	// Коллекции
 	//////////////////////////////////////////////////////
@@ -65,7 +66,7 @@ Moves,
 	 * Группа крови пациента
 	 * @type {*}
 	 */
-	 Monitoring.Models.PatientBloodType = Model.extend({
+	Monitoring.Models.PatientBloodType = Model.extend({
 		/*idAttribute: "id",
 
 		defaults: {
@@ -83,62 +84,62 @@ Moves,
 	 * История изменения группы крови пациента
 	 * @type {*}
 	 */
-	 Monitoring.Collections.PatientBloodTypes = Collection.extend({
-	 	model: Monitoring.Models.PatientBloodType,
+	Monitoring.Collections.PatientBloodTypes = Collection.extend({
+		model: Monitoring.Models.PatientBloodType,
 
-	 	initialize: function (models, options) {
-	 		this.patientId = options.patientId;
-	 	},
+		initialize: function(models, options) {
+			this.patientId = options.patientId;
+		},
 
-	 	comparator: function (a, b) {
-	 		var aDatetime = parseInt(a.get("id"));
-	 		var bDatetime = parseInt(b.get("id"));
+		comparator: function(a, b) {
+			var aDatetime = parseInt(a.get("id"));
+			var bDatetime = parseInt(b.get("id"));
 
-	 		if (aDatetime < bDatetime) {
-	 			return 1;
-	 		} else if (aDatetime > bDatetime) {
-	 			return -1;
-	 		} else {
-	 			return 0;
-	 		}
-	 	},
+			if (aDatetime < bDatetime) {
+				return 1;
+			} else if (aDatetime > bDatetime) {
+				return -1;
+			} else {
+				return 0;
+			}
+		},
 
-	 	url: function () {
-	 		return DATA_PATH + "patients/" + this.patientId + "/bloodtypes";
-	 	}
-	 });
+		url: function() {
+			return DATA_PATH + "patients/" + this.patientId + "/bloodtypes";
+		}
+	});
 
 	/**
 	 * Модель для таблицы "Мониторинг"
 	 * @type {*}
 	 */
-	 Monitoring.Models.MonitoringInfo = Model.extend({
-	 	defaults: {
-	 		datetime: "",
-	 		temperature: "",
-	 		bpras: "",
-	 		bprad: "",
-	 		heartRate: "",
-	 		spo2: "",
-	 		breathRate: "",
-	 		state: "",
-	 		health: ""
-	 	}
-	 });
+	Monitoring.Models.MonitoringInfo = Model.extend({
+		defaults: {
+			datetime: "",
+			temperature: "",
+			bpras: "",
+			bprad: "",
+			heartRate: "",
+			spo2: "",
+			breathRate: "",
+			state: "",
+			health: ""
+		}
+	});
 
 	/**
 	 * Коллекция для таблицы "Мониторинг"
 	 * @type {*}
 	 */
-	 Monitoring.Collections.MonitoringInfos = Collection.extend({
-	 	model: Monitoring.Models.MonitoringInfo,
+	Monitoring.Collections.MonitoringInfos = Collection.extend({
+		model: Monitoring.Models.MonitoringInfo,
 
-	 	url: function () {
-	 		return DATA_PATH + "appeals/" + appeal.get("id") + "/monitoring";
+		url: function() {
+			return DATA_PATH + "appeals/" + appeal.get("id") + "/monitoring";
 			//return "/monitoring-info.json";
 		},
 
-		getParseMap: function (rawByDate) {
+		getParseMap: function(rawByDate) {
 			return _.map(rawByDate, function(rawRow, date) {
 				return {
 					datetime: +date,
@@ -170,7 +171,7 @@ Moves,
 
 			parsed = parsed
 
-			.sort(function (a, b) {
+			.sort(function(a, b) {
 
 				var adt = a.datetime;
 				var bdt = b.datetime;
@@ -179,12 +180,12 @@ Moves,
 				else if (adt < bdt) return -1;
 				else return 0;
 			})
-			.filter(function (row) {
-				return _.some(row, function (field, fieldName) {
+				.filter(function(row) {
+				return _.some(row, function(field, fieldName) {
 					return fieldName !== "datetime" && field && field.toString().length;
 				});
 			})
-			.slice(0, 5);
+				.slice(0, 5);
 
 
 			console.log(rawByDate);
@@ -220,7 +221,7 @@ Moves,
 	Monitoring.Collections.ExpressAnalyses = Monitoring.Collections.MonitoringInfos.extend({
 		model: Monitoring.Models.ExpressAnalysis,
 
-		getParseMap: function (rawByDate) {
+		getParseMap: function(rawByDate) {
 			return _.map(rawByDate, function(rawRow, date) {
 				return {};
 				/*return {
@@ -246,28 +247,28 @@ Moves,
 	 * Модель диагноза пациента
 	 * @type {*}
 	 */
-	 Monitoring.Models.PatientDiagnosis = Model.extend({
-	 	defaults: {
-	 		"diagnosticId": "",
-	 		"diagnosisKind": "",
-	 		"datetime": "",
-	 		"description": "",
-	 		"injury": "",
-	 		"doctor": {
-	 			"name": {
-	 				"first": "",
-	 				"last": "",
-	 				"middle": "",
-	 				"raw": ""
-	 			}
-	 		},
-	 		"mkb": {
-	 			"id": "",
-	 			"code": "",
-	 			"diagnosis": ""
-	 		}
-	 	}
-	 });
+	Monitoring.Models.PatientDiagnosis = Model.extend({
+		defaults: {
+			"diagnosticId": "",
+			"diagnosisKind": "",
+			"datetime": "",
+			"description": "",
+			"injury": "",
+			"doctor": {
+				"name": {
+					"first": "",
+					"last": "",
+					"middle": "",
+					"raw": ""
+				}
+			},
+			"mkb": {
+				"id": "",
+				"code": "",
+				"diagnosis": ""
+			}
+		}
+	});
 
 	/**
 	 * Коллекция диагнозов пациента
@@ -344,16 +345,16 @@ Moves,
 	 * Облегчённая коллекция персонала ЛПУ (без bb.relational)
 	 * @type {*}
 	 */
-	 var Persons = Collection.extend({
-	 	model: Backbone.Model.extend({}),
+	var Persons = Collection.extend({
+		model: Backbone.Model.extend({}),
 
 		url: function() {
 			return DATA_PATH + "dir/persons";
 		}
 	});
 
-	 var AppealExecPerson = Backbone.Model.extend({
-	 	idAttribute: "id",
+	var AppealExecPerson = Backbone.Model.extend({
+		idAttribute: "id",
 
 		sync: function(method, model, options) {
 			options.dataType = "jsonp";
@@ -366,8 +367,8 @@ Moves,
 					data: model.toJSON()
 				});
 	}*/
-	return Backbone.sync(method, model, options);
-},
+			return Backbone.sync(method, model, options);
+		},
 
 
 		url: function() {
@@ -382,10 +383,10 @@ Moves,
 	 * Главная вьюха, контейнер для виджетов
 	 * @type {*}
 	 */
-	 Monitoring.Views.Layout = Card.extend({
-	 	className: "monitoring-layout",
+	Monitoring.Views.Layout = Card.extend({
+		className: "monitoring-layout",
 
-	 	template: monitoringTmpl,
+		template: monitoringTmpl,
 
 		initialize: function() {
 			appeal = this.model = this.options.appeal;
@@ -396,26 +397,26 @@ Moves,
 		render: function() {
 			this.trigger("change:printState");
 
-	 		console.time("layout render time");
+			console.time("layout render time");
 
-	 		this.$el.html(_.template(this.template));
+			this.$el.html(_.template(this.template));
 
 
 
-	 		this.assign({
-	 			".monitoring-layout-header": new Monitoring.Views.Header(),
-	 			".patient-info": new Monitoring.Views.PatientInfo(),
-	 			".signal-info": new Monitoring.Views.SignalInfo(),
-	 			".patient-diagnoses-list": new Monitoring.Views.PatientDiagnosesList(),
-	 			".monitoring-info": new Monitoring.Views.MonitoringInfoGrid(),
-	 			".express-analyses": new Monitoring.Views.ExpressAnalyses()
-	 		});
+			this.assign({
+				".monitoring-layout-header": new Monitoring.Views.Header(),
+				".patient-info": new Monitoring.Views.PatientInfo(),
+				".signal-info": new Monitoring.Views.SignalInfo(),
+				".patient-diagnoses-list": new Monitoring.Views.PatientDiagnosesList(),
+				".monitoring-info": new Monitoring.Views.MonitoringInfoGrid(),
+				".express-analyses": new Monitoring.Views.ExpressAnalyses()
+			});
 
-	 		console.timeEnd("layout render time");
+			console.timeEnd("layout render time");
 
-	 		return this;
-	 	}
-	 });
+			return this;
+		}
+	});
 
 
 	// Базовые вью для виджетов
@@ -425,8 +426,8 @@ Moves,
 	 * Базовый класс для простых вьюшек
 	 * @type {*}
 	 */
-	 Monitoring.Views.BaseView = Backbone.View.extend({
-	 	template: "",
+	Monitoring.Views.BaseView = Backbone.View.extend({
+		template: "",
 
 		data: function() {
 			return {};
@@ -446,10 +447,10 @@ Moves,
 	 * Базовый класс для виджетов-таблиц сортируемых на клиенте
 	 * @type {*}
 	 */
-	 Monitoring.Views.ClientSortableGrid = Backbone.View.extend({
-	 	events: {
-	 		"click th.sortable": "onThSortableClick"
-	 	},
+	Monitoring.Views.ClientSortableGrid = Backbone.View.extend({
+		events: {
+			"click th.sortable": "onThSortableClick"
+		},
 
 		initialize: function() {
 			//вызывается и после фетча и после сорта
@@ -583,6 +584,19 @@ Moves,
 	 */
 	Monitoring.Views.Header = Monitoring.Views.BaseView.extend({
 		template: headerTmpl,
+		events: {
+			'click .close-appeal': 'openCloseAppealPopup'
+		},
+		openCloseAppealPopup: function() {
+			console.log('openCloseAppealPopup');
+			this.closeAppealView = new CloseAppealView({
+				title: 'Закрытие истории болезни',
+				width: '50em',
+				saveText: 'Закрыть',
+				appeal: appeal
+			});
+			this.closeAppealView.render().open();
+		},
 
 		data: function() {
 			return {
@@ -590,6 +604,11 @@ Moves,
 				appealIsUrgent: appeal.get("urgent"),
 				appealIsClosed: appeal.closed
 			};
+		},
+		render: function() {
+			Monitoring.Views.BaseView.prototype.render.apply(this);
+			this.$('.close-appeal').button();
+			return this;
 		}
 	});
 
@@ -597,8 +616,8 @@ Moves,
 	 * Сведения о пациенте
 	 * @type {*}
 	 */
-	 Monitoring.Views.PatientInfo = Monitoring.Views.BaseView.extend({
-	 	template: patientInfoTmpl,
+	Monitoring.Views.PatientInfo = Monitoring.Views.BaseView.extend({
+		template: patientInfoTmpl,
 
 		data: function() {
 			return {
@@ -610,16 +629,16 @@ Moves,
 		render: function() {
 			Monitoring.Views.BaseView.prototype.render.apply(this);
 
-	 		this.assign({
-	 			".patient-blood-type": new Monitoring.Views.PatientBloodTypeRow(),
-	 			".patient-blood-type-history": new Monitoring.Views.PatientBloodTypeHistoryRow()
-	 		});
+			this.assign({
+				".patient-blood-type": new Monitoring.Views.PatientBloodTypeRow(),
+				".patient-blood-type-history": new Monitoring.Views.PatientBloodTypeHistoryRow()
+			});
 
-	 		this.$(".patient-blood-type-history").hide();
+			this.$(".patient-blood-type-history").hide();
 
-	 		return this;
-	 	}
-	 });
+			return this;
+		}
+	});
 
 	/**
 	 * Текущая группа крови пациента
@@ -633,7 +652,7 @@ Moves,
 			return {
 				currentBloodType: appeal.get("patient").get("medicalInfo").get("blood"),
 				bloodTypes: this.bloodTypesDict,
-				canChangeBloodType:this.canChangeBloodType
+				canChangeBloodType: this.canChangeBloodType
 			};
 		},
 
@@ -664,7 +683,7 @@ Moves,
 
 			if (appeal.closed) {
 				this.canChangeBloodType = false;
-			}else{
+			} else {
 				this.canChangeBloodType = true;
 			}
 		},
@@ -769,8 +788,8 @@ Moves,
 	 * Истрория изменения группы крови
 	 * @type {*}
 	 */
-	 Monitoring.Views.PatientBloodTypeHistoryRow = Monitoring.Views.BaseView.extend({
-	 	template: patientBloodTypeHistoryRowTmpl,
+	Monitoring.Views.PatientBloodTypeHistoryRow = Monitoring.Views.BaseView.extend({
+		template: patientBloodTypeHistoryRowTmpl,
 
 		data: function() {
 			return {
@@ -778,9 +797,9 @@ Moves,
 			};
 		},
 
-	 	events: {
+		events: {
 
-	 	},
+		},
 
 		initialize: function(options) {
 			Monitoring.Views.BaseView.prototype.initialize.apply(this);
@@ -797,7 +816,7 @@ Moves,
 			//.on("add", this.render, this)
 			.on("reset", this.render, this)
 				.fetch();
-			},
+		},
 
 		toggleVisible: function(event) {
 			this.$el.toggle();
@@ -817,7 +836,7 @@ Moves,
 				appeal: appealJSON,
 				appealExtraData: Core.Data.appealExtraData.toJSON(),
 				days: this.days,
-				canAssign:this.canAssign
+				canAssign: this.canAssign
 			};
 		},
 
@@ -844,7 +863,7 @@ Moves,
 
 			if (appeal.closed) {
 				this.canAssign = false;
-			}else{
+			} else {
 				this.canAssign = true;
 			}
 
@@ -884,10 +903,10 @@ Moves,
 	 * Диалог назначения врача
 	 * @type {*}
 	 */
-	 Monitoring.Views.ExecPersonAssignmentDialog = Monitoring.Views.BaseView.extend({
-	 	template: assignExecPersonDialogTmpl,
+	Monitoring.Views.ExecPersonAssignmentDialog = Monitoring.Views.BaseView.extend({
+		template: assignExecPersonDialogTmpl,
 
-		data: function () {
+		data: function() {
 			return {
 				assignMe: this.assignMe
 			};
@@ -1036,8 +1055,8 @@ Moves,
 	 * Список диагнозов пациента
 	 * @type {*}
 	 */
-	 Monitoring.Views.PatientDiagnosesList = Monitoring.Views.BaseView.extend({
-	 	template: patientDiagnosesListTmpl,
+	Monitoring.Views.PatientDiagnosesList = Monitoring.Views.BaseView.extend({
+		template: patientDiagnosesListTmpl,
 
 		data: function() {
 			return {
@@ -1048,19 +1067,19 @@ Moves,
 		initialize: function(options) {
 			Monitoring.Views.BaseView.prototype.initialize.apply(this);
 
-	 		this.collection = new Monitoring.Collections.PatientDiagnoses();
-	 		console.log("fetching diagnoses");
-	 		this.collection.on("reset", this.render, this).fetch();
-	 	}
-	 });
+			this.collection = new Monitoring.Collections.PatientDiagnoses();
+			console.log("fetching diagnoses");
+			this.collection.on("reset", this.render, this).fetch();
+		}
+	});
 
 	/**
 	 * Вью таблицы-виджета "Мониторинг"
 	 * @type {*}
 	 */
-	 Monitoring.Views.MonitoringInfoGrid = Monitoring.Views.ClientSortableGrid.extend({
-	 	template: monitoringInfoGridTmpl,
-	 	itemTemplate: monitoringInfoItemTmpl,
+	Monitoring.Views.MonitoringInfoGrid = Monitoring.Views.ClientSortableGrid.extend({
+		template: monitoringInfoGridTmpl,
+		itemTemplate: monitoringInfoItemTmpl,
 
 		/*data: function () {
 			return {infos: this.collection};
@@ -1076,9 +1095,9 @@ Moves,
 	 * Вью таблицы-виджета "Экспресс-анализы"
 	 * @type {*}
 	 */
-	 Monitoring.Views.ExpressAnalyses = Monitoring.Views.ClientSortableGrid.extend({
-	 	template: expressAnalysesTmpl,
-	 	itemTemplate: expressAnalysesItemTmpl,
+	Monitoring.Views.ExpressAnalyses = Monitoring.Views.ClientSortableGrid.extend({
+		template: expressAnalysesTmpl,
+		itemTemplate: expressAnalysesItemTmpl,
 
 		/*data: function () {
 			return {analyses: this.collection};
@@ -1090,5 +1109,5 @@ Moves,
 		}
 	});
 
-	 return Monitoring;
-	});
+	return Monitoring;
+});
