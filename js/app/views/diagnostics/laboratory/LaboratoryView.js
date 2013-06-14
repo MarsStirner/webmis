@@ -81,7 +81,7 @@ define(function(require) {
 
 				var status = (model.get('status')).id;
 
-				if ((status === 1) || (status === 2)) {
+				if ((status === 0) || (status === 1) || (status === 2)) {
 					this.trigger("change:viewState", {
 						type: "diagnostics-laboratory-result",
 						options: {

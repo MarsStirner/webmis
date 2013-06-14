@@ -155,9 +155,40 @@
         }
       }
       return this;
-    }
+    },
+
+		// Tell this object to stop listening to either specific events ... or
+		// to every object it's currently listening to.
+		stopListening: function(obj, name, callback) {
+			var listeners = this._listeners;
+			if (!listeners) return this;
+			var deleteListener = !name && !callback;
+			if (typeof name === 'object') callback = this;
+			if (obj) (listeners = {})[obj._listenerId] = obj;
+			for (var id in listeners) {
+				listeners[id].off(name, callback, this);
+				if (deleteListener) delete this._listeners[id];
+			}
+			return this;
+		}
 
   };
+
+	var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
+
+	// Inversion-of-control versions of `on` and `once`. Tell *this* object to
+	// listen to an event in another object ... keeping track of what it's
+	// listening to.
+	_.each(listenMethods, function(implementation, method) {
+		Events[method] = function(obj, name, callback) {
+			var listeners = this._listeners || (this._listeners = {});
+			var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
+			listeners[id] = obj;
+			if (typeof name === 'object') callback = this;
+			obj[implementation](name, callback, this);
+			return this;
+		};
+	});
 
   // Aliases for backwards compatibility.
   Events.bind   = Events.on;

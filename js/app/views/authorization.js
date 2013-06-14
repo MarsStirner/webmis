@@ -171,7 +171,10 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 				Core.Cookies.set("userId", model.get("userId"));
 				Core.Cookies.set("doctorFirstName", Doctor.get("name").get("first"));
 				Core.Cookies.set("doctorLastName", Doctor.get("name").get("last"));
-				Core.Cookies.set("userDepartmentId", Doctor.get("department").get("id"));
+				if(Doctor.get("department")){
+					Core.Cookies.set("userDepartmentId", Doctor.get("department").get("id"));
+				}
+
 
 				Core.Cookies.set("roles", JSON.stringify(this.model.collection.pluck("id")));
 

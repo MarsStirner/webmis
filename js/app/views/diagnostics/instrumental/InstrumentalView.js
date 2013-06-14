@@ -10,7 +10,7 @@ define(function(require) {
 
 	var GridView = require('views/grid');
 	var InstrumentalEditPopupView = require('views/diagnostics/instrumental/InstrumentalEditPopupView');
-	var InstrumentalPopupView= require('views/diagnostics/instrumental/InstrumentalPopupView');
+	var InstrumentalPopupView = require('views/diagnostics/instrumental/InstrumentalPopupView');
 	var PaginatorView = require('views/paginator');
 
 
@@ -85,11 +85,24 @@ define(function(require) {
 
 			if (_.indexOf(event.target.classList, 'cancel-direction') >= 0) {
 				this.cancelDirection(model);
+			} else if (_.indexOf(event.target.classList, 'edit-direction') >= 0) {
+				this.editDirection(model);
+			} else {
+				this.openResult(model);
 			}
 
-			if (_.indexOf(event.target.classList, 'edit-direction') >= 0) {
-				this.editDirection(model);
-			}
+		},
+		openResult: function(model) {
+			console.log('openResult', model);
+			var self = this;
+			this.trigger("change:viewState", {
+				type: "diagnostics-instrumental-result",
+				options: {
+					modelId: model.get('id'),
+					appealId: self.options.appealId
+				}
+			});
+			App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics/instrumental/result/" + model.get('id'));
 
 		},
 

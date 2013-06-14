@@ -354,7 +354,6 @@ Core = {
 		},
 		
 		endsWith: function (str, chr) {
-			console.log(arguments, str[str.length-1], chr);
 			return str.length ? str[str.length - 1] === chr : false;
 		},
 

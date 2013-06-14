@@ -64,7 +64,9 @@ define([], function() {
 				}));
 			}, view);
 
-			view.select2 = view.$el.select2();
+			view.select2 = view.$el.select2({
+				allowClear: true
+			});
 
 			if (view.options.initSelection) {
 				view.val(view.options.initSelection)

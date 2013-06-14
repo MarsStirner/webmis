@@ -28,6 +28,7 @@ define(["views/filter"], function () {
 
 			UIInitialize(element.parent());
 
+
 			if (this.preselectedValue) {
 				element.select2("val", this.preselectedValue);//.change();
 			}

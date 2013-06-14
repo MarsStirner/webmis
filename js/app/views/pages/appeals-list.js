@@ -332,7 +332,7 @@ define([
 						//						console.log('bed-registration', model.get('id'));
 						view.newHospitalBed(model.get('id'));
 					} else {
-						App.Router.navigate('/appeals/' + model.get('id') + '/', {
+						App.Router.navigate('/appeals/' + model.get('id') + '/monitoring', {
 							trigger: true
 						});
 					}

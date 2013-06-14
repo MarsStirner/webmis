@@ -1,0 +1,4 @@
+<label>
+	<%=model.get('name')%>
+</label>
+<input type="text" class="Combo attribute-value" data-options="<%=model.get('scope').replace(/\'/g,'').split(',').join('|')%>"  value="<%=model.getValue()%>"/>

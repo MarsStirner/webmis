@@ -3,46 +3,38 @@
  * Date: 08.06.12
  */
 define([
-		"text!templates/appeal/edit/main.tmpl",
-		"views/diagnostics/laboratory/LaboratoryView",
-		"views/diagnostics/laboratory/LaboratoryResultView",
-		"views/diagnostics/instrumental/InstrumentalView",
-		"views/diagnostics/consultations/ConsultationsListView",
-		"views/appeal/edit/pages/monitoring",
-
+	"text!templates/appeal/edit/main.tmpl",
+	"views/diagnostics/laboratory/LaboratoryView",
+	"views/diagnostics/laboratory/LaboratoryResultView",
+	"views/diagnostics/instrumental/InstrumentalView",
+	"views/diagnostics/instrumental/InstrumentalResultView",
+	"views/diagnostics/consultations/ConsultationsListView",
+	"views/diagnostics/consultations/ConsultationsResultView",
+	"views/appeal/edit/pages/monitoring",
+	"views/documents/documents",
 	"views/moves/moves",
-		"views/moves/HospitalBedView",
-
-	//"text!templates/cardnav.tmpl",
-
-
+	"views/moves/HospitalBedView",
 	"models/appeal",
-		"collections/patient-appeals",
-
+	"collections/patient-appeals",
 	"views/breadcrumbs",
-		"views/menu",
-		"views/card-header",
-
-	//"views/appeal/edit/pages/instrumental",
-
-	//"views/appeal/edit/pages/consultation",
+	"views/menu",
+	"views/card-header",
 	"views/appeal/edit/pages/examinations",
-		"views/appeal/edit/pages/examination-edit",
-		"views/appeal/edit/pages/examination-primary",
-		"views/appeal/edit/pages/card"
-
-
+	"views/appeal/edit/pages/examination-edit",
+	"views/appeal/edit/pages/examination-primary",
+	"views/appeal/edit/pages/card"
 ], function(
 	template,
 	LaboratoryView,
 	LaboratoryResultView,
 	InstrumentalView,
+	InstrumentalResultView,
 	ConsultationView,
-
-Monitoring,
+	ConsultationResultView,
+	Monitoring,
+	Documents,
 	Moves,
 	HospitalBed
-
 ) {
 
 	App.Views.Main = View.extend({
@@ -51,11 +43,7 @@ Monitoring,
 		appeal: {},
 		patient: {},
 
-		events: {
-			//"click .Print": "onPrintClick"//,
-			//"click #staticPrints a" : "onStaticPrintsClick"
-			//,"click .SectionNav a": "onSectionClick"
-		},
+		documentEditorMode: false,
 
 		typeViews: {
 			"card": App.Views.Card,
@@ -69,34 +57,42 @@ Monitoring,
 			"diagnostics-laboratory": LaboratoryView,
 			"diagnostics-laboratory-result": LaboratoryResultView,
 			"diagnostics-instrumental": InstrumentalView,
+			"diagnostics-instrumental-result": InstrumentalResultView,
 			"diagnostics-consultations": ConsultationView,
+			"diagnostics-consultations-result": ConsultationResultView,
 
 			"first-examination-edit": App.Views.ExaminationEdit,
 
 			"moves": Moves,
 			"hospitalbed": HospitalBed,
 
-			"monitoring": Monitoring.Views.Layout
+			"monitoring": Monitoring.Views.Layout,
+
+			"documents": Documents.Views.List.Layout,
+
+			"document-edit": Documents.Views.Edit.Layout
 		},
 
 		breadCrumbsMap: {
 			"diagnostics-laboratory": App.Router.cachedBreadcrumbs.LABORATORY,
 			"diagnostics-laboratory-result": App.Router.cachedBreadcrumbs.LABORATORY_RESULT,
 			"diagnostics-instrumental": App.Router.cachedBreadcrumbs.INSTRUMENTAL,
+			"diagnostics-instrumental-result": App.Router.cachedBreadcrumbs.INSTRUMENTAL_RESULT,
 			"diagnostics-consultations": App.Router.cachedBreadcrumbs.CONSULTATION,
+			"diagnostics-consultations-result": App.Router.cachedBreadcrumbs.CONSULTATION_RESULT,
 			"examinations": App.Router.cachedBreadcrumbs.EXAMS,
 			"first-examination-edit": App.Router.cachedBreadcrumbs.EXAMS,
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
 			"card": App.Router.cachedBreadcrumbs.APPEAL,
 			"moves": App.Router.cachedBreadcrumbs.MOVES,
 			"hospitalbed": App.Router.cachedBreadcrumbs.HOSPITALBED,
-			"monitoring": App.Router.cachedBreadcrumbs.APPEAL
+			"monitoring": App.Router.cachedBreadcrumbs.APPEAL,
+			"documents": App.Router.cachedBreadcrumbs.APPEAL
 		},
 
-		initialize: function() {
+		initialize: function () {
 			this.appealId = this.options.id;
 			this.type = this.options.type;
-			//console.log('main init', this);
 
 			if (!(this.appealId && this.typeViews[this.type])) {
 				throw new Error("Invalid diagnostic type or empty appeal id");
@@ -105,8 +101,6 @@ Monitoring,
 			this.appeal = new App.Models.Appeal({
 				id: this.appealId
 			});
-
-
 
 			this.breadcrumbs = new App.Views.Breadcrumbs();
 
@@ -119,12 +113,7 @@ Monitoring,
 		},
 
 		setContentView: function(type, extraOptions) {
-			var force = false;
-			if (extraOptions && extraOptions.force) {
-				var force = extraOptions.force;
-			}
-
-			if (this.type !== type || !this.contentView || extraOptions.force) {
+			if (this.type !== type || !this.contentView || (extraOptions && extraOptions.force)) {
 				if (this.typeViews[type]) {
 					this.type = type;
 
@@ -136,6 +125,9 @@ Monitoring,
 						}
 						if (this.contentView.cleanUp) {
 							this.contentView.cleanUp();
+						}
+						if (this.contentView.tearDown) {
+							this.contentView.tearDown();
 						}
 					}
 
@@ -151,6 +143,7 @@ Monitoring,
 
 					this.contentView.on("change:printState", this.onPrintStateChange, this);
 					this.contentView.on("change:viewState", this.onViewStateChange, this);
+					this.contentView.on("change:mainState", this.onMainStateChange, this);
 
 					//this.togglePrintBtn();
 					this.cardHeader.hidePrintBtn();
@@ -168,7 +161,18 @@ Monitoring,
 			this.setContentView(event.type, event.options);
 		},
 
-		onAppealLoaded: function() {
+		onMainStateChange: function (event) {
+			switch (event.stateName) {
+				case "default":
+					this.toggleMenu(true);
+					break;
+				case "documentEditor":
+					this.toggleMenu(false);
+					break;
+			}
+		},
+
+		onAppealLoaded: function () {
 			var self = this;
 			var appealExtraData = new App.Collections.PatientAppeals();
 			appealExtraData.patient = this.appeal.get("patient");
@@ -204,43 +208,14 @@ Monitoring,
 			appealExtraData.off("reset", this.onAppealExtraDataLoaded, this);
 		},
 
-		onPatientLoaded: function(patient) {
+		onPatientLoaded: function (patient) {
 			Cache.Patient = patient;
-			this.setContentView(this.type);
 			this.ready();
+			this.setContentView(this.type);
 			this.setBreadcrumbsStructure();
 
 			patient.off("change", this.onPatientLoaded, this);
-			//this.renderCardnav();
 		},
-
-		/*onPrintClick: function (event) {
-			event.preventDefault();
-			this.contentView.showPrint({
-				template: $(event.currentTarget).data("print-template"),
-				data: $(event.currentTarget).data("print-data")
-			});
-		},*/
-
-		/*onStaticPrintsClick: function (event) {
-			event.preventDefault();
-			window.open($(event.currentTarget).attr("href"), "printWindow", "menubar=0,toolbar=0,status=0,location=0");
-		},*/
-
-		/*onSectionClick: function (event) {
-			event.preventDefault();
-			event.stopPropagation()
-			this.updateUrl(event);
-		},
-
-		updateUrl: function ( event ) {
-			var $target = $(event.currentTarget ),
-				href = $target.attr("href");
-
-			if ( href ) {
-				App.Router.navigate ( href, {trigger:true} );
-			}
-		},*/
 
 		setBreadcrumbsStructure: function() {
 			if (this.breadCrumbsMap[this.type]) {
@@ -264,50 +239,11 @@ Monitoring,
 			this.$("#page-head").html(this.breadcrumbs.render().el);
 
 			this.$(".LeftSideBar").html(this.menu.render().el);
-
-			//this.menu.delegateEvents();
-
-			this.renderPageContent();
 		},
 
 		render: function() {
 			return this;
 		},
-
-		/*renderCardnav: function () {
-			this.$(".CardHeader").html($.tmpl(cardnavTemplate, this.appeal.toJSON()));
-			this.$("#printBtn")
-				.button()
-				.next()
-					.button({
-						text: false,
-						icons: {
-							primary: "ui-icon-triangle-1-s"
-						}
-					})
-					.click(function () {
-						$(this).parent().next().position({
-							my: "right top",
-							at: "right bottom",
-							of: this
-						}).toggleClass("Active");
-
-						//event.stopPropagation();
-
-						return false;
-					})
-					.parent()
-						.buttonset();
-						*/
-		/**/
-		/*.next()
-							.hide();
-							.menu();*/
-		/**/
-		/*
-			this.togglePrintBtn();*/
-		/*
-		},*/
 
 		renderPageContent: function() {
 			this.menu.setPage(this.type);
@@ -323,6 +259,10 @@ Monitoring,
 			//this.$(".CardHeader .CardPrint")[this.contentView.canPrint ? "show" : "hide"]();
 		},
 
+		toggleMenu: function (visible) {
+			this.menu.$el.parent().toggle(!!visible);
+		},
+
 		getMenuStructure: function () {
 			var menuStructure = {};
 			var self = this;
@@ -334,12 +274,17 @@ Monitoring,
 						App.Router.compile({
 							name: "monitoring",
 							title: "Мониторинг&nbsp;состояния",
-							uri: "/appeals/:id/"
+							uri: "/appeals/:id/monitoring"
 						}, appealJSON),
+						// App.Router.compile({
+						// 	name: "examinations",
+						// 	title: "Осмотры",
+						// 	uri: "/appeals/:id/examinations/"
+						// }, appealJSON),
 						App.Router.compile({
-							name: "examinations",
-							title: "Осмотры",
-							uri: "/appeals/:id/examinations/"
+							name: "documents",
+							title: "Документы",
+							uri: "/appeals/:id/documents/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-laboratory",
@@ -368,14 +313,14 @@ Monitoring,
 							}
 						}()),
 						App.Router.compile({
-							name: "card",
-							title: "Титульный лист ИБ",
-							uri: "/appeals/:id/"
-						}, appealJSON),
-						App.Router.compile({
 							name: "moves",
 							title: "Движение пациента",
 							uri: "/appeals/:id/moves"
+						}, appealJSON),
+						App.Router.compile({
+							name: "card",
+							title: "Титульный лист ИБ",
+							uri: "/appeals/:id/"
 						}, appealJSON)
 					]
 				}
@@ -387,25 +332,19 @@ Monitoring,
 				menuStructure = {
 					structure: [
 						App.Router.compile({
-							name: "card",
-							title: "Основное",
-							uri: "/appeals/:id/"
+							name: "monitoring",
+							title: "Мониторинг&nbsp;состояния",
+							uri: "/appeals/:id/monitoring"
 						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-laboratory",
-							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
-						}, appealJSON),
-						//						{name: "medical-info", title: "Лечение", structure: [
-						//							{name: "medical-info", title: "Медикаментозное"},
-						//							{name: "medical-info", title: "Оперативное"},
-						//							{name: "medical-info", title: "Восстановительное"}
-						//						]},
-						//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
 						App.Router.compile({
 							name: "moves",
 							title: "Движение пациента",
 							uri: "/appeals/:id/moves"
+						}, appealJSON),
+						App.Router.compile({
+							name: "card",
+							title: "Титульный лист ИБ",
+							uri: "/appeals/:id/"
 						}, appealJSON)
 
 					]
@@ -427,6 +366,11 @@ Monitoring,
 							uri: "/appeals/:id/examinations/"
 						}, appealJSON),
 						App.Router.compile({
+							name: "documents",
+							title: "Документы",
+							uri: "/appeals/:id/documents/"
+						}, appealJSON),
+						App.Router.compile({
 							name: "diagnostics-laboratory",
 							title: "Лабораторные исследования",
 							uri: "/appeals/:id/diagnostics/laboratory/"
@@ -441,13 +385,6 @@ Monitoring,
 							title: "Консультации",
 							uri: "/appeals/:id/diagnostics/consultations/"
 						}, appealJSON),
-						//						{name: "medical-info", title: "Лечение", structure: [
-						//							{name: "medical-info", title: "Медикаментозное"},
-						//							{name: "medical-info", title: "Оперативное"},
-						//							{name: "medical-info", title: "Восстановительное"}
-						//						]},
-						/*App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)*/
-
 						App.Router.compile({
 							name: "moves",
 							title: "Движение пациента",
@@ -466,29 +403,6 @@ Monitoring,
 							title: "Основное",
 							uri: "/appeals/:id/"
 						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-laboratory",
-							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-instrumental",
-							title: "Инструментальные исследования",
-							uri: "/appeals/:id/diagnostics/instrumental/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-consultations",
-							title: "Консультации",
-							uri: "/appeals/:id/diagnostics/consultations/"
-						}, appealJSON),
-						//						{name: "address", title: "Диагностика"},
-						//						{name: "medical-info", title: "Лечение", structure: [
-						//							{name: "medical-info", title: "Медикаментозное"},
-						//							{name: "medical-info", title: "Оперативное"},
-						//							{name: "medical-info", title: "Восстановительное"}
-						//						]},
-						//App.Router.compile({name: "send-to-department", title: "Направить в отделение", uri: "/appeals/:id/"}, appealJSON)
-						//App.Router.compile({name: "hospitalbed", title: "Коечный фонд", uri: "/appeals/:id/hospitalbed"}, appealJSON),
 
 						App.Router.compile({
 							name: "moves",
