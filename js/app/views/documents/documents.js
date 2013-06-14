@@ -997,6 +997,12 @@ define(function (require) {
 
 		onToggleDividedStateClick: function () {
 			this.model.trigger("toggle:dividedState");
+			if (this.$(".toggle-divided-state .ui-button-text").text() == "Свернуть") {
+				this.$(".toggle-divided-state .ui-button-text").text("Развернуть");
+			} else {
+				this.$(".toggle-divided-state .ui-button-text").text("Свернуть");
+			}
+
 		},
 
 		onCopyFromPrevClick: function () {
