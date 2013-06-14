@@ -1601,18 +1601,36 @@ define(function (require) {
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
 			this.listenTo(this.collection, "review:next", this.onDocumentsReviewNext);
+			this.listenTo(this.collection, "review:prev", this.onDocumentsReviewPrev);
 		},
 
-		onDocumentsReviewNext: function (event) {
-			var currentDocument = this.collection.first();
+		tearDown: function () {
+			this.tearDownSubviews();
+			this.stopListening(this.collection, "review:next", this.onDocumentsReviewNext);
+			this.stopListening(this.collection, "review:prev", this.onDocumentsReviewPrev);
+			this.undelegateEvents();
+			this.remove();
+		},
 
-			var currentDocumentListItem = this.options.documents.get(currentDocument.id);
-			var currentDocumentListItemIndex = this.options.documents.indexOf(currentDocumentListItem);
-
-			var nextDocumentListItem = this.options.documents.at(currentDocumentListItemIndex + 1);
+		onDocumentsReviewNext: function () {
+			var nextDocumentListItem = this.options.documents.at(this.getListItemIndex() + 1);
 			var nextDocument = new Documents.Models.Document({id: nextDocumentListItem.id});
 
 			this.collection.reset([nextDocument]);
+		},
+
+		onDocumentsReviewPrev: function () {
+			var prevDocumentListItem = this.options.documents.at(this.getListItemIndex() - 1);
+			var prevDocument = new Documents.Models.Document({id: prevDocumentListItem.id});
+
+			this.collection.reset([prevDocument]);
+		},
+
+		getListItemIndex: function () {
+			var currentDocument = this.collection.first();
+			var currentDocumentListItem = this.options.documents.get(currentDocument.id);
+
+			return this.options.documents.indexOf(currentDocumentListItem);
 		},
 
 		render: function () {
@@ -1633,20 +1651,35 @@ define(function (require) {
 
 		events: {
 			"click .back-to-document-list": "onBackToDocumentListClick",
-			"click .prev-document": "onPrevDocumentClick",
-			"click .next-document": "onNextDocumentClick"
+			"click .next-document": "onNextDocumentClick",
+			"click .prev-document": "onPrevDocumentClick"
 		},
 
 		onBackToDocumentListClick: function () {
 			this.collection.trigger("quitReviewState");
 		},
 
-		onPrevDocumentClick: function () {
-
-		},
-
 		onNextDocumentClick: function () {
 			this.collection.trigger("review:next");
+		},
+
+		onPrevDocumentClick: function () {
+			this.collection.trigger("review:prev");
+		},
+
+		initialize: function () {
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+		},
+
+		tearDown: function () {
+			this.tearDownSubviews();
+			this.stopListening(this.collection, "reset", this.onCollectionReset);
+			this.undelegateEvents();
+			this.remove();
+		},
+
+		onCollectionReset: function () {
+
 		}
 	});
 
@@ -1698,6 +1731,12 @@ define(function (require) {
 		initialize: function () {
 			RepeaterBase.prototype.initialize.call(this, this.options);
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
+		},
+		tearDown: function () {
+			this.tearDownSubviews();
+			this.stopListening(this.collection, "reset", this.onCollectionReset);
+			this.undelegateEvents();
+			this.remove();
 		},
 		getRepeatView: function (repeatOptions) {
 			return new Documents.Views.Review.Sheet(repeatOptions);
