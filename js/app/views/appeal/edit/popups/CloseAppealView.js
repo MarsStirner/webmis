@@ -27,29 +27,21 @@ define(function(require) {
 
             var closeDocs = this.ui.$closeDocs.prop('checked');
 
-
+            var when;
             if (closeDocs) {
-                $.when(closeAppealDocs(), vacateBed(), closeAppeal()).
-                then(function() {
-                    console.log('всё закрыли', arguments);
-                    pubsub.trigger('appeal:closed');
-                    self.close();
-
-                }, function() {
-                    console.log('ошибка', arguments);
-                })
-
+                when = $.when(closeAppealDocs(), vacateBed(), closeAppeal());
             } else {
-                $.when(vacateBed(), closeAppeal()).
-                then(function() {
-                    pubsub.trigger('appeal:closed');
-                    self.close();
-                    console.log('всё закрыли', arguments);
-
-                }, function() {
-                    console.log('ошибка', arguments);
-                })
+                when = $.when(vacateBed(), closeAppeal());
             }
+
+            when.then(function() {
+                console.log('всё закрыли', arguments);
+                pubsub.trigger('appeal:closed');
+                self.close();
+
+            }, function() {
+                console.log('ошибка', arguments);
+            })
 
             function closeAppealDocs() {
                 //закрываем документы
@@ -58,7 +50,10 @@ define(function(require) {
                     dataType: 'jsonp',
                     type: 'GET',
                     success: function() {
-                        pubsub.trigger('noty', {text:'Закрыли документы' ,type:'success'});
+                        pubsub.trigger('noty', {
+                            text: 'Закрыли документы',
+                            type: 'success'
+                        });
                         console.log('success close docs', arguments);
                     }
                 });
@@ -71,7 +66,10 @@ define(function(require) {
                     dataType: 'jsonp',
                     type: 'GET',
                     success: function() {
-                        pubsub.trigger('noty', {text:'Выписали с койки' ,type:'success'});
+                        pubsub.trigger('noty', {
+                            text: 'Выписали с койки',
+                            type: 'success'
+                        });
                         console.log('success close bed', arguments);
                     }
                 });
@@ -85,16 +83,14 @@ define(function(require) {
                     dataType: 'jsonp',
                     type: 'GET',
                     success: function() {
-                        pubsub.trigger('noty', {text:'Закрыли историю болезни',type:'success'});
+                        pubsub.trigger('noty', {
+                            text: 'Закрыли историю болезни',
+                            type: 'success'
+                        });
                         console.log('success close appeal', arguments);
                     }
                 });
             }
-
-
-
-
-
 
 
         },
