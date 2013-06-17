@@ -387,7 +387,7 @@ define(function (require) {
 				if ($this.data("icon-secondary")) {
 					icons.secondary = $this.data("icon-secondary");
 				}
-				$this.button({icons: icons});
+				$this.button({icons: icons, text: !$this.data("notext")});
 			});
 			//this.$("select").select2();
 			return this;
