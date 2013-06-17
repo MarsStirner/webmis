@@ -378,7 +378,7 @@ define(function (require) {
 				this.subViews = {};
 				this.assign(subViews);
 			}
-			this.$("button").each(function () {
+			this.$("button,[data-display-as=button]").each(function () {
 				var $this = $(this);
 				var icons = {};
 				if ($this.data("icon-primary")) {
@@ -989,19 +989,18 @@ define(function (require) {
 		template: templates._editNavControls,
 
 		events: {
-			"click .toggle-divided-state": "onToggleDividedStateClick",
+			"change .toggle-divided-state": "onToggleDividedStateClick",
 			"click .copy-from-prev": "onCopyFromPrevClick",
 			"click .copy-from": "onCopyFromClick"
 		},
 
 		onToggleDividedStateClick: function () {
 			this.model.trigger("toggle:dividedState");
-			if (this.$(".toggle-divided-state .ui-button-text").text() == "Свернуть") {
-				this.$(".toggle-divided-state .ui-button-text").text("Развернуть");
+			/*if (this.$(".toggle-divided-state .ui-button-text").text() == "История") {
+				this.$(".toggle-divided-state .ui-button-text").text("Скрыть историю");
 			} else {
-				this.$(".toggle-divided-state .ui-button-text").text("Свернуть");
-			}
-
+				this.$(".toggle-divided-state .ui-button-text").text("История");
+			}*/
 		},
 
 		onCopyFromPrevClick: function () {
