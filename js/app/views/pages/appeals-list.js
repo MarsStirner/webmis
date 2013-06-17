@@ -246,7 +246,8 @@ define([
 
 				var doctors = new App.Collections.Doctors();
 				doctors.setParams({
-					limit: 9999
+					limit: 9999,
+					sortingField:'lastname'
 				});
 				var departments = new App.Collections.Departments();
 				departments.setParams({

@@ -934,7 +934,8 @@ Moves,
 			//Все врачи
 			this.allPersons = new Persons();
 			this.allPersons.setParams({
-				limit: 999
+				limit: 999,
+				sortingField:'lastname'
 			});
 			this.allPersons.on("reset", this.addAllPersons, this).fetch();
 
@@ -942,8 +943,9 @@ Moves,
 			this.departmentPersons = new Persons();
 			this.departmentPersons.setParams({
 				limit: 999,
+				sortingField:'lastname',
 				filter: {
-					departmentId: Core.Data.appealExtraData.get("department").id
+					departmentId: appeal.get("currentDepartment").id
 				}
 			});
 			this.departmentPersons.on("reset", this.addDepartmentPersons, this).fetch();
