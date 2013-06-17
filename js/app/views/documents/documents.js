@@ -1427,7 +1427,26 @@ define(function (require) {
 
 	//Поле типа Double
 	Documents.Views.Edit.UIElement.Double = UIElementBase.extend({
-		template: templates.uiElements._double
+		template: templates.uiElements._double,
+
+		events: _.extend({
+			"keypress .format-double": "onFormatDoubleKeypress",
+			"keyup .format-double": "onFormatDoubleKeyup"
+		}, UIElementBase.prototype.events),
+
+		onFormatDoubleKeypress: function (eve) {
+			var $ct = $(eve.currentTarget);
+			if ((eve.which != 46 || $ct.val().indexOf('.') != -1) && (eve.which < 48 || eve.which > 57) || (eve.which == 46 && $ct.caret().start == 0) ) {
+				eve.preventDefault();
+			}
+		},
+
+		onFormatDoubleKeyup: function (event) {
+			var $ct = $(event.currentTarget);
+			if ($ct.val().indexOf('.') == 0) {
+				$ct.val($ct.val().substring(1));
+			}
+		}
 	});
 
 	//Поле типа MKB
