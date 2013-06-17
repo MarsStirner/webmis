@@ -487,7 +487,7 @@ define(function (require) {
 	//Список
 	//---------------------
 
-	Documents.Views.List.LayoutLight = LayoutBase.extend({
+	Documents.Views.List.LayoutHistory = LayoutBase.extend({
 		template: templates._listLayout,
 
 		initialize: function () {
@@ -539,23 +539,23 @@ define(function (require) {
 		}
 	});
 
-	Documents.Views.List.Layout = Documents.Views.List.LayoutLight.extend({
+	Documents.Views.List.Layout = Documents.Views.List.LayoutHistory.extend({
 		attributes: {style: "display: table; width: 100%;"},
 
 		initialize: function () {
-			Documents.Views.List.LayoutLight.prototype.initialize.call(this, this.options);
+			Documents.Views.List.LayoutHistory.prototype.initialize.call(this, this.options);
 
 			this.documentTypes = new Documents.Collections.DocumentTypes();
 			this.documentTypes.fetch();
 		},
 
 		toggleReviewState: function (enabled) {
-			Documents.Views.List.LayoutLight.prototype.toggleReviewState.call(this, enabled);
+			Documents.Views.List.LayoutHistory.prototype.toggleReviewState.call(this, enabled);
 			this.$(".documents-controls").toggle(!enabled);
 		},
 
 		render: function () {
-			return Documents.Views.List.LayoutLight.prototype.render.call(this, {
+			return Documents.Views.List.LayoutHistory.prototype.render.call(this, {
 				".documents-controls": new Documents.Views.List.Controls({collection: this.documents, documentTypes: this.documentTypes})
 			});
 		}
@@ -870,7 +870,6 @@ define(function (require) {
 		 }*/
 	});
 
-
 	Documents.Views.List.Paging = ViewBase.extend({
 		template: templates._documentsTablePaging,
 		data: function () {
@@ -956,7 +955,7 @@ define(function (require) {
 						"</div>"
 				);
 
-				this.listLayoutLight = new Documents.Views.List.LayoutLight({included: true});
+				this.listLayoutLight = new Documents.Views.List.LayoutHistory({included: true});
 
 				this.assign({".document-list": this.listLayoutLight});
 
