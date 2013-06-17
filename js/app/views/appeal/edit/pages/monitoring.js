@@ -392,6 +392,16 @@ Moves,
 			appeal = this.model = this.options.appeal;
 			appealJSON = appeal.toJSON();
 			this.canPrint = false;
+
+			pubsub.on('appeal:closed',function(){//когда закрыли историю болезни
+				appeal.fetch();
+			});
+
+			appeal.on('change', function(){
+				console.log('on appeal change');
+				this.render();
+			},this);
+
 		},
 
 		render: function() {
@@ -602,7 +612,7 @@ Moves,
 			return {
 				appealNumber: appeal.get("number"),
 				appealIsUrgent: appeal.get("urgent"),
-				appealIsClosed: appeal.closed
+				appealIsClosed: appeal.get('closed')
 			};
 		},
 		render: function() {

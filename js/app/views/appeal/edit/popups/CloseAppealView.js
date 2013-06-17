@@ -14,6 +14,7 @@ define(function(require) {
             'click .save': 'onSave'
         },
         onSave: function() {
+            var self = this;
             console.log('onSave');
             this.ui.$saveButton.button('disable');
 
@@ -28,36 +29,71 @@ define(function(require) {
 
 
             if (closeDocs) {
+                $.when(closeAppealDocs(), vacateBed(), closeAppeal()).
+                then(function() {
+                    console.log('всё закрыли', arguments);
+                    pubsub.trigger('appeal:closed');
+                    self.close();
+
+                }, function() {
+                    console.log('ошибка', arguments);
+                })
+
+            } else {
+                $.when(vacateBed(), closeAppeal()).
+                then(function() {
+                    pubsub.trigger('appeal:closed');
+                    self.close();
+                    console.log('всё закрыли', arguments);
+
+                }, function() {
+                    console.log('ошибка', arguments);
+                })
+            }
+
+            function closeAppealDocs() {
                 //закрываем документы
-                $.ajax({
+                return $.ajax({
                     url: '/api/v1/appeals/' + appealId + '/docs/close?execDate=' + closeDate,
                     dataType: 'jsonp',
                     type: 'GET',
                     success: function() {
+                        pubsub.trigger('noty', {text:'Закрыли документы' ,type:'success'});
                         console.log('success close docs', arguments);
+                    }
+                });
+            };
+
+            function vacateBed() {
+                //выписка с койки
+                return $.ajax({
+                    url: '/api/v1/appeals/' + appealId + '/bed/vacate?execDate=' + closeDate,
+                    dataType: 'jsonp',
+                    type: 'GET',
+                    success: function() {
+                        pubsub.trigger('noty', {text:'Выписали с койки' ,type:'success'});
+                        console.log('success close bed', arguments);
                     }
                 });
             }
 
-            //выписка с койки
-            $.ajax({
-                url: '/api/v1/appeals/' + appealId + '/bed/vacate?execDate=' + closeDate,
-                dataType: 'jsonp',
-                type: 'GET',
-                success: function() {
-                    console.log('success close bed', arguments);
-                }
-            });
 
-            //выписка с истории болезни
-            $.ajax({
-                url: '/api/v1/appeals/' + appealId + '/close?execDate=' + closeDate,
-                dataType: 'jsonp',
-                type: 'GET',
-                success: function() {
-                    console.log('success close appeal', arguments);
-                }
-            });
+            function closeAppeal() {
+                //выписка с истории болезни
+                return $.ajax({
+                    url: '/api/v1/appeals/' + appealId + '/close?execDate=' + closeDate,
+                    dataType: 'jsonp',
+                    type: 'GET',
+                    success: function() {
+                        pubsub.trigger('noty', {text:'Закрыли историю болезни',type:'success'});
+                        console.log('success close appeal', arguments);
+                    }
+                });
+            }
+
+
+
+
 
 
 
