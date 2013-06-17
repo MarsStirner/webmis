@@ -49,7 +49,8 @@ define(function(require) {
             //Все врачи
             this.allPersons = new Persons();
             this.allPersons.setParams({
-                limit: 999
+                limit: 999,
+                sortingField:'lastname'
             });
             this.allPersons.on("reset", this.addAllPersons, this);
             this.allPersons.fetch();
@@ -65,6 +66,7 @@ define(function(require) {
             this.departmentPersons = new Persons();
             this.departmentPersons.setParams({
                 limit: 999,
+                sortingField:'lastname',
                 filter: {
                     departmentId: this.appealExtraData.get("department").id
                 }
