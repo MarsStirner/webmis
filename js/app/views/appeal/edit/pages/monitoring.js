@@ -874,7 +874,7 @@ Moves,
 				limit: 999,
 				sortingField:'lastname',
 				filter: {
-					departmentId: Core.Data.appealExtraData.get("department").id
+					departmentId: appeal.get("currentDepartment").id
 				}
 			});
 			this.departmentPersons.on("reset", this.addDepartmentPersons, this).fetch();

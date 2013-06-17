@@ -29,12 +29,13 @@ define(function(require) {
             if (!this.options.appeal) {
                 throw new Error('Нет госпитализации в опциях вью!');
             }
-            //загружаем список госпитализаций,
-            //чтобы из последней гопитализации получить отделение пациента
-            this.loadAppealExtraData();
+
 
             //Все врачи
             this.loadAllPersons();
+
+            //Врачи отделения
+            this.loadDepartmentPersons();
 
             this.assignMe = true;
 
@@ -68,7 +69,7 @@ define(function(require) {
                 limit: 999,
                 sortingField:'lastname',
                 filter: {
-                    departmentId: this.appealExtraData.get("department").id
+                    departmentId: this.options.appeal.get("currentDepartment").id
                 }
             });
             this.departmentPersons.on("reset", this.addDepartmentPersons, this);
@@ -79,29 +80,6 @@ define(function(require) {
             this.$(".department-persons").append(this.departmentPersons.map(function(person) {
                 return "<option value='" + person.get('id') + "'>" + person.get("name").raw + "</option>";
             })).select2("enable");
-        },
-
-        loadAppealExtraData: function() {
-            var self = this;
-            var appealExtraData = new PatientAppeals();
-            appealExtraData.patient = this.options.appeal.get("patient");
-            appealExtraData.setParams({
-                filter: {
-                    number: self.options.appeal.get("number")
-                }
-            });
-            appealExtraData.on("reset", this.onAppealExtraDataLoaded, this);
-            appealExtraData.fetch();
-
-        },
-
-        onAppealExtraDataLoaded: function(appealExtraData) {
-
-            this.appealExtraData = appealExtraData.first();
-            //Врачи отделения
-            this.loadDepartmentPersons();
-
-            appealExtraData.off("reset", this.onAppealExtraDataLoaded, this);
         },
 
         onFilterPersonsChange: function(event) {
