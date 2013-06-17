@@ -83,10 +83,10 @@ Version: 3.1 Timestamp: Tue Aug 14 09:05:17 PDT 2012
   display: block;
   position: absolute;
   right: 26px;
-  top: 13px;
+  top: 0.6em;
   width: 12px;
   height: 12px;
-  font-size: 1px;
+  font-size: inherit;
   background: url('select2.png') right top no-repeat;
   cursor: pointer;
   text-decoration: none;
