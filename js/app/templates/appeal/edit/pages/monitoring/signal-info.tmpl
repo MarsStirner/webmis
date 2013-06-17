@@ -2,14 +2,16 @@
 <tr>
 	<td>Дата поступления</td>
 	<td>
-		<%= Core.Date.format(appealExtraData.rangeAppealDateTime.start) %>
+		<%= Core.Date.format(appeal.rangeAppealDateTime.start) %>
 	</td>
 </tr>
 <tr>
 	<td>Продолжительность лечения (дней) или дата выписки</td>
 	<td>
-		<% if (appealExtraData.rangeAppealDateTime.end) { %>
-			<%= Core.Date.format(appealExtraData.rangeAppealDateTime.end) %>
+		<% if (appeal.closed) { %>
+			<% if (appealExtraData.rangeAppealDateTime.end){ %>
+				<%= Core.Date.format(appealExtraData.rangeAppealDateTime.end) %>
+			<%}%>
 		<% } else { %>
 			<%= days %>
 		<% } %>
@@ -18,7 +20,7 @@
 <tr>
 	<td>Отделение</td>
 	<td>
-		<%= appealExtraData.department.name %>
+		<%= appeal.currentDepartment.name %>
 	</td>
 </tr>
 <!--<tr>
@@ -42,8 +44,8 @@
 	<td>
 		<div class="row-fluid">
 			<div class="span12" style="min-height: 0">
-				<% if (appealExtraData.execPerson && appealExtraData.execPerson.doctor) { %>
-					<%= appealExtraData.execPerson.doctor.name.full %>
+				<% if (appeal.execPerson && appeal.execPerson.name) { %>
+					<%= appeal.execPerson.name.raw %>
 				<% } else { %>
 					<span class="Warning">Врач не назначен</span>
 				<% } %>

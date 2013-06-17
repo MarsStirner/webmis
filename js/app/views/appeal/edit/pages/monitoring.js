@@ -691,7 +691,7 @@ Moves,
 
 			this.bloodTypesDict.on("reset", this.render, this).fetch();
 
-			if (appeal.closed) {
+			if (appeal.get('closed')) {
 				this.canChangeBloodType = false;
 			} else {
 				this.canChangeBloodType = true;
@@ -843,15 +843,28 @@ Moves,
 		data: function() {
 			return {
 				lastMove: this.moves.last(),
-				appeal: appealJSON,
+				appeal: appeal.toJSON(),
 				appealExtraData: Core.Data.appealExtraData.toJSON(),
-				days: this.days,
+				days: this.days(),
 				canAssign: this.canAssign
 			};
 		},
 
 		events: {
 			"click .assign-exec-person": "onAssignExecPersonClick"
+		},
+		days: function(){
+			var days;
+			//продолжительность лечения
+			if (appealJSON.appealType.requestType.id === 1) {
+				//дневной стационар
+				days = moment().diff(moment(appeal.get('rangeAppealDateTime').start), "days") + 1;
+			} else if (appealJSON.appealType.requestType.id === 2) {
+				//круглосуточный стационар
+				days = moment().diff(moment(appeal.get('rangeAppealDateTime').start), "days");
+			}
+
+			return days;
 		},
 
 		initialize: function() {
@@ -861,17 +874,10 @@ Moves,
 			this.moves.appealId = appeal.get("id");
 			//console.log("fetching moves");
 			this.moves.on("reset", this.render, this).fetch();
-			//продолжительность лечения
-			if (appealJSON.appealType.requestType.id === 1) {
-				//дневной стационар
-				this.days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days") + 1;
-			} else if (appealJSON.appealType.requestType.id === 2) {
-				//круглосуточный стационар
-				this.days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days");
-			}
 
 
-			if (appeal.closed) {
+
+			if (appeal.get('closed')) {
 				this.canAssign = false;
 			} else {
 				this.canAssign = true;
