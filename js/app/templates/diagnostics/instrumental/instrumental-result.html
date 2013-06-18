@@ -1,0 +1,21 @@
+<div class="actions" style="margin-bottom:2em;">
+    <button class="buck-to-list"><i class="icon-list"></i> Вернуться к списку</button>
+</div>
+<div class="Inspection" style="display: table;">
+<div class="SingleHeader Clearfix">
+    <h2><%= data.name %></h2>
+    <div class="SingleInfo">
+        <span class="Date"><%= data.plannedEndDate %></span> <% if (data.doctor){%>| <span class="Doctor"><%= data.doctor %></span> <%}%>
+    </div>
+</div>
+<ul>
+<% _.each(data.tests, function(test){%>
+<li>
+    <strong><%= test.name %></strong>
+    <%= test.value %>
+</li>
+<%});%>
+</ul>
+</div>
+
+

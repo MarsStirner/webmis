@@ -3,46 +3,38 @@
  * Date: 08.06.12
  */
 define([
-		"text!templates/appeal/edit/main.tmpl",
-		"views/diagnostics/laboratory/LaboratoryView",
-		"views/diagnostics/laboratory/LaboratoryResultView",
-		"views/diagnostics/instrumental/InstrumentalView",
-		"views/diagnostics/consultations/ConsultationsListView",
-		"views/appeal/edit/pages/monitoring",
-
+	"text!templates/appeal/edit/main.tmpl",
+	"views/diagnostics/laboratory/LaboratoryView",
+	"views/diagnostics/laboratory/LaboratoryResultView",
+	"views/diagnostics/instrumental/InstrumentalView",
+	"views/diagnostics/instrumental/InstrumentalResultView",
+	"views/diagnostics/consultations/ConsultationsListView",
+	"views/diagnostics/consultations/ConsultationsResultView",
+	"views/appeal/edit/pages/monitoring",
+	"views/documents/documents",
 	"views/moves/moves",
-		"views/moves/HospitalBedView",
-
-	//"text!templates/cardnav.tmpl",
-
-
+	"views/moves/HospitalBedView",
 	"models/appeal",
-		"collections/patient-appeals",
-
+	"collections/patient-appeals",
 	"views/breadcrumbs",
-		"views/menu",
-		"views/card-header",
-
-	//"views/appeal/edit/pages/instrumental",
-
-	//"views/appeal/edit/pages/consultation",
+	"views/menu",
+	"views/card-header",
 	"views/appeal/edit/pages/examinations",
-		"views/appeal/edit/pages/examination-edit",
-		"views/appeal/edit/pages/examination-primary",
-		"views/appeal/edit/pages/card"
-
-
+	"views/appeal/edit/pages/examination-edit",
+	"views/appeal/edit/pages/examination-primary",
+	"views/appeal/edit/pages/card"
 ], function(
 	template,
 	LaboratoryView,
 	LaboratoryResultView,
 	InstrumentalView,
+	InstrumentalResultView,
 	ConsultationView,
-
-Monitoring,
+	ConsultationResultView,
+	Monitoring,
+	Documents,
 	Moves,
 	HospitalBed
-
 ) {
 
 	App.Views.Main = View.extend({
@@ -51,11 +43,7 @@ Monitoring,
 		appeal: {},
 		patient: {},
 
-		events: {
-			//"click .Print": "onPrintClick"//,
-			//"click #staticPrints a" : "onStaticPrintsClick"
-			//,"click .SectionNav a": "onSectionClick"
-		},
+		documentEditorMode: false,
 
 		typeViews: {
 			"card": App.Views.Card,
@@ -69,34 +57,42 @@ Monitoring,
 			"diagnostics-laboratory": LaboratoryView,
 			"diagnostics-laboratory-result": LaboratoryResultView,
 			"diagnostics-instrumental": InstrumentalView,
+			"diagnostics-instrumental-result": InstrumentalResultView,
 			"diagnostics-consultations": ConsultationView,
+			"diagnostics-consultations-result": ConsultationResultView,
 
 			"first-examination-edit": App.Views.ExaminationEdit,
 
 			"moves": Moves,
 			"hospitalbed": HospitalBed,
 
-			"monitoring": Monitoring.Views.Layout
+			"monitoring": Monitoring.Views.Layout,
+
+			"documents": Documents.Views.List.Layout,
+
+			"document-edit": Documents.Views.Edit.Layout
 		},
 
 		breadCrumbsMap: {
 			"diagnostics-laboratory": App.Router.cachedBreadcrumbs.LABORATORY,
 			"diagnostics-laboratory-result": App.Router.cachedBreadcrumbs.LABORATORY_RESULT,
 			"diagnostics-instrumental": App.Router.cachedBreadcrumbs.INSTRUMENTAL,
+			"diagnostics-instrumental-result": App.Router.cachedBreadcrumbs.INSTRUMENTAL_RESULT,
 			"diagnostics-consultations": App.Router.cachedBreadcrumbs.CONSULTATION,
+			"diagnostics-consultations-result": App.Router.cachedBreadcrumbs.CONSULTATION_RESULT,
 			"examinations": App.Router.cachedBreadcrumbs.EXAMS,
 			"first-examination-edit": App.Router.cachedBreadcrumbs.EXAMS,
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
 			"card": App.Router.cachedBreadcrumbs.APPEAL,
 			"moves": App.Router.cachedBreadcrumbs.MOVES,
 			"hospitalbed": App.Router.cachedBreadcrumbs.HOSPITALBED,
-			"monitoring": App.Router.cachedBreadcrumbs.APPEAL
+			"monitoring": App.Router.cachedBreadcrumbs.APPEAL,
+			"documents": App.Router.cachedBreadcrumbs.APPEAL
 		},
 
-		initialize: function() {
+		initialize: function () {
 			this.appealId = this.options.id;
 			this.type = this.options.type;
-			//console.log('main init', this);
 
 			if (!(this.appealId && this.typeViews[this.type])) {
 				throw new Error("Invalid diagnostic type or empty appeal id");
@@ -105,8 +101,6 @@ Monitoring,
 			this.appeal = new App.Models.Appeal({
 				id: this.appealId
 			});
-
-
 
 			this.breadcrumbs = new App.Views.Breadcrumbs();
 
@@ -119,12 +113,7 @@ Monitoring,
 		},
 
 		setContentView: function(type, extraOptions) {
-			var force = false;
-			if (extraOptions && extraOptions.force) {
-				var force = extraOptions.force;
-			}
-
-			if (this.type !== type || !this.contentView || extraOptions.force) {
+			if (this.type !== type || !this.contentView || (extraOptions && extraOptions.force)) {
 				if (this.typeViews[type]) {
 					this.type = type;
 
@@ -136,6 +125,9 @@ Monitoring,
 						}
 						if (this.contentView.cleanUp) {
 							this.contentView.cleanUp();
+						}
+						if (this.contentView.tearDown) {
+							this.contentView.tearDown();
 						}
 					}
 
@@ -151,6 +143,7 @@ Monitoring,
 
 					this.contentView.on("change:printState", this.onPrintStateChange, this);
 					this.contentView.on("change:viewState", this.onViewStateChange, this);
+					this.contentView.on("change:mainState", this.onMainStateChange, this);
 
 					//this.togglePrintBtn();
 					this.cardHeader.hidePrintBtn();
@@ -168,7 +161,18 @@ Monitoring,
 			this.setContentView(event.type, event.options);
 		},
 
-		onAppealLoaded: function() {
+		onMainStateChange: function (event) {
+			switch (event.stateName) {
+				case "default":
+					this.toggleMenu(true);
+					break;
+				case "documentEditor":
+					this.toggleMenu(false);
+					break;
+			}
+		},
+
+		onAppealLoaded: function () {
 			var self = this;
 			var appealExtraData = new App.Collections.PatientAppeals();
 			appealExtraData.patient = this.appeal.get("patient");
@@ -204,16 +208,14 @@ Monitoring,
 			appealExtraData.off("reset", this.onAppealExtraDataLoaded, this);
 		},
 
-		onPatientLoaded: function(patient) {
+		onPatientLoaded: function (patient) {
 			Cache.Patient = patient;
-			this.setContentView(this.type);
 			this.ready();
+			this.setContentView(this.type);
 			this.setBreadcrumbsStructure();
 
 			patient.off("change", this.onPatientLoaded, this);
-			//this.renderCardnav();
 		},
-
 
 		setBreadcrumbsStructure: function() {
 			if (this.breadCrumbsMap[this.type]) {
@@ -237,17 +239,11 @@ Monitoring,
 			this.$("#page-head").html(this.breadcrumbs.render().el);
 
 			this.$(".LeftSideBar").html(this.menu.render().el);
-
-			//this.menu.delegateEvents();
-
-			this.renderPageContent();
 		},
 
 		render: function() {
 			return this;
 		},
-
-
 
 		renderPageContent: function() {
 			this.menu.setPage(this.type);
@@ -263,7 +259,11 @@ Monitoring,
 			//this.$(".CardHeader .CardPrint")[this.contentView.canPrint ? "show" : "hide"]();
 		},
 
-		getMenuStructure: function() {
+		toggleMenu: function (visible) {
+			this.menu.$el.parent().toggle(!!visible);
+		},
+
+		getMenuStructure: function () {
 			var menuStructure = {};
 			var self = this;
 
@@ -276,10 +276,15 @@ Monitoring,
 							title: "Мониторинг&nbsp;состояния",
 							uri: "/appeals/:id/monitoring"
 						}, appealJSON),
+						// App.Router.compile({
+						// 	name: "examinations",
+						// 	title: "Осмотры",
+						// 	uri: "/appeals/:id/examinations/"
+						// }, appealJSON),
 						App.Router.compile({
-							name: "examinations",
-							title: "Осмотры",
-							uri: "/appeals/:id/examinations/"
+							name: "documents",
+							title: "Документы",
+							uri: "/appeals/:id/documents/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-laboratory",
@@ -359,6 +364,11 @@ Monitoring,
 							name: "examinations",
 							title: "Осмотры",
 							uri: "/appeals/:id/examinations/"
+						}, appealJSON),
+						App.Router.compile({
+							name: "documents",
+							title: "Документы",
+							uri: "/appeals/:id/documents/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-laboratory",

@@ -119,7 +119,17 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 			"prints/": "prints",
 
-			"widgets/": "widgets"
+			"widgets/": "widgets",
+
+			"test/": "test"
+		},
+
+		test: function () {
+			require(["views/documents/documents"], function (Documents) {
+				//var docsLayout = new Documents.Views.List.Layout();
+				$("#wrapper").html(new Documents.Views.List.Layout().render().el);
+				$("#dinputest").dPassword({});
+			});
 		},
 
 		widgets: function() {
@@ -688,9 +698,17 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			title: "Инструментальные исследования",
 			uri: "/appeals/:id/instrumental/"
 		},
+		INSTRUMENTAL_RESULT: {
+			title: "Результаты инструментального исследования",
+			uri: "/appeals/:id/diagnostics/instrumental/result/:test"
+		},
 		CONSULTATION: {
 			title: "Консультации",
 			uri: "/appeals/:id/diagnostics/consultations/"
+		},
+		CONSULTATION_RESULT: {
+			title: "Результаты консультации",
+			uri: "/appeals/:id/diagnostics/consultations/result/:test"
 		},
 		REPORTS: {
 			title: "Отчёты",

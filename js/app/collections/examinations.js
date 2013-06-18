@@ -7,7 +7,7 @@ define(["models/examination"], function ()
 	App.Collections.Examinations = Collection.extend({
 		model: App.Models.Examination,
 		url: function () {
-			return DATA_PATH + "appeals/" + this.appealId + "/examinations/"
+			return DATA_PATH + "appeals/" + this.appealId + "/documents/?filter[mnem]=EXAM"
 		}
 	});
 

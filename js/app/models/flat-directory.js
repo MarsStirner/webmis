@@ -115,6 +115,7 @@ define(function () {
 					.get("fieldValueList")
 					.each(function(value) {
 						beautyRecord[value.toJSON().fieldDescription.id] = value.toJSON().fieldValue.value;
+						beautyRecord[value.toJSON().fieldDescription.name] = value.toJSON().fieldValue.value;
 					});
 				beautyRecordList.push(beautyRecord);
 			});

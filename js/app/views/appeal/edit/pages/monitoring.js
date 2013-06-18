@@ -137,19 +137,8 @@ Moves,
 			//return "/monitoring-info.json";
 		},
 
-		parse: function(raw) {
-			var rawByDate = {};
-
-			_.each(raw.data, function(param) {
-				_.each(param.values, function(paramValue) {
-					if (!rawByDate.hasOwnProperty(paramValue.date)) {
-						rawByDate[paramValue.date] = {};
-					}
-					rawByDate[paramValue.date][param.code] = (paramValue.value !== "0.0" ? paramValue.value : "");
-				});
-			});
-
-			var parsed = _.map(rawByDate, function(rawRow, date) {
+		getParseMap: function (rawByDate) {
+			return _.map(rawByDate, function(rawRow, date) {
 				return {
 					datetime: +date,
 					temperature: rawRow["TEMPERATURE"],
@@ -162,6 +151,21 @@ Moves,
 					health: rawRow["WB"]
 				};
 			});
+		},
+
+		parse: function(raw) {
+			var rawByDate = {};
+
+			_.each(raw.data, function(param) {
+				_.each(param.values, function(paramValue) {
+					if (!rawByDate.hasOwnProperty(paramValue.date)) {
+						rawByDate[paramValue.date] = {};
+					}
+					rawByDate[paramValue.date][param.code] = (paramValue.value !== "0.0" ? paramValue.value : "");
+				});
+			});
+
+			var parsed = this.getParseMap(rawByDate);
 
 			parsed = parsed
 				.sort(function(a, b) {
@@ -190,7 +194,7 @@ Moves,
 	 * Модель для таблицы "Экспресс-анализы"
 	 * @type {*}
 	 */
-	Monitoring.Models.ExpressAnalysis = Model.extend({
+	Monitoring.Models.ExpressAnalysis = Monitoring.Models.MonitoringInfo.extend({
 		defaults: {
 			"datetime": "",
 			"k": "",
@@ -208,16 +212,28 @@ Moves,
 	 * Коллекция для таблицы "Экспресс-анализы"
 	 * @type {*}
 	 */
-	Monitoring.Collections.ExpressAnalyses = Collection.extend({
-		model: Monitoring.Models.MonitoringInfo,
+	Monitoring.Collections.ExpressAnalyses = Monitoring.Collections.MonitoringInfos.extend({
+		model: Monitoring.Models.ExpressAnalysis,
 
-		sync: function(method, model, options) {
-			return Backbone.sync(method, model, options);
+		getParseMap: function (rawByDate) {
+			return _.map(rawByDate, function(rawRow, date) {
+				return {};
+				/*return {
+					datetime: +date,
+					temperature: rawRow["TEMPERATURE"],
+					bpras: rawRow["BPRAS"],
+					bprad: rawRow["BPRAS"],
+					heartRate: rawRow["PULS"],
+					spo2: rawRow["SPO2"],
+					breathRate: rawRow["RR"],
+					state: rawRow["STATE"],
+					health: rawRow["WB"]
+				};*/
+			});
 		},
 
 		url: function() {
-			//return DATA_PATH + "";
-			return "/express-analyses.json";
+			return DATA_PATH + "appeals/" + appeal.get("id") + "/analyzes";
 		}
 	});
 
@@ -605,7 +621,8 @@ Moves,
 		data: function() {
 			return {
 				currentBloodType: appeal.get("patient").get("medicalInfo").get("blood"),
-				bloodTypes: this.bloodTypesDict
+				bloodTypes: this.bloodTypesDict,
+				canChangeBloodType:this.canChangeBloodType
 			};
 		},
 
@@ -633,6 +650,12 @@ Moves,
 			});
 
 			this.bloodTypesDict.on("reset", this.render, this).fetch();
+
+			if (appeal.closed) {
+				this.canChangeBloodType = false;
+			}else{
+				this.canChangeBloodType = true;
+			}
 		},
 
 		onEditBloodClick: function(event) {
@@ -782,7 +805,8 @@ Moves,
 				lastMove: this.moves.last(),
 				appeal: appealJSON,
 				appealExtraData: Core.Data.appealExtraData.toJSON(),
-				days: this.days
+				days: this.days,
+				canAssign:this.canAssign
 			};
 		},
 
@@ -804,6 +828,13 @@ Moves,
 			} else if (appealJSON.appealType.requestType.id === 2) {
 				//круглосуточный стационар
 				this.days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days");
+			}
+
+
+			if (appeal.closed) {
+				this.canAssign = false;
+			}else{
+				this.canAssign = true;
 			}
 
 

@@ -44,8 +44,12 @@ define([
 				this.isLeafNode = true;
 				this.termSelected();
 			} else {
-				new ThesaurusTree({collection: this.model.get("childrenTerms"), parent: this}).render().$el.appendTo(this.$el.addClass("Opened"));
+				this.createBranch();
 			}
+		},
+
+		createBranch: function () {
+			new ThesaurusTree({collection: this.model.get("childrenTerms"), parent: this}).render().$el.appendTo(this.$el.addClass("Opened"));
 		},
 
 		termSelected: function () {
@@ -234,7 +238,7 @@ define([
 					event.preventDefault();
 				});
 
-				UIInitialize(this.el);
+				//UIInitialize(this.el);
 			}
 
 			return this;
