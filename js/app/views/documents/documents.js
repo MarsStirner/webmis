@@ -4,12 +4,35 @@
  */
 
 define(function (require) {
+	//Структура модуля
+	var Documents = {
+		Views: {
+			List: {
+				Base: {},
+				Common: {},
+				Examination: {},
+				Therapy: {}
+			},
+			Review: {},
+			Edit: {
+				UIElement: {}
+			}
+		},
+		Collections: {},
+		Models: {}
+	};
+
+
+	//region BOOTSTRAP
 	var Backbone = window.Backbone;
 	var _ = window._;
 	var appealId = 0;
 	var appeal = null;
 	var dispatcher = _.extend({}, Backbone.Events);
+	//endregion
 
+
+	//region DEPENDENCIES
 	var templates = {
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
 		_listControls: _.template(require("text!templates/documents/list/controls.html")),
@@ -44,22 +67,10 @@ define(function (require) {
 	var Thesaurus = require("views/appeal/edit/popups/thesaurus");
 	var FlatDirectory = require("models/flat-directory");
 	var MKB = require("views/mkb-directory");
+	//endregion
 
-	//Структура модуля
-	var Documents = {
-		Views: {
-			List: {},
-			Review: {},
-			Edit: {
-				UIElement: {}
-			}
-		},
-		Collections: {},
-		Models: {}
-	};
 
-	//Модели
-	//---------------------
+	//region MODELS
 	//---------------------
 
 	Documents.Models.FetchableModelBase = Backbone.Model.extend({});
@@ -295,11 +306,10 @@ define(function (require) {
 			return copyAttr.properties[this.getValuePropertyIndex(copyAttr.properties, copyAttr.type)].value;
 		}
 	});
+	//endregion
 
-	//Коллекции
-	//---------------------
-	//---------------------
 
+	//region COLLECTIONS
 	Documents.Collections.DocumentList = Collection.extend({
 		model: Documents.Models.DocumentListItem,
 		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
@@ -309,6 +319,9 @@ define(function (require) {
 		initialize: function (models, options) {
 			Collection.prototype.initialize.call(this);
 			this.appealId = options.appealId || appealId;
+			if (options.defaultMnems) {
+				this.mnems = options.defaultMnems;
+			}
 		},
 		url: function () {
 			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?sortingField=assessmentDate&sortingMethod=desc&";
@@ -353,11 +366,13 @@ define(function (require) {
 			return DATA_PATH + "dir/actionTypes/?filter[view]=tree&filter[mnem]=EXAM&filter[mnem]=EPI&filter[mnem]=JOUR&filter[mnem]=ORD";
 		}
 	});
+	//endregion
 
-	//Представления
-	//---------------------
+
+	//region VIEWS
 	//---------------------
 
+	//region VIEWS BASE
 	//Базовые классы
 	var ViewBase = Documents.Views.Base = Backbone.View.extend({
 		template: _.template(""),
@@ -484,13 +499,16 @@ define(function (require) {
 			return this;
 		}
 	});
+	//endregion
 
-	//Список
+
+	//region VIEWS LIST BASE
 	//---------------------
-
-	Documents.Views.List.LayoutHistory = LayoutBase.extend({
-		template: templates._listLayout,
-
+	/**
+	 * Базовый лэйаут списка созданных документов
+	 * @type {*}
+	 */
+	var ListLayoutBase = Documents.Views.List.Base.Layout = LayoutBase.extend({
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
 
@@ -500,12 +518,18 @@ define(function (require) {
 			}
 			this.appealId = appealId;
 
-			this.documents = new Documents.Collections.DocumentList([], {appealId: this.appealId});
+			this.documents = new Documents.Collections.DocumentList([], {appealId: this.appealId, defaultMnems: this.getDefaultDocumentsMnems()});
 			this.documents.fetch();
 
 			this.selectedDocuments = new Backbone.Collection();
 			this.listenTo(this.selectedDocuments, "review:enter", this.onEnteredReviewState);
 			this.listenTo(this.selectedDocuments, "review:quit", this.onQuitReviewState);
+
+			this.reviewStateToggles = [".documents-table", ".documents-paging", ".controls-filters"];
+		},
+
+		getDefaultDocumentsMnems: function () {
+			return Documents.Collections.DocumentList.prototype.mnems;
 		},
 
 		onEnteredReviewState: function () {
@@ -517,7 +541,8 @@ define(function (require) {
 		},
 
 		toggleReviewState: function (enabled) {
-			this.$(".documents-table, .controls-filters, .documents-paging").toggle(!enabled);
+			//this.$(".documents-table, .controls-filters, .documents-paging").toggle(!enabled);
+			this.$(this.reviewStateToggles.join(",")).toggle(!enabled);
 
 			if (enabled) {
 				this.$el.append('<div class="row-fluid review-area-row"><div class="span12 review-area"></div></div>');
@@ -533,38 +558,197 @@ define(function (require) {
 
 		render: function (subViews) {
 			return LayoutBase.prototype.render.call(this, _.extend({
-				".documents-table": new Documents.Views.List.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
-				".documents-filters": new Documents.Views.List.Filters({collection: this.documents}),
-				".table-controls": new Documents.Views.List.TableControls({collection: this.selectedDocuments}),
-				".documents-paging": new Documents.Views.List.Paging({collection: this.documents})
+				".documents-table": new Documents.Views.List.Base.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
+				//".documents-filters": new Documents.Views.List.Common.Filters({collection: this.documents}),
+				".table-controls": new Documents.Views.List.Base.TableControls({collection: this.selectedDocuments}),
+				".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents})
 			}, subViews));
 		}
 	});
 
-	Documents.Views.List.Layout = Documents.Views.List.LayoutHistory.extend({
+	/**
+	 * Таблица со списком созданных документов
+	 * @type {*}
+	 */
+	Documents.Views.List.Base.DocumentsTable = ViewBase.extend({
+		template: templates._documentsTable,
+
+		events: {
+			"change .selected-flag": "onSelectedFlagChange",
+			"click .edit-document": "onEditDocumentClick",
+			"click .single-item-select": "onItemClick"
+		},
+
+		data: function () {
+			return {documents: this.collection};
+		},
+
+		initialize: function () {
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+			this.listenTo(this.options.selectedDocuments, "review:quit", this.onCollectionReset);
+		},
+
+		onCollectionReset: function () {
+			this.options.selectedDocuments.reset();
+			this.render();
+		},
+
+		onQuitReviewState: function () {
+			this.options.selectedDocuments.reset();
+			this.render();
+		},
+
+		onSelectedFlagChange: function (event) {
+			this.updatedSelectedItems($(event.currentTarget).is(":checked"), parseInt($(event.currentTarget).val()));
+			$(event.currentTarget).parent().siblings().toggleClass("selected", $(event.currentTarget).is(":checked"));
+		},
+
+		onEditDocumentClick: function (event) {
+			dispatcher.trigger("change:viewState", {type: "document-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+		},
+
+		onItemClick: function (event) {
+			console.log($(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
+			this.updatedSelectedItems(true, $(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
+			this.options.selectedDocuments.trigger("review:enter");
+		},
+
+		updatedSelectedItems: function (selected, itemId) {
+			if (selected) {
+				this.options.selectedDocuments.add(new Documents.Models.Document({id: itemId}));
+			} else {
+				this.options.selectedDocuments.remove(this.options.selectedDocuments.get(itemId));
+			}
+			//console.log(this.options.selectedDocuments);
+		}
+	});
+
+	/**
+	 * Элементы управления данными таблицы
+	 * @type {*}
+	 */
+	Documents.Views.List.Base.TableControls = ViewBase.extend({
+		template: templates._listTableControls,
+
+		data: function () {
+			return {selectedDocuments: this.collection};
+		},
+
+		events: {
+			"click .review-selected": "onReviewSelectedClick"
+		},
+
+		initialize: function () {
+			this.listenTo(this.collection, "add remove reset", this.onCollectionChange);
+		},
+
+		onReviewSelectedClick: function (event) {
+			this.collection.trigger("review:enter");
+		},
+
+		onCollectionChange: function () {
+			this.render();
+		}
+
+		/*onSelectedDocumentsAdd: function () {
+		 this.render();
+		 //this.toggleReviewSelectedDisabled(this.collection.length > 0);
+		 },
+
+		 onSelectedDocumentsRemove: function () {
+		 this.render();
+		 //this.toggleReviewSelectedDisabled(this.collection.length > 0);
+		 },
+
+		 toggleReviewSelectedDisabled: function (enabled) {
+		 //this.$(".review-selected").button(!!enabled ? "enable" : "disable");
+		 }*/
+	});
+
+	/**
+	 * Пэйджинг
+	 * @type {*}
+	 */
+	Documents.Views.List.Base.Paging = ViewBase.extend({
+		template: templates._documentsTablePaging,
+		data: function () {
+			console.log(this.collection);
+			if (this.collection.requestData) {
+				return {
+					currentPage: this.collection.requestData.page,
+					pageCount: Math.ceil(this.collection.requestData.recordsCount / this.collection.requestData.limit)
+				};
+			} else {
+				return {
+					currentPage: 0,
+					pageCount: 0
+				}
+			}
+
+		},
+		events: {
+			"click .page-number": "onPageNumberClick"
+		},
+		initialize: function () {
+			ViewBase.prototype.initialize.call(this, this.options);
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+		},
+		onCollectionReset: function () {
+			this.render();
+		},
+		onPageNumberClick: function (event) {
+			event.preventDefault();
+			this.collection.pageNumber = $(event.currentTarget).data("page-number");
+			this.collection.fetch();
+		}
+	});
+	//endregion
+
+
+	//region VIEWS LIST COMMON
+	//---------------------
+	/**
+	 * Лэйаут без отображения контролов для создания/редактирования доков
+	 * @type {*}
+	 */
+	Documents.Views.List.Common.LayoutHistory = ListLayoutBase.extend({
+		template: templates._listLayout,
+
+		render: function (subViews) {
+			return ListLayoutBase.prototype.render.call(this, _.extend({
+				".documents-filters": new Documents.Views.List.Common.Filters({collection: this.documents})
+			}, subViews));
+		}
+	});
+
+	/**
+	 * Лэйаут со всеми контролами
+	 * @type {*}
+	 */
+	Documents.Views.List.Common.Layout = Documents.Views.List.Common.LayoutHistory.extend({
 		attributes: {style: "display: table; width: 100%;"},
 
 		initialize: function () {
-			Documents.Views.List.LayoutHistory.prototype.initialize.call(this, this.options);
+			Documents.Views.List.Common.LayoutHistory.prototype.initialize.call(this, this.options);
 
 			this.documentTypes = new Documents.Collections.DocumentTypes();
 			this.documentTypes.fetch();
-		},
 
-		toggleReviewState: function (enabled) {
-			Documents.Views.List.LayoutHistory.prototype.toggleReviewState.call(this, enabled);
-			this.$(".documents-controls").toggle(!enabled);
+			this.reviewStateToggles.push(".documents-controls");
 		},
 
 		render: function () {
-			return Documents.Views.List.LayoutHistory.prototype.render.call(this, {
-				".documents-controls": new Documents.Views.List.Controls({collection: this.documents, documentTypes: this.documentTypes})
+			return Documents.Views.List.Common.LayoutHistory.prototype.render.call(this, {
+				".documents-controls": new Documents.Views.List.Common.Controls({collection: this.documents, documentTypes: this.documentTypes})
 			});
 		}
 	});
 
-	//Элементы управления (кнопка "Новый документ" и пр.)
-	Documents.Views.List.Controls = ViewBase.extend({
+	/**
+	 * Элементы управления (кнопка "Новый документ" и пр.)
+	 * @type {*}
+	 */
+	Documents.Views.List.Common.Controls = ViewBase.extend({
 		template: templates._listControls,
 
 		events: {
@@ -601,7 +785,7 @@ define(function (require) {
 		},
 
 		showDocumentTypeSelector: function () {
-			new Documents.Views.List.DocumentTypeSelector({collection: this.documentTypes}).render();
+			new Documents.Views.List.Common.DocumentTypeSelector({collection: this.documentTypes}).render();
 		},
 
 		openDutyDocExamTemplate: function () {
@@ -610,7 +794,11 @@ define(function (require) {
 		}
 	});
 
-	Documents.Views.List.Filters = ViewBase.extend({
+	/**
+	 * Фильтры
+	 * @type {*}
+	 */
+	Documents.Views.List.Common.Filters = ViewBase.extend({
 		template: templates._documentFilters,
 
 		events: {
@@ -697,8 +885,11 @@ define(function (require) {
 		}
 	});
 
-	//Выбор шаблона документа
-	Documents.Views.List.DocumentTypeSelector = PopUpBase.extend({
+	/**
+	 * Выбор шаблона документа
+	 * @type {*}
+	 */
+	Documents.Views.List.Common.DocumentTypeSelector = PopUpBase.extend({
 		template: templates._documentTypeSelector,
 
 		className: "Tree popup",
@@ -779,132 +970,40 @@ define(function (require) {
 			this.$("ul").first().show();
 		}
 	});
+	//endregion
 
-	//Список созданных документов
-	Documents.Views.List.DocumentsTable = ViewBase.extend({
-		template: templates._documentsTable,
 
-		events: {
-			"change .selected-flag": "onSelectedFlagChange",
-			"click .edit-document": "onEditDocumentClick",
-			"click .single-item-select": "onItemClick"
-		},
+	//region VIEWS LIST EXAMINATION
+	//---------------------
+	Documents.Views.List.Examination.LayoutHistory = ListLayoutBase.extend({
+		template: templates._listLayout,
 
-		data: function () {
-			return {documents: this.collection};
-		},
-
-		initialize: function () {
-			this.listenTo(this.collection, "reset", this.onCollectionReset);
-			this.listenTo(this.options.selectedDocuments, "review:quit", this.onCollectionReset);
-		},
-
-		onCollectionReset: function () {
-			this.options.selectedDocuments.reset();
-			this.render();
-		},
-
-		onQuitReviewState: function () {
-			this.options.selectedDocuments.reset();
-			this.render();
-		},
-
-		onSelectedFlagChange: function (event) {
-			this.updatedSelectedItems($(event.currentTarget).is(":checked"), parseInt($(event.currentTarget).val()));
-			$(event.currentTarget).parent().siblings().toggleClass("selected", $(event.currentTarget).is(":checked"));
-		},
-
-		onEditDocumentClick: function (event) {
-			dispatcher.trigger("change:viewState", {type: "document-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
-		},
-
-		onItemClick: function (event) {
-			console.log($(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
-			this.updatedSelectedItems(true, $(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
-			this.options.selectedDocuments.trigger("review:enter");
-		},
-
-		updatedSelectedItems: function (selected, itemId) {
-			if (selected) {
-				this.options.selectedDocuments.add(new Documents.Models.Document({id: itemId}));
-			} else {
-				this.options.selectedDocuments.remove(this.options.selectedDocuments.get(itemId));
-			}
-			//console.log(this.options.selectedDocuments);
+		getDefaultDocumentsMnems: function () {
+			return ["EXAM"];
 		}
 	});
 
-	Documents.Views.List.TableControls = ViewBase.extend({
-		template: templates._listTableControls,
-
-		data: function () {
-			return {selectedDocuments: this.collection};
-		},
-
-		events: {
-			"click .review-selected": "onReviewSelectedClick"
-		},
-
-		initialize: function () {
-			this.listenTo(this.collection, "add remove reset", this.onCollectionChange);
-		},
-
-		onReviewSelectedClick: function (event) {
-			this.collection.trigger("review:enter");
-		},
-
-		onCollectionChange: function () {
-			this.render();
-		}
-
-		/*onSelectedDocumentsAdd: function () {
-		 this.render();
-		 //this.toggleReviewSelectedDisabled(this.collection.length > 0);
-		 },
-
-		 onSelectedDocumentsRemove: function () {
-		 this.render();
-		 //this.toggleReviewSelectedDisabled(this.collection.length > 0);
-		 },
-
-		 toggleReviewSelectedDisabled: function (enabled) {
-		 //this.$(".review-selected").button(!!enabled ? "enable" : "disable");
-		 }*/
+	Documents.Views.List.Examination.Layout = Documents.Views.List.Examination.LayoutHistory.extend({
+		attributes: {style: "display: table; width: 100%;"}
 	});
+	//endregion
 
-	Documents.Views.List.Paging = ViewBase.extend({
-		template: templates._documentsTablePaging,
-		data: function () {
-			console.log(this.collection);
-			if (this.collection.requestData) {
-				return {
-					currentPage: this.collection.requestData.page,
-					pageCount: Math.ceil(this.collection.requestData.recordsCount / this.collection.requestData.limit)
-				};
-			} else {
-				return {
-					currentPage: 0,
-					pageCount: 0
-				}
-			}
 
-		},
-		events: {
-			"click .page-number": "onPageNumberClick"
-		},
-		initialize: function () {
-			ViewBase.prototype.initialize.call(this, this.options);
-			this.listenTo(this.collection, "reset", this.onCollectionReset);
-		},
-		onCollectionReset: function () {
-			this.render();
-		},
-		onPageNumberClick: function (event) {
-			event.preventDefault();
-			this.collection.pageNumber = $(event.currentTarget).data("page-number");
-			this.collection.fetch();
+	//region VIEWS LIST THERAPY
+	//---------------------
+	Documents.Views.List.Therapy.LayoutHistory = ListLayoutBase.extend({
+		template: templates._listLayout,
+
+		getDefaultDocumentsMnems: function () {
+			return ["THER"];
 		}
 	});
+
+	Documents.Views.List.Therapy.Layout = Documents.Views.List.Therapy.LayoutHistory.extend({
+		attributes: {style: "display: table; width: 100%;"}
+	});
+	//endregion
+
 
 	//Редактирование
 	//---------------------
@@ -957,7 +1056,7 @@ define(function (require) {
 						"</div>"
 				);
 
-				this.listLayoutLight = new Documents.Views.List.LayoutHistory({included: true});
+				this.listLayoutLight = new Documents.Views.List.Common.LayoutHistory({included: true});
 
 				this.assign({".document-list": this.listLayoutLight});
 
@@ -1158,7 +1257,7 @@ define(function (require) {
 
 		/*render: function () {
 		 PopUpBase.prototype.render.call(this);
-		 var documentsTable = new Documents.Views.List.DocumentsTable({collection: this.collection});
+		 var documentsTable = new Documents.Views.List.Base.DocumentsTable({collection: this.collection});
 		 this.subViews = [documentsTable];
 		 documentsTable.setElement(this.el).render();
 		 }*/
@@ -1732,7 +1831,6 @@ define(function (require) {
 				data: documentsPrintData,
 				template: "examination"
 			});
-
 		}
 
 		/*initialize: function () {
@@ -1800,20 +1898,25 @@ define(function (require) {
 			RepeaterBase.prototype.initialize.call(this, this.options);
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
 		},
+
 		tearDown: function () {
 			this.tearDownSubviews();
 			this.stopListening(this.collection, "reset", this.onCollectionReset);
 			this.undelegateEvents();
 			this.remove();
 		},
+
 		getRepeatView: function (repeatOptions) {
 			return new Documents.Views.Review.Sheet(repeatOptions);
 		},
+
 		onCollectionReset: function () {
 			this.tearDownSubviews();
 			this.render();
 		}
 	});
+	//endregion
+
 
 	return Documents;
 });
