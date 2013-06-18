@@ -31,9 +31,10 @@ define(["text!templates/card-" +
 		template: template,
 
 		data: function () {
+			console.log('data', this.model.toJSON());
 			return this.model.toJSON();
 		},
-		
+
 		initialize: function (options) {
 			this.model.on("change", this.render, this);
 		},
