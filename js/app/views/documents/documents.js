@@ -7,6 +7,7 @@ define(function (require) {
 	var Backbone = window.Backbone;
 	var _ = window._;
 	var appealId = 0;
+	var appeal = null;
 	var dispatcher = _.extend({}, Backbone.Events);
 
 	var templates = {
@@ -378,7 +379,7 @@ define(function (require) {
 				this.subViews = {};
 				this.assign(subViews);
 			}
-			this.$("button").each(function () {
+			this.$("button,[data-display-as=button]").each(function () {
 				var $this = $(this);
 				var icons = {};
 				if ($this.data("icon-primary")) {
@@ -387,7 +388,7 @@ define(function (require) {
 				if ($this.data("icon-secondary")) {
 					icons.secondary = $this.data("icon-secondary");
 				}
-				$this.button({icons: icons});
+				$this.button({icons: icons, text: !$this.data("notext")});
 			});
 			//this.$("select").select2();
 			return this;
@@ -487,7 +488,7 @@ define(function (require) {
 	//Список
 	//---------------------
 
-	Documents.Views.List.LayoutLight = LayoutBase.extend({
+	Documents.Views.List.LayoutHistory = LayoutBase.extend({
 		template: templates._listLayout,
 
 		initialize: function () {
@@ -495,6 +496,7 @@ define(function (require) {
 
 			if (this.options.appealId) {
 				appealId = this.options.appealId;
+				appeal = this.options.appeal;
 			}
 			this.appealId = appealId;
 
@@ -502,8 +504,8 @@ define(function (require) {
 			this.documents.fetch();
 
 			this.selectedDocuments = new Backbone.Collection();
-			this.listenTo(this.selectedDocuments, "enteredReviewState", this.onEnteredReviewState);
-			this.listenTo(this.selectedDocuments, "quitReviewState", this.onQuitReviewState);
+			this.listenTo(this.selectedDocuments, "review:enter", this.onEnteredReviewState);
+			this.listenTo(this.selectedDocuments, "review:quit", this.onQuitReviewState);
 		},
 
 		onEnteredReviewState: function () {
@@ -519,7 +521,7 @@ define(function (require) {
 
 			if (enabled) {
 				this.$el.append('<div class="row-fluid review-area-row"><div class="span12 review-area"></div></div>');
-				this.reviewLayout = new Documents.Views.Review.Layout({collection: this.selectedDocuments, included: true});
+				this.reviewLayout = new Documents.Views.Review.Layout({collection: this.selectedDocuments, documents: this.documents, included: true});
 				this.assign({
 					".review-area": this.reviewLayout
 				});
@@ -535,28 +537,27 @@ define(function (require) {
 				".documents-filters": new Documents.Views.List.Filters({collection: this.documents}),
 				".table-controls": new Documents.Views.List.TableControls({collection: this.selectedDocuments}),
 				".documents-paging": new Documents.Views.List.Paging({collection: this.documents})
-				//".review-area": new Documents.Views.Review.Layout({collection: this.selectedDocuments, included: true})
 			}, subViews));
 		}
 	});
 
-	Documents.Views.List.Layout = Documents.Views.List.LayoutLight.extend({
+	Documents.Views.List.Layout = Documents.Views.List.LayoutHistory.extend({
 		attributes: {style: "display: table; width: 100%;"},
 
 		initialize: function () {
-			Documents.Views.List.LayoutLight.prototype.initialize.call(this, this.options);
+			Documents.Views.List.LayoutHistory.prototype.initialize.call(this, this.options);
 
 			this.documentTypes = new Documents.Collections.DocumentTypes();
 			this.documentTypes.fetch();
 		},
 
 		toggleReviewState: function (enabled) {
-			Documents.Views.List.LayoutLight.prototype.toggleReviewState.call(this, enabled);
+			Documents.Views.List.LayoutHistory.prototype.toggleReviewState.call(this, enabled);
 			this.$(".documents-controls").toggle(!enabled);
 		},
 
 		render: function () {
-			return Documents.Views.List.LayoutLight.prototype.render.call(this, {
+			return Documents.Views.List.LayoutHistory.prototype.render.call(this, {
 				".documents-controls": new Documents.Views.List.Controls({collection: this.documents, documentTypes: this.documentTypes})
 			});
 		}
@@ -795,7 +796,7 @@ define(function (require) {
 
 		initialize: function () {
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
-			this.listenTo(this.options.selectedDocuments, "quitReviewState", this.onCollectionReset);
+			this.listenTo(this.options.selectedDocuments, "review:quit", this.onCollectionReset);
 		},
 
 		onCollectionReset: function () {
@@ -820,7 +821,7 @@ define(function (require) {
 		onItemClick: function (event) {
 			console.log($(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
 			this.updatedSelectedItems(true, $(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
-			this.options.selectedDocuments.trigger("enteredReviewState");
+			this.options.selectedDocuments.trigger("review:enter");
 		},
 
 		updatedSelectedItems: function (selected, itemId) {
@@ -849,7 +850,7 @@ define(function (require) {
 		},
 
 		onReviewSelectedClick: function (event) {
-			this.collection.trigger("enteredReviewState");
+			this.collection.trigger("review:enter");
 		},
 
 		onCollectionChange: function () {
@@ -870,7 +871,6 @@ define(function (require) {
 		 //this.$(".review-selected").button(!!enabled ? "enable" : "disable");
 		 }*/
 	});
-
 
 	Documents.Views.List.Paging = ViewBase.extend({
 		template: templates._documentsTablePaging,
@@ -957,7 +957,7 @@ define(function (require) {
 						"</div>"
 				);
 
-				this.listLayoutLight = new Documents.Views.List.LayoutLight({included: true});
+				this.listLayoutLight = new Documents.Views.List.LayoutHistory({included: true});
 
 				this.assign({".document-list": this.listLayoutLight});
 
@@ -990,13 +990,18 @@ define(function (require) {
 		template: templates._editNavControls,
 
 		events: {
-			"click .toggle-divided-state": "onToggleDividedStateClick",
+			"change .toggle-divided-state": "onToggleDividedStateClick",
 			"click .copy-from-prev": "onCopyFromPrevClick",
 			"click .copy-from": "onCopyFromClick"
 		},
 
 		onToggleDividedStateClick: function () {
 			this.model.trigger("toggle:dividedState");
+			/*if (this.$(".toggle-divided-state .ui-button-text").text() == "История") {
+				this.$(".toggle-divided-state .ui-button-text").text("Скрыть историю");
+			} else {
+				this.$(".toggle-divided-state .ui-button-text").text("История");
+			}*/
 		},
 
 		onCopyFromPrevClick: function () {
@@ -1423,7 +1428,26 @@ define(function (require) {
 
 	//Поле типа Double
 	Documents.Views.Edit.UIElement.Double = UIElementBase.extend({
-		template: templates.uiElements._double
+		template: templates.uiElements._double,
+
+		events: _.extend({
+			"keypress .format-double": "onFormatDoubleKeypress",
+			"keyup .format-double": "onFormatDoubleKeyup"
+		}, UIElementBase.prototype.events),
+
+		onFormatDoubleKeypress: function (eve) {
+			var $ct = $(eve.currentTarget);
+			if ((eve.which != 46 || $ct.val().indexOf('.') != -1) && (eve.which < 48 || eve.which > 57) || (eve.which == 46 && $ct.caret().start == 0) ) {
+				eve.preventDefault();
+			}
+		},
+
+		onFormatDoubleKeyup: function (event) {
+			var $ct = $(event.currentTarget);
+			if ($ct.val().indexOf('.') == 0) {
+				$ct.val($ct.val().substring(1));
+			}
+		}
 	});
 
 	//Поле типа MKB
@@ -1593,9 +1617,40 @@ define(function (require) {
 	Documents.Views.Review.Layout = LayoutBase.extend({
 		template: templates._reviewLayout,
 
-		/*initialize: function () {
+		initialize: function () {
+			LayoutBase.prototype.initialize.call(this, this.options);
+			this.listenTo(this.collection, "review:next", this.onDocumentsReviewNext);
+			this.listenTo(this.collection, "review:prev", this.onDocumentsReviewPrev);
+		},
 
-		},*/
+		tearDown: function () {
+			this.tearDownSubviews();
+			this.stopListening(this.collection, "review:next", this.onDocumentsReviewNext);
+			this.stopListening(this.collection, "review:prev", this.onDocumentsReviewPrev);
+			this.undelegateEvents();
+			this.remove();
+		},
+
+		onDocumentsReviewNext: function () {
+			var nextDocumentListItem = this.options.documents.at(this.getListItemIndex() + 1);
+			var nextDocument = new Documents.Models.Document({id: nextDocumentListItem.id});
+
+			this.collection.reset([nextDocument]);
+		},
+
+		onDocumentsReviewPrev: function () {
+			var prevDocumentListItem = this.options.documents.at(this.getListItemIndex() - 1);
+			var prevDocument = new Documents.Models.Document({id: prevDocumentListItem.id});
+
+			this.collection.reset([prevDocument]);
+		},
+
+		getListItemIndex: function () {
+			var currentDocument = this.collection.first();
+			var currentDocumentListItem = this.options.documents.get(currentDocument.id);
+
+			return this.options.documents.indexOf(currentDocumentListItem);
+		},
 
 		render: function () {
 			return LayoutBase.prototype.render.call(this, {
@@ -1615,21 +1670,85 @@ define(function (require) {
 
 		events: {
 			"click .back-to-document-list": "onBackToDocumentListClick",
+			"click .next-document": "onNextDocumentClick",
 			"click .prev-document": "onPrevDocumentClick",
-			"click .next-document": "onNextDocumentClick"
+			"click .print-documents": "onPrintDocumentsClick"
 		},
 
 		onBackToDocumentListClick: function () {
-			this.collection.trigger("quitReviewState");
-		},
-
-		onPrevDocumentClick: function () {
-
+			this.collection.trigger("review:quit");
 		},
 
 		onNextDocumentClick: function () {
+			this.collection.trigger("review:next");
+		},
+
+		onPrevDocumentClick: function () {
+			this.collection.trigger("review:prev");
+		},
+
+		onPrintDocumentsClick: function () {
+			var documentsPrintData = [];
+
+			this.collection.each(function (document) {
+				var summaryAttrs   = document.get("group")[0]["attribute"];
+
+				documentsPrintData.push({
+					patientId: appeal.get("patient").get("id"),
+					patientName: appeal.get("patient").get("name").toJSON(),
+
+					appealId: appealId,
+					appealNumber: appeal.get("number"),
+
+					id: document.get("id"),
+					name: summaryAttrs[1]["properties"][0]["value"],
+					endDate: moment(document.getDates().begin.getValue(), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss"),
+					doctorName: [
+						summaryAttrs[4]["properties"][0]["value"],
+						summaryAttrs[5]["properties"][0]["value"],
+						summaryAttrs[6]["properties"][0]["value"]
+					].join(" "),
+					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
+					attributes: document.getFilledAttrs()
+				});
+
+				/*var pointType = _(data.attributes).where({id: 96});
+
+				if (pointType.length) {
+					var pointTypeId = pointType[0].value;
+					var directoryValue = _(this.hospitalizationPointTypes.toBeautyJSON()).find(function (type) {
+						return type.id == pointTypeId;
+					});
+					if (directoryValue) {
+						_(data.attributes).where({id: 96})[0].value = directoryValue['49'];
+						//pointType.value = directoryValue['49'];
+					}
+				}*/
+			}, this);
+
+			console.log(documentsPrintData);
+
+			new App.Views.Print({
+				data: documentsPrintData,
+				template: "examination"
+			});
 
 		}
+
+		/*initialize: function () {
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+		},
+
+		tearDown: function () {
+			this.tearDownSubviews();
+			this.stopListening(this.collection, "reset", this.onCollectionReset);
+			this.undelegateEvents();
+			this.remove();
+		},
+
+		onCollectionReset: function () {
+
+		}*/
 	});
 
 	//Значения полей из документа
@@ -1677,8 +1796,22 @@ define(function (require) {
 
 	//Значения полей из документа
 	Documents.Views.Review.SheetList = RepeaterBase.extend({
+		initialize: function () {
+			RepeaterBase.prototype.initialize.call(this, this.options);
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+		},
+		tearDown: function () {
+			this.tearDownSubviews();
+			this.stopListening(this.collection, "reset", this.onCollectionReset);
+			this.undelegateEvents();
+			this.remove();
+		},
 		getRepeatView: function (repeatOptions) {
 			return new Documents.Views.Review.Sheet(repeatOptions);
+		},
+		onCollectionReset: function () {
+			this.tearDownSubviews();
+			this.render();
 		}
 	});
 
