@@ -15,7 +15,11 @@ define(function (require) {
 			},
 			Review: {},
 			Edit: {
-				UIElement: {}
+				UIElement: {},
+				Base: {},
+				Common: {},
+				Examination: {},
+				Therapy: {}
 			}
 		},
 		Collections: {},
@@ -36,6 +40,7 @@ define(function (require) {
 	var templates = {
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
 		_listControls: _.template(require("text!templates/documents/list/controls.html")),
+		_listExaminationControls: _.template(require("text!templates/documents/list/examination-controls.html")),
 		_listTableControls: _.template(require("text!templates/documents/list/table-controls.html")),
 		_documentFilters: _.template(require("text!templates/documents/list/filters.html")),
 		_documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
@@ -559,7 +564,6 @@ define(function (require) {
 		render: function (subViews) {
 			return LayoutBase.prototype.render.call(this, _.extend({
 				".documents-table": new Documents.Views.List.Base.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
-				//".documents-filters": new Documents.Views.List.Common.Filters({collection: this.documents}),
 				".table-controls": new Documents.Views.List.Base.TableControls({collection: this.selectedDocuments}),
 				".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents})
 			}, subViews));
@@ -984,7 +988,37 @@ define(function (require) {
 	});
 
 	Documents.Views.List.Examination.Layout = Documents.Views.List.Examination.LayoutHistory.extend({
-		attributes: {style: "display: table; width: 100%;"}
+		attributes: {style: "display: table; width: 100%;"},
+
+		initialize: function () {
+			Documents.Views.List.Examination.LayoutHistory.prototype.initialize.call(this, this.options);
+			this.reviewStateToggles.push(".documents-controls");
+		},
+
+		render: function () {
+			return Documents.Views.List.Examination.LayoutHistory.prototype.render.call(this, {
+				".documents-controls": new Documents.Views.List.Examination.Controls()
+			});
+		}
+	});
+
+	Documents.Views.List.Examination.Controls = ViewBase.extend({
+		template: templates._listExaminationControls,
+
+		events: {
+			"click .new-examination-primary": "onNewExaminationPrimaryClick",
+			"click .new-examination-primary-repeated": "onNewExaminationPrimaryRepeatedClick"
+		},
+
+		onNewExaminationPrimaryClick: function () {
+			//TODO: HARCODED
+			dispatcher.trigger("change:viewState", {type: "examination-edit", options: {templateId: 139}});
+		},
+
+		onNewExaminationPrimaryRepeatedClick: function () {
+			//TODO: HARCODED
+			dispatcher.trigger("change:viewState", {type: "examination-edit", options: {templateId: 2456}});
+		}
 	});
 	//endregion
 
@@ -1010,7 +1044,7 @@ define(function (require) {
 
 	var layoutAttributesDir = new Documents.Models.LayoutAttributesDir();
 
-	Documents.Views.Edit.Layout = LayoutBase.extend({
+	Documents.Views.Edit.Common.Layout = LayoutBase.extend({
 		template: templates._editLayout,
 
 		dividedStateEnabled: false,
@@ -1056,14 +1090,14 @@ define(function (require) {
 						"</div>"
 				);
 
-				this.listLayoutLight = new Documents.Views.List.Common.LayoutHistory({included: true});
+				this.listLayoutHistory = this.getListLayoutHistory();
 
-				this.assign({".document-list": this.listLayoutLight});
+				this.assign({".document-list": this.listLayoutHistory});
 
-				this.listLayoutLight.$(".documents-controls").remove();
-				this.listLayoutLight.$(".documents-filters").removeClass("span6").addClass("span12");
+				this.listLayoutHistory.$(".documents-controls").remove();
+				this.listLayoutHistory.$(".documents-filters").removeClass("span6").addClass("span12");
 			} else {
-				if (this.listLayoutLight) this.listLayoutLight.tearDown(); //ViewBase.prototype.tearDown.call(this.listLayoutLight);
+				if (this.listLayoutHistory) this.listLayoutHistory.tearDown(); //ViewBase.prototype.tearDown.call(this.listLayoutLight);
 				this.$el.parent().css({"margin-left": "20em"});
 
 				this.$(".document-list-side").remove();
@@ -1071,6 +1105,10 @@ define(function (require) {
 
 				dispatcher.trigger("change:mainState", {stateName: "default"});
 			}
+		},
+
+		getListLayoutHistory: function () {
+			return new Documents.Views.List.Common.LayoutHistory({included: true});
 		},
 
 		render: function () {
@@ -1081,6 +1119,18 @@ define(function (require) {
 				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
 				".document-controls": new Documents.Views.Edit.DocControls({model: this.model})
 			});
+		}
+	});
+
+	Documents.Views.Edit.Examination.Layout = Documents.Views.Edit.Common.Layout.extend({
+		getListLayoutHistory: function () {
+			return new Documents.Views.List.Examination.LayoutHistory({included: true});
+		}
+	});
+
+	Documents.Views.Edit.Therapy.Layout = Documents.Views.Edit.Common.Layout.extend({
+		getListLayoutHistory: function () {
+			return new Documents.Views.List.Therapy.LayoutHistory({included: true});
 		}
 	});
 

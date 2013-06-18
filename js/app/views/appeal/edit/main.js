@@ -55,7 +55,7 @@ define([
 			 "examination-primary-repeated-preview": App.Views.ExaminationPrimaryPreview,*/
 
 			"examinations": Documents.Views.List.Examination.Layout,
-			"examination-edit": Documents.Views.Edit.Layout,
+			"examination-edit": Documents.Views.Edit.Examination.Layout,
 
 			"diagnostics-laboratory": LaboratoryView,
 			"diagnostics-laboratory-result": LaboratoryResultView,
@@ -72,10 +72,10 @@ define([
 			"monitoring": Monitoring.Views.Layout,
 
 			"documents": Documents.Views.List.Common.Layout,
-			"document-edit": Documents.Views.Edit.Layout,
+			"document-edit": Documents.Views.Edit.Common.Layout,
 
 			"therapy": Documents.Views.List.Therapy.Layout,
-			"therapy-edit": Documents.Views.Edit.Layout
+			"therapy-edit": Documents.Views.Edit.Therapy.Layout
 		},
 
 		breadCrumbsMap: {
