@@ -10,13 +10,14 @@ define(function(require) {
 		model: LabTest,
 
 		url: function() {
-			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=LAB";
+			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=LAB&filter[view]=tree";
 
 			return path;
 		},
 
-		convertToTree: function(list) {
-			return _.map(list, function(item) {
+		convert: function(list) {
+			var withoutParents = [];
+			 _.each(list, function(item) {
 
 				var node = {};
 				node.title = item.name;
@@ -24,19 +25,22 @@ define(function(require) {
 				node.icon = false;
 				node.cito = '';
 
-				if (item.groups && item.groups.length) {
-					node.children = convert(item.groups);
-					node.isFolder = true;
+				if (item.groups && (item.groups.length === 0)) {
+					withoutParents.push(node);
 				}
 
-				return node;
 			});
+
+			console.log('withoutParents',withoutParents);
+
+			return withoutParents;
 		},
 
 		parse: function(raw) {
 			var tree = [];
+			console.log('raw',raw);
 
-			tree = this.convertToTree(raw.data);
+			tree = this.convert(raw.data);
 			return tree;
 		}
 

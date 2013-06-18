@@ -31,6 +31,7 @@ define(function(require) {
 			});
 
 			pubsub.on('group:click', function(code) {
+				console.log('group:click',code);
 				view.collection.fetch({
 					data: {
 						'patientId': view.options.patientId,
