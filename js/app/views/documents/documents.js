@@ -7,6 +7,7 @@ define(function (require) {
 	var Backbone = window.Backbone;
 	var _ = window._;
 	var appealId = 0;
+	var appeal = null;
 	var dispatcher = _.extend({}, Backbone.Events);
 
 	var templates = {
@@ -495,6 +496,7 @@ define(function (require) {
 
 			if (this.options.appealId) {
 				appealId = this.options.appealId;
+				appeal = this.options.appeal;
 			}
 			this.appealId = appealId;
 
@@ -502,8 +504,8 @@ define(function (require) {
 			this.documents.fetch();
 
 			this.selectedDocuments = new Backbone.Collection();
-			this.listenTo(this.selectedDocuments, "enteredReviewState", this.onEnteredReviewState);
-			this.listenTo(this.selectedDocuments, "quitReviewState", this.onQuitReviewState);
+			this.listenTo(this.selectedDocuments, "review:enter", this.onEnteredReviewState);
+			this.listenTo(this.selectedDocuments, "review:quit", this.onQuitReviewState);
 		},
 
 		onEnteredReviewState: function () {
@@ -794,7 +796,7 @@ define(function (require) {
 
 		initialize: function () {
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
-			this.listenTo(this.options.selectedDocuments, "quitReviewState", this.onCollectionReset);
+			this.listenTo(this.options.selectedDocuments, "review:quit", this.onCollectionReset);
 		},
 
 		onCollectionReset: function () {
@@ -819,7 +821,7 @@ define(function (require) {
 		onItemClick: function (event) {
 			console.log($(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
 			this.updatedSelectedItems(true, $(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
-			this.options.selectedDocuments.trigger("enteredReviewState");
+			this.options.selectedDocuments.trigger("review:enter");
 		},
 
 		updatedSelectedItems: function (selected, itemId) {
@@ -848,7 +850,7 @@ define(function (require) {
 		},
 
 		onReviewSelectedClick: function (event) {
-			this.collection.trigger("enteredReviewState");
+			this.collection.trigger("review:enter");
 		},
 
 		onCollectionChange: function () {
@@ -1669,11 +1671,12 @@ define(function (require) {
 		events: {
 			"click .back-to-document-list": "onBackToDocumentListClick",
 			"click .next-document": "onNextDocumentClick",
-			"click .prev-document": "onPrevDocumentClick"
+			"click .prev-document": "onPrevDocumentClick",
+			"click .print-documents": "onPrintDocumentsClick"
 		},
 
 		onBackToDocumentListClick: function () {
-			this.collection.trigger("quitReviewState");
+			this.collection.trigger("review:quit");
 		},
 
 		onNextDocumentClick: function () {
@@ -1684,7 +1687,55 @@ define(function (require) {
 			this.collection.trigger("review:prev");
 		},
 
-		initialize: function () {
+		onPrintDocumentsClick: function () {
+			var documentsPrintData = [];
+
+			this.collection.each(function (document) {
+				var summaryAttrs   = document.get("group")[0]["attribute"];
+
+				documentsPrintData.push({
+					patientId: appeal.get("patient").get("id"),
+					patientName: appeal.get("patient").get("name").toJSON(),
+
+					appealId: appealId,
+					appealNumber: appeal.get("number"),
+
+					id: document.get("id"),
+					name: summaryAttrs[1]["properties"][0]["value"],
+					endDate: moment(document.getDates().begin.getValue(), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss"),
+					doctorName: [
+						summaryAttrs[4]["properties"][0]["value"],
+						summaryAttrs[5]["properties"][0]["value"],
+						summaryAttrs[6]["properties"][0]["value"]
+					].join(" "),
+					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
+					attributes: document.getFilledAttrs()
+				});
+
+				/*var pointType = _(data.attributes).where({id: 96});
+
+				if (pointType.length) {
+					var pointTypeId = pointType[0].value;
+					var directoryValue = _(this.hospitalizationPointTypes.toBeautyJSON()).find(function (type) {
+						return type.id == pointTypeId;
+					});
+					if (directoryValue) {
+						_(data.attributes).where({id: 96})[0].value = directoryValue['49'];
+						//pointType.value = directoryValue['49'];
+					}
+				}*/
+			}, this);
+
+			console.log(documentsPrintData);
+
+			new App.Views.Print({
+				data: documentsPrintData,
+				template: "examination"
+			});
+
+		}
+
+		/*initialize: function () {
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
 		},
 
@@ -1697,7 +1748,7 @@ define(function (require) {
 
 		onCollectionReset: function () {
 
-		}
+		}*/
 	});
 
 	//Значения полей из документа
