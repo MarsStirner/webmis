@@ -31,14 +31,14 @@ define(function(require) {
 
 			});
 
-			console.log('withoutParents',withoutParents);
+			//console.log('withoutParents',withoutParents);
 
 			return withoutParents;
 		},
 
 		parse: function(raw) {
 			var tree = [];
-			console.log('raw',raw);
+			//console.log('raw',raw);
 
 			tree = this.convert(raw.data);
 			return tree;

@@ -17,12 +17,12 @@ define(function(require) {
 			});
 
 			view.collection.on('fetch', function() {
-				console.log('view.collection',view.collection)
+				//console.log('view.collection',view.collection)
 				view.renderOnFetch();
 			});
 
 			view.collection.on('change', function() {
-				console.log('view.collection',view.collection);
+				///console.log('view.collection',view.collection);
 
 			});
 
@@ -31,7 +31,7 @@ define(function(require) {
 			});
 
 			pubsub.on('group:click', function(code) {
-				console.log('group:click',code);
+				//console.log('group:click',code);
 				view.collection.fetch({
 					data: {
 						'patientId': view.options.patientId,
@@ -60,7 +60,7 @@ define(function(require) {
 
 		renderAll: function(testsData) {
 			var view = this;
-			console.log('renderAll', testsData, view);
+			//console.log('renderAll', testsData, view);
 
 			view.$el.html(_.template(listTemplate, {}));
 			view.$tests_list = view.$el.find('tbody.item-container');
@@ -68,7 +68,7 @@ define(function(require) {
 			//view.$tests_list.append(_.template(listTemplate , {}));
 
 			this.collection.each(function(model) {
-				console.log('collection item', model);
+				//console.log('collection item', model);
 				var itemView = new ItemView({
 					model: model,
 					collection: view.collection,

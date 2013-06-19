@@ -122,8 +122,14 @@ define(function(require) {
 
             if (selectedExecPersonId) {
                 console.log('выбрали', selectedExecPersonId);
-                var doctor = this.allPersons.get(selectedExecPersonId).toJSON();
-                pubsub.trigger('person:changed', doctor);
+                var person = this.allPersons.get(selectedExecPersonId).toJSON();
+
+                if(_.isFunction(this.options.callback)){
+                    this.options.callback(person);
+                }else{
+                    pubsub.trigger('person:changed', person);
+                }
+
 
                 this.close();
             }

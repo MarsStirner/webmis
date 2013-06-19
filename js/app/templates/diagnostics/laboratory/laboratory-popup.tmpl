@@ -28,25 +28,10 @@
 			<div class="QuartCol">
 				<span class="Label" style="white-space: nowrap">Дата и время создания</span>
 				<div class="date">
-
-
 					<input type="text" data-mindate="0" name="start-date" id="start-date" placeholder="дд.мм.гггг" class="SelectDate"
 								 data-relation="#start-time" />
 					<i class="icon-calendar date-icon"></i>
 				</div>
-				<!--<div class="DateTime">
-					<div class="DatePeriod SingleDate">
-						<div class="FromTo">
-							<input type="text" data-mindate="0" name="start-date" id="start-date" placeholder="дд.мм.гггг" class="SelectDate"
-										 data-relation="#start-time"/>
-						</div>
-						<i class="DateIcon Icon"></i>
-					</div>
-					<div class="SemiCol">
-						<input type="text" class="Styled HourPicker" id="start-time" data-relation="#start-date" placeholder="чч:мм"/>
-					</div>
-
-				</div>-->
 			</div>
 			<div class="DecCol WithoutName">
 				<div class="time">
@@ -54,16 +39,26 @@
 					<i class="icon-time time-icon"></i>
 				</div>
 			</div>
-			<div class="ColHalf">
-				<span class="Label">Направивший врач</span>
-				<div id="doctor-outer">
-					<input name="doctor" id="doctor" type="text" style="" disabled value="${doctor.name.first} ${doctor.name.middle} ${doctor.name.last}">
-					<button class="change-doctor" style=""><i class="icon-user-md"></i></button>
-				</div>
-			</div>
+
 			<div class="HalfCol">
 				<span class="Label">Вид оплаты</span><br/>
 				<select name="finance" id="finance" style="width: 100%;"></select>
+			</div>
+		</div>
+		<div style="margin-bottom: 1.5em;">
+			<div class="ColHalf">
+				<span class="Label">Направивший врач</span>
+				<div id="doctor-outer">
+					<input name="doctor" id="doctor" type="text" style="" disabled value="${doctor.name.first} ${doctor.name.middle} ${doctor.name.last}" class="Disabled">
+					<button class="change-doctor" style=""><i class="icon-user-md"></i></button>
+				</div>
+			</div>
+			<div class="ColHalf">
+				<span class="Label">Исполнитель</span>
+				<div id="executor-outer">
+					<input name="executor" id="executor" type="text" style="" disabled value="" class="Disabled">
+					<button class="change-executor" style=""><i class="icon-user-md"></i></button>
+				</div>
 			</div>
 		</div>
 
