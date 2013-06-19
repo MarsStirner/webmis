@@ -48,11 +48,14 @@ define([
 		typeViews: {
 			"card": App.Views.Card,
 
-			"examinations": App.Views.Examinations,
-			"examination-primary": App.Views.ExaminationPrimary,
-			"examination-primary-preview": App.Views.ExaminationPrimaryPreview,
-			"examination-primary-repeated": App.Views.ExaminationPrimary,
-			"examination-primary-repeated-preview": App.Views.ExaminationPrimaryPreview,
+			/*"examinations": App.Views.Examinations,
+			 "examination-primary": App.Views.ExaminationPrimary,
+			 "examination-primary-preview": App.Views.ExaminationPrimaryPreview,
+			 "examination-primary-repeated": App.Views.ExaminationPrimary,
+			 "examination-primary-repeated-preview": App.Views.ExaminationPrimaryPreview,*/
+
+			"examinations": Documents.Views.List.Examination.Layout,
+			"examination-edit": Documents.Views.Edit.Examination.Layout,
 
 			"diagnostics-laboratory": LaboratoryView,
 			"diagnostics-laboratory-result": LaboratoryResultView,
@@ -61,16 +64,18 @@ define([
 			"diagnostics-consultations": ConsultationView,
 			"diagnostics-consultations-result": ConsultationResultView,
 
-			"first-examination-edit": App.Views.ExaminationEdit,
+			//"first-examination-edit": App.Views.ExaminationEdit,
 
 			"moves": Moves,
 			"hospitalbed": HospitalBed,
 
 			"monitoring": Monitoring.Views.Layout,
 
-			"documents": Documents.Views.List.Layout,
+			"documents": Documents.Views.List.Common.Layout,
+			"document-edit": Documents.Views.Edit.Common.Layout,
 
-			"document-edit": Documents.Views.Edit.Layout
+			"therapy": Documents.Views.List.Therapy.Layout,
+			"therapy-edit": Documents.Views.Edit.Therapy.Layout
 		},
 
 		breadCrumbsMap: {
@@ -81,7 +86,7 @@ define([
 			"diagnostics-consultations": App.Router.cachedBreadcrumbs.CONSULTATION,
 			"diagnostics-consultations-result": App.Router.cachedBreadcrumbs.CONSULTATION_RESULT,
 			"examinations": App.Router.cachedBreadcrumbs.EXAMS,
-			"first-examination-edit": App.Router.cachedBreadcrumbs.EXAMS,
+			//"first-examination-edit": App.Router.cachedBreadcrumbs.EXAMS,
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
 			"card": App.Router.cachedBreadcrumbs.APPEAL,
 			"moves": App.Router.cachedBreadcrumbs.MOVES,
@@ -321,11 +326,15 @@ define([
 							name: "card",
 							title: "Титульный лист ИБ",
 							uri: "/appeals/:id/"
+						}, appealJSON),
+						App.Router.compile({
+							name: "therapy",
+							title: "Лечение",
+							uri: "/appeals/:id/therapy"
 						}, appealJSON)
 					]
 				}
-			},
-				this);
+			}, this);
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function() {
 				var appealJSON = this.appeal.toJSON();
@@ -362,14 +371,14 @@ define([
 						}, appealJSON),
 						App.Router.compile({
 							name: "examinations",
-							title: "Осмотры",
+							title: "Документы",
 							uri: "/appeals/:id/examinations/"
 						}, appealJSON),
-						App.Router.compile({
+						/*App.Router.compile({
 							name: "documents",
 							title: "Документы",
 							uri: "/appeals/:id/documents/"
-						}, appealJSON),
+						}, appealJSON),*/
 						App.Router.compile({
 							name: "diagnostics-laboratory",
 							title: "Лабораторные исследования",
@@ -413,7 +422,7 @@ define([
 				};
 			}, this);
 
-			menuStructure.structure = _.compact(menuStructure.structure)
+			menuStructure.structure = _.compact(menuStructure.structure);
 
 			return menuStructure;
 		}
