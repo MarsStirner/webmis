@@ -1981,7 +1981,7 @@ define(function (require) {
 		},
 
 		getPrintData: function () {
-			return this.collection.map(function (document) {
+			return {documents: this.collection.map(function (document) {
 				var summaryAttrs   = document.get("group")[0]["attribute"];
 
 				return {
@@ -2017,7 +2017,7 @@ define(function (require) {
 				 //pointType.value = directoryValue['49'];
 				 }
 				 }*/
-			}, this);
+			}, this)};
 		}
 
 		/*initialize: function () {
