@@ -25,7 +25,7 @@ define(function(require) {
                 $target.parents('li').removeClass('selected');
             }
             this.model.tests.setProperty(name, 'isAssigned', "" + value);
-            console.log('this.model.tests', this.model.tests);
+            //console.log('this.model.tests', this.model.tests);
         },
 
         onTitleClick: function() {
@@ -43,11 +43,11 @@ define(function(require) {
 
             if (view.model.tests) {
                 view.model.tests.setProperty('urgent', 'value', "" + value);
-                console.log('onCitoChange', view.model.tests)
+                //console.log('onCitoChange', view.model.tests)
             } else {
                 view.loadTests().done(function() {
                     view.model.tests.setProperty('urgent', 'value', "" + value);
-                    console.log('onCitoChange load', view.model.tests)
+                    //console.log('onCitoChange load', view.model.tests)
                 });
             }
 
@@ -82,7 +82,7 @@ define(function(require) {
                 this.collapse();
             }
 
-            console.log('onSelectChange', this.collection)
+            //console.log('onSelectChange', this.collection)
 
 
 
@@ -108,7 +108,7 @@ define(function(require) {
                 view.ui.$select.prop('checked', true).trigger('change');
             }
 
-            console.log('date', rawDate, rawTime);
+            //console.log('date', rawDate, rawTime);
 
         },
 
@@ -155,13 +155,13 @@ define(function(require) {
         },
 
         expand: function() {
-            console.log('expand');
+            //console.log('expand');
             this.triggerTestsList(true);
             this.triggerIcons(true);
 
         },
         collapse: function() {
-            console.log('collapse');
+            //console.log('collapse');
             this.triggerTestsList(false);
             this.triggerIcons(false);
 
@@ -188,7 +188,7 @@ define(function(require) {
 
         },
         initialize: function(options) {
-            console.log('options', options);
+            //console.log('options', options);
             this.$el.attr('data-code', this.model.get('code'));
             this.$el.attr('data-cid', this.model.cid);
             this.$el.addClass('context-menu-' + this.cid);
@@ -254,13 +254,13 @@ define(function(require) {
                 callback: function(key, options) {
                     //var m = "clicked: " + key + " " + options.$trigger.data("cid");
 
-                    console.log(arguments, options.$trigger.data("cid"));
+                    //console.log(arguments, options.$trigger.data("cid"));
                 },
                 items: {
                     "select": {
                         name: "Выбрать все",
                         callback: function() {
-                            console.log('select all')
+                            //console.log('select all')
                             $('.context-menu-' + view.cid + ' .tests ')
                                 .find('input:checkbox').prop('checked', true)
                                 .trigger('change');
@@ -269,7 +269,7 @@ define(function(require) {
                     "deselect": {
                         name: "Снять выделение",
                         callback: function() {
-                            console.log('deselect all')
+                            //console.log('deselect all')
 
                             $('.context-menu-' + view.cid + ' .tests ')
                                 .find('input:checkbox').prop('checked', false)

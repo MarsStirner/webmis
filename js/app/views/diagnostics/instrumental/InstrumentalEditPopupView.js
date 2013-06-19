@@ -12,7 +12,8 @@ define(function(require) {
 	return View.extend({
 		template: tmpl,
 		events: {
-			'click #doctor-outer': 'openDoctorSelectPopup'
+			'click #doctor-outer': 'openDoctorSelectPopup',
+            'click #executor-outer': 'openExecutorSelectPopup'
 		},
 
 		initialize: function(options) {
@@ -54,6 +55,18 @@ define(function(require) {
 
 			},this);
 
+            pubsub.on('executor:changed', function(executor) {
+                this.executor = executor;
+
+
+                this.viewModel.set('executorFirstName', executor.name.first);
+                this.viewModel.set('executorMiddleName', executor.name.middle);
+                this.viewModel.set('executorLastName', executor.name.last);
+
+                this.$executor.val(executor.name.raw);
+
+            },this);
+
 		},
 
 		openDoctorSelectPopup: function() {
@@ -65,6 +78,18 @@ define(function(require) {
 			this.personDialogView.render().open();
 
 		},
+
+        openExecutorSelectPopup: function() {
+            this.personDialogView = new PersonDialogView({
+                appeal: this.options.appeal,
+                callback: function(person){
+                    pubsub.trigger('executor:changed', person);
+                }
+            });
+
+            this.personDialogView.render().open();
+
+        },
 
 		modelToTree: function() {
 			var view = this;
@@ -101,10 +126,11 @@ define(function(require) {
 			view.$plannedTimepicker = view.$("#tp");
 			view.$urgent = view.$('input[name=urgent]');
 			view.$doctor = view.$('input[name=doctor]');
+            view.$executor = view.$('input[name=executor]');
 			view.$finance = view.$('#finance');
 			view.$mkbDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
 			view.$mkbCode = view.$("input[name='diagnosis[mkb][code]']");
-			this.$('.change-doctor').button();
+			this.$('.change-doctor,.change-executor').button();
 
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
 
@@ -172,6 +198,14 @@ define(function(require) {
 			view.model.setProperty('doctorMiddleName', 'value', view.viewModel.get('doctorMiddleName'));
 			//doctorLastName - фамилия врача назначившего исследование
 			view.model.setProperty('doctorLastName', 'value', view.viewModel.get('doctorLastName'));
+
+
+            //doctorFirstName - имя врача назначившего исследование
+            //view.model.setProperty('doctorFirstName', 'value', view.viewModel.get('doctorFirstName'));
+            //doctorMiddleName - отчество врача назначившего исследование
+            //view.model.setProperty('doctorMiddleName', 'value', view.viewModel.get('doctorMiddleName'));
+            //doctorLastName - фамилия врача назначившего исследование
+            //view.model.setProperty('doctorLastName', 'value', view.viewModel.get('doctorLastName'));
 
 			//assessmentDate - дата создания направления на исследование
 			var assessmentDay = view.viewModel.get('assessmentDay');

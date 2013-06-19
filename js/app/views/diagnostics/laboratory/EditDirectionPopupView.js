@@ -16,7 +16,8 @@ define(function(require) {
 	return View.extend({
 		template: tmpl,
 		events: {
-			'click #doctor-outer': 'openDoctorSelectPopup'
+			'click #doctor-outer': 'openDoctorSelectPopup',
+            "click #executor-outer": "openExecutorSelectPopup"
 		},
 		initialize: function() {
 			_.bindAll(this);
@@ -41,23 +42,43 @@ define(function(require) {
 			view.mkbInputView = new MkbInputView();
 			view.depended(view.mkbInputView);
 
-			pubsub.on('person:changed', function(doctor) {
-				console.log('assign-person: changed', doctor);
-				view.doctor = doctor;
-				view.ui.$doctor.val(doctor.name.raw);
+			pubsub.on('assigner:changed', function(assigner) {
+				view.doctor = assigner;
+				view.ui.$doctor.val(assigner.name.raw);
 
 			});
 
-		},
-		openDoctorSelectPopup: function() {
-			console.log('openDoctorSelectPopup');
-			this.personDialogView = new PersonDialogView({
-				appeal: this.options.appeal
-			});
+            pubsub.on('executor:changed', function(executor) {
+                view.executor = executor;
+                view.ui.$executor.val(executor.name.raw);
 
-			this.personDialogView.render().open();
+            });
 
 		},
+
+        openDoctorSelectPopup: function() {
+            this.personDialogView = new PersonDialogView({
+                appeal: this.options.appeal,
+                callback: function(person){
+                    pubsub.trigger('assigner:changed', person);
+                }
+            });
+
+            this.personDialogView.render().open();
+
+        },
+
+        openExecutorSelectPopup: function() {
+            this.personDialogView = new PersonDialogView({
+                appeal: this.options.appeal,
+                callback: function(person){
+                    pubsub.trigger('executor:changed', person);
+                }
+            });
+
+            this.personDialogView.render().open();
+
+        },
 
 		initFinanseSelect: function(elSelector) {
 			var view = this;
@@ -152,8 +173,9 @@ define(function(require) {
 			view.ui.$startTime = view.$("#start-time");
 			view.ui.$finance = view.$('#finance');
 			view.ui.$doctor = view.$('#doctor');
+            view.ui.$executor = view.$('#executor');
 
-			this.$('.change-doctor').button();
+			this.$('.change-doctor,.change-executor').button();
 
 			view.$('.edit-tree').dynatree({
 				clickFolderMode: 2,
@@ -286,6 +308,12 @@ define(function(require) {
 			view.model.setProperty('doctorFirstName', 'value', view.doctor.name.first);
 			view.model.setProperty('doctorLastName', 'value', view.doctor.name.last);
 			view.model.setProperty('doctorMiddleName', 'value', '');
+
+//            view.model.setProperty('executorFirstName', 'value', view.executor.name.first);
+//            view.model.setProperty('executorLastName', 'value', view.executor.name.last);
+//            view.model.setProperty('executorMiddleName', 'value', view.executor.name.middle);
+
+
 			view.model.setProperty('urgent', 'value', cito);
 			view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 			view.model.setProperty('assessmentBeginDate', 'value', startDate + ' ' + startTime);
