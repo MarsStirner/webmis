@@ -1973,14 +1973,14 @@ define(function (require) {
 		onPrintDocumentsSinglePageClick: function () {
 			new App.Views.Print({
 				data: this.getPrintData(),
-				template: "documentsToPrintSeparately"
+				template: "documentsToPrintTogether"
 			});
 		},
 
 		onPrintDocumentsMultiplePagesClick: function () {
 			new App.Views.Print({
 				data: this.getPrintData(),
-				template: "documentsToPrintTogether"
+				template: "documentsToPrintSeparately"
 			});
 		},
 
