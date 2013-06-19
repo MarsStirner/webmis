@@ -7,6 +7,11 @@
 		<%}%>
 	</div>
 	<div class="pull-right">
-		<button type="button" class="print-documents review-nav" data-icon-primary="icon-print">Печать</button>
+		<%if (selectedDocuments.length == 1) {%>
+			<button type="button" class="print-documents single-page review-nav" data-icon-primary="icon-print">Печать</button>
+		<%} else {%>
+			<button type="button" class="print-documents single-page review-nav" data-icon-primary="icon-print">Печать вместе</button>
+			<button type="button" class="print-documents multiple-pages review-nav" data-icon-primary="icon-print">Печать раздельно</button>
+		<%}%>
 	</div>
 </div>

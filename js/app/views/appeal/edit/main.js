@@ -334,8 +334,7 @@ define([
 						}, appealJSON)
 					]
 				}
-			},
-				this);
+			}, this);
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function() {
 				var appealJSON = this.appeal.toJSON();
@@ -372,14 +371,14 @@ define([
 						}, appealJSON),
 						App.Router.compile({
 							name: "examinations",
-							title: "Осмотры",
+							title: "Документы",
 							uri: "/appeals/:id/examinations/"
 						}, appealJSON),
-						App.Router.compile({
+						/*App.Router.compile({
 							name: "documents",
 							title: "Документы",
 							uri: "/appeals/:id/documents/"
-						}, appealJSON),
+						}, appealJSON),*/
 						App.Router.compile({
 							name: "diagnostics-laboratory",
 							title: "Лабораторные исследования",
@@ -423,7 +422,7 @@ define([
 				};
 			}, this);
 
-			menuStructure.structure = _.compact(menuStructure.structure)
+			menuStructure.structure = _.compact(menuStructure.structure);
 
 			return menuStructure;
 		}

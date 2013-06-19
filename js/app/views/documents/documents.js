@@ -42,7 +42,8 @@ define(function (require) {
 		_listControls: _.template(require("text!templates/documents/list/controls.html")),
 		_listExaminationControls: _.template(require("text!templates/documents/list/examination-controls.html")),
 		_listTableControls: _.template(require("text!templates/documents/list/table-controls.html")),
-		_documentFilters: _.template(require("text!templates/documents/list/filters.html")),
+		_documentTypeDateFilters: _.template(require("text!templates/documents/list/type-date-filter.html")),
+		_documentDateFilter: _.template(require("text!templates/documents/list/date-filter.html")),
 		_documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
 		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
 		_documentsTablePaging: _.template(require("text!templates/documents/list/paging.html")),
@@ -706,6 +707,60 @@ define(function (require) {
 			this.collection.fetch();
 		}
 	});
+
+	/**
+	 * Фильтр по дате
+	 * @type {*}
+	 */
+	Documents.Views.List.Base.Filters = ViewBase.extend({
+		template: templates._documentDateFilter,
+
+		events: {
+			"change [name='document-create-date-filter']": "onDocumentCreateDateFilterChange"
+		},
+
+		onDocumentCreateDateFilterChange: function (event) {
+			var rangeMnem = $(event.currentTarget).val();
+
+			this.applyDocumentCreateDateFilter(rangeMnem);
+		},
+
+		applyDocumentCreateDateFilter: function (rangeMnem) {
+			var dateRange;
+
+			switch (rangeMnem) {
+				case "ALL":
+					dateRange = null;
+					break;
+				case "TODAY":
+					dateRange = {
+						start: moment().hours(0).minutes(0).seconds(0).toDate().getTime(),
+						end: moment().hours(23).minutes(59).seconds(59).toDate().getTime()
+					};
+					break;
+				case "YESTERDAY":
+					dateRange = {
+						start: moment().subtract("d", 1).hours(0).minutes(0).seconds(0).toDate().getTime(),
+						end: moment().subtract("d", 1).hours(23).minutes(59).seconds(59).toDate().getTime()
+					};
+					break;
+				case "FIVE_DAYS":
+					dateRange = {
+						start: moment().subtract("d", 5).hours(0).minutes(0).seconds(0).toDate().getTime(),
+						end: moment().hours(23).minutes(59).seconds(59).toDate().getTime()
+					};
+					break;
+			}
+
+			this.collection.dateRange = dateRange;
+			this.collection.fetch();
+		},
+
+		render: function () {
+			ViewBase.prototype.render.apply(this);
+			this.$(".document-create-date-filter-buttonset").buttonset();
+		}
+	});
 	//endregion
 
 
@@ -802,24 +857,17 @@ define(function (require) {
 	 * Фильтры
 	 * @type {*}
 	 */
-	Documents.Views.List.Common.Filters = ViewBase.extend({
-		template: templates._documentFilters,
+	Documents.Views.List.Common.Filters = Documents.Views.List.Base.Filters.extend({
+		template: templates._documentTypeDateFilters,
 
-		events: {
-			"change .document-type-filter": "onDocumentTypeFilterChange",
-			"change [name='document-create-date-filter']": "onDocumentCreateDateFilterChange"
-		},
+		events: _.extend({
+			"change .document-type-filter": "onDocumentTypeFilterChange"
+		}, Documents.Views.List.Base.Filters.prototype.events),
 
 		onDocumentTypeFilterChange: function (event) {
 			var type = $(event.currentTarget).val();
 			//console.log(type);
 			this.applyDocumentTypeFilter(type);
-		},
-
-		onDocumentCreateDateFilterChange: function (event) {
-			var rangeMnem = $(event.currentTarget).val();
-
-			this.applyDocumentCreateDateFilter(rangeMnem);
 		},
 
 		applyDocumentTypeFilter: function (type) {
@@ -850,42 +898,6 @@ define(function (require) {
 			}
 			this.collection.mnems = mnems;
 			this.collection.fetch();
-		},
-
-		applyDocumentCreateDateFilter: function (rangeMnem) {
-			var dateRange;
-
-			switch (rangeMnem) {
-				case "ALL":
-					dateRange = null;
-					break;
-				case "TODAY":
-					dateRange = {
-						start: moment().hours(0).minutes(0).seconds(0).toDate().getTime(),
-						end: moment().hours(23).minutes(59).seconds(59).toDate().getTime()
-					};
-					break;
-				case "YESTERDAY":
-					dateRange = {
-						start: moment().subtract("d", 1).hours(0).minutes(0).seconds(0).toDate().getTime(),
-						end: moment().subtract("d", 1).hours(23).minutes(59).seconds(59).toDate().getTime()
-					};
-					break;
-				case "FIVE_DAYS":
-					dateRange = {
-						start: moment().subtract("d", 5).hours(0).minutes(0).seconds(0).toDate().getTime(),
-						end: moment().hours(23).minutes(59).seconds(59).toDate().getTime()
-					};
-					break;
-			}
-
-			this.collection.dateRange = dateRange;
-			this.collection.fetch();
-		},
-
-		render: function () {
-			ViewBase.prototype.render.apply(this);
-			this.$(".document-create-date-filter-buttonset").buttonset();
 		}
 	});
 
@@ -984,6 +996,13 @@ define(function (require) {
 
 		getDefaultDocumentsMnems: function () {
 			return ["EXAM"];
+		},
+
+		render: function (subViews) {
+			return ListLayoutBase.prototype.render.call(this, _.extend({
+				".documents-table": new Documents.Views.List.Examination.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
+				".documents-filters": new Documents.Views.List.Base.Filters({collection: this.documents})
+			}, subViews));
 		}
 	});
 
@@ -1020,6 +1039,12 @@ define(function (require) {
 			dispatcher.trigger("change:viewState", {type: "examination-edit", options: {templateId: 2456}});
 		}
 	});
+
+	Documents.Views.List.Examination.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
+		onEditDocumentClick: function (event) {
+			dispatcher.trigger("change:viewState", {type: "examination-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+		}
+	});
 	//endregion
 
 
@@ -1030,11 +1055,23 @@ define(function (require) {
 
 		getDefaultDocumentsMnems: function () {
 			return ["THER"];
+		},
+
+		render: function (subViews) {
+			return ListLayoutBase.prototype.render.call(this, _.extend({
+				".documents-table": new Documents.Views.List.Therapy.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments})
+			}, subViews));
 		}
 	});
 
 	Documents.Views.List.Therapy.Layout = Documents.Views.List.Therapy.LayoutHistory.extend({
 		attributes: {style: "display: table; width: 100%;"}
+	});
+
+	Documents.Views.List.Therapy.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
+		onEditDocumentClick: function (event) {
+			dispatcher.trigger("change:viewState", {type: "therapy-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+		}
 	});
 	//endregion
 
@@ -1821,7 +1858,8 @@ define(function (require) {
 			"click .back-to-document-list": "onBackToDocumentListClick",
 			"click .next-document": "onNextDocumentClick",
 			"click .prev-document": "onPrevDocumentClick",
-			"click .print-documents": "onPrintDocumentsClick"
+			"click .print-documents.single-page": "onPrintDocumentsSinglePageClick",
+			"click .print-documents.multiple-pages": "onPrintDocumentsMultiplePagesClick"
 		},
 
 		onBackToDocumentListClick: function () {
@@ -1836,13 +1874,25 @@ define(function (require) {
 			this.collection.trigger("review:prev");
 		},
 
-		onPrintDocumentsClick: function () {
-			var documentsPrintData = [];
+		onPrintDocumentsSinglePageClick: function () {
+			new App.Views.Print({
+				data: this.getPrintData(),
+				template: "documentsToPrintSeparately"
+			});
+		},
 
-			this.collection.each(function (document) {
+		onPrintDocumentsMultiplePagesClick: function () {
+			new App.Views.Print({
+				data: this.getPrintData(),
+				template: "documentsToPrintTogether"
+			});
+		},
+
+		getPrintData: function () {
+			return this.collection.map(function (document) {
 				var summaryAttrs   = document.get("group")[0]["attribute"];
 
-				documentsPrintData.push({
+				return {
 					patientId: appeal.get("patient").get("id"),
 					patientName: appeal.get("patient").get("name").toJSON(),
 
@@ -1859,28 +1909,23 @@ define(function (require) {
 					].join(" "),
 					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
 					attributes: document.getFilledAttrs()
-				});
+				};
+
+
 
 				/*var pointType = _(data.attributes).where({id: 96});
 
-				if (pointType.length) {
-					var pointTypeId = pointType[0].value;
-					var directoryValue = _(this.hospitalizationPointTypes.toBeautyJSON()).find(function (type) {
-						return type.id == pointTypeId;
-					});
-					if (directoryValue) {
-						_(data.attributes).where({id: 96})[0].value = directoryValue['49'];
-						//pointType.value = directoryValue['49'];
-					}
-				}*/
+				 if (pointType.length) {
+				 var pointTypeId = pointType[0].value;
+				 var directoryValue = _(this.hospitalizationPointTypes.toBeautyJSON()).find(function (type) {
+				 return type.id == pointTypeId;
+				 });
+				 if (directoryValue) {
+				 _(data.attributes).where({id: 96})[0].value = directoryValue['49'];
+				 //pointType.value = directoryValue['49'];
+				 }
+				 }*/
 			}, this);
-
-			console.log(documentsPrintData);
-
-			new App.Views.Print({
-				data: documentsPrintData,
-				template: "examination"
-			});
 		}
 
 		/*initialize: function () {
