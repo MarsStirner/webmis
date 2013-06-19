@@ -371,14 +371,14 @@ define([
 						}, appealJSON),
 						App.Router.compile({
 							name: "examinations",
-							title: "Документы",
+							title: "Осмотры",
 							uri: "/appeals/:id/examinations/"
 						}, appealJSON),
-						/*App.Router.compile({
+						App.Router.compile({
 							name: "documents",
 							title: "Документы",
 							uri: "/appeals/:id/documents/"
-						}, appealJSON),*/
+						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-laboratory",
 							title: "Лабораторные исследования",

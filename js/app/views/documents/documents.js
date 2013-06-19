@@ -39,7 +39,8 @@ define(function (require) {
 	//region DEPENDENCIES
 	var templates = {
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
-		_listControls: _.template(require("text!templates/documents/list/controls.html")),
+		_listControlsBase: _.template(require("text!templates/documents/list/controls.html")),
+		_listControlsCommon: _.template(require("text!templates/documents/list/controls-common.html")),
 		_listExaminationControls: _.template(require("text!templates/documents/list/examination-controls.html")),
 		_listTableControls: _.template(require("text!templates/documents/list/table-controls.html")),
 		_documentTypeDateFilters: _.template(require("text!templates/documents/list/type-date-filter.html")),
@@ -367,9 +368,20 @@ define(function (require) {
 	Documents.Collections.DocumentTypes = Collection.extend({
 		model: Documents.Models.DocumentType,
 
+		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
+
 		url: function () {
 			//filter[view]=tree
-			return DATA_PATH + "dir/actionTypes/?filter[view]=tree&filter[mnem]=EXAM&filter[mnem]=EPI&filter[mnem]=JOUR&filter[mnem]=ORD";
+			var url =  DATA_PATH + "dir/actionTypes/?filter[view]=tree&";
+			var params = [];
+
+			if (this.mnems.length) {
+				this.mnems.map(function (mnem) {
+					return params.push("filter[mnem]=" + mnem);
+				});
+			}
+
+			return url + params.join("&");
 		}
 	});
 	//endregion
@@ -761,6 +773,45 @@ define(function (require) {
 			this.$(".document-create-date-filter-buttonset").buttonset();
 		}
 	});
+
+	/**
+	 * Элементы управления созданием доков
+	 */
+	Documents.Views.List.Base.Controls = ViewBase.extend({
+		template: templates._listControlsBase,
+
+		events: {
+			"click .new-document": "onNewDocumentClick"
+		},
+
+		initialize: function () {
+			//if (this.options.documentTypes) {
+				this.documentTypes = this.options.documentTypes;
+			//} else {
+				/*this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.fetch();*/
+			//}
+
+			this.listenTo(this.documentTypes, "reset", function () {
+				this.$(".new-document,.new-duty-doc-exam").button("enable");
+				//console.log(this.documentTypes);
+			});
+
+			this.listenTo(this.documentTypes, "document-type:selected", this.onDocumentTypeSelected);
+		},
+
+		onDocumentTypeSelected: function (event) {
+			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: event.selectedType}});
+		},
+
+		onNewDocumentClick: function () {
+			this.showDocumentTypeSelector();
+		},
+
+		showDocumentTypeSelector: function () {
+			new Documents.Views.List.Common.DocumentTypeSelector({collection: this.documentTypes}).render();
+		}
+	});
 	//endregion
 
 
@@ -807,44 +858,15 @@ define(function (require) {
 	 * Элементы управления (кнопка "Новый документ" и пр.)
 	 * @type {*}
 	 */
-	Documents.Views.List.Common.Controls = ViewBase.extend({
-		template: templates._listControls,
+	Documents.Views.List.Common.Controls = Documents.Views.List.Base.Controls.extend({
+		template: templates._listControlsCommon,
 
-		events: {
-			"click .new-document": "onNewDocumentClick",
+		events: _.extend({
 			"click .new-duty-doc-exam": "onNewDutyDocExamClick"
-		},
-
-		initialize: function () {
-			if (this.options.documentTypes) {
-				this.documentTypes = this.options.documentTypes;
-			} else {
-				this.documentTypes = new Documents.Collections.DocumentTypes();
-				this.documentTypes.fetch();
-			}
-
-			this.listenTo(this.documentTypes, "reset", function () {
-				this.$(".new-document,.new-duty-doc-exam").button("enable");
-				//console.log(this.documentTypes);
-			});
-
-			this.listenTo(this.documentTypes, "document-type:selected", this.onDocumentTypeSelected);
-		},
-
-		onDocumentTypeSelected: function (event) {
-			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: event.selectedType}});
-		},
-
-		onNewDocumentClick: function () {
-			this.showDocumentTypeSelector();
-		},
+		}, Documents.Views.List.Base.Controls.prototype.events),
 
 		onNewDutyDocExamClick: function () {
 			this.openDutyDocExamTemplate();
-		},
-
-		showDocumentTypeSelector: function () {
-			new Documents.Views.List.Common.DocumentTypeSelector({collection: this.documentTypes}).render();
 		},
 
 		openDutyDocExamTemplate: function () {
@@ -1054,19 +1076,38 @@ define(function (require) {
 		template: templates._listLayout,
 
 		getDefaultDocumentsMnems: function () {
-			return ["THER"];
+			return ["EPI"];
 		},
 
 		render: function (subViews) {
 			return ListLayoutBase.prototype.render.call(this, _.extend({
-				".documents-table": new Documents.Views.List.Therapy.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments})
+				".documents-table": new Documents.Views.List.Therapy.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
+				".documents-filters": new Documents.Views.List.Base.Filters({collection: this.documents})
 			}, subViews));
 		}
 	});
 
 	Documents.Views.List.Therapy.Layout = Documents.Views.List.Therapy.LayoutHistory.extend({
-		attributes: {style: "display: table; width: 100%;"}
+		attributes: {style: "display: table; width: 100%;"},
+
+		initialize: function () {
+			Documents.Views.List.Therapy.LayoutHistory.prototype.initialize.call(this, this.options);
+
+			this.documentTypes = new Documents.Collections.DocumentTypes();
+			this.documentTypes.mnems = ["EPI"];
+			this.documentTypes.fetch();
+
+			this.reviewStateToggles.push(".documents-controls");
+		},
+
+		render: function () {
+			return Documents.Views.List.Therapy.LayoutHistory.prototype.render.call(this, {
+				".documents-controls": new Documents.Views.List.Therapy.Controls({collection: this.documents, documentTypes: this.documentTypes})
+			});
+		}
 	});
+
+	Documents.Views.List.Therapy.Controls = Documents.Views.List.Base.Controls.extend({});
 
 	Documents.Views.List.Therapy.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
 		onEditDocumentClick: function (event) {
