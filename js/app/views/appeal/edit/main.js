@@ -302,6 +302,11 @@ define([
 							uri: "/appeals/:id/diagnostics/instrumental/"
 						}, appealJSON),
 						App.Router.compile({
+							name: "therapy",
+							title: "Лечение",
+							uri: "/appeals/:id/therapy"
+						}, appealJSON),
+						App.Router.compile({
 							name: "diagnostics-consultations",
 							title: "Консультации",
 							uri: "/appeals/:id/diagnostics/consultations/"
@@ -326,11 +331,6 @@ define([
 							name: "card",
 							title: "Титульный лист ИБ",
 							uri: "/appeals/:id/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "therapy",
-							title: "Лечение",
-							uri: "/appeals/:id/therapy"
 						}, appealJSON)
 					]
 				}
