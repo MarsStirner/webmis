@@ -46,6 +46,7 @@ define(function (require) {
 		_documentTypeDateFilters: _.template(require("text!templates/documents/list/type-date-filter.html")),
 		_documentDateFilter: _.template(require("text!templates/documents/list/date-filter.html")),
 		_documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
+		_documentTypesTree: _.template(require("text!templates/documents/list/doc-types-tree.html")),
 		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
 		_documentsTablePaging: _.template(require("text!templates/documents/list/paging.html")),
 		_editLayout: _.template(require("text!templates/documents/edit/layout.html")),
@@ -776,6 +777,7 @@ define(function (require) {
 
 	/**
 	 * Элементы управления созданием доков
+	 * @type {*}
 	 */
 	Documents.Views.List.Base.Controls = ViewBase.extend({
 		template: templates._listControlsBase,
@@ -797,7 +799,7 @@ define(function (require) {
 				//console.log(this.documentTypes);
 			});
 
-			this.listenTo(this.documentTypes, "document-type:selected", this.onDocumentTypeSelected);
+			this.listenTo(this.documentTypes, "document-type:selection-confirmed", this.onDocumentTypeSelected);
 		},
 
 		onDocumentTypeSelected: function (event) {
@@ -809,7 +811,137 @@ define(function (require) {
 		},
 
 		showDocumentTypeSelector: function () {
-			new Documents.Views.List.Common.DocumentTypeSelector({collection: this.documentTypes}).render();
+			new Documents.Views.List.Base.DocumentTypeSelector({collection: this.documentTypes}).render();
+		}
+	});
+
+	/**
+	 * Выбор шаблона документа
+	 * @type {*}
+	 */
+	Documents.Views.List.Base.DocumentTypeSelector = PopUpBase.extend({
+		template: templates._documentTypeSelector,
+
+		className: "Tree popup",
+
+		data: function () {
+			return {};
+		},
+
+		events: {
+			"keyup .document-type-search": "onDocumentTypeSearchKeyup"
+			//"click .document-type-node": "onDocumentTypeNodeClick"
+		},
+
+		initialize: function () {
+			this.dialogOptions = {
+				title: "Выберите тип документа",
+				modal: true,
+				width: 800,
+				height: 600,
+				resizable: false,
+				close: _.bind(this.tearDown, this),
+				buttons: [
+					{text: "Создать", click: _.bind(this.onCreateDocumentClick, this)},
+					{text: "Отмена", click: _.bind(this.tearDown, this)}
+				]
+			};
+
+			this.origCollection = this.collection;
+
+			this.collection = new Documents.Collections.DocumentTypes(this.collection.models);
+
+			this.originalModels = this.collection.models;
+
+			this.listenTo(this.collection, "document-type:selected", this.onDocumentTypeSelected);
+		},
+
+		onDocumentTypeSelected: function (event) {
+			this.selectedType = event.selectedType;
+		},
+
+		onCreateDocumentClick: function () {
+			this.origCollection.trigger("document-type:selection-confirmed", {selectedType: this.selectedType});
+			this.tearDown();
+		},
+
+		onDocumentTypeSearchKeyup: function (event) {
+			this.applySearchFilter($(event.currentTarget).val());
+		},
+
+		applySearchFilter: function (criteria) {
+			var criteriaRE = new RegExp(criteria, "gi");
+
+			this.collection.reset(criteria ?
+				_.filter(this.originalModels, function (model) {
+					return criteriaRE.test(model.get("name"))
+				}) :
+				this.originalModels);
+		},
+
+		/*toggleNodeCollapse: function (collapse) { console.log("stub:toggleNodeCollapse"); },
+
+		 markNodeSelected: function () { console.log("stub:markNodeSelected"); },*/
+
+		render: function () {
+			return PopUpBase.prototype.render.call(this, {
+				".document-types-tree": new Documents.Views.List.Base.DocumentTypesTree({collection: this.collection})
+			});
+		}
+	});
+
+	/**
+	 * Дерево типов документов
+	 * @type {*}
+	 */
+	Documents.Views.List.Base.DocumentTypesTree = ViewBase.extend({
+		template: templates._documentTypesTree,
+
+		events: {
+			"click .document-type-node": "onDocumentTypeNodeClick"
+		},
+		
+		data: function () {
+			return {documentTypes: this.collection.toJSON(), template: this.template};
+		},
+		
+		initialize: function () {
+			this.listenTo(this.collection, "reset", this.onCollectionReset)
+		},
+
+		onCollectionReset: function () {
+			this.render();
+		},
+
+		onDocumentTypeNodeClick: function (event) {
+			event.stopPropagation();
+			var $node = $(event.currentTarget);
+			if ($node.is(".Opened")) {
+				$node.removeClass("Opened").siblings().removeClass("Opened");
+				$node.children().removeClass("Opened");
+				$node.find(".icon-minus").addClass("icon-plus").removeClass("icon-minus");
+			} else {
+				$node.addClass("Opened").siblings().removeClass("Opened");
+				$node.children().removeClass("Opened");
+				$node.find(".icon-plus").addClass("icon-minus").removeClass("icon-plus");
+			}
+
+			this.collection.trigger("document-type:selected", {selectedType: $node.data("document-type-id")});
+
+			/*$(event.currentTarget).toggleClass("Opened").siblings().removeClass("Opened");
+			 $(event.currentTarget).find(".icon-plus,icon-minus").toggleClass("icon-plus icon-minus");*/
+			//$(event.currentTarget).addClass("Opened");
+			/*var nodeHasChildren;
+			 if (nodeHasChildren) {
+			 this.toggleNodeCollapse();
+			 } else {
+			 this.markNodeSelected();
+			 }*/
+		},
+		
+		render: function () {
+			ViewBase.prototype.render.call(this);
+			this.$("ul").first().show();
 		}
 	});
 	//endregion
@@ -920,92 +1052,6 @@ define(function (require) {
 			}
 			this.collection.mnems = mnems;
 			this.collection.fetch();
-		}
-	});
-
-	/**
-	 * Выбор шаблона документа
-	 * @type {*}
-	 */
-	Documents.Views.List.Common.DocumentTypeSelector = PopUpBase.extend({
-		template: templates._documentTypeSelector,
-
-		className: "Tree popup",
-
-		data: function () {
-			return {documentTypes: this.collection.toJSON(), template: this.template}
-		},
-
-		events: {
-			//"change .document-type-search-field": "onDocumentTypeSearchFieldChange",
-			"click .document-type-node": "onDocumentTypeNodeClick"
-		},
-
-		initialize: function () {
-			this.dialogOptions = {
-				title: "Выберите тип документа",
-				modal: true,
-				width: 800,
-				height: 600,
-				resizable: false,
-				close: _.bind(this.tearDown, this),
-				buttons: [
-					{
-						text: "Создать",
-						click: _.bind(this.onCreateDocumentClick, this)
-					},
-					{
-						text: "Отмена",
-						click: _.bind(this.tearDown, this)
-					}
-				]
-			};
-		},
-
-		/*onDocumentTypeSearchFieldChange: function () {
-		 this.applySearchFilter();
-		 },*/
-
-		onDocumentTypeNodeClick: function (event) {
-			event.stopPropagation();
-			var $node = $(event.currentTarget);
-			if ($node.is(".Opened")) {
-				$node.removeClass("Opened").siblings().removeClass("Opened");
-				$node.children().removeClass("Opened");
-				$node.find(".icon-minus").addClass("icon-plus").removeClass("icon-minus");
-			} else {
-				$node.addClass("Opened").siblings().removeClass("Opened");
-				$node.children().removeClass("Opened");
-				$node.find(".icon-plus").addClass("icon-minus").removeClass("icon-plus");
-			}
-
-			this.selectedType = $node.data("document-type-id");
-
-			/*$(event.currentTarget).toggleClass("Opened").siblings().removeClass("Opened");
-			 $(event.currentTarget).find(".icon-plus,icon-minus").toggleClass("icon-plus icon-minus");*/
-			//$(event.currentTarget).addClass("Opened");
-			/*var nodeHasChildren;
-			 if (nodeHasChildren) {
-			 this.toggleNodeCollapse();
-			 } else {
-			 this.markNodeSelected();
-			 }*/
-		},
-
-		onCreateDocumentClick: function () {
-			this.collection.trigger("document-type:selected", {selectedType: this.selectedType});
-			this.tearDown();
-		},
-
-		/*applySearchFilter: function () { console.log("stub:applySearchFilter"); },*/
-
-		/*toggleNodeCollapse: function (collapse) { console.log("stub:toggleNodeCollapse"); },
-
-		 markNodeSelected: function () { console.log("stub:markNodeSelected"); },*/
-
-		render: function () {
-			PopUpBase.prototype.render.call(this);
-			this.$("ul").first().show();
 		}
 	});
 	//endregion

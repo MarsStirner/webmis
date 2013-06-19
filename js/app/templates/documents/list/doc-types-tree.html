@@ -1,0 +1,15 @@
+<ul>
+	<%_(documentTypes).each(function (documentType) {%>
+	<li class="document-type-node" data-document-type-id="<%=documentType.id%>">
+		<%if (documentType.groups && documentType.groups.length) {%>
+			<i class="icon-plus" style="font-size: .7em; line-height: 1.6em; top: -.1em; position: relative;"></i>
+		<%}else{%>
+			<i class="icon-plus transparent" style="font-size: .7em; line-height: 1.6em; top: -.1em; position: relative;"></i>
+		<%}%>
+		<span style="font-size: .9em; line-height: 1.6em"><%=documentType.name%></span>
+		<%if (documentType.groups && documentType.groups.length) {%>
+			<%=template({documentTypes: documentType.groups, template: template})%>
+		<%}%>
+	</li>
+	<%});%>
+</ul>
