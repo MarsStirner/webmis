@@ -371,13 +371,8 @@ define([
 						}, appealJSON),
 						App.Router.compile({
 							name: "examinations",
-							title: "Осмотры",
-							uri: "/appeals/:id/examinations/"
-						}, appealJSON),
-						App.Router.compile({
-							name: "documents",
 							title: "Документы",
-							uri: "/appeals/:id/documents/"
+							uri: "/appeals/:id/examinations/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-laboratory",
