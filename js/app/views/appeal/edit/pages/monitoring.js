@@ -215,20 +215,20 @@ Moves,
 	Monitoring.Collections.ExpressAnalyses = Monitoring.Collections.MonitoringInfos.extend({
 		model: Monitoring.Models.ExpressAnalysis,
 
-		getParseMap: function (rawByDate) {
+		getParseMap: function(rawByDate) {
+			console.log('getParseMap', rawByDate)
 			return _.map(rawByDate, function(rawRow, date) {
-				return {};
-				/*return {
-					datetime: +date,
-					temperature: rawRow["TEMPERATURE"],
-					bpras: rawRow["BPRAS"],
-					bprad: rawRow["BPRAS"],
-					heartRate: rawRow["PULS"],
-					spo2: rawRow["SPO2"],
-					breathRate: rawRow["RR"],
-					state: rawRow["STATE"],
-					health: rawRow["WB"]
-				};*/
+				return {
+					"datetime": +date,
+					"k": rawRow["K"],
+					"na": rawRow["NA"],
+					"ca": rawRow["CA"],
+					"glucose": rawRow["GLUCOSE"],
+					"protein": rawRow["TP"],
+					"urea": rawRow["UREA"],
+					"bilubrinOb": rawRow["TB"],
+					"bilubrinPr": rawRow["CB"]
+				};
 			});
 		},
 
