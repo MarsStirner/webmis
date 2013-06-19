@@ -594,6 +594,7 @@ define(function (require) {
 		events: {
 			"change .selected-flag": "onSelectedFlagChange",
 			"click .edit-document": "onEditDocumentClick",
+			"click .duplicate-document": "onDuplicateDocumentClick",
 			"click .single-item-select": "onItemClick"
 		},
 
@@ -623,6 +624,10 @@ define(function (require) {
 
 		onEditDocumentClick: function (event) {
 			dispatcher.trigger("change:viewState", {type: "document-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+		},
+
+		onDuplicateDocumentClick: function (event) {
+			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: $(event.currentTarget).data('template-id')}});
 		},
 
 		onItemClick: function (event) {
