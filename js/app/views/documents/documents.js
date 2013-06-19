@@ -623,11 +623,15 @@ define(function (require) {
 		},
 
 		onEditDocumentClick: function (event) {
-			dispatcher.trigger("change:viewState", {type: "document-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+			if ($(event.currentTarget).data('document-id')) {
+				dispatcher.trigger("change:viewState", {type: "document-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+			}
 		},
 
 		onDuplicateDocumentClick: function (event) {
-			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: $(event.currentTarget).data('template-id')}});
+			if ($(event.currentTarget).data('template-id')) {
+				dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: $(event.currentTarget).data('template-id')}});
+			}
 		},
 
 		onItemClick: function (event) {
