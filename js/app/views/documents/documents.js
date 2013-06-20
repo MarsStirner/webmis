@@ -39,12 +39,14 @@ define(function (require) {
 	//region DEPENDENCIES
 	var templates = {
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
-		_listControls: _.template(require("text!templates/documents/list/controls.html")),
+		_listControlsBase: _.template(require("text!templates/documents/list/controls.html")),
+		_listControlsCommon: _.template(require("text!templates/documents/list/controls-common.html")),
 		_listExaminationControls: _.template(require("text!templates/documents/list/examination-controls.html")),
 		_listTableControls: _.template(require("text!templates/documents/list/table-controls.html")),
 		_documentTypeDateFilters: _.template(require("text!templates/documents/list/type-date-filter.html")),
 		_documentDateFilter: _.template(require("text!templates/documents/list/date-filter.html")),
 		_documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
+		_documentTypesTree: _.template(require("text!templates/documents/list/doc-types-tree.html")),
 		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
 		_documentsTablePaging: _.template(require("text!templates/documents/list/paging.html")),
 		_editLayout: _.template(require("text!templates/documents/edit/layout.html")),
@@ -367,9 +369,20 @@ define(function (require) {
 	Documents.Collections.DocumentTypes = Collection.extend({
 		model: Documents.Models.DocumentType,
 
+		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
+
 		url: function () {
 			//filter[view]=tree
-			return DATA_PATH + "dir/actionTypes/?filter[view]=tree&filter[mnem]=EXAM&filter[mnem]=EPI&filter[mnem]=JOUR&filter[mnem]=ORD";
+			var url =  DATA_PATH + "dir/actionTypes/?filter[view]=tree&";
+			var params = [];
+
+			if (this.mnems.length) {
+				this.mnems.map(function (mnem) {
+					return params.push("filter[mnem]=" + mnem);
+				});
+			}
+
+			return url + params.join("&");
 		}
 	});
 	//endregion
@@ -581,6 +594,7 @@ define(function (require) {
 		events: {
 			"change .selected-flag": "onSelectedFlagChange",
 			"click .edit-document": "onEditDocumentClick",
+			"click .duplicate-document": "onDuplicateDocumentClick",
 			"click .single-item-select": "onItemClick"
 		},
 
@@ -609,7 +623,15 @@ define(function (require) {
 		},
 
 		onEditDocumentClick: function (event) {
-			dispatcher.trigger("change:viewState", {type: "document-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+			if ($(event.currentTarget).data('document-id')) {
+				dispatcher.trigger("change:viewState", {type: "document-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+			}
+		},
+
+		onDuplicateDocumentClick: function (event) {
+			if ($(event.currentTarget).data('template-id')) {
+				dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: $(event.currentTarget).data('template-id')}});
+			}
 		},
 
 		onItemClick: function (event) {
@@ -761,6 +783,176 @@ define(function (require) {
 			this.$(".document-create-date-filter-buttonset").buttonset();
 		}
 	});
+
+	/**
+	 * Элементы управления созданием доков
+	 * @type {*}
+	 */
+	Documents.Views.List.Base.Controls = ViewBase.extend({
+		template: templates._listControlsBase,
+
+		events: {
+			"click .new-document": "onNewDocumentClick"
+		},
+
+		initialize: function () {
+			//if (this.options.documentTypes) {
+				this.documentTypes = this.options.documentTypes;
+			//} else {
+				/*this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.fetch();*/
+			//}
+
+			this.listenTo(this.documentTypes, "reset", function () {
+				this.$(".new-document,.new-duty-doc-exam").button("enable");
+				//console.log(this.documentTypes);
+			});
+
+			this.listenTo(this.documentTypes, "document-type:selection-confirmed", this.onDocumentTypeSelected);
+		},
+
+		onDocumentTypeSelected: function (event) {
+			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: event.selectedType}});
+		},
+
+		onNewDocumentClick: function () {
+			this.showDocumentTypeSelector();
+		},
+
+		showDocumentTypeSelector: function () {
+			new Documents.Views.List.Base.DocumentTypeSelector({collection: this.documentTypes}).render();
+		}
+	});
+
+	/**
+	 * Выбор шаблона документа
+	 * @type {*}
+	 */
+	Documents.Views.List.Base.DocumentTypeSelector = PopUpBase.extend({
+		template: templates._documentTypeSelector,
+
+		className: "Tree popup",
+
+		data: function () {
+			return {};
+		},
+
+		events: {
+			"keyup .document-type-search": "onDocumentTypeSearchKeyup"
+			//"click .document-type-node": "onDocumentTypeNodeClick"
+		},
+
+		initialize: function () {
+			this.dialogOptions = {
+				title: "Выберите тип документа",
+				modal: true,
+				width: 800,
+				height: 600,
+				resizable: false,
+				close: _.bind(this.tearDown, this),
+				buttons: [
+					{text: "Создать", click: _.bind(this.onCreateDocumentClick, this)},
+					{text: "Отмена", click: _.bind(this.tearDown, this)}
+				]
+			};
+
+			this.origCollection = this.collection;
+
+			this.collection = new Documents.Collections.DocumentTypes(this.collection.models);
+
+			this.originalModels = this.collection.models;
+
+			this.listenTo(this.collection, "document-type:selected", this.onDocumentTypeSelected);
+		},
+
+		onDocumentTypeSelected: function (event) {
+			this.selectedType = event.selectedType;
+		},
+
+		onCreateDocumentClick: function () {
+			this.origCollection.trigger("document-type:selection-confirmed", {selectedType: this.selectedType});
+			this.tearDown();
+		},
+
+		onDocumentTypeSearchKeyup: function (event) {
+			this.applySearchFilter($(event.currentTarget).val());
+		},
+
+		applySearchFilter: function (criteria) {
+			var criteriaRE = new RegExp(criteria, "gi");
+
+			this.collection.reset(criteria ?
+				_.filter(this.originalModels, function (model) {
+					return criteriaRE.test(model.get("name"))
+				}) :
+				this.originalModels);
+		},
+
+		/*toggleNodeCollapse: function (collapse) { console.log("stub:toggleNodeCollapse"); },
+
+		 markNodeSelected: function () { console.log("stub:markNodeSelected"); },*/
+
+		render: function () {
+			return PopUpBase.prototype.render.call(this, {
+				".document-types-tree": new Documents.Views.List.Base.DocumentTypesTree({collection: this.collection})
+			});
+		}
+	});
+
+	/**
+	 * Дерево типов документов
+	 * @type {*}
+	 */
+	Documents.Views.List.Base.DocumentTypesTree = ViewBase.extend({
+		template: templates._documentTypesTree,
+
+		events: {
+			"click .document-type-node": "onDocumentTypeNodeClick"
+		},
+		
+		data: function () {
+			return {documentTypes: this.collection.toJSON(), template: this.template};
+		},
+		
+		initialize: function () {
+			this.listenTo(this.collection, "reset", this.onCollectionReset)
+		},
+
+		onCollectionReset: function () {
+			this.render();
+		},
+
+		onDocumentTypeNodeClick: function (event) {
+			event.stopPropagation();
+			var $node = $(event.currentTarget);
+			if ($node.is(".Opened")) {
+				$node.removeClass("Opened").siblings().removeClass("Opened");
+				$node.children().removeClass("Opened");
+				$node.find(".icon-minus").addClass("icon-plus").removeClass("icon-minus");
+			} else {
+				$node.addClass("Opened").siblings().removeClass("Opened");
+				$node.children().removeClass("Opened");
+				$node.find(".icon-plus").addClass("icon-minus").removeClass("icon-plus");
+			}
+
+			this.collection.trigger("document-type:selected", {selectedType: $node.data("document-type-id")});
+
+			/*$(event.currentTarget).toggleClass("Opened").siblings().removeClass("Opened");
+			 $(event.currentTarget).find(".icon-plus,icon-minus").toggleClass("icon-plus icon-minus");*/
+			//$(event.currentTarget).addClass("Opened");
+			/*var nodeHasChildren;
+			 if (nodeHasChildren) {
+			 this.toggleNodeCollapse();
+			 } else {
+			 this.markNodeSelected();
+			 }*/
+		},
+		
+		render: function () {
+			ViewBase.prototype.render.call(this);
+			this.$("ul").first().show();
+		}
+	});
 	//endregion
 
 
@@ -807,44 +999,15 @@ define(function (require) {
 	 * Элементы управления (кнопка "Новый документ" и пр.)
 	 * @type {*}
 	 */
-	Documents.Views.List.Common.Controls = ViewBase.extend({
-		template: templates._listControls,
+	Documents.Views.List.Common.Controls = Documents.Views.List.Base.Controls.extend({
+		template: templates._listControlsCommon,
 
-		events: {
-			"click .new-document": "onNewDocumentClick",
+		events: _.extend({
 			"click .new-duty-doc-exam": "onNewDutyDocExamClick"
-		},
-
-		initialize: function () {
-			if (this.options.documentTypes) {
-				this.documentTypes = this.options.documentTypes;
-			} else {
-				this.documentTypes = new Documents.Collections.DocumentTypes();
-				this.documentTypes.fetch();
-			}
-
-			this.listenTo(this.documentTypes, "reset", function () {
-				this.$(".new-document,.new-duty-doc-exam").button("enable");
-				//console.log(this.documentTypes);
-			});
-
-			this.listenTo(this.documentTypes, "document-type:selected", this.onDocumentTypeSelected);
-		},
-
-		onDocumentTypeSelected: function (event) {
-			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: event.selectedType}});
-		},
-
-		onNewDocumentClick: function () {
-			this.showDocumentTypeSelector();
-		},
+		}, Documents.Views.List.Base.Controls.prototype.events),
 
 		onNewDutyDocExamClick: function () {
 			this.openDutyDocExamTemplate();
-		},
-
-		showDocumentTypeSelector: function () {
-			new Documents.Views.List.Common.DocumentTypeSelector({collection: this.documentTypes}).render();
 		},
 
 		openDutyDocExamTemplate: function () {
@@ -898,92 +1061,6 @@ define(function (require) {
 			}
 			this.collection.mnems = mnems;
 			this.collection.fetch();
-		}
-	});
-
-	/**
-	 * Выбор шаблона документа
-	 * @type {*}
-	 */
-	Documents.Views.List.Common.DocumentTypeSelector = PopUpBase.extend({
-		template: templates._documentTypeSelector,
-
-		className: "Tree popup",
-
-		data: function () {
-			return {documentTypes: this.collection.toJSON(), template: this.template}
-		},
-
-		events: {
-			//"change .document-type-search-field": "onDocumentTypeSearchFieldChange",
-			"click .document-type-node": "onDocumentTypeNodeClick"
-		},
-
-		initialize: function () {
-			this.dialogOptions = {
-				title: "Выберите тип документа",
-				modal: true,
-				width: 800,
-				height: 600,
-				resizable: false,
-				close: _.bind(this.tearDown, this),
-				buttons: [
-					{
-						text: "Создать",
-						click: _.bind(this.onCreateDocumentClick, this)
-					},
-					{
-						text: "Отмена",
-						click: _.bind(this.tearDown, this)
-					}
-				]
-			};
-		},
-
-		/*onDocumentTypeSearchFieldChange: function () {
-		 this.applySearchFilter();
-		 },*/
-
-		onDocumentTypeNodeClick: function (event) {
-			event.stopPropagation();
-			var $node = $(event.currentTarget);
-			if ($node.is(".Opened")) {
-				$node.removeClass("Opened").siblings().removeClass("Opened");
-				$node.children().removeClass("Opened");
-				$node.find(".icon-minus").addClass("icon-plus").removeClass("icon-minus");
-			} else {
-				$node.addClass("Opened").siblings().removeClass("Opened");
-				$node.children().removeClass("Opened");
-				$node.find(".icon-plus").addClass("icon-minus").removeClass("icon-plus");
-			}
-
-			this.selectedType = $node.data("document-type-id");
-
-			/*$(event.currentTarget).toggleClass("Opened").siblings().removeClass("Opened");
-			 $(event.currentTarget).find(".icon-plus,icon-minus").toggleClass("icon-plus icon-minus");*/
-			//$(event.currentTarget).addClass("Opened");
-			/*var nodeHasChildren;
-			 if (nodeHasChildren) {
-			 this.toggleNodeCollapse();
-			 } else {
-			 this.markNodeSelected();
-			 }*/
-		},
-
-		onCreateDocumentClick: function () {
-			this.collection.trigger("document-type:selected", {selectedType: this.selectedType});
-			this.tearDown();
-		},
-
-		/*applySearchFilter: function () { console.log("stub:applySearchFilter"); },*/
-
-		/*toggleNodeCollapse: function (collapse) { console.log("stub:toggleNodeCollapse"); },
-
-		 markNodeSelected: function () { console.log("stub:markNodeSelected"); },*/
-
-		render: function () {
-			PopUpBase.prototype.render.call(this);
-			this.$("ul").first().show();
 		}
 	});
 	//endregion
@@ -1054,19 +1131,38 @@ define(function (require) {
 		template: templates._listLayout,
 
 		getDefaultDocumentsMnems: function () {
-			return ["THER"];
+			return ["EPI"];
 		},
 
 		render: function (subViews) {
 			return ListLayoutBase.prototype.render.call(this, _.extend({
-				".documents-table": new Documents.Views.List.Therapy.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments})
+				".documents-table": new Documents.Views.List.Therapy.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
+				".documents-filters": new Documents.Views.List.Base.Filters({collection: this.documents})
 			}, subViews));
 		}
 	});
 
 	Documents.Views.List.Therapy.Layout = Documents.Views.List.Therapy.LayoutHistory.extend({
-		attributes: {style: "display: table; width: 100%;"}
+		attributes: {style: "display: table; width: 100%;"},
+
+		initialize: function () {
+			Documents.Views.List.Therapy.LayoutHistory.prototype.initialize.call(this, this.options);
+
+			this.documentTypes = new Documents.Collections.DocumentTypes();
+			this.documentTypes.mnems = ["EPI"];
+			this.documentTypes.fetch();
+
+			this.reviewStateToggles.push(".documents-controls");
+		},
+
+		render: function () {
+			return Documents.Views.List.Therapy.LayoutHistory.prototype.render.call(this, {
+				".documents-controls": new Documents.Views.List.Therapy.Controls({collection: this.documents, documentTypes: this.documentTypes})
+			});
+		}
 	});
+
+	Documents.Views.List.Therapy.Controls = Documents.Views.List.Base.Controls.extend({});
 
 	Documents.Views.List.Therapy.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
 		onEditDocumentClick: function (event) {
@@ -1877,19 +1973,19 @@ define(function (require) {
 		onPrintDocumentsSinglePageClick: function () {
 			new App.Views.Print({
 				data: this.getPrintData(),
-				template: "documentsToPrintSeparately"
+				template: "documentsToPrintTogether"
 			});
 		},
 
 		onPrintDocumentsMultiplePagesClick: function () {
 			new App.Views.Print({
 				data: this.getPrintData(),
-				template: "documentsToPrintTogether"
+				template: "documentsToPrintSeparately"
 			});
 		},
 
 		getPrintData: function () {
-			return this.collection.map(function (document) {
+			return {documents: this.collection.map(function (document) {
 				var summaryAttrs   = document.get("group")[0]["attribute"];
 
 				return {
@@ -1925,7 +2021,7 @@ define(function (require) {
 				 //pointType.value = directoryValue['49'];
 				 }
 				 }*/
-			}, this);
+			}, this)};
 		}
 
 		/*initialize: function () {
