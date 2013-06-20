@@ -795,3 +795,14 @@
 .ContentSide .container-fluid {
   padding-left: 0;
 }
+
+/* line 660, ../../sass/modules/editform.scss */
+.doc-type-search {
+  /*	position: relative;
+  	top: 0;
+  	left: 0;
+  	width: 100%;
+  	height: 2.6em;*/
+  padding: 1em;
+  background-color: whitesmoke;
+}

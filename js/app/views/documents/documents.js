@@ -46,6 +46,7 @@ define(function (require) {
 		_documentTypeDateFilters: _.template(require("text!templates/documents/list/type-date-filter.html")),
 		_documentDateFilter: _.template(require("text!templates/documents/list/date-filter.html")),
 		_documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
+		_documentTypeSearch: _.template(require("text!templates/documents/list/doc-type-search.html")),
 		_documentTypesTree: _.template(require("text!templates/documents/list/doc-types-tree.html")),
 		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
 		_documentsTablePaging: _.template(require("text!templates/documents/list/paging.html")),
@@ -833,15 +834,6 @@ define(function (require) {
 
 		className: "Tree popup",
 
-		data: function () {
-			return {};
-		},
-
-		events: {
-			"keyup .document-type-search": "onDocumentTypeSearchKeyup"
-			//"click .document-type-node": "onDocumentTypeNodeClick"
-		},
-
 		initialize: function () {
 			this.dialogOptions = {
 				title: "Выберите тип документа",
@@ -863,6 +855,10 @@ define(function (require) {
 			this.originalModels = this.collection.models;
 
 			this.listenTo(this.collection, "document-type:selected", this.onDocumentTypeSelected);
+
+			this.docTypeSearch = new Documents.Views.List.Base.DocumentTypeSearch({collection: this.collection, originalModels: this.originalModels});
+
+			this.subViews = {".doc-type-search": this.docTypeSearch};
 		},
 
 		onDocumentTypeSelected: function (event) {
@@ -874,28 +870,32 @@ define(function (require) {
 			this.tearDown();
 		},
 
+		render: function () {
+			PopUpBase.prototype.render.call(this, {
+				".document-types-tree": new Documents.Views.List.Base.DocumentTypesTree({collection: this.collection})
+			});
+			this.$el.before(this.docTypeSearch.render().el);
+			return this;
+		}
+	});
+
+	Documents.Views.List.Base.DocumentTypeSearch = ViewBase.extend({
+		className: "doc-type-search",
+		template: templates._documentTypeSearch,
+		events: {
+			"keyup .document-type-search": "onDocumentTypeSearchKeyup"
+		},
 		onDocumentTypeSearchKeyup: function (event) {
 			this.applySearchFilter($(event.currentTarget).val());
 		},
-
 		applySearchFilter: function (criteria) {
 			var criteriaRE = new RegExp(criteria, "gi");
 
 			this.collection.reset(criteria ?
-				_.filter(this.originalModels, function (model) {
+				_.filter(this.options.originalModels, function (model) {
 					return criteriaRE.test(model.get("name"))
 				}) :
-				this.originalModels);
-		},
-
-		/*toggleNodeCollapse: function (collapse) { console.log("stub:toggleNodeCollapse"); },
-
-		 markNodeSelected: function () { console.log("stub:markNodeSelected"); },*/
-
-		render: function () {
-			return PopUpBase.prototype.render.call(this, {
-				".document-types-tree": new Documents.Views.List.Base.DocumentTypesTree({collection: this.collection})
-			});
+				this.options.originalModels);
 		}
 	});
 
