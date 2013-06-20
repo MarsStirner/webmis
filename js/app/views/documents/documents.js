@@ -2098,6 +2098,11 @@ define(function (require) {
 		},
 
 		getRepeatView: function (repeatOptions) {
+			if (repeatOptions.model && repeatOptions.model.collection && (repeatOptions.model.collection.indexOf(repeatOptions.model) % 2 == 0)) {
+				repeatOptions.className = "sheet odd-sheet";
+			} else {
+				repeatOptions.className = "sheet even-sheet";
+			}
 			return new Documents.Views.Review.Sheet(repeatOptions);
 		},
 

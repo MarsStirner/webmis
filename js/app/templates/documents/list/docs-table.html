@@ -18,7 +18,7 @@
 					<td class="single-item-select"><%=document.get('assessmentName').name%></td>
 					<td class="single-item-select"><%=document.get('doctor').name.raw%></td>
 					<td class="single-item-select"><%=document.get('doctor').specs ? document.get('doctor').specs.name : ''%></td>
-					<td>
+					<td class="IconsCell">
 						<%if (document.get('closeDate')) {%>
 						<a><i class="icon-lock" title="Документ закрыт"></i></a>
 						<%} else {%>
