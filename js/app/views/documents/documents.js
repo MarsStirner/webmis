@@ -1172,102 +1172,12 @@ define(function (require) {
 	//endregion
 
 
-	//Редактирование
+	//region VIEWS EDIT BASE
 	//---------------------
-
-	var layoutAttributesDir = new Documents.Models.LayoutAttributesDir();
-
-	Documents.Views.Edit.Common.Layout = LayoutBase.extend({
-		template: templates._editLayout,
-
-		dividedStateEnabled: false,
-
-		initialize: function () {
-			LayoutBase.prototype.initialize.call(this, this.options);
-
-			if (!this.model) {
-				if (this.options.templateId) {
-					this.model = new Documents.Models.DocumentTemplate({id: this.options.templateId});
-					//this.model.id = this.options.templateId;
-				} else if (this.options.documentId) {
-					this.model = new Documents.Models.Document({id: this.options.documentId});
-					//this.model.id = this.options.documentId;
-				} else {
-					console.error("no doc or tmpl id!");
-					dispatcher.trigger("change:viewState", {type: "documents"});
-				}
-			}
-
-			$.when(layoutAttributesDir.fetch()).then(_.bind(function () {
-				this.model.fetch();
-			}, this));
-
-			this.listenTo(this.model, "toggle:dividedState", this.toggleDividedState);
-		},
-
-		toggleDividedState: function (enabled) {
-			enabled = _.isUndefined(enabled) ? !this.dividedStateEnabled : enabled;
-			this.dividedStateEnabled = enabled;
-
-			if (enabled) {
-				this.$el.parent().css({"margin-left": "0"});
-				dispatcher.trigger("change:mainState", {stateName: "documentEditor"});
-
-				this.$(".document-edit-side").removeClass("span12").addClass("span6 vertical-delim");
-
-				this.$(".divided").prepend(
-					"<div class='document-list-side span6'>" +
-						"<div class='row-fluid'>" +
-						"<div class='span12 document-list'></div>" +
-						"</div>" +
-						"</div>"
-				);
-
-				this.listLayoutHistory = this.getListLayoutHistory();
-
-				this.assign({".document-list": this.listLayoutHistory});
-
-				this.listLayoutHistory.$(".documents-controls").remove();
-				this.listLayoutHistory.$(".documents-filters").removeClass("span6").addClass("span12");
-			} else {
-				if (this.listLayoutHistory) this.listLayoutHistory.tearDown(); //ViewBase.prototype.tearDown.call(this.listLayoutLight);
-				this.$el.parent().css({"margin-left": "20em"});
-
-				this.$(".document-list-side").remove();
-				this.$(".document-edit-side").removeClass("span6 vertical-delim").addClass("span12");
-
-				dispatcher.trigger("change:mainState", {stateName: "default"});
-			}
-		},
-
-		getListLayoutHistory: function () {
-			return new Documents.Views.List.Common.LayoutHistory({included: true});
-		},
-
-		render: function () {
-			return ViewBase.prototype.render.call(this, {
-				".nav-controls": new Documents.Views.Edit.NavControls({model: this.model}),
-				".heading": new Documents.Views.Edit.Heading({model: this.model}),
-				".dates": new Documents.Views.Edit.Dates({model: this.model}),
-				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
-				".document-controls": new Documents.Views.Edit.DocControls({model: this.model})
-			});
-		}
-	});
-
-	Documents.Views.Edit.Examination.Layout = Documents.Views.Edit.Common.Layout.extend({
-		getListLayoutHistory: function () {
-			return new Documents.Views.List.Examination.LayoutHistory({included: true});
-		}
-	});
-
-	Documents.Views.Edit.Therapy.Layout = Documents.Views.Edit.Common.Layout.extend({
-		getListLayoutHistory: function () {
-			return new Documents.Views.List.Therapy.LayoutHistory({included: true});
-		}
-	});
-
-	//Верхний блок элементов управления и навигации
+	/**
+	 * Верхний блок элементов управления и навигации
+	 * @type {*}
+	 */
 	Documents.Views.Edit.NavControls = ViewBase.extend({
 		template: templates._editNavControls,
 
@@ -1280,10 +1190,10 @@ define(function (require) {
 		onToggleDividedStateClick: function () {
 			this.model.trigger("toggle:dividedState");
 			/*if (this.$(".toggle-divided-state .ui-button-text").text() == "История") {
-				this.$(".toggle-divided-state .ui-button-text").text("Скрыть историю");
-			} else {
-				this.$(".toggle-divided-state .ui-button-text").text("История");
-			}*/
+			 this.$(".toggle-divided-state .ui-button-text").text("Скрыть историю");
+			 } else {
+			 this.$(".toggle-divided-state .ui-button-text").text("История");
+			 }*/
 		},
 
 		onCopyFromPrevClick: function () {
@@ -1488,7 +1398,115 @@ define(function (require) {
 			dispatcher.trigger("change:viewState", {type: "documents"});
 		}
 	});
+	//endregion
 
+
+	//region VIEWS EDIT COMMON
+	//---------------------
+	var layoutAttributesDir = new Documents.Models.LayoutAttributesDir();
+
+	Documents.Views.Edit.Common.Layout = LayoutBase.extend({
+		template: templates._editLayout,
+
+		dividedStateEnabled: false,
+
+		initialize: function () {
+			LayoutBase.prototype.initialize.call(this, this.options);
+
+			if (!this.model) {
+				if (this.options.templateId) {
+					this.model = new Documents.Models.DocumentTemplate({id: this.options.templateId});
+					//this.model.id = this.options.templateId;
+				} else if (this.options.documentId) {
+					this.model = new Documents.Models.Document({id: this.options.documentId});
+					//this.model.id = this.options.documentId;
+				} else {
+					console.error("no doc or tmpl id!");
+					dispatcher.trigger("change:viewState", {type: "documents"});
+				}
+			}
+
+			$.when(layoutAttributesDir.fetch()).then(_.bind(function () {
+				this.model.fetch();
+			}, this));
+
+			this.listenTo(this.model, "toggle:dividedState", this.toggleDividedState);
+		},
+
+		toggleDividedState: function (enabled) {
+			enabled = _.isUndefined(enabled) ? !this.dividedStateEnabled : enabled;
+			this.dividedStateEnabled = enabled;
+
+			if (enabled) {
+				this.$el.parent().css({"margin-left": "0"});
+				dispatcher.trigger("change:mainState", {stateName: "documentEditor"});
+
+				this.$(".document-edit-side").removeClass("span12").addClass("span6 vertical-delim");
+
+				this.$(".divided").prepend(
+					"<div class='document-list-side span6'>" +
+						"<div class='row-fluid'>" +
+						"<div class='span12 document-list'></div>" +
+						"</div>" +
+						"</div>"
+				);
+
+				this.listLayoutHistory = this.getListLayoutHistory();
+
+				this.assign({".document-list": this.listLayoutHistory});
+
+				this.listLayoutHistory.$(".documents-controls").remove();
+				this.listLayoutHistory.$(".documents-filters").removeClass("span6").addClass("span12");
+			} else {
+				if (this.listLayoutHistory) this.listLayoutHistory.tearDown(); //ViewBase.prototype.tearDown.call(this.listLayoutLight);
+				this.$el.parent().css({"margin-left": "20em"});
+
+				this.$(".document-list-side").remove();
+				this.$(".document-edit-side").removeClass("span6 vertical-delim").addClass("span12");
+
+				dispatcher.trigger("change:mainState", {stateName: "default"});
+			}
+		},
+
+		getListLayoutHistory: function () {
+			return new Documents.Views.List.Common.LayoutHistory({included: true});
+		},
+
+		render: function () {
+			return ViewBase.prototype.render.call(this, {
+				".nav-controls": new Documents.Views.Edit.NavControls({model: this.model}),
+				".heading": new Documents.Views.Edit.Heading({model: this.model}),
+				".dates": new Documents.Views.Edit.Dates({model: this.model}),
+				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
+				".document-controls": new Documents.Views.Edit.DocControls({model: this.model})
+			});
+		}
+	});
+	//endregion
+
+
+	//region VIEWS EDIT EXAMINATION
+	//---------------------
+	Documents.Views.Edit.Examination.Layout = Documents.Views.Edit.Common.Layout.extend({
+		getListLayoutHistory: function () {
+			return new Documents.Views.List.Examination.LayoutHistory({included: true});
+		}
+	});
+	//endregion
+
+
+	//region VIEWS EDIT THERAPY
+	//---------------------
+	Documents.Views.Edit.Therapy.Layout = Documents.Views.Edit.Common.Layout.extend({
+		getListLayoutHistory: function () {
+			return new Documents.Views.List.Therapy.LayoutHistory({included: true});
+		}
+	});
+	//endregion
+
+
+	//region VIEWS EDIT GRID BASE
+	//---------------------
 	Documents.Views.Edit.GridSpanList = RepeaterBase.extend({
 		initialize: function () {
 			this.UIElementFactory = new UIElementFactory();
@@ -1500,7 +1518,10 @@ define(function (require) {
 		}
 	});
 
-	//Ряд в сетке
+	/**
+	 * Ряд в сетке
+	 * @type {*}
+	 */
 	Documents.Views.Edit.GridRow = ViewBase.extend({
 		className: "row-fluid",
 
@@ -1514,7 +1535,10 @@ define(function (require) {
 		}
 	});
 
-	//Сетка (12 колонок по умолчанию)
+	/**
+	 * Сетка (12 колонок по умолчанию)
+	 * @type {*}
+	 */
 	Documents.Views.Edit.Grid = RepeaterBase.extend({
 		initialize: function () {
 			this.collection = new Backbone.Collection();
@@ -1530,39 +1554,34 @@ define(function (require) {
 		onModelReset: function () {
 			this.stopListening(this.model, "change", this.onModelReset);
 
-			//this.collection.reset(this.groupRows());
 			this.collection.reset(this.model.getGroupedByRow());
 		},
-
-		/*groupRows: function () {
-		 var groupedByRow = _(this.model.get("group")[1].attribute).groupBy(function (item) {
-		 //return item.layoutAttributes[]; //TODO: groupBy ROW attr
-		 //var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
-		 return "UNDEFINED";
-		 }, this);
-
-		 var rows = [];
-
-		 for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
-		 if (i == 0 || i%2 == 0) {
-		 rows.push({spans: new Backbone.Collection()});
-		 }
-
-		 rows[rows.length-1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
-		 }
-
-		 //console.log("rows", rows);
-
-		 return rows;
-		 },*/
 
 		onCollectionReset: function () {
 			this.tearDownSubviews();
 			this.render();
+		},
+
+		render: function () {
+			RepeaterBase.prototype.render.call(this);
+
+			var i = 0;
+			this.$("input[type=text],select,.RichText").each(function () {
+				$(this).prop("tabindex", ++i);
+			});
+
+			return this;
 		}
 	});
+	//endregion
 
-	//Базовый класс UI элемента для поля документа
+
+	//region VIEWS UI_ELEMENT
+	//---------------------
+	/**
+	 * Базовый класс UI элемента для поля документа
+	 * @type {*}
+	 */
 	var UIElementBase = Documents.Views.Edit.UIElement.Base = ViewBase.extend({
 		template: templates.uiElements._base,
 
@@ -1618,7 +1637,10 @@ define(function (require) {
 		}
 	});
 
-	//Поле типа Text
+	/**
+	 * Поле типа Text
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({
 		template: templates.uiElements._text,
 
@@ -1631,7 +1653,10 @@ define(function (require) {
 		}
 	});
 
-	//Поле типа Constructor
+	/**
+	 * Поле типа Constructor
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.Constructor = Documents.Views.Edit.UIElement.Text.extend({
 		template: templates.uiElements._constructor,
 
@@ -1659,7 +1684,10 @@ define(function (require) {
 		}
 	});
 
-	//Поле типа String
+	/**
+	 * Поле типа String
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.String = UIElementBase.extend({
 		template: templates.uiElements._string,
 
@@ -1697,18 +1725,30 @@ define(function (require) {
 		}
 	});
 
-	//Поле типа Time
+	/**
+	 * Поле типа Time
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.Time = UIElementBase.extend({});
 
-	//Поле типа Date
+	/**
+	 * Поле типа Date
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.Date = UIElementBase.extend({});
 
-	//Поле типа Integer
+	/**
+	 * Поле типа Integer
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.Integer = UIElementBase.extend({
 		template: templates.uiElements._integer
 	});
 
-	//Поле типа Double
+	/**
+	 * Поле типа Double
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.Double = UIElementBase.extend({
 		template: templates.uiElements._double,
 
@@ -1732,7 +1772,10 @@ define(function (require) {
 		}
 	});
 
-	//Поле типа MKB
+	/**
+	 * Поле типа MKB
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.MKB = UIElementBase.extend({
 		template: templates.uiElements._mkb,
 		events: {
@@ -1751,7 +1794,10 @@ define(function (require) {
 		}
 	});
 
-	//Поле типа FlatDirectory
+	/**
+	 * Поле типа FlatDirectory
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({
 		template: templates.uiElements._flatDirectory,
 		data: function () {
@@ -1769,7 +1815,10 @@ define(function (require) {
 		}
 	});
 
-	//Поле типа Html
+	/**
+	 * Поле типа Html
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({});
 
 	/**
@@ -1819,7 +1868,10 @@ define(function (require) {
 		return new this.UIElementClass(options);
 	};
 
-	//Patched thesaurus view, supporting safe tear down
+	/**
+	 * Patched thesaurus view, supporting safe tear down
+ 	 * @type {*}
+	 */
 	var ThesaurusPopUp = Documents.Views.Edit.ThesaurusPopUp = Thesaurus.Thesaurus.extend({
 		initialize: function () {
 			this.model = new (Backbone.Model.extend({
@@ -1860,7 +1912,6 @@ define(function (require) {
 		},
 		tearDownSubviews: ViewBase.prototype.tearDownSubviews
 	});
-
 	Documents.Views.Edit.ThesaurusPopUpTree = Thesaurus.ThesaurusTree.extend({
 		tearDown: function () {
 			this.collection.off("reset", this.onTermTreeReset, this);
@@ -1878,7 +1929,6 @@ define(function (require) {
 		},
 		tearDownSubviews: ViewBase.prototype.tearDownSubviews
 	});
-
 	Documents.Views.Edit.ThesaurusPopUpTreeNode = Thesaurus.ThesaurusTreeNode.extend({
 		tearDown: function () {
 			this.model.get("childrenTerms").off("reset", this.onChildrenTermsReset, this);
@@ -1892,10 +1942,11 @@ define(function (require) {
 		},
 		tearDownSubviews: ViewBase.prototype.tearDownSubviews
 	});
+	//endregion
 
-	//Просмотр
+
+	//region VIEWS REVIEW BASE
 	//---------------------
-
 	Documents.Views.Review.Layout = LayoutBase.extend({
 		template: templates._reviewLayout,
 
@@ -1942,7 +1993,10 @@ define(function (require) {
 		}
 	});
 
-	//Элементы управления
+	/**
+	 * Элементы управления
+	 * @type {*}
+	 */
 	Documents.Views.Review.Controls = ViewBase.extend({
 		template: templates._reviewControls,
 
@@ -2040,7 +2094,10 @@ define(function (require) {
 		}*/
 	});
 
-	//Значения полей из документа
+	/**
+	 * Значения полей из документа
+	 * @type {*}
+	 */
 	Documents.Views.Review.Sheet = ViewBase.extend({
 		template: templates._reviewSheet,
 
@@ -2083,7 +2140,10 @@ define(function (require) {
 		}
 	});
 
-	//Значения полей из документа
+	/**
+	 * Значения полей из документа
+	 * @type {*}
+	 */
 	Documents.Views.Review.SheetList = RepeaterBase.extend({
 		initialize: function () {
 			RepeaterBase.prototype.initialize.call(this, this.options);
@@ -2111,6 +2171,8 @@ define(function (require) {
 			this.render();
 		}
 	});
+	//endregion
+
 	//endregion
 
 
