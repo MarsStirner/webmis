@@ -23,7 +23,7 @@ define(function(require) {
 
 		initialize: function() {
 
-			this.canAddDirection = true; //this.options.appeal.closed ? false : true;
+			this.canAddDirection = !this.options.appeal.get('closed');
 
 			this.collection = new Consultations();
 			this.collection.appealId = this.options.appealId;

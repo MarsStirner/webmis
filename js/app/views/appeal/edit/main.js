@@ -301,16 +301,20 @@ define([
 							title: "Инструментальные исследования",
 							uri: "/appeals/:id/diagnostics/instrumental/"
 						}, appealJSON),
+
+						App.Router.compile({
+							name: "diagnostics-consultations",
+							title: "Консультации",
+							uri: "/appeals/:id/diagnostics/consultations/"
+						}, appealJSON),
+
 						App.Router.compile({
 							name: "therapy",
 							title: "Лечение",
 							uri: "/appeals/:id/therapy"
 						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-consultations",
-							title: "Консультации",
-							uri: "/appeals/:id/diagnostics/consultations/"
-						}, appealJSON), (function() {
+
+						 (function() {
 							var appeal = self.appeal;
 							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (appeal.get('appealType').get('finance').get('name') === 'ВМП')) {
 								return {
