@@ -50,6 +50,7 @@ define(function(require) {
                 data: {
                     id: result.id,
                     name: result.name,
+                    patientSex: result.patientSex,
                     patientName: result.patientName,
                     patientBirthday: result.patientBirthday,
                     age: result.age2,
@@ -176,14 +177,17 @@ define(function(require) {
             json.department = appeal.get('currentDepartment').name;
 
             json.patientName = appeal.get('patient').get('name').get('raw');
+
+
             json.appealNumber = appeal.get('number');
             var sex = appeal.get('patient').get('sex');
             if (sex === 'female') {
-                json.sex = 'Ж';
+                json.patientSex = 'Ж';
             }
             if (sex === 'male') {
-                json.sex = 'М';
+                json.patientSex = 'М';
             }
+
             var birthDate = appeal.get('patient').get('birthDate');
             //ageString
             json.patientBirthday = Core.Date.format(birthDate);
