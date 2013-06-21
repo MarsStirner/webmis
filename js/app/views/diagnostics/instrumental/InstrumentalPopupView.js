@@ -296,7 +296,7 @@ define(function (require) {
 
 
             view.$saveButton.button(view.viewModel.get('saveButtonState'));
-            view.viewModel.on('change', view.updateSaveButton, view);
+           // view.viewModel.on('change', view.updateSaveButton, view);
 
         }
 

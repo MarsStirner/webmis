@@ -50,9 +50,9 @@ define(function(require) {
 
 			this.on('change:plannedEndTime', this.updateSaveButtonState, this);
 
-			this.on('change', function(){
-				console.log('change',this.toJSON())
-			}, this);
+			// this.on('change', function(){
+			// 	console.log('change',this.toJSON())
+			// }, this);
 
 
 
