@@ -46,6 +46,7 @@ define(function(require) {
 
         printResultOfLaboratory: function() {
             var result = this.resultData();
+            
             new App.Views.Print({
                 data: {
                     id: result.id,
@@ -68,15 +69,48 @@ define(function(require) {
         },
 
         printDirectionForLaboratory: function() {
+            var result = this.resultData();
+
             new App.Views.Print({
-                data: {},
+                data: {
+                    id: result.id,
+                    name: result.name,
+                    patientSex: result.patientSex,
+                    patientName: result.patientName,
+                    patientBirthday: result.patientBirthday,
+                    age: result.age2,
+                    appealNumber: result.appealNumber,
+                    payments: result.payments,
+                    department: result.department,
+                    rbTissueTypeName: '',
+                    rbTestTubeTypeNamе: '',
+                    tests: result.tests,
+                    assignDoctor: result.doctor,
+                    jobTicketDatetime: ''
+                },
                 template: "directionForLaboratory"
             });
         },
 
         printDirectionForLaboratorySimple: function() {
+            var result = this.resultData();
+
             new App.Views.Print({
-                data: {},
+                data: {
+                    id: result.id,
+                    name: result.name,
+                    patientSex: result.patientSex,
+                    patientName: result.patientName,
+                    patientBirthday: result.patientBirthday,
+                    age: result.age2,
+                    appealNumber: result.appealNumber,
+                    payments: result.payments,
+                    department: result.department,
+                    rbTissueTypeName: '',
+                    rbTestTubeTypeNamе: '',
+                    assignDoctor: result.doctor,
+                    jobTicketDatetime: ''
+                },
                 template: "directionForLaboratorySimple"
             });
         },
