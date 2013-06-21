@@ -195,6 +195,10 @@ define(function(require) {
 
 				var volume = 0;
 
+				if(model.label === '##Ошибка отправки в ЛИС##'){
+					model.highlight = 'highlight-it';
+				}
+
 				_.each(model.actions, function(action, key, list) {
 					var sexShortName = '';
 
