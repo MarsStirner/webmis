@@ -2196,6 +2196,20 @@ define(function (require) {
 				 }
 				 }*/
 			}, this)};
+		},
+
+		render: function () {
+			ViewBase.prototype.render.call(this);
+
+			this.$(".buttonset").buttonset();
+			this.$(".print-options").hide().menu();
+			this.$(".show-print-options").on("click", _.bind(function () {
+				this.$(".print-options").show().position({
+					my: "right top",
+					at: "left bottom",
+					of: this.$(".show-print-options")
+				});
+			}, this));
 		}
 
 		/*initialize: function () {
@@ -2274,7 +2288,7 @@ define(function (require) {
 
 		onEditDocumentClick: function (event) {
 			event.preventDefault();
-			if ($(event.currentTarget).data('template-id')) {
+			if ($(event.currentTarget).data('document-id')) {
 				dispatcher.trigger("change:viewState", {
 					type: "document-edit",
 					options: {documentId: $(event.currentTarget).data('document-id')}
