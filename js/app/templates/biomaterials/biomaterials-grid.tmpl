@@ -43,7 +43,7 @@
 </script>
 
 <script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
-	<td class="status-code-${status}">
+	<td class="status-code-${status} ${highlight}">
 		{{if status<=2}}
 		<input type="checkbox" class="id" name="id" value="${id}"/>
 		{{/if}}
@@ -51,21 +51,21 @@
 
 	</td>
 
-	<td class="status-code-${status}">
+	<td class="status-code-${status} ${highlight}">
 		{{formatDateTime date}}
 	</td>
 
-	<td class="status-code-${status}">
+	<td class="status-code-${status} ${highlight}">
 		${patient.name.raw}
 	</td>
-	<td class="status-code-${status}">
+	<td class="status-code-${status} ${highlight}">
 		${patient.sex}
 	</td>
-	<td class="status-code-${status}">
+	<td class="status-code-${status}  ${highlight}">
 		{{formatDate patient.birthDate}}
 
 	</td>
-	<td class="status-code-${status} HasToolTip open-popup" data-tooltip-content="#tooltip_${id}">
+	<td class="status-code-${status}  ${highlight} HasToolTip open-popup" data-tooltip-content="#tooltip_${id}">
 
 		{{if status == 0}}
 			<b class="open-popup"><u class="open-popup">${biomaterial.tissueType.name} (${actions.length})</u></b>
@@ -106,11 +106,11 @@
 		</div>
 	</td>
 
-	<td class="status-code-${status}">
+	<td class="status-code-${status}  ${highlight}">
 		{{if urgent}}<span class="Urgent">срочно</span>{{/if}}
 	</td>
 
-	<td class="status-code-${status}">
+	<td class="status-code-${status}  ${highlight}">
 		{{if volume}}
 			${volume}
 			{{if biomaterial.unit && biomaterial.unit.name}} ${biomaterial.unit.name}{{/if}}
@@ -121,7 +121,7 @@
 
 
 
-	<td class="status-code-${status}">
+	<td class="status-code-${status}  ${highlight}">
 		<span class="status-name">${statusName}</span>
 	</td>
 </script>
