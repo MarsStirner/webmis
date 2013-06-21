@@ -578,6 +578,7 @@ define(function (require) {
 			if (this.options.appealId) {
 				appealId = this.options.appealId;
 				appeal = this.options.appeal;
+				console.log("appeal",appeal);
 			}
 			this.appealId = appealId;
 
@@ -652,7 +653,7 @@ define(function (require) {
 		},
 
 		data: function () {
-			return {documents: this.collection, showIcons: !this.options.included};
+			return {documents: this.collection, showIcons: !this.options.included && !appeal.isClosed()};
 		},
 
 		initialize: function () {
@@ -864,7 +865,9 @@ define(function (require) {
 			//}
 
 			this.listenTo(this.documentTypes, "reset", function () {
-				this.$(".new-document,.new-duty-doc-exam").button("enable");
+				if (!appeal.isClosed()) {
+					this.$(".new-document,.new-duty-doc-exam").button("enable");
+				}
 				//console.log(this.documentTypes);
 			});
 
@@ -2107,7 +2110,7 @@ define(function (require) {
 				".review-controls": new Documents.Views.Review.Controls({collection: this.collection}),
 				".sheets": new Documents.Views.Review.SheetList({
 					collection: this.collection,
-					showIcons: this.options.showIcons
+					showIcons: this.options.showIcons && !appeal.isClosed()
 				})
 			});
 		}
@@ -2201,7 +2204,7 @@ define(function (require) {
 		render: function () {
 			ViewBase.prototype.render.call(this);
 
-			this.$(".buttonset").buttonset();
+			/*this.$(".buttonset").buttonset();
 			this.$(".print-options").hide().menu();
 			this.$(".show-print-options").on("click", _.bind(function () {
 				this.$(".print-options").show().position({
@@ -2209,7 +2212,7 @@ define(function (require) {
 					at: "left bottom",
 					of: this.$(".show-print-options")
 				});
-			}, this));
+			}, this));*/
 		}
 
 		/*initialize: function () {
