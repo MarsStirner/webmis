@@ -1,11 +1,11 @@
-<div class="row-fluid">
-	<div class="span8">
-		<input type="text" class="document-type-search" style="width: 100%; font-size: 1em;">
-		<!--<i class="icon-search" style="position: relative; top: 1.4em"></i>-->
+<div class="row-fluid" style="margin-bottom: .5em">
+	<div class="span8" style="position: relative">
+		<input type="text" class="document-type-search" style="width: 100%; font-size: 1em;" placeholder="Поиск">
+		<i class="icon-search" style="position: absolute; top: .35em; right: .6em;"></i>
 	</div>
 	<div class="span4">
-		<select style="width: 100%; font-size: 1em; padding: 4px; height: 2.25em;">
-			<option value="ALL" selected>Все</option>
+		<select class="document-type-mnem Regular" style="font-size: 1em;">
+			<option value="EXAM,JOUR,ORD,EPI,NOT,OTH" selected>Все</option>
 			<option value="EXAM">Осмотры</option>
 			<option value="JOUR">Дневники</option>
 			<option value="ORD">Выписки</option>
@@ -15,3 +15,10 @@
 		</select>
 	</div>
 </div>
+<span class="search-result-count" style="margin-top: .5em"></span>
+<!--
+<div class="row-fluid">
+	<div class="span12">
+
+	</div>
+</div>-->

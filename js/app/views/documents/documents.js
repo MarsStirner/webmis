@@ -372,6 +372,8 @@ define(function (require) {
 
 		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
 
+		lastCrtiteria: "",
+
 		url: function () {
 			//filter[view]=tree
 			var url =  DATA_PATH + "dir/actionTypes/?filter[view]=tree&";
@@ -384,6 +386,47 @@ define(function (require) {
 			}
 
 			return url + params.join("&");
+		},
+
+		extractResult: function (groups, result, criteriaRE) {
+			_.each(groups, function (model) {
+				if (!model.groups.length && criteriaRE.test(model.name)) {
+					result.push(model);
+				}
+				if (model.groups.length) {
+					this.extractResult(model.groups, result, criteriaRE);
+				}
+			}, this);
+		},
+
+		search: function (criteria) {
+			this.lastCrtiteria = criteria;
+
+			if (!this.originalModels) {
+				this.originalModels = this.toJSON();
+			}
+			if (this.lastCrtiteria) {
+				var criteriaRE = new RegExp(this.lastCrtiteria, "gi");
+				var result = [];
+				this.extractResult(this.originalModels, result, criteriaRE);
+				this.reset(result);
+			} else {
+				this.reset(this.originalModels);
+			}
+
+			/*this.collection.reset(criteria ?
+				_.filter(this.options.originalModels, function (model) {
+					return criteriaRE.test(model.get("name"))
+				}) :
+				this.options.originalModels);*/
+		},
+
+		searchByMnem: function (mnems) {
+			this.mnems = mnems;
+			this.fetch().then(_.bind(function () {
+				this.originalModels = null;
+				this.search(this.lastCrtiteria);
+			}, this));
 		}
 	});
 	//endregion
@@ -578,7 +621,7 @@ define(function (require) {
 
 		render: function (subViews) {
 			return LayoutBase.prototype.render.call(this, _.extend({
-				".documents-table": new Documents.Views.List.Base.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
+				".documents-table": new Documents.Views.List.Base.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments, included: !!this.options.included}),
 				".table-controls": new Documents.Views.List.Base.TableControls({collection: this.selectedDocuments}),
 				".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents})
 			}, subViews));
@@ -600,7 +643,7 @@ define(function (require) {
 		},
 
 		data: function () {
-			return {documents: this.collection};
+			return {documents: this.collection, showIcons: !this.options.included};
 		},
 
 		initialize: function () {
@@ -776,6 +819,7 @@ define(function (require) {
 			}
 
 			this.collection.dateRange = dateRange;
+			this.collection.pageNumber = 1;
 			this.collection.fetch();
 		},
 
@@ -852,11 +896,11 @@ define(function (require) {
 
 			this.collection = new Documents.Collections.DocumentTypes(this.collection.models);
 
-			this.originalModels = this.collection.models;
+			//this.collection.originalModels = this.collection.models;
 
 			this.listenTo(this.collection, "document-type:selected", this.onDocumentTypeSelected);
 
-			this.docTypeSearch = new Documents.Views.List.Base.DocumentTypeSearch({collection: this.collection, originalModels: this.originalModels});
+			this.docTypeSearch = new Documents.Views.List.Base.DocumentTypeSearch({collection: this.collection});
 
 			this.subViews = {".doc-type-search": this.docTypeSearch};
 		},
@@ -866,8 +910,10 @@ define(function (require) {
 		},
 
 		onCreateDocumentClick: function () {
-			this.origCollection.trigger("document-type:selection-confirmed", {selectedType: this.selectedType});
-			this.tearDown();
+			if (this.selectedType) {
+				this.origCollection.trigger("document-type:selection-confirmed", {selectedType: this.selectedType});
+				this.tearDown();
+			}
 		},
 
 		render: function () {
@@ -883,19 +929,40 @@ define(function (require) {
 		className: "doc-type-search",
 		template: templates._documentTypeSearch,
 		events: {
-			"keyup .document-type-search": "onDocumentTypeSearchKeyup"
+			"keyup .document-type-search": "onDocumentTypeSearchKeyup",
+			"change .document-type-mnem": "onDocumentTypeMnemChange"
 		},
 		onDocumentTypeSearchKeyup: function (event) {
 			this.applySearchFilter($(event.currentTarget).val());
 		},
+		onDocumentTypeMnemChange: function (event) {
+			this.collection.searchByMnem($(event.currentTarget).val().split(","));
+		},
 		applySearchFilter: function (criteria) {
-			var criteriaRE = new RegExp(criteria, "gi");
+			this.collection.search(criteria);
 
+			/*var criteriaRE = new RegExp(criteria, "gi");
 			this.collection.reset(criteria ?
 				_.filter(this.options.originalModels, function (model) {
 					return criteriaRE.test(model.get("name"))
 				}) :
-				this.options.originalModels);
+				this.options.originalModels);*/
+		},
+		render: function () {
+			return ViewBase.prototype.render.call(this, {
+				".search-result-count": new Documents.Views.List.Base.DocumentTypeSearchResultCount({collection: this.collection})
+			});
+		}
+	});
+
+	Documents.Views.List.Base.DocumentTypeSearchResultCount = ViewBase.extend({
+		template: _.template("Найдено шаблонов: <%=resultsCount%>"),
+		data: function () {
+			return {resultsCount: this.collection.length};
+		},
+		initialize: function () {
+			ViewBase.prototype.initialize.call(this, this.options);
+			this.listenTo(this.collection, "reset", function () { this.render(); });
 		}
 	});
 
@@ -1060,6 +1127,7 @@ define(function (require) {
 					break;
 			}
 			this.collection.mnems = mnems;
+			this.collection.pageNumber = 1;
 			this.collection.fetch();
 		}
 	});
