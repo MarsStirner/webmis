@@ -609,7 +609,12 @@ define(function (require) {
 
 			if (enabled) {
 				this.$el.append('<div class="row-fluid review-area-row"><div class="span12 review-area"></div></div>');
-				this.reviewLayout = new Documents.Views.Review.Layout({collection: this.selectedDocuments, documents: this.documents, included: true});
+				this.reviewLayout = new Documents.Views.Review.Layout({
+					collection: this.selectedDocuments,
+					documents: this.documents,
+					included: true,
+					showIcons: !this.options.included
+				});
 				this.assign({
 					".review-area": this.reviewLayout
 				});
@@ -621,7 +626,11 @@ define(function (require) {
 
 		render: function (subViews) {
 			return LayoutBase.prototype.render.call(this, _.extend({
-				".documents-table": new Documents.Views.List.Base.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments, included: !!this.options.included}),
+				".documents-table": new Documents.Views.List.Base.DocumentsTable({
+					collection: this.documents,
+					selectedDocuments: this.selectedDocuments,
+					included: !!this.options.included
+				}),
 				".table-controls": new Documents.Views.List.Base.TableControls({collection: this.selectedDocuments}),
 				".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents})
 			}, subViews));
@@ -668,13 +677,19 @@ define(function (require) {
 
 		onEditDocumentClick: function (event) {
 			if ($(event.currentTarget).data('document-id')) {
-				dispatcher.trigger("change:viewState", {type: "document-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+				dispatcher.trigger("change:viewState", {
+					type: "document-edit",
+					options: {documentId: $(event.currentTarget).data('document-id')}
+				});
 			}
 		},
 
 		onDuplicateDocumentClick: function (event) {
 			if ($(event.currentTarget).data('template-id')) {
-				dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: $(event.currentTarget).data('template-id')}});
+				dispatcher.trigger("change:viewState", {
+					type: "document-edit",
+					options: {templateId: $(event.currentTarget).data('template-id')}
+				});
 			}
 		},
 
@@ -857,7 +872,10 @@ define(function (require) {
 		},
 
 		onDocumentTypeSelected: function (event) {
-			dispatcher.trigger("change:viewState", {type: "document-edit", options: {templateId: event.selectedType}});
+			dispatcher.trigger("change:viewState", {
+				type: "document-edit",
+				options: {templateId: event.selectedType}
+			});
 		},
 
 		onNewDocumentClick: function () {
@@ -1057,7 +1075,10 @@ define(function (require) {
 
 		render: function () {
 			return Documents.Views.List.Common.LayoutHistory.prototype.render.call(this, {
-				".documents-controls": new Documents.Views.List.Common.Controls({collection: this.documents, documentTypes: this.documentTypes})
+				".documents-controls": new Documents.Views.List.Common.Controls({
+					collection: this.documents,
+					documentTypes: this.documentTypes
+				})
 			});
 		}
 	});
@@ -1145,7 +1166,10 @@ define(function (require) {
 
 		render: function (subViews) {
 			return ListLayoutBase.prototype.render.call(this, _.extend({
-				".documents-table": new Documents.Views.List.Examination.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
+				".documents-table": new Documents.Views.List.Examination.DocumentsTable({
+					collection: this.documents,
+					selectedDocuments: this.selectedDocuments
+				}),
 				".documents-filters": new Documents.Views.List.Base.Filters({collection: this.documents})
 			}, subViews));
 		}
@@ -1187,7 +1211,10 @@ define(function (require) {
 
 	Documents.Views.List.Examination.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
 		onEditDocumentClick: function (event) {
-			dispatcher.trigger("change:viewState", {type: "examination-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+			dispatcher.trigger("change:viewState", {
+				type: "examination-edit",
+				options: {documentId: $(event.currentTarget).data('document-id')}
+			});
 		}
 	});
 	//endregion
@@ -1204,7 +1231,10 @@ define(function (require) {
 
 		render: function (subViews) {
 			return ListLayoutBase.prototype.render.call(this, _.extend({
-				".documents-table": new Documents.Views.List.Therapy.DocumentsTable({collection: this.documents, selectedDocuments: this.selectedDocuments}),
+				".documents-table": new Documents.Views.List.Therapy.DocumentsTable({
+					collection: this.documents,
+					selectedDocuments: this.selectedDocuments
+				}),
 				".documents-filters": new Documents.Views.List.Base.Filters({collection: this.documents})
 			}, subViews));
 		}
@@ -1225,7 +1255,10 @@ define(function (require) {
 
 		render: function () {
 			return Documents.Views.List.Therapy.LayoutHistory.prototype.render.call(this, {
-				".documents-controls": new Documents.Views.List.Therapy.Controls({collection: this.documents, documentTypes: this.documentTypes})
+				".documents-controls": new Documents.Views.List.Therapy.Controls({
+					collection: this.documents,
+					documentTypes: this.documentTypes
+				})
 			});
 		}
 	});
@@ -1234,7 +1267,10 @@ define(function (require) {
 
 	Documents.Views.List.Therapy.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
 		onEditDocumentClick: function (event) {
-			dispatcher.trigger("change:viewState", {type: "therapy-edit", options: {documentId: $(event.currentTarget).data('document-id')}});
+			dispatcher.trigger("change:viewState", {
+				type: "therapy-edit",
+				options: {documentId: $(event.currentTarget).data('document-id')}
+			});
 		}
 	});
 	//endregion
@@ -1272,7 +1308,11 @@ define(function (require) {
 		onCopyFromClick: function () {
 			this.copySourceList = new Documents.Collections.DocumentList([], {});
 			this.listenTo(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
-			new Documents.Views.Edit.CopySourceSelector({typeId: this.getDocumentTypeId(), collection: this.copySourceList});
+
+			new Documents.Views.Edit.CopySourceSelector({
+				typeId: this.getDocumentTypeId(),
+				collection: this.copySourceList
+			});
 		},
 
 		onCopySourceSelected: function (event) {
@@ -1674,6 +1714,7 @@ define(function (require) {
 		},
 
 		mapLayoutAttributes: function () {
+			//TODO: MAP ALL ATTRIBUTES
 			_(this.model.get('layoutAttributeValues')).each(function (value) {
 				var layoutAttributeParams = _(layoutAttributesDir.get(this.model.get('type'))).where({id: value.layoutAttribute_id})[0];
 				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
@@ -1765,7 +1806,13 @@ define(function (require) {
 			//TODO: move this shit to the template
 
 			this.$(".Combo").each(function () {
-				var $comboInput = $(this).wrap('<div class="DDList DDSelect ComboWrapper"><div class="Title"><span class="Actions"></span></div></div>');
+				var $comboInput = $(this).wrap(
+					'<div class="DDList DDSelect ComboWrapper">' +
+						'<div class="Title">' +
+							'<span class="Actions"></span>' +
+						'</div>' +
+					'</div>'
+				);
 				var $wrapper = $comboInput.parents(".DDList").append('<div class="Content"><ul></ul></div>');
 
 				if ($comboInput.hasClass("Mandatory")) $wrapper.addClass("Mandatory");
@@ -1827,7 +1874,9 @@ define(function (require) {
 
 		onFormatDoubleKeypress: function (eve) {
 			var $ct = $(eve.currentTarget);
-			if ((eve.which != 46 || $ct.val().indexOf('.') != -1) && (eve.which < 48 || eve.which > 57) || (eve.which == 46 && $ct.caret().start == 0) ) {
+			if ((eve.which != 46 || $ct.val().indexOf('.') != -1) &&
+				  (eve.which < 48 || eve.which > 57) ||
+				  (eve.which == 46 && $ct.caret().start == 0)) {
 				eve.preventDefault();
 			}
 		},
@@ -2056,7 +2105,10 @@ define(function (require) {
 		render: function () {
 			return LayoutBase.prototype.render.call(this, {
 				".review-controls": new Documents.Views.Review.Controls({collection: this.collection}),
-				".sheets": new Documents.Views.Review.SheetList({collection: this.collection, repeat: Documents.Views.Review.Sheet})
+				".sheets": new Documents.Views.Review.SheetList({
+					collection: this.collection,
+					showIcons: this.options.showIcons
+				})
 			});
 		}
 	});
@@ -2177,17 +2229,23 @@ define(function (require) {
 				var summaryAttrs = documentJSON["group"][0]["attribute"];
 
 				tmplData = {
+					id: documentJSON.id,
+					typeId: documentJSON.typeId,
 					attributes: this.model.getFilledAttrs(),
 					name: summaryAttrs[1]["properties"][0]["value"],
 					//endDate: summaryAttrs[3]["properties"][0]["value"],
-					endDate: moment(this.model.getDates().begin.getValue(), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss"),
+					beginDate: moment(this.model.getDates().begin.getValue(), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss"),
+					endDate: this.model.getDates().end.getValue() ?
+						moment(this.model.getDates().end.getValue(), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss") :
+						false,
 					doctorName: [
 						summaryAttrs[4]["properties"][0]["value"],
 						summaryAttrs[5]["properties"][0]["value"],
 						summaryAttrs[6]["properties"][0]["value"]
 					].join(" "),
 					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
-					loaded: true
+					loaded: true,
+					showIcons: this.options.showIcons
 				};
 			} else {
 				tmplData = {
@@ -2195,7 +2253,14 @@ define(function (require) {
 				};
 			}
 
+			console.log(tmplData);
+
 			return {document: tmplData};
+		},
+
+		events: {
+			"click .edit-document": "onEditDocumentClick",
+			"click .duplicate-document": "onDuplicateDocumentClick"
 		},
 
 		initialize: function () {
@@ -2205,6 +2270,26 @@ define(function (require) {
 
 		onModelReset: function () {
 			this.render();
+		},
+
+		onEditDocumentClick: function (event) {
+			event.preventDefault();
+			if ($(event.currentTarget).data('template-id')) {
+				dispatcher.trigger("change:viewState", {
+					type: "document-edit",
+					options: {documentId: $(event.currentTarget).data('document-id')}
+				});
+			}
+		},
+
+		onDuplicateDocumentClick: function (event) {
+			event.preventDefault();
+			if ($(event.currentTarget).data('template-id')) {
+				dispatcher.trigger("change:viewState", {
+					type: "document-edit",
+					options: {templateId: $(event.currentTarget).data('template-id')}
+				});
+			}
 		}
 	});
 
@@ -2226,11 +2311,15 @@ define(function (require) {
 		},
 
 		getRepeatView: function (repeatOptions) {
-			if (repeatOptions.model && repeatOptions.model.collection && (repeatOptions.model.collection.indexOf(repeatOptions.model) % 2 == 0)) {
+			if (repeatOptions.model &&
+				  repeatOptions.model.collection &&
+				  (repeatOptions.model.collection.indexOf(repeatOptions.model) % 2 == 0)) {
 				repeatOptions.className = "sheet odd-sheet";
 			} else {
 				repeatOptions.className = "sheet even-sheet";
 			}
+			repeatOptions.showIcons = !!this.options.showIcons;
+
 			return new Documents.Views.Review.Sheet(repeatOptions);
 		},
 
