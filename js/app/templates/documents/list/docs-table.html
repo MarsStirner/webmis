@@ -6,7 +6,9 @@
 			<th>Название</th>
 			<th>Врач</th>
 			<th>Специальность</th>
+			<%if (showIcons) {%>
 			<th>&nbsp;</th>
+			<%}%>
 		</tr>
 	</thead>
 	<tbody>
@@ -18,14 +20,16 @@
 					<td class="single-item-select"><%=document.get('assessmentName').name%></td>
 					<td class="single-item-select"><%=document.get('doctor').name.raw%></td>
 					<td class="single-item-select"><%=document.get('doctor').specs ? document.get('doctor').specs.name : ''%></td>
-					<td class="IconsCell">
-						<%if (document.get('closeDate')) {%>
-						<a><i class="icon-lock" title="Документ закрыт"></i></a>
-						<%} else {%>
-						<a class="edit-document" data-document-id="<%=document.id%>"><i class="icon-pencil" title="Редактировать"></i></a>
-						<%}%>
-						<a class="duplicate-document" data-template-id="<%=document.get('typeId')%>" style="margin-left: .5em"><i class="icon-copy" title="Дублировать"></i></a>
-					</td>
+					<%if (showIcons) {%>
+						<td class="IconsCell">
+							<%if (document.get('closeDate')) {%>
+							<a><i class="icon-lock" title="Документ закрыт"></i></a>
+							<%} else {%>
+							<a class="edit-document" data-document-id="<%=document.id%>"><i class="icon-pencil" title="Редактировать"></i></a>
+							<%}%>
+							<a class="duplicate-document" data-template-id="<%=document.get('typeId')%>" style="margin-left: .5em"><i class="icon-copy" title="Дублировать"></i></a>
+						</td>
+					<%}%>
 				</tr>
 			<%});%>
 		<%} else {%>
