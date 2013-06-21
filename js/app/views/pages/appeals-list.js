@@ -273,6 +273,9 @@ define([
 							getValue: function(model) {
 								return model.get("id");
 							},
+							matcher: function(term, text, opt){
+								return text.split(' ')[0].toUpperCase().indexOf(term.toUpperCase()) >= 0
+							},
 							preselectedValue: Core.Cookies.get("userId")
 						},
 						departments: {
