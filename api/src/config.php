@@ -8,7 +8,7 @@ $app["log.level"] = 100;
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver'   => 'pdo_mysql',
-        'host'=> '10.1.2.106',//хост базы данных
+        'host'=> '10.1.2.149',//хост базы данных
         'dbname'=> 's11r64',//имя базы данных
         'user'=> 'root',//пользователь базы данных
         'password'=> 'root',//пароль пользователя базы данных
@@ -17,24 +17,24 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 ));
 
 
-$app->register(new MonologServiceProvider(), array(
-        "monolog.logfile" => __DIR__."/".date("Y-m-d").".log",
-        "monolog.level" => $app["log.level"],
-        "monolog.name" => "application"
-));
+// $app->register(new MonologServiceProvider(), array(
+//         "monolog.logfile" => __DIR__."/".date("Y-m-d").".log",
+//         "monolog.level" => $app["log.level"],
+//         "monolog.name" => "application"
+// ));
 
 
-if ( $app['debug'] ) {
-    $logger = new Doctrine\DBAL\Logging\DebugStack();
+// if ( $app['debug'] ) {
+//     $logger = new Doctrine\DBAL\Logging\DebugStack();
 
-    $app['db.config']->setSQLLogger($logger);
-    $app->after(function() use ($app, $logger) {
+//     $app['db.config']->setSQLLogger($logger);
+//     $app->after(function() use ($app, $logger) {
 
-        foreach ( $logger->queries as $query ) {
-            $app['monolog']->debug($query['sql'], array(
-                'params' => $query['params'],
-                'types' => $query['types']
-            ));
-        }
-    });
-}
+//         foreach ( $logger->queries as $query ) {
+//             $app['monolog']->debug($query['sql'], array(
+//                 'params' => $query['params'],
+//                 'types' => $query['types']
+//             ));
+//         }
+//     });
+// }

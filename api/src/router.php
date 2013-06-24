@@ -4,7 +4,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 
 
-
+$app->before(function (Request $request) {
+    if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+        $data = json_decode($request->getContent(), true);
+        $request->request->replace(is_array($data) ? $data : array());
+    }
+});
 
 $apiRouts = $app['controllers_factory'];
 
@@ -279,6 +284,147 @@ $apiRouts->get('/appeals/{appealId}/close', function($appealId, Request $request
 
 })->assert('appealId', '\d+');
 
+
+//вмп талон госпитализации
+$apiRouts->get('/appeals/{appealId}/client_quoting', function($appealId, Request $request) use ($app){
+
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
+
+
+    $select_sql = "SELECT Client_Quoting.* FROM Client_Quoting WHERE Client_Quoting.event_id = ? ";
+
+    $vmpTalon = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+    $clientId = $vmpTalon["master_id"];
+
+
+    $select_sql2 = "SELECT Client_Quoting.* FROM Client_Quoting "
+    ."WHERE Client_Quoting.master_id = ? "
+    ."AND Client_Quoting.event_id != ? "
+    ."ORDER BY Client_Quoting.createDatetime DESC "
+    ."LIMIT 1";
+
+    $previousVmpTalon = $app['db']->fetchAssoc($select_sql2, array((int) $clientId,(int) $appealId));
+
+
+    return $app->json(array("data" => array("vmpTalon" => $vmpTalon, "previousVmpTalon" => $previousVmpTalon)))->setCallback($callback);
+
+})->assert('appealId', '\d+');
+
+
+//создание вмп талона госпитализации
+$apiRouts->post('/appeals/{appealId}/client_quoting', function($appealId, Request $request) use ($app){
+
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
+
+    $userId = $request->cookies->get('userId');
+    $now = (new \DateTime('NOW'))->format('Y-m-d H:i:s');
+
+
+    $select_event_sql = "SELECT * FROM Event WHERE id = ?";
+    $event = $app['db']->fetchAssoc($select_event_sql, array((int) $appealId));
+
+
+    $data = array(
+        "createDatetime" => $now,
+        "createPerson_id" => $userId,
+        "modifyDatetime" => $now,
+        "modifyPerson_id" => $userId,
+        "master_id"=>$event['client_id'],
+        "identifier"=>$event['externalId'],
+        "quotaType_id" => $app['request']->get('quotaType_id'),
+        "MKB" => $app['request']->get('MKB'),
+        "pacientModel_id" => $app['request']->get('pacientModel_id'),
+        "treatment_id" => $app['request']->get('treatment_id'),
+        "event_id" => $appealId
+        );
+
+    $app['db']->insert('Client_Quoting', $data);
+
+
+    return $app->json(array("data" => $data))->setCallback($callback);
+
+})->assert('appealId', '\d+');
+
+//обновление вмп талона госпитализации
+$apiRouts->put('/appeals/{appealId}/client_quoting/{quotingId}', function($appealId, $quotingId, Request $request) use ($app){
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
+
+    $userId = $request->cookies->get('userId');
+    $now = (new \DateTime('NOW'))->format('Y-m-d H:i:s');
+
+
+    $data = array(
+        "modifyDatetime" => $now,
+        "modifyPerson_id" => $userId,
+        "quotaType_id" => $app['request']->get('quotaType_id'),
+        "MKB" => $app['request']->get('MKB'),
+        "pacientModel_id" => $app['request']->get('pacientModel_id'),
+        "treatment_id" => $app['request']->get('treatment_id')
+        );
+
+     $app['db']->update('Client_Quoting', $data, array('id' => (int) $quotingId));
+
+
+    return $app->json(array("data" => $data))->setCallback($callback);
+
+})->assert('appealId', '\d+')->assert('quotingId', '\d+');
+
+
+//справочник rbPacientModel
+$apiRouts->get('/dir/pacient_model', function(Request $request)  use ($app){//?dictName=pacientModel
+
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
+
+    $select_sql = "SELECT rbPacientModel.id,rbPacientModel.name FROM rbPacientModel";
+
+    $statement = $app['db']->prepare($select_sql);
+    $statement->execute();
+    $pacientModel = $statement->fetchAll();
+
+
+    return $app->json(array('data'=>$pacientModel))->setCallback($callback);
+
+});
+
+
+//справочник rbTreatment
+$apiRouts->get('/dir/treatment', function(Request $request)  use ($app){
+
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
+
+    $select_sql = "SELECT rbTreatment.id,rbTreatment.name FROM rbTreatment";
+
+    $statement = $app['db']->prepare($select_sql);
+    $statement->execute();
+    $treatment = $statement->fetchAll();
+
+
+    return $app->json(array('data'=>$treatment))->setCallback($callback);
+
+});
+
+
+//справочник QuotaType
+$apiRouts->get('/dir/quotaType', function(Request $request)  use ($app){
+
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
+
+    $select_sql = "SELECT QuotaType.id,QuotaType.name FROM QuotaType";
+
+    $statement = $app['db']->prepare($select_sql);
+    $statement->execute();
+    $quotaType = $statement->fetchAll();
+
+
+    return $app->json(array('data'=>$quotaType))->setCallback($callback);
+
+});
 
 
 $app->mount('/api/v1', $apiRouts);
