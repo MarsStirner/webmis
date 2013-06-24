@@ -340,6 +340,25 @@ def application(environ, start_response):
         return barcode_char.decode('windows-1252')
 
 
+    def getFinanceCode (financeCode):
+        if financeCode == 2:
+            return '1'
+        elif financeCode == 1:
+            return '2'
+        elif financeCode == 3:
+            return '3'
+        elif financeCode == 4:
+            return '3'
+        elif financeCode == 5:
+            return '7'
+        elif financeCode == 6:
+            return '5'
+        elif financeCode == 7:
+            return '6'
+        else:
+            return ''      
+
+
     def getData( path_string, data=dataJSON ):
         data = data if len(data) > 0 else dataJSON
         path = path_string.split('.')
@@ -400,6 +419,7 @@ def application(environ, start_response):
         getBarcode128 = getBarcode128,
         findDiagnosis = findDiagnosis,
         getAddress = getAddress,
+        getFinanceCode = getFinanceCode,
         getDaysDelta=getDaysDelta), rendered_file_name)
 
     renderer.run()
