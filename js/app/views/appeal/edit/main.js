@@ -3,26 +3,28 @@
  * Date: 08.06.12
  */
 define([
-	"text!templates/appeal/edit/main.tmpl",
-	"views/diagnostics/laboratory/LaboratoryView",
-	"views/diagnostics/laboratory/LaboratoryResultView",
-	"views/diagnostics/instrumental/InstrumentalView",
-	"views/diagnostics/instrumental/InstrumentalResultView",
-	"views/diagnostics/consultations/ConsultationsListView",
-	"views/diagnostics/consultations/ConsultationsResultView",
+		"text!templates/appeal/edit/main.tmpl",
+		"views/diagnostics/laboratory/LaboratoryView",
+		"views/diagnostics/laboratory/LaboratoryResultView",
+		"views/diagnostics/instrumental/InstrumentalView",
+		"views/diagnostics/instrumental/InstrumentalResultView",
+		"views/diagnostics/consultations/ConsultationsListView",
+		"views/diagnostics/consultations/ConsultationsResultView",
+		"views/appeal/edit/pages/QuotesView",
+
 	"views/appeal/edit/pages/monitoring",
-	"views/documents/documents",
-	"views/moves/moves",
-	"views/moves/HospitalBedView",
-	"models/appeal",
-	"collections/patient-appeals",
-	"views/breadcrumbs",
-	"views/menu",
-	"views/card-header",
-	"views/appeal/edit/pages/examinations",
-	"views/appeal/edit/pages/examination-edit",
-	"views/appeal/edit/pages/examination-primary",
-	"views/appeal/edit/pages/card"
+		"views/documents/documents",
+		"views/moves/moves",
+		"views/moves/HospitalBedView",
+		"models/appeal",
+		"collections/patient-appeals",
+		"views/breadcrumbs",
+		"views/menu",
+		"views/card-header",
+		"views/appeal/edit/pages/examinations",
+		"views/appeal/edit/pages/examination-edit",
+		"views/appeal/edit/pages/examination-primary",
+		"views/appeal/edit/pages/card"
 ], function(
 	template,
 	LaboratoryView,
@@ -31,11 +33,12 @@ define([
 	InstrumentalResultView,
 	ConsultationView,
 	ConsultationResultView,
-	Monitoring,
+	QuotesView,
+
+Monitoring,
 	Documents,
 	Moves,
-	HospitalBed
-) {
+	HospitalBed) {
 
 	App.Views.Main = View.extend({
 		template: template,
@@ -60,6 +63,7 @@ define([
 			"diagnostics-instrumental-result": InstrumentalResultView,
 			"diagnostics-consultations": ConsultationView,
 			"diagnostics-consultations-result": ConsultationResultView,
+			"quotes": QuotesView,
 
 			"first-examination-edit": App.Views.ExaminationEdit,
 
@@ -80,6 +84,7 @@ define([
 			"diagnostics-instrumental-result": App.Router.cachedBreadcrumbs.INSTRUMENTAL_RESULT,
 			"diagnostics-consultations": App.Router.cachedBreadcrumbs.CONSULTATION,
 			"diagnostics-consultations-result": App.Router.cachedBreadcrumbs.CONSULTATION_RESULT,
+			"quotes": App.Router.cachedBreadcrumbs.QUOTES,
 			"examinations": App.Router.cachedBreadcrumbs.EXAMS,
 			"first-examination-edit": App.Router.cachedBreadcrumbs.EXAMS,
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
@@ -90,9 +95,10 @@ define([
 			"documents": App.Router.cachedBreadcrumbs.APPEAL
 		},
 
-		initialize: function () {
+		initialize: function() {
 			this.appealId = this.options.id;
 			this.type = this.options.type;
+			console.log('this', this)
 
 			if (!(this.appealId && this.typeViews[this.type])) {
 				throw new Error("Invalid diagnostic type or empty appeal id");
@@ -161,7 +167,7 @@ define([
 			this.setContentView(event.type, event.options);
 		},
 
-		onMainStateChange: function (event) {
+		onMainStateChange: function(event) {
 			switch (event.stateName) {
 				case "default":
 					this.toggleMenu(true);
@@ -172,7 +178,7 @@ define([
 			}
 		},
 
-		onAppealLoaded: function () {
+		onAppealLoaded: function() {
 			var self = this;
 			var appealExtraData = new App.Collections.PatientAppeals();
 			appealExtraData.patient = this.appeal.get("patient");
@@ -208,7 +214,7 @@ define([
 			appealExtraData.off("reset", this.onAppealExtraDataLoaded, this);
 		},
 
-		onPatientLoaded: function (patient) {
+		onPatientLoaded: function(patient) {
 			Cache.Patient = patient;
 			this.ready();
 			this.setContentView(this.type);
@@ -259,11 +265,11 @@ define([
 			//this.$(".CardHeader .CardPrint")[this.contentView.canPrint ? "show" : "hide"]();
 		},
 
-		toggleMenu: function (visible) {
-			this.menu.$el.parent().toggle(!!visible);
+		toggleMenu: function(visible) {
+			this.menu.$el.parent().toggle( !! visible);
 		},
 
-		getMenuStructure: function () {
+		getMenuStructure: function() {
 			var menuStructure = {};
 			var self = this;
 
@@ -304,9 +310,9 @@ define([
 							var appeal = self.appeal;
 							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (appeal.get('appealType').get('finance').get('name') === 'ВМП')) {
 								return {
-									name: "quotеs",
+									name: "quotes",
 									title: "Квоты",
-									uri: ""
+									uri: "/appeals/" + appeal.get('id') + "/quotes"
 								};
 							} else {
 								return false;

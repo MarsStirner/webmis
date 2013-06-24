@@ -1,0 +1,16 @@
+<h2>Талон ВМП</h2>
+<% if(vmpTalon){ %>
+<ul>
+<li>Код МКБ: <%= vmpTalon.DiagName %></li>
+
+<li>Код вида МКБ: <%= vmpTalon.quotaTypeName %></li>
+<li>Модель пациента: <%= vmpTalon.patientModelName %></li>
+<li>Метод лечения: <%= vmpTalon.treatmentName %></li>
+</ul>
+<% }else{ %>
+<form>
+	<select id="quota-type"></select>
+</form>
+<% } %>
+
+

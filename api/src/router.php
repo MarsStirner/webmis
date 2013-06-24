@@ -292,16 +292,27 @@ $apiRouts->get('/appeals/{appealId}/client_quoting', function($appealId, Request
     $callback = $callback ? $callback : 'callback';
 
 
-    $select_sql = "SELECT Client_Quoting.* FROM Client_Quoting WHERE Client_Quoting.event_id = ? ";
+    $select_sql = "SELECT cq.*, pm.name as 'patientModelName',mkb.DiagName, qt.name AS 'quotaTypeName',t.name AS 'treatmentName' "
+    ."FROM Client_Quoting as cq "
+    ."JOIN MKB AS mkb ON cq.MKB = mkb.DiagID "
+    ."JOIN rbPacientModel AS pm on cq.pacientModel_id = pm.id "
+    ."JOIN QuotaType AS qt on cq.quotaType_id = qt.id "
+    ."JOIN rbTreatment AS t ON cq.treatment_id = t.id "
+    ." WHERE cq.event_id = ? ";
 
     $vmpTalon = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
     $clientId = $vmpTalon["master_id"];
 
 
-    $select_sql2 = "SELECT Client_Quoting.* FROM Client_Quoting "
-    ."WHERE Client_Quoting.master_id = ? "
-    ."AND Client_Quoting.event_id != ? "
-    ."ORDER BY Client_Quoting.createDatetime DESC "
+    $select_sql2 = "SELECT cq.*, pm.name as 'patientModelName',mkb.DiagName, qt.name AS 'quotaTypeName',t.name AS 'treatmentName' "
+    ."FROM Client_Quoting as cq "
+    ."JOIN MKB AS mkb ON cq.MKB = mkb.DiagID "
+    ."JOIN rbPacientModel AS pm on cq.pacientModel_id = pm.id "
+    ."JOIN QuotaType AS qt on cq.quotaType_id = qt.id "
+    ."JOIN rbTreatment AS t ON cq.treatment_id = t.id "
+    ."WHERE cq.master_id = ? "
+    ."AND cq.event_id != ? "
+    ."ORDER BY cq.createDatetime DESC "
     ."LIMIT 1";
 
     $previousVmpTalon = $app['db']->fetchAssoc($select_sql2, array((int) $clientId,(int) $appealId));

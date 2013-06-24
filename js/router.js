@@ -710,6 +710,10 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			title: "Результаты консультации",
 			uri: "/appeals/:id/diagnostics/consultations/result/:test"
 		},
+		QUOTES: {
+			title: "Квоты",
+			uri: "/appeals/:id/quotes"
+		},
 		REPORTS: {
 			title: "Отчёты",
 			uri: "/reports/"
