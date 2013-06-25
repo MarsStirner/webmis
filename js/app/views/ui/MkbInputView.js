@@ -75,9 +75,10 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 				minLength: 2,
 				select: function(event, ui) {
 					//view.mkbAttrId = $(this).data("mkb-examattr-id");
+					console.log('ui',ui)
 
 					view.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
-					view.$("input[name='diagnosis[mkb][code]']").val(ui.item.displayText);
+					view.$("input[name='diagnosis[mkb][code]']").val(ui.item.value);
 					view.$("input[name='diagnosis[mkb][code]']").data('mkb-id', ui.item.id).trigger('change');
 				}
 			}).on("keyup", function() {

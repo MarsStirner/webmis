@@ -301,24 +301,26 @@ $apiRouts->get('/appeals/{appealId}/client_quoting', function($appealId, Request
     ." WHERE cq.event_id = ? ";
 
     $vmpTalon = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
-    $clientId = $vmpTalon["master_id"];
+    // $clientId = $vmpTalon["master_id"];
 
 
-    $select_sql2 = "SELECT cq.*, pm.name as 'patientModelName',mkb.DiagName, qt.name AS 'quotaTypeName',t.name AS 'treatmentName' "
-    ."FROM Client_Quoting as cq "
-    ."JOIN MKB AS mkb ON cq.MKB = mkb.DiagID "
-    ."JOIN rbPacientModel AS pm on cq.pacientModel_id = pm.id "
-    ."JOIN QuotaType AS qt on cq.quotaType_id = qt.id "
-    ."JOIN rbTreatment AS t ON cq.treatment_id = t.id "
-    ."WHERE cq.master_id = ? "
-    ."AND cq.event_id != ? "
-    ."ORDER BY cq.createDatetime DESC "
-    ."LIMIT 1";
+    // $select_sql2 = "SELECT cq.*, pm.name as 'patientModelName',mkb.DiagName, qt.name AS 'quotaTypeName',t.name AS 'treatmentName' "
+    // ."FROM Client_Quoting as cq "
+    // ."JOIN MKB AS mkb ON cq.MKB = mkb.DiagID "
+    // ."JOIN rbPacientModel AS pm on cq.pacientModel_id = pm.id "
+    // ."JOIN QuotaType AS qt on cq.quotaType_id = qt.id "
+    // ."JOIN rbTreatment AS t ON cq.treatment_id = t.id "
+    // ."WHERE cq.master_id = ? "
+    // ."AND cq.event_id != ? "
+    // ."ORDER BY cq.createDatetime DESC "
+    // ."LIMIT 1";
 
-    $previousVmpTalon = $app['db']->fetchAssoc($select_sql2, array((int) $clientId,(int) $appealId));
+    // $previousVmpTalon = $app['db']->fetchAssoc($select_sql2, array((int) $clientId,(int) $appealId));
+    if(!$vmpTalon){
+        $vmpTalon = array();
+    }
 
-
-    return $app->json(array("data" => array("vmpTalon" => $vmpTalon, "previousVmpTalon" => $previousVmpTalon)))->setCallback($callback);
+    return $app->json(array("data" => $vmpTalon))->setCallback($callback);
 
 })->assert('appealId', '\d+');
 
@@ -389,10 +391,24 @@ $apiRouts->get('/dir/pacient_model', function(Request $request)  use ($app){//?d
 
     $callback = $request->query->get('callback');
     $callback = $callback ? $callback : 'callback';
+    $quotaTypeId = $request->query->get('quotaTypeId');
 
-    $select_sql = "SELECT rbPacientModel.id,rbPacientModel.name FROM rbPacientModel";
+    // quotaTypeId
 
-    $statement = $app['db']->prepare($select_sql);
+    $select_sql = "SELECT pm.id,pm.name FROM rbPacientModel AS pm";
+
+    $select_sql_with_quotaTypeId = "SELECT DISTINCT pm.* FROM MKB_QuotaType_PacientModel as mmm "
+    ."JOIN rbPacientModel AS pm ON mmm.pacientModel_id = pm.id "
+    ."WHERE mmm.quotaType_id = :quotaTypeId";
+
+    if($quotaTypeId){
+        $statement = $app['db']->prepare($select_sql_with_quotaTypeId);
+        $statement->bindValue('quotaTypeId', $quotaTypeId);
+    }else{
+        $statement = $app['db']->prepare($select_sql);
+    }
+
+
     $statement->execute();
     $pacientModel = $statement->fetchAll();
 
@@ -425,10 +441,27 @@ $apiRouts->get('/dir/quotaType', function(Request $request)  use ($app){
 
     $callback = $request->query->get('callback');
     $callback = $callback ? $callback : 'callback';
+    $mkbId = ($request->query->get('mkbId'));
+    $teenOlder = (int) ($request->query->get('teenOlder'));
+    $teenOlder = $teenOlder ? $teenOlder : 0;
 
-    $select_sql = "SELECT QuotaType.id,QuotaType.name FROM QuotaType";
+    $select_sql = "SELECT qt.id, qt.code, qt.name FROM QuotaType AS qt WHERE qt.teenOlder = :teenOlder";
 
-    $statement = $app['db']->prepare($select_sql);
+    $select_sql_with_mkb = "SELECT qt.id, qt.code, qt.name FROM MKB_QuotaType_PacientModel AS mmm "
+        ."JOIN QuotaType AS qt ON qt.id = mmm.quotaType_id "
+        ."WHERE mmm.MKB_id = :mkbId AND qt.teenOlder = :teenOlder";
+
+
+    if($mkbId){
+        $statement = $app['db']->prepare($select_sql_with_mkb);
+        $statement->bindValue('mkbId', $mkbId);
+    }else{
+        $statement = $app['db']->prepare($select_sql);
+    }
+
+
+    $statement->bindValue('teenOlder', $teenOlder);
+
     $statement->execute();
     $quotaType = $statement->fetchAll();
 

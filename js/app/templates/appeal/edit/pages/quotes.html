@@ -1,15 +1,30 @@
 <h2>Талон ВМП</h2>
-<% if(vmpTalon){ %>
+<% if(data.DiagName){ %>
 <ul>
-<li>Код МКБ: <%= vmpTalon.DiagName %></li>
+<li>Код МКБ: <%= data.DiagName %></li>
 
-<li>Код вида МКБ: <%= vmpTalon.quotaTypeName %></li>
-<li>Модель пациента: <%= vmpTalon.patientModelName %></li>
-<li>Метод лечения: <%= vmpTalon.treatmentName %></li>
+<li>Код вида МКБ: <%= data.quotaTypeName %></li>
+<li>Модель пациента: <%= data.patientModelName %></li>
+<li>Метод лечения: <%= data.treatmentName %></li>
 </ul>
 <% }else{ %>
 <form>
+	<div class="mkb" style="height:8em;"></div>
+
+<div>
+	<div id="quota-type-error"></div>
 	<select id="quota-type"></select>
+	<div id="quota-type-name"></div>
+</div>
+
+<div>
+		<select id="pacient-model"></select>
+		<div id="pacient-model-name"></div>
+</div>
+
+
+	<select id="treatment"></select>
+	<div id="treatment-name"></div>
 </form>
 <% } %>
 

@@ -1,11 +1,11 @@
 define(function () {
 
-	return Model.extend({
+	return Collection.extend({
 		url:function(){
 			return '/api/v1/dir/quotaType';
 		},
 		parse: function(raw){
-			return {items: raw.data}
+			return raw.data;//{items: raw.data}
 		}
 	});
 });
