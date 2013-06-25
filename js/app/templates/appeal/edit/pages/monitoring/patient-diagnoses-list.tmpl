@@ -3,16 +3,13 @@
 		<% diagnoses.each(function (diagnosis) { %>
 			<% if (diagnosis.get("mkb").code) { %>
 				<h3><%= diagnosis.get("diagnosisKindLabel") %></h3>
-				<p>
-					<%= diagnosis.get("mkb").code %> &mdash; <%= diagnosis.get("mkb").diagnosis %>
+				<p class="HasToolTip" data-tooltip-content="#tooltip_<%= diagnosis.get("doctor").id %>">
+					<%= Core.Date.format(diagnosis.get("datetime")) %> <%= diagnosis.get("mkb").code %> &mdash; <%= diagnosis.get("mkb").diagnosis %>
 				</p>
-				<p>
-					<%= Core.Date.format(diagnosis.get("datetime")) %> <%= diagnosis.get("doctor").name.raw %>
-				</p>
-				<!--<dl>
-					<dt><%= diagnosis.get("mkb").code %></dt>
-					<dd><%= diagnosis.get("mkb").diagnosis %></dd>
-				</dl>-->
+				<div id="tooltip_<%= diagnosis.get("doctor").id %>" class="ToolTip TopTail">
+					<%= diagnosis.get("doctor").name.raw %>
+				</div>
+
 			<% } %>
 		<% }); %>
 	</div>

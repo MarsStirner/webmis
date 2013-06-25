@@ -391,7 +391,7 @@ Moves,
 
 			console.time("layout render time");
 
-			this.$el.html(_.template(this.template));
+			this.$el.html(_.template(this.template, appealJSON));
 
 			this.assign({
 				".monitoring-layout-header": new Monitoring.Views.Header(),
@@ -1046,6 +1046,35 @@ Moves,
 			this.collection = new Monitoring.Collections.PatientDiagnoses();
 			console.log("fetching diagnoses");
 			this.collection.on("reset", this.render, this).fetch();
+		},
+
+		render: function() {
+
+			Monitoring.Views.BaseView.prototype.render.apply(this);
+
+
+			$('.HasToolTip', this.$el).each(function() {
+				var tip = $($(this).data("tooltip-content"));
+				var dx = -tip.width() / 2 - 35,
+					dy = 15;
+				tip.css('position', 'absolute');
+				tip.hide();
+
+				function position(e) {
+					tip.css('left', e.pageX + dx + 'px').css('top', e.pageY + dy + 'px');
+				}
+				$(this).mousemove(position);
+
+				$(this).hover(function(e) {
+					position(e);
+					tip.show();
+				}, function(e) {
+					tip.hide();
+				});
+			});
+
+			return this;
+
 		}
 	});
 
