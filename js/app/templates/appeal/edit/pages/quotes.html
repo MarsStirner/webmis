@@ -1,31 +1,69 @@
-<h2>Талон ВМП</h2>
-<% if(data.DiagName){ %>
-<ul>
-<li>Код МКБ: <%= data.DiagName %></li>
 
-<li>Код вида МКБ: <%= data.quotaTypeName %></li>
-<li>Модель пациента: <%= data.patientModelName %></li>
-<li>Метод лечения: <%= data.treatmentName %></li>
-</ul>
-<% }else{ %>
-<form>
-	<div class="mkb" style="height:8em;"></div>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row-fluid">
+				<div class="span8">
+					<h2>Талон ВМП</h2>
+				</div>
+				<div class="span4">
+					<div class="pull-right">
+						<button class="copy" >Копировать предыдущей талон</button>
+					</div>
+				</div>
 
-<div>
-	<div id="quota-type-error"></div>
-	<select id="quota-type"></select>
-	<div id="quota-type-name"></div>
+			</div>
+			<div class="row-fluid">
+				<div class="span12">
+					<div class="mkb" style="height:8em;"></div>
+				</div>
+			</div>
+			<div class="row-fluid">
+				<div class="span12">
+					<div id="quota-type-error"></div>
+				</div>
+			</div>
+			<div class="row-fluid"  style="margin-bottom:2em;">
+				<div class="span1">Код вида ВМП:</div>
+				<div class="span4">
+					<select id="quota-type" style="width:100%;"></select>
+				</div>
+				<div class="span7">
+					<div id="quota-type-name"></div>
+				</div>
+			</div>
+			<div class="row-fluid" style="margin-bottom:2em;">
+				<div class="span1">Модель пациента:</div>
+				<div class="span4">
+					<select id="pacient-model" style="width:100%;"></select>
+				</div>
+				<div class="span7">
+					<div id="pacient-model-name"></div>
+				</div>
+			</div>
+			<div class="row-fluid" style="margin-bottom:2em;">
+				<div class="span1">Метод лечения:</div>
+				<div class="span4">
+					<select id="treatment" style="width:100%;"></select>
+				</div>
+				<div class="span7">
+					<div id="treatment-name"></div>
+				</div>
+			</div>
+			<div class="row-fluid" style="margin-bottom:2em;">
+				<div class="span12">
+					<div class="pull-right">
+						<button class="save button-color-green">Сохранить</button>
+						<button class="cancel">Отмена</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
 </div>
 
-<div>
-		<select id="pacient-model"></select>
-		<div id="pacient-model-name"></div>
-</div>
-
-
-	<select id="treatment"></select>
-	<div id="treatment-name"></div>
-</form>
-<% } %>
 
 

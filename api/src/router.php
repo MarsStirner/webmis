@@ -1,13 +1,14 @@
 <?php
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 
 
 $app->before(function (Request $request) {
     if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
         $data = json_decode($request->getContent(), true);
-        $request->request->replace(is_array($data) ? $data : array());
+        $request->request = new ParameterBag(is_array($data) ? $data : array());
     }
 });
 
@@ -292,7 +293,7 @@ $apiRouts->get('/appeals/{appealId}/client_quoting', function($appealId, Request
     $callback = $callback ? $callback : 'callback';
 
 
-    $select_sql = "SELECT cq.*, pm.name as 'patientModelName',mkb.DiagName, qt.name AS 'quotaTypeName',t.name AS 'treatmentName' "
+    $select_sql = "SELECT cq.*, pm.name as 'patientModelName',mkb.DiagName,mkb.id as 'mkbId', qt.name AS 'quotaTypeName',t.name AS 'treatmentName' "
     ."FROM Client_Quoting as cq "
     ."JOIN MKB AS mkb ON cq.MKB = mkb.DiagID "
     ."JOIN rbPacientModel AS pm on cq.pacientModel_id = pm.id "
@@ -301,21 +302,7 @@ $apiRouts->get('/appeals/{appealId}/client_quoting', function($appealId, Request
     ." WHERE cq.event_id = ? ";
 
     $vmpTalon = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
-    // $clientId = $vmpTalon["master_id"];
 
-
-    // $select_sql2 = "SELECT cq.*, pm.name as 'patientModelName',mkb.DiagName, qt.name AS 'quotaTypeName',t.name AS 'treatmentName' "
-    // ."FROM Client_Quoting as cq "
-    // ."JOIN MKB AS mkb ON cq.MKB = mkb.DiagID "
-    // ."JOIN rbPacientModel AS pm on cq.pacientModel_id = pm.id "
-    // ."JOIN QuotaType AS qt on cq.quotaType_id = qt.id "
-    // ."JOIN rbTreatment AS t ON cq.treatment_id = t.id "
-    // ."WHERE cq.master_id = ? "
-    // ."AND cq.event_id != ? "
-    // ."ORDER BY cq.createDatetime DESC "
-    // ."LIMIT 1";
-
-    // $previousVmpTalon = $app['db']->fetchAssoc($select_sql2, array((int) $clientId,(int) $appealId));
     if(!$vmpTalon){
         $vmpTalon = array();
     }
@@ -324,6 +311,43 @@ $apiRouts->get('/appeals/{appealId}/client_quoting', function($appealId, Request
 
 })->assert('appealId', '\d+');
 
+//предыдущий вмп талон госпитализации
+$apiRouts->get('/appeals/{appealId}/client_quoting/prev', function($appealId, Request $request) use ($app){
+
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
+
+
+    $select_sql = "SELECT * "
+    ."FROM Event as e "
+    ."WHERE e.id = ? "
+    ."AND e.eventType_id IN (2,13,53,67,68,69,100,102,103,104) "
+    ."ORDER BY e.createDatetime DESC "
+    ."LIMIT 1 ";
+
+    $event = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+    $clientId = $event["client_id"];
+
+
+    $select_sql2 = "SELECT cq.*, pm.name as 'patientModelName',mkb.id AS 'mkbId',mkb.DiagName, qt.name AS 'quotaTypeName',t.name AS 'treatmentName' "
+    ."FROM Client_Quoting as cq "
+    ."JOIN MKB AS mkb ON cq.MKB = mkb.DiagID "
+    ."JOIN rbPacientModel AS pm on cq.pacientModel_id = pm.id "
+    ."JOIN QuotaType AS qt on cq.quotaType_id = qt.id "
+    ."JOIN rbTreatment AS t ON cq.treatment_id = t.id "
+    ."WHERE cq.master_id = ? "
+    ."AND cq.event_id != ? "
+    ."ORDER BY cq.createDatetime DESC "
+    ."LIMIT 1";
+
+    $previousVmpTalon = $app['db']->fetchAssoc($select_sql2, array((int) $clientId,(int) $appealId));
+    if(!$previousVmpTalon){
+        $previousVmpTalon = array();
+    }
+
+    return $app->json(array("data" => $previousVmpTalon))->setCallback($callback);
+
+})->assert('appealId', '\d+');
 
 //создание вмп талона госпитализации
 $apiRouts->post('/appeals/{appealId}/client_quoting', function($appealId, Request $request) use ($app){
@@ -337,7 +361,7 @@ $apiRouts->post('/appeals/{appealId}/client_quoting', function($appealId, Reques
 
     $select_event_sql = "SELECT * FROM Event WHERE id = ?";
     $event = $app['db']->fetchAssoc($select_event_sql, array((int) $appealId));
-
+    $post = json_decode($request->getContent());
 
     $data = array(
         "createDatetime" => $now,
@@ -346,14 +370,15 @@ $apiRouts->post('/appeals/{appealId}/client_quoting', function($appealId, Reques
         "modifyPerson_id" => $userId,
         "master_id"=>$event['client_id'],
         "identifier"=>$event['externalId'],
-        "quotaType_id" => $app['request']->get('quotaType_id'),
-        "MKB" => $app['request']->get('MKB'),
-        "pacientModel_id" => $app['request']->get('pacientModel_id'),
-        "treatment_id" => $app['request']->get('treatment_id'),
+        "quotaType_id" => $post->data->quotaType_id,
+        "MKB" => $post->data->MKB,
+        "pacientModel_id" => $post->data->pacientModel_id,
+        "treatment_id" => $post->data->treatment_id,
         "event_id" => $appealId
         );
 
     $app['db']->insert('Client_Quoting', $data);
+
 
 
     return $app->json(array("data" => $data))->setCallback($callback);
@@ -368,14 +393,16 @@ $apiRouts->put('/appeals/{appealId}/client_quoting/{quotingId}', function($appea
     $userId = $request->cookies->get('userId');
     $now = (new \DateTime('NOW'))->format('Y-m-d H:i:s');
 
+    $put = json_decode($request->getContent());
+
 
     $data = array(
         "modifyDatetime" => $now,
         "modifyPerson_id" => $userId,
-        "quotaType_id" => $app['request']->get('quotaType_id'),
-        "MKB" => $app['request']->get('MKB'),
-        "pacientModel_id" => $app['request']->get('pacientModel_id'),
-        "treatment_id" => $app['request']->get('treatment_id')
+        "quotaType_id" => $put->data->quotaType_id,
+        "MKB" => $put->data->MKB,
+        "pacientModel_id" => $put->data->pacientModel_id,
+        "treatment_id" => $put->data->treatment_id
         );
 
      $app['db']->update('Client_Quoting', $data, array('id' => (int) $quotingId));
@@ -441,7 +468,9 @@ $apiRouts->get('/dir/quotaType', function(Request $request)  use ($app){
 
     $callback = $request->query->get('callback');
     $callback = $callback ? $callback : 'callback';
-    $mkbId = ($request->query->get('mkbId'));
+
+    $mkbId = $request->query->get('mkbId');
+
     $teenOlder = (int) ($request->query->get('teenOlder'));
     $teenOlder = $teenOlder ? $teenOlder : 0;
 
@@ -461,7 +490,6 @@ $apiRouts->get('/dir/quotaType', function(Request $request)  use ($app){
 
 
     $statement->bindValue('teenOlder', $teenOlder);
-
     $statement->execute();
     $quotaType = $statement->fetchAll();
 

@@ -97,6 +97,11 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 			return view;
 
 		},
+		disable: function(){
+			console.log('disable')
+			this.$(".MKBLauncher").button('disable');
+			this.$("input[name='diagnosis[mkb][code]']").prop('disabled', true).addClass('Disabled NotEditable');
+		},
 		close: function(){
 			this.mkbDirectory.remove();
 		}
