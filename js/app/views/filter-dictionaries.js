@@ -17,7 +17,7 @@ define(["views/filter"], function () {
 
 		renderDictionary: function () {
 			var dictionary = this;
-			var options = {};
+			var options = {allowClear:true};
 			var element = $("#" + dictionary.elementId);
 
 			dictionary.collection.each(function (m) {
