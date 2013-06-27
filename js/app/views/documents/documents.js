@@ -1865,7 +1865,14 @@ define(function (require) {
 
 		},
 		getTime: function(){
-			return moment(this.model.getValue(),'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+			var value = this.model.getValue();
+			
+			if(value){
+				return moment(this.model.getValue(),'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+			}else{
+				return '';
+			}
+			
 		},
 		setAttributeValue: function () {
 			var $attributeValueEl = this.$(".attribute-value");
@@ -1895,7 +1902,14 @@ define(function (require) {
 			};
 		},
 		getDate: function(){
-			return moment(this.model.getValue(),'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY');
+			var value = this.model.getValue();
+			
+			if(value){
+				return moment(this.model.getValue(),'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY');
+			}else{
+				return '';
+			}
+
 		},
 		setAttributeValue: function () {
 			var $attributeValueEl = this.$(".attribute-value");
