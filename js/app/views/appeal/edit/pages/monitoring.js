@@ -272,38 +272,43 @@ Moves,
 		model: Monitoring.Models.PatientDiagnosis,
 
 		diagKinds: {
-			"assignment": {
-				priority: 0,
-				title: "Направительный диагноз"
-			},
-			"admission": {
-				priority: 1,
-				title: "Диагноз при поступлении"
-			},
-			"clinical": {
-				priority: 2,
-				title: "Клинический"
-			},
 			"final": {
-				priority: 3,
+				priority: 0,
 				title: "Заключительный"
 			},
-			"aftereffect": {
-				priority: 4,
-				title: "Сопутствующий к направительному"
-			},
-			"attendant": {
-				priority: 5,
-				title: "Осложнения к направительному"
+
+			"clinical": {
+				priority: 1,
+				title: "Клинический"
 			},
 			"secondaryToClinical": {
-				priority: 6,
+				priority: 2,
 				title: "Сопутствующий к клиническому"
 			},
 			"complicateToClinical": {
-				priority: 7,
+				priority: 3,
 				title: "Осложнения к клиническому"
+			},
+
+			"admission": {
+				priority: 4,
+				title: "Диагноз при поступлении"
+			},
+
+			"assignment": {
+				priority: 5,
+				title: "Направительный диагноз"
+			},
+
+			"aftereffect": {
+				priority: 6,
+				title: "Сопутствующий к направительному"
+			},
+			"attendant": {
+				priority: 7,
+				title: "Осложнения к направительному"
 			}
+
 		},
 
 		url: function() {
