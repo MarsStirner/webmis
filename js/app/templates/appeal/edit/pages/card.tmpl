@@ -29,8 +29,8 @@
 		<tr>
 			<td> Дата и время выписки</td>
 			<td>
-				{{if closed && closed > 0}}
-					{{formatDateTime closed}}
+				{{if closeDate && closeDate > 0}}
+					{{formatDateTime closeDate}}
 				{{else}}
 					-
 				{{/if}}

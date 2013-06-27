@@ -176,9 +176,14 @@ cardTemplate, Moves) {
 						dicts: dicts
 					}, this.model.toJSON())));
 				} else {*/
+					var closeDate = false;
+					if(this.model.get('closeDateTime')){
+						closeDate = this.model.get('closeDateTime');
+					}
+
 				this.$el.html($.tmpl(cardTemplate, _.extend({
-					closed: this.model.closed,
-					isClosed: this.model.isClosed(),
+					closeDate: closeDate,
+					isClosed: this.model.get('closed'),
 					allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
 					dicts: dicts
 				}, this.model.toJSON())));
