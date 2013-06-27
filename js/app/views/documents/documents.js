@@ -48,6 +48,7 @@ define(function (require) {
 		_documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
 		_documentTypeSearch: _.template(require("text!templates/documents/list/doc-type-search.html")),
 		_documentTypesTree: _.template(require("text!templates/documents/list/doc-types-tree.html")),
+		_documentsTableHead: _.template(require("text!templates/documents/list/docs-table-head.html")),
 		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
 		_documentsTablePaging: _.template(require("text!templates/documents/list/paging.html")),
 		_editLayout: _.template(require("text!templates/documents/edit/layout.html")),
@@ -335,7 +336,7 @@ define(function (require) {
 			}
 		},
 		url: function () {
-			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?sortingField=assessmentDate&sortingMethod=desc&";
+			var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?";
 
 			var params = [];
 
@@ -629,16 +630,90 @@ define(function (require) {
 
 		render: function (subViews) {
 			return LayoutBase.prototype.render.call(this, _.extend({
-				".documents-table": new Documents.Views.List.Base.DocumentsTable({
+				".documents-table-tbody": new Documents.Views.List.Base.DocumentsTable({
 					collection: this.documents,
 					selectedDocuments: this.selectedDocuments,
 					included: !!this.options.included
 				}),
 				".table-controls": new Documents.Views.List.Base.TableControls({collection: this.selectedDocuments}),
-				".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents})
+				".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents}),
+				".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
+					collection: this.documents,
+				included: !!this.options.included
+			})
 			}, subViews));
 		}
 	});
+
+	/**
+	 * Таблица со списком созданных документов
+	 * @type {*}
+	 */
+	Documents.Views.List.Base.DocumentsTableHead = ViewBase.extend({
+		template: templates._documentsTableHead,
+
+		events: {
+			"click th.sortable": "onThSortableClick"
+		},
+
+		data: function () {
+			return {
+				documents: this.collection, 
+				showIcons: !this.options.included && !appeal.isClosed(),
+				isSortedBy: this.isSortedBy
+			};
+		},
+
+		initialize: function () {
+
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+			_.bindAll( this, 'data' );
+		},
+		// render: function (subViews) {
+		// 	this.$el.html(this.template(this.data()));
+
+		// },
+
+		onCollectionReset: function () {
+			console.log('reset',this.collection)
+			//this.render();
+		},
+
+		onThSortableClick: function(event){
+			console.log(event)
+			var $targetTh = $(event.currentTarget);
+			if (!this.$caret) {
+				this.$caret = $('<i/>');
+			}
+
+			this.$caret.detach().removeClass();
+
+			if ($targetTh.hasClass("sorted")) {
+				if ($targetTh.hasClass("asc")) {
+					$targetTh.removeClass("asc").addClass("desc");
+					this.$caret.addClass("icon-caret-down");
+				} else if ($targetTh.hasClass("desc")) {
+					$targetTh.removeClass("desc").addClass("asc");
+					this.$caret.addClass("icon-caret-up");
+				}
+			} else {
+				this.$("th").removeClass("sorted asc desc");
+				$targetTh.addClass("sorted asc");
+				this.$caret.addClass("icon-caret-up");
+			}
+
+			this.$caret.appendTo($targetTh);
+
+			var sortingField = $targetTh.data('sort-field');
+			var sortingMethod = $targetTh.hasClass("desc") ? "desc" : "asc";
+
+			this.collection.fetch({data:{
+				sortingField: sortingField,
+				sortingMethod: sortingMethod
+			}})
+		}
+	});
+
 
 	/**
 	 * Таблица со списком созданных документов
@@ -649,9 +724,10 @@ define(function (require) {
 
 		events: {
 			"change .selected-flag": "onSelectedFlagChange",
-			"click .edit-document": "onEditDocumentClick",
 			"click .duplicate-document": "onDuplicateDocumentClick",
-			"click .single-item-select": "onItemClick"
+			"click .edit-document": "onEditDocumentClick",
+			"click .single-item-select": "onItemClick",
+			"click th.sortable": "onThSortableClick"
 		},
 
 		data: function () {
@@ -700,6 +776,34 @@ define(function (require) {
 			console.log($(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
 			this.updatedSelectedItems(true, $(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
 			this.options.selectedDocuments.trigger("review:enter");
+		},
+		onThSortableClick: function(event){
+			var $targetTh = $(event.currentTarget);
+			if (!this.$caret) {
+				this.$caret = $('<i/>');
+			}
+
+			this.$caret.detach().removeClass();
+
+			if ($targetTh.hasClass("sorted")) {
+				if ($targetTh.hasClass("asc")) {
+					$targetTh.removeClass("asc").addClass("desc");
+					this.$caret.addClass("icon-caret-down");
+				} else if ($targetTh.hasClass("desc")) {
+					$targetTh.removeClass("desc").addClass("asc");
+					this.$caret.addClass("icon-caret-up");
+				}
+			} else {
+				this.$("th").removeClass("sorted asc desc");
+				$targetTh.addClass("sorted asc");
+				this.$caret.addClass("icon-caret-up");
+			}
+
+			this.$caret.appendTo($targetTh);
+
+			var sortField = $targetTh.data('sort-field')
+			console.log('sort by', sortField);
+			this.collection.fetch({data:{sortingField: sortField}})
 		},
 
 		updatedSelectedItems: function (selected, itemId) {
