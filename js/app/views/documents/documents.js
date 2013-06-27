@@ -65,6 +65,8 @@ define(function (require) {
 			_base: _.template(require("text!templates/documents/edit/ui-elements/base.html")),
 			_constructor: _.template(require("text!templates/documents/edit/ui-elements/constructor.html")),
 			_text: _.template(require("text!templates/documents/edit/ui-elements/text.html")),
+			_date: _.template(require("text!templates/documents/edit/ui-elements/date.html")),
+			_time: _.template(require("text!templates/documents/edit/ui-elements/time.html")),
 			_double: _.template(require("text!templates/documents/edit/ui-elements/double.html")),
 			_integer: _.template(require("text!templates/documents/edit/ui-elements/integer.html")),
 			_string: _.template(require("text!templates/documents/edit/ui-elements/string.html")),
@@ -1745,7 +1747,7 @@ define(function (require) {
 
 		onAttributeValueChange: function (event) {
 			this.model.setValue(this.getAttributeValue());
-			//console.log(this.model.getValue());
+			console.log(this.model.getValue());
 		}
 	});
 
@@ -1847,13 +1849,74 @@ define(function (require) {
 	 * Поле типа Time
 	 * @type {*}
 	 */
-	Documents.Views.Edit.UIElement.Time = UIElementBase.extend({});
+	Documents.Views.Edit.UIElement.Time = UIElementBase.extend({		
+		template: templates.uiElements._time,
+		data: function () {
+			var self = this;
+			return {
+				model: this.model,
+				time: this.getTime()
+			};
+		}, 
+		
+		getAttributeValue: function () {
+			var $attributeValueEl = this.$(".attribute-value");
+			return "1970-01-01 " + $attributeValueEl.val() + ':00';
+
+		},
+		getTime: function(){
+			return moment(this.model.getValue(),'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+		},
+		setAttributeValue: function () {
+			var $attributeValueEl = this.$(".attribute-value");
+			var time = this.getTime();
+
+			return $attributeValueEl.val(time);
+
+		},
+		render: function(){
+			UIElementBase.prototype.render.call(this);
+			this.$el.find(".attribute-value").mask("99:99");
+
+			return this;
+		}});
 
 	/**
 	 * Поле типа Date
 	 * @type {*}
 	 */
-	Documents.Views.Edit.UIElement.Date = UIElementBase.extend({});
+	Documents.Views.Edit.UIElement.Date = UIElementBase.extend({
+		template: templates.uiElements._date,
+		data: function () {
+			var self = this;
+			return {
+				model: this.model,
+				date: this.getDate()
+			};
+		},
+		getDate: function(){
+			return moment(this.model.getValue(),'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY');
+		},
+		setAttributeValue: function () {
+			var $attributeValueEl = this.$(".attribute-value");
+			var date = this.getDate();
+
+			return $attributeValueEl.val(date);
+
+		},
+		getAttributeValue: function () {
+			var $attributeValueEl = this.$(".attribute-value");
+			var date = moment($attributeValueEl.val(),'DD.MM.YYYY').format('YYYY-MM-DD HH:mm:ss')
+			return date;
+
+		},
+		render: function(){
+			UIElementBase.prototype.render.call(this);
+			this.$el.find(".attribute-value").mask("99.99.9999");
+
+			return this;
+		}
+	});
 
 	/**
 	 * Поле типа Integer
