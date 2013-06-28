@@ -549,6 +549,9 @@ Moves,
 				collection: this.collection
 			}));
 		},
+		data: function(){
+			return {};
+		},
 
 		render: function(c, options) {
 			//этот параметр передаётся только при сортировке, и в этом случае
@@ -558,8 +561,8 @@ Moves,
 			};
 			if (!options.sortRequest) {
 				//сейчас в теле таблицы данных нет
-				//this.$el.html(_.template(this.template, this.data()));
-				this.$el.html(_.template(this.template));
+				this.$el.html(_.template(this.template, this.data()));
+				//this.$el.html(_.template(this.template));
 			}
 
 			this.renderItems();
@@ -1108,10 +1111,22 @@ Moves,
 	Monitoring.Views.ExpressAnalyses = Monitoring.Views.ClientSortableGrid.extend({
 		template: expressAnalysesTmpl,
 		itemTemplate: expressAnalysesItemTmpl,
+		events: {
+			"click .toggle": "toggle"
+		},
+		toggle: function(event){
+			var $target = this.$(event.target);
+			this.$('.toggle-icon').toggleClass('icon-chevron-down').toggleClass('icon-chevron-up');
 
-		/*data: function () {
-			return {analyses: this.collection};
-		},*/
+			this.$('tbody tr').not('tbody tr:first-child').toggle();
+
+
+
+		},
+
+		data: function () {
+			return {analyses: this.collection, appealId: appeal.get('id')};
+		},
 
 		initialize: function(options) {
 			this.collection = new Monitoring.Collections.ExpressAnalyses();
