@@ -40,7 +40,7 @@ define([], function() {
 				var flattened = [];
 
 				_.each(attributes, function (attribute) {
-					console.log('attribute',attribute)
+					//console.log('attribute',attribute)
 						var valueProperty = _(attribute.properties).find(function (property) {
 							return property.name === "value";
 						});
