@@ -46,7 +46,7 @@ define(function(require) {
 
         printResultOfLaboratory: function() {
             var result = this.resultData();
-            
+
             new App.Views.Print({
                 data: {
                     id: result.id,
@@ -296,7 +296,7 @@ define(function(require) {
         },
         print: function() {
 
-            alert(JSON.stringify(this.resultData()));
+            //alert(JSON.stringify(this.resultData()));
         },
 
 

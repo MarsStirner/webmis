@@ -20,6 +20,43 @@ define([], function() {
 
 				return attributes;
 			},
+			getGroup: function(groupName){
+				var group = _.find(this._getGroups(), function(group) {
+					return group.name == groupName;
+				},this);
+
+				return group;
+			},
+
+			getDetailsAttributes: function(){
+				var details = this.getGroup('Details');
+				return details.attribute;
+			},
+			getFlattenedDetails: function(){
+				return this.flatten(this.getDetailsAttributes());
+			},
+
+			flatten: function(attributes){
+				var flattened = [];
+
+				_.each(attributes, function (attribute) {
+					console.log('attribute',attribute)
+						var valueProperty = _(attribute.properties).find(function (property) {
+							return property.name === "value";
+						});
+
+						if (valueProperty && valueProperty.value && valueProperty.value !== "0.0") {
+							flattened.push({
+								//id: attribute.typeId,
+								name: attribute.name,
+								value: valueProperty.value
+							});
+						}
+
+				},this);
+
+				return flattened;
+			},
 
 			getProperty: function(attributeName, propertyName) {
 
@@ -75,7 +112,7 @@ define([], function() {
 
 				model.set('group', group);
 
-				console.log('setProperty', attributeName, propertyName, value, group);
+				//console.log('setProperty', attributeName, propertyName, value, group);
 
 			}
 
