@@ -658,7 +658,7 @@ define(function (require) {
 
 		data: function () {
 			return {
-				documents: this.collection, 
+				documents: this.collection,
 				showIcons: !this.options.included && !appeal.isClosed(),
 				isSortedBy: this.isSortedBy
 			};
@@ -1103,11 +1103,11 @@ define(function (require) {
 		events: {
 			"click .document-type-node": "onDocumentTypeNodeClick"
 		},
-		
+
 		data: function () {
 			return {documentTypes: this.collection.toJSON(), template: this.template};
 		},
-		
+
 		initialize: function () {
 			this.listenTo(this.collection, "reset", this.onCollectionReset)
 		},
@@ -1141,7 +1141,7 @@ define(function (require) {
 			 this.markNodeSelected();
 			 }*/
 		},
-		
+
 		render: function () {
 			ViewBase.prototype.render.call(this);
 			this.$("ul").first().show();
@@ -1335,7 +1335,7 @@ define(function (require) {
 		template: templates._listLayout,
 
 		getDefaultDocumentsMnems: function () {
-			return ["EPI"];
+			return ["THER"];
 		},
 
 		render: function (subViews) {
@@ -1356,7 +1356,7 @@ define(function (require) {
 			Documents.Views.List.Therapy.LayoutHistory.prototype.initialize.call(this, this.options);
 
 			this.documentTypes = new Documents.Collections.DocumentTypes();
-			this.documentTypes.mnems = ["EPI"];
+			this.documentTypes.mnems = ["THER"];
 			this.documentTypes.fetch();
 
 			this.reviewStateToggles.push(".documents-controls");
@@ -1953,7 +1953,7 @@ define(function (require) {
 	 * Поле типа Time
 	 * @type {*}
 	 */
-	Documents.Views.Edit.UIElement.Time = UIElementBase.extend({		
+	Documents.Views.Edit.UIElement.Time = UIElementBase.extend({
 		template: templates.uiElements._time,
 		data: function () {
 			var self = this;
@@ -1961,8 +1961,8 @@ define(function (require) {
 				model: this.model,
 				time: this.getTime()
 			};
-		}, 
-		
+		},
+
 		getAttributeValue: function () {
 			var $attributeValueEl = this.$(".attribute-value");
 			return "1970-01-01 " + $attributeValueEl.val() + ':00';
@@ -1970,13 +1970,13 @@ define(function (require) {
 		},
 		getTime: function(){
 			var value = this.model.getValue();
-			
+
 			if(value){
 				return moment(this.model.getValue(),'YYYY-MM-DD HH:mm:ss').format('HH:mm');
 			}else{
 				return '';
 			}
-			
+
 		},
 		setAttributeValue: function () {
 			var $attributeValueEl = this.$(".attribute-value");
@@ -2007,7 +2007,7 @@ define(function (require) {
 		},
 		getDate: function(){
 			var value = this.model.getValue();
-			
+
 			if(value){
 				return moment(this.model.getValue(),'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY');
 			}else{
