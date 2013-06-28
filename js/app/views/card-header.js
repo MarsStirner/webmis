@@ -31,7 +31,7 @@ define(["text!templates/card-" +
 		template: template,
 
 		data: function () {
-			console.log('data', this.model.toJSON());
+			//console.log('data', this.model.toJSON());
 			return this.model.toJSON();
 		},
 

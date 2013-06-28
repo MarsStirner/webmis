@@ -69,9 +69,7 @@ cardTemplate, Moves) {
 
 			$.when(PrintAppeal.fetch(), moves.fetch()).then(function() {
 				new App.Views.Print({
-					data: _.extend({
-						moves: moves.toJSON()
-					}, PrintAppeal.toJSON()),
+					data: _.extend({moves: moves.toJSON()},PrintAppeal.toJSON(),{age: self.model.getAge()}),
 					template: "f003"
 				});
 			});
@@ -113,14 +111,19 @@ cardTemplate, Moves) {
 		},
 
 		printStatisticCard: function() {
+			var self = this;
 			var PrintAppeal = new App.Models.PrintAppeal({
 				id: this.model.get("id")
 			});
 
-			new App.Views.Print({
-				model: PrintAppeal,
-				template: "f066"
+
+			$.when(PrintAppeal.fetch()).then(function() {
+				new App.Views.Print({
+					data: _.extend(PrintAppeal.toJSON(),{age: self.model.getAge()}),
+					template: "f066"
+				});
 			});
+
 
 			PrintAppeal.fetch();
 		},
