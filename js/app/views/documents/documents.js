@@ -1820,6 +1820,7 @@ define(function (require) {
 			this.listenTo(this.model, "copy", this.setAttributeValue);
 			//common attrs to fit into grid
 			this.$el.addClass("span" + this.layoutAttributes.width);
+			this.model.set('readOnly',true)
 		},
 
 		mapLayoutAttributes: function () {
@@ -1956,7 +1957,7 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.Time = UIElementBase.extend({
 		template: templates.uiElements._time,
 		data: function () {
-			var self = this;
+
 			return {
 				model: this.model,
 				time: this.getTime()
@@ -1964,33 +1965,33 @@ define(function (require) {
 		},
 
 		getAttributeValue: function () {
-			var $attributeValueEl = this.$(".attribute-value");
-			return "1970-01-01 " + $attributeValueEl.val() + ':00';
-
+			return "1970-01-01 " + this.ui.$attributeValueEl.val() + ':00';
 		},
+
 		getTime: function(){
-			var value = this.model.getValue();
+			var time = this.model.getValue();
 
-			if(value){
-				return moment(this.model.getValue(),'YYYY-MM-DD HH:mm:ss').format('HH:mm');
-			}else{
-				return '';
-			}
-
+			return time ?  moment(time,'YYYY-MM-DD HH:mm:ss').format('HH:mm') : '';
 		},
+
 		setAttributeValue: function () {
-			var $attributeValueEl = this.$(".attribute-value");
 			var time = this.getTime();
 
-			return $attributeValueEl.val(time);
-
+			//return
+			this.ui.$attributeValueEl.val(time);
 		},
+
 		render: function(){
+			this.ui = {};
+			this.ui.$attributeValueEl = this.$el.find(".attribute-value");
+
 			UIElementBase.prototype.render.call(this);
-			this.$el.find(".attribute-value").mask("99:99");
+
+			this.ui.$attributeValueEl.mask("99:99");
 
 			return this;
-		}});
+		}
+	});
 
 	/**
 	 * Поле типа Date
@@ -1998,39 +1999,42 @@ define(function (require) {
 	 */
 	Documents.Views.Edit.UIElement.Date = UIElementBase.extend({
 		template: templates.uiElements._date,
+
 		data: function () {
-			var self = this;
 			return {
 				model: this.model,
 				date: this.getDate()
 			};
 		},
+		storageFormat: 'YYYY-MM-DD HH:mm:ss',
+		inputFormat: 'DD.MM.YYYY',
+		inputMaskFormat: '99.99.9999',
+
 		getDate: function(){
-			var value = this.model.getValue();
+			var date = this.model.getValue();
 
-			if(value){
-				return moment(this.model.getValue(),'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY');
-			}else{
-				return '';
-			}
-
+			return date ? moment(date, this.storageFormat).format(this.inputFormat) : '';
 		},
+
 		setAttributeValue: function () {
-			var $attributeValueEl = this.$(".attribute-value");
 			var date = this.getDate();
 
-			return $attributeValueEl.val(date);
-
+			//return
+			this.ui.$input.val(date);
 		},
+
 		getAttributeValue: function () {
-			var $attributeValueEl = this.$(".attribute-value");
-			var date = moment($attributeValueEl.val(),'DD.MM.YYYY').format('YYYY-MM-DD HH:mm:ss')
-			return date;
+			var date = moment(this.ui.$input.val(), this.inputFormat).format(this.storageFormat);
 
+			return date;
 		},
+
 		render: function(){
+			this.ui = {};
+			this.ui.$input = this.$el.find(".attribute-value");
+
 			UIElementBase.prototype.render.call(this);
-			this.$el.find(".attribute-value").mask("99.99.9999");
+			this.ui.$input.mask(this.inputMaskFormat);
 
 			return this;
 		}
@@ -2058,6 +2062,7 @@ define(function (require) {
 
 		onFormatDoubleKeypress: function (eve) {
 			var $ct = $(eve.currentTarget);
+
 			if ((eve.which != 46 || $ct.val().indexOf('.') != -1) &&
 				  (eve.which < 48 || eve.which > 57) ||
 				  (eve.which == 46 && $ct.caret().start == 0)) {
@@ -2067,6 +2072,7 @@ define(function (require) {
 
 		onFormatDoubleKeyup: function (event) {
 			var $ct = $(event.currentTarget);
+
 			if ($ct.val().indexOf('.') == 0) {
 				$ct.val($ct.val().substring(1));
 			}
@@ -2082,13 +2088,16 @@ define(function (require) {
 		events: {
 			"click .MKBLauncher": "onMKBLauncherClick"
 		},
+
 		onMKBLauncherClick: function () {
 			this.mkbDirectory = new App.Views.MkbDirectory();
 			this.mkbDirectory.render().open();
 			this.mkbDirectory.on("selectionConfirmed", this.onMKBConfirmed, this);
 		},
+
 		onMKBConfirmed: function (event) {
 			var sd = event.selectedDiagnosis;
+
 			this.model.setValue(sd.get("id") || sd.get("code"));
 			this.$(".mkb-diagnosis").val(sd.get("diagnosis"));
 			this.$(".mkb-code").val(sd.get("code") || sd.get("id"));

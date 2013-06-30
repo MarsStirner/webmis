@@ -2,6 +2,6 @@
 	<label>
 		<%=model.get('name')%>
 	</label>
-	<input type="text" class="Combo attribute-value" placeholder="ДД.ММ.ГГГГ" value="<%=date%>"/>
+	<input type="text"  <% if(model.get('readOnly')){%>disabled="disabled"<%}%> class="Combo attribute-value" placeholder="ДД.ММ.ГГГГ" value="<%=date%>"/>
 
 </div>
