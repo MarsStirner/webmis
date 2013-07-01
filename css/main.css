@@ -441,6 +441,19 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
   display: inline-block;
 }
 
+/* line 312, ../sass/modules/_labs.scss */
+#executor-outer #executor {
+  color: #777;
+  cursor: pointer;
+  display: inline-block;
+  width: 88%;
+}
+
+/* line 315, ../sass/modules/_labs.scss */
+#executor-outer .change-executor {
+  display: inline-block;
+}
+
 /* line 1, ../sass/modules/_consultations.scss */
 .consultation-status-0 {
   color: blue;
@@ -519,7 +532,7 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
   padding: 2px 4px;
   background-color: #fff;
   margin-bottom: -4px;
-  border: 1px solid #bbb;
+  border: 1px solid #bbbbbb;
 }
 
 /* line 13, ../sass/modules/_biomaterials.scss */
@@ -658,6 +671,12 @@ td.status-code-2, td.status-code-2 .Warning {
 .biomaterials-send-to-lab {
   float: right;
   margin-top: 18px;
+}
+
+/* line 140, ../sass/modules/_biomaterials.scss */
+.Grid td.highlight-it {
+  background: #FFCBCB;
+  border-bottom: 1px solid #cf8e8e;
 }
 
 /* line 1, ../sass/modules/_ui_print_button.scss */

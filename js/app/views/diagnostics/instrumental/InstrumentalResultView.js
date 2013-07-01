@@ -2,11 +2,13 @@ define(function(require) {
     var template = require('text!templates/diagnostics/instrumental/instrumental-result.html');
 
     var Result = require('models/diagnostics/instrumental/InstrumentalResearch');
+    var PrintView = require('views/print');
 
     var InstrumentalResultView = Backbone.View.extend({
         template: template,
         events: {
             "click .buck-to-list": "openInstrumental"
+            ,"click .print": "print"
         },
         getResult: function(success, error) {
             var self = this;
@@ -34,6 +36,39 @@ define(function(require) {
             App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics/instrumental/");
 
         },
+        printData: function(){
+
+            var appeal = this.options.appeal;
+            var patient = appeal.get('patient');
+            var result = this.result;
+
+            var data = {
+                patientId: patient.get('id'),
+                patientName: patient.get('name').toJSON(),
+                appealId: appeal.get('id'),
+                appealNumber: appeal.get('number'),
+                id: result.get('id'),
+                name: result.get('name'),
+                endDate: moment(result.getProperty('plannedEndDate'), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss"),
+                doctorName: [result.getProperty('doctorFirstName'),result.getProperty('doctorMiddleName'),result.getProperty('doctorLastName')].join(" "),
+                doctorSpecs: result.getProperty('doctorSpecs'),
+                assignerName: [result.getProperty('assignerFirstName'),result.getProperty('assignerMiddleName'),result.getProperty('assignerLastName')].join(" "),
+                assignerSpecs: result.getProperty('assignerSpecs'),
+                attributes:result.getFlattenedDetails()
+            }
+
+            // console.log('printData',data);
+
+            return [data];
+        },
+        print: function(){
+
+             new PrintView({
+                data: this.printData(),
+                template: "documentsToPrintSeparately"
+            });
+
+        },
         resultData: function() {
             var self = this;
             var json = this.result.toJSON();
@@ -51,8 +86,15 @@ define(function(require) {
             var doctorLastName = this.result.getProperty('doctorLastName');
             json.plannedEndDate = this.result.getProperty('plannedEndDate');
 
-            //json.doctor = doctorFirstName + ' ' + doctorMiddleName + ' ' + doctorLastName + ', ' + doctorSpecs;
-            json.doctor = this.result.getProperty('Исполнитель');
+            if(doctorLastName){
+                var doctor = doctorFirstName + ' ' + doctorMiddleName + ' ' + doctorLastName;
+                if(doctorSpecs){
+                    var doctor = doctor + ', ' + doctorSpecs;
+                }
+            }
+
+            json.doctor = doctor;
+            //json.doctor = this.result.getProperty('Исполнитель');
 
 
             if (this.result.get('group')) {

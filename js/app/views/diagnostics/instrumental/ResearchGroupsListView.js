@@ -39,6 +39,7 @@ define(function(require) {
                 } else {
                     pubsub.trigger('group:click', code);
                 }
+                pubsub.trigger('research:deselected');
 
                 var code = $(this).data('code');
                 console.log('code', code, treeData);

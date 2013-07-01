@@ -46,7 +46,8 @@ define(function(require) {
 				$this.addClass('clicked');
 
 				if ($this.hasClass('parent')) {
-					pubsub.trigger('group:parent:click');
+					//pubsub.trigger('group:parent:click');
+					pubsub.trigger('group:click', code);
 				} else {
 					pubsub.trigger('group:click', code);
 				}

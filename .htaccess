@@ -1,6 +1,7 @@
 AddDefaultCharset utf-8
 DirectoryIndex index.shtml index.html
 AddCharset utf-8 .tmpl
+AddType text/plain .tmpl
 
 #ExpiresActive On
 #ExpiresByType text/plain A1

@@ -29,11 +29,11 @@
 <td>
 	<div class="row-fluid current-blood-type">
 		<div class="span12">
-			<a href="#" class="show-patient-blood-history" title="Показать историю изменения">
+			<a href="#" class="show-patient-blood-history" title="Показать историю изменения" style="line-height: 2em;">
 				<% if (currentBloodType && currentBloodType.get("group")) { %>
 					<%= currentBloodType.get("group") %>
 				<% } else { %>
-					-
+					Нет данных
 				<% } %>
 			</a>
 			<%if(canChangeBloodType){%>

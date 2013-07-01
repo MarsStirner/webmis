@@ -17,6 +17,7 @@ define(["views/filter"], function () {
 
 		renderDictionary: function () {
 			var dictionary = this;
+			var options = {allowClear:true};
 			var element = $("#" + dictionary.elementId);
 
 			dictionary.collection.each(function (m) {
@@ -26,7 +27,13 @@ define(["views/filter"], function () {
 					.appendTo(element);
 			});
 
-			UIInitialize(element.parent());
+			if(dictionary.matcher){
+				options.matcher = dictionary.matcher;
+			}
+
+			element.select2(options)
+
+			//UIInitialize(element.parent());
 
 
 			if (this.preselectedValue) {

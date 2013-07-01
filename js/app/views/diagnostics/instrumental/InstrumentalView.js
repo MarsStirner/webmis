@@ -154,7 +154,7 @@ define(function(require) {
 		},
 
 		render: function() {
-			this.$el.html($.tmpl(this.template));
+			this.$el.html(_.template(this.template,{closed: this.options.appeal.get('closed')}));
 			this.$("#grid").html(this.grid.el);
 			this.$("#grid-pager").html(this.paginator.render().el);
 

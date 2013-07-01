@@ -471,6 +471,10 @@ define([
 			}
 		],
 
+		getAge: function(){
+			return Core.Date.getAgeString(this.get('patient').get('birthDate'));
+		},
+
 		/***
 		 *
 		 * @returns {*} false или модель диагноза admission, assignment, в соответствии с приоритетом.

@@ -378,10 +378,11 @@ define(function(require){
 
             pubsub.on('appeal:closed', function () {//когда закрыли историю болезни
                 appeal.fetch();
+
             });
 
-            appeal.on('change', function () {
-                console.log('on appeal change');
+            appeal.on('change reset', function () {
+                console.log('appeal change', appeal);
                 this.render();
             }, this);
 
@@ -829,13 +830,16 @@ define(function(require){
         template: signalInfoTmpl,
 
         data: function () {
-            return {
+            var data = {
                 lastMove: this.moves.last(),
                 appeal: appeal.toJSON(),
                 appealExtraData: Core.Data.appealExtraData.toJSON(),
                 days: this.days(),
                 canAssign: this.canAssign
             };
+            console.log('data',data)
+
+            return data;
         },
 
         events: {
@@ -846,16 +850,18 @@ define(function(require){
             //продолжительность лечения
             if (appealJSON.appealType.requestType.id === 1) {
                 //дневной стационар
-                days = moment().diff(moment(appeal.get('rangeAppealDateTime').start), "days") + 1;
+                days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days") + 1;
             } else if (appealJSON.appealType.requestType.id === 2) {
                 //круглосуточный стационар
-                days = moment().diff(moment(appeal.get('rangeAppealDateTime').start), "days");
+                days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days");
             }
+            console.log('days', days, appealJSON, appeal.get('rangeAppealDateTime').start)
 
             return days;
         },
 
         initialize: function () {
+            console.log('init', appeal);
             Monitoring.Views.BaseView.prototype.initialize.apply(this);
 
             this.moves = new Moves();
@@ -871,9 +877,9 @@ define(function(require){
             }
 
 
-            Core.Data.appealExtraData.get("execPerson").on("change:doctor", this.onExecPersonDoctorChange, this);
+            appeal.on("change:execPerson", this.onExecPersonDoctorChange, this);
 
-            if (!Core.Data.appealExtraData.get("execPerson").get("doctor").get("id")) {
+            if (!appeal.get("execPerson").id) {
                 pubsub.trigger("noty", {
                     text: "Требуется назначить лечащего врача.",
                     type: "alert"
@@ -1027,9 +1033,7 @@ define(function(require){
                     id: selectedExecPersonId
                 });
 
-                Core.Data.appealExtraData.get("execPerson").set({
-                    doctor: this.allPersons.get(selectedExecPersonId).toJSON()
-                });
+                appeal.set("execPerson", this.allPersons.get(selectedExecPersonId).toJSON());
 
                 this.close();
             }

@@ -671,7 +671,6 @@ define(function (require) {
         },
         // render: function (subViews) {
         //  this.$el.html(this.template(this.data()));
-
         // },
 
         onCollectionReset: function () {

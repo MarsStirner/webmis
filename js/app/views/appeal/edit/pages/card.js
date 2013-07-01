@@ -68,9 +68,7 @@ define(function(require){
 
 			$.when(PrintAppeal.fetch(), moves.fetch()).then(function() {
 				new App.Views.Print({
-					data: _.extend({
-						moves: moves.toJSON()
-					}, PrintAppeal.toJSON()),
+					data: _.extend({moves: moves.toJSON()},PrintAppeal.toJSON(),{age: self.model.getAge()}),
 					template: "f003"
 				});
 			});
@@ -112,14 +110,19 @@ define(function(require){
 		},
 
 		printStatisticCard: function() {
+			var self = this;
 			var PrintAppeal = new App.Models.PrintAppeal({
 				id: this.model.get("id")
 			});
 
-			new App.Views.Print({
-				model: PrintAppeal,
-				template: "f066"
+
+			$.when(PrintAppeal.fetch()).then(function() {
+				new App.Views.Print({
+					data: _.extend(PrintAppeal.toJSON(),{age: self.model.getAge()}),
+					template: "f066"
+				});
 			});
+
 
 			PrintAppeal.fetch();
 		},
@@ -175,9 +178,14 @@ define(function(require){
 						dicts: dicts
 					}, this.model.toJSON())));
 				} else {*/
+					var closeDate = false;
+					if(this.model.get('closeDateTime')){
+						closeDate = this.model.get('closeDateTime');
+					}
+
 				this.$el.html($.tmpl(cardTemplate, _.extend({
-					closed: this.model.closed,
-					isClosed: this.model.isClosed(),
+					closeDate: closeDate,
+					isClosed: this.model.get('closed'),
 					allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
 					dicts: dicts
 				}, this.model.toJSON())));

@@ -15,7 +15,7 @@ define(function(require) {
         },
         onSave: function() {
             var self = this;
-            console.log('onSave');
+           // console.log('onSave');
             this.ui.$saveButton.button('disable');
 
             var hour = this.ui.$appealCloseTime.timepicker('getHour');
@@ -35,7 +35,7 @@ define(function(require) {
             }
 
             when.then(function() {
-                console.log('всё закрыли', arguments);
+                //console.log('всё закрыли', arguments);
                 pubsub.trigger('appeal:closed');
                 self.close();
 
@@ -54,7 +54,7 @@ define(function(require) {
                             text: 'Закрыли документы',
                             type: 'success'
                         });
-                        console.log('success close docs', arguments);
+                        //console.log('success close docs', arguments);
                     }
                 });
             };
@@ -70,7 +70,7 @@ define(function(require) {
                             text: 'Выписали с койки',
                             type: 'success'
                         });
-                        console.log('success close bed', arguments);
+                        //console.log('success close bed', arguments);
                     }
                 });
             }
@@ -87,7 +87,7 @@ define(function(require) {
                             text: 'Закрыли историю болезни',
                             type: 'success'
                         });
-                        console.log('success close appeal', arguments);
+                        //console.log('success close appeal', arguments);
                     }
                 });
             }
@@ -100,7 +100,7 @@ define(function(require) {
 
             this.ui.$saveButton = this.$el.closest(".ui-dialog").find('.save');
 
-            //this.ui.$saveButton.button('disable');
+            this.ui.$saveButton.button('disable');
 
             this.docs4closing = new Docs4closing();
             this.docs4closing.appealId = this.options.appeal.get('id');

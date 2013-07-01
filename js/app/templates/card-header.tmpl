@@ -20,6 +20,13 @@
 		{{if patient && patient.birthDate}}
 			({{ageString patient.birthDate}})
 		{{/if}}
+		{{if patient && patient.sex === 'male'}}
+			Пол: М
+		{{/if}}
+		{{if patient && patient.sex === 'female'}}
+			Пол: Ж
+		{{/if}}
+
 	</h2>
 	<ul class="SectionNav">
 		<li>

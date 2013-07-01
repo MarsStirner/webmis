@@ -46,10 +46,12 @@ define(function(require) {
 
         printResultOfLaboratory: function() {
             var result = this.resultData();
+
             new App.Views.Print({
                 data: {
                     id: result.id,
                     name: result.name,
+                    patientSex: result.patientSex,
                     patientName: result.patientName,
                     patientBirthday: result.patientBirthday,
                     age: result.age2,
@@ -67,15 +69,48 @@ define(function(require) {
         },
 
         printDirectionForLaboratory: function() {
+            var result = this.resultData();
+
             new App.Views.Print({
-                data: {},
+                data: {
+                    id: result.id,
+                    name: result.name,
+                    patientSex: result.patientSex,
+                    patientName: result.patientName,
+                    patientBirthday: result.patientBirthday,
+                    age: result.age2,
+                    appealNumber: result.appealNumber,
+                    payments: result.payments,
+                    department: result.department,
+                    rbTissueTypeName: '',
+                    rbTestTubeTypeNamе: '',
+                    tests: result.tests,
+                    assignDoctor: result.doctor,
+                    jobTicketDatetime: ''
+                },
                 template: "directionForLaboratory"
             });
         },
 
         printDirectionForLaboratorySimple: function() {
+            var result = this.resultData();
+
             new App.Views.Print({
-                data: {},
+                data: {
+                    id: result.id,
+                    name: result.name,
+                    patientSex: result.patientSex,
+                    patientName: result.patientName,
+                    patientBirthday: result.patientBirthday,
+                    age: result.age2,
+                    appealNumber: result.appealNumber,
+                    payments: result.payments,
+                    department: result.department,
+                    rbTissueTypeName: '',
+                    rbTestTubeTypeNamе: '',
+                    assignDoctor: result.doctor,
+                    jobTicketDatetime: ''
+                },
                 template: "directionForLaboratorySimple"
             });
         },
@@ -176,14 +211,17 @@ define(function(require) {
             json.department = appeal.get('currentDepartment').name;
 
             json.patientName = appeal.get('patient').get('name').get('raw');
+
+
             json.appealNumber = appeal.get('number');
             var sex = appeal.get('patient').get('sex');
             if (sex === 'female') {
-                json.sex = 'Ж';
+                json.patientSex = 'Ж';
             }
             if (sex === 'male') {
-                json.sex = 'М';
+                json.patientSex = 'М';
             }
+
             var birthDate = appeal.get('patient').get('birthDate');
             //ageString
             json.patientBirthday = Core.Date.format(birthDate);
@@ -258,7 +296,7 @@ define(function(require) {
         },
         print: function() {
 
-            alert(JSON.stringify(this.resultData()));
+            //alert(JSON.stringify(this.resultData()));
         },
 
 

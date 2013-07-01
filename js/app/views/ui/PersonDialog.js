@@ -122,8 +122,14 @@ define(function(require) {
 
             if (selectedExecPersonId) {
                 console.log('выбрали', selectedExecPersonId);
-                var doctor = this.allPersons.get(selectedExecPersonId).toJSON();
-                pubsub.trigger('person:changed', doctor);
+                var person = this.allPersons.get(selectedExecPersonId).toJSON();
+
+                if(_.isFunction(this.options.callback)){
+                    this.options.callback(person);
+                }else{
+                    pubsub.trigger('person:changed', person);
+                }
+
 
                 this.close();
             }
@@ -136,7 +142,11 @@ define(function(require) {
             }));
 
             this.$("#filter-persons-container").buttonset();
-            this.$(".all-persons, .department-persons").select2().select2("disable");
+            this.$(".all-persons, .department-persons").select2({
+                matcher: function(term, text, opt){
+                    return text.split(' ')[0].toUpperCase().indexOf(term.toUpperCase()) >= 0
+                }
+            }).select2("disable");
             this.$(".all-persons").hide();
 
             return this;

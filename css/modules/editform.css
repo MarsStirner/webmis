@@ -770,11 +770,39 @@
 .document-grid > .row-fluid {
   margin-bottom: 2em;
   padding-bottom: 2em;
-  border-bottom: 1px solid #D9D9D9;
+  border-bottom: 1px solid #d9d9d9;
 }
 
 /* line 637, ../../sass/modules/editform.scss */
 .document-edit-side.vertical-delim {
   border-left: 1px solid #d9d9d9;
   padding-left: 2em;
+}
+
+/* line 642, ../../sass/modules/editform.scss */
+.sheets .sheet {
+  padding: 1em;
+  margin-bottom: 1em;
+  border: 1px solid #d4d4d4;
+  border-radius: 5px;
+}
+/* line 651, ../../sass/modules/editform.scss */
+.sheets .sheet.odd-sheet {
+  background-color: #f9f9f9;
+}
+
+/* line 656, ../../sass/modules/editform.scss */
+.ContentSide .container-fluid {
+  padding-left: 0;
+}
+
+/* line 660, ../../sass/modules/editform.scss */
+.doc-type-search {
+  /*	position: relative;
+  	top: 0;
+  	left: 0;
+  	width: 100%;
+  	height: 2.6em;*/
+  padding: 1em 1em 0.5em 1em;
+  background-color: whitesmoke;
 }

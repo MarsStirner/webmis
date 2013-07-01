@@ -27,7 +27,8 @@ define(function(require) {
 
 		events: {
 			"click .ShowHidePopup": "close",
-			"click #doctor-outer": "openDoctorSelectPopup"
+			"click #doctor-outer": "openDoctorSelectPopup",
+            "click #executor-outer": "openExecutorSelectPopup"
 		},
 		initialize: function() {
 			_.bindAll(this);
@@ -36,7 +37,7 @@ define(function(require) {
 			var view = this;
 			var appealDoctor = this.options.appeal.get('execPerson');
 
-			console.log('Core.Cookies.get("currentRole")', Core.Cookies.get("currentRole"));
+			//console.log('Core.Cookies.get("currentRole")', Core.Cookies.get("currentRole"));
 
 			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
 				//юзер не врач
@@ -104,6 +105,7 @@ define(function(require) {
 
 			view.testsCollection = new TestsCollection();
 
+
 			view.testsCollection.on('updateAll:success', function() {
 				pubsub.trigger('lab-diagnostic:added');
 
@@ -168,7 +170,7 @@ define(function(require) {
 
 			view.groupTestsView = new GroupTestsView({
 				collection: view.groupTestsCollection,
-				patientId: view.options.appeal.get('patient').get('id'),
+				patientId: view.options.appeal.get('patient').get('id')//,
 				//testCollection: view.testCollection
 			});
 
@@ -186,18 +188,29 @@ define(function(require) {
 
 				view.saveButton(selected.length);
 
-				//console.log('selected', selected);
+			});
+
+
+			view.groupTestsCollection.on('change:selected', function(model, value, options) {
+				console.log('change:selected',arguments);
+				if(!view.executor){ //если исполнитель не задан взять исполнителя из исследования
+					//view.executor = model.getProperty('sdhlkhshfsa','value');
+					//pubsub.trigger('assigner:changed',view.executor);
+
+				}
+			});
+
+
+			pubsub.on('assigner:changed', function(assigner) {
+				view.doctor = assigner;
+
+				view.ui.$doctor.val(assigner.name.raw);
 
 			});
 
-			pubsub.on('person:changed', function(doctor) {
-				console.log('assign-person: changed', doctor);
-				view.doctor = doctor;
-				// view.doctor.name.first = doctor.name.first;
-				// view.doctor.name.middle = doctor.name.middle;
-				// view.doctor.name.last = doctor.name.last;
-
-				view.ui.$doctor.val(doctor.name.raw);
+			pubsub.on('executor:changed', function(executor) {
+				view.executor = executor;
+				view.ui.$executor.val(executor.name.raw);
 
 			});
 
@@ -206,9 +219,24 @@ define(function(require) {
 		},
 
 		openDoctorSelectPopup: function() {
-			console.log('openDoctorSelectPopup');
 			this.personDialogView = new PersonDialogView({
-				appeal: this.options.appeal
+				appeal: this.options.appeal,
+				callback: function(person){
+					pubsub.trigger('assigner:changed', person);
+				}
+			});
+
+			this.personDialogView.render().open();
+
+		},
+
+
+		openExecutorSelectPopup: function() {
+			this.personDialogView = new PersonDialogView({
+				appeal: this.options.appeal,
+				callback: function(person){
+					pubsub.trigger('executor:changed', person);
+				}
 			});
 
 			this.personDialogView.render().open();
@@ -259,7 +287,7 @@ define(function(require) {
 
 			_.each(selected, function(item) {
 				view.testsCollection.add(item.tests)
-			})
+			});
 
 
 			var startDate = moment(view.ui.$startDate.datepicker("getDate")).format('YYYY-MM-DD');
@@ -271,9 +299,16 @@ define(function(require) {
 				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
 
 				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
+
 				model.setProperty('doctorFirstName', 'value', view.doctor.name.first);
 				model.setProperty('doctorLastName', 'value', view.doctor.name.last);
 				model.setProperty('doctorMiddleName', 'value', view.doctor.name.middle);
+
+//                model.setProperty('executorFirstName', 'value', view.executor.name.first);
+//                model.setProperty('executorLastName', 'value', view.executor.name.last);
+//                model.setProperty('executorMiddleName', 'value', view.executor.name.middle);
+
+
 				model.setProperty('finance', 'value', view.ui.$finance.val());
 				if (mkbId) {
 					model.setProperty('Направительный диагноз', 'valueId', mkbId);
@@ -325,8 +360,9 @@ define(function(require) {
 			view.ui.$mbkDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
 			view.ui.$finance = view.$('#finance');
 			view.ui.$doctor = view.$('#doctor');
+			view.ui.$executor = view.$('#executor');
 
-			this.$('.change-doctor').button();
+			this.$('.change-doctor,.change-executor').button();
 
 
 
