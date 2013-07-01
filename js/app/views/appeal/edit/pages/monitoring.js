@@ -3,26 +3,26 @@
  * Date: 09.04.13
  */
 
-define([
-    "text!templates/appeal/edit/pages/monitoring/layout.tmpl",
-    "text!templates/appeal/edit/pages/monitoring/header.tmpl",
-    "text!templates/appeal/edit/pages/monitoring/patient-info.tmpl",
-    "text!templates/appeal/edit/pages/monitoring/patient-blood-type-row.tmpl",
-    "text!templates/appeal/edit/pages/monitoring/patient-blood-type-history-row.tmpl",
-    "text!templates/appeal/edit/pages/monitoring/signal-info.tmpl",
-    "text!templates/appeal/edit/pages/monitoring/assign-exec-person-dialog.tmpl",
-    "text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl",
-    "text!templates/appeal/edit/pages/monitoring/monitoring-info.tmpl",
-    "text!templates/appeal/edit/pages/monitoring/monitoring-info-item.tmpl",
-    "text!templates/appeal/edit/pages/monitoring/express-analyses.tmpl",
-    "text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl",
+define(function(require){
 
-    "views/appeal/edit/pages/card",
+    var assignExecPersonDialogTmpl = require('text!templates/appeal/edit/pages/monitoring/assign-exec-person-dialog.tmpl');
+    var expressAnalysesItemTmpl = require('text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl');
+    var expressAnalysesTmpl = require('text!templates/appeal/edit/pages/monitoring/express-analyses.tmpl');
+    var headerTmpl = require('text!templates/appeal/edit/pages/monitoring/header.tmpl');
+    var monitoringInfoGridTmpl = require('text!templates/appeal/edit/pages/monitoring/monitoring-info.tmpl');
+    var monitoringInfoItemTmpl = require('text!templates/appeal/edit/pages/monitoring/monitoring-info-item.tmpl');
+    var monitoringTmpl = require('text!templates/appeal/edit/pages/monitoring/layout.tmpl');
+    var patientBloodTypeHistoryRowTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-blood-type-history-row.tmpl');
+    var patientBloodTypesRowTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-blood-type-row.tmpl');
+    var patientDiagnosesListTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl');
+    var patientInfoTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-info.tmpl');
+    var signalInfoTmpl = require('text!templates/appeal/edit/pages/monitoring/signal-info.tmpl');
 
-    "collections/moves/moves",
-    "collections/dictionary-values",
-    "views/appeal/edit/popups/CloseAppealView"
-], function (monitoringTmpl, headerTmpl, patientInfoTmpl, patientBloodTypesRowTmpl, patientBloodTypeHistoryRowTmpl, signalInfoTmpl, assignExecPersonDialogTmpl, patientDiagnosesListTmpl, monitoringInfoGridTmpl, monitoringInfoItemTmpl, expressAnalysesTmpl, expressAnalysesItemTmpl, Card, Moves, DictionaryValues, CloseAppealView) {
+    var DictionaryValues = require('collections/dictionary-values');
+    var Moves = require('collections/moves/moves');
+
+    var Card = require('views/appeal/edit/pages/card');
+    var CloseAppealView = require('views/appeal/edit/popups/CloseAppealView');
 
     /**
      * Структура модуля
@@ -152,7 +152,6 @@ define([
             var parsed = this.getParseMap(rawByDate);
 
             parsed = parsed
-
                 .sort(function (a, b) {
 
                     var adt = a.datetime;
@@ -168,7 +167,6 @@ define([
                     });
                 })
                 .slice(0, 5);
-
 
             console.log(rawByDate);
             console.log(parsed);
@@ -205,18 +203,17 @@ define([
 
         getParseMap: function (rawByDate) {
             return _.map(rawByDate, function (rawRow, date) {
-                return {};
-                /*return {
-                 datetime: +date,
-                 temperature: rawRow["TEMPERATURE"],
-                 bpras: rawRow["BPRAS"],
-                 bprad: rawRow["BPRAS"],
-                 heartRate: rawRow["PULS"],
-                 spo2: rawRow["SPO2"],
-                 breathRate: rawRow["RR"],
-                 state: rawRow["STATE"],
-                 health: rawRow["WB"]
-                 };*/
+                return {
+                    "datetime": +date,
+                    "k": rawRow["K"],
+                    "na": rawRow["NA"],
+                    "ca": rawRow["CA"],
+                    "glucose": rawRow["GLUCOSE"],
+                    "protein": rawRow["TP"],
+                    "urea": rawRow["UREA"],
+                    "bilubrinOb": rawRow["TB"],
+                    "bilubrinPr": rawRow["CB"]
+                };
             });
         },
 
@@ -261,37 +258,41 @@ define([
         model: Monitoring.Models.PatientDiagnosis,
 
         diagKinds: {
-            "assignment": {
-                priority: 0,
-                title: "Направительный диагноз"
-            },
-            "admission": {
-                priority: 1,
-                title: "Диагноз при поступлении"
-            },
-            "clinical": {
-                priority: 2,
-                title: "Клинический"
-            },
             "final": {
-                priority: 3,
+                priority: 0,
                 title: "Заключительный"
             },
-            "aftereffect": {
-                priority: 4,
-                title: "Сопутствующий к направительному"
-            },
-            "attendant": {
-                priority: 5,
-                title: "Осложнения к направительному"
+
+            "clinical": {
+                priority: 1,
+                title: "Клинический"
             },
             "secondaryToClinical": {
-                priority: 6,
+                priority: 2,
                 title: "Сопутствующий к клиническому"
             },
             "complicateToClinical": {
-                priority: 7,
+                priority: 3,
                 title: "Осложнения к клиническому"
+            },
+
+            "admission": {
+                priority: 4,
+                title: "Диагноз при поступлении"
+            },
+
+            "assignment": {
+                priority: 5,
+                title: "Направительный диагноз"
+            },
+
+            "aftereffect": {
+                priority: 6,
+                title: "Сопутствующий к направительному"
+            },
+            "attendant": {
+                priority: 7,
+                title: "Осложнения к направительному"
             }
         },
 
@@ -391,7 +392,7 @@ define([
 
             console.time("layout render time");
 
-            this.$el.html(_.template(this.template));
+            this.$el.html(_.template(this.template, appealJSON));
 
 
             this.assign({
@@ -546,6 +547,9 @@ define([
                 collection: this.collection
             }));
         },
+        data: function () {
+            return {};
+        },
 
         render: function (c, options) {
             //этот параметр передаётся только при сортировке, и в этом случае
@@ -555,8 +559,8 @@ define([
             };
             if (!options.sortRequest) {
                 //сейчас в теле таблицы данных нет
-                //this.$el.html(_.template(this.template, this.data()));
-                this.$el.html(_.template(this.template));
+                this.$el.html(_.template(this.template, this.data()));
+                //this.$el.html(_.template(this.template));
             }
 
             this.renderItems();
@@ -575,9 +579,19 @@ define([
      */
     Monitoring.Views.Header = Monitoring.Views.BaseView.extend({
         template: headerTmpl,
+
+        data: function () {
+            return {
+                appealNumber: appeal.get("number"),
+                appealIsUrgent: appeal.get("urgent"),
+                appealIsClosed: appeal.get('closed')
+            };
+        },
+
         events: {
             'click .close-appeal': 'openCloseAppealPopup'
         },
+
         openCloseAppealPopup: function () {
             console.log('openCloseAppealPopup');
             this.closeAppealView = new CloseAppealView({
@@ -589,13 +603,6 @@ define([
             this.closeAppealView.render().open();
         },
 
-        data: function () {
-            return {
-                appealNumber: appeal.get("number"),
-                appealIsUrgent: appeal.get("urgent"),
-                appealIsClosed: appeal.get('closed')
-            };
-        },
         render: function () {
             Monitoring.Views.BaseView.prototype.render.apply(this);
             this.$('.close-appeal').button();
@@ -1044,7 +1051,11 @@ define([
             Monitoring.Views.BaseView.prototype.render.apply(this);
 
             this.$("#filter-persons-container").buttonset();
-            this.$(".all-persons, .department-persons").select2().select2("disable");
+            this.$(".all-persons, .department-persons").select2({
+                matcher: function (term, text, opt) {
+                    return text.split(' ')[0].toUpperCase().indexOf(term.toUpperCase()) >= 0
+                }
+            }).select2("disable");
             this.$(".all-persons").hide();
 
             return this;
@@ -1070,6 +1081,36 @@ define([
             this.collection = new Monitoring.Collections.PatientDiagnoses();
             console.log("fetching diagnoses");
             this.collection.on("reset", this.render, this).fetch();
+        },
+
+        render: function () {
+
+            Monitoring.Views.BaseView.prototype.render.apply(this);
+
+
+            $('.HasToolTip', this.$el).each(function () {
+                var tip = $($(this).data("tooltip-content"));
+                var dx = -tip.width() / 2 - 35,
+                    dy = 15;
+                tip.css('position', 'absolute');
+                tip.hide();
+
+                function position(e) {
+                    tip.css('left', e.pageX + dx + 'px').css('top', e.pageY + dy + 'px');
+                }
+
+                $(this).mousemove(position);
+
+                $(this).hover(function (e) {
+                    position(e);
+                    tip.show();
+                }, function (e) {
+                    tip.hide();
+                });
+            });
+
+            return this;
+
         }
     });
 
@@ -1096,12 +1137,23 @@ define([
      * @type {*}
      */
     Monitoring.Views.ExpressAnalyses = Monitoring.Views.ClientSortableGrid.extend({
-        template: expressAnalysesTmpl,
+       template: expressAnalysesTmpl,
         itemTemplate: expressAnalysesItemTmpl,
+        events: {
+            "click .toggle": "toggle"
+        },
+        toggle: function (event) {
+            var $target = this.$(event.target);
+            this.$('.toggle-icon').toggleClass('icon-chevron-down').toggleClass('icon-chevron-up');
 
-        /*data: function () {
-         return {analyses: this.collection};
-         },*/
+            this.$('tbody tr').not('tbody tr:first-child').toggle();
+
+
+        },
+
+        data: function () {
+            return {analyses: this.collection, appealId: appeal.get('id')};
+        },
 
         initialize: function (options) {
             this.collection = new Monitoring.Collections.ExpressAnalyses();
