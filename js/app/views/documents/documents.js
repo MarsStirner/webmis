@@ -262,9 +262,10 @@ define(function (require) {
         getValuePropertyIndex: function (props, type) {
             var propName;
             var valuePropertyIndex;
+            console.log('props, type',props, type)
 
             if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
-                propName = "valueId";
+                propName = "value";
             } else {
                 propName = "value";
             }
@@ -2087,7 +2088,8 @@ define(function (require) {
     Documents.Views.Edit.UIElement.MKB = UIElementBase.extend({
         template: templates.uiElements._mkb,
         events: {
-            "click .MKBLauncher": "onMKBLauncherClick"
+            "click .MKBLauncher": "onMKBLauncherClick",
+            "keyup .mkb-code": "onMKBCodeKeyUp"
         },
 
         onMKBLauncherClick: function () {
@@ -2098,10 +2100,67 @@ define(function (require) {
 
         onMKBConfirmed: function (event) {
             var sd = event.selectedDiagnosis;
+            console.log('onMKBConfirmed',sd,arguments);
 
-            this.model.setValue(sd.get("id") || sd.get("code"));
-            this.$(".mkb-diagnosis").val(sd.get("diagnosis"));
-            this.$(".mkb-code").val(sd.get("code") || sd.get("id"));
+            this.model.setValue(sd.get("id"));
+            this.ui.$diagnosis.val(sd.get("diagnosis"));
+            this.ui.$code.val(sd.get("code"));
+        },
+        onMKBCodeKeyUp: function(event) {
+            $(event.currentTarget).val(Core.Strings.toLatin($(event.currentTarget).val()));
+        },
+        render: function () {
+            var self = this;
+
+
+            UIElementBase.prototype.render.call(this);
+
+            this.ui = {};
+            this.ui.$diagnosis = this.$el.find(".mkb-diagnosis");
+            this.ui.$code = this.$el.find(".mkb-code");
+
+            var patientSex = Cache.Patient.get("sex").length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
+
+            this.ui.$code.addClass('dfdfdfgdfdfdg').autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "/data/dir/mkbs/",
+                        dataType: "jsonp",
+                        data: {
+                            filter: {
+                                view: "mkb",
+                                code: request.term,
+                                sex: patientSex
+                            }
+                        },
+                        success: function(raw) {
+                            response($.map(raw.data, function(item) {
+                                return {
+                                    label: item.code + " " + item.diagnosis,
+                                    value: item.code,
+                                    id: item.id,
+                                    diagnosis: item.diagnosis
+                                };
+                            }));
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    console.log('ui',ui)
+
+                    self.ui.$diagnosis.val(ui.item.diagnosis);
+                    self.ui.$code.val(ui.item.value);
+                    self.ui.$code.data('mkb-id', ui.item.id).trigger('change');
+                }
+            }).on("keyup", function() {
+                if (!$(this).val().length) {
+                    self.ui.$diagnosis.val("");
+                }
+            });
+
+
+            return this;
         }
     });
 
