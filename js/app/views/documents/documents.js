@@ -630,17 +630,17 @@ define(function (require) {
 
         render: function (subViews) {
             return LayoutBase.prototype.render.call(this, _.extend({
+                ".table-controls": new Documents.Views.List.Base.TableControls({collection: this.selectedDocuments}),
                 ".documents-table-tbody": new Documents.Views.List.Base.DocumentsTable({
                     collection: this.documents,
                     selectedDocuments: this.selectedDocuments,
                     included: !!this.options.included
                 }),
-                ".table-controls": new Documents.Views.List.Base.TableControls({collection: this.selectedDocuments}),
-                ".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents}),
                 ".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
                     collection: this.documents,
                     included: !!this.options.included
-                })
+                }),
+                ".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents})
             }, subViews));
         }
     });
