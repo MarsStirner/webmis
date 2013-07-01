@@ -18,7 +18,7 @@ $apiRouts = $app['controllers_factory'];
 $apiRouts->get('/appeals/{appealId}/docs4closing', function($appealId, Request $request)  use ($app) {
 
 
-    $json = [];
+    $json = array();
     $callback = $request->query->get('callback');
     $callback = $callback ? $callback : 'callback';
 
@@ -356,7 +356,8 @@ $apiRouts->post('/appeals/{appealId}/client_quoting', function($appealId, Reques
     $callback = $callback ? $callback : 'callback';
 
     $userId = $request->cookies->get('userId');
-    $now = (new \DateTime('NOW'))->format('Y-m-d H:i:s');
+    $date = new \DateTime('NOW');
+    $now = $date->format('Y-m-d H:i:s');
 
 
     $select_event_sql = "SELECT * FROM Event WHERE id = ?";
@@ -391,7 +392,8 @@ $apiRouts->put('/appeals/{appealId}/client_quoting/{quotingId}', function($appea
     $callback = $callback ? $callback : 'callback';
 
     $userId = $request->cookies->get('userId');
-    $now = (new \DateTime('NOW'))->format('Y-m-d H:i:s');
+    $date = new \DateTime('NOW');
+    $now = $date->format('Y-m-d H:i:s');
 
     $put = json_decode($request->getContent());
 

@@ -1821,7 +1821,7 @@ define(function (require) {
             this.listenTo(this.model, "copy", this.setAttributeValue);
             //common attrs to fit into grid
             this.$el.addClass("span" + this.layoutAttributes.width);
-            this.model.set('readOnly', true)
+            //this.model.set('readOnly', true)
         },
 
         mapLayoutAttributes: function () {
@@ -2132,6 +2132,13 @@ define(function (require) {
      */
     Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({});
 
+
+        /**
+     * Поле типа OrgStructure
+     * @type {*}
+     */
+    Documents.Views.Edit.UIElement.OrgStructure = Documents.Views.Edit.UIElement.String.extend({});
+
     /**
      * Фабрика для создания элементов шаблона соответсвующего типа
      * @type {Function}
@@ -2171,6 +2178,9 @@ define(function (require) {
                 break;
             case "html":
                 this.UIElementClass = Documents.Views.Edit.UIElement.Html;
+                break;
+            case "orgstructure":
+                this.UIElementClass = Documents.Views.Edit.UIElement.OrgStructure;
                 break;
             default:
                 this.UIElementClass = Documents.Views.Edit.UIElement.Base;

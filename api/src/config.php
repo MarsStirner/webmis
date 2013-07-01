@@ -1,5 +1,5 @@
 <?php
-use Silex\Provider\MonologServiceProvider;
+//use Silex\Provider\MonologServiceProvider;
 
 
 $app['debug'] = true;
