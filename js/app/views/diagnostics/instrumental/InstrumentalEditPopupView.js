@@ -72,6 +72,7 @@ define(function(require) {
 		openDoctorSelectPopup: function() {
 			console.log('openDoctorSelectPopup');
 			this.personDialogView = new PersonDialogView({
+				title: 'Направивший врач',
 				appeal: this.options.appeal
 			});
 
@@ -82,6 +83,7 @@ define(function(require) {
         openExecutorSelectPopup: function() {
             this.personDialogView = new PersonDialogView({
                 appeal: this.options.appeal,
+                title: 'Исполнитель',
                 callback: function(person){
                     pubsub.trigger('executor:changed', person);
                 }

@@ -27,7 +27,7 @@ define(function(require) {
 
 		events: {
 			"click .ShowHidePopup": "close",
-			"click #doctor-outer": "openDoctorSelectPopup",
+			"click #assigner-outer": "openAssignerSelectPopup",
             "click #executor-outer": "openExecutorSelectPopup"
 		},
 		initialize: function() {
@@ -41,7 +41,7 @@ define(function(require) {
 
 			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
 				//юзер не врач
-				view.doctor = {
+				view.assigner = {
 					name: {
 						first: appealDoctor.name.first,
 						last: appealDoctor.name.last,
@@ -52,7 +52,7 @@ define(function(require) {
 			} else {
 				//юзер врач
 
-				view.doctor = {
+				view.assigner = {
 					name: {
 						first: Core.Cookies.get("doctorFirstName"),
 						last: Core.Cookies.get("doctorLastName"),
@@ -61,11 +61,19 @@ define(function(require) {
 				};
 			}
 
+			view.executor = {
+					name: {
+						first: '',
+						last: '',
+						middle: ''
+					}
+				};
 
 
-			view.data = {
-				'doctor': view.doctor
-			};
+
+			// view.data = {
+			// 	'doctor': view.doctor
+			// };
 
 
 			view.appeal = view.options.appeal;
@@ -202,9 +210,9 @@ define(function(require) {
 
 
 			pubsub.on('assigner:changed', function(assigner) {
-				view.doctor = assigner;
+				view.assigner = assigner;
 
-				view.ui.$doctor.val(assigner.name.raw);
+				view.ui.$assigner.val(assigner.name.raw);
 
 			});
 
@@ -218,9 +226,10 @@ define(function(require) {
 
 		},
 
-		openDoctorSelectPopup: function() {
+		openAssignerSelectPopup: function() {
 			this.personDialogView = new PersonDialogView({
 				appeal: this.options.appeal,
+				title: 'Направивший врач',
 				callback: function(person){
 					pubsub.trigger('assigner:changed', person);
 				}
@@ -234,6 +243,7 @@ define(function(require) {
 		openExecutorSelectPopup: function() {
 			this.personDialogView = new PersonDialogView({
 				appeal: this.options.appeal,
+				title: 'Исполнитель',
 				callback: function(person){
 					pubsub.trigger('executor:changed', person);
 				}
@@ -300,13 +310,13 @@ define(function(require) {
 
 				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
 
-				model.setProperty('doctorFirstName', 'value', view.doctor.name.first);
-				model.setProperty('doctorLastName', 'value', view.doctor.name.last);
-				model.setProperty('doctorMiddleName', 'value', view.doctor.name.middle);
+				model.setProperty('doctorFirstName', 'value', view.executor.name.first);
+				model.setProperty('doctorLastName', 'value', view.executor.name.last);
+				model.setProperty('doctorMiddleName', 'value', view.executor.name.middle);
 
-//                model.setProperty('executorFirstName', 'value', view.executor.name.first);
-//                model.setProperty('executorLastName', 'value', view.executor.name.last);
-//                model.setProperty('executorMiddleName', 'value', view.executor.name.middle);
+               model.setProperty('assignerFirstName', 'value', view.assigner.name.first);
+               model.setProperty('assignerLastName', 'value', view.assigner.name.last);
+               model.setProperty('assignerMiddleName', 'value', view.assigner.name.middle);
 
 
 				model.setProperty('finance', 'value', view.ui.$finance.val());
@@ -349,8 +359,9 @@ define(function(require) {
 
 			//if ($(view.$el.parent().length).length === 0) {
 
-			view.$el.html($.tmpl(this.template, {
-				doctor: this.doctor
+			view.$el.html(_.template(this.template, {
+				executor: this.executor,
+				assigner: this.assigner
 			}));
 
 			view.ui = {};
@@ -359,10 +370,10 @@ define(function(require) {
 			view.ui.$mbkCode = view.$("input[name='diagnosis[mkb][code]']");
 			view.ui.$mbkDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
 			view.ui.$finance = view.$('#finance');
-			view.ui.$doctor = view.$('#doctor');
+			view.ui.$assigner = view.$('#assigner');
 			view.ui.$executor = view.$('#executor');
 
-			this.$('.change-doctor,.change-executor').button();
+			this.$('.change-assigner,.change-executor').button();
 
 
 

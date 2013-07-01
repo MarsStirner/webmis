@@ -16,7 +16,7 @@ define(function(require) {
 	return View.extend({
 		template: tmpl,
 		events: {
-			'click #doctor-outer': 'openDoctorSelectPopup',
+			'click #assigner-outer': 'openAssignerSelectPopup',
             "click #executor-outer": "openExecutorSelectPopup"
 		},
 		initialize: function() {
@@ -24,11 +24,11 @@ define(function(require) {
 
 			var view = this;
 
-			view.doctor = view.getDoctor();
 
-			this.data = {
-				'doctor': view.doctor
-			}
+
+			// this.data = {
+			// 	'assigner': view.assigner
+			// }
 
 			view.appeal = view.options.appeal;
 			view.diagnosis = view.appeal.getDiagnosis();
@@ -38,27 +38,36 @@ define(function(require) {
 			view.model.eventId = view.options.appeal.get('id');
 			//console.log('popup init', view.model);
 
+			view.assigner = view.getAssigner();
+			view.executor = view.getExecutor();
+
 			//инпут классификатора диагнозов
 			view.mkbInputView = new MkbInputView();
 			view.depended(view.mkbInputView);
 
 			pubsub.on('assigner:changed', function(assigner) {
-				view.doctor = assigner;
-				view.ui.$doctor.val(assigner.name.raw);
+				console.log('assigner:changed',arguments, view)
+				view.assigner = assigner;
+				view.ui.$assigner.val(assigner.name.raw);
 
 			});
 
             pubsub.on('executor:changed', function(executor) {
+            	console.log('executor:changed',arguments, view)
                 view.executor = executor;
                 view.ui.$executor.val(executor.name.raw);
 
             });
 
+
+            console.log('view',view);
+
 		},
 
-        openDoctorSelectPopup: function() {
+        openAssignerSelectPopup: function() {
             this.personDialogView = new PersonDialogView({
                 appeal: this.options.appeal,
+                title: 'Направивший врач',
                 callback: function(person){
                     pubsub.trigger('assigner:changed', person);
                 }
@@ -71,6 +80,7 @@ define(function(require) {
         openExecutorSelectPopup: function() {
             this.personDialogView = new PersonDialogView({
                 appeal: this.options.appeal,
+                title: 'Исполнитель',
                 callback: function(person){
                     pubsub.trigger('executor:changed', person);
                 }
@@ -100,18 +110,35 @@ define(function(require) {
 
 		},
 
-		getDoctor: function() {
+		getAssigner: function() {
 			var view = this;
 
-			var doctorLastName = view.model.getProperty('doctorLastName');
-			var doctorFirstName = view.model.getProperty('doctorFirstName');
-			var doctorMiddleName = view.model.getProperty('doctorMiddleName');
+			var assignerLastName = view.model.getProperty('assignerLastName');
+			var assignerFirstName = view.model.getProperty('assignerFirstName');
+			var assignerMiddleName = view.model.getProperty('assignerMiddleName');
 
 			return {
 				name: {
-					first: doctorFirstName ? doctorFirstName : Core.Cookies.get("doctorFirstName"),
-					last: doctorLastName ? doctorLastName : Core.Cookies.get("doctorLastName"),
-					middle: doctorMiddleName ? doctorMiddleName : ''
+					first: assignerFirstName ? assignerFirstName : Core.Cookies.get("doctorFirstName"),
+					last: assignerLastName ? assignerLastName : Core.Cookies.get("doctorLastName"),
+					middle: assignerMiddleName ? assignerMiddleName : ''
+				}
+			};
+
+		},
+
+		getExecutor: function() {
+			var view = this;
+
+			var executorLastName = view.model.getProperty('doctorLastName');
+			var executorFirstName = view.model.getProperty('doctorFirstName');
+			var executorMiddleName = view.model.getProperty('doctorMiddleName');
+
+			return {
+				name: {
+					first: executorFirstName ? executorFirstName : '',
+					last: executorLastName ? executorLastName : '',
+					middle: executorMiddleName ? executorMiddleName : ''
 				}
 			};
 
@@ -161,9 +188,11 @@ define(function(require) {
 
 		render: function() {
 			var view = this;
+			console.log('render', view);
 
-			view.$el.html($.tmpl(view.template, {
-				doctor: view.doctor
+			view.$el.html(_.template(view.template, {
+				assigner: view.assigner,
+				executor: view.executor
 			}));
 
 			view.ui = {};
@@ -172,10 +201,10 @@ define(function(require) {
 			view.ui.$startDate = view.$("#start-date");
 			view.ui.$startTime = view.$("#start-time");
 			view.ui.$finance = view.$('#finance');
-			view.ui.$doctor = view.$('#doctor');
+			view.ui.$assigner = view.$('#assigner');
             view.ui.$executor = view.$('#executor');
 
-			this.$('.change-doctor,.change-executor').button();
+			this.$('.change-assigner,.change-executor').button();
 
 			view.$('.edit-tree').dynatree({
 				clickFolderMode: 2,
@@ -305,13 +334,13 @@ define(function(require) {
 				});
 			});
 
-			view.model.setProperty('doctorFirstName', 'value', view.doctor.name.first);
-			view.model.setProperty('doctorLastName', 'value', view.doctor.name.last);
-			view.model.setProperty('doctorMiddleName', 'value', '');
+			view.model.setProperty('doctorFirstName', 'value', view.executor.name.first);
+			view.model.setProperty('doctorLastName', 'value', view.executor.name.last);
+			view.model.setProperty('doctorMiddleName', 'value', view.executor.name.middle);
 
-//            view.model.setProperty('executorFirstName', 'value', view.executor.name.first);
-//            view.model.setProperty('executorLastName', 'value', view.executor.name.last);
-//            view.model.setProperty('executorMiddleName', 'value', view.executor.name.middle);
+           view.model.setProperty('assignerFirstName', 'value', view.assigner.name.first);
+           view.model.setProperty('assignerLastName', 'value', view.assigner.name.last);
+           view.model.setProperty('assignerMiddleName', 'value', view.assigner.name.middle);
 
 
 			view.model.setProperty('urgent', 'value', cito);
@@ -324,7 +353,7 @@ define(function(require) {
 
 
 
-			console.log(view.model.get('group'))
+			console.log('attr',view.model.get('group'))
 			view.model.set('group', group);
 
 			view.model.save({}, {
@@ -349,6 +378,8 @@ define(function(require) {
 		close: function() {
 			this.$el.dialog("close");
 			this.$el.remove();
+			pubsub.off('assigner:changed');
+			pubsub.off('executor:changed');
 
 			this.mkbInputView.close();
 			this.financeSelect.close();

@@ -199,6 +199,7 @@ define(function(require) {
 		openDoctorSelectPopup: function() {
 			console.log('openDoctorSelectPopup');
 			this.personDialogView = new PersonDialogView({
+				 title: 'Направивший врач',
 				appeal: this.options.appeal
 			});
 

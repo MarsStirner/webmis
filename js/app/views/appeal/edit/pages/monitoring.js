@@ -378,7 +378,6 @@ define(function(require){
 
             pubsub.on('appeal:closed', function () {//когда закрыли историю болезни
                 appeal.fetch();
-
             });
 
             appeal.on('change reset', function () {

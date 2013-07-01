@@ -219,6 +219,7 @@ define(function(require) {
 					pubsub.trigger('noty', {
 						text: 'Пациент зарегистрирован на койке'
 					});
+
 					view.redirectToMoves();
 				}
 			});
