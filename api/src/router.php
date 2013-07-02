@@ -477,7 +477,7 @@ $apiRouts->get('/dir/result', function(Request $request)  use ($app){
 
     $select_sql = "SELECT rbResult.id,rbResult.name FROM rbResult";
 
-    $select_sql_with_purpose = "SELECT et.purpose_id, r.name FROM Event as e "
+    $select_sql_with_purpose = "SELECT r.id, r.name FROM Event as e "
         ."join EventType as et on e.eventType_id = et.id "
         ."join rbResult as r on r.eventPurpose_id = et.purpose_id "
         ."where e.id = :appealId";
