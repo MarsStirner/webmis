@@ -4,6 +4,8 @@ define(function(require) {
     var template = require('text!templates/diagnostics/laboratory/laboratory-result.html');
     var Result = require('models/diagnostics/laboratory/laboratory-diag-form');
 
+    var Biomaterials = require('collections/biomaterials/Biomaterials');
+
     require('views/print');
 
 
@@ -43,6 +45,16 @@ define(function(require) {
                 ]
             }
         },
+
+        // getJobTicket: function(jobTicketId){
+        //     var biomaterials = new Biomaterials();
+        //     biomaterials.setParams({
+        //         filter: {
+        //             jobTicketId : jobTicketId
+        //         }
+        //     });
+        //     biomaterials.fetch();
+        // },
 
         printResultOfLaboratory: function() {
             var result = this.resultData();
