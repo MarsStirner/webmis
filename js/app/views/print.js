@@ -5,6 +5,7 @@ define([], function (){
 		// TODO: Отдельный запрос для получения каждой печатной формы
 
 		initialize: function () {
+			console.log('init print',this.options.data)
 			checkForErrors (this.options.template, "template is mandatory");
 
 			var view = this;

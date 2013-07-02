@@ -64,7 +64,7 @@ define(function(require) {
         print: function(){
 
              new PrintView({
-                data: this.printData(),
+                data: {documents: this.printData()},
                 template: "documentsToPrintSeparately"
             });
 
