@@ -1,6 +1,7 @@
 define(function(require) {
     var popupMixin = require('mixins/PopupMixin');
     var Docs4closing = require('models/Docs4closing');
+    var Results = require('collections/Results');
 
     var template = require('text!templates/appeal/edit/popups/close-appeal-popup.html');
 
@@ -11,7 +12,16 @@ define(function(require) {
         },
         //template:'',
         events: {
-            'click .save': 'onSave'
+            'click .save': 'onSave',
+            'change #results':'validate'
+        },
+        validate: function(){
+            console.log(this.ui.$results.val())
+            if(this.ui.$results.val() != '...'){
+                this.ui.$saveButton.button('enable');
+            }else{
+                this.ui.$saveButton.button('disable');
+            }
         },
         onSave: function() {
             var self = this;
@@ -26,6 +36,8 @@ define(function(require) {
             var appealId = this.options.appeal.get('id');
 
             var closeDocs = this.ui.$closeDocs.prop('checked');
+
+            var resultId = this.ui.$results.val();
 
             var when;
             if (closeDocs) {
@@ -79,7 +91,8 @@ define(function(require) {
             function closeAppeal() {
                 //выписка с истории болезни
                 return $.ajax({
-                    url: '/api/v1/appeals/' + appealId + '/close?execDate=' + closeDate,
+                    url: '/api/v1/appeals/' + appealId + '/close',
+                    data: {execDate:closeDate,resultId: resultId},
                     dataType: 'jsonp',
                     type: 'GET',
                     success: function() {
@@ -95,6 +108,7 @@ define(function(require) {
 
         },
         render: function() {
+            var self = this;
 
             this.ui = {};
 
@@ -121,7 +135,29 @@ define(function(require) {
                 this.ui.$appealCloseTime.timepicker("setTime", datetime);
 
                 if (this.docs4closing.get('allDocs')) {
-                    this.ui.$saveButton.button('enable');
+                    //this.ui.$saveButton.button('enable');
+
+                    this.results = new Results();
+                    this.results.fetch({
+                        data: {
+                            appealId: self.options.appeal.get('id')
+                        }
+                    }).done(function() {
+                        self.ui.$results = self.$('#results');
+
+                        self.results.each(function(item) {
+                            console.log('item', item);
+                            self.ui.$results.append($("<option/>", {
+                                "text": item.get('name'),
+                                "value": item.get('id')
+                            }));
+
+                        }, self);
+
+                        self.ui.$results.select2();
+
+                    });
+
                 }
 
 

@@ -271,10 +271,13 @@ $apiRouts->get('/appeals/{appealId}/close', function($appealId, Request $request
         $date = new \DateTime('NOW');
     }
 
-    $update_sql = "UPDATE Event SET Event.execDate = :execDate WHERE Event.id = :id";
+    $resultId = $request->query->get('resultId');
+
+    $update_sql = "UPDATE Event SET Event.execDate = :execDate, Event.result_id = :resultId WHERE Event.id = :id";
 
     $stmt = $app['db']->prepare($update_sql);
     $stmt->bindValue('execDate', $date, "datetime");
+    $stmt->bindValue('resultId',$resultId, "integer");
     $stmt->bindValue('id', $appealId, "integer");
     $stmt->execute();
 
@@ -461,6 +464,36 @@ $apiRouts->get('/dir/treatment', function(Request $request)  use ($app){
 
 
     return $app->json(array('data'=>$treatment))->setCallback($callback);
+
+});
+
+//справочник rbResult
+$apiRouts->get('/dir/result', function(Request $request)  use ($app){
+
+    $callback = $request->query->get('callback');
+    $callback = $callback ? $callback : 'callback';
+
+    $appealId = $request->query->get('appealId');
+
+    $select_sql = "SELECT rbResult.id,rbResult.name FROM rbResult";
+
+    $select_sql_with_purpose = "SELECT et.purpose_id, r.name FROM Event as e "
+        ."join EventType as et on e.eventType_id = et.id "
+        ."join rbResult as r on r.eventPurpose_id = et.purpose_id "
+        ."where e.id = :appealId";
+
+    if($appealId){
+        $statement = $app['db']->prepare($select_sql_with_purpose);
+        $statement->bindValue('appealId', $appealId);
+    }else{
+        $statement = $app['db']->prepare($select_sql);
+    }
+
+    $statement->execute();
+    $result = $statement->fetchAll();
+
+
+    return $app->json(array('data'=>$result))->setCallback($callback);
 
 });
 
