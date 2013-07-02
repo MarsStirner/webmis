@@ -53,11 +53,12 @@ define(function(require) {
         //             jobTicketId : jobTicketId
         //         }
         //     });
-        //     biomaterials.fetch();
+        //     biomaterials.fetch().;
         // },
 
         printResultOfLaboratory: function() {
             var result = this.resultData();
+            var jobTicket = this.getJobTicket(result.id);
 
             new App.Views.Print({
                 data: {
