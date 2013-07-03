@@ -77,6 +77,7 @@ define(function(require) {
                 var rbTissueTypeName = '';
                 var rbTestTubeTypeNamе = '';
                 var jobTicketDatetime = '';
+                var takenTissueJournal = '';
                 if(action){
                     if(action.tubeType && action.tubeType.name){
                         rbTestTubeTypeNamе = action.tubeType.name;
@@ -85,28 +86,34 @@ define(function(require) {
                         rbTissueTypeName = action.biomaterial.tissueType.name;
                     }
                     if(action.jobTicket && action.jobTicket.date){
-                        jobTicketDatetime = moment(action.jobTicket.date).format('DD.MM.YYYY');
+                        jobTicketDatetime = moment(action.jobTicket.date).format('DD.MM.YYYY HH:mm:ss');
+                    }
+                    if(action.takenTissueJournal){
+                        takenTissueJournal = action.takenTissueJournal
                     }
                 }
-
+                var plannedEndDate = moment(self.result.getProperty('plannedEndDate'), 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY HH:mm:ss');
 
                 new App.Views.Print({
                     data: {
-                        id: result.id,
-                        name: result.name,
-                        patientSex: result.patientSex,
-                        patientName: result.patientName,
-                        patientBirthday: result.patientBirthday,
                         age: result.age2,
                         appealNumber: result.appealNumber,
-                        payments: result.payments,
-                        department: result.department,
-                        rbTissueTypeName: rbTissueTypeName,
-                        rbTestTubeTypeNamе: rbTestTubeTypeNamе,
-                        tests: result.tests,
-                        executorDoctor: result.executor,
                         assignDoctor: result.assigner,
-                        jobTicketDatetime: jobTicketDatetime
+                        department: result.department,
+                        executorDoctor: result.executor,
+                        id: result.id,
+                        jobTicketDatetime: jobTicketDatetime,
+                        mkb: result.mkb,
+                        name: result.name,
+                        patientBirthday: result.patientBirthday,
+                        patientName: result.patientName,
+                        patientSex: result.patientSex,
+                        payments: result.payments,
+                        plannedEndDate : plannedEndDate,
+                        rbTestTubeTypeNamе: rbTestTubeTypeNamе,
+                        rbTissueTypeName: rbTissueTypeName,
+                        takenTissueJournal: takenTissueJournal,
+                        tests: result.tests,
                     },
                     template: "resultOfLaboratory"
                 });
@@ -125,7 +132,8 @@ define(function(require) {
                 var actions = biomaterial? biomaterial.get('actions') : [];
                 var action = _.find(actions, function(action) {
                     return action.id === result.id
-                })
+                });
+
 
                 var rbTissueTypeName = '';
                 var rbTestTubeTypeNamе = '';
@@ -138,28 +146,37 @@ define(function(require) {
                         rbTissueTypeName = action.biomaterial.tissueType.name;
                     }
                     if(action.jobTicket && action.jobTicket.date){
-                        jobTicketDatetime = moment(action.jobTicket.date).format('DD.MM.YYYY');
+                        jobTicketDatetime = moment(action.jobTicket.date).format('DD.MM.YYYY HH:mm:ss');
+                    }
+                    if(action.takenTissueJournal){
+                        takenTissueJournal = action.takenTissueJournal
                     }
                 }
+
+                var plannedEndDate = moment(self.result.getProperty('plannedEndDate'), 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY HH:mm:ss');
+
 
 
                 new App.Views.Print({
                     data: {
-                        id: result.id,
-                        name: result.name,
-                        patientSex: result.patientSex,
-                        patientName: result.patientName,
-                        patientBirthday: result.patientBirthday,
                         age: result.age2,
                         appealNumber: result.appealNumber,
-                        payments: result.payments,
-                        department: result.department,
-                        rbTissueTypeName: rbTissueTypeName,
-                        rbTestTubeTypeNamе: rbTestTubeTypeNamе,
-                        tests: result.tests,
-                        executorDoctor: result.executor,
                         assignDoctor: result.assigner,
-                        jobTicketDatetime: jobTicketDatetime
+                        department: result.department,
+                        executorDoctor: result.executor,
+                        id: result.id,
+                        jobTicketDatetime: jobTicketDatetime,
+                        mkb: result.mkb,
+                        name: result.name,
+                        patientBirthday: result.patientBirthday,
+                        patientName: result.patientName,
+                        patientSex: result.patientSex,
+                        payments: result.payments,
+                        plannedEndDate : plannedEndDate,
+                        rbTestTubeTypeNamе: rbTestTubeTypeNamе,
+                        rbTissueTypeName: rbTissueTypeName,
+                        takenTissueJournal: takenTissueJournal,
+                        tests: result.tests,
                     },
                     template: "directionForLaboratory"
                 });
@@ -190,28 +207,35 @@ define(function(require) {
                         rbTissueTypeName = action.biomaterial.tissueType.name;
                     }
                     if(action.jobTicket && action.jobTicket.date){
-                        jobTicketDatetime = moment(action.jobTicket.date).format('DD.MM.YYYY');
+                        jobTicketDatetime = moment(action.jobTicket.date).format('DD.MM.YYYY HH:mm:ss');
+                    }
+                    if(action.takenTissueJournal){
+                        takenTissueJournal = action.takenTissueJournal
                     }
                 }
 
+                var plannedEndDate = moment(self.result.getProperty('plannedEndDate'), 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY HH:mm:ss');
 
                 new App.Views.Print({
                     data: {
-                        id: result.id,
-                        name: result.name,
-                        patientSex: result.patientSex,
-                        patientName: result.patientName,
-                        patientBirthday: result.patientBirthday,
                         age: result.age2,
                         appealNumber: result.appealNumber,
-                        payments: result.payments,
-                        department: result.department,
-                        rbTissueTypeName: rbTissueTypeName,
-                        rbTestTubeTypeNamе: rbTestTubeTypeNamе,
-                        tests: result.tests,
-                        executorDoctor: result.executor,
                         assignDoctor: result.assigner,
-                        jobTicketDatetime: jobTicketDatetime
+                        department: result.department,
+                        executorDoctor: result.executor,
+                        id: result.id,
+                        jobTicketDatetime: jobTicketDatetime,
+                        mkb: result.mkb,
+                        name: result.name,
+                        patientBirthday: result.patientBirthday,
+                        patientName: result.patientName,
+                        patientSex: result.patientSex,
+                        payments: result.payments,
+                        plannedEndDate : plannedEndDate,
+                        rbTestTubeTypeNamе: rbTestTubeTypeNamе,
+                        rbTissueTypeName: rbTissueTypeName,
+                        takenTissueJournal: takenTissueJournal,
+                        tests: result.tests,
                     },
                     template: "directionForLaboratorySimple"
                 });
@@ -221,7 +245,6 @@ define(function(require) {
         },
 
         showPrintBtn: function(options) {
-            console.log('showPrintBtn', options, this.$el);
             if (options) {
                 var $printBtnHolder = $("<div/>");
                 var $printBtn = $('<button class="PrintBtn"/>');
@@ -301,29 +324,88 @@ define(function(require) {
                 }
             });
         },
+
+        printData: function(){
+            var self = this;
+            // var result = this.resultData();
+
+            // this.getJobTicket().done(function() {
+            //     var biomaterial = self.biomaterials.first();
+            //     var actions = biomaterial? biomaterial.get('actions') : [];
+            //     var action = _.find(actions, function(action) {
+            //         return action.id === result.id
+            //     })
+
+            //     var rbTissueTypeName = '';
+            //     var rbTestTubeTypeNamе = '';
+            //     var jobTicketDatetime = '';
+            //     if(action){
+            //         if(action.tubeType && action.tubeType.name){
+            //             rbTestTubeTypeNamе = action.tubeType.name;
+            //         }
+            //         if(action.biomaterial && action.biomaterial.tissueType && action.biomaterial.tissueType.name){
+            //             rbTissueTypeName = action.biomaterial.tissueType.name;
+            //         }
+            //         if(action.jobTicket && action.jobTicket.date){
+            //             jobTicketDatetime = moment(action.jobTicket.date).format('DD.MM.YYYY');
+            //         }
+            //     }
+
+            //     var data = {
+            //             id: result.id,
+            //             name: result.name,
+            //             mkb: result.mkb,
+            //             patientSex: result.patientSex,
+            //             patientName: result.patientName,
+            //             patientBirthday: result.patientBirthday,
+            //             age: result.age2,
+            //             appealNumber: result.appealNumber,
+            //             payments: result.payments,
+            //             department: result.department,
+            //             rbTissueTypeName: rbTissueTypeName,
+            //             rbTestTubeTypeNamе: rbTestTubeTypeNamе,
+            //             tests: result.tests,
+            //             executorDoctor: result.executor,
+            //             assignDoctor: result.assigner,
+            //             jobTicketDatetime: jobTicketDatetime
+            //         };
+
+            //         return data;
+
+            // }
+        },
+
         resultData: function() {
             var appeal = this.options.appeal;
 
             var self = this;
             var json = this.result.toJSON();
 
+            json.mkb = this.result.getProperty('Направительный диагноз')||'';
+
             var executorSpecs = this.result.getProperty('doctorSpecs');
             var executorFirstName = this.result.getProperty('doctorFirstName');
             var executorMiddleName = this.result.getProperty('doctorMiddleName');
             var executorLastName = this.result.getProperty('doctorLastName');
+
+            json.executor = executorFirstName + ' ' + executorMiddleName + ' ' + executorLastName + ', ' + executorSpecs;
 
             var assignerSpecs = this.result.getProperty('assignerSpecs');
             var assignerFirstName = this.result.getProperty('assignerFirstName');
             var assignerMiddleName = this.result.getProperty('assignerMiddleName');
             var assignerLastName = this.result.getProperty('assignerLastName');
 
+            json.assigner = assignerFirstName + ' ' + assignerMiddleName + ' ' + assignerLastName + ', ' + assignerSpecs;
+
             json.payments = appeal.get('patient').get('payments').toJSON();
+
             json.department = appeal.get('currentDepartment').name;
 
             json.patientName = appeal.get('patient').get('name').get('raw');
 
 
             json.appealNumber = appeal.get('number');
+
             var sex = appeal.get('patient').get('sex');
             if (sex === 'female') {
                 json.patientSex = 'Ж';
@@ -338,11 +420,8 @@ define(function(require) {
             json.age = Core.Date.format(birthDate) + ' ' + Core.Date.getAgeString(birthDate);
             json.age2 = Core.Date.getAgeString(birthDate);
 
-
-            json.executor = executorFirstName + ' ' + executorMiddleName + ' ' + executorLastName + ', ' + executorSpecs;
-            json.assigner = assignerFirstName + ' ' + assignerMiddleName + ' ' + assignerLastName + ', ' + assignerSpecs;
-
             json.assessmentBeginDate = this.result.getProperty('assessmentBeginDate');
+
             json.plannedEndDate = this.result.getProperty('plannedEndDate');
 
             if (this.result.getProperty('urgent') === 'false') {

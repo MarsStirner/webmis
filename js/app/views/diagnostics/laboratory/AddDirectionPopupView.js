@@ -304,9 +304,21 @@ define(function(require) {
 			var startTime = view.ui.$startTime.val() + ':00';
 
 			view.testsCollection.forEach(function(model) {
+				console.log('model', model)
+				var id = model.get('id');
+
+
+				var $datepicker = view.$('#start-date-' + id);
+				console.log('$datepicker', $datepicker.datepicker("getDate"))
+				var date = moment($datepicker.datepicker("getDate")).format('YYYY-MM-DD');
+				var $timepicker = view.$('#start-time-' + id);
+				console.log('timepicker',$timepicker)
+				var time = $timepicker.val()+':00';
+				model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 
 
 				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
+
 
 				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
 

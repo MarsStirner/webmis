@@ -20,6 +20,7 @@ define(function(require) {
 			 _.each(list, function(item) {
 
 				var node = {};
+				node.id = item.id,
 				node.title = item.name;
 				node.code = item.code;
 				node.icon = false;

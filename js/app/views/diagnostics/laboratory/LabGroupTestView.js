@@ -198,6 +198,7 @@ define(function(require) {
         },
 
         modelData: function() {
+            console.log('this.model',this.model)
             var data = _.extend(this.model.toJSON(), {
                 cid: this.model.cid
             });
