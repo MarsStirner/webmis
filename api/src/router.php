@@ -49,7 +49,8 @@ $apiRouts->get('/appeals/{appealId}/docs4closing', function($appealId, Request $
 
         $select_sql = "SELECT Client_Quoting.id FROM Event "
         ."JOIN Client_Quoting ON Event.externalId = Client_Quoting.Identifier "
-        ."WHERE Event.id = ? ";
+        ."WHERE Event.id = ? "
+        ."AND Client_Quoting.deleted = 0 ";
 
         $vmpTicket = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
 
@@ -64,7 +65,8 @@ $apiRouts->get('/appeals/{appealId}/docs4closing', function($appealId, Request $
     ."JOIN ActionType ON Action.actionType_id = ActionType.id "
     ."WHERE Action.event_id = ? "
     ."AND (ActionType.code = 4504 OR ActionType.code = 4507 OR ActionType.code = 4511) "
-    ."AND ActionType.mnem = 'EPI' ";
+    ."AND ActionType.mnem = 'EPI' "
+    ."AND Action.deleted = 0 ";
 
     $epicrisis = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
 
@@ -77,6 +79,7 @@ $apiRouts->get('/appeals/{appealId}/docs4closing', function($appealId, Request $
     ."JOIN ActionType ON Action.actionType_id = ActionType.id "
     ."WHERE Action.event_id = ? "
     ."AND ActionType.flatCode = 'leaved' "
+    ."AND Action.deleted = 0 "
     ."AND ActionType.mnem = 'ORD' ";
 
     $discharge = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
@@ -89,6 +92,7 @@ $apiRouts->get('/appeals/{appealId}/docs4closing', function($appealId, Request $
     ."JOIN Diagnosis ON Diagnosis.id = Diagnostic.diagnosis_id "
     ."JOIN MKB ON Diagnosis.MKB = MKB.DiagID "
     ."WHERE Diagnostic.event_id = ? "
+    ."AND Diagnostic.deleted = 0 "
     ."AND MKB.DiagId LIKE 'C%' ";
 
     $oncology = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
@@ -121,6 +125,7 @@ $apiRouts->get('/appeals/{appealId}/docs4closing', function($appealId, Request $
         ." JOIN ActionType ON Action.actionType_id = ActionType.id "
         ." WHERE Action.event_id = ? "
         ." AND ActionType.code= '1_7_2'"
+        ."AND Action.deleted = 0 "
         ." AND ActionType.mnem = 'NOT' ";
 
         $notice_090y = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
@@ -135,6 +140,7 @@ $apiRouts->get('/appeals/{appealId}/docs4closing', function($appealId, Request $
         ." JOIN ActionType ON Action.actionType_id = ActionType.id "
         ." WHERE Action.event_id = ? "
         ." AND ActionType.code= '1_7_1'"
+        ." AND Action.deleted = 0 "
         ." AND ActionType.mnem = 'NOT' ";
 
         $notice_027y_2 = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
@@ -148,6 +154,7 @@ $apiRouts->get('/appeals/{appealId}/docs4closing', function($appealId, Request $
         $select_sql = "SELECT Action.id FROM Action "
         ." JOIN ActionType ON Action.actionType_id = ActionType.id "
         ." WHERE Action.event_id = ? "
+        ." AND Action.deleted = 0 "
         ." AND ActionType.code= '1_8_5'"
         ." AND ActionType.mnem = 'OTH' ";
 
@@ -161,6 +168,7 @@ $apiRouts->get('/appeals/{appealId}/docs4closing', function($appealId, Request $
     $select_sql = "SELECT Action.id FROM Action "
     ." JOIN ActionType ON Action.actionType_id = ActionType.id "
     ." WHERE Action.event_id = ? "
+    ." AND Action.deleted = 0 "
     ." AND Action.endDate IS NULL";
 
     $openDocs = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
