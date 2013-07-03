@@ -3,10 +3,10 @@
 		<% diagnoses.each(function (diagnosis) { %>
 			<% if (diagnosis.get("mkb").code) { %>
 				<h3><%= diagnosis.get("diagnosisKindLabel") %></h3>
-				<p class="HasToolTip" data-tooltip-content="#tooltip_<%= diagnosis.get("doctor").id %>">
+				<p class="HasToolTip" data-tooltip-content="#tooltip_<%= diagnosis.cid %>">
 					<%= Core.Date.format(diagnosis.get("datetime")) %> <%= diagnosis.get("mkb").code %> &mdash; <%= diagnosis.get("mkb").diagnosis %>
 				</p>
-				<div id="tooltip_<%= diagnosis.get("doctor").id %>" class="ToolTip TopTail">
+				<div id="tooltip_<%= diagnosis.cid %>" class="ToolTip TopTail">
 					<%= diagnosis.get("doctor").name.raw %>
 				</div>
 
