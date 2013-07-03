@@ -262,7 +262,6 @@ define(function (require) {
         getValuePropertyIndex: function (props, type) {
             var propName;
             var valuePropertyIndex;
-            console.log('props, type',props, type)
 
             if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
                 propName = "value";
@@ -318,6 +317,25 @@ define(function (require) {
         getCopyValueProperty: function (copyAttr) {
             return copyAttr.properties[this.getValuePropertyIndex(copyAttr.properties, copyAttr.type)].value;
         }
+
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        ,getPropertyValueFor: function(name){
+            var properties = this.get('properties');
+            var property = _.find(properties, function(prop){ return prop.name === name; });
+
+            return property.value;
+        }
+
+        ,setPropertyValueFor: function(name, value){
+            console.log(name, value)
+            var properties = this.get('properties');
+            var property = _.find(properties, function(prop){ return prop.name === name; });
+
+            property.value = value;
+
+
+        }
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     });
     //endregion
 
@@ -1823,6 +1841,7 @@ define(function (require) {
             //common attrs to fit into grid
             this.$el.addClass("span" + this.layoutAttributes.width);
             //this.model.set('readOnly', true)
+
         },
 
         mapLayoutAttributes: function () {
@@ -1854,7 +1873,6 @@ define(function (require) {
 
         onAttributeValueChange: function (event) {
             this.model.setValue(this.getAttributeValue());
-            console.log(this.model.getValue());
         }
     });
 
@@ -2089,7 +2107,25 @@ define(function (require) {
         template: templates.uiElements._mkb,
         events: {
             "click .MKBLauncher": "onMKBLauncherClick",
-            "keyup .mkb-code": "onMKBCodeKeyUp"
+            "keyup .mkb-code": "onMKBCodeKeyUp",
+            "change .mkb-code":"onMKBCodeChange"
+        },
+
+        data: function() {
+            var data = {};
+            data.name = this.model.get('name');
+            data.mkbId = this.model.getPropertyValueFor('valueId');
+            data.mkbCode = '';
+            data.diagnosis = '';
+
+            var value = this.model.getPropertyValueFor('value');
+            if (value) {
+                var array = value.split(/\s+/);
+                data.mkbCode = array[0];
+                data.diagnosis = (array.splice(1)).join(' ');
+            }
+
+            return data;
         },
 
         onMKBLauncherClick: function () {
@@ -2102,12 +2138,18 @@ define(function (require) {
             var sd = event.selectedDiagnosis;
             console.log('onMKBConfirmed',sd,arguments);
 
-            this.model.setValue(sd.get("id"));
             this.ui.$diagnosis.val(sd.get("diagnosis"));
             this.ui.$code.val(sd.get("code"));
+            this.ui.$code.data('mkb-id',sd.get("id")).trigger('change');
         },
         onMKBCodeKeyUp: function(event) {
             $(event.currentTarget).val(Core.Strings.toLatin($(event.currentTarget).val()));
+        },
+
+        onMKBCodeChange: function(){
+            var mkbId = this.ui.$code.data('mkb-id');
+            this.model.setPropertyValueFor('valueId',mkbId);
+
         },
         render: function () {
             var self = this;
@@ -2121,7 +2163,7 @@ define(function (require) {
 
             var patientSex = Cache.Patient.get("sex").length ? (Cache.Patient.get("sex") == "male" ? 1 : 2) : 0;
 
-            this.ui.$code.addClass('dfdfdfgdfdfdg').autocomplete({
+            this.ui.$code.autocomplete({
                 source: function(request, response) {
                     $.ajax({
                         url: "/data/dir/mkbs/",
