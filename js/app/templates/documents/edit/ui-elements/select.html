@@ -3,6 +3,6 @@
 </label>
 <select class="attribute-value" style="font-size: 1.2em; padding: 4px; width: 100%;border: 1px solid #737477;">
 	<% _.each(items, function (item) {%>
-	<option value="<%=item.id%>" <%if (model.getValue() == item.id) {%>selected<%}%>><%= item.name %></option>
+	<option value="<%=item.id%>" <%if (selected == item.id) {%>selected<%}%>><%= item.name %></option>
 	<%});%>
 </select>

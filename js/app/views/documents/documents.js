@@ -2240,11 +2240,13 @@ define(function (require) {
         initialize: function () {
             UIElementBase.prototype.initialize.apply(this);
             this.items = [];
+            this.selected = '';
         },
         data: function () {
             return {
                 model: this.model,
-                items: this.items
+                items: this.items,
+                selected: this.selected
             }
         },
         render: function () {
@@ -2264,6 +2266,7 @@ define(function (require) {
             UIElementBase.prototype.initialize.apply(this);
             var Departments = require('collections/departments');
             var departments = new Departments();
+            this.selected = this.model.getPropertyValueFor('valueId');
 
             $.when(departments.fetch()).then(_.bind(function () {
                 this.items = departments.toJSON();
@@ -2272,7 +2275,8 @@ define(function (require) {
 
         },
         onAttributeValueChange: function(){
-            this.model.setPropertyValueFor('valueId',this.getAttributeValue());
+            var departmentId = this.$el.find("select").val();
+            this.model.setPropertyValueFor('valueId',departmentId);
         }
 
 
