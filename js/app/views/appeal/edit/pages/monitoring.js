@@ -618,11 +618,43 @@ define(function(require){
         template: patientInfoTmpl,
 
         data: function () {
+            var bsa = this.getBSA();
+            var weight = appealJSON.physicalParameters.weight;
+
+            if(weight && weight > 500){//если вес больше 500, то наверно это граммы...
+                weight = weight+' г';
+            }else if(weight && weight <= 500){
+                weight = weight+' кг';
+            }
+
+
             return {
+                weight: weight,
+                bsa: bsa,
                 appeal: appealJSON,
                 patient: appealJSON.patient
             };
         },
+
+        getBSA: function(){
+            var height = appealJSON.physicalParameters.height;
+            var weight = appealJSON.physicalParameters.weight;
+            var bsa;
+
+            if(weight > 500){//если вес больше 500, то наверно это граммы...
+                weight = weight/1000;
+            }
+
+            if(height || weight){
+                bsa = Math.sqrt((height*weight)/3600);
+
+                bsa = bsa.toFixed(2);
+            }
+
+            return bsa;
+
+        },
+
 
         render: function () {
             Monitoring.Views.BaseView.prototype.render.apply(this);

@@ -62,13 +62,8 @@
 <tr>
 	<td>Вес</td>
 	<td>
-		<% if (appeal.physicalParameters.weight) { %>
-		<%= appeal.physicalParameters.weight %>
-		<% if (moment().diff(moment(parseInt(patient.birthDate)), 'month') < 1) { %>
-		г
-		<% } else { %>
-		кг
-		<% } %>
+		<% if (weight) { %>
+		<%= weight %>
 		<% } else { %>
 		-
 		<% } %>
@@ -76,6 +71,12 @@
 </tr>
 <tr>
 	<td>Площадь поверхности тела</td>
-	<td>-</td>
+	<td>
+		<% if (bsa) { %>
+		<%= bsa %> кв.м
+		<% }else{ %>
+		-
+		<% } %>
+	</td>
 </tr>
 </tbody>
