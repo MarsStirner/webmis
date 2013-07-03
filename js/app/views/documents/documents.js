@@ -72,7 +72,8 @@ define(function (require) {
             _integer: _.template(require("text!templates/documents/edit/ui-elements/integer.html")),
             _string: _.template(require("text!templates/documents/edit/ui-elements/string.html")),
             _mkb: _.template(require("text!templates/documents/edit/ui-elements/mkb.html")),
-            _flatDirectory: _.template(require("text!templates/documents/edit/ui-elements/flat-directory.html"))
+            _flatDirectory: _.template(require("text!templates/documents/edit/ui-elements/flat-directory.html")),
+            _select: _.template(require("text!templates/documents/edit/ui-elements/select.html"))
         }
     };
 
@@ -2234,11 +2235,48 @@ define(function (require) {
     Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({});
 
 
+    Documents.Views.Edit.UIElement.Select = UIElementBase.extend({
+        template: templates.uiElements._select,
+        initialize: function () {
+            UIElementBase.prototype.initialize.apply(this);
+            this.items = [];
+        },
+        data: function () {
+            return {
+                model: this.model,
+                items: this.items
+            }
+        },
+        render: function () {
+            UIElementBase.prototype.render.call(this);
+            this.$el.find('select').select2();
+
+            return this;
+        }
+    });
+
         /**
      * Поле типа OrgStructure
      * @type {*}
      */
-    Documents.Views.Edit.UIElement.OrgStructure = Documents.Views.Edit.UIElement.String.extend({});
+    Documents.Views.Edit.UIElement.OrgStructure = Documents.Views.Edit.UIElement.Select.extend({
+        initialize: function(){
+            UIElementBase.prototype.initialize.apply(this);
+            var Departments = require('collections/departments');
+            var departments = new Departments();
+
+            $.when(departments.fetch()).then(_.bind(function () {
+                this.items = departments.toJSON();
+                this.render();
+            }, this));
+
+        },
+        onAttributeValueChange: function(){
+            this.model.setPropertyValueFor('valueId',this.getAttributeValue());
+        }
+
+
+    });
 
     /**
      * Фабрика для создания элементов шаблона соответсвующего типа
