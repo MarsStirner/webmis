@@ -2302,8 +2302,8 @@ define(function (require) {
 
         },
         onAttributeValueChange: function(){
-            var departmentId = this.$el.find("select").val();
-            this.model.setPropertyValueFor('value',departmentId);
+            var itemId = this.$el.find("select").val();
+            this.model.setPropertyValueFor('value',itemId);
         }
     });
 
