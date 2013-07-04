@@ -2237,17 +2237,62 @@ define(function (require) {
 
     Documents.Views.Edit.UIElement.Select = UIElementBase.extend({
         template: templates.uiElements._select,
-        initialize: function () {
-            UIElementBase.prototype.initialize.apply(this);
-            this.items = [];
-            this.selected = '';
+        getOptionText: function(model){
+            throw new Error("Documents.Views.Edit.UIElement.Select: не переопределён getOptionText");
+        },
+        getOptionValue: function(model){
+            throw new Error("Documents.Views.Edit.UIElement.Select: не переопределён getOptionValue");
+        },
+        getSelectedValue: function(){
+            return this.model.getPropertyValueFor(this.getPropertyName());
+        },
+        getPropertyName: function(){
+            return 'value';
+        },
+        getCollectionPath: function(){
+            throw new Error("Documents.Views.Edit.UIElement.Select: не переопределён getCollectionPath");
         },
         data: function () {
-            return {
+            var data =  {
                 model: this.model,
-                items: this.items,
+                options: this.options,
                 selected: this.selected
             }
+            //console.log('data', data);
+            return data;
+        },
+        initialize: function(){
+            var self = this;
+            UIElementBase.prototype.initialize.apply(self);
+
+            require([self.getCollectionPath()], function(Options) {
+                var options = new Options();
+                self.selected = self.getSelectedValue();
+
+                $.when(options.fetch({
+                    data:{limit:0}
+                }))
+                .then(_.bind(function() {
+
+                    self.options = options.map(function(option) {
+                        return {
+                            val: self.getOptionValue(option),
+                            text: self.getOptionText(option)
+                        }
+                    }, self);
+
+                    //console.log('options',options, self.options);
+
+                    self.render();
+                }, self));
+
+            });
+
+
+        },
+        onAttributeValueChange: function(){
+            var value = this.$el.find("select").val();
+            this.model.setPropertyValueFor(this.getPropertyName(),value);
         },
         render: function () {
             UIElementBase.prototype.render.call(this);
@@ -2257,53 +2302,41 @@ define(function (require) {
         }
     });
 
-        /**
+    /**
      * Поле типа OrgStructure
      * @type {*}
      */
     Documents.Views.Edit.UIElement.OrgStructure = Documents.Views.Edit.UIElement.Select.extend({
-        initialize: function(){
-            UIElementBase.prototype.initialize.apply(this);
-            var Departments = require('collections/departments');
-            var departments = new Departments();
-            this.selected = this.model.getPropertyValueFor('valueId');
-
-            $.when(departments.fetch()).then(_.bind(function () {
-                this.items = departments.toJSON();
-                this.render();
-            }, this));
-
+        getOptionText: function(model){
+            return model.get('name');
         },
-        onAttributeValueChange: function(){
-            var departmentId = this.$el.find("select").val();
-            this.model.setPropertyValueFor('valueId',departmentId);
+        getOptionValue: function(model){
+            return model.get('id');
+        },
+        getPropertyName: function(){
+            return 'valueId';
+        },
+        getCollectionPath: function(){
+            return 'collections/departments';
         }
-
-
     });
 
+    /**
+     * Поле типа OperationType
+     * @type {*}
+     */
     Documents.Views.Edit.UIElement.OperationType = Documents.Views.Edit.UIElement.Select.extend({
-        initialize: function(){
-            UIElementBase.prototype.initialize.apply(this);
-            var Items = require('collections/OperationType');
-            var items = new Items();
-            this.selected = this.model.getPropertyValueFor('value');
-
-            $.when(items.fetch()).then(_.bind(function () {
-                this.items = items.map(function(item){
-                    return {
-                        id: item.get('id'),
-                        name: item.get('value')
-                    }
-                }, this);
-
-                this.render();
-            }, this));
-
+        getOptionText: function(model){
+            return model.get('value');
         },
-        onAttributeValueChange: function(){
-            var itemId = this.$el.find("select").val();
-            this.model.setPropertyValueFor('value',itemId);
+        getOptionValue: function(model){
+            return model.get('id');
+        },
+        getPropertyName: function(){
+            return 'value';
+        },
+        getCollectionPath: function(){
+            return 'collections/OperationType';
         }
     });
 
