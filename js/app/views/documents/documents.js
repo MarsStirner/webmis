@@ -2282,6 +2282,31 @@ define(function (require) {
 
     });
 
+    Documents.Views.Edit.UIElement.OperationType = Documents.Views.Edit.UIElement.Select.extend({
+        initialize: function(){
+            UIElementBase.prototype.initialize.apply(this);
+            var Items = require('collections/OperationType');
+            var items = new Items();
+            this.selected = this.model.getPropertyValueFor('value');
+
+            $.when(items.fetch()).then(_.bind(function () {
+                this.items = items.map(function(item){
+                    return {
+                        id: item.get('id'),
+                        name: item.get('value')
+                    }
+                }, this);
+
+                this.render();
+            }, this));
+
+        },
+        onAttributeValueChange: function(){
+            var departmentId = this.$el.find("select").val();
+            this.model.setPropertyValueFor('value',departmentId);
+        }
+    });
+
     /**
      * Фабрика для создания элементов шаблона соответсвующего типа
      * @type {Function}
@@ -2324,6 +2349,9 @@ define(function (require) {
                 break;
             case "orgstructure":
                 this.UIElementClass = Documents.Views.Edit.UIElement.OrgStructure;
+                break;
+            case "operationtype":
+                this.UIElementClass = Documents.Views.Edit.UIElement.OperationType;
                 break;
             default:
                 this.UIElementClass = Documents.Views.Edit.UIElement.Base;
