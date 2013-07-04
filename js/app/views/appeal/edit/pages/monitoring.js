@@ -581,15 +581,24 @@ define(function(require){
         template: headerTmpl,
 
         data: function () {
+            //console.log('canClose',this.canClose())
             return {
                 appealNumber: appeal.get("number"),
                 appealIsUrgent: appeal.get("urgent"),
-                appealIsClosed: appeal.get('closed')
+                appealIsClosed: appeal.get('closed'),
+                canClose: this.canClose()
             };
         },
 
         events: {
             'click .close-appeal': 'openCloseAppealPopup'
+        },
+        canClose: function(){
+            if (appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
+                return false;
+            } else {
+                return true;
+            }
         },
 
         openCloseAppealPopup: function () {
@@ -682,7 +691,7 @@ define(function(require){
             return {
                 currentBloodType: appeal.get("patient").get("medicalInfo").get("blood"),
                 bloodTypes: this.bloodTypesDict,
-                canChangeBloodType: this.canChangeBloodType
+                canChangeBloodType: this.canChangeBloodType()
             };
         },
 
@@ -711,10 +720,14 @@ define(function(require){
 
             this.bloodTypesDict.on("reset", this.render, this).fetch();
 
-            if (appeal.get('closed')) {
-                this.canChangeBloodType = false;
+
+        },
+
+        canChangeBloodType: function(){
+            if (appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
+                return false;
             } else {
-                this.canChangeBloodType = true;
+                return true;
             }
         },
 
@@ -866,7 +879,7 @@ define(function(require){
                 appeal: appeal.toJSON(),
                 appealExtraData: Core.Data.appealExtraData.toJSON(),
                 days: this.days(),
-                canAssign: this.canAssign
+                canAssign: this.canAssign()
             };
             console.log('data',data)
 
@@ -901,13 +914,6 @@ define(function(require){
             this.moves.on("reset", this.render, this).fetch();
 
 
-            if (appeal.get('closed')) {
-                this.canAssign = false;
-            } else {
-                this.canAssign = true;
-            }
-
-
             appeal.on("change:execPerson", this.onExecPersonDoctorChange, this);
 
             if (!appeal.get("execPerson").id) {
@@ -915,6 +921,14 @@ define(function(require){
                     text: "Требуется назначить лечащего врача.",
                     type: "alert"
                 });
+            }
+        },
+
+        canAssign: function(){
+            if (appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
+                return false;
+            } else {
+                return true;
             }
         },
 
