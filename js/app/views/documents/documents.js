@@ -26,6 +26,11 @@ define(function (require) {
         Models: {}
     };
 
+    //константы
+    var HIDDEN_TYPES = ['JobTicket'];//типы полей, которые не выводятся в ui.
+    var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
+    var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';//Формат даты в коммон дата
+
 
     //region BOOTSTRAP
     var Backbone = window.Backbone;
@@ -98,7 +103,14 @@ define(function (require) {
         groupedByRow: null,
 
         groupByRow: function () {
-            var groupedByRow = _(this.get("group")[1].attribute).groupBy(function (item) {
+            var attributes = this.get("group")[1].attribute;
+
+            attributes = _.reject(attributes, function(attribute){
+                return _.contains(HIDDEN_TYPES, attribute.type)
+            },this);
+
+
+            var groupedByRow = _(attributes).groupBy(function (item) {
                 //return item.layoutAttributes[]; //TODO: groupBy ROW attr
                 //var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
                 return "UNDEFINED";
@@ -170,7 +182,7 @@ define(function (require) {
         },
 
         setCloseDate: function () {
-            this.getDates().end.setValue(this.shouldBeClosed ? moment().format("YYYY-MM-DD HH:mm:ss") : "");
+            this.getDates().end.setValue(this.shouldBeClosed ? moment().format(CD_DATE_FORMAT ) : "");
         }
     });
 
@@ -1503,7 +1515,7 @@ define(function (require) {
         onModelReset: function () {
             this.stopListening(this.model, "change", this.onModelReset);
             if (!this.model.getDates().begin.getValue()) {
-                this.model.getDates().begin.setValue(moment().format("YYYY-MM-DD HH:mm:ss"))
+                this.model.getDates().begin.setValue(moment().format(CD_DATE_FORMAT ))
             }
             this.model.shouldBeClosed = !!this.model.getDates().end.getValue();
             this.render();
@@ -1513,7 +1525,7 @@ define(function (require) {
                 moment(this.$(".document-create-date").datepicker("getDate"))
                     .hour(this.$(".time-input").timepicker("getHour"))
                     .minute(this.$(".time-input").timepicker("getMinute"))
-                    .format("YYYY-MM-DD HH:mm:ss")
+                    .format(CD_DATE_FORMAT )
             );
             console.log(this.model.getDates().begin.getValue());
         },
@@ -1992,13 +2004,12 @@ define(function (require) {
         getTime: function () {
             var time = this.model.getValue();
 
-            return time ? moment(time, 'YYYY-MM-DD HH:mm:ss').format('HH:mm') : '';
+            return time ? moment(time, CD_DATE_FORMAT).format('HH:mm') : '';
         },
 
         setAttributeValue: function () {
             var time = this.getTime();
 
-            //return
             this.ui.$attributeValueEl.val(time);
         },
 
@@ -2027,25 +2038,23 @@ define(function (require) {
                 date: this.getDate()
             };
         },
-        storageFormat: 'YYYY-MM-DD HH:mm:ss',
         inputFormat: 'DD.MM.YYYY',
         inputMaskFormat: '99.99.9999',
 
         getDate: function () {
             var date = this.model.getValue();
 
-            return date ? moment(date, this.storageFormat).format(this.inputFormat) : '';
+            return date ? moment(date, CD_DATE_FORMAT).format(this.inputFormat) : '';
         },
 
         setAttributeValue: function () {
             var date = this.getDate();
 
-            //return
             this.ui.$input.val(date);
         },
 
         getAttributeValue: function () {
-            var date = moment(this.ui.$input.val(), this.inputFormat).format(this.storageFormat);
+            var date = moment(this.ui.$input.val(), this.inputFormat).format(CD_DATE_FORMAT);
 
             return date;
         },
@@ -2579,7 +2588,7 @@ define(function (require) {
 
                     id: document.get("id"),
                     name: summaryAttrs[1]["properties"][0]["value"],
-                    endDate: moment(document.getDates().begin.getValue(), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss"),
+                    endDate: moment(document.getDates().begin.getValue(), CD_DATE_FORMAT ).format("DD.MM.YYYY HH:ss"),
                     doctorName: [
                         summaryAttrs[4]["properties"][0]["value"],
                         summaryAttrs[5]["properties"][0]["value"],
@@ -2655,9 +2664,9 @@ define(function (require) {
                     attributes: this.model.getFilledAttrs(),
                     name: summaryAttrs[1]["properties"][0]["value"],
                     //endDate: summaryAttrs[3]["properties"][0]["value"],
-                    beginDate: moment(this.model.getDates().begin.getValue(), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss"),
+                    beginDate: moment(this.model.getDates().begin.getValue(), CD_DATE_FORMAT ).format("DD.MM.YYYY HH:ss"),
                     endDate: this.model.getDates().end.getValue() ?
-                        moment(this.model.getDates().end.getValue(), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss") :
+                        moment(this.model.getDates().end.getValue(), CD_DATE_FORMAT ).format("DD.MM.YYYY HH:ss") :
                         false,
                     doctorName: [
                         summaryAttrs[4]["properties"][0]["value"],
