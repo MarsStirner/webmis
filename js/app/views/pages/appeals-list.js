@@ -76,8 +76,8 @@ define([
 				page: 1
 			});
 
-			this.$("#appeal-start-date").change();
-			//this.$("#appeal-end-date").change();
+			//this.$("#appeal-start-date").change();
+			this.$("#appeal-end-date").change();
 		},
 
 		toggleFilters: function(event) {
@@ -177,38 +177,38 @@ define([
 				});*/
 
 				var DepCollection = new App.Collections.Departments();
-				DepCollection.setParams({
-					filter: {
-						hasBeds: true
-					},
-					limit: 0,
-					sortingField: 'name',
-					sortingMethod: 'asc'
-				});
+				// DepCollection.setParams({
+				// 	filter: {
+				// 		hasBeds: true
+				// 	},
+				// 	limit: 0,
+				// 	sortingField: 'name',
+				// 	sortingMethod: 'asc'
+				// });
 
 
-				Collection.on("reset", function resetHandler() {
-					Collection.off("reset", resetHandler);
+				// Collection.on("reset", function resetHandler() {
+				// 	Collection.off("reset", resetHandler);
 
-					DepCollection.fetch();
-				});
+				// 	DepCollection.fetch();
+				// });
 
-				Filter = new App.Views.FilterDictionaries({
+				Filter = new App.Views.Filter({
 					collection: Collection,
 					templateId: "#appeals-list-filters-reception",
-					path: this.options.path,
-					dictionaries: {
-						departments: {
-							collection: DepCollection,
-							elementId: "deps-dictionary",
-							getText: function(model) {
-								return model.get("name");
-							},
-							getValue: function(model) {
-								return model.get("id");
-							}
-						}
-					}
+					path: this.options.path//,
+					// dictionaries: {
+					// 	departments: {
+					// 		collection: DepCollection,
+					// 		elementId: "deps-dictionary",
+					// 		getText: function(model) {
+					// 			return model.get("name");
+					// 		},
+					// 		getValue: function(model) {
+					// 			return model.get("id");
+					// 		}
+					// 	}
+					// }
 				});
 
 				AppealsGrid = new App.Views.Grid({
@@ -233,22 +233,25 @@ define([
 			}, this);
 
 			this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function() {
+
 				Collection = new App.Collections.DepartmentPatients({
 					role: "doctor"
 				});
-				Collection.reset();
+				//Collection.reset();
 
-				Collection.setParams({
-					filter: {
-						roleId: 25
-					}
-				});
+				// Collection.setParams({
+				// 	filter: {
+				// 		roleId: 25
+				// 	}
+				// });
 
 				var doctors = new App.Collections.Doctors();
 				doctors.setParams({
 					limit: 9999,
 					sortingField:'lastname'
 				});
+
+
 				var departments = new App.Collections.Departments();
 				departments.setParams({
 					filter: {
@@ -259,11 +262,28 @@ define([
 					sortingMethod: 'asc'
 				});
 
+				doctors.on('reset',function(){
+					setTimeout(function(){
+						view.$("#appeal-start-date").change();
+					},500);
+				});//код распечатать и сжечь
+
 				Filter = new App.Views.FilterDictionaries({
 					collection: Collection,
 					templateId: "#appeals-list-filters-doctor-department",
 					path: this.options.path,
 					dictionaries: {
+						departments: {
+							collection: departments,
+							elementId: "deps-dictionary",
+							getText: function(model) {
+								return model.get("name");
+							},
+							getValue: function(model) {
+								return model.get("id");
+							},
+							preselectedValue: Core.Cookies.get("userDepartmentId")
+						},
 						doctors: {
 							collection: doctors,
 							elementId: "docs-dictionary",
@@ -277,18 +297,8 @@ define([
 								return text.split(' ')[0].toUpperCase().indexOf(term.toUpperCase()) >= 0
 							},
 							preselectedValue: Core.Cookies.get("userId")
-						},
-						departments: {
-							collection: departments,
-							elementId: "deps-dictionary",
-							getText: function(model) {
-								return model.get("name");
-							},
-							getValue: function(model) {
-								return model.get("id");
-							},
-							preselectedValue: Core.Cookies.get("userDepartmentId")
 						}
+
 					}
 				});
 
@@ -299,6 +309,8 @@ define([
 					rowTemplateId: "#appeals-grid-doctor-department-row",
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
+
+
 			}, this);
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function() {
@@ -342,6 +354,11 @@ define([
 					}
 
 				});
+
+
+				setTimeout(function(){
+					view.$("#appeal-start-date").change();
+				},0);
 
 
 			}, this);

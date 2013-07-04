@@ -37,6 +37,7 @@ App.Views.Filter = View.extend({
 			$target.data("old-value", $target.val());
 
 			var filter = Core.Forms.serializeToObject($target.closest("form"));
+			console.log('filter',filter);
 
 			this.collection.setParams({
 				filter:filter
