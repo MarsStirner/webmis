@@ -120,7 +120,7 @@ define(function (require) {
         },
 
         updateSaveButton: function () {
-            this.$saveButton.button(this.viewModel.get('saveButtonState'));
+            this.$saveButton.button().button(this.viewModel.get('saveButtonState'));
         },
 
         onSave: function () {
