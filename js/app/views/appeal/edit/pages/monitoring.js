@@ -122,7 +122,9 @@ define(function(require){
         },
 
         getParseMap: function (rawByDate) {
+            console.log('rawByDate',rawByDate)
             return _.map(rawByDate, function (rawRow, date) {
+                console.log('rawRow, date',rawRow, date)
                 return {
                     datetime: +date,
                     temperature: rawRow["TEMPERATURE"],
@@ -168,8 +170,9 @@ define(function(require){
                 })
                 .slice(0, 5);
 
-            console.log(rawByDate);
-            console.log(parsed);
+            // console.log(rawByDate);
+            console.log('raw',raw);
+            console.log('parsed',parsed);
 
             return parsed;
         }
@@ -203,6 +206,7 @@ define(function(require){
 
         getParseMap: function (rawByDate) {
             return _.map(rawByDate, function (rawRow, date) {
+                console.log('rawRow, date',rawRow, date);
                 return {
                     "datetime": +date,
                     "k": rawRow["K"],
@@ -212,7 +216,12 @@ define(function(require){
                     "protein": rawRow["TP"],
                     "urea": rawRow["UREA"],
                     "bilubrinOb": rawRow["TB"],
-                    "bilubrinPr": rawRow["CB"]
+                    "bilubrinPr": rawRow["CB"],
+                    "wbc": rawRow["WBC"],
+                    "gran": rawRow["GRAN"],
+                    "neut": rawRow["NEUT"],
+                    "hgb": rawRow["HGB"],
+                    "plt": rawRow["PLT"]
                 };
             });
         },

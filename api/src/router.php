@@ -250,11 +250,22 @@ $apiRouts->get('/appeals/{appealId}/bed/vacate', function($appealId, Request $re
     $stmt->bindValue('lastMoveId', $lastMoveId, "integer");
     $count = $stmt->execute();
 
-    // $select_sql_2 = "SELECT * FROM Action "
-    // ."WHERE Action.event_id = ?"
-    // ."ORDER BY Action.directionDate DESC LIMIT 1";
+    $timeleavead = $date->format('H:i:s');
+    //timeleaved id
+    $select_sql = "select ap.id from Action as a "
+        ."join ActionProperty as ap on ap.action_id = a.id "
+        ."where a.id = ? and ap.type_id = 1617 ";
 
-    // $updatedLastMove = $app['db']->fetchAssoc($select_sql_2, array((int) $appealId));
+    $timeleaveadProperty = $app['db']->fetchAssoc($select_sql, array((int) $lastMoveId));
+    $timeleaveadPropertyId = $timeleaveadProperty['id'];
+
+    $insert_sql = "INSERT INTO ActionProperty_Time (id, value) VALUES (:id,:time) "
+            ."ON DUPLICATE KEY UPDATE value= :time;";
+
+    $stmt = $app['db']->prepare($insert_sql);
+    $stmt->bindValue('id', $timeleaveadPropertyId, "integer");
+    $stmt->bindValue('time', $timeleavead);
+    $count = $stmt->execute();
 
     return $app->json($count)->setCallback($callback);
 
