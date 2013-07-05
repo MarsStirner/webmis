@@ -35,7 +35,7 @@ define(function(require) {
 
         },
 
-       printData: function(){
+        printData: function() {
 
             var appeal = this.options.appeal;
             var patient = appeal.get('patient');
@@ -49,14 +49,14 @@ define(function(require) {
                 id: result.get('id'),
                 name: result.get('name'),
                 endDate: moment(result.getProperty('plannedEndDate'), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss"),
-                doctorName: [result.getProperty('doctorFirstName'),result.getProperty('doctorMiddleName'),result.getProperty('doctorLastName')].join(" "),
+                doctorName: [result.getProperty('doctorFirstName'), result.getProperty('doctorMiddleName'), result.getProperty('doctorLastName')].join(" "),
                 doctorSpecs: result.getProperty('doctorSpecs'),
-                assignerName: [result.getProperty('assignerFirstName'),result.getProperty('assignerMiddleName'),result.getProperty('assignerLastName')].join(" "),
+                assignerName: [result.getProperty('assignerFirstName'), result.getProperty('assignerMiddleName'), result.getProperty('assignerLastName')].join(" "),
                 assignerSpecs: result.getProperty('assignerSpecs'),
-                attributes:result.getFlattenedDetails()
+                attributes: result.getFlattenedDetails()
             }
 
-            console.log('printData',data);
+            console.log('printData', data);
 
             return [data];
         },
@@ -64,7 +64,9 @@ define(function(require) {
         print: function() {
 
             new PrintView({
-                data: {documents: this.printData()},
+                data: {
+                    documents: this.printData()
+                },
                 template: "documentsToPrintSeparately"
             });
 
@@ -95,16 +97,24 @@ define(function(require) {
                 var group_1 = (this.result.get('group'))[1].attribute;
                 json.tests = [];
                 _.each(group_1, function(item) {
-                    if (true) { //item.type == 'String') {
+                    var value;
 
-                        json.tests.push({
-                            name: item.name,
-                            value: emptyFalse(self.result.getProperty(item.name, 'value')),
-                            unit: emptyFalse(self.result.getProperty(item.name, 'unit')),
-                            norm: emptyFalse(self.result.getProperty(item.name, 'norm'))
-                        });
-
+                    switch (item.type) {
+                        case 'Time':
+                            value = moment(self.result.getProperty(item.name, 'value'),'YYYY-MM-DD HH:mm:ss').format('HH:mm')
+                            break;
+                        default:
+                            value = emptyFalse(self.result.getProperty(item.name, 'value'));
+                            break;
                     }
+
+                    json.tests.push({
+                        name: item.name,
+                        value: value //,
+                        // unit: emptyFalse(self.result.getProperty(item.name, 'unit')),
+                        // norm: emptyFalse(self.result.getProperty(item.name, 'norm'))
+                    });
+
                 });
             }
 

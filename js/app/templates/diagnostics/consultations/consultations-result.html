@@ -13,10 +13,11 @@
 
 <ul>
 <% _.each(data.tests, function(test){%>
-<li>
-    <strong><%= test.name %></strong>
-    <%= test.value %>
-</li>
+	<% if(test.value){ %>
+		<li>
+			<strong><%= test.name %>:</strong> <%= test.value %>
+		</li>
+	<% } %>
 <%});%>
 </ul>
 </div>

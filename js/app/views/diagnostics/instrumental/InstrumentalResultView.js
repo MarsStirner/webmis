@@ -12,9 +12,8 @@ define(function(require) {
         },
         getResult: function(success, error) {
             var self = this;
-            console.log('getResult',this);
+            //console.log('getResult',this);
             this.result = new Result({},{
-                test:'ttutut',
                 appealId: this.options.appealId
             });
             //this.result.eventId = this.options.appealId;
