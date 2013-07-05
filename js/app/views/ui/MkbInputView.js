@@ -9,17 +9,20 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 		initialize: function() {
 			var view = this;
 
-			view.mkbDirectory = new App.Views.MkbDirectory();
-			view.mkbDirectory.on("selectionConfirmed", view.onMKBConfirmed, view);
-			view.mkbDirectory.render();
 
-			view.depended(view.mkbDirectory);
 		},
 
 		toggleMKB: function(event) {
 			event.preventDefault();
 
 			//this.mkbAttrId = $(event.currentTarget).data("mkb-examattr-id");
+			if (!this.mkbDirectory) {
+				this.mkbDirectory = new App.Views.MkbDirectory();
+				this.mkbDirectory.on("selectionConfirmed", this.onMKBConfirmed, this);
+				this.mkbDirectory.render();
+
+				this.depended(this.mkbDirectory);
+			}
 
 			this.mkbDirectory.open();
 		},
@@ -75,7 +78,7 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 				minLength: 2,
 				select: function(event, ui) {
 					//view.mkbAttrId = $(this).data("mkb-examattr-id");
-					console.log('ui',ui)
+					console.log('ui', ui)
 
 					view.$("input[name='diagnosis[mkb][diagnosis]']").val(ui.item.diagnosis);
 					view.$("input[name='diagnosis[mkb][code]']").val(ui.item.value);
@@ -97,12 +100,12 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 			return view;
 
 		},
-		disable: function(){
+		disable: function() {
 			console.log('disable')
 			this.$(".MKBLauncher").button('disable');
 			this.$("input[name='diagnosis[mkb][code]']").prop('disabled', true).addClass('Disabled NotEditable');
 		},
-		close: function(){
+		close: function() {
 			this.mkbDirectory.remove();
 		}
 

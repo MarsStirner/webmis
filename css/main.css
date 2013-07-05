@@ -679,6 +679,13 @@ td.status-code-2, td.status-code-2 .Warning {
   border-bottom: 1px solid #cf8e8e;
 }
 
+/* line 1, ../sass/modules/_vmp.scss */
+.error {
+  border: 1px solid red;
+  padding: 5px;
+  margin-bottom: 1em;
+}
+
 /* line 1, ../sass/modules/_ui_print_button.scss */
 .split-button-dropdown .ui-menu-item a {
   border-width: 0px!important;
