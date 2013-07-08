@@ -928,7 +928,7 @@ define(function(require){
             if (!appeal.get("execPerson").id) {
                 pubsub.trigger("noty", {
                     text: "Требуется назначить лечащего врача.",
-                    type: "alert"
+                    type: "warning"
                 });
             }
         },
