@@ -32,7 +32,8 @@ define(function(require) {
 			//'change #assign-person': 'onChangeAssignPerson',
 			'click #doctor-outer': 'openDoctorSelectPopup',
 			'change #assign-date': 'onChangeAssignDate',
-			'change #assign-time': 'onChangeAssignDate'
+			'change #assign-time': 'onChangeAssignDate',
+			'change #urgent': 'onChangeUrgent'
 
 		},
 
@@ -190,6 +191,11 @@ define(function(require) {
 			var $target = this.$(e.target);
 
 			this.consultation.get('finance').id = $target.val();
+		},
+
+		onChangeUrgent: function(e){
+			var $target = this.$(e.target);
+			this.consultation.set('urgent',$target.prop('checked'));
 		},
 
 		//при изменении диагноза
