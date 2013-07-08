@@ -1353,6 +1353,10 @@ define(function (require) {
 	Documents.Views.List.Examination.Controls = ViewBase.extend({
 		template: templates._listExaminationControls,
 
+		data: function () {
+			return {creationAllowed: !appeal.isClosed()};
+		},
+
 		events: {
 			"click .new-examination-primary": "onNewExaminationPrimaryClick",
 			"click .new-examination-primary-repeated": "onNewExaminationPrimaryRepeatedClick"
