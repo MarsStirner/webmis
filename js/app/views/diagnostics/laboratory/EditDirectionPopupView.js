@@ -195,6 +195,8 @@ define(function(require) {
 				executor: view.executor
 			}));
 
+			view.renderNested(view.mkbInputView, ".mbk");
+
 			view.ui = {};
 			view.ui.$mkbDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
 			view.ui.$mkbCode = view.$("input[name='diagnosis[mkb][code]']");
@@ -251,7 +253,7 @@ define(function(require) {
 			//Вид оплаты
 			view.initFinanseSelect('#finance');
 
-			view.renderNested(view.mkbInputView, ".mbk");
+
 
 			//Диагноз
 			var diagnosis = view.model.getProperty('Направительный диагноз', 'value');

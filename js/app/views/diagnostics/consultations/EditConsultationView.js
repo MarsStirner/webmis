@@ -146,12 +146,16 @@ define(function(require) {
 
         //при выборе консультации
         onConsultationSelect: function(code) {
-            console.log('onConsultationSelect', code);
+            console.log('onConsultationSelect', code, consultation);
             var consultation = this.consultationsGroups.find(function(model) {
                 return model.get('code') === code;
             })
 
-            this.consultation.set('actionTypeId', consultation.get('id'));
+            if(consultation){
+                this.consultation.set('actionTypeId', consultation.get('id'));
+            }
+
+
 
         },
 

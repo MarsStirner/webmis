@@ -106,7 +106,9 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 			this.$("input[name='diagnosis[mkb][code]']").prop('disabled', true).addClass('Disabled NotEditable');
 		},
 		close: function() {
-			this.mkbDirectory.remove();
+			if (this.mkbDirectory) {
+				this.mkbDirectory.remove();
+			}
 		}
 
 	});

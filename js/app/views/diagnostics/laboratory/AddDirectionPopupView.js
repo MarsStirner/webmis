@@ -135,6 +135,7 @@ define(function(require) {
 			//диагнозы из госпитализации
 			view.appealDiagnosis = view.appeal.getDiagnosis();
 
+
 			//лаборатории
 			view.labsCollection = new LabsCollection();
 
@@ -317,7 +318,7 @@ define(function(require) {
 				model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 
 
-				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
+
 
 
 				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
@@ -332,12 +333,17 @@ define(function(require) {
 
 
 				model.setProperty('finance', 'value', view.ui.$finance.val());
+
+				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
 				if (mkbId) {
 					model.setProperty('Направительный диагноз', 'valueId', mkbId);
 				}
 
 
 			});
+
+			console.log('view.testsCollection',view.testsCollection);
+
 			view.saveButton(false, 'Сохраняем...');
 			view.testsCollection.updateAll();
 
@@ -376,6 +382,11 @@ define(function(require) {
 				assigner: this.assigner
 			}));
 
+			view.renderNested(view.mkbInputView, ".mbk");
+
+			view.renderNested(view.labsCollectionView, ".labs");
+			view.labsCollection.fetch();
+
 			view.ui = {};
 			view.ui.$startDate = this.$("#start-date");
 			view.ui.$startTime = this.$("#start-time");
@@ -389,9 +400,8 @@ define(function(require) {
 
 
 
-			view.renderNested(view.labsCollectionView, ".labs");
-			view.labsCollection.fetch();
-			view.renderNested(view.mkbInputView, ".mbk");
+
+
 			//селект вида оплаты
 			view.initFinanseSelect();
 
@@ -402,6 +412,7 @@ define(function(require) {
 
 			//установка диагноза
 			if (view.appealDiagnosis) {
+				console.log('view.appealDiagnosis',view.appeal,view.appealDiagnosis.get('mkb').get('diagnosis'));
 				view.ui.$mbkDiagnosis.val(view.appealDiagnosis.get('mkb').get('diagnosis'));
 				view.ui.$mbkCode.val(view.appealDiagnosis.get('mkb').get('code'));
 				view.ui.$mbkCode.data('mkb-id', view.appealDiagnosis.get('mkb').get('id'));

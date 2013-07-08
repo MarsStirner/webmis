@@ -93,6 +93,15 @@ define(function(require) {
 			this.consultation.set('createDateTime', moment().valueOf());
 			this.consultation.set('createPerson', this.doctor.id);
 
+			this.diagnosis = this.options.appeal.getDiagnosis();
+
+			if(this.diagnosis){
+				this.consultation.set('diagnosis', {
+					code: this.diagnosis.get('mkb').get('code')
+				});
+			}
+
+
 
 
 			//список специалистов которые могут оказать консультацию
@@ -124,6 +133,7 @@ define(function(require) {
 			pubsub.on('person:changed', function(doctor) {
 				console.log('assign-person: changed', doctor);
 				this.consultation.set('createPerson', doctor.id)
+				this.consultation.set('assignerId', doctor.id)
 
 				this.ui.$doctor.val(doctor.name.raw);
 
@@ -194,6 +204,8 @@ define(function(require) {
 			var $target = this.$(e.target);
 
 			this.consultation.set('createPerson').code = $target.val();
+			this.consultation.set('assignerId').code = $target.val();
+			//assignerId
 		},
 
 		openDoctorSelectPopup: function() {
