@@ -21,9 +21,16 @@ define(function(require) {
 		initialize: function() {
 			this.options.options.on('reset', this.render, this);
 
+			this.options.options.on('reset', function() {
+				if (this.options.options.length === 0) {
+					this.options.model.set(this.options.selectedProperty, '')
+				}
+				console.log('on reset', this.options.options, this.options.model, this.options.selectedProperty)
+			}, this);
 
-			this.options.model.on('change:'+ this.options.selectedProperty, function(model){
-				console.log('change:'+ this.options.selectedProperty, model)
+
+			this.options.model.on('change:' + this.options.selectedProperty, function(model) {
+				console.log('change:' + this.options.selectedProperty, model)
 			}, this);
 		},
 
@@ -60,12 +67,12 @@ define(function(require) {
 				selected: selected,
 				text: text
 			}
-			console.log('data '+this.options.selectedProperty, data)
+			console.log('data ' + this.options.selectedProperty, data)
 			return data;
 		},
 
 		render: function() {
-			console.log('render',this.options.selectedProperty,this.options.model)
+			console.log('render', this.options.selectedProperty, this.options.model)
 			var view = this;
 			view.$el.html(view.template(view.data()));
 
@@ -74,7 +81,7 @@ define(function(require) {
 			view.ui.$text = view.$el.find('.text');
 
 			view.ui.$select.select2().select2('enable');
-			if(this.options.options.length == 0){
+			if (this.options.options.length == 0) {
 				view.ui.$select.select2('disable');
 			}
 			this.options.model.on('change:' + this.options.selectedProperty, this.select, this)
@@ -183,8 +190,8 @@ define(function(require) {
 				data: {
 					mkbId: mkbId
 				}
-			}).done(function(){
-				if(!view.quotaType.length){
+			}).done(function() {
+				if (!view.quotaType.length) {
 					view.pacientModel.reset();
 				}
 			});
@@ -207,6 +214,14 @@ define(function(require) {
 
 		validate: function() {
 			var talon = this.vmpTalon;
+			// console.log('validate',this.quotaType)
+			// if(this.quotaType.length === 0){
+			// 	talon.set('quotaType_id','');
+			// }
+
+			// if(this.pacientModel === 0){
+			// 	talon.set('pacientModel_id','');
+			// }
 			console.log('validate', talon.toJSON(), talon.get('quotaType_id'));
 
 			if (talon.get('MKB') && talon.get('quotaType_id') && talon.get('pacientModel_id') && talon.get('treatment_id')) {
