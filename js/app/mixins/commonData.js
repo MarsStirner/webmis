@@ -20,40 +20,40 @@ define([], function() {
 
 				return attributes;
 			},
-			getGroup: function(groupName){
+			getGroup: function(groupName) {
 				var group = _.find(this._getGroups(), function(group) {
 					return group.name == groupName;
-				},this);
+				}, this);
 
 				return group;
 			},
 
-			getDetailsAttributes: function(){
+			getDetailsAttributes: function() {
 				var details = this.getGroup('Details');
 				return details.attribute;
 			},
-			getFlattenedDetails: function(){
+			getFlattenedDetails: function() {
 				return this.flatten(this.getDetailsAttributes());
 			},
 
-			flatten: function(attributes){
+			flatten: function(attributes) {
 				var flattened = [];
 
-				_.each(attributes, function (attribute) {
+				_.each(attributes, function(attribute) {
 					//console.log('attribute',attribute)
-						var valueProperty = _(attribute.properties).find(function (property) {
-							return property.name === "value";
+					var valueProperty = _(attribute.properties).find(function(property) {
+						return property.name === "value";
+					});
+
+					if (valueProperty && valueProperty.value && valueProperty.value !== "0.0") {
+						flattened.push({
+							//id: attribute.typeId,
+							name: attribute.name,
+							value: valueProperty.value
 						});
+					}
 
-						if (valueProperty && valueProperty.value && valueProperty.value !== "0.0") {
-							flattened.push({
-								//id: attribute.typeId,
-								name: attribute.name,
-								value: valueProperty.value
-							});
-						}
-
-				},this);
+				}, this);
 
 				return flattened;
 			},
@@ -77,7 +77,23 @@ define([], function() {
 
 				if (!property) return false;
 
-				var value = property.value;
+
+				var value;
+
+				//console.log(attribute.type, property.value);
+
+				switch (attribute.type) {
+					case 'Time':
+						value = moment(property.value, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+						break;
+					case 'Date':
+						value = moment(property.value, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
+						break;
+					default:
+						value = property.value;
+						break;
+				}
+
 
 				return value;
 			},
