@@ -13,7 +13,12 @@ define(function (require) {
 				Examination: {},
 				Therapy: {}
 			},
-			Review: {},
+			Review: {
+				Base: {},
+				Common: {},
+				Examination: {},
+				Therapy: {}
+			},
 			Edit: {
 				UIElement: {},
 				Base: {},
@@ -27,7 +32,7 @@ define(function (require) {
 	};
 
 	//константы
-	var HIDDEN_TYPES = ['JobTicket'];//типы полей, которые не выводятся в ui.
+	var HIDDEN_TYPES = ['JobTicket', 'RLS'];//типы полей, которые не выводятся в ui.
 	var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
 	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';//Формат даты в коммон дата
 
@@ -503,7 +508,10 @@ define(function (require) {
 				if ($this.data("icon-secondary")) {
 					icons.secondary = $this.data("icon-secondary");
 				}
-				$this.button({icons: icons, text: !$this.data("notext")});
+				$this.button({
+					icons: icons,
+					text: !$this.data("notext")
+				});
 			});
 			//this.$("select").select2();
 			return this;
@@ -647,12 +655,7 @@ define(function (require) {
 
 			if (enabled) {
 				this.$el.append('<div class="row-fluid review-area-row"><div class="span12 review-area"></div></div>');
-				this.reviewLayout = new Documents.Views.Review.Layout({
-					collection: this.selectedDocuments,
-					documents: this.documents,
-					included: true,
-					showIcons: !this.options.included
-				});
+				this.reviewLayout = this.getReviewLayout();
 				this.assign({
 					".review-area": this.reviewLayout
 				});
@@ -660,6 +663,15 @@ define(function (require) {
 				this.reviewLayout.tearDown();
 				this.$(".review-area-row").remove();
 			}
+		},
+
+		getReviewLayout: function () {
+			return new Documents.Views.Review.Base.Layout({
+				collection: this.selectedDocuments,
+				documents: this.documents,
+				included: true,
+				showIcons: !this.options.included
+			});
 		},
 
 		render: function (subViews) {
@@ -747,7 +759,6 @@ define(function (require) {
 		}
 	});
 
-
 	/**
 	 * Таблица со списком созданных документов
 	 * @type {*}
@@ -790,7 +801,7 @@ define(function (require) {
 		onEditDocumentClick: function (event) {
 			if ($(event.currentTarget).data('document-id')) {
 				dispatcher.trigger("change:viewState", {
-					type: "document-edit",
+					type: this.getEditPageTypeName(),
 					options: {documentId: $(event.currentTarget).data('document-id')}
 				});
 			}
@@ -799,7 +810,7 @@ define(function (require) {
 		onDuplicateDocumentClick: function (event) {
 			if ($(event.currentTarget).data('template-id')) {
 				dispatcher.trigger("change:viewState", {
-					type: "document-edit",
+					type: this.getEditPageTypeName(),
 					options: {templateId: $(event.currentTarget).data('template-id')}
 				});
 			}
@@ -838,6 +849,10 @@ define(function (require) {
 			var sortField = $targetTh.data('sort-field')
 			console.log('sort by', sortField);
 			this.collection.fetch({data: {sortingField: sortField}})
+		},
+
+		getEditPageTypeName: function () {
+			return "document-edit";
 		},
 
 		updatedSelectedItems: function (selected, itemId) {
@@ -1320,6 +1335,15 @@ define(function (require) {
 			return ["EXAM"];
 		},
 
+		getReviewLayout: function () {
+			return new Documents.Views.Review.Examination.Layout({
+				collection: this.selectedDocuments,
+				documents: this.documents,
+				included: true,
+				showIcons: !this.options.included
+			});
+		},
+
 		render: function (subViews) {
 			return ListLayoutBase.prototype.render.call(this, _.extend({
 				".documents-table-body": new Documents.Views.List.Examination.DocumentsTable({
@@ -1374,11 +1398,8 @@ define(function (require) {
 	});
 
 	Documents.Views.List.Examination.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
-		onEditDocumentClick: function (event) {
-			dispatcher.trigger("change:viewState", {
-				type: "examination-edit",
-				options: {documentId: $(event.currentTarget).data('document-id')}
-			});
+		getEditPageTypeName: function () {
+			return "examination-edit";
 		}
 	});
 	//endregion
@@ -1391,6 +1412,15 @@ define(function (require) {
 
 		getDefaultDocumentsMnems: function () {
 			return ["THER"];
+		},
+
+		getReviewLayout: function () {
+			return new Documents.Views.Review.Therapy.Layout({
+				collection: this.selectedDocuments,
+				documents: this.documents,
+				included: true,
+				showIcons: !this.options.included
+			});
 		},
 
 		render: function (subViews) {
@@ -1438,11 +1468,8 @@ define(function (require) {
 	});
 
 	Documents.Views.List.Therapy.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
-		onEditDocumentClick: function (event) {
-			dispatcher.trigger("change:viewState", {
-				type: "therapy-edit",
-				options: {documentId: $(event.currentTarget).data('document-id')}
-			});
+		getEditPageTypeName: function () {
+			return "therapy-edit";
 		}
 	});
 
@@ -1758,14 +1785,14 @@ define(function (require) {
 			return new Documents.Views.List.Common.LayoutHistory({included: true});
 		},
 
-		render: function () {
-			return ViewBase.prototype.render.call(this, {
+		render: function (subViews) {
+			return ViewBase.prototype.render.call(this, _.extend({
 				".nav-controls": new Documents.Views.Edit.NavControls({model: this.model}),
 				".heading": new Documents.Views.Edit.Heading({model: this.model}),
 				".dates": new Documents.Views.Edit.Dates({model: this.model}),
 				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
 				".document-controls": new Documents.Views.Edit.DocControls({model: this.model})
-			});
+			}, subViews));
 		}
 	});
 	//endregion
@@ -1777,6 +1804,14 @@ define(function (require) {
 		getListLayoutHistory: function () {
 			return new Documents.Views.List.Examination.LayoutHistory({included: true});
 		},
+		render: function () {
+			return Documents.Views.Edit.Common.Layout.prototype.render.call(this, {
+				".document-controls": new Documents.Views.Edit.Examination.DocControls({model: this.model})
+			});
+		}
+	});
+
+	Documents.Views.Edit.Examination.DocControls = Documents.Views.Edit.DocControls.extend({
 		returnToList: function () {
 			this.model.trigger("toggle:dividedState", false);
 			dispatcher.trigger("change:viewState", {type: "examinations"});
@@ -1791,6 +1826,14 @@ define(function (require) {
 		getListLayoutHistory: function () {
 			return new Documents.Views.List.Therapy.LayoutHistory({included: true});
 		},
+		render: function () {
+			return Documents.Views.Edit.Common.Layout.prototype.render.call(this, {
+				".document-controls": new Documents.Views.Edit.Therapy.DocControls({model: this.model})
+			});
+		}
+	});
+
+	Documents.Views.Edit.Therapy.DocControls = Documents.Views.Edit.DocControls.extend({
 		returnToList: function () {
 			this.model.trigger("toggle:dividedState", false);
 			dispatcher.trigger("change:viewState", {type: "therapy"});
@@ -2538,7 +2581,7 @@ define(function (require) {
 
 	//region VIEWS REVIEW BASE
 	//---------------------
-	Documents.Views.Review.Layout = LayoutBase.extend({
+	Documents.Views.Review.Base.Layout = LayoutBase.extend({
 		template: templates._reviewLayout,
 
 		initialize: function () {
@@ -2576,12 +2619,17 @@ define(function (require) {
 			return this.options.documents.indexOf(currentDocumentListItem);
 		},
 
+		getEditPageTypeName: function () {
+			return "document-edit";
+		},
+
 		render: function () {
 			return LayoutBase.prototype.render.call(this, {
-				".review-controls": new Documents.Views.Review.Controls({collection: this.collection}),
-				".sheets": new Documents.Views.Review.SheetList({
+				".review-controls": new Documents.Views.Review.Base.Controls({collection: this.collection}),
+				".sheets": new Documents.Views.Review.Base.SheetList({
 					collection: this.collection,
-					showIcons: this.options.showIcons && !appeal.isClosed()
+					showIcons: this.options.showIcons && !appeal.isClosed(),
+					editPageTypeName: this.getEditPageTypeName()
 				})
 			});
 		}
@@ -2591,7 +2639,7 @@ define(function (require) {
 	 * Элементы управления
 	 * @type {*}
 	 */
-	Documents.Views.Review.Controls = ViewBase.extend({
+	Documents.Views.Review.Base.Controls = ViewBase.extend({
 		template: templates._reviewControls,
 
 		data: function () {
@@ -2705,7 +2753,7 @@ define(function (require) {
 	 * Значения полей из документа
 	 * @type {*}
 	 */
-	Documents.Views.Review.Sheet = ViewBase.extend({
+	Documents.Views.Review.Base.Sheet = ViewBase.extend({
 		template: templates._reviewSheet,
 
 		data: function () {
@@ -2763,7 +2811,7 @@ define(function (require) {
 			event.preventDefault();
 			if ($(event.currentTarget).data('document-id')) {
 				dispatcher.trigger("change:viewState", {
-					type: "document-edit",
+					type: this.options.editPageTypeName,
 					options: {documentId: $(event.currentTarget).data('document-id')}
 				});
 			}
@@ -2773,7 +2821,7 @@ define(function (require) {
 			event.preventDefault();
 			if ($(event.currentTarget).data('template-id')) {
 				dispatcher.trigger("change:viewState", {
-					type: "document-edit",
+					type: this.options.editPageTypeName,
 					options: {templateId: $(event.currentTarget).data('template-id')}
 				});
 			}
@@ -2784,7 +2832,7 @@ define(function (require) {
 	 * Значения полей из документа
 	 * @type {*}
 	 */
-	Documents.Views.Review.SheetList = RepeaterBase.extend({
+	Documents.Views.Review.Base.SheetList = RepeaterBase.extend({
 		initialize: function () {
 			RepeaterBase.prototype.initialize.call(this, this.options);
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
@@ -2806,8 +2854,9 @@ define(function (require) {
 				repeatOptions.className = "sheet even-sheet";
 			}
 			repeatOptions.showIcons = !!this.options.showIcons;
+			repeatOptions.editPageTypeName = this.options.editPageTypeName;
 
-			return new Documents.Views.Review.Sheet(repeatOptions);
+			return new Documents.Views.Review.Base.Sheet(repeatOptions);
 		},
 
 		onCollectionReset: function () {
@@ -2817,6 +2866,21 @@ define(function (require) {
 	});
 	//endregion
 
+	//region REVIEW EXAMINATION
+	Documents.Views.Review.Examination.Layout = Documents.Views.Review.Base.Layout.extend({
+		getEditPageTypeName: function () {
+			return "examination-edit";
+		}
+	});
+	//endregion
+
+	//region REVIEW THERAPY
+	Documents.Views.Review.Therapy.Layout = Documents.Views.Review.Base.Layout.extend({
+		getEditPageTypeName: function () {
+			return "therapy-edit";
+		}
+	});
+	//endregion
 	//endregion
 
 
