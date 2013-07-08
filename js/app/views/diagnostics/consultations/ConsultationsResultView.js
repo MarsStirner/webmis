@@ -100,9 +100,12 @@ define(function(require) {
                     var value;
 
                     switch (item.type) {
-                        case 'Time':
-                            value = moment(self.result.getProperty(item.name, 'value'),'YYYY-MM-DD HH:mm:ss').format('HH:mm')
-                            break;
+                        // case 'Time':
+                        //     value = moment(self.result.getProperty(item.name, 'value'),'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+                        //     break;
+                        // case 'Date':
+                        //     value = moment(self.result.getProperty(item.name, 'value'),'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
+                        //     break;
                         default:
                             value = emptyFalse(self.result.getProperty(item.name, 'value'));
                             break;

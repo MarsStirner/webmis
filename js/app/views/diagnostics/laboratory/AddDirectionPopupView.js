@@ -28,7 +28,7 @@ define(function(require) {
 		events: {
 			"click .ShowHidePopup": "close",
 			"click #assigner-outer": "openAssignerSelectPopup",
-            "click #executor-outer": "openExecutorSelectPopup"
+			"click #executor-outer": "openExecutorSelectPopup"
 		},
 		initialize: function() {
 			_.bindAll(this);
@@ -62,12 +62,12 @@ define(function(require) {
 			}
 
 			view.executor = {
-					name: {
-						first: '',
-						last: '',
-						middle: ''
-					}
-				};
+				name: {
+					first: '',
+					last: '',
+					middle: ''
+				}
+			};
 
 
 
@@ -179,7 +179,7 @@ define(function(require) {
 
 			view.groupTestsView = new GroupTestsView({
 				collection: view.groupTestsCollection,
-				patientId: view.options.appeal.get('patient').get('id')//,
+				patientId: view.options.appeal.get('patient').get('id') //,
 				//testCollection: view.testCollection
 			});
 
@@ -201,8 +201,8 @@ define(function(require) {
 
 
 			view.groupTestsCollection.on('change:selected', function(model, value, options) {
-				console.log('change:selected',arguments);
-				if(!view.executor){ //если исполнитель не задан взять исполнителя из исследования
+				console.log('change:selected', arguments);
+				if (!view.executor) { //если исполнитель не задан взять исполнителя из исследования
 					//view.executor = model.getProperty('sdhlkhshfsa','value');
 					//pubsub.trigger('assigner:changed',view.executor);
 
@@ -212,15 +212,12 @@ define(function(require) {
 
 			pubsub.on('assigner:changed', function(assigner) {
 				view.assigner = assigner;
-
 				view.ui.$assigner.val(assigner.name.raw);
-
 			});
 
 			pubsub.on('executor:changed', function(executor) {
 				view.executor = executor;
 				view.ui.$executor.val(executor.name.raw);
-
 			});
 
 
@@ -231,7 +228,7 @@ define(function(require) {
 			this.personDialogView = new PersonDialogView({
 				appeal: this.options.appeal,
 				title: 'Направивший врач',
-				callback: function(person){
+				callback: function(person) {
 					pubsub.trigger('assigner:changed', person);
 				}
 			});
@@ -245,7 +242,7 @@ define(function(require) {
 			this.personDialogView = new PersonDialogView({
 				appeal: this.options.appeal,
 				title: 'Исполнитель',
-				callback: function(person){
+				callback: function(person) {
 					pubsub.trigger('executor:changed', person);
 				}
 			});
@@ -313,23 +310,23 @@ define(function(require) {
 				console.log('$datepicker', $datepicker.datepicker("getDate"))
 				var date = moment($datepicker.datepicker("getDate")).format('YYYY-MM-DD');
 				var $timepicker = view.$('#start-time-' + id);
-				console.log('timepicker',$timepicker)
-				var time = $timepicker.val()+':00';
+				console.log('timepicker', $timepicker)
+				var time = $timepicker.val() + ':00';
 				model.setProperty('plannedEndDate', 'value', date + ' ' + time);
-
-
 
 
 
 				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
 
+				model.setProperty('executorId', 'value', view.executor.id);
 				model.setProperty('doctorFirstName', 'value', view.executor.name.first);
 				model.setProperty('doctorLastName', 'value', view.executor.name.last);
 				model.setProperty('doctorMiddleName', 'value', view.executor.name.middle);
 
-               model.setProperty('assignerFirstName', 'value', view.assigner.name.first);
-               model.setProperty('assignerLastName', 'value', view.assigner.name.last);
-               model.setProperty('assignerMiddleName', 'value', view.assigner.name.middle);
+				model.setProperty('assignerId', 'value', view.assigner.id);
+				model.setProperty('assignerFirstName', 'value', view.assigner.name.first);
+				model.setProperty('assignerLastName', 'value', view.assigner.name.last);
+				model.setProperty('assignerMiddleName', 'value', view.assigner.name.middle);
 
 
 				model.setProperty('finance', 'value', view.ui.$finance.val());
@@ -342,7 +339,7 @@ define(function(require) {
 
 			});
 
-			console.log('view.testsCollection',view.testsCollection);
+			console.log('view.testsCollection', view.testsCollection);
 
 			view.saveButton(false, 'Сохраняем...');
 			view.testsCollection.updateAll();
@@ -400,8 +397,6 @@ define(function(require) {
 
 
 
-
-
 			//селект вида оплаты
 			view.initFinanseSelect();
 
@@ -412,7 +407,7 @@ define(function(require) {
 
 			//установка диагноза
 			if (view.appealDiagnosis) {
-				console.log('view.appealDiagnosis',view.appeal,view.appealDiagnosis.get('mkb').get('diagnosis'));
+				console.log('view.appealDiagnosis', view.appeal, view.appealDiagnosis.get('mkb').get('diagnosis'));
 				view.ui.$mbkDiagnosis.val(view.appealDiagnosis.get('mkb').get('diagnosis'));
 				view.ui.$mbkCode.val(view.appealDiagnosis.get('mkb').get('code'));
 				view.ui.$mbkCode.data('mkb-id', view.appealDiagnosis.get('mkb').get('id'));
