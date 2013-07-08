@@ -1040,7 +1040,23 @@ define(function (require) {
 		className: "Tree popup",
 
 		initialize: function () {
-			this.dialogOptions = {
+			this.dialogOptions = this.getDialogOptions();
+
+			this.origCollection = this.collection;
+
+			this.collection = new Documents.Collections.DocumentTypes(this.collection.models);
+
+			//this.collection.originalModels = this.collection.models;
+
+			this.listenTo(this.collection, "document-type:selected", this.onDocumentTypeSelected);
+
+			this.docTypeSearch = this.getSearchView();
+
+			this.subViews = {".doc-type-search": this.docTypeSearch};
+		},
+
+		getDialogOptions: function () {
+			return {
 				title: "Выберите тип документа",
 				modal: true,
 				width: 800,
@@ -1052,18 +1068,10 @@ define(function (require) {
 					{text: "Отмена", click: _.bind(this.tearDown, this)}
 				]
 			};
+		},
 
-			this.origCollection = this.collection;
-
-			this.collection = new Documents.Collections.DocumentTypes(this.collection.models);
-
-			//this.collection.originalModels = this.collection.models;
-
-			this.listenTo(this.collection, "document-type:selected", this.onDocumentTypeSelected);
-
-			this.docTypeSearch = new Documents.Views.List.Base.DocumentTypeSearch({collection: this.collection});
-
-			this.subViews = {".doc-type-search": this.docTypeSearch};
+		getSearchView: function () {
+			return new Documents.Views.List.Base.DocumentTypeSearch({collection: this.collection, showTypeMnem: true});
 		},
 
 		onDocumentTypeSelected: function (event) {
@@ -1089,6 +1097,9 @@ define(function (require) {
 	Documents.Views.List.Base.DocumentTypeSearch = ViewBase.extend({
 		className: "doc-type-search",
 		template: templates._documentTypeSearch,
+		data: function () {
+			return {showTypeMnem: !!this.options.showTypeMnem};
+		},
 		events: {
 			"keyup .document-type-search": "onDocumentTypeSearchKeyup",
 			"change .document-type-mnem": "onDocumentTypeMnemChange"
@@ -1416,7 +1427,11 @@ define(function (require) {
 		}
 	});
 
-	Documents.Views.List.Therapy.Controls = Documents.Views.List.Base.Controls.extend({});
+	Documents.Views.List.Therapy.Controls = Documents.Views.List.Base.Controls.extend({
+		showDocumentTypeSelector: function () {
+			new Documents.Views.List.Therapy.DocumentTypeSelector({collection: this.documentTypes}).render();
+		}
+	});
 
 	Documents.Views.List.Therapy.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
 		onEditDocumentClick: function (event) {
@@ -1424,6 +1439,12 @@ define(function (require) {
 				type: "therapy-edit",
 				options: {documentId: $(event.currentTarget).data('document-id')}
 			});
+		}
+	});
+
+	Documents.Views.List.Therapy.DocumentTypeSelector = Documents.Views.List.Base.DocumentTypeSelector.extend({
+		getSearchView: function () {
+			return new Documents.Views.List.Base.DocumentTypeSearch({collection: this.collection, showTypeMnem: false});
 		}
 	});
 	//endregion
