@@ -43,6 +43,7 @@ define(function (require) {
 	var appealId = 0;
 	var appeal = null;
 	var dispatcher = _.extend({}, Backbone.Events);
+	var dictionaries = {};
 	//endregion
 
 
@@ -90,6 +91,19 @@ define(function (require) {
 	var Thesaurus = require("views/appeal/edit/popups/thesaurus");
 	var FlatDirectory = require("models/flat-directory");
 	var MKB = require("views/mkb-directory");
+
+	var FDLoader = {
+		dictionaries: {},
+		get: function (id, cb, context) {
+			if (!this.dictionaries[id]) {
+				var directoryEntries = new FlatDirectory();
+				directoryEntries.set({id: id});
+				$.when(this.directoryEntries.fetch()).then(cb);
+			}
+
+			return this.dictionaries[id] ;
+		}
+	};
 	//endregion
 
 
@@ -628,7 +642,7 @@ define(function (require) {
 			this.appealId = appealId;
 
 			this.documents = new Documents.Collections.DocumentList([], {appealId: this.appealId, defaultMnems: this.getDefaultDocumentsMnems()});
-			this.documents.fetch();
+			this.documents.fetch({data: {sortingField: "assesmentDate", sortingMethod: "desc"}});
 
 			this.selectedDocuments = new Backbone.Collection();
 			this.listenTo(this.selectedDocuments, "review:enter", this.onEnteredReviewState);
@@ -2325,9 +2339,20 @@ define(function (require) {
 		template: templates.uiElements._flatDirectory,
 		data: function () {
 			//debugger;
-			return {model: this.model, directoryEntries: _(this.directoryEntries.toBeautyJSON())}
+			//return {model: this.model, directoryEntries: _(dictionaries[this.model.get("scope")].toBeautyJSON())}
+			return {model: this.model, directoryEntries: _(this.directoryEntries.toBeautyJSON())};
 		},
 		initialize: function () {
+			/*if (!dictionaries[this.model.get("scope")]) {
+				dictionaries[this.model.get("scope")] = new FlatDirectory();
+				dictionaries[this.model.get("scope")].set({id: this.model.get("scope")});
+				$.
+					when(dictionaries[this.model.get("scope")].fetch()).
+					then(_.bind(this.onDirectoryReady, this));
+			} else {
+				this.onDirectoryReady();
+			}
+*/
 			this.directoryEntries = new FlatDirectory();
 			this.directoryEntries.set({id: this.model.get("scope")});
 			$.when(this.directoryEntries.fetch()).then(_.bind(function () {
@@ -2335,6 +2360,10 @@ define(function (require) {
 				this.render();
 			}, this));
 			UIElementBase.prototype.initialize.apply(this);
+		},
+		onDirectoryReady: function () {
+			this.model.setValue(dictionaries[this.model.get("scope")].toBeautyJSON()[0].id);
+			this.render();
 		}
 	});
 
