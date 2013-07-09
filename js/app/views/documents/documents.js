@@ -43,7 +43,7 @@ define(function (require) {
 	var appealId = 0;
 	var appeal = null;
 	var dispatcher = _.extend({}, Backbone.Events);
-	var dictionaries = {};
+	var fds = {};
 	//endregion
 
 
@@ -93,15 +93,15 @@ define(function (require) {
 	var MKB = require("views/mkb-directory");
 
 	var FDLoader = {
-		dictionaries: {},
+		fds: {},
 		get: function (id, cb, context) {
-			if (!this.dictionaries[id]) {
+			if (!this.fds[id]) {
 				var directoryEntries = new FlatDirectory();
 				directoryEntries.set({id: id});
 				$.when(this.directoryEntries.fetch()).then(cb);
 			}
 
-			return this.dictionaries[id] ;
+			return this.fds[id] ;
 		}
 	};
 	//endregion
@@ -2339,15 +2339,15 @@ define(function (require) {
 		template: templates.uiElements._flatDirectory,
 		data: function () {
 			//debugger;
-			return {model: this.model, directoryEntries: _(dictionaries[this.model.get("scope")].toBeautyJSON())}
+			return {model: this.model, directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())}
 			//return {model: this.model, directoryEntries: _(this.directoryEntries.toBeautyJSON())};
 		},
 		initialize: function () {
-			if (!dictionaries[this.model.get("scope")]) {
-				dictionaries[this.model.get("scope")] = new FlatDirectory();
-				dictionaries[this.model.get("scope")].set({id: this.model.get("scope")});
+			if (!fds[this.model.get("scope")]) {
+				fds[this.model.get("scope")] = new FlatDirectory();
+				fds[this.model.get("scope")].set({id: this.model.get("scope")});
 				$.
-					when(dictionaries[this.model.get("scope")].fetch()).
+					when(fds[this.model.get("scope")].fetch()).
 					then(_.bind(this.onDirectoryReady, this));
 			} else {
 				this.onDirectoryReady();
@@ -2361,7 +2361,7 @@ define(function (require) {
 			UIElementBase.prototype.initialize.apply(this);
 		},
 		onDirectoryReady: function () {
-			this.model.setValue(dictionaries[this.model.get("scope")].toBeautyJSON()[0].id);
+			this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
 			this.render();
 		}
 	});
@@ -2394,13 +2394,11 @@ define(function (require) {
 			throw new Error("Documents.Views.Edit.UIElement.Select: не переопределён getCollectionPath");
 		},
 		data: function () {
-			var data = {
+			return {
 				model: this.model,
 				options: this.options,
 				selected: this.selected
-			}
-			//console.log('data', data);
-			return data;
+			};
 		},
 		initialize: function () {
 			var self = this;
@@ -2421,15 +2419,10 @@ define(function (require) {
 								text: self.getOptionText(option)
 							}
 						}, self);
-
 						//console.log('options',options, self.options);
-
 						self.render();
 					}, self));
-
 			});
-
-
 		},
 		onAttributeValueChange: function () {
 			var value = this.$el.find("select").val();
