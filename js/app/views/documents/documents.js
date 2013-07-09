@@ -1946,9 +1946,13 @@ define(function (require) {
 			"input [contenteditable].attribute-value": "onAttributeValueChange"
 		},
 
-		data: function () {
-			return {model: this.model}
-		},
+        data: function () {
+            return {
+                model: this.model,
+                disabled: this.getReadOnly(),
+                required: this.getMandatory()
+            }
+        },
 
 		layoutAttributes: {
 			width: 6
@@ -1970,6 +1974,28 @@ define(function (require) {
 				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
 			}, this);
 		},
+        getReadOnly: function(){
+            return this.getDouble('readOnly');
+        },
+        getMandatory: function(){
+            return this.getDouble('mandatory');
+        },
+        getDouble: function(name){
+            var value = this.model.get(name);
+
+            switch (value) {
+                case 'true':
+                    value = true;
+                    break;
+                case 'false':
+                    value = false;
+                    break;
+                default:
+                    value = false;
+                    break;
+            }
+            return value;
+        },
 
 		getAttributeValue: function () {
 			var $attributeValueEl = this.$(".attribute-value");
@@ -2099,7 +2125,9 @@ define(function (require) {
 
 			return {
 				model: this.model,
-				time: this.getTime()
+				time: this.getTime(),
+                disabled: this.getReadOnly(),
+                required: this.getMandatory()
 			};
 		},
 
@@ -2141,7 +2169,9 @@ define(function (require) {
 		data: function () {
 			return {
 				model: this.model,
-				date: this.getDate()
+				date: this.getDate(),
+                disabled: this.getReadOnly(),
+                required: this.getMandatory()
 			};
 		},
 		inputFormat: 'DD.MM.YYYY',
@@ -2251,6 +2281,9 @@ define(function (require) {
 				data.diagnosis = (array.splice(1)).join(' ');
 			}
 
+            data.disabled = this.getReadOnly();
+            data.required = this.getMandatory();
+
 			return data;
 		},
 
@@ -2340,7 +2373,11 @@ define(function (require) {
 		template: templates.uiElements._flatDirectory,
 		data: function () {
 			//debugger;
-			return {model: this.model, directoryEntries: _(this.directoryEntries.toBeautyJSON())}
+			return {
+                model: this.model,
+                directoryEntries: _(this.directoryEntries.toBeautyJSON()),
+                disabled: this.getReadOnly(),
+                required: this.getMandatory()}
 		},
 		initialize: function () {
 			this.directoryEntries = new FlatDirectory();
@@ -2384,7 +2421,9 @@ define(function (require) {
 			var data = {
 				model: this.model,
 				options: this.options,
-				selected: this.selected
+				selected: this.selected,
+                disabled: this.getReadOnly(),
+                required: this.getMandatory()
 			}
 			//console.log('data', data);
 			return data;

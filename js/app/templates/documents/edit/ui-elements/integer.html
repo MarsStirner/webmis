@@ -2,5 +2,8 @@
 	<label>
 		<%=model.get('name')%>
 	</label>
-	<input type="text"  class="attribute-value integer" value="<%=model.getValue()%>"/>
+	<input type="text"
+           class="attribute-value integer<% if(disabled){%> Disabled<%}%>"
+           value="<%=model.getValue()%>"
+            <% if(disabled){%>disabled<%}%> />
 </div>

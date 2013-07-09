@@ -1,12 +1,12 @@
 <div class="row-fluid">
-	<div class="spddan12">
+	<div>
 		<span class="Label"><%= name %></span>
 	</div>
 </div>
 
 <div class="row-fluid">
 	<div class="span2">
-		<input class="mkb-code" type="text" value="<%= mkbCode %>" data-mkb-id="<%= mkbId %>">
+		<input <% if(disabled){%>disabled<%}%> class="mkb-code<% if(disabled){%> Disabled<%}%>" type="text" value="<%= mkbCode %>" data-mkb-id="<%= mkbId %>">
 		<span class="FieldInfo">Код по МКБ</span>
 	</div>
 	<div class="span7" >
