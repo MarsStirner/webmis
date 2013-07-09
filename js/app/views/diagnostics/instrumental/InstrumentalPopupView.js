@@ -37,7 +37,10 @@ define(function (require) {
                 appeal: this.options.appeal
             });
 
-            this.viewModel.on('change:saveButtonState', this.updateSaveButton, this)
+            this.viewModel.on('change:saveButtonState', this.updateSaveButton, this);
+
+                        //диагнозы из госпитализации
+            this.appealDiagnosis = this.options.appeal.getDiagnosis();
 
             //список групп исследований
             this.instrumntalResearchs = new InstrumntalGroups();
@@ -222,8 +225,19 @@ define(function (require) {
             view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
             view.$doctor = view.$("#doctor");
             view.$executor = view.$("#executor");
+            view.$mbkCode = view.$("input[name='diagnosis[mkb][code]']");
+            view.$mbkDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
+
             this.$('.change-doctor,.change-executor').button();
 
+
+            //установка диагноза
+            if (view.appealDiagnosis) {
+                console.log('view.appealDiagnosis',view.appeal,view.appealDiagnosis.get('mkb').get('diagnosis'));
+                view.$mbkDiagnosis.val(view.appealDiagnosis.get('mkb').get('diagnosis'));
+                view.$mbkCode.val(view.appealDiagnosis.get('mkb').get('code'));
+                view.$mbkCode.data('mkb-id', view.appealDiagnosis.get('mkb').get('id'));
+            }
 
             view.$plannedDatepicker.datepicker({
                 minDate: new Date(),

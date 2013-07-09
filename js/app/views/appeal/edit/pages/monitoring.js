@@ -928,7 +928,7 @@ define(function(require){
             if (!appeal.get("execPerson").id) {
                 pubsub.trigger("noty", {
                     text: "Требуется назначить лечащего врача.",
-                    type: "alert"
+                    type: "warning"
                 });
             }
         },
@@ -1210,10 +1210,18 @@ define(function(require){
         },
 
         data: function () {
-            return {analyses: this.collection, appealId: appeal.get('id')};
+            return {
+                analyses: this.collection,
+                appealId: appeal.get('id'),
+                showLabsLink: this.showLabsLink
+            };
         },
 
         initialize: function (options) {
+            if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
+                this.showLabsLink = false;
+            }
+
             this.collection = new Monitoring.Collections.ExpressAnalyses();
             Monitoring.Views.ClientSortableGrid.prototype.initialize.apply(this);
         }

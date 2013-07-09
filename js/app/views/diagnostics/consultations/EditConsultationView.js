@@ -31,7 +31,8 @@ define(function(require) {
             'change input[name="diagnosis[mkb][code]"]': 'onChangeMKB',
             'click #doctor-outer': 'openDoctorSelectPopup',
             'change #assign-date': 'onChangeAssignDate',
-            'change #assign-time': 'onChangeAssignDate'
+            'change #assign-time': 'onChangeAssignDate',
+            'change #urgent': 'onChangeUrgent'
         },
 
         initialize: function(options) {
@@ -79,7 +80,7 @@ define(function(require) {
 
             //направление на консультацию
             this.consultation = new Consultation({
-                'id': this.options.id//,
+                'id': this.options.id //,
                 //'eventId': this.options.appealId//,
                 //'patientId': this.options.appeal.get('patient').get('id')
             });
@@ -146,12 +147,16 @@ define(function(require) {
 
         //при выборе консультации
         onConsultationSelect: function(code) {
-            console.log('onConsultationSelect', code);
+            console.log('onConsultationSelect', code, consultation);
             var consultation = this.consultationsGroups.find(function(model) {
                 return model.get('code') === code;
             })
 
-            this.consultation.set('actionTypeId', consultation.get('id'));
+            if (consultation) {
+                this.consultation.set('actionTypeId', consultation.get('id'));
+            }
+
+
 
         },
 
@@ -215,8 +220,11 @@ define(function(require) {
             var $target = this.$(e.target);
 
             this.consultation.setProperty('finance', 'value', $target.val());
+        },
 
-            console.log('onChangeFinance', $target, this.consultation.getProperty('finance'));
+        onChangeUrgent: function(e) {
+            var $target = this.$(e.target);
+            this.consultation.setProperty('urgent', 'value', $target.prop('checked')+'');
         },
 
         //при изменении диагноза
@@ -246,7 +254,7 @@ define(function(require) {
         openDoctorSelectPopup: function() {
             console.log('openDoctorSelectPopup');
             this.personDialogView = new PersonDialogView({
-                 title: 'Направивший врач',
+                title: 'Направивший врач',
                 appeal: this.options.appeal
             });
 
@@ -322,6 +330,8 @@ define(function(require) {
             this.ui.$assignDate = this.$el.find('#assign-date');
             this.ui.$assignTime = this.$el.find('#assign-time');
             this.ui.$assignPerson = this.$el.find('#doctor');
+
+            this.ui.$urgent = this.$el.find('#urgent');
             this.$el.find('.change-doctor').button();
 
             //календарь
@@ -363,6 +373,12 @@ define(function(require) {
                 this.$("input[name='diagnosis[mkb][code]']").data('mkb-id', mkbId);
                 //}
             }
+
+            if(this.consultation.getProperty('urgent') === 'true'){
+                this.ui.$urgent.prop('checked', true);
+            }
+
+
 
 
             //список консультаций
