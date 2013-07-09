@@ -11,7 +11,7 @@ define(function(require) {
             return moment(now + time).format('HH:mm:ss')
         },
         parse: function(raw) {
-            console.log('parse raw', raw);
+           // console.log('parse raw', raw);
             _.each(raw.schedule, function(item){
                 item.parsedTime = this.convertTime(item.time);
             },this)
@@ -30,11 +30,11 @@ define(function(require) {
     });
 
     var DoctorsFreeCollection = Collection.extend({
-        initialize: function(){
-            this.on('all',function () {
-                console.log('doctors free all', arguments);
-            })
-        },
+//        initialize: function(){
+//            this.on('all',function () {
+//                console.log('doctors free all', arguments);
+//            })
+//        },
         model: DoctorFreeModel,
         url: function() {
             return DATA_PATH + "dir/persons/free/"

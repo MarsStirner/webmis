@@ -97,7 +97,7 @@ define(function(require) {
 		},
 
 		editDirection: function(model) {
-			console.log('editDirection', model);
+			//console.log('editDirection', model);
 			this.editConsultationView = new EditConsultationView(_.extend(this.options, {
 				title: 'Редактирование направления',
 				id: model.get('id')
@@ -106,7 +106,7 @@ define(function(require) {
 		},
 
 		cancelDirection: function(model) {
-			console.log('cancelDirection ', model);
+			///console.log('cancelDirection ', model);
 			model.destroy({
 				wait: true,
 				success: function(model, response) {

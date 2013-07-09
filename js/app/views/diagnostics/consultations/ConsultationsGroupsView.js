@@ -27,6 +27,9 @@ define(function(require) {
                 view.$consultations_list.find('.clicked').removeClass('clicked');
                 $(this).addClass('clicked');
 
+                    $(this).siblings().removeClass('open').addClass('closed');
+                    $(this).toggleClass('open').toggleClass('closed').addClass('clicked');
+
                 var code = $(this).data('code');
                 pubsub.trigger('consultation:selected', code);
             })
