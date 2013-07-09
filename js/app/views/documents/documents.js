@@ -207,10 +207,25 @@ define(function (require) {
 						});
 
 						if (valueProp && valueProp.value && valueProp.value !== "0.0") {
+
+                            var value;
+                            console.log('a',a)
+                            switch (a.type) {
+                                case 'Time':
+                                    value = moment(valueProp.value, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+                                    break;
+                                case 'Date':
+                                    value = moment(valueProp.value, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
+                                    break;
+                                default:
+                                    value = valueProp.value;
+                                    break;
+                            }
+
 							examFlatJSON.push({
 								id: a.typeId,
 								name: a.name,
-								value: valueProp.value
+								value: value
 							});
 						}
 					});
