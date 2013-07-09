@@ -296,7 +296,7 @@ define(function (require) {
 			var valuePropertyIndex;
 
 			if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
-				propName = "value";
+				propName = "valueId";
 			} else {
 				propName = "value";
 			}
@@ -2339,11 +2339,11 @@ define(function (require) {
 		template: templates.uiElements._flatDirectory,
 		data: function () {
 			//debugger;
-			//return {model: this.model, directoryEntries: _(dictionaries[this.model.get("scope")].toBeautyJSON())}
-			return {model: this.model, directoryEntries: _(this.directoryEntries.toBeautyJSON())};
+			return {model: this.model, directoryEntries: _(dictionaries[this.model.get("scope")].toBeautyJSON())}
+			//return {model: this.model, directoryEntries: _(this.directoryEntries.toBeautyJSON())};
 		},
 		initialize: function () {
-			/*if (!dictionaries[this.model.get("scope")]) {
+			if (!dictionaries[this.model.get("scope")]) {
 				dictionaries[this.model.get("scope")] = new FlatDirectory();
 				dictionaries[this.model.get("scope")].set({id: this.model.get("scope")});
 				$.
@@ -2352,13 +2352,12 @@ define(function (require) {
 			} else {
 				this.onDirectoryReady();
 			}
-*/
-			this.directoryEntries = new FlatDirectory();
+			/*this.directoryEntries = new FlatDirectory();
 			this.directoryEntries.set({id: this.model.get("scope")});
 			$.when(this.directoryEntries.fetch()).then(_.bind(function () {
 				this.model.setValue(this.directoryEntries.toBeautyJSON()[0].id);
 				this.render();
-			}, this));
+			}, this));*/
 			UIElementBase.prototype.initialize.apply(this);
 		},
 		onDirectoryReady: function () {
