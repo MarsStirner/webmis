@@ -130,7 +130,7 @@ define(function (require) {
                     datetime: +date,
                     temperature: rawRow["TEMPERATURE"],
                     bpras: rawRow["BPRAS"],
-                    bprad: rawRow["BPRAS"],
+                    bprad: rawRow["BPRAD"],
                     heartRate: rawRow["PULS"],
                     spo2: rawRow["SPO2"],
                     breathRate: rawRow["RR"],
