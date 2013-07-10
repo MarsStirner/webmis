@@ -442,7 +442,9 @@ $apiRouts->get('/dir/pacient_model', function(Request $request)  use ($app){//?d
 
     $callback = $request->query->get('callback');
     $callback = $callback ? $callback : 'callback';
+
     $quotaTypeId = $request->query->get('quotaTypeId');
+    $mkbId = $request->query->get('mkbId');
 
     // quotaTypeId
 
@@ -450,11 +452,12 @@ $apiRouts->get('/dir/pacient_model', function(Request $request)  use ($app){//?d
 
     $select_sql_with_quotaTypeId = "SELECT DISTINCT pm.* FROM MKB_QuotaType_PacientModel as mmm "
     ."JOIN rbPacientModel AS pm ON mmm.pacientModel_id = pm.id "
-    ."WHERE mmm.quotaType_id = :quotaTypeId";
+    ."WHERE mmm.quotaType_id = :quotaTypeId AND mmm.MKB_id = :mkbId";
 
-    if($quotaTypeId){
+    if($quotaTypeId && $mkbId){
         $statement = $app['db']->prepare($select_sql_with_quotaTypeId);
         $statement->bindValue('quotaTypeId', $quotaTypeId);
+        $statement->bindValue('mkbId', $mkbId);
     }else{
         $statement = $app['db']->prepare($select_sql);
     }

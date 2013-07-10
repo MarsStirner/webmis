@@ -198,12 +198,14 @@ define(function(require) {
 		},
 
 		onChangeQuotaTypeId: function(model, quotaTypeId) {
+			var mkbId = this.vmpTalon.get('mkbId');
 
 			if (quotaTypeId != '') {
 				//фильтрация справочника "модель пациента" по виду вмп
 				this.pacientModel.fetch({
 					data: {
-						quotaTypeId: quotaTypeId
+						quotaTypeId: quotaTypeId,
+						mkbId: mkbId
 					}
 				});
 
