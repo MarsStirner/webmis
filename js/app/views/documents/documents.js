@@ -2853,6 +2853,10 @@ define(function (require) {
 		}
 	});
 
+	Documents.Views.Review.Base.SheetRow = ViewBase.extend({
+
+	});
+
 	/**
 	 * Значения полей из документа
 	 * @type {*}
