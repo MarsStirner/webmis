@@ -3,7 +3,7 @@
 		<%=model.get('name')%>
 	</label>
 	<input type="text"
-    class="attribute-value format-double<% if(disabled){%> Disabled<%}%>"
+    class="attribute-value format-double<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
     value="<%=model.getValue()%>"
     <% if(disabled){%>disabled<%}%>
     />

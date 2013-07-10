@@ -188,6 +188,27 @@ define(function (require) {
 
 		setCloseDate: function () {
 			this.getDates().end.setValue(this.shouldBeClosed ? moment().format(CD_DATE_FORMAT) : "");
+		},
+		validate: function (arg1, arg2) {
+			console.log("VALIDATING DOC", arguments);
+			if (!arg2) {
+				var requiredValidationFail = false;
+
+				_(this.getGroupedByRow()).each(function (row) {
+					row.spans.each(function (templateAttr) {
+				//span.each(function (templateAttr) {
+					if (templateAttr.get("mandatory") === "true" && !templateAttr.getValue()) {
+						templateAttr.trigger("requiredValidation:fail");
+						requiredValidationFail = true;
+					}
+				//});
+				});
+				});
+
+				console.log("VALIDATING DOC",requiredValidationFail,arg1, arg2);
+
+				if (requiredValidationFail) return requiredValidationFail;
+			}
 		}
 	});
 
@@ -208,19 +229,19 @@ define(function (require) {
 
 						if (valueProp && valueProp.value && valueProp.value !== "0.0") {
 
-                            var value;
-                            console.log('a',a)
-                            switch (a.type) {
-                                case 'Time':
-                                    value = moment(valueProp.value, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
-                                    break;
-                                case 'Date':
-                                    value = moment(valueProp.value, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
-                                    break;
-                                default:
-                                    value = valueProp.value;
-                                    break;
-                            }
+							var value;
+							console.log('a',a)
+							switch (a.type) {
+								case 'Time':
+									value = moment(valueProp.value, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+									break;
+								case 'Date':
+									value = moment(valueProp.value, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
+									break;
+								default:
+									value = valueProp.value;
+									break;
+							}
 
 							examFlatJSON.push({
 								id: a.typeId,
@@ -1722,7 +1743,10 @@ define(function (require) {
 		},
 
 		saveDocument: function () {
-			this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
+			//this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
+			if (this.model.isValid()) {
+				this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
+			}
 		},
 
 		returnToList: function () {
@@ -1946,13 +1970,13 @@ define(function (require) {
 			"input [contenteditable].attribute-value": "onAttributeValueChange"
 		},
 
-        data: function () {
-            return {
-                model: this.model,
-                disabled: this.getReadOnly(),
-                required: this.getMandatory()
-            }
-        },
+		data: function () {
+			return {
+				model: this.model,
+				disabled: this.getReadOnly(),
+				required: this.getMandatory()
+			}
+		},
 
 		layoutAttributes: {
 			width: 6
@@ -1961,6 +1985,7 @@ define(function (require) {
 		initialize: function () {
 			this.mapLayoutAttributes();
 			this.listenTo(this.model, "copy", this.setAttributeValue);
+			this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
 			//common attrs to fit into grid
 			this.$el.addClass("span" + this.layoutAttributes.width);
 			//this.model.set('readOnly', true)
@@ -1974,28 +1999,28 @@ define(function (require) {
 				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
 			}, this);
 		},
-        getReadOnly: function(){
-            return this.getDouble('readOnly');
-        },
-        getMandatory: function(){
-            return this.getDouble('mandatory');
-        },
-        getDouble: function(name){
-            var value = this.model.get(name);
+		getReadOnly: function(){
+			return this.getDouble('readOnly');
+		},
+		getMandatory: function(){
+			return this.getDouble('mandatory');
+		},
+		getDouble: function(name){
+			var value = this.model.get(name);
 
-            switch (value) {
-                case 'true':
-                    value = true;
-                    break;
-                case 'false':
-                    value = false;
-                    break;
-                default:
-                    value = false;
-                    break;
-            }
-            return value;
-        },
+			switch (value) {
+				case 'true':
+					value = true;
+					break;
+				case 'false':
+					value = false;
+					break;
+				default:
+					value = false;
+					break;
+			}
+			return value;
+		},
 
 		getAttributeValue: function () {
 			var $attributeValueEl = this.$(".attribute-value");
@@ -2018,6 +2043,11 @@ define(function (require) {
 
 		onAttributeValueChange: function (event) {
 			this.model.setValue(this.getAttributeValue());
+			this.$(".Mandatory").removeClass("WrongField");
+		},
+
+		onRequiredValidationFail: function () {
+			this.$(".Mandatory").addClass("WrongField");
 		}
 	});
 
@@ -2126,8 +2156,8 @@ define(function (require) {
 			return {
 				model: this.model,
 				time: this.getTime(),
-                disabled: this.getReadOnly(),
-                required: this.getMandatory()
+				disabled: this.getReadOnly(),
+				required: this.getMandatory()
 			};
 		},
 
@@ -2170,8 +2200,8 @@ define(function (require) {
 			return {
 				model: this.model,
 				date: this.getDate(),
-                disabled: this.getReadOnly(),
-                required: this.getMandatory()
+				disabled: this.getReadOnly(),
+				required: this.getMandatory()
 			};
 		},
 		inputFormat: 'DD.MM.YYYY',
@@ -2281,8 +2311,8 @@ define(function (require) {
 				data.diagnosis = (array.splice(1)).join(' ');
 			}
 
-            data.disabled = this.getReadOnly();
-            data.required = this.getMandatory();
+			data.disabled = this.getReadOnly();
+			data.required = this.getMandatory();
 
 			return data;
 		},
@@ -2374,10 +2404,10 @@ define(function (require) {
 		data: function () {
 			//debugger;
 			return {
-                model: this.model,
-                directoryEntries: _(this.directoryEntries.toBeautyJSON()),
-                disabled: this.getReadOnly(),
-                required: this.getMandatory()}
+				model: this.model,
+				directoryEntries: _(this.directoryEntries.toBeautyJSON()),
+				disabled: this.getReadOnly(),
+				required: this.getMandatory()}
 		},
 		initialize: function () {
 			this.directoryEntries = new FlatDirectory();
@@ -2422,8 +2452,8 @@ define(function (require) {
 				model: this.model,
 				options: this.options,
 				selected: this.selected,
-                disabled: this.getReadOnly(),
-                required: this.getMandatory()
+				disabled: this.getReadOnly(),
+				required: this.getMandatory()
 			}
 			//console.log('data', data);
 			return data;

@@ -7,7 +7,10 @@
     <a href="#" class="FormLink Actions thesaurus-open field" style="display: inline;  margin-top: 0;">Тезаурус</a>
     <%}%>
 	<div class="RichTextWrapper field">
-		<div <% if(!disabled){%>contenteditable="true"<%}%> class="RichText attribute-value<% if(disabled){%> Disabled<%}%>" style="min-height: 8em;">
+		<div
+		class="RichText attribute-value<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
+		style="min-height: 8em;"
+		<% if(!disabled){%>contenteditable="true"<%}%> >
 			<%=model.getValue() || '<br>'%>
 		</div>
 	</div>

@@ -6,11 +6,21 @@
 
 <div class="row-fluid">
 	<div class="span2">
-		<input <% if(disabled){%>disabled<%}%> class="mkb-code<% if(disabled){%> Disabled<%}%>" type="text" value="<%= mkbCode %>" data-mkb-id="<%= mkbId %>">
+		<input
+		<% if(disabled){%>disabled<%}%>
+		class="mkb-code<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
+		type="text"
+		value="<%= mkbCode %>"
+		data-mkb-id="<%= mkbId %>">
 		<span class="FieldInfo">Код по МКБ</span>
 	</div>
 	<div class="span7" >
-		<input class="Disabled NotEditable mkb-diagnosis" disabled="disabled" type="text" placeholder="" value="<%= diagnosis %>"/>
+		<input
+		class="Disabled NotEditable mkb-diagnosis"
+		disabled="disabled"
+		type="text"
+		placeholder=""
+		value="<%= diagnosis %>"/>
 		<span class="FieldInfo">Описание</span>
 	</div>
 	<div class="span3" >

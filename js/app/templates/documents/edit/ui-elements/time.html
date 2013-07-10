@@ -2,6 +2,10 @@
 	<label>
 		<%=model.get('name')%>
 	</label>
-	<input <% if(disabled){%>disabled<%}%> type="text"  class="Combo attribute-value<% if(disabled){%> Disabled<%}%>" placeholder="ЧЧ:ММ" value="<%= time %>"/>
+	<input <% if(disabled){%>disabled<%}%>
+	type="text"
+	class="Combo attribute-value<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
+	placeholder="ЧЧ:ММ"
+	value="<%= time %>"/>
 
 </div>

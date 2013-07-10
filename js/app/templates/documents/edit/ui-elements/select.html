@@ -1,7 +1,11 @@
 <label>
 	<%=model.get('name')%>
 </label>
-<select class="attribute-value" style="font-size: 1.2em; padding: 4px; width: 100%;border: 1px solid #737477;">
+<select
+class="attribute-value<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
+style="font-size: 1.2em; padding: 4px; width: 100%;border: 1px solid #737477;"
+<% if(disabled){%>disabled<%}%>
+>
 	<% _.each(options, function (option) {%>
 	<option value="<%=option.val%>" <%if (selected == option.val) {%>selected<%}%>><%= option.text %></option>
 	<%});%>
