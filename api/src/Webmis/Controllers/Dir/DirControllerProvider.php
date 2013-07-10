@@ -4,7 +4,7 @@ namespace Webmis\Controllers\Dir;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\ParameterBag;
+// use Symfony\Component\HttpFoundation\ParameterBag;
 
 class DirControllerProvider implements ControllerProviderInterface
 {
@@ -15,9 +15,6 @@ class DirControllerProvider implements ControllerProviderInterface
 
 		//справочник QuotaType
 		$controllers->get('/quotaType', function(Request $request)  use ($app){
-
-			$callback = $request->query->get('callback');
-			$callback = $callback ? $callback : 'callback';
 
 			$mkbId = $request->query->get('mkbId');
 
@@ -43,8 +40,7 @@ class DirControllerProvider implements ControllerProviderInterface
 			$statement->execute();
 			$quotaType = $statement->fetchAll();
 
-
-			return $app->json(array('data'=>$quotaType))->setCallback($callback);
+			return $app['jsonp']->jsonp(array('data'=>$quotaType));
 
 		});
 
@@ -52,9 +48,6 @@ class DirControllerProvider implements ControllerProviderInterface
 
 		//справочник rbResult
 		$controllers->get('/result', function(Request $request)  use ($app){
-
-			$callback = $request->query->get('callback');
-			$callback = $callback ? $callback : 'callback';
 
 			$appealId = $request->query->get('appealId');
 
@@ -76,16 +69,13 @@ class DirControllerProvider implements ControllerProviderInterface
 			$result = $statement->fetchAll();
 
 
-			return $app->json(array('data'=>$result))->setCallback($callback);
+			return $app['jsonp']->jsonp(array('data'=>$result));
 
 		});
 
 
 		//справочник rbTreatment
 		$controllers->get('/treatment', function(Request $request)  use ($app){
-
-			$callback = $request->query->get('callback');
-			$callback = $callback ? $callback : 'callback';
 
 			$pacientModelId = $request->query->get('pacientModelId');
 
@@ -105,16 +95,13 @@ class DirControllerProvider implements ControllerProviderInterface
 			$treatment = $statement->fetchAll();
 
 
-			return $app->json(array('data'=>$treatment))->setCallback($callback);
+			return $app['jsonp']->jsonp(array('data'=>$treatment));
 
 		});
 
 
 		//справочник rbPacientModel
 		$controllers->get('/pacient_model', function(Request $request)  use ($app){//?dictName=pacientModel
-
-			$callback = $request->query->get('callback');
-			$callback = $callback ? $callback : 'callback';
 
 			$quotaTypeId = $request->query->get('quotaTypeId');
 			$mkbId = $request->query->get('mkbId');
@@ -140,7 +127,7 @@ class DirControllerProvider implements ControllerProviderInterface
 			$pacientModel = $statement->fetchAll();
 
 
-			return $app->json(array('data'=>$pacientModel))->setCallback($callback);
+			return $app['jsonp']->jsonp(array('data'=>$pacientModel));
 
 		});
 
