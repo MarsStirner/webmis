@@ -120,6 +120,18 @@ define(function(require) {
 				model: this.vmpTalon,
 				selectedProperty: 'quotaType_id'
 			});
+
+			this.quotaType.on('reset', function(){
+				var $warning = this.$('#quota-type-error');
+
+				if(this.quotaType.length === 0){
+					$warning.html('Кода вида ВМП для диагноза нет! Измените диагноз').addClass('error');
+				}else{
+					$warning.html('').removeClass('error');
+				}
+
+			}, this);
+
 			//модель пациента
 			this.pacientModel = new PacientModel();
 			this.pacientModelView = new RSelectView({
@@ -137,13 +149,14 @@ define(function(require) {
 				model: this.vmpTalon,
 				selectedProperty: 'treatment_id'
 			});
-			this.treatment.fetch();
+			//this.treatment.fetch();
 
 			this.vmpTalon.on('change:mkbId', this.onChangeMkbId, this);
 			this.vmpTalon.on('change:MKB', this.onChangeMkbCode, this);
 			this.vmpTalon.on('change:DiagName', this.onChangeDiagName, this);
 
 			this.vmpTalon.on('change:quotaType_id', this.onChangeQuotaTypeId, this);
+			this.vmpTalon.on('change:pacientModel_id', this.onChangePacientModelId, this);
 
 			this.vmpTalonPrev = new VmpTalonPrev();
 			this.vmpTalonPrev.appealId = this.options.appeal.get('id');
@@ -211,6 +224,20 @@ define(function(require) {
 
 			} else {
 				this.pacientModel.reset()
+			}
+		},
+
+		onChangePacientModelId: function(model, pacientModelId){
+			if (pacientModelId != '') {
+				//фильтрация справочника "метод лечения" по "модели пациента"
+				this.treatment.fetch({
+					data: {
+						pacientModelId: pacientModelId
+					}
+				});
+
+			} else {
+				this.treatment.reset()
 			}
 		},
 

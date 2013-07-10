@@ -478,9 +478,20 @@ $apiRouts->get('/dir/treatment', function(Request $request)  use ($app){
     $callback = $request->query->get('callback');
     $callback = $callback ? $callback : 'callback';
 
+    $pacientModelId = $request->query->get('pacientModelId');
+
     $select_sql = "SELECT rbTreatment.id,rbTreatment.name FROM rbTreatment";
 
-    $statement = $app['db']->prepare($select_sql);
+    $select_sql_with_pacientModelId = "SELECT rbTreatment.id,rbTreatment.name FROM rbTreatment WHERE pacientModel_id = :pacientModelId";
+
+    if($pacientModelId){
+        $statement = $app['db']->prepare($select_sql_with_pacientModelId);
+        $statement->bindValue('pacientModelId', $pacientModelId);
+
+    }else{
+        $statement = $app['db']->prepare($select_sql);
+    }
+
     $statement->execute();
     $treatment = $statement->fetchAll();
 
