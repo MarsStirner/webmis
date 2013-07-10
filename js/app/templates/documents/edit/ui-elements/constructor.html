@@ -1,12 +1,16 @@
 <div class="SetComment">
 	<label>
-		<input type="checkbox" <% if(disabled){%>disabled<%}%> checked="checked" class="field-toggle">
+		<input
+		type="checkbox"
+		<% if(required){%> checked<%}%>
+		class="field-toggle">
 		<%=model.get('name')%>
 	</label>
+	<div class="field" <% if(!required){%>style="display:none;"<%}%>>
     <% if(!disabled){%>
     <a href="#" class="FormLink Actions thesaurus-open field" style="display: inline;  margin-top: 0;">Тезаурус</a>
     <%}%>
-	<div class="RichTextWrapper field">
+	<div class="RichTextWrapper">
 		<div
 		class="RichText attribute-value<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
 		style="min-height: 8em;"
@@ -14,4 +18,6 @@
 			<%=model.getValue() || '<br>'%>
 		</div>
 	</div>
+	</div>
+
 </div>

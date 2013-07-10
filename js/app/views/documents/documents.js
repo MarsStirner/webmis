@@ -205,7 +205,7 @@ define(function (require) {
 				});
 				});
 
-				console.log("VALIDATING DOC",requiredValidationFail,arg1, arg2);
+				console.log("VALIDATING DOC",requiredValidationFail);
 
 				if (requiredValidationFail) return requiredValidationFail;
 			}
@@ -1967,7 +1967,8 @@ define(function (require) {
 
 		events: {
 			"change .attribute-value": "onAttributeValueChange",
-			"input [contenteditable].attribute-value": "onAttributeValueChange"
+			"input [contenteditable].attribute-value": "onAttributeValueChange",
+			"change .field-toggle": "onFieldToggleChange"
 		},
 
 		data: function () {
@@ -2048,6 +2049,9 @@ define(function (require) {
 
 		onRequiredValidationFail: function () {
 			this.$(".Mandatory").addClass("WrongField");
+		},
+		onFieldToggleChange: function (event) {
+			this.$(".field").toggle($(event.currentTarget).is(":checked"));
 		}
 	});
 
@@ -2057,11 +2061,6 @@ define(function (require) {
 	 */
 	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({
 		template: templates.uiElements._text,
-
-		events: _.extend({
-			"change .field-toggle": "onFieldToggleChange"
-		}, UIElementBase.prototype.events),
-
 		onFieldToggleChange: function (event) {
 			this.$(".field").toggle($(event.currentTarget).is(":checked"));
 		}
@@ -2291,11 +2290,11 @@ define(function (require) {
 	 */
 	Documents.Views.Edit.UIElement.MKB = UIElementBase.extend({
 		template: templates.uiElements._mkb,
-		events: {
+		events: _.extend({
 			"click .MKBLauncher": "onMKBLauncherClick",
 			"keyup .mkb-code": "onMKBCodeKeyUp",
 			"change .mkb-code": "onMKBCodeChange"
-		},
+		}, UIElementBase.prototype.events),
 
 		data: function () {
 			var data = {};
