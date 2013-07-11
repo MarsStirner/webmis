@@ -31,11 +31,18 @@ define(function(require) {
 
         },
 
+        showTime: function(text){
+            console.log('showTime', text, this.$el);
+            this.$('#prev').addClass('dasas').html(text);
+        },
+
         render: function() {
             console.log('schedule render', this.collection.toJSON())
             this.$el.html(_.template(this.template, {
                 items: this.collection.toJSON()
             }));
+
+            this.trigger('after:render');
 
             return this;
         },

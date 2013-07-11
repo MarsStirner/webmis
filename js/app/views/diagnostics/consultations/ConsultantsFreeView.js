@@ -12,7 +12,7 @@ define(function(require) {
         },
         renderAll: function(data) {
             var view = this;
-            console.log('renderAll', arguments);
+            //console.log('renderAll', arguments);
             // view.$el.html('<div class="consultations-list tree"></div>');
             // view.$consultations_list = view.$('.consultations-list');
 
@@ -39,7 +39,7 @@ define(function(require) {
         },
         render: function() {
             var data = this.collection.toJSON();
-            console.log('consultants view render', data);
+            //console.log('consultants view render', data);
 
             if (_.isArray(data) && data.length > 0) {
                 this.renderAll(data);

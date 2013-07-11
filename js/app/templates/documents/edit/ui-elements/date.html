@@ -1,7 +1,18 @@
 <div class="SetComment">
 	<label>
+		<input
+		type="checkbox"
+		<% if(required){%> checked<%}%>
+		class="field-toggle">
 		<%=model.get('name')%>
 	</label>
-	<input type="text"   class="Combo attribute-value" placeholder="ДД.ММ.ГГГГ" value="<%=date%>"/>
+<div class="field" <% if(!required && _.isEmpty(date)){%>style="display:none;"<%}%>>
+	<input type="text"
+	class="Combo attribute-value<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
+	placeholder="ДД.ММ.ГГГГ"
+	value="<%=date%>"
+	<% if(disabled){%>disabled<%}%>
+	/>
+	</div>
 
 </div>

@@ -284,7 +284,7 @@ Monitoring,
 					structure: [
 						App.Router.compile({
 							name: "monitoring",
-							title: "Мониторинг&nbsp;состояния",
+							title: "Основные&nbsp;сведения",
 							uri: "/appeals/:id/monitoring"
 						}, appealJSON),
 						// App.Router.compile({
@@ -352,7 +352,7 @@ Monitoring,
 					structure: [
 						App.Router.compile({
 							name: "monitoring",
-							title: "Мониторинг&nbsp;состояния",
+							title: "Основные&nbsp;сведения",
 							uri: "/appeals/:id/monitoring"
 						}, appealJSON),
 						App.Router.compile({

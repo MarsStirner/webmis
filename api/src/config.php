@@ -1,6 +1,6 @@
 <?php
 //use Silex\Provider\MonologServiceProvider;
-
+use Webmis\Services\JsonpResponce;
 
 $app['debug'] = true;
 $app["log.level"] = 100;
@@ -15,6 +15,10 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'charset'=>'utf8'
     ),
 ));
+
+$app['jsonp'] = function ($app) {
+    return new JsonpResponce($app);
+};
 
 
 // $app->register(new MonologServiceProvider(), array(

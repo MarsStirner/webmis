@@ -49,34 +49,6 @@
 		<% } %>
 	</td>
 </tr>
-<tr>
-	<td>Рост</td>
-	<td>
-		<% if (appeal.physicalParameters.height) { %>
-		<%= appeal.physicalParameters.height %> см
-		<% } else { %>
-		-
-		<% } %>
-	</td>
-</tr>
-<tr>
-	<td>Вес</td>
-	<td>
-		<% if (weight) { %>
-		<%= weight %>
-		<% } else { %>
-		-
-		<% } %>
-	</td>
-</tr>
-<tr>
-	<td>Площадь поверхности тела</td>
-	<td>
-		<% if (bsa) { %>
-		<%= bsa %> кв.м
-		<% }else{ %>
-		-
-		<% } %>
-	</td>
-</tr>
 </tbody>
+
+<tbody class="patient-bsa"></tbody>

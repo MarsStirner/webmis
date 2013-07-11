@@ -1,16 +1,29 @@
 <div class="row-fluid">
-	<div class="spddan12">
+	<div>		<input
+		type="checkbox"
+		<% if(required){%> checked<%}%>
+		class="field-toggle">
 		<span class="Label"><%= name %></span>
 	</div>
 </div>
 
-<div class="row-fluid">
+<div class="row-fluid field" <% if(!required && _.isEmpty(mkbCode)){%>style="display:none;"<%}%>>
 	<div class="span2">
-		<input class="mkb-code" type="text" value="<%= mkbCode %>" data-mkb-id="<%= mkbId %>">
+		<input
+		<% if(disabled){%>disabled<%}%>
+		class="mkb-code<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
+		type="text"
+		value="<%= mkbCode %>"
+		data-mkb-id="<%= mkbId %>">
 		<span class="FieldInfo">Код по МКБ</span>
 	</div>
 	<div class="span7" >
-		<input class="Disabled NotEditable mkb-diagnosis" disabled="disabled" type="text" placeholder="" value="<%= diagnosis %>"/>
+		<input
+		class="Disabled NotEditable mkb-diagnosis"
+		disabled="disabled"
+		type="text"
+		placeholder=""
+		value="<%= diagnosis %>"/>
 		<span class="FieldInfo">Описание</span>
 	</div>
 	<div class="span3" >

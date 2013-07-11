@@ -1,8 +1,17 @@
 <label>
+		<input
+		type="checkbox"
+		<% if(required){%> checked<%}%>
+		class="field-toggle">
 	<%=model.get('name')%>
 </label>
-<select class="attribute-value" style="font-size: 1.2em; padding: 4px; width: 100%;border: 1px solid #737477;">
+<div class="field" <% if(!required && _.isEmpty(model.getValue())){%>style="display:none;"<%}%>>
+<select
+class="attribute-value<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
+style="font-size: 1.2em; padding: 4px; width: 100%;border: 1px solid #737477;"
+<% if(disabled){%>disabled<%}%>>
 	<%directoryEntries.each(function (directoryEntry) {%>
 	<option value="<%=directoryEntry.id%>" <%if (model.getValue() == directoryEntry.id) {%>selected<%}%>><%=directoryEntry['Наименование']%></option>
 	<%});%>
 </select>
+</div>

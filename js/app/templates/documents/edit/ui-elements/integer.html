@@ -1,6 +1,15 @@
 <div class="SetComment">
 	<label>
+			<input
+		type="checkbox"
+		<% if(required){%> checked<%}%>
+		class="field-toggle">
 		<%=model.get('name')%>
 	</label>
-	<input type="text"  class="attribute-value integer" value="<%=model.getValue()%>"/>
+	<div class="field" <% if(!required && _.isEmpty(model.getValue())){%>style="display:none;"<%}%>>
+	<input type="text"
+           class="attribute-value integer<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
+           value="<%=model.getValue()%>"
+            <% if(disabled){%>disabled<%}%> />
+    </div>
 </div>

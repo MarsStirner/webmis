@@ -3,7 +3,7 @@
  * Date: 09.04.13
  */
 
-define(function(require){
+define(function (require) {
 
     var assignExecPersonDialogTmpl = require('text!templates/appeal/edit/pages/monitoring/assign-exec-person-dialog.tmpl');
     var expressAnalysesItemTmpl = require('text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl');
@@ -14,9 +14,11 @@ define(function(require){
     var monitoringTmpl = require('text!templates/appeal/edit/pages/monitoring/layout.tmpl');
     var patientBloodTypeHistoryRowTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-blood-type-history-row.tmpl');
     var patientBloodTypesRowTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-blood-type-row.tmpl');
+    var patientBsaRowTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-bsa-row.tmpl');
     var patientDiagnosesListTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl');
     var patientInfoTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-info.tmpl');
     var signalInfoTmpl = require('text!templates/appeal/edit/pages/monitoring/signal-info.tmpl');
+    var chemotherapyInfoTmpl = require('text!templates/appeal/edit/pages/monitoring/chemotherapy-info.html')
 
     var DictionaryValues = require('collections/dictionary-values');
     var Moves = require('collections/moves/moves');
@@ -122,19 +124,22 @@ define(function(require){
         },
 
         getParseMap: function (rawByDate) {
-            console.log('rawByDate',rawByDate)
+            console.log('rawByDate', rawByDate)
             return _.map(rawByDate, function (rawRow, date) {
-                console.log('rawRow, date',rawRow, date)
+                console.log('rawRow, date', rawRow, date)
                 return {
                     datetime: +date,
                     temperature: rawRow["TEMPERATURE"],
                     bpras: rawRow["BPRAS"],
-                    bprad: rawRow["BPRAS"],
+                    bprad: rawRow["BPRAD"],
                     heartRate: rawRow["PULS"],
                     spo2: rawRow["SPO2"],
                     breathRate: rawRow["RR"],
                     state: rawRow["STATE"],
-                    health: rawRow["WB"]
+                    health: rawRow["WB"],
+                    weight: rawRow["WEIGHT"],
+                    growth: rawRow["GROWTH"]
+
                 };
             });
         },
@@ -159,8 +164,8 @@ define(function(require){
                     var adt = a.datetime;
                     var bdt = b.datetime;
 
-                    if (adt > bdt) return 1;
-                    else if (adt < bdt) return -1;
+                    if (adt < bdt) return 1;
+                    else if (adt > bdt) return -1;
                     else return 0;
                 })
                 .filter(function (row) {
@@ -171,8 +176,8 @@ define(function(require){
                 .slice(0, 5);
 
             // console.log(rawByDate);
-            console.log('raw',raw);
-            console.log('parsed',parsed);
+            console.log('raw', raw);
+            console.log('parsed', parsed);
 
             return parsed;
         }
@@ -206,7 +211,7 @@ define(function(require){
 
         getParseMap: function (rawByDate) {
             return _.map(rawByDate, function (rawRow, date) {
-                console.log('rawRow, date',rawRow, date);
+                console.log('rawRow, date', rawRow, date);
                 return {
                     "datetime": +date,
                     "k": rawRow["K"],
@@ -409,6 +414,7 @@ define(function(require){
                 ".patient-info": new Monitoring.Views.PatientInfo(),
                 ".signal-info": new Monitoring.Views.SignalInfo(),
                 ".patient-diagnoses-list": new Monitoring.Views.PatientDiagnosesList(),
+                ".chemotherapy-info": new Monitoring.Views.ChemotherapyInfo(),
                 ".monitoring-info": new Monitoring.Views.MonitoringInfoGrid(),
                 ".express-analyses": new Monitoring.Views.ExpressAnalyses()
             });
@@ -602,7 +608,7 @@ define(function(require){
         events: {
             'click .close-appeal': 'openCloseAppealPopup'
         },
-        canClose: function(){
+        canClose: function () {
             if (appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
                 return false;
             } else {
@@ -639,10 +645,10 @@ define(function(require){
             var bsa = this.getBSA();
             var weight = appealJSON.physicalParameters.weight;
 
-            if(weight && weight > 500){//если вес больше 500, то наверно это граммы...
-                weight = weight+' г';
-            }else if(weight && weight <= 500){
-                weight = weight+' кг';
+            if (weight && weight > 500) {//если вес больше 500, то наверно это граммы...
+                weight = weight + ' г';
+            } else if (weight && weight <= 500) {
+                weight = weight + ' кг';
             }
 
 
@@ -654,17 +660,17 @@ define(function(require){
             };
         },
 
-        getBSA: function(){
+        getBSA: function () {
             var height = appealJSON.physicalParameters.height;
             var weight = appealJSON.physicalParameters.weight;
             var bsa;
 
-            if(weight > 500){//если вес больше 500, то наверно это граммы...
-                weight = weight/1000;
+            if (weight > 500) {//если вес больше 500, то наверно это граммы...
+                weight = weight / 1000;
             }
 
-            if(height || weight){
-                bsa = Math.sqrt((height*weight)/3600);
+            if (height || weight) {
+                bsa = Math.sqrt((height * weight) / 3600);
 
                 bsa = bsa.toFixed(2);
             }
@@ -679,13 +685,94 @@ define(function(require){
 
             this.assign({
                 ".patient-blood-type": new Monitoring.Views.PatientBloodTypeRow(),
-                ".patient-blood-type-history": new Monitoring.Views.PatientBloodTypeHistoryRow()
+                ".patient-blood-type-history": new Monitoring.Views.PatientBloodTypeHistoryRow(),
+                ".patient-bsa": new Monitoring.Views.PatientBsaRow()
             });
 
             this.$(".patient-blood-type-history").hide();
 
             return this;
         }
+    });
+
+
+    Monitoring.Views.PatientBsaRow = Monitoring.Views.BaseView.extend({
+        template: patientBsaRowTmpl,
+        data: function () {
+            var data = {
+                weight: '',
+                height: '',
+                bsa: ''
+            };
+            if (this.collection.length) {
+                //модели у которых есть рос и вес
+                var wah = this.collection.filter(function (model) {
+                    return (model.get('weight') && model.get('growth'))
+                });
+                //последняя модель
+                var model = _.last(wah);
+                //console.log('model', model);
+
+                if (!model) {//ели нет моделей с ростом и весом
+                    //модели у которых есть или рост или вес
+                    var wah = this.collection.filter(function (model) {
+                        return (model.get('weight') || model.get('growth'))
+                    });
+                }
+
+                model = _.last(wah);
+
+                var weight = model.get('weight');
+
+                if (weight && weight > 500) {//если вес больше 500, то наверно это граммы...
+                    weight = weight + ' г';
+                } else if (weight && weight <= 500) {
+                    weight = weight + ' кг';
+                }
+
+                var height = model.get('growth') ? model.get('growth') + ' см' : '';
+                var bsa = this.getBSA(model) ? this.getBSA(model) + ' кв.м' : '';
+
+                data.weight = weight;
+                data.height = height;
+                data.bsa = bsa;
+            }
+
+
+            return data;
+        },
+
+        getBSA: function (model) {
+            var height = model.get('growth');
+            var weight = model.get('weight');
+            var bsa;
+
+            if (weight > 500) {//если вес больше 500, то наверно это граммы...
+                weight = weight / 1000;
+            }
+
+            if (height && weight) {
+                bsa = Math.sqrt((height * weight) / 3600);
+
+                bsa = bsa.toFixed(2);
+            }
+
+            return bsa;
+
+        },
+
+        initialize: function () {
+            Monitoring.Views.BaseView.prototype.initialize.apply(this);
+            this.collection = new Monitoring.Collections.MonitoringInfos();
+//            this.collection.on("reset",function(){
+//                console.log('MonitoringInfos',this.collection.last());
+//            },this);
+            // this.collection.setParams({
+
+            // })
+            this.collection.on("reset", this.render, this).fetch();
+        }
+
     });
 
     /**
@@ -732,7 +819,7 @@ define(function(require){
 
         },
 
-        canChangeBloodType: function(){
+        canChangeBloodType: function () {
             if (appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
                 return false;
             } else {
@@ -875,6 +962,15 @@ define(function(require){
         }
     });
 
+
+    /**
+    * Блок химиотерапии
+    *
+    */
+    Monitoring.Views.ChemotherapyInfo = Monitoring.Views.BaseView.extend({
+        template: chemotherapyInfoTmpl
+    });
+
     /**
      * Блок сигнальной информации о пациенте
      * @type {*}
@@ -890,7 +986,7 @@ define(function(require){
                 days: this.days(),
                 canAssign: this.canAssign()
             };
-            console.log('data',data)
+            console.log('data', data)
 
             return data;
         },
@@ -933,7 +1029,7 @@ define(function(require){
             }
         },
 
-        canAssign: function(){
+        canAssign: function () {
             if (appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
                 return false;
             } else {
@@ -1179,10 +1275,18 @@ define(function(require){
     Monitoring.Views.MonitoringInfoGrid = Monitoring.Views.ClientSortableGrid.extend({
         template: monitoringInfoGridTmpl,
         itemTemplate: monitoringInfoItemTmpl,
+        events: _.extend({
+            "click .toggle": "toggle"
+        }, Monitoring.Views.ClientSortableGrid.prototype.events),
+        toggle: function (event) {
+            var $target = this.$(event.target);
+            this.$('.toggle-icon').toggleClass('icon-chevron-down').toggleClass('icon-chevron-up');
+            this.$('tbody tr').not('tbody tr:first-child').toggle();
+        },
 
-        /*data: function () {
-         return {infos: this.collection};
-         },*/
+        data: function () {
+         return {collection: this.collection};
+         },
 
         initialize: function (options) {
             this.collection = new Monitoring.Collections.MonitoringInfos();
@@ -1195,18 +1299,15 @@ define(function(require){
      * @type {*}
      */
     Monitoring.Views.ExpressAnalyses = Monitoring.Views.ClientSortableGrid.extend({
-       template: expressAnalysesTmpl,
+        template: expressAnalysesTmpl,
         itemTemplate: expressAnalysesItemTmpl,
-        events: {
+        events: _.extend({
             "click .toggle": "toggle"
-        },
+        }, Monitoring.Views.ClientSortableGrid.prototype.events),
         toggle: function (event) {
             var $target = this.$(event.target);
             this.$('.toggle-icon').toggleClass('icon-chevron-down').toggleClass('icon-chevron-up');
-
             this.$('tbody tr').not('tbody tr:first-child').toggle();
-
-
         },
 
         data: function () {
@@ -1220,6 +1321,8 @@ define(function(require){
         initialize: function (options) {
             if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
                 this.showLabsLink = false;
+            }else{
+                this.showLabsLink = true;
             }
 
             this.collection = new Monitoring.Collections.ExpressAnalyses();

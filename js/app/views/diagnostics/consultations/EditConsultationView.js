@@ -2,7 +2,7 @@
  * User: FKurilov
  * Date: 25.06.12
  */
-define(function(require) {
+define(function (require) {
 
     var popupMixin = require('mixins/PopupMixin');
     var tmpl = require('text!templates/diagnostics/consultations/new-consultation-popup.html');
@@ -21,7 +21,6 @@ define(function(require) {
     var SelectView = require('views/ui/SelectView');
 
 
-
     return View.extend({
         template: tmpl,
         className: "popup",
@@ -35,7 +34,7 @@ define(function(require) {
             'change #urgent': 'onChangeUrgent'
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             // var self = this;
             console.log('init new consultation view', this);
             _.bindAll(this);
@@ -78,19 +77,22 @@ define(function(require) {
             });
             this.consultationsGroups.fetch();
 
+
             //направление на консультацию
             this.consultation = new Consultation({
-                'id': this.options.id //,
-                //'eventId': this.options.appealId//,
-                //'patientId': this.options.appeal.get('patient').get('id')
+                'id': this.options.id
             });
             this.consultation.eventId = this.options.appealId;
 
-
+            this.consultation.on('all',function(){
+                console.log('consultation all',arguments);
+            }, this);
 
             this.consultation.on('change', this.onLoadConsultation, this);
+           // this.consultation.on('change', this.updateSaveButton, this);
+            this.consultation.on('change:actionTypeId', this.loadConsultants, this);
+            this.consultation.on('change:plannedEndDate', this.loadConsultants, this);
             this.consultation.fetch();
-
 
 
             //список специалистов которые могут оказать консультацию
@@ -101,8 +103,11 @@ define(function(require) {
 
             pubsub.on('consultation:selected', this.onConsultationSelect, this);
             pubsub.on('consultant:selected', this.onConsultantSelect, this);
+
             pubsub.on('date:selected', this.onChangePlanedDate, this);
+            pubsub.on('person:changed', this.onChangeAssignPerson, this);
             pubsub.on('time:selected', this.onChangePlanedTime, this);
+
 
             //классификатор диагнозов
             this.mkbInputView = new MkbInputView();
@@ -113,32 +118,56 @@ define(function(require) {
                 name: 'finance'
             });
 
+            //расписание врача
             this.scheduleView = new ScheduleView();
-
-            this.consultation.on('change:actionTypeId', this.loadConsultants, this);
-            this.consultation.on('change:plannedEndDate', this.loadConsultants, this);
-            this.consultation.on('change', this.updateSaveButton, this);
-
-            pubsub.on('person:changed', this.onChangeAssignPerson, this);
 
         },
 
-        onLoadConsultation: function() {
+        onLoadConsultation: function () {
             this.consultation.off('change', this.onLoadConsultation, this);
             console.log('onLoadConsultation', this.consultation);
-            var code = this.consultation.get('code');
+            var consultationCode = this.consultation.get('code');
+            var consultantId = this.consultation.getProperty('executorId');
             var date = moment(this.consultation.getProperty('plannedEndDate'), 'YYYY-MM-DD HH:mm:ss').toDate();
 
 
-            this.on('after:render', function() {
-                this.$('#consultations').find("[data-code='" + code + "']").trigger('click');
-                //pubsub.trigger('consultation:selected', this.consultation.get('code'));
-                this.ui.$planedDate.datepicker('enable');
-                this.ui.$planedDate.datepicker("setDate", date);
-                this.consultation.trigger('change:plannedEndDate');
+            this.on('after:render', oneTime, this);
 
-            }, this);
+            function oneTime() {
+                var self = this;
 
+                console.log('oneTime')
+                self.off('after:render', oneTime, self);
+
+
+                self.$('#consultations').find("[data-code='" + consultationCode + "']").trigger('click');
+                self.ui.$planedDate.datepicker('enable');
+                self.ui.$planedDate.datepicker("setDate", date);
+                self.consultation.trigger('change:plannedEndDate');
+
+                self.consultantsFree.on('reset', selectConsultant, self);
+
+                //this.scheduleView.collection.on('reset', clickTime, this);
+
+                function selectConsultant() {
+                    self.consultantsFree.off('reset', selectConsultant);
+                    self.scheduleView.on('after:render', showTime, self);
+                    console.log('selectConsultant')
+
+                    self.$('#consultants').find("[data-id='" + consultantId + "']").trigger('click');
+
+
+                }
+
+                function showTime() {
+                    self.scheduleView.off('after:render', showTime);
+                    console.log('showTime')
+                    self.$('#schedule').prepend('dsgdhsgdhsgdhsgdhgshd');
+
+                }
+
+
+            }
 
 
             this.render();
@@ -146,24 +175,25 @@ define(function(require) {
         },
 
         //при выборе консультации
-        onConsultationSelect: function(code) {
-            console.log('onConsultationSelect', code, consultation);
-            var consultation = this.consultationsGroups.find(function(model) {
+        onConsultationSelect: function (code) {
+
+            var consultation = this.consultationsGroups.find(function (model) {
                 return model.get('code') === code;
-            })
+            });
+
+            console.log('onConsultationSelect', code, consultation);
 
             if (consultation) {
                 this.consultation.set('actionTypeId', consultation.get('id'));
             }
 
 
-
         },
 
         //при выборе консультанта
-        onConsultantSelect: function(consultantId) {
+        onConsultantSelect: function (consultantId) {
             console.log('onConsultantSelect', consultantId);
-            var consultant = this.consultantsFree.find(function(consultant) {
+            var consultant = this.consultantsFree.find(function (consultant) {
                 return consultant.get('doctor').id === consultantId;
             });
             this.consultation.set('executorId', consultantId);
@@ -171,8 +201,8 @@ define(function(require) {
         },
 
         //при выборе даты
-        onChangePlanedDate: function(date) {
-            console.log('onChangePlanedDate', date);
+        onChangePlanedDate: function (date) {
+           // console.log('onChangePlanedDate', date);
             var newDate = moment(date);
             var year = newDate.year();
             var month = newDate.month();
@@ -183,14 +213,13 @@ define(function(require) {
 
             this.consultation.setProperty('plannedEndDate', 'value', planedDate);
             this.consultation.trigger('change:plannedEndDate');
-            console.log('onChangePlanedDate', this.consultation.getProperty('plannedEndDate'));
-
+            //console.log('onChangePlanedDate', this.consultation.getProperty('plannedEndDate'));
 
 
         },
 
         //при выборе времени
-        onChangePlanedTime: function(obj) {
+        onChangePlanedTime: function (obj) {
             var time = obj.time;
             var hours = Math.floor(time / (60 * 60 * 1000));
             var minutes = Math.floor((time - hours * 60 * 60 * 1000) / (60 * 1000));
@@ -201,58 +230,58 @@ define(function(require) {
                 .hours(hours).minutes(minutes).seconds(seconds).format('YYYY-MM-DD HH:mm:ss');
 
             this.consultation.setProperty('plannedEndDate', 'value', planedDate);
-            console.log('onChangePlanedTime', this.consultation.getProperty('plannedEndDate'));
+           // console.log('onChangePlanedTime', this.consultation.getProperty('plannedEndDate'));
         },
 
-        onChangeAssignDate: function() {
+        onChangeAssignDate: function () {
             var date = this.ui.$assignDate.val();
             var time = this.ui.$assignTime.val();
             var datetime = moment(date + ' ' + time, 'DD.MM.YYYY HH:mm').format('YYYY-MM-DD HH:mm:ss')
 
             this.consultation.setProperty('assessmentBeginDate', 'value', datetime);
 
-            console.log('onChangeAssignDate', date, time, this.consultation.getProperty('assessmentBeginDate'));
+            //console.log('onChangeAssignDate', date, time, this.consultation.getProperty('assessmentBeginDate'));
 
         },
 
         //при выборе вида оплаты
-        onChangeFinance: function(e) {
+        onChangeFinance: function (e) {
             var $target = this.$(e.target);
 
-            this.consultation.setProperty('finance', 'value', $target.val());
+            //this.consultation.setProperty('finance', 'value', $target.val());
         },
 
-        onChangeUrgent: function(e) {
+        onChangeUrgent: function (e) {
             var $target = this.$(e.target);
-            this.consultation.setProperty('urgent', 'value', $target.prop('checked')+'');
+            this.consultation.setProperty('urgent', 'value', $target.prop('checked') + '');
         },
 
         //при изменении диагноза
-        onChangeMKB: function(e) {
+        onChangeMKB: function (e) {
             var $target = this.$(e.target);
 
             this.consultation.setProperty('Направительный диагноз', 'valueId', $target.data('mkb-id'));
 
-            console.log('onMKBChange', $target, this.consultation.getProperty('Направительный диагноз', 'valueId'));
+            //console.log('onMKBChange', $target, this.consultation.getProperty('Направительный диагноз', 'valueId'));
 
         },
 
-        onChangeAssignPerson: function(person) {
+        onChangeAssignPerson: function (person) {
             this.ui.$assignPerson.val(person.name.raw);
 
             this.consultation.setProperty('doctorFirstName', 'value', person.name.first);
             this.consultation.setProperty('doctorMiddleName', 'value', person.name.middle);
             this.consultation.setProperty('doctorLastName', 'value', person.name.last);
-
-            console.log('onChangeAssignPerson',
-                this.consultation.getProperty('doctorFirstName'),
-                this.consultation.getProperty('doctorMiddleName'),
-                this.consultation.getProperty('doctorLastName'))
+//
+//            console.log('onChangeAssignPerson',
+//                this.consultation.getProperty('doctorFirstName'),
+//                this.consultation.getProperty('doctorMiddleName'),
+//                this.consultation.getProperty('doctorLastName'))
 
         },
 
-        openDoctorSelectPopup: function() {
-            console.log('openDoctorSelectPopup');
+        openDoctorSelectPopup: function () {
+            //console.log('openDoctorSelectPopup');
             this.personDialogView = new PersonDialogView({
                 title: 'Направивший врач',
                 appeal: this.options.appeal
@@ -263,7 +292,7 @@ define(function(require) {
         },
 
         //загрузка списка консультантов
-        loadConsultants: function() {
+        loadConsultants: function () {
             console.log('loadConsultants');
             if (!this.consultation.getProperty('plannedEndDate') || !this.consultation.get('typeId')) {
                 return false;
@@ -278,16 +307,16 @@ define(function(require) {
             this.consultantsFree.fetch();
         },
         //расписание приёма консультанта на определённый день
-        renderShedule: function(consultant) {
+        renderShedule: function (consultant) {
             this.scheduleView.collection.reset(consultant.get('schedule').toJSON());
             this.scheduleView.render();
         },
         //при клике на кнопку "Сохранить"
-        onSave: function() {
+        onSave: function () {
             var self = this;
             console.log('onSave', this.consultation);
             this.consultation.save({}, {
-                success: function() {
+                success: function () {
 
                     pubsub.trigger('noty', {
                         text: 'Направление сохранено',
@@ -296,7 +325,7 @@ define(function(require) {
                     self.close();
                     pubsub.trigger('consultation:added', this.consultation);
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
+                error: function (jqXHR, textStatus, errorThrown) {
                     pubsub.trigger('noty', {
                         text: (JSON.parse(textStatus.responseText)).exception,
                         type: 'error'
@@ -307,8 +336,8 @@ define(function(require) {
             });
         },
         //измение статуса кнопки "Сохранить"
-        updateSaveButton: function() {
-            console.log('updateSaveButton', this.consultation);
+        updateSaveButton: function () {
+            //console.log('updateSaveButton', this.consultation);
             /// if (this.consultation.get('plannedTime').time) {
             this.ui.$saveButton.button("enable");
             // } else {
@@ -316,11 +345,11 @@ define(function(require) {
             //}
         },
 
-        render: function() {
+        render: function () {
             var self = this;
 
             this.ui = {};
-            this.ui.$saveButton = this.$el.closest(".ui-dialog").find('.save');
+            this.ui.$saveButton = this.$el.find('.save');
             //this.ui.$consultations = this.$el.find('#consultations');
             this.ui.$planedDate = this.$el.find('#datepicker');
 
@@ -336,8 +365,8 @@ define(function(require) {
 
             //календарь
             this.ui.$planedDate.datepicker({
-                minDate: 0,
-                onSelect: function(dateText, inst) {
+                //minDate: 0,
+                onSelect: function (dateText, inst) {
                     var timestamp = moment(dateText, 'DD.MM.YYYY').valueOf();
                     pubsub.trigger('date:selected', timestamp)
 
@@ -374,11 +403,9 @@ define(function(require) {
                 //}
             }
 
-            if(this.consultation.getProperty('urgent') === 'true'){
+            if (this.consultation.getProperty('urgent') === 'true') {
                 this.ui.$urgent.prop('checked', true);
             }
-
-
 
 
             //список консультаций
@@ -410,7 +437,7 @@ define(function(require) {
 
             return this;
         },
-        close: function() {
+        close: function () {
             console.log('popup view close');
             this.mkbInputView.close();
             this.consultationsGroupsView.close();

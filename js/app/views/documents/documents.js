@@ -206,6 +206,27 @@ define(function (require) {
 
 		setCloseDate: function () {
 			this.getDates().end.setValue(this.shouldBeClosed ? moment().format(CD_DATE_FORMAT) : "");
+		},
+		validate: function (arg1, arg2) {
+			console.log("VALIDATING DOC", arguments);
+			if (!arg2) {
+				var requiredValidationFail = false;
+
+				_(this.getGroupedByRow()).each(function (row) {
+					row.spans.each(function (templateAttr) {
+				//span.each(function (templateAttr) {
+					if (templateAttr.get("mandatory") === "true" && !templateAttr.getValue()) {
+						templateAttr.trigger("requiredValidation:fail");
+						requiredValidationFail = true;
+					}
+				//});
+				});
+				});
+
+				console.log("VALIDATING DOC",requiredValidationFail);
+
+				if (requiredValidationFail) return requiredValidationFail;
+			}
 		}
 	});
 
@@ -225,10 +246,25 @@ define(function (require) {
 						});
 
 						if (valueProp && valueProp.value && valueProp.value !== "0.0") {
+
+							var value;
+							console.log('a',a)
+							switch (a.type) {
+								case 'Time':
+									value = moment(valueProp.value, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+									break;
+								case 'Date':
+									value = moment(valueProp.value, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
+									break;
+								default:
+									value = valueProp.value;
+									break;
+							}
+
 							examFlatJSON.push({
 								id: a.typeId,
 								name: a.name,
-								value: valueProp.value
+								value: value
 							});
 						}
 					});
@@ -1860,7 +1896,10 @@ define(function (require) {
 		},
 
 		saveDocument: function () {
-			this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
+			//this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
+			if (this.model.isValid()) {
+				this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
+			}
 		},
 
 		returnToList: function () {
@@ -2036,11 +2075,16 @@ define(function (require) {
 
 		events: {
 			"change .attribute-value": "onAttributeValueChange",
-			"input [contenteditable].attribute-value": "onAttributeValueChange"
+			"input [contenteditable].attribute-value": "onAttributeValueChange",
+			"change .field-toggle": "onFieldToggleChange"
 		},
 
 		data: function () {
-			return {model: this.model}
+			return {
+				model: this.model,
+				disabled: this.getReadOnly(),
+				required: this.getMandatory()
+			}
 		},
 
 		layoutAttributes: {
@@ -2050,6 +2094,7 @@ define(function (require) {
 		initialize: function () {
 			this.mapLayoutAttributes();
 			this.listenTo(this.model, "copy", this.setAttributeValue);
+			this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
 			//common attrs to fit into grid
 			this.$el.addClass("span" + this.layoutAttributes.width);
 			//this.model.set('readOnly', true)
@@ -2062,6 +2107,28 @@ define(function (require) {
 				var layoutAttributeParams = _(layoutAttributesDir.get(this.model.get('type'))).where({id: value.layoutAttribute_id})[0];
 				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
 			}, this);
+		},
+		getReadOnly: function(){
+			return this.getDouble('readOnly');
+		},
+		getMandatory: function(){
+			return this.getDouble('mandatory');
+		},
+		getDouble: function(name){
+			var value = this.model.get(name);
+
+			switch (value) {
+				case 'true':
+					value = true;
+					break;
+				case 'false':
+					value = false;
+					break;
+				default:
+					value = false;
+					break;
+			}
+			return value;
 		},
 
 		getAttributeValue: function () {
@@ -2085,6 +2152,14 @@ define(function (require) {
 
 		onAttributeValueChange: function (event) {
 			this.model.setValue(this.getAttributeValue());
+			this.$(".Mandatory").removeClass("WrongField");
+		},
+
+		onRequiredValidationFail: function () {
+			this.$(".Mandatory").addClass("WrongField");
+		},
+		onFieldToggleChange: function (event) {
+			this.$(".field").toggle($(event.currentTarget).is(":checked"));
 		}
 	});
 
@@ -2094,11 +2169,6 @@ define(function (require) {
 	 */
 	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({
 		template: templates.uiElements._text,
-
-		events: _.extend({
-			"change .field-toggle": "onFieldToggleChange"
-		}, UIElementBase.prototype.events),
-
 		onFieldToggleChange: function (event) {
 			this.$(".field").toggle($(event.currentTarget).is(":checked"));
 		}
@@ -2192,7 +2262,9 @@ define(function (require) {
 
 			return {
 				model: this.model,
-				time: this.getTime()
+				time: this.getTime(),
+				disabled: this.getReadOnly(),
+				required: this.getMandatory()
 			};
 		},
 
@@ -2234,7 +2306,9 @@ define(function (require) {
 		data: function () {
 			return {
 				model: this.model,
-				date: this.getDate()
+				date: this.getDate(),
+				disabled: this.getReadOnly(),
+				required: this.getMandatory()
 			};
 		},
 		inputFormat: 'DD.MM.YYYY',
@@ -2324,11 +2398,11 @@ define(function (require) {
 	 */
 	Documents.Views.Edit.UIElement.MKB = UIElementBase.extend({
 		template: templates.uiElements._mkb,
-		events: {
+		events: _.extend({
 			"click .MKBLauncher": "onMKBLauncherClick",
 			"keyup .mkb-code": "onMKBCodeKeyUp",
 			"change .mkb-code": "onMKBCodeChange"
-		},
+		}, UIElementBase.prototype.events),
 
 		data: function () {
 			var data = {};
@@ -2343,6 +2417,9 @@ define(function (require) {
 				data.mkbCode = array[0];
 				data.diagnosis = (array.splice(1)).join(' ');
 			}
+
+			data.disabled = this.getReadOnly();
+			data.required = this.getMandatory();
 
 			return data;
 		},
@@ -2408,8 +2485,6 @@ define(function (require) {
 				},
 				minLength: 2,
 				select: function (event, ui) {
-					console.log('ui', ui)
-
 					self.ui.$diagnosis.val(ui.item.diagnosis);
 					self.ui.$code.val(ui.item.value);
 					self.ui.$code.data('mkb-id', ui.item.id).trigger('change');
@@ -2433,7 +2508,12 @@ define(function (require) {
 		template: templates.uiElements._flatDirectory,
 		data: function () {
 			//debugger;
-			return {model: this.model, directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())}
+			return {
+				model: this.model, 
+				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON()),
+				disabled: this.getReadOnly(),
+				required: this.getMandatory()
+			};			
 			//return {model: this.model, directoryEntries: _(this.directoryEntries.toBeautyJSON())};
 		},
 		initialize: function () {
@@ -2491,7 +2571,9 @@ define(function (require) {
 			return {
 				model: this.model,
 				options: this.options,
-				selected: this.selected
+				selected: this.selected,
+				disabled: this.getReadOnly(),
+				required: this.getMandatory()
 			};
 		},
 		initialize: function () {

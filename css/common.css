@@ -1831,22 +1831,41 @@ body.NoScroll {
     height: 18px !important;
   }
 }
-/* line 87, ../sass/common.scss */
+/* line 85, ../sass/common.scss */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+/* line 91, ../sass/common.scss */
+sup {
+  top: -0.5em;
+}
+
+/* line 94, ../sass/common.scss */
+sub {
+  bottom: -0.25em;
+}
+
+/* line 99, ../sass/common.scss */
 img {
   border: none;
 }
-/* line 90, ../sass/common.scss */
+/* line 102, ../sass/common.scss */
 img.Left {
   float: left;
   margin: 0 1em 1em 0;
 }
-/* line 94, ../sass/common.scss */
+/* line 106, ../sass/common.scss */
 img.Right {
   float: right;
   margin: 0 0 1em 1em;
 }
 
-/* line 101, ../sass/common.scss */
+/* line 113, ../sass/common.scss */
 .Clearfix, .clearfix {
   zoom: 1;
 }
@@ -1859,7 +1878,7 @@ img.Right {
   visibility: hidden;
 }
 
-/* line 111, ../sass/common.scss */
+/* line 123, ../sass/common.scss */
 h1,
 h2,
 h3,
@@ -1869,7 +1888,7 @@ h6 {
   line-height: 1.4em;
 }
 
-/* line 115, ../sass/common.scss */
+/* line 127, ../sass/common.scss */
 a {
   color: #118ddc;
   /*
@@ -1885,7 +1904,7 @@ a:hover {
 a:active {
   color: #118ddc;
 }
-/* line 118, ../sass/common.scss */
+/* line 130, ../sass/common.scss */
 a.Actions {
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -1895,83 +1914,83 @@ a.Actions {
   cursor: pointer;
   border-bottom: 1px dashed;
 }
-/* line 123, ../sass/common.scss */
+/* line 135, ../sass/common.scss */
 a.Actions.Opened {
   border: none;
 }
-/* line 127, ../sass/common.scss */
+/* line 139, ../sass/common.scss */
 a.Iconed {
   text-decoration: none;
   border: none;
 }
-/* line 131, ../sass/common.scss */
+/* line 143, ../sass/common.scss */
 a.Iconed span {
   text-decoration: underline;
 }
 
-/* line 138, ../sass/common.scss */
+/* line 150, ../sass/common.scss */
 .PageActions a.Actions {
   text-decoration: none;
   font-size: 1.2em;
 }
 
-/* line 146, ../sass/common.scss */
+/* line 158, ../sass/common.scss */
 .Hidden,
 .Template,
 .More {
   display: none;
 }
 
-/* line 149, ../sass/common.scss */
+/* line 161, ../sass/common.scss */
 .Visible {
   display: block;
 }
 
-/* line 157, ../sass/common.scss */
+/* line 169, ../sass/common.scss */
 h2 {
   font-size: 2em;
 }
 
-/* line 160, ../sass/common.scss */
+/* line 172, ../sass/common.scss */
 h3 {
   font-size: 1.6em;
 }
 
-/* line 163, ../sass/common.scss */
+/* line 175, ../sass/common.scss */
 h4 {
   font-size: 1.4em;
 }
 
-/* line 170, ../sass/common.scss */
+/* line 182, ../sass/common.scss */
 .Small, small, time {
   color: #747578;
 }
 
-/* line 176, ../sass/common.scss */
+/* line 188, ../sass/common.scss */
 strong {
   font-weight: bold;
 }
 
 /* Common elements */
-/* line 182, ../sass/common.scss */
+/* line 194, ../sass/common.scss */
 table {
   width: 100%;
   border: none;
   border-collapse: collapse;
 }
-/* line 188, ../sass/common.scss */
+/* line 200, ../sass/common.scss */
 table td,
 table th {
   padding: 0;
 }
 
 /* Buttons */
-/* line 195, ../sass/common.scss */
+/* line 207, ../sass/common.scss */
 a.Styled {
   text-decoration: none;
 }
 
-/* line 199, ../sass/common.scss */
+/* line 211, ../sass/common.scss */
 a.Styled,
 button.Styled {
   padding: 0;
@@ -1986,23 +2005,23 @@ button.Styled {
   *display: inline;
 }
 
-/* line 210, ../sass/common.scss */
+/* line 222, ../sass/common.scss */
 b {
   font-weight: bold;
 }
 
-/* line 214, ../sass/common.scss */
+/* line 226, ../sass/common.scss */
 #body {
   width: 960px;
   margin: auto;
 }
 
-/* line 225, ../sass/common.scss */
+/* line 237, ../sass/common.scss */
 .Rouble {
   font-weight: normal;
   position: relative;
 }
-/* line 229, ../sass/common.scss */
+/* line 241, ../sass/common.scss */
 .Rouble:after {
   content: "-";
   position: absolute;
@@ -2011,18 +2030,18 @@ b {
   font-size: 1em;
 }
 
-/* line 238, ../sass/common.scss */
+/* line 250, ../sass/common.scss */
 .HighestDepth {
   z-index: 999999 !important;
 }
 
-/* line 243, ../sass/common.scss */
+/* line 255, ../sass/common.scss */
 button::-moz-focus-inner {
   border: 0;
   padding: 0;
 }
 
-/* line 248, ../sass/common.scss */
+/* line 260, ../sass/common.scss */
 .ServiceLogin {
   width: 42em;
   margin: 0 auto;
@@ -2031,20 +2050,20 @@ button::-moz-focus-inner {
   text-align: center;
 }
 
-/* line 256, ../sass/common.scss */
+/* line 268, ../sass/common.scss */
 .ServiceLogin h1 {
   font-size: 2.2em;
   margin-bottom: 1.2em;
 }
 
-/* line 260, ../sass/common.scss */
+/* line 272, ../sass/common.scss */
 .ServiceLogin h2 {
   font-size: 1.6em;
   line-height: 1.2em;
   margin-bottom: 1.2em;
 }
 
-/* line 265, ../sass/common.scss */
+/* line 277, ../sass/common.scss */
 .LoginForm {
   background: #fff;
   padding: 3.8em 9.4em;
@@ -2052,38 +2071,38 @@ button::-moz-focus-inner {
   text-align: left;
 }
 
-/* line 271, ../sass/common.scss */
+/* line 283, ../sass/common.scss */
 .LoginForm input {
   font-size: 1.7em;
 }
 
-/* line 274, ../sass/common.scss */
+/* line 286, ../sass/common.scss */
 .LoginForm li {
   margin-bottom: 1.2em;
 }
 
-/* line 278, ../sass/common.scss */
+/* line 290, ../sass/common.scss */
 .LoginForm label, .LoginForm .Label {
   margin-left: -1em;
 }
 
-/* line 281, ../sass/common.scss */
+/* line 293, ../sass/common.scss */
 .SubmitLine {
   padding: 0.5em 0 2em 0;
 }
 
-/* line 284, ../sass/common.scss */
+/* line 296, ../sass/common.scss */
 .RecoveryLink {
   color: #6D6D71;
   font-size: 1.2em;
 }
 
-/* line 288, ../sass/common.scss */
+/* line 300, ../sass/common.scss */
 .LoginForm button {
   width: 100%;
 }
 
-/* line 291, ../sass/common.scss */
+/* line 303, ../sass/common.scss */
 .LoginForm h3 {
   margin-bottom: 1em;
   font-size: 1.4em;
