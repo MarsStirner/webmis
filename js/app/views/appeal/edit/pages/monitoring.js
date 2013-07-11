@@ -722,20 +722,22 @@ define(function (require) {
 
                 model = _.last(wah);
 
-                var weight = model.get('weight');
+                if (model) {
+                    var weight = model.get('weight');
 
-                if (weight && weight > 500) {//если вес больше 500, то наверно это граммы...
-                    weight = weight + ' г';
-                } else if (weight && weight <= 500) {
-                    weight = weight + ' кг';
+                    if (weight && weight > 500) {//если вес больше 500, то наверно это граммы...
+                        weight = weight + ' г';
+                    } else if (weight && weight <= 500) {
+                        weight = weight + ' кг';
+                    }
+
+                    var height = model.get('growth') ? model.get('growth') + ' см' : '';
+                    var bsa = this.getBSA(model) ? this.getBSA(model) + ' кв.м' : '';
+
+                    data.weight = weight;
+                    data.height = height;
+                    data.bsa = bsa;
                 }
-
-                var height = model.get('growth') ? model.get('growth') + ' см' : '';
-                var bsa = this.getBSA(model) ? this.getBSA(model) + ' кв.м' : '';
-
-                data.weight = weight;
-                data.height = height;
-                data.bsa = bsa;
             }
 
 
