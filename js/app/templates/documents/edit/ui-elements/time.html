@@ -6,7 +6,7 @@
 		class="field-toggle">
 		<%=model.get('name')%>
 	</label>
-		<div class="field" <% if(!required){%>style="display:none;"<%}%>>
+		<div class="field" <% if(!required && _.isEmpty(time)){%>style="display:none;"<%}%>>
 	<input <% if(disabled){%>disabled<%}%>
 	type="text"
 	class="Combo attribute-value<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"

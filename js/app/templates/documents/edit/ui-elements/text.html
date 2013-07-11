@@ -7,7 +7,7 @@
 		<%=model.get('name')%>
 	</label>
 
-	<div class="RichTextWrapper field" <% if(!required){%>style="display:none;"<%}%>>
+	<div class="RichTextWrapper field" <% if(!required && _.isEmpty(model.getValue())){%>style="display:none;"<%}%>>
 		<div <% if(!disabled){%> contenteditable="true"<%}%>
 		class="RichText attribute-value<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
 		style="min-height: 8em;">
