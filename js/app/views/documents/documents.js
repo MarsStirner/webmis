@@ -49,6 +49,7 @@ define(function (require) {
 
 	//region DEPENDENCIES
 	var templates = {
+		_panicBtn: _.template(require("text!templates/documents/panic-btn.html")),
 		_listLayout: _.template(require("text!templates/documents/list/layout.html")),
 		_listControlsBase: _.template(require("text!templates/documents/list/controls.html")),
 		_listControlsCommon: _.template(require("text!templates/documents/list/controls-common.html")),
@@ -621,6 +622,17 @@ define(function (require) {
 			return this;
 		}
 	});
+
+	var PanicBtn = Documents.Views.PanicBtn = ViewBase.extend({
+		template: templates._panicBtn,
+		data: function () {
+			return {panicId: this.panicId};
+		},
+		panicId: 0,
+		initialize: function () {
+
+		}
+	});
 	//endregion
 
 
@@ -1024,12 +1036,12 @@ define(function (require) {
 		},
 
 		initialize: function () {
-			//if (this.options.documentTypes) {
-			this.documentTypes = this.options.documentTypes;
-			//} else {
-			/*this.documentTypes = new Documents.Collections.DocumentTypes();
-			 this.documentTypes.fetch();*/
-			//}
+			if (this.options.documentTypes) {
+				this.documentTypes = this.options.documentTypes;
+			} else {
+				this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.fetch();
+			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
 				if (!appeal.isClosed()) {
@@ -1044,7 +1056,7 @@ define(function (require) {
 		onDocumentTypeSelected: function (event) {
 			dispatcher.trigger("change:viewState", {
 				type: this.options.editPageTypeName,
-				options: {templateId: event.selectedType}
+				options: {templateId: event.selectedType, force: true}
 			});
 		},
 
@@ -1262,7 +1274,11 @@ define(function (require) {
 					collection: this.documents,
 					documentTypes: this.documentTypes,
 					editPageTypeName: this.getEditPageTypeName()
-				})
+				})/*,
+				".panic-btn": new PanicBtn({
+					documentTypes: this.documentTypes,
+					editPageTypeName: this.getEditPageTypeName()
+				})*/
 			});
 		}
 	});
@@ -1501,6 +1517,89 @@ define(function (require) {
 
 	//region VIEWS EDIT BASE
 	//---------------------
+	Documents.Views.Edit.Base.Layout = LayoutBase.extend({
+		template: templates._editLayout,
+
+		dividedStateEnabled: false,
+
+		initialize: function () {
+			LayoutBase.prototype.initialize.call(this, this.options);
+
+			if (!this.model) {
+				if (this.options.templateId) {
+					this.model = new Documents.Models.DocumentTemplate({id: this.options.templateId});
+					//this.model.id = this.options.templateId;
+				} else if (this.options.documentId) {
+					this.model = new Documents.Models.Document({id: this.options.documentId});
+					//this.model.id = this.options.documentId;
+				} else {
+					console.error("no doc or tmpl id!");
+					dispatcher.trigger("change:viewState", {type: "documents"});
+				}
+			}
+
+			$.when(layoutAttributesDir.fetch()).then(_.bind(function () {
+				this.model.fetch();
+			}, this));
+
+			this.listenTo(this.model, "toggle:dividedState", this.toggleDividedState);
+		},
+
+		toggleDividedState: function (enabled) {
+			enabled = _.isUndefined(enabled) ? !this.dividedStateEnabled : enabled;
+			this.dividedStateEnabled = enabled;
+
+			if (enabled) {
+				this.$el.parent().css({"margin-left": "0"});
+				dispatcher.trigger("change:mainState", {stateName: "documentEditor"});
+
+				this.$(".document-edit-side").removeClass("span12").addClass("span6 vertical-delim");
+
+				this.$(".divided").prepend(
+					"<div class='document-list-side span6'>" +
+						"<div class='row-fluid'>" +
+						"<div class='span12 document-list'></div>" +
+						"</div>" +
+						"</div>"
+				);
+
+				this.listLayoutHistory = this.getListLayoutHistory();
+
+				this.assign({".document-list": this.listLayoutHistory});
+
+				this.listLayoutHistory.$(".documents-controls").remove();
+				this.listLayoutHistory.$(".documents-filters").removeClass("span6").addClass("span12");
+			} else {
+				if (this.listLayoutHistory) this.listLayoutHistory.tearDown(); //ViewBase.prototype.tearDown.call(this.listLayoutLight);
+				this.$el.parent().css({"margin-left": "20em"});
+
+				this.$(".document-list-side").remove();
+				this.$(".document-edit-side").removeClass("span6 vertical-delim").addClass("span12");
+
+				dispatcher.trigger("change:mainState", {stateName: "default"});
+			}
+		},
+
+		getListLayoutHistory: function () {
+			return new Documents.Views.List.Common.LayoutHistory({included: true});
+		},
+
+		//getEditPageTypeName: Documents.Views.List.Common.Layout.prototype.getEditPageTypeName,
+
+		render: function (subViews) {
+			return ViewBase.prototype.render.call(this, _.extend({
+				/*".new-document-controls": new Documents.Views.Edit.Common.Controls({
+				 editPageTypeName: this.getEditPageTypeName()
+				 }),*/
+				".nav-controls": new Documents.Views.Edit.NavControls({model: this.model}),
+				".heading": new Documents.Views.Edit.Heading({model: this.model}),
+				".dates": new Documents.Views.Edit.Dates({model: this.model}),
+				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
+				".document-controls": new Documents.Views.Edit.DocControls({model: this.model})
+			}, subViews));
+		}
+	});
+
 	/**
 	 * Верхний блок элементов управления и навигации
 	 * @type {*}
@@ -1736,7 +1835,7 @@ define(function (require) {
 	//---------------------
 	var layoutAttributesDir = new Documents.Models.LayoutAttributesDir();
 
-	Documents.Views.Edit.Common.Layout = LayoutBase.extend({
+	Documents.Views.Edit.Common.Layout = Documents.Views.Edit.Base.Layout.extend({
 		template: templates._editLayout,
 
 		dividedStateEnabled: false,
@@ -1803,8 +1902,13 @@ define(function (require) {
 			return new Documents.Views.List.Common.LayoutHistory({included: true});
 		},
 
+		getEditPageTypeName: Documents.Views.List.Common.Layout.prototype.getEditPageTypeName,
+
 		render: function (subViews) {
 			return ViewBase.prototype.render.call(this, _.extend({
+				".new-document-controls": new Documents.Views.Edit.Common.Controls({
+					editPageTypeName: this.getEditPageTypeName()
+				}),
 				".nav-controls": new Documents.Views.Edit.NavControls({model: this.model}),
 				".heading": new Documents.Views.Edit.Heading({model: this.model}),
 				".dates": new Documents.Views.Edit.Dates({model: this.model}),
@@ -1813,17 +1917,23 @@ define(function (require) {
 			}, subViews));
 		}
 	});
+
+	Documents.Views.Edit.Common.Controls = Documents.Views.List.Common.Controls.extend({});
 	//endregion
 
 
 	//region VIEWS EDIT EXAMINATION
 	//---------------------
-	Documents.Views.Edit.Examination.Layout = Documents.Views.Edit.Common.Layout.extend({
+	Documents.Views.Edit.Examination.Layout = Documents.Views.Edit.Base.Layout.extend({
 		getListLayoutHistory: function () {
 			return new Documents.Views.List.Examination.LayoutHistory({included: true});
 		},
+		//getEditPageTypeName: Documents.Views.List.Examination.Layout.prototype.getEditPageTypeName,
 		render: function () {
-			return Documents.Views.Edit.Common.Layout.prototype.render.call(this, {
+			return Documents.Views.Edit.Base.Layout.prototype.render.call(this, {
+				/*".new-document-controls": new Documents.Views.Edit.Examination.Controls({
+					editPageTypeName: this.getEditPageTypeName()
+				}),*/
 				".document-controls": new Documents.Views.Edit.Examination.DocControls({model: this.model})
 			});
 		}
@@ -1835,17 +1945,30 @@ define(function (require) {
 			dispatcher.trigger("change:viewState", {type: "examinations"});
 		}
 	});
+
+	//Documents.Views.Edit.Examination.Controls = Documents.Views.List.Examination.Controls.extend({});
 	//endregion
 
 
 	//region VIEWS EDIT THERAPY
 	//---------------------
-	Documents.Views.Edit.Therapy.Layout = Documents.Views.Edit.Common.Layout.extend({
+	Documents.Views.Edit.Therapy.Layout = Documents.Views.Edit.Base.Layout.extend({
+		/*initialize: function () {
+			Documents.Views.Edit.Common.Layout.prototype.initialize.call(this, this.options);
+			this.documentTypes = new Documents.Collections.DocumentTypes();
+			this.documentTypes.mnems = ["THER"];
+			this.documentTypes.fetch();
+		},*/
 		getListLayoutHistory: function () {
 			return new Documents.Views.List.Therapy.LayoutHistory({included: true});
 		},
+		//getEditPageTypeName: Documents.Views.List.Therapy.Layout.prototype.getEditPageTypeName,
 		render: function () {
 			return Documents.Views.Edit.Common.Layout.prototype.render.call(this, {
+				/*".new-document-controls": new Documents.Views.Edit.Therapy.Controls({
+					documentTypes: this.documentTypes,
+					editPageTypeName: this.getEditPageTypeName()
+				}),*/
 				".document-controls": new Documents.Views.Edit.Therapy.DocControls({model: this.model})
 			});
 		}
@@ -1857,6 +1980,8 @@ define(function (require) {
 			dispatcher.trigger("change:viewState", {type: "therapy"});
 		}
 	});
+
+	//Documents.Views.Edit.Therapy.Controls = Documents.Views.List.Therapy.Controls.extend({});
 	//endregion
 
 

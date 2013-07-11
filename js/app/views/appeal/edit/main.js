@@ -168,7 +168,7 @@ Monitoring,
 		},
 
 		onViewStateChange: function(event) {
-			//console.log('onViewStateChange',event);
+			console.log('onViewStateChange',event);
 			this.setContentView(event.type, event.options);
 		},
 
