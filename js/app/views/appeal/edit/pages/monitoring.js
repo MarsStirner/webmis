@@ -18,6 +18,7 @@ define(function (require) {
     var patientDiagnosesListTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl');
     var patientInfoTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-info.tmpl');
     var signalInfoTmpl = require('text!templates/appeal/edit/pages/monitoring/signal-info.tmpl');
+    var chemotherapyInfoTmpl = require('text!templates/appeal/edit/pages/monitoring/chemotherapy-info.html')
 
     var DictionaryValues = require('collections/dictionary-values');
     var Moves = require('collections/moves/moves');
@@ -163,8 +164,8 @@ define(function (require) {
                     var adt = a.datetime;
                     var bdt = b.datetime;
 
-                    if (adt > bdt) return 1;
-                    else if (adt < bdt) return -1;
+                    if (adt < bdt) return 1;
+                    else if (adt > bdt) return -1;
                     else return 0;
                 })
                 .filter(function (row) {
@@ -413,6 +414,7 @@ define(function (require) {
                 ".patient-info": new Monitoring.Views.PatientInfo(),
                 ".signal-info": new Monitoring.Views.SignalInfo(),
                 ".patient-diagnoses-list": new Monitoring.Views.PatientDiagnosesList(),
+                ".chemotherapy-info": new Monitoring.Views.ChemotherapyInfo(),
                 ".monitoring-info": new Monitoring.Views.MonitoringInfoGrid(),
                 ".express-analyses": new Monitoring.Views.ExpressAnalyses()
             });
@@ -765,6 +767,9 @@ define(function (require) {
 //            this.collection.on("reset",function(){
 //                console.log('MonitoringInfos',this.collection.last());
 //            },this);
+            // this.collection.setParams({
+
+            // })
             this.collection.on("reset", this.render, this).fetch();
         }
 
@@ -955,6 +960,15 @@ define(function (require) {
         toggleVisible: function (event) {
             this.$el.toggle();
         }
+    });
+
+
+    /**
+    * Блок химиотерапии
+    *
+    */
+    Monitoring.Views.ChemotherapyInfo = Monitoring.Views.BaseView.extend({
+        template: chemotherapyInfoTmpl
     });
 
     /**
@@ -1261,10 +1275,18 @@ define(function (require) {
     Monitoring.Views.MonitoringInfoGrid = Monitoring.Views.ClientSortableGrid.extend({
         template: monitoringInfoGridTmpl,
         itemTemplate: monitoringInfoItemTmpl,
+        events: _.extend({
+            "click .toggle": "toggle"
+        }, Monitoring.Views.ClientSortableGrid.prototype.events),
+        toggle: function (event) {
+            var $target = this.$(event.target);
+            this.$('.toggle-icon').toggleClass('icon-chevron-down').toggleClass('icon-chevron-up');
+            this.$('tbody tr').not('tbody tr:first-child').toggle();
+        },
 
-        /*data: function () {
-         return {infos: this.collection};
-         },*/
+        data: function () {
+         return {collection: this.collection};
+         },
 
         initialize: function (options) {
             this.collection = new Monitoring.Collections.MonitoringInfos();
@@ -1279,16 +1301,13 @@ define(function (require) {
     Monitoring.Views.ExpressAnalyses = Monitoring.Views.ClientSortableGrid.extend({
         template: expressAnalysesTmpl,
         itemTemplate: expressAnalysesItemTmpl,
-        events: {
+        events: _.extend({
             "click .toggle": "toggle"
-        },
+        }, Monitoring.Views.ClientSortableGrid.prototype.events),
         toggle: function (event) {
             var $target = this.$(event.target);
             this.$('.toggle-icon').toggleClass('icon-chevron-down').toggleClass('icon-chevron-up');
-
             this.$('tbody tr').not('tbody tr:first-child').toggle();
-
-
         },
 
         data: function () {
@@ -1302,6 +1321,8 @@ define(function (require) {
         initialize: function (options) {
             if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
                 this.showLabsLink = false;
+            }else{
+                this.showLabsLink = true;
             }
 
             this.collection = new Monitoring.Collections.ExpressAnalyses();
