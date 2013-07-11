@@ -1,7 +1,7 @@
 <div class="row-fluid">
 	<div>		<input
 		type="checkbox"
-		<% if(required){%> checked<%}%>
+		<% if(required || !_.isEmpty(mkbCode)){%> checked<%}%>
 		class="field-toggle">
 		<span class="Label"><%= name %></span>
 	</div>

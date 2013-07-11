@@ -2,13 +2,13 @@
 	<label>
 		<input
 		type="checkbox"
-		<% if(required){%> checked<%}%>
+		<% if(required || model.getValue()){%> checked<%}%>
 		class="field-toggle">
 		<%=model.get('name')%>
 	</label>
 	<div class="field" <% if(!required && _.isEmpty(model.getValue())){console.log('log',_.isEmpty(model.getValue()))%>style="display:none;"<%}%>>
     <% if(!disabled){%>
-    <a href="#" class="FormLink Actions thesaurus-open field" style="display: inline;  margin-top: 0;">Тезаурус</a>
+    <a href="#" class="FormLink Actions thesaurus-open field" style="display: inline;">Тезаурус</a>
     <%}%>
 	<div class="RichTextWrapper">
 		<div

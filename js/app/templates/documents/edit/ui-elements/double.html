@@ -2,7 +2,7 @@
 	<label>
 		<input
 		type="checkbox"
-		<% if(required){%> checked<%}%>
+		<% if(required || model.getValue()){%> checked<%}%>
 		class="field-toggle">
 		<%=model.get('name')%>
 	</label>

@@ -2535,7 +2535,7 @@ define(function (require) {
 			UIElementBase.prototype.initialize.apply(this);
 		},
 		onDirectoryReady: function () {
-			this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
+			//this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
 			this.render();
 		}
 	});
