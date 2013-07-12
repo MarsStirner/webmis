@@ -8,6 +8,8 @@ use Webmis\Controllers\Appeal\AppealControllerProvider;
 
 
 
+
+
 $app->before(function (Request $request) {
     if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
         $data = json_decode($request->getContent(), true);

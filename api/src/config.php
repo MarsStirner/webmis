@@ -21,24 +21,9 @@ $app['jsonp'] = function ($app) {
 };
 
 
-// $app->register(new MonologServiceProvider(), array(
-//         "monolog.logfile" => __DIR__."/".date("Y-m-d").".log",
-//         "monolog.level" => $app["log.level"],
-//         "monolog.name" => "application"
-// ));
+$app['propel.path'] = __DIR__.'../vendor/propel/propel1/runtime/lib/Propel.php';
+$app['propel.config_file'] = __DIR__.'/propel-conf.php';
+$app['propel.model_path'] = __DIR__.'/Webmis/build/classes';
+$app->register(new Propel\Silex\PropelServiceProvider());
 
 
-// if ( $app['debug'] ) {
-//     $logger = new Doctrine\DBAL\Logging\DebugStack();
-
-//     $app['db.config']->setSQLLogger($logger);
-//     $app->after(function() use ($app, $logger) {
-
-//         foreach ( $logger->queries as $query ) {
-//             $app['monolog']->debug($query['sql'], array(
-//                 'params' => $query['params'],
-//                 'types' => $query['types']
-//             ));
-//         }
-//     });
-// }

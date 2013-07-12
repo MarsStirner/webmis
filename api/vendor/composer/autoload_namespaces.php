@@ -16,6 +16,7 @@ return array(
     'Symfony\\Component\\Console\\' => array($vendorDir . '/symfony/console'),
     'Silex' => array($vendorDir . '/silex/silex/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
+    'Propel\\Silex' => array($vendorDir . '/propel/propel-service-provider/src'),
     'Pimple' => array($vendorDir . '/pimple/pimple/lib'),
     'Monolog' => array($vendorDir . '/monolog/monolog/src'),
     'Doctrine\\DBAL' => array($vendorDir . '/doctrine/dbal/lib'),

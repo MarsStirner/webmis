@@ -6,6 +6,9 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 // use Symfony\Component\HttpFoundation\ParameterBag;
 
+use Webmis\Models\MkbQuotatypePacientmodelQuery;
+use Webmis\Models\QuotatypeQuery;
+
 class DirControllerProvider implements ControllerProviderInterface
 {
 	public function connect(Application $app)
@@ -16,29 +19,21 @@ class DirControllerProvider implements ControllerProviderInterface
 		//справочник QuotaType
 		$controllers->get('/quotaType', function(Request $request)  use ($app){
 
-			$mkbId = $request->query->get('mkbId');
-
-			$teenOlder = (int) ($request->query->get('teenOlder'));
+			$quotaType = QuotatypeQuery::create();
+			//фильтр по возрасту
+			$teenOlder = (int) $request->query->get('teenOlder');
 			$teenOlder = $teenOlder ? $teenOlder : 0;
 
-			$select_sql = "SELECT qt.id, qt.code, qt.name FROM QuotaType AS qt WHERE qt.teenOlder = :teenOlder";
+			$quotaType = $quotaType->filterByTeenolder($teenOlder);
 
-			$select_sql_with_mkb = "SELECT qt.id, qt.code, qt.name FROM MKB_QuotaType_PacientModel AS mmm "
-			."JOIN QuotaType AS qt ON qt.id = mmm.quotaType_id "
-			."WHERE mmm.MKB_id = :mkbId AND qt.teenOlder = :teenOlder";
-
+			//фильтр по диагнозу
+			$mkbId = (int) $request->query->get('mkbId');
 
 			if($mkbId){
-				$statement = $app['db']->prepare($select_sql_with_mkb);
-				$statement->bindValue('mkbId', $mkbId);
-			}else{
-				$statement = $app['db']->prepare($select_sql);
+				$quotaType = $quotaType->useMkbQuotatypePacientmodelQuery()->filterById($mkbId)->endUse();
 			}
 
-
-			$statement->bindValue('teenOlder', $teenOlder);
-			$statement->execute();
-			$quotaType = $statement->fetchAll();
+			$quotaType = $quotaType->find()->toArray();
 
 			return $app['jsonp']->jsonp(array('data'=>$quotaType));
 

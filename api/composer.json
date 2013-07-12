@@ -2,6 +2,8 @@
     "require": {
         "silex/silex": "~1.0",
         "doctrine/dbal": ">=2.2.0,<2.4.0-dev",
+        "propel/propel1": "~1.6",
+        "propel/propel-service-provider": "0.0.1",
         "symfony/console": "~2.3",
         "monolog/monolog": "1.5.*",
         "symfony/stopwatch": "2.3.*"
