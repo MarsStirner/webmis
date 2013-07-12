@@ -311,6 +311,11 @@ $TABLE_CELL_COLOR: #414142;
 	}
 }
 
+.documents-table tr th.sortable:hover {
+	background: #f5f4f4;
+	cursor:pointer;
+}
+
 .AnalisGrid {
    width:auto;
    margin:0 0 2em 0;
