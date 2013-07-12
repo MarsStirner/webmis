@@ -139,6 +139,10 @@ define(function (require) {
 				return "UNDEFINED";
 			}, this);
 
+			if (!groupedByRow.UNDEFINED) {
+				groupedByRow.UNDEFINED = [];
+			}
+
 			var rows = [];
 
 			for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
