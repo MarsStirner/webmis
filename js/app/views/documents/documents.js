@@ -77,6 +77,7 @@ define(function (require) {
 		_reviewLayout: _.template(require("text!templates/documents/review/layout.html")),
 		_reviewControls: _.template(require("text!templates/documents/review/controls.html")),
 		_reviewSheet: _.template(require("text!templates/documents/review/sheet.html")),
+		_reviewSheetRow: _.template(require("text!templates/documents/review/sheet-row.html")),
 		uiElements: {
 			_base: _.template(require("text!templates/documents/edit/ui-elements/base.html")),
 			_constructor: _.template(require("text!templates/documents/edit/ui-elements/constructor.html")),
@@ -240,7 +241,7 @@ define(function (require) {
 		},
 
 		getFilledAttrs: function () {
-			if (this.get("group").length) {
+			if (this.get("group") && this.get("group").length) {
 				var examAttributes = this.get("group")[1].attribute;
 				var examFlatJSON = [];
 				if (examAttributes) {
@@ -250,25 +251,12 @@ define(function (require) {
 						});
 
 						if (valueProp && valueProp.value && valueProp.value !== "0.0") {
-
-							var value;
-							console.log('a',a)
-							switch (a.type) {
-								case 'Time':
-									value = moment(valueProp.value, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
-									break;
-								case 'Date':
-									value = moment(valueProp.value, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
-									break;
-								default:
-									value = valueProp.value;
-									break;
-							}
-
 							examFlatJSON.push({
 								id: a.typeId,
 								name: a.name,
-								value: value
+								value: valueProp.value,
+								type: a.type,
+								scope: a.scope
 							});
 						}
 					});
@@ -859,6 +847,19 @@ define(function (require) {
 				sortingField: sortingField,
 				sortingMethod: sortingMethod
 			}})
+		},
+
+		onSelectAllFlagChange: function (event) {
+			this.updateSelectedItems($(event.currentTarget).is(":checked"));
+		},
+
+		updateSelectedItems: function (selected) {
+			/*if (selected) {
+				this.options.selectedDocuments.add(new Documents.Models.Document({id: itemId}));
+			} else {
+				this.options.selectedDocuments.remove(this.options.selectedDocuments.get(itemId));
+			}*/
+			//console.log(this.options.selectedDocuments);
 		}
 	});
 
@@ -2971,7 +2972,7 @@ define(function (require) {
 				tmplData = {
 					id: documentJSON.id,
 					typeId: documentJSON.typeId,
-					attributes: this.model.getFilledAttrs(),
+					//attributes: this.model.getFilledAttrs(),
 					name: summaryAttrs[1]["properties"][0]["value"],
 					//endDate: summaryAttrs[3]["properties"][0]["value"],
 					beginDate: moment(this.model.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:ss"),
@@ -3030,11 +3031,78 @@ define(function (require) {
 					options: {templateId: $(event.currentTarget).data('template-id')}
 				});
 			}
+		},
+
+		render: function () {
+			return ViewBase.prototype.render.call(this, {
+				".sheet-rows": new Documents.Views.Review.Base.SheetRows({
+					collection: new Backbone.Collection(this.model.getFilledAttrs())
+				})
+			});
+		}
+	});
+
+	Documents.Views.Review.Base.SheetRows = RepeaterBase.extend({
+		getRepeatView: function (repeatOptions) {
+			return new Documents.Views.Review.Base.SheetRow(repeatOptions);
 		}
 	});
 
 	Documents.Views.Review.Base.SheetRow = ViewBase.extend({
+		tagName: "li",
+		template: templates._reviewSheetRow,
+		data: function () {
+			var value = this.model.get("value"), displayValue;
+			switch (this.model.get("type").toUpperCase()) {
+				case 'TIME':
+					displayValue = moment(value, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+					break;
+				case 'DATE':
+					displayValue = moment(value, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
+					break;
+				case 'FLATDIRECTORY':
+					displayValue = this.model.get("fdValue") ? this.model.get("fdValue") : value;
+					break;
+				default:
+					displayValue = value;
+					break;
+			}
 
+			return {
+				attr: {
+					name: this.model.get("name"),
+					value: displayValue
+				}
+			};
+		},
+		initialize: function () {
+			ViewBase.prototype.initialize.call(this, this.options);
+			console.log(this.model);
+
+			if (this.model.get("type").toUpperCase() == "FLATDIRECTORY") {
+				if (!fds[this.model.get("scope")]) {
+					fds[this.model.get("scope")] = new FlatDirectory();
+					fds[this.model.get("scope")].set({id: this.model.get("scope")});
+					$.
+						when(fds[this.model.get("scope")].fetch()).
+						then(_.bind(this.onDirectoryReady, this));
+				} else {
+					this.onDirectoryReady();
+				}
+			}
+		},
+
+		onDirectoryReady: function () {
+			var directoryValue = _(fds[this.model.get("scope")].toBeautyJSON()).find(function (type) {
+				return type.id == this.model.get("value");
+			}, this);
+
+			if (directoryValue) {
+				this.model.set({fdValue: directoryValue['Наименование']});
+			}
+
+			this.render();
+		}
 	});
 
 	/**
