@@ -134,7 +134,7 @@ define(function(require) {
                 this.ui.$appealCloseTime.timepicker();
                 this.ui.$appealCloseTime.timepicker("setTime", datetime);
 
-                if (this.docs4closing.get('allDocs')) {
+                //if (this.docs4closing.get('allDocs')) {
                     //this.ui.$saveButton.button('enable');
 
                     this.results = new Results();
@@ -158,7 +158,7 @@ define(function(require) {
 
                     });
 
-                }
+                //}
 
 
             }, this);

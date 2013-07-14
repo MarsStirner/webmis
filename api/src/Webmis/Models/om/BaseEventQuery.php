@@ -15,178 +15,168 @@ use \PropelPDO;
 use Webmis\Models\Event;
 use Webmis\Models\EventPeer;
 use Webmis\Models\EventQuery;
-use Webmis\Models\Rbacheresult;
-use Webmis\Models\Rbmesspecification;
-use Webmis\Models\Tissue;
+use Webmis\Models\EventType;
 
 /**
  * Base class that represents a query for the 'Event' table.
  *
  *
  *
- * @method EventQuery orderById($order = Criteria::ASC) Order by the id column
- * @method EventQuery orderByCreatedatetime($order = Criteria::ASC) Order by the createDatetime column
- * @method EventQuery orderByCreatepersonId($order = Criteria::ASC) Order by the createPerson_id column
- * @method EventQuery orderByModifydatetime($order = Criteria::ASC) Order by the modifyDatetime column
- * @method EventQuery orderByModifypersonId($order = Criteria::ASC) Order by the modifyPerson_id column
- * @method EventQuery orderByDeleted($order = Criteria::ASC) Order by the deleted column
- * @method EventQuery orderByExternalid($order = Criteria::ASC) Order by the externalId column
- * @method EventQuery orderByEventtypeId($order = Criteria::ASC) Order by the eventType_id column
- * @method EventQuery orderByOrgId($order = Criteria::ASC) Order by the org_id column
- * @method EventQuery orderByClientId($order = Criteria::ASC) Order by the client_id column
- * @method EventQuery orderByContractId($order = Criteria::ASC) Order by the contract_id column
- * @method EventQuery orderByPreveventdate($order = Criteria::ASC) Order by the prevEventDate column
- * @method EventQuery orderBySetdate($order = Criteria::ASC) Order by the setDate column
- * @method EventQuery orderBySetpersonId($order = Criteria::ASC) Order by the setPerson_id column
- * @method EventQuery orderByExecdate($order = Criteria::ASC) Order by the execDate column
- * @method EventQuery orderByExecpersonId($order = Criteria::ASC) Order by the execPerson_id column
- * @method EventQuery orderByIsprimary($order = Criteria::ASC) Order by the isPrimary column
- * @method EventQuery orderByOrder($order = Criteria::ASC) Order by the order column
- * @method EventQuery orderByResultId($order = Criteria::ASC) Order by the result_id column
- * @method EventQuery orderByNexteventdate($order = Criteria::ASC) Order by the nextEventDate column
- * @method EventQuery orderByPaystatus($order = Criteria::ASC) Order by the payStatus column
- * @method EventQuery orderByTypeassetId($order = Criteria::ASC) Order by the typeAsset_id column
- * @method EventQuery orderByNote($order = Criteria::ASC) Order by the note column
- * @method EventQuery orderByCuratorId($order = Criteria::ASC) Order by the curator_id column
- * @method EventQuery orderByAssistantId($order = Criteria::ASC) Order by the assistant_id column
- * @method EventQuery orderByPregnancyweek($order = Criteria::ASC) Order by the pregnancyWeek column
- * @method EventQuery orderByMesId($order = Criteria::ASC) Order by the MES_id column
- * @method EventQuery orderByMesspecificationId($order = Criteria::ASC) Order by the mesSpecification_id column
- * @method EventQuery orderByRbacheresultId($order = Criteria::ASC) Order by the rbAcheResult_id column
- * @method EventQuery orderByVersion($order = Criteria::ASC) Order by the version column
- * @method EventQuery orderByPrivilege($order = Criteria::ASC) Order by the privilege column
- * @method EventQuery orderByUrgent($order = Criteria::ASC) Order by the urgent column
- * @method EventQuery orderByOrgstructureId($order = Criteria::ASC) Order by the orgStructure_id column
- * @method EventQuery orderByUuidId($order = Criteria::ASC) Order by the uuid_id column
- * @method EventQuery orderByLpuTransfer($order = Criteria::ASC) Order by the lpu_transfer column
+ * @method EventQuery orderByid($order = Criteria::ASC) Order by the id column
+ * @method EventQuery orderBycreateDatetime($order = Criteria::ASC) Order by the createDatetime column
+ * @method EventQuery orderBycreatePersonId($order = Criteria::ASC) Order by the createPerson_id column
+ * @method EventQuery orderBymodifyDatetime($order = Criteria::ASC) Order by the modifyDatetime column
+ * @method EventQuery orderBymodifyPersonId($order = Criteria::ASC) Order by the modifyPerson_id column
+ * @method EventQuery orderBydeleted($order = Criteria::ASC) Order by the deleted column
+ * @method EventQuery orderByexternalid($order = Criteria::ASC) Order by the externalId column
+ * @method EventQuery orderByeventTypeId($order = Criteria::ASC) Order by the eventType_id column
+ * @method EventQuery orderByorgId($order = Criteria::ASC) Order by the org_id column
+ * @method EventQuery orderByclientId($order = Criteria::ASC) Order by the client_id column
+ * @method EventQuery orderBycontractId($order = Criteria::ASC) Order by the contract_id column
+ * @method EventQuery orderByprevEventDate($order = Criteria::ASC) Order by the prevEventDate column
+ * @method EventQuery orderBysetDate($order = Criteria::ASC) Order by the setDate column
+ * @method EventQuery orderBysetPersonId($order = Criteria::ASC) Order by the setPerson_id column
+ * @method EventQuery orderByexecDate($order = Criteria::ASC) Order by the execDate column
+ * @method EventQuery orderByexecPersonId($order = Criteria::ASC) Order by the execPerson_id column
+ * @method EventQuery orderByisPrimary($order = Criteria::ASC) Order by the isPrimary column
+ * @method EventQuery orderByorder($order = Criteria::ASC) Order by the order column
+ * @method EventQuery orderByresultId($order = Criteria::ASC) Order by the result_id column
+ * @method EventQuery orderBynextEventDate($order = Criteria::ASC) Order by the nextEventDate column
+ * @method EventQuery orderBypayStatus($order = Criteria::ASC) Order by the payStatus column
+ * @method EventQuery orderBytypeAssetId($order = Criteria::ASC) Order by the typeAsset_id column
+ * @method EventQuery orderBynote($order = Criteria::ASC) Order by the note column
+ * @method EventQuery orderBycuratorId($order = Criteria::ASC) Order by the curator_id column
+ * @method EventQuery orderByassistantId($order = Criteria::ASC) Order by the assistant_id column
+ * @method EventQuery orderBypregnancyWeek($order = Criteria::ASC) Order by the pregnancyWeek column
+ * @method EventQuery orderBymesId($order = Criteria::ASC) Order by the MES_id column
+ * @method EventQuery orderBymesSpecificationId($order = Criteria::ASC) Order by the mesSpecification_id column
+ * @method EventQuery orderByrbAcheResultId($order = Criteria::ASC) Order by the rbAcheResult_id column
+ * @method EventQuery orderByversion($order = Criteria::ASC) Order by the version column
+ * @method EventQuery orderByprivilege($order = Criteria::ASC) Order by the privilege column
+ * @method EventQuery orderByurgent($order = Criteria::ASC) Order by the urgent column
+ * @method EventQuery orderByorgStructureId($order = Criteria::ASC) Order by the orgStructure_id column
+ * @method EventQuery orderByuuidId($order = Criteria::ASC) Order by the uuid_id column
+ * @method EventQuery orderBylpuTransfer($order = Criteria::ASC) Order by the lpu_transfer column
  *
- * @method EventQuery groupById() Group by the id column
- * @method EventQuery groupByCreatedatetime() Group by the createDatetime column
- * @method EventQuery groupByCreatepersonId() Group by the createPerson_id column
- * @method EventQuery groupByModifydatetime() Group by the modifyDatetime column
- * @method EventQuery groupByModifypersonId() Group by the modifyPerson_id column
- * @method EventQuery groupByDeleted() Group by the deleted column
- * @method EventQuery groupByExternalid() Group by the externalId column
- * @method EventQuery groupByEventtypeId() Group by the eventType_id column
- * @method EventQuery groupByOrgId() Group by the org_id column
- * @method EventQuery groupByClientId() Group by the client_id column
- * @method EventQuery groupByContractId() Group by the contract_id column
- * @method EventQuery groupByPreveventdate() Group by the prevEventDate column
- * @method EventQuery groupBySetdate() Group by the setDate column
- * @method EventQuery groupBySetpersonId() Group by the setPerson_id column
- * @method EventQuery groupByExecdate() Group by the execDate column
- * @method EventQuery groupByExecpersonId() Group by the execPerson_id column
- * @method EventQuery groupByIsprimary() Group by the isPrimary column
- * @method EventQuery groupByOrder() Group by the order column
- * @method EventQuery groupByResultId() Group by the result_id column
- * @method EventQuery groupByNexteventdate() Group by the nextEventDate column
- * @method EventQuery groupByPaystatus() Group by the payStatus column
- * @method EventQuery groupByTypeassetId() Group by the typeAsset_id column
- * @method EventQuery groupByNote() Group by the note column
- * @method EventQuery groupByCuratorId() Group by the curator_id column
- * @method EventQuery groupByAssistantId() Group by the assistant_id column
- * @method EventQuery groupByPregnancyweek() Group by the pregnancyWeek column
- * @method EventQuery groupByMesId() Group by the MES_id column
- * @method EventQuery groupByMesspecificationId() Group by the mesSpecification_id column
- * @method EventQuery groupByRbacheresultId() Group by the rbAcheResult_id column
- * @method EventQuery groupByVersion() Group by the version column
- * @method EventQuery groupByPrivilege() Group by the privilege column
- * @method EventQuery groupByUrgent() Group by the urgent column
- * @method EventQuery groupByOrgstructureId() Group by the orgStructure_id column
- * @method EventQuery groupByUuidId() Group by the uuid_id column
- * @method EventQuery groupByLpuTransfer() Group by the lpu_transfer column
+ * @method EventQuery groupByid() Group by the id column
+ * @method EventQuery groupBycreateDatetime() Group by the createDatetime column
+ * @method EventQuery groupBycreatePersonId() Group by the createPerson_id column
+ * @method EventQuery groupBymodifyDatetime() Group by the modifyDatetime column
+ * @method EventQuery groupBymodifyPersonId() Group by the modifyPerson_id column
+ * @method EventQuery groupBydeleted() Group by the deleted column
+ * @method EventQuery groupByexternalid() Group by the externalId column
+ * @method EventQuery groupByeventTypeId() Group by the eventType_id column
+ * @method EventQuery groupByorgId() Group by the org_id column
+ * @method EventQuery groupByclientId() Group by the client_id column
+ * @method EventQuery groupBycontractId() Group by the contract_id column
+ * @method EventQuery groupByprevEventDate() Group by the prevEventDate column
+ * @method EventQuery groupBysetDate() Group by the setDate column
+ * @method EventQuery groupBysetPersonId() Group by the setPerson_id column
+ * @method EventQuery groupByexecDate() Group by the execDate column
+ * @method EventQuery groupByexecPersonId() Group by the execPerson_id column
+ * @method EventQuery groupByisPrimary() Group by the isPrimary column
+ * @method EventQuery groupByorder() Group by the order column
+ * @method EventQuery groupByresultId() Group by the result_id column
+ * @method EventQuery groupBynextEventDate() Group by the nextEventDate column
+ * @method EventQuery groupBypayStatus() Group by the payStatus column
+ * @method EventQuery groupBytypeAssetId() Group by the typeAsset_id column
+ * @method EventQuery groupBynote() Group by the note column
+ * @method EventQuery groupBycuratorId() Group by the curator_id column
+ * @method EventQuery groupByassistantId() Group by the assistant_id column
+ * @method EventQuery groupBypregnancyWeek() Group by the pregnancyWeek column
+ * @method EventQuery groupBymesId() Group by the MES_id column
+ * @method EventQuery groupBymesSpecificationId() Group by the mesSpecification_id column
+ * @method EventQuery groupByrbAcheResultId() Group by the rbAcheResult_id column
+ * @method EventQuery groupByversion() Group by the version column
+ * @method EventQuery groupByprivilege() Group by the privilege column
+ * @method EventQuery groupByurgent() Group by the urgent column
+ * @method EventQuery groupByorgStructureId() Group by the orgStructure_id column
+ * @method EventQuery groupByuuidId() Group by the uuid_id column
+ * @method EventQuery groupBylpuTransfer() Group by the lpu_transfer column
  *
  * @method EventQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method EventQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method EventQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method EventQuery leftJoinRbacheresult($relationAlias = null) Adds a LEFT JOIN clause to the query using the Rbacheresult relation
- * @method EventQuery rightJoinRbacheresult($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Rbacheresult relation
- * @method EventQuery innerJoinRbacheresult($relationAlias = null) Adds a INNER JOIN clause to the query using the Rbacheresult relation
- *
- * @method EventQuery leftJoinRbmesspecification($relationAlias = null) Adds a LEFT JOIN clause to the query using the Rbmesspecification relation
- * @method EventQuery rightJoinRbmesspecification($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Rbmesspecification relation
- * @method EventQuery innerJoinRbmesspecification($relationAlias = null) Adds a INNER JOIN clause to the query using the Rbmesspecification relation
- *
- * @method EventQuery leftJoinTissue($relationAlias = null) Adds a LEFT JOIN clause to the query using the Tissue relation
- * @method EventQuery rightJoinTissue($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Tissue relation
- * @method EventQuery innerJoinTissue($relationAlias = null) Adds a INNER JOIN clause to the query using the Tissue relation
+ * @method EventQuery leftJoinEventType($relationAlias = null) Adds a LEFT JOIN clause to the query using the EventType relation
+ * @method EventQuery rightJoinEventType($relationAlias = null) Adds a RIGHT JOIN clause to the query using the EventType relation
+ * @method EventQuery innerJoinEventType($relationAlias = null) Adds a INNER JOIN clause to the query using the EventType relation
  *
  * @method Event findOne(PropelPDO $con = null) Return the first Event matching the query
  * @method Event findOneOrCreate(PropelPDO $con = null) Return the first Event matching the query, or a new Event object populated from the query conditions when no match is found
  *
- * @method Event findOneByCreatedatetime(string $createDatetime) Return the first Event filtered by the createDatetime column
- * @method Event findOneByCreatepersonId(int $createPerson_id) Return the first Event filtered by the createPerson_id column
- * @method Event findOneByModifydatetime(string $modifyDatetime) Return the first Event filtered by the modifyDatetime column
- * @method Event findOneByModifypersonId(int $modifyPerson_id) Return the first Event filtered by the modifyPerson_id column
- * @method Event findOneByDeleted(boolean $deleted) Return the first Event filtered by the deleted column
- * @method Event findOneByExternalid(string $externalId) Return the first Event filtered by the externalId column
- * @method Event findOneByEventtypeId(int $eventType_id) Return the first Event filtered by the eventType_id column
- * @method Event findOneByOrgId(int $org_id) Return the first Event filtered by the org_id column
- * @method Event findOneByClientId(int $client_id) Return the first Event filtered by the client_id column
- * @method Event findOneByContractId(int $contract_id) Return the first Event filtered by the contract_id column
- * @method Event findOneByPreveventdate(string $prevEventDate) Return the first Event filtered by the prevEventDate column
- * @method Event findOneBySetdate(string $setDate) Return the first Event filtered by the setDate column
- * @method Event findOneBySetpersonId(int $setPerson_id) Return the first Event filtered by the setPerson_id column
- * @method Event findOneByExecdate(string $execDate) Return the first Event filtered by the execDate column
- * @method Event findOneByExecpersonId(int $execPerson_id) Return the first Event filtered by the execPerson_id column
- * @method Event findOneByIsprimary(boolean $isPrimary) Return the first Event filtered by the isPrimary column
- * @method Event findOneByOrder(boolean $order) Return the first Event filtered by the order column
- * @method Event findOneByResultId(int $result_id) Return the first Event filtered by the result_id column
- * @method Event findOneByNexteventdate(string $nextEventDate) Return the first Event filtered by the nextEventDate column
- * @method Event findOneByPaystatus(int $payStatus) Return the first Event filtered by the payStatus column
- * @method Event findOneByTypeassetId(int $typeAsset_id) Return the first Event filtered by the typeAsset_id column
- * @method Event findOneByNote(string $note) Return the first Event filtered by the note column
- * @method Event findOneByCuratorId(int $curator_id) Return the first Event filtered by the curator_id column
- * @method Event findOneByAssistantId(int $assistant_id) Return the first Event filtered by the assistant_id column
- * @method Event findOneByPregnancyweek(int $pregnancyWeek) Return the first Event filtered by the pregnancyWeek column
- * @method Event findOneByMesId(int $MES_id) Return the first Event filtered by the MES_id column
- * @method Event findOneByMesspecificationId(int $mesSpecification_id) Return the first Event filtered by the mesSpecification_id column
- * @method Event findOneByRbacheresultId(int $rbAcheResult_id) Return the first Event filtered by the rbAcheResult_id column
- * @method Event findOneByVersion(int $version) Return the first Event filtered by the version column
- * @method Event findOneByPrivilege(boolean $privilege) Return the first Event filtered by the privilege column
- * @method Event findOneByUrgent(boolean $urgent) Return the first Event filtered by the urgent column
- * @method Event findOneByOrgstructureId(int $orgStructure_id) Return the first Event filtered by the orgStructure_id column
- * @method Event findOneByUuidId(int $uuid_id) Return the first Event filtered by the uuid_id column
- * @method Event findOneByLpuTransfer(string $lpu_transfer) Return the first Event filtered by the lpu_transfer column
+ * @method Event findOneBycreateDatetime(string $createDatetime) Return the first Event filtered by the createDatetime column
+ * @method Event findOneBycreatePersonId(int $createPerson_id) Return the first Event filtered by the createPerson_id column
+ * @method Event findOneBymodifyDatetime(string $modifyDatetime) Return the first Event filtered by the modifyDatetime column
+ * @method Event findOneBymodifyPersonId(int $modifyPerson_id) Return the first Event filtered by the modifyPerson_id column
+ * @method Event findOneBydeleted(boolean $deleted) Return the first Event filtered by the deleted column
+ * @method Event findOneByexternalid(string $externalId) Return the first Event filtered by the externalId column
+ * @method Event findOneByeventTypeId(int $eventType_id) Return the first Event filtered by the eventType_id column
+ * @method Event findOneByorgId(int $org_id) Return the first Event filtered by the org_id column
+ * @method Event findOneByclientId(int $client_id) Return the first Event filtered by the client_id column
+ * @method Event findOneBycontractId(int $contract_id) Return the first Event filtered by the contract_id column
+ * @method Event findOneByprevEventDate(string $prevEventDate) Return the first Event filtered by the prevEventDate column
+ * @method Event findOneBysetDate(string $setDate) Return the first Event filtered by the setDate column
+ * @method Event findOneBysetPersonId(int $setPerson_id) Return the first Event filtered by the setPerson_id column
+ * @method Event findOneByexecDate(string $execDate) Return the first Event filtered by the execDate column
+ * @method Event findOneByexecPersonId(int $execPerson_id) Return the first Event filtered by the execPerson_id column
+ * @method Event findOneByisPrimary(boolean $isPrimary) Return the first Event filtered by the isPrimary column
+ * @method Event findOneByorder(boolean $order) Return the first Event filtered by the order column
+ * @method Event findOneByresultId(int $result_id) Return the first Event filtered by the result_id column
+ * @method Event findOneBynextEventDate(string $nextEventDate) Return the first Event filtered by the nextEventDate column
+ * @method Event findOneBypayStatus(int $payStatus) Return the first Event filtered by the payStatus column
+ * @method Event findOneBytypeAssetId(int $typeAsset_id) Return the first Event filtered by the typeAsset_id column
+ * @method Event findOneBynote(string $note) Return the first Event filtered by the note column
+ * @method Event findOneBycuratorId(int $curator_id) Return the first Event filtered by the curator_id column
+ * @method Event findOneByassistantId(int $assistant_id) Return the first Event filtered by the assistant_id column
+ * @method Event findOneBypregnancyWeek(int $pregnancyWeek) Return the first Event filtered by the pregnancyWeek column
+ * @method Event findOneBymesId(int $MES_id) Return the first Event filtered by the MES_id column
+ * @method Event findOneBymesSpecificationId(int $mesSpecification_id) Return the first Event filtered by the mesSpecification_id column
+ * @method Event findOneByrbAcheResultId(int $rbAcheResult_id) Return the first Event filtered by the rbAcheResult_id column
+ * @method Event findOneByversion(int $version) Return the first Event filtered by the version column
+ * @method Event findOneByprivilege(boolean $privilege) Return the first Event filtered by the privilege column
+ * @method Event findOneByurgent(boolean $urgent) Return the first Event filtered by the urgent column
+ * @method Event findOneByorgStructureId(int $orgStructure_id) Return the first Event filtered by the orgStructure_id column
+ * @method Event findOneByuuidId(int $uuid_id) Return the first Event filtered by the uuid_id column
+ * @method Event findOneBylpuTransfer(string $lpu_transfer) Return the first Event filtered by the lpu_transfer column
  *
- * @method array findById(int $id) Return Event objects filtered by the id column
- * @method array findByCreatedatetime(string $createDatetime) Return Event objects filtered by the createDatetime column
- * @method array findByCreatepersonId(int $createPerson_id) Return Event objects filtered by the createPerson_id column
- * @method array findByModifydatetime(string $modifyDatetime) Return Event objects filtered by the modifyDatetime column
- * @method array findByModifypersonId(int $modifyPerson_id) Return Event objects filtered by the modifyPerson_id column
- * @method array findByDeleted(boolean $deleted) Return Event objects filtered by the deleted column
- * @method array findByExternalid(string $externalId) Return Event objects filtered by the externalId column
- * @method array findByEventtypeId(int $eventType_id) Return Event objects filtered by the eventType_id column
- * @method array findByOrgId(int $org_id) Return Event objects filtered by the org_id column
- * @method array findByClientId(int $client_id) Return Event objects filtered by the client_id column
- * @method array findByContractId(int $contract_id) Return Event objects filtered by the contract_id column
- * @method array findByPreveventdate(string $prevEventDate) Return Event objects filtered by the prevEventDate column
- * @method array findBySetdate(string $setDate) Return Event objects filtered by the setDate column
- * @method array findBySetpersonId(int $setPerson_id) Return Event objects filtered by the setPerson_id column
- * @method array findByExecdate(string $execDate) Return Event objects filtered by the execDate column
- * @method array findByExecpersonId(int $execPerson_id) Return Event objects filtered by the execPerson_id column
- * @method array findByIsprimary(boolean $isPrimary) Return Event objects filtered by the isPrimary column
- * @method array findByOrder(boolean $order) Return Event objects filtered by the order column
- * @method array findByResultId(int $result_id) Return Event objects filtered by the result_id column
- * @method array findByNexteventdate(string $nextEventDate) Return Event objects filtered by the nextEventDate column
- * @method array findByPaystatus(int $payStatus) Return Event objects filtered by the payStatus column
- * @method array findByTypeassetId(int $typeAsset_id) Return Event objects filtered by the typeAsset_id column
- * @method array findByNote(string $note) Return Event objects filtered by the note column
- * @method array findByCuratorId(int $curator_id) Return Event objects filtered by the curator_id column
- * @method array findByAssistantId(int $assistant_id) Return Event objects filtered by the assistant_id column
- * @method array findByPregnancyweek(int $pregnancyWeek) Return Event objects filtered by the pregnancyWeek column
- * @method array findByMesId(int $MES_id) Return Event objects filtered by the MES_id column
- * @method array findByMesspecificationId(int $mesSpecification_id) Return Event objects filtered by the mesSpecification_id column
- * @method array findByRbacheresultId(int $rbAcheResult_id) Return Event objects filtered by the rbAcheResult_id column
- * @method array findByVersion(int $version) Return Event objects filtered by the version column
- * @method array findByPrivilege(boolean $privilege) Return Event objects filtered by the privilege column
- * @method array findByUrgent(boolean $urgent) Return Event objects filtered by the urgent column
- * @method array findByOrgstructureId(int $orgStructure_id) Return Event objects filtered by the orgStructure_id column
- * @method array findByUuidId(int $uuid_id) Return Event objects filtered by the uuid_id column
- * @method array findByLpuTransfer(string $lpu_transfer) Return Event objects filtered by the lpu_transfer column
+ * @method array findByid(int $id) Return Event objects filtered by the id column
+ * @method array findBycreateDatetime(string $createDatetime) Return Event objects filtered by the createDatetime column
+ * @method array findBycreatePersonId(int $createPerson_id) Return Event objects filtered by the createPerson_id column
+ * @method array findBymodifyDatetime(string $modifyDatetime) Return Event objects filtered by the modifyDatetime column
+ * @method array findBymodifyPersonId(int $modifyPerson_id) Return Event objects filtered by the modifyPerson_id column
+ * @method array findBydeleted(boolean $deleted) Return Event objects filtered by the deleted column
+ * @method array findByexternalid(string $externalId) Return Event objects filtered by the externalId column
+ * @method array findByeventTypeId(int $eventType_id) Return Event objects filtered by the eventType_id column
+ * @method array findByorgId(int $org_id) Return Event objects filtered by the org_id column
+ * @method array findByclientId(int $client_id) Return Event objects filtered by the client_id column
+ * @method array findBycontractId(int $contract_id) Return Event objects filtered by the contract_id column
+ * @method array findByprevEventDate(string $prevEventDate) Return Event objects filtered by the prevEventDate column
+ * @method array findBysetDate(string $setDate) Return Event objects filtered by the setDate column
+ * @method array findBysetPersonId(int $setPerson_id) Return Event objects filtered by the setPerson_id column
+ * @method array findByexecDate(string $execDate) Return Event objects filtered by the execDate column
+ * @method array findByexecPersonId(int $execPerson_id) Return Event objects filtered by the execPerson_id column
+ * @method array findByisPrimary(boolean $isPrimary) Return Event objects filtered by the isPrimary column
+ * @method array findByorder(boolean $order) Return Event objects filtered by the order column
+ * @method array findByresultId(int $result_id) Return Event objects filtered by the result_id column
+ * @method array findBynextEventDate(string $nextEventDate) Return Event objects filtered by the nextEventDate column
+ * @method array findBypayStatus(int $payStatus) Return Event objects filtered by the payStatus column
+ * @method array findBytypeAssetId(int $typeAsset_id) Return Event objects filtered by the typeAsset_id column
+ * @method array findBynote(string $note) Return Event objects filtered by the note column
+ * @method array findBycuratorId(int $curator_id) Return Event objects filtered by the curator_id column
+ * @method array findByassistantId(int $assistant_id) Return Event objects filtered by the assistant_id column
+ * @method array findBypregnancyWeek(int $pregnancyWeek) Return Event objects filtered by the pregnancyWeek column
+ * @method array findBymesId(int $MES_id) Return Event objects filtered by the MES_id column
+ * @method array findBymesSpecificationId(int $mesSpecification_id) Return Event objects filtered by the mesSpecification_id column
+ * @method array findByrbAcheResultId(int $rbAcheResult_id) Return Event objects filtered by the rbAcheResult_id column
+ * @method array findByversion(int $version) Return Event objects filtered by the version column
+ * @method array findByprivilege(boolean $privilege) Return Event objects filtered by the privilege column
+ * @method array findByurgent(boolean $urgent) Return Event objects filtered by the urgent column
+ * @method array findByorgStructureId(int $orgStructure_id) Return Event objects filtered by the orgStructure_id column
+ * @method array findByuuidId(int $uuid_id) Return Event objects filtered by the uuid_id column
+ * @method array findBylpuTransfer(string $lpu_transfer) Return Event objects filtered by the lpu_transfer column
  *
- * @package    propel.generator.Webmis.Models.om
+ * @package    propel.generator.Models.om
  */
 abstract class BaseEventQuery extends ModelCriteria
 {
@@ -271,7 +261,7 @@ abstract class BaseEventQuery extends ModelCriteria
      * @return                 Event A model object, or null if the key is not found
      * @throws PropelException
      */
-     public function findOneById($key, $con = null)
+     public function findOneByid($key, $con = null)
      {
         return $this->findPk($key, $con);
      }
@@ -382,10 +372,10 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterById(1234); // WHERE id = 1234
-     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
-     * $query->filterById(array('min' => 12)); // WHERE id >= 12
-     * $query->filterById(array('max' => 12)); // WHERE id <= 12
+     * $query->filterByid(1234); // WHERE id = 1234
+     * $query->filterByid(array(12, 34)); // WHERE id IN (12, 34)
+     * $query->filterByid(array('min' => 12)); // WHERE id >= 12
+     * $query->filterByid(array('max' => 12)); // WHERE id <= 12
      * </code>
      *
      * @param     mixed $id The value to use as filter.
@@ -396,7 +386,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterById($id = null, $comparison = null)
+    public function filterByid($id = null, $comparison = null)
     {
         if (is_array($id)) {
             $useMinMax = false;
@@ -424,12 +414,12 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByCreatedatetime('2011-03-14'); // WHERE createDatetime = '2011-03-14'
-     * $query->filterByCreatedatetime('now'); // WHERE createDatetime = '2011-03-14'
-     * $query->filterByCreatedatetime(array('max' => 'yesterday')); // WHERE createDatetime > '2011-03-13'
+     * $query->filterBycreateDatetime('2011-03-14'); // WHERE createDatetime = '2011-03-14'
+     * $query->filterBycreateDatetime('now'); // WHERE createDatetime = '2011-03-14'
+     * $query->filterBycreateDatetime(array('max' => 'yesterday')); // WHERE createDatetime > '2011-03-13'
      * </code>
      *
-     * @param     mixed $createdatetime The value to use as filter.
+     * @param     mixed $createDatetime The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -439,16 +429,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByCreatedatetime($createdatetime = null, $comparison = null)
+    public function filterBycreateDatetime($createDatetime = null, $comparison = null)
     {
-        if (is_array($createdatetime)) {
+        if (is_array($createDatetime)) {
             $useMinMax = false;
-            if (isset($createdatetime['min'])) {
-                $this->addUsingAlias(EventPeer::CREATEDATETIME, $createdatetime['min'], Criteria::GREATER_EQUAL);
+            if (isset($createDatetime['min'])) {
+                $this->addUsingAlias(EventPeer::CREATEDATETIME, $createDatetime['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($createdatetime['max'])) {
-                $this->addUsingAlias(EventPeer::CREATEDATETIME, $createdatetime['max'], Criteria::LESS_EQUAL);
+            if (isset($createDatetime['max'])) {
+                $this->addUsingAlias(EventPeer::CREATEDATETIME, $createDatetime['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -459,7 +449,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::CREATEDATETIME, $createdatetime, $comparison);
+        return $this->addUsingAlias(EventPeer::CREATEDATETIME, $createDatetime, $comparison);
     }
 
     /**
@@ -467,13 +457,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByCreatepersonId(1234); // WHERE createPerson_id = 1234
-     * $query->filterByCreatepersonId(array(12, 34)); // WHERE createPerson_id IN (12, 34)
-     * $query->filterByCreatepersonId(array('min' => 12)); // WHERE createPerson_id >= 12
-     * $query->filterByCreatepersonId(array('max' => 12)); // WHERE createPerson_id <= 12
+     * $query->filterBycreatePersonId(1234); // WHERE createPerson_id = 1234
+     * $query->filterBycreatePersonId(array(12, 34)); // WHERE createPerson_id IN (12, 34)
+     * $query->filterBycreatePersonId(array('min' => 12)); // WHERE createPerson_id >= 12
+     * $query->filterBycreatePersonId(array('max' => 12)); // WHERE createPerson_id <= 12
      * </code>
      *
-     * @param     mixed $createpersonId The value to use as filter.
+     * @param     mixed $createPersonId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -481,16 +471,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByCreatepersonId($createpersonId = null, $comparison = null)
+    public function filterBycreatePersonId($createPersonId = null, $comparison = null)
     {
-        if (is_array($createpersonId)) {
+        if (is_array($createPersonId)) {
             $useMinMax = false;
-            if (isset($createpersonId['min'])) {
-                $this->addUsingAlias(EventPeer::CREATEPERSON_ID, $createpersonId['min'], Criteria::GREATER_EQUAL);
+            if (isset($createPersonId['min'])) {
+                $this->addUsingAlias(EventPeer::CREATEPERSON_ID, $createPersonId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($createpersonId['max'])) {
-                $this->addUsingAlias(EventPeer::CREATEPERSON_ID, $createpersonId['max'], Criteria::LESS_EQUAL);
+            if (isset($createPersonId['max'])) {
+                $this->addUsingAlias(EventPeer::CREATEPERSON_ID, $createPersonId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -501,7 +491,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::CREATEPERSON_ID, $createpersonId, $comparison);
+        return $this->addUsingAlias(EventPeer::CREATEPERSON_ID, $createPersonId, $comparison);
     }
 
     /**
@@ -509,12 +499,12 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByModifydatetime('2011-03-14'); // WHERE modifyDatetime = '2011-03-14'
-     * $query->filterByModifydatetime('now'); // WHERE modifyDatetime = '2011-03-14'
-     * $query->filterByModifydatetime(array('max' => 'yesterday')); // WHERE modifyDatetime > '2011-03-13'
+     * $query->filterBymodifyDatetime('2011-03-14'); // WHERE modifyDatetime = '2011-03-14'
+     * $query->filterBymodifyDatetime('now'); // WHERE modifyDatetime = '2011-03-14'
+     * $query->filterBymodifyDatetime(array('max' => 'yesterday')); // WHERE modifyDatetime > '2011-03-13'
      * </code>
      *
-     * @param     mixed $modifydatetime The value to use as filter.
+     * @param     mixed $modifyDatetime The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -524,16 +514,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByModifydatetime($modifydatetime = null, $comparison = null)
+    public function filterBymodifyDatetime($modifyDatetime = null, $comparison = null)
     {
-        if (is_array($modifydatetime)) {
+        if (is_array($modifyDatetime)) {
             $useMinMax = false;
-            if (isset($modifydatetime['min'])) {
-                $this->addUsingAlias(EventPeer::MODIFYDATETIME, $modifydatetime['min'], Criteria::GREATER_EQUAL);
+            if (isset($modifyDatetime['min'])) {
+                $this->addUsingAlias(EventPeer::MODIFYDATETIME, $modifyDatetime['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($modifydatetime['max'])) {
-                $this->addUsingAlias(EventPeer::MODIFYDATETIME, $modifydatetime['max'], Criteria::LESS_EQUAL);
+            if (isset($modifyDatetime['max'])) {
+                $this->addUsingAlias(EventPeer::MODIFYDATETIME, $modifyDatetime['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -544,7 +534,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::MODIFYDATETIME, $modifydatetime, $comparison);
+        return $this->addUsingAlias(EventPeer::MODIFYDATETIME, $modifyDatetime, $comparison);
     }
 
     /**
@@ -552,13 +542,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByModifypersonId(1234); // WHERE modifyPerson_id = 1234
-     * $query->filterByModifypersonId(array(12, 34)); // WHERE modifyPerson_id IN (12, 34)
-     * $query->filterByModifypersonId(array('min' => 12)); // WHERE modifyPerson_id >= 12
-     * $query->filterByModifypersonId(array('max' => 12)); // WHERE modifyPerson_id <= 12
+     * $query->filterBymodifyPersonId(1234); // WHERE modifyPerson_id = 1234
+     * $query->filterBymodifyPersonId(array(12, 34)); // WHERE modifyPerson_id IN (12, 34)
+     * $query->filterBymodifyPersonId(array('min' => 12)); // WHERE modifyPerson_id >= 12
+     * $query->filterBymodifyPersonId(array('max' => 12)); // WHERE modifyPerson_id <= 12
      * </code>
      *
-     * @param     mixed $modifypersonId The value to use as filter.
+     * @param     mixed $modifyPersonId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -566,16 +556,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByModifypersonId($modifypersonId = null, $comparison = null)
+    public function filterBymodifyPersonId($modifyPersonId = null, $comparison = null)
     {
-        if (is_array($modifypersonId)) {
+        if (is_array($modifyPersonId)) {
             $useMinMax = false;
-            if (isset($modifypersonId['min'])) {
-                $this->addUsingAlias(EventPeer::MODIFYPERSON_ID, $modifypersonId['min'], Criteria::GREATER_EQUAL);
+            if (isset($modifyPersonId['min'])) {
+                $this->addUsingAlias(EventPeer::MODIFYPERSON_ID, $modifyPersonId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($modifypersonId['max'])) {
-                $this->addUsingAlias(EventPeer::MODIFYPERSON_ID, $modifypersonId['max'], Criteria::LESS_EQUAL);
+            if (isset($modifyPersonId['max'])) {
+                $this->addUsingAlias(EventPeer::MODIFYPERSON_ID, $modifyPersonId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -586,7 +576,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::MODIFYPERSON_ID, $modifypersonId, $comparison);
+        return $this->addUsingAlias(EventPeer::MODIFYPERSON_ID, $modifyPersonId, $comparison);
     }
 
     /**
@@ -594,8 +584,8 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByDeleted(true); // WHERE deleted = true
-     * $query->filterByDeleted('yes'); // WHERE deleted = true
+     * $query->filterBydeleted(true); // WHERE deleted = true
+     * $query->filterBydeleted('yes'); // WHERE deleted = true
      * </code>
      *
      * @param     boolean|string $deleted The value to use as filter.
@@ -607,7 +597,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByDeleted($deleted = null, $comparison = null)
+    public function filterBydeleted($deleted = null, $comparison = null)
     {
         if (is_string($deleted)) {
             $deleted = in_array(strtolower($deleted), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
@@ -621,8 +611,8 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByExternalid('fooValue');   // WHERE externalId = 'fooValue'
-     * $query->filterByExternalid('%fooValue%'); // WHERE externalId LIKE '%fooValue%'
+     * $query->filterByexternalid('fooValue');   // WHERE externalId = 'fooValue'
+     * $query->filterByexternalid('%fooValue%'); // WHERE externalId LIKE '%fooValue%'
      * </code>
      *
      * @param     string $externalid The value to use as filter.
@@ -631,7 +621,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByExternalid($externalid = null, $comparison = null)
+    public function filterByexternalid($externalid = null, $comparison = null)
     {
         if (null === $comparison) {
             if (is_array($externalid)) {
@@ -650,13 +640,15 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByEventtypeId(1234); // WHERE eventType_id = 1234
-     * $query->filterByEventtypeId(array(12, 34)); // WHERE eventType_id IN (12, 34)
-     * $query->filterByEventtypeId(array('min' => 12)); // WHERE eventType_id >= 12
-     * $query->filterByEventtypeId(array('max' => 12)); // WHERE eventType_id <= 12
+     * $query->filterByeventTypeId(1234); // WHERE eventType_id = 1234
+     * $query->filterByeventTypeId(array(12, 34)); // WHERE eventType_id IN (12, 34)
+     * $query->filterByeventTypeId(array('min' => 12)); // WHERE eventType_id >= 12
+     * $query->filterByeventTypeId(array('max' => 12)); // WHERE eventType_id <= 12
      * </code>
      *
-     * @param     mixed $eventtypeId The value to use as filter.
+     * @see       filterByEventType()
+     *
+     * @param     mixed $eventTypeId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -664,16 +656,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByEventtypeId($eventtypeId = null, $comparison = null)
+    public function filterByeventTypeId($eventTypeId = null, $comparison = null)
     {
-        if (is_array($eventtypeId)) {
+        if (is_array($eventTypeId)) {
             $useMinMax = false;
-            if (isset($eventtypeId['min'])) {
-                $this->addUsingAlias(EventPeer::EVENTTYPE_ID, $eventtypeId['min'], Criteria::GREATER_EQUAL);
+            if (isset($eventTypeId['min'])) {
+                $this->addUsingAlias(EventPeer::EVENTTYPE_ID, $eventTypeId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($eventtypeId['max'])) {
-                $this->addUsingAlias(EventPeer::EVENTTYPE_ID, $eventtypeId['max'], Criteria::LESS_EQUAL);
+            if (isset($eventTypeId['max'])) {
+                $this->addUsingAlias(EventPeer::EVENTTYPE_ID, $eventTypeId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -684,7 +676,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::EVENTTYPE_ID, $eventtypeId, $comparison);
+        return $this->addUsingAlias(EventPeer::EVENTTYPE_ID, $eventTypeId, $comparison);
     }
 
     /**
@@ -692,10 +684,10 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByOrgId(1234); // WHERE org_id = 1234
-     * $query->filterByOrgId(array(12, 34)); // WHERE org_id IN (12, 34)
-     * $query->filterByOrgId(array('min' => 12)); // WHERE org_id >= 12
-     * $query->filterByOrgId(array('max' => 12)); // WHERE org_id <= 12
+     * $query->filterByorgId(1234); // WHERE org_id = 1234
+     * $query->filterByorgId(array(12, 34)); // WHERE org_id IN (12, 34)
+     * $query->filterByorgId(array('min' => 12)); // WHERE org_id >= 12
+     * $query->filterByorgId(array('max' => 12)); // WHERE org_id <= 12
      * </code>
      *
      * @param     mixed $orgId The value to use as filter.
@@ -706,7 +698,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByOrgId($orgId = null, $comparison = null)
+    public function filterByorgId($orgId = null, $comparison = null)
     {
         if (is_array($orgId)) {
             $useMinMax = false;
@@ -734,10 +726,10 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByClientId(1234); // WHERE client_id = 1234
-     * $query->filterByClientId(array(12, 34)); // WHERE client_id IN (12, 34)
-     * $query->filterByClientId(array('min' => 12)); // WHERE client_id >= 12
-     * $query->filterByClientId(array('max' => 12)); // WHERE client_id <= 12
+     * $query->filterByclientId(1234); // WHERE client_id = 1234
+     * $query->filterByclientId(array(12, 34)); // WHERE client_id IN (12, 34)
+     * $query->filterByclientId(array('min' => 12)); // WHERE client_id >= 12
+     * $query->filterByclientId(array('max' => 12)); // WHERE client_id <= 12
      * </code>
      *
      * @param     mixed $clientId The value to use as filter.
@@ -748,7 +740,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByClientId($clientId = null, $comparison = null)
+    public function filterByclientId($clientId = null, $comparison = null)
     {
         if (is_array($clientId)) {
             $useMinMax = false;
@@ -776,10 +768,10 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByContractId(1234); // WHERE contract_id = 1234
-     * $query->filterByContractId(array(12, 34)); // WHERE contract_id IN (12, 34)
-     * $query->filterByContractId(array('min' => 12)); // WHERE contract_id >= 12
-     * $query->filterByContractId(array('max' => 12)); // WHERE contract_id <= 12
+     * $query->filterBycontractId(1234); // WHERE contract_id = 1234
+     * $query->filterBycontractId(array(12, 34)); // WHERE contract_id IN (12, 34)
+     * $query->filterBycontractId(array('min' => 12)); // WHERE contract_id >= 12
+     * $query->filterBycontractId(array('max' => 12)); // WHERE contract_id <= 12
      * </code>
      *
      * @param     mixed $contractId The value to use as filter.
@@ -790,7 +782,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByContractId($contractId = null, $comparison = null)
+    public function filterBycontractId($contractId = null, $comparison = null)
     {
         if (is_array($contractId)) {
             $useMinMax = false;
@@ -818,12 +810,12 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByPreveventdate('2011-03-14'); // WHERE prevEventDate = '2011-03-14'
-     * $query->filterByPreveventdate('now'); // WHERE prevEventDate = '2011-03-14'
-     * $query->filterByPreveventdate(array('max' => 'yesterday')); // WHERE prevEventDate > '2011-03-13'
+     * $query->filterByprevEventDate('2011-03-14'); // WHERE prevEventDate = '2011-03-14'
+     * $query->filterByprevEventDate('now'); // WHERE prevEventDate = '2011-03-14'
+     * $query->filterByprevEventDate(array('max' => 'yesterday')); // WHERE prevEventDate > '2011-03-13'
      * </code>
      *
-     * @param     mixed $preveventdate The value to use as filter.
+     * @param     mixed $prevEventDate The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -833,16 +825,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByPreveventdate($preveventdate = null, $comparison = null)
+    public function filterByprevEventDate($prevEventDate = null, $comparison = null)
     {
-        if (is_array($preveventdate)) {
+        if (is_array($prevEventDate)) {
             $useMinMax = false;
-            if (isset($preveventdate['min'])) {
-                $this->addUsingAlias(EventPeer::PREVEVENTDATE, $preveventdate['min'], Criteria::GREATER_EQUAL);
+            if (isset($prevEventDate['min'])) {
+                $this->addUsingAlias(EventPeer::PREVEVENTDATE, $prevEventDate['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($preveventdate['max'])) {
-                $this->addUsingAlias(EventPeer::PREVEVENTDATE, $preveventdate['max'], Criteria::LESS_EQUAL);
+            if (isset($prevEventDate['max'])) {
+                $this->addUsingAlias(EventPeer::PREVEVENTDATE, $prevEventDate['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -853,7 +845,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::PREVEVENTDATE, $preveventdate, $comparison);
+        return $this->addUsingAlias(EventPeer::PREVEVENTDATE, $prevEventDate, $comparison);
     }
 
     /**
@@ -861,12 +853,12 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterBySetdate('2011-03-14'); // WHERE setDate = '2011-03-14'
-     * $query->filterBySetdate('now'); // WHERE setDate = '2011-03-14'
-     * $query->filterBySetdate(array('max' => 'yesterday')); // WHERE setDate > '2011-03-13'
+     * $query->filterBysetDate('2011-03-14'); // WHERE setDate = '2011-03-14'
+     * $query->filterBysetDate('now'); // WHERE setDate = '2011-03-14'
+     * $query->filterBysetDate(array('max' => 'yesterday')); // WHERE setDate > '2011-03-13'
      * </code>
      *
-     * @param     mixed $setdate The value to use as filter.
+     * @param     mixed $setDate The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -876,16 +868,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterBySetdate($setdate = null, $comparison = null)
+    public function filterBysetDate($setDate = null, $comparison = null)
     {
-        if (is_array($setdate)) {
+        if (is_array($setDate)) {
             $useMinMax = false;
-            if (isset($setdate['min'])) {
-                $this->addUsingAlias(EventPeer::SETDATE, $setdate['min'], Criteria::GREATER_EQUAL);
+            if (isset($setDate['min'])) {
+                $this->addUsingAlias(EventPeer::SETDATE, $setDate['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($setdate['max'])) {
-                $this->addUsingAlias(EventPeer::SETDATE, $setdate['max'], Criteria::LESS_EQUAL);
+            if (isset($setDate['max'])) {
+                $this->addUsingAlias(EventPeer::SETDATE, $setDate['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -896,7 +888,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::SETDATE, $setdate, $comparison);
+        return $this->addUsingAlias(EventPeer::SETDATE, $setDate, $comparison);
     }
 
     /**
@@ -904,13 +896,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterBySetpersonId(1234); // WHERE setPerson_id = 1234
-     * $query->filterBySetpersonId(array(12, 34)); // WHERE setPerson_id IN (12, 34)
-     * $query->filterBySetpersonId(array('min' => 12)); // WHERE setPerson_id >= 12
-     * $query->filterBySetpersonId(array('max' => 12)); // WHERE setPerson_id <= 12
+     * $query->filterBysetPersonId(1234); // WHERE setPerson_id = 1234
+     * $query->filterBysetPersonId(array(12, 34)); // WHERE setPerson_id IN (12, 34)
+     * $query->filterBysetPersonId(array('min' => 12)); // WHERE setPerson_id >= 12
+     * $query->filterBysetPersonId(array('max' => 12)); // WHERE setPerson_id <= 12
      * </code>
      *
-     * @param     mixed $setpersonId The value to use as filter.
+     * @param     mixed $setPersonId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -918,16 +910,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterBySetpersonId($setpersonId = null, $comparison = null)
+    public function filterBysetPersonId($setPersonId = null, $comparison = null)
     {
-        if (is_array($setpersonId)) {
+        if (is_array($setPersonId)) {
             $useMinMax = false;
-            if (isset($setpersonId['min'])) {
-                $this->addUsingAlias(EventPeer::SETPERSON_ID, $setpersonId['min'], Criteria::GREATER_EQUAL);
+            if (isset($setPersonId['min'])) {
+                $this->addUsingAlias(EventPeer::SETPERSON_ID, $setPersonId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($setpersonId['max'])) {
-                $this->addUsingAlias(EventPeer::SETPERSON_ID, $setpersonId['max'], Criteria::LESS_EQUAL);
+            if (isset($setPersonId['max'])) {
+                $this->addUsingAlias(EventPeer::SETPERSON_ID, $setPersonId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -938,7 +930,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::SETPERSON_ID, $setpersonId, $comparison);
+        return $this->addUsingAlias(EventPeer::SETPERSON_ID, $setPersonId, $comparison);
     }
 
     /**
@@ -946,12 +938,12 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByExecdate('2011-03-14'); // WHERE execDate = '2011-03-14'
-     * $query->filterByExecdate('now'); // WHERE execDate = '2011-03-14'
-     * $query->filterByExecdate(array('max' => 'yesterday')); // WHERE execDate > '2011-03-13'
+     * $query->filterByexecDate('2011-03-14'); // WHERE execDate = '2011-03-14'
+     * $query->filterByexecDate('now'); // WHERE execDate = '2011-03-14'
+     * $query->filterByexecDate(array('max' => 'yesterday')); // WHERE execDate > '2011-03-13'
      * </code>
      *
-     * @param     mixed $execdate The value to use as filter.
+     * @param     mixed $execDate The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -961,16 +953,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByExecdate($execdate = null, $comparison = null)
+    public function filterByexecDate($execDate = null, $comparison = null)
     {
-        if (is_array($execdate)) {
+        if (is_array($execDate)) {
             $useMinMax = false;
-            if (isset($execdate['min'])) {
-                $this->addUsingAlias(EventPeer::EXECDATE, $execdate['min'], Criteria::GREATER_EQUAL);
+            if (isset($execDate['min'])) {
+                $this->addUsingAlias(EventPeer::EXECDATE, $execDate['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($execdate['max'])) {
-                $this->addUsingAlias(EventPeer::EXECDATE, $execdate['max'], Criteria::LESS_EQUAL);
+            if (isset($execDate['max'])) {
+                $this->addUsingAlias(EventPeer::EXECDATE, $execDate['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -981,7 +973,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::EXECDATE, $execdate, $comparison);
+        return $this->addUsingAlias(EventPeer::EXECDATE, $execDate, $comparison);
     }
 
     /**
@@ -989,13 +981,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByExecpersonId(1234); // WHERE execPerson_id = 1234
-     * $query->filterByExecpersonId(array(12, 34)); // WHERE execPerson_id IN (12, 34)
-     * $query->filterByExecpersonId(array('min' => 12)); // WHERE execPerson_id >= 12
-     * $query->filterByExecpersonId(array('max' => 12)); // WHERE execPerson_id <= 12
+     * $query->filterByexecPersonId(1234); // WHERE execPerson_id = 1234
+     * $query->filterByexecPersonId(array(12, 34)); // WHERE execPerson_id IN (12, 34)
+     * $query->filterByexecPersonId(array('min' => 12)); // WHERE execPerson_id >= 12
+     * $query->filterByexecPersonId(array('max' => 12)); // WHERE execPerson_id <= 12
      * </code>
      *
-     * @param     mixed $execpersonId The value to use as filter.
+     * @param     mixed $execPersonId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -1003,16 +995,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByExecpersonId($execpersonId = null, $comparison = null)
+    public function filterByexecPersonId($execPersonId = null, $comparison = null)
     {
-        if (is_array($execpersonId)) {
+        if (is_array($execPersonId)) {
             $useMinMax = false;
-            if (isset($execpersonId['min'])) {
-                $this->addUsingAlias(EventPeer::EXECPERSON_ID, $execpersonId['min'], Criteria::GREATER_EQUAL);
+            if (isset($execPersonId['min'])) {
+                $this->addUsingAlias(EventPeer::EXECPERSON_ID, $execPersonId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($execpersonId['max'])) {
-                $this->addUsingAlias(EventPeer::EXECPERSON_ID, $execpersonId['max'], Criteria::LESS_EQUAL);
+            if (isset($execPersonId['max'])) {
+                $this->addUsingAlias(EventPeer::EXECPERSON_ID, $execPersonId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -1023,7 +1015,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::EXECPERSON_ID, $execpersonId, $comparison);
+        return $this->addUsingAlias(EventPeer::EXECPERSON_ID, $execPersonId, $comparison);
     }
 
     /**
@@ -1031,11 +1023,11 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByIsprimary(true); // WHERE isPrimary = true
-     * $query->filterByIsprimary('yes'); // WHERE isPrimary = true
+     * $query->filterByisPrimary(true); // WHERE isPrimary = true
+     * $query->filterByisPrimary('yes'); // WHERE isPrimary = true
      * </code>
      *
-     * @param     boolean|string $isprimary The value to use as filter.
+     * @param     boolean|string $isPrimary The value to use as filter.
      *              Non-boolean arguments are converted using the following rules:
      *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
@@ -1044,13 +1036,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByIsprimary($isprimary = null, $comparison = null)
+    public function filterByisPrimary($isPrimary = null, $comparison = null)
     {
-        if (is_string($isprimary)) {
-            $isprimary = in_array(strtolower($isprimary), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        if (is_string($isPrimary)) {
+            $isPrimary = in_array(strtolower($isPrimary), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
-        return $this->addUsingAlias(EventPeer::ISPRIMARY, $isprimary, $comparison);
+        return $this->addUsingAlias(EventPeer::ISPRIMARY, $isPrimary, $comparison);
     }
 
     /**
@@ -1058,8 +1050,8 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByOrder(true); // WHERE order = true
-     * $query->filterByOrder('yes'); // WHERE order = true
+     * $query->filterByorder(true); // WHERE order = true
+     * $query->filterByorder('yes'); // WHERE order = true
      * </code>
      *
      * @param     boolean|string $order The value to use as filter.
@@ -1071,7 +1063,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByOrder($order = null, $comparison = null)
+    public function filterByorder($order = null, $comparison = null)
     {
         if (is_string($order)) {
             $order = in_array(strtolower($order), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
@@ -1085,10 +1077,10 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByResultId(1234); // WHERE result_id = 1234
-     * $query->filterByResultId(array(12, 34)); // WHERE result_id IN (12, 34)
-     * $query->filterByResultId(array('min' => 12)); // WHERE result_id >= 12
-     * $query->filterByResultId(array('max' => 12)); // WHERE result_id <= 12
+     * $query->filterByresultId(1234); // WHERE result_id = 1234
+     * $query->filterByresultId(array(12, 34)); // WHERE result_id IN (12, 34)
+     * $query->filterByresultId(array('min' => 12)); // WHERE result_id >= 12
+     * $query->filterByresultId(array('max' => 12)); // WHERE result_id <= 12
      * </code>
      *
      * @param     mixed $resultId The value to use as filter.
@@ -1099,7 +1091,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByResultId($resultId = null, $comparison = null)
+    public function filterByresultId($resultId = null, $comparison = null)
     {
         if (is_array($resultId)) {
             $useMinMax = false;
@@ -1127,12 +1119,12 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByNexteventdate('2011-03-14'); // WHERE nextEventDate = '2011-03-14'
-     * $query->filterByNexteventdate('now'); // WHERE nextEventDate = '2011-03-14'
-     * $query->filterByNexteventdate(array('max' => 'yesterday')); // WHERE nextEventDate > '2011-03-13'
+     * $query->filterBynextEventDate('2011-03-14'); // WHERE nextEventDate = '2011-03-14'
+     * $query->filterBynextEventDate('now'); // WHERE nextEventDate = '2011-03-14'
+     * $query->filterBynextEventDate(array('max' => 'yesterday')); // WHERE nextEventDate > '2011-03-13'
      * </code>
      *
-     * @param     mixed $nexteventdate The value to use as filter.
+     * @param     mixed $nextEventDate The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -1142,16 +1134,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByNexteventdate($nexteventdate = null, $comparison = null)
+    public function filterBynextEventDate($nextEventDate = null, $comparison = null)
     {
-        if (is_array($nexteventdate)) {
+        if (is_array($nextEventDate)) {
             $useMinMax = false;
-            if (isset($nexteventdate['min'])) {
-                $this->addUsingAlias(EventPeer::NEXTEVENTDATE, $nexteventdate['min'], Criteria::GREATER_EQUAL);
+            if (isset($nextEventDate['min'])) {
+                $this->addUsingAlias(EventPeer::NEXTEVENTDATE, $nextEventDate['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($nexteventdate['max'])) {
-                $this->addUsingAlias(EventPeer::NEXTEVENTDATE, $nexteventdate['max'], Criteria::LESS_EQUAL);
+            if (isset($nextEventDate['max'])) {
+                $this->addUsingAlias(EventPeer::NEXTEVENTDATE, $nextEventDate['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -1162,7 +1154,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::NEXTEVENTDATE, $nexteventdate, $comparison);
+        return $this->addUsingAlias(EventPeer::NEXTEVENTDATE, $nextEventDate, $comparison);
     }
 
     /**
@@ -1170,13 +1162,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByPaystatus(1234); // WHERE payStatus = 1234
-     * $query->filterByPaystatus(array(12, 34)); // WHERE payStatus IN (12, 34)
-     * $query->filterByPaystatus(array('min' => 12)); // WHERE payStatus >= 12
-     * $query->filterByPaystatus(array('max' => 12)); // WHERE payStatus <= 12
+     * $query->filterBypayStatus(1234); // WHERE payStatus = 1234
+     * $query->filterBypayStatus(array(12, 34)); // WHERE payStatus IN (12, 34)
+     * $query->filterBypayStatus(array('min' => 12)); // WHERE payStatus >= 12
+     * $query->filterBypayStatus(array('max' => 12)); // WHERE payStatus <= 12
      * </code>
      *
-     * @param     mixed $paystatus The value to use as filter.
+     * @param     mixed $payStatus The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -1184,16 +1176,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByPaystatus($paystatus = null, $comparison = null)
+    public function filterBypayStatus($payStatus = null, $comparison = null)
     {
-        if (is_array($paystatus)) {
+        if (is_array($payStatus)) {
             $useMinMax = false;
-            if (isset($paystatus['min'])) {
-                $this->addUsingAlias(EventPeer::PAYSTATUS, $paystatus['min'], Criteria::GREATER_EQUAL);
+            if (isset($payStatus['min'])) {
+                $this->addUsingAlias(EventPeer::PAYSTATUS, $payStatus['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($paystatus['max'])) {
-                $this->addUsingAlias(EventPeer::PAYSTATUS, $paystatus['max'], Criteria::LESS_EQUAL);
+            if (isset($payStatus['max'])) {
+                $this->addUsingAlias(EventPeer::PAYSTATUS, $payStatus['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -1204,7 +1196,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::PAYSTATUS, $paystatus, $comparison);
+        return $this->addUsingAlias(EventPeer::PAYSTATUS, $payStatus, $comparison);
     }
 
     /**
@@ -1212,13 +1204,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByTypeassetId(1234); // WHERE typeAsset_id = 1234
-     * $query->filterByTypeassetId(array(12, 34)); // WHERE typeAsset_id IN (12, 34)
-     * $query->filterByTypeassetId(array('min' => 12)); // WHERE typeAsset_id >= 12
-     * $query->filterByTypeassetId(array('max' => 12)); // WHERE typeAsset_id <= 12
+     * $query->filterBytypeAssetId(1234); // WHERE typeAsset_id = 1234
+     * $query->filterBytypeAssetId(array(12, 34)); // WHERE typeAsset_id IN (12, 34)
+     * $query->filterBytypeAssetId(array('min' => 12)); // WHERE typeAsset_id >= 12
+     * $query->filterBytypeAssetId(array('max' => 12)); // WHERE typeAsset_id <= 12
      * </code>
      *
-     * @param     mixed $typeassetId The value to use as filter.
+     * @param     mixed $typeAssetId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -1226,16 +1218,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByTypeassetId($typeassetId = null, $comparison = null)
+    public function filterBytypeAssetId($typeAssetId = null, $comparison = null)
     {
-        if (is_array($typeassetId)) {
+        if (is_array($typeAssetId)) {
             $useMinMax = false;
-            if (isset($typeassetId['min'])) {
-                $this->addUsingAlias(EventPeer::TYPEASSET_ID, $typeassetId['min'], Criteria::GREATER_EQUAL);
+            if (isset($typeAssetId['min'])) {
+                $this->addUsingAlias(EventPeer::TYPEASSET_ID, $typeAssetId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($typeassetId['max'])) {
-                $this->addUsingAlias(EventPeer::TYPEASSET_ID, $typeassetId['max'], Criteria::LESS_EQUAL);
+            if (isset($typeAssetId['max'])) {
+                $this->addUsingAlias(EventPeer::TYPEASSET_ID, $typeAssetId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -1246,7 +1238,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::TYPEASSET_ID, $typeassetId, $comparison);
+        return $this->addUsingAlias(EventPeer::TYPEASSET_ID, $typeAssetId, $comparison);
     }
 
     /**
@@ -1254,8 +1246,8 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByNote('fooValue');   // WHERE note = 'fooValue'
-     * $query->filterByNote('%fooValue%'); // WHERE note LIKE '%fooValue%'
+     * $query->filterBynote('fooValue');   // WHERE note = 'fooValue'
+     * $query->filterBynote('%fooValue%'); // WHERE note LIKE '%fooValue%'
      * </code>
      *
      * @param     string $note The value to use as filter.
@@ -1264,7 +1256,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByNote($note = null, $comparison = null)
+    public function filterBynote($note = null, $comparison = null)
     {
         if (null === $comparison) {
             if (is_array($note)) {
@@ -1283,10 +1275,10 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByCuratorId(1234); // WHERE curator_id = 1234
-     * $query->filterByCuratorId(array(12, 34)); // WHERE curator_id IN (12, 34)
-     * $query->filterByCuratorId(array('min' => 12)); // WHERE curator_id >= 12
-     * $query->filterByCuratorId(array('max' => 12)); // WHERE curator_id <= 12
+     * $query->filterBycuratorId(1234); // WHERE curator_id = 1234
+     * $query->filterBycuratorId(array(12, 34)); // WHERE curator_id IN (12, 34)
+     * $query->filterBycuratorId(array('min' => 12)); // WHERE curator_id >= 12
+     * $query->filterBycuratorId(array('max' => 12)); // WHERE curator_id <= 12
      * </code>
      *
      * @param     mixed $curatorId The value to use as filter.
@@ -1297,7 +1289,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByCuratorId($curatorId = null, $comparison = null)
+    public function filterBycuratorId($curatorId = null, $comparison = null)
     {
         if (is_array($curatorId)) {
             $useMinMax = false;
@@ -1325,10 +1317,10 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByAssistantId(1234); // WHERE assistant_id = 1234
-     * $query->filterByAssistantId(array(12, 34)); // WHERE assistant_id IN (12, 34)
-     * $query->filterByAssistantId(array('min' => 12)); // WHERE assistant_id >= 12
-     * $query->filterByAssistantId(array('max' => 12)); // WHERE assistant_id <= 12
+     * $query->filterByassistantId(1234); // WHERE assistant_id = 1234
+     * $query->filterByassistantId(array(12, 34)); // WHERE assistant_id IN (12, 34)
+     * $query->filterByassistantId(array('min' => 12)); // WHERE assistant_id >= 12
+     * $query->filterByassistantId(array('max' => 12)); // WHERE assistant_id <= 12
      * </code>
      *
      * @param     mixed $assistantId The value to use as filter.
@@ -1339,7 +1331,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByAssistantId($assistantId = null, $comparison = null)
+    public function filterByassistantId($assistantId = null, $comparison = null)
     {
         if (is_array($assistantId)) {
             $useMinMax = false;
@@ -1367,13 +1359,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByPregnancyweek(1234); // WHERE pregnancyWeek = 1234
-     * $query->filterByPregnancyweek(array(12, 34)); // WHERE pregnancyWeek IN (12, 34)
-     * $query->filterByPregnancyweek(array('min' => 12)); // WHERE pregnancyWeek >= 12
-     * $query->filterByPregnancyweek(array('max' => 12)); // WHERE pregnancyWeek <= 12
+     * $query->filterBypregnancyWeek(1234); // WHERE pregnancyWeek = 1234
+     * $query->filterBypregnancyWeek(array(12, 34)); // WHERE pregnancyWeek IN (12, 34)
+     * $query->filterBypregnancyWeek(array('min' => 12)); // WHERE pregnancyWeek >= 12
+     * $query->filterBypregnancyWeek(array('max' => 12)); // WHERE pregnancyWeek <= 12
      * </code>
      *
-     * @param     mixed $pregnancyweek The value to use as filter.
+     * @param     mixed $pregnancyWeek The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -1381,16 +1373,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByPregnancyweek($pregnancyweek = null, $comparison = null)
+    public function filterBypregnancyWeek($pregnancyWeek = null, $comparison = null)
     {
-        if (is_array($pregnancyweek)) {
+        if (is_array($pregnancyWeek)) {
             $useMinMax = false;
-            if (isset($pregnancyweek['min'])) {
-                $this->addUsingAlias(EventPeer::PREGNANCYWEEK, $pregnancyweek['min'], Criteria::GREATER_EQUAL);
+            if (isset($pregnancyWeek['min'])) {
+                $this->addUsingAlias(EventPeer::PREGNANCYWEEK, $pregnancyWeek['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($pregnancyweek['max'])) {
-                $this->addUsingAlias(EventPeer::PREGNANCYWEEK, $pregnancyweek['max'], Criteria::LESS_EQUAL);
+            if (isset($pregnancyWeek['max'])) {
+                $this->addUsingAlias(EventPeer::PREGNANCYWEEK, $pregnancyWeek['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -1401,7 +1393,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::PREGNANCYWEEK, $pregnancyweek, $comparison);
+        return $this->addUsingAlias(EventPeer::PREGNANCYWEEK, $pregnancyWeek, $comparison);
     }
 
     /**
@@ -1409,10 +1401,10 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByMesId(1234); // WHERE MES_id = 1234
-     * $query->filterByMesId(array(12, 34)); // WHERE MES_id IN (12, 34)
-     * $query->filterByMesId(array('min' => 12)); // WHERE MES_id >= 12
-     * $query->filterByMesId(array('max' => 12)); // WHERE MES_id <= 12
+     * $query->filterBymesId(1234); // WHERE MES_id = 1234
+     * $query->filterBymesId(array(12, 34)); // WHERE MES_id IN (12, 34)
+     * $query->filterBymesId(array('min' => 12)); // WHERE MES_id >= 12
+     * $query->filterBymesId(array('max' => 12)); // WHERE MES_id <= 12
      * </code>
      *
      * @param     mixed $mesId The value to use as filter.
@@ -1423,7 +1415,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByMesId($mesId = null, $comparison = null)
+    public function filterBymesId($mesId = null, $comparison = null)
     {
         if (is_array($mesId)) {
             $useMinMax = false;
@@ -1451,15 +1443,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByMesspecificationId(1234); // WHERE mesSpecification_id = 1234
-     * $query->filterByMesspecificationId(array(12, 34)); // WHERE mesSpecification_id IN (12, 34)
-     * $query->filterByMesspecificationId(array('min' => 12)); // WHERE mesSpecification_id >= 12
-     * $query->filterByMesspecificationId(array('max' => 12)); // WHERE mesSpecification_id <= 12
+     * $query->filterBymesSpecificationId(1234); // WHERE mesSpecification_id = 1234
+     * $query->filterBymesSpecificationId(array(12, 34)); // WHERE mesSpecification_id IN (12, 34)
+     * $query->filterBymesSpecificationId(array('min' => 12)); // WHERE mesSpecification_id >= 12
+     * $query->filterBymesSpecificationId(array('max' => 12)); // WHERE mesSpecification_id <= 12
      * </code>
      *
-     * @see       filterByRbmesspecification()
-     *
-     * @param     mixed $messpecificationId The value to use as filter.
+     * @param     mixed $mesSpecificationId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -1467,16 +1457,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByMesspecificationId($messpecificationId = null, $comparison = null)
+    public function filterBymesSpecificationId($mesSpecificationId = null, $comparison = null)
     {
-        if (is_array($messpecificationId)) {
+        if (is_array($mesSpecificationId)) {
             $useMinMax = false;
-            if (isset($messpecificationId['min'])) {
-                $this->addUsingAlias(EventPeer::MESSPECIFICATION_ID, $messpecificationId['min'], Criteria::GREATER_EQUAL);
+            if (isset($mesSpecificationId['min'])) {
+                $this->addUsingAlias(EventPeer::MESSPECIFICATION_ID, $mesSpecificationId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($messpecificationId['max'])) {
-                $this->addUsingAlias(EventPeer::MESSPECIFICATION_ID, $messpecificationId['max'], Criteria::LESS_EQUAL);
+            if (isset($mesSpecificationId['max'])) {
+                $this->addUsingAlias(EventPeer::MESSPECIFICATION_ID, $mesSpecificationId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -1487,7 +1477,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::MESSPECIFICATION_ID, $messpecificationId, $comparison);
+        return $this->addUsingAlias(EventPeer::MESSPECIFICATION_ID, $mesSpecificationId, $comparison);
     }
 
     /**
@@ -1495,15 +1485,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByRbacheresultId(1234); // WHERE rbAcheResult_id = 1234
-     * $query->filterByRbacheresultId(array(12, 34)); // WHERE rbAcheResult_id IN (12, 34)
-     * $query->filterByRbacheresultId(array('min' => 12)); // WHERE rbAcheResult_id >= 12
-     * $query->filterByRbacheresultId(array('max' => 12)); // WHERE rbAcheResult_id <= 12
+     * $query->filterByrbAcheResultId(1234); // WHERE rbAcheResult_id = 1234
+     * $query->filterByrbAcheResultId(array(12, 34)); // WHERE rbAcheResult_id IN (12, 34)
+     * $query->filterByrbAcheResultId(array('min' => 12)); // WHERE rbAcheResult_id >= 12
+     * $query->filterByrbAcheResultId(array('max' => 12)); // WHERE rbAcheResult_id <= 12
      * </code>
      *
-     * @see       filterByRbacheresult()
-     *
-     * @param     mixed $rbacheresultId The value to use as filter.
+     * @param     mixed $rbAcheResultId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -1511,16 +1499,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByRbacheresultId($rbacheresultId = null, $comparison = null)
+    public function filterByrbAcheResultId($rbAcheResultId = null, $comparison = null)
     {
-        if (is_array($rbacheresultId)) {
+        if (is_array($rbAcheResultId)) {
             $useMinMax = false;
-            if (isset($rbacheresultId['min'])) {
-                $this->addUsingAlias(EventPeer::RBACHERESULT_ID, $rbacheresultId['min'], Criteria::GREATER_EQUAL);
+            if (isset($rbAcheResultId['min'])) {
+                $this->addUsingAlias(EventPeer::RBACHERESULT_ID, $rbAcheResultId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($rbacheresultId['max'])) {
-                $this->addUsingAlias(EventPeer::RBACHERESULT_ID, $rbacheresultId['max'], Criteria::LESS_EQUAL);
+            if (isset($rbAcheResultId['max'])) {
+                $this->addUsingAlias(EventPeer::RBACHERESULT_ID, $rbAcheResultId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -1531,7 +1519,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::RBACHERESULT_ID, $rbacheresultId, $comparison);
+        return $this->addUsingAlias(EventPeer::RBACHERESULT_ID, $rbAcheResultId, $comparison);
     }
 
     /**
@@ -1539,10 +1527,10 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByVersion(1234); // WHERE version = 1234
-     * $query->filterByVersion(array(12, 34)); // WHERE version IN (12, 34)
-     * $query->filterByVersion(array('min' => 12)); // WHERE version >= 12
-     * $query->filterByVersion(array('max' => 12)); // WHERE version <= 12
+     * $query->filterByversion(1234); // WHERE version = 1234
+     * $query->filterByversion(array(12, 34)); // WHERE version IN (12, 34)
+     * $query->filterByversion(array('min' => 12)); // WHERE version >= 12
+     * $query->filterByversion(array('max' => 12)); // WHERE version <= 12
      * </code>
      *
      * @param     mixed $version The value to use as filter.
@@ -1553,7 +1541,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByVersion($version = null, $comparison = null)
+    public function filterByversion($version = null, $comparison = null)
     {
         if (is_array($version)) {
             $useMinMax = false;
@@ -1581,8 +1569,8 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByPrivilege(true); // WHERE privilege = true
-     * $query->filterByPrivilege('yes'); // WHERE privilege = true
+     * $query->filterByprivilege(true); // WHERE privilege = true
+     * $query->filterByprivilege('yes'); // WHERE privilege = true
      * </code>
      *
      * @param     boolean|string $privilege The value to use as filter.
@@ -1594,7 +1582,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByPrivilege($privilege = null, $comparison = null)
+    public function filterByprivilege($privilege = null, $comparison = null)
     {
         if (is_string($privilege)) {
             $privilege = in_array(strtolower($privilege), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
@@ -1608,8 +1596,8 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByUrgent(true); // WHERE urgent = true
-     * $query->filterByUrgent('yes'); // WHERE urgent = true
+     * $query->filterByurgent(true); // WHERE urgent = true
+     * $query->filterByurgent('yes'); // WHERE urgent = true
      * </code>
      *
      * @param     boolean|string $urgent The value to use as filter.
@@ -1621,7 +1609,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByUrgent($urgent = null, $comparison = null)
+    public function filterByurgent($urgent = null, $comparison = null)
     {
         if (is_string($urgent)) {
             $urgent = in_array(strtolower($urgent), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
@@ -1635,13 +1623,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByOrgstructureId(1234); // WHERE orgStructure_id = 1234
-     * $query->filterByOrgstructureId(array(12, 34)); // WHERE orgStructure_id IN (12, 34)
-     * $query->filterByOrgstructureId(array('min' => 12)); // WHERE orgStructure_id >= 12
-     * $query->filterByOrgstructureId(array('max' => 12)); // WHERE orgStructure_id <= 12
+     * $query->filterByorgStructureId(1234); // WHERE orgStructure_id = 1234
+     * $query->filterByorgStructureId(array(12, 34)); // WHERE orgStructure_id IN (12, 34)
+     * $query->filterByorgStructureId(array('min' => 12)); // WHERE orgStructure_id >= 12
+     * $query->filterByorgStructureId(array('max' => 12)); // WHERE orgStructure_id <= 12
      * </code>
      *
-     * @param     mixed $orgstructureId The value to use as filter.
+     * @param     mixed $orgStructureId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -1649,16 +1637,16 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByOrgstructureId($orgstructureId = null, $comparison = null)
+    public function filterByorgStructureId($orgStructureId = null, $comparison = null)
     {
-        if (is_array($orgstructureId)) {
+        if (is_array($orgStructureId)) {
             $useMinMax = false;
-            if (isset($orgstructureId['min'])) {
-                $this->addUsingAlias(EventPeer::ORGSTRUCTURE_ID, $orgstructureId['min'], Criteria::GREATER_EQUAL);
+            if (isset($orgStructureId['min'])) {
+                $this->addUsingAlias(EventPeer::ORGSTRUCTURE_ID, $orgStructureId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($orgstructureId['max'])) {
-                $this->addUsingAlias(EventPeer::ORGSTRUCTURE_ID, $orgstructureId['max'], Criteria::LESS_EQUAL);
+            if (isset($orgStructureId['max'])) {
+                $this->addUsingAlias(EventPeer::ORGSTRUCTURE_ID, $orgStructureId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -1669,7 +1657,7 @@ abstract class BaseEventQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(EventPeer::ORGSTRUCTURE_ID, $orgstructureId, $comparison);
+        return $this->addUsingAlias(EventPeer::ORGSTRUCTURE_ID, $orgStructureId, $comparison);
     }
 
     /**
@@ -1677,10 +1665,10 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByUuidId(1234); // WHERE uuid_id = 1234
-     * $query->filterByUuidId(array(12, 34)); // WHERE uuid_id IN (12, 34)
-     * $query->filterByUuidId(array('min' => 12)); // WHERE uuid_id >= 12
-     * $query->filterByUuidId(array('max' => 12)); // WHERE uuid_id <= 12
+     * $query->filterByuuidId(1234); // WHERE uuid_id = 1234
+     * $query->filterByuuidId(array(12, 34)); // WHERE uuid_id IN (12, 34)
+     * $query->filterByuuidId(array('min' => 12)); // WHERE uuid_id >= 12
+     * $query->filterByuuidId(array('max' => 12)); // WHERE uuid_id <= 12
      * </code>
      *
      * @param     mixed $uuidId The value to use as filter.
@@ -1691,7 +1679,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByUuidId($uuidId = null, $comparison = null)
+    public function filterByuuidId($uuidId = null, $comparison = null)
     {
         if (is_array($uuidId)) {
             $useMinMax = false;
@@ -1719,8 +1707,8 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByLpuTransfer('fooValue');   // WHERE lpu_transfer = 'fooValue'
-     * $query->filterByLpuTransfer('%fooValue%'); // WHERE lpu_transfer LIKE '%fooValue%'
+     * $query->filterBylpuTransfer('fooValue');   // WHERE lpu_transfer = 'fooValue'
+     * $query->filterBylpuTransfer('%fooValue%'); // WHERE lpu_transfer LIKE '%fooValue%'
      * </code>
      *
      * @param     string $lpuTransfer The value to use as filter.
@@ -1729,7 +1717,7 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByLpuTransfer($lpuTransfer = null, $comparison = null)
+    public function filterBylpuTransfer($lpuTransfer = null, $comparison = null)
     {
         if (null === $comparison) {
             if (is_array($lpuTransfer)) {
@@ -1744,43 +1732,43 @@ abstract class BaseEventQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Rbacheresult object
+     * Filter the query by a related EventType object
      *
-     * @param   Rbacheresult|PropelObjectCollection $rbacheresult The related object(s) to use as filter
+     * @param   EventType|PropelObjectCollection $eventType The related object(s) to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return                 EventQuery The current query, for fluid interface
      * @throws PropelException - if the provided filter is invalid.
      */
-    public function filterByRbacheresult($rbacheresult, $comparison = null)
+    public function filterByEventType($eventType, $comparison = null)
     {
-        if ($rbacheresult instanceof Rbacheresult) {
+        if ($eventType instanceof EventType) {
             return $this
-                ->addUsingAlias(EventPeer::RBACHERESULT_ID, $rbacheresult->getId(), $comparison);
-        } elseif ($rbacheresult instanceof PropelObjectCollection) {
+                ->addUsingAlias(EventPeer::EVENTTYPE_ID, $eventType->getid(), $comparison);
+        } elseif ($eventType instanceof PropelObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(EventPeer::RBACHERESULT_ID, $rbacheresult->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(EventPeer::EVENTTYPE_ID, $eventType->toKeyValue('PrimaryKey', 'id'), $comparison);
         } else {
-            throw new PropelException('filterByRbacheresult() only accepts arguments of type Rbacheresult or PropelCollection');
+            throw new PropelException('filterByEventType() only accepts arguments of type EventType or PropelCollection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Rbacheresult relation
+     * Adds a JOIN clause to the query using the EventType relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function joinRbacheresult($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinEventType($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Rbacheresult');
+        $relationMap = $tableMap->getRelation('EventType');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -1795,14 +1783,14 @@ abstract class BaseEventQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Rbacheresult');
+            $this->addJoinObject($join, 'EventType');
         }
 
         return $this;
     }
 
     /**
-     * Use the Rbacheresult relation Rbacheresult object
+     * Use the EventType relation EventType object
      *
      * @see       useQuery()
      *
@@ -1810,163 +1798,13 @@ abstract class BaseEventQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return   \Webmis\Models\RbacheresultQuery A secondary query class using the current class as primary query
+     * @return   \Webmis\Models\EventTypeQuery A secondary query class using the current class as primary query
      */
-    public function useRbacheresultQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useEventTypeQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinRbacheresult($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Rbacheresult', '\Webmis\Models\RbacheresultQuery');
-    }
-
-    /**
-     * Filter the query by a related Rbmesspecification object
-     *
-     * @param   Rbmesspecification|PropelObjectCollection $rbmesspecification The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 EventQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByRbmesspecification($rbmesspecification, $comparison = null)
-    {
-        if ($rbmesspecification instanceof Rbmesspecification) {
-            return $this
-                ->addUsingAlias(EventPeer::MESSPECIFICATION_ID, $rbmesspecification->getId(), $comparison);
-        } elseif ($rbmesspecification instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(EventPeer::MESSPECIFICATION_ID, $rbmesspecification->toKeyValue('PrimaryKey', 'Id'), $comparison);
-        } else {
-            throw new PropelException('filterByRbmesspecification() only accepts arguments of type Rbmesspecification or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Rbmesspecification relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return EventQuery The current query, for fluid interface
-     */
-    public function joinRbmesspecification($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Rbmesspecification');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Rbmesspecification');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Rbmesspecification relation Rbmesspecification object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   \Webmis\Models\RbmesspecificationQuery A secondary query class using the current class as primary query
-     */
-    public function useRbmesspecificationQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        return $this
-            ->joinRbmesspecification($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Rbmesspecification', '\Webmis\Models\RbmesspecificationQuery');
-    }
-
-    /**
-     * Filter the query by a related Tissue object
-     *
-     * @param   Tissue|PropelObjectCollection $tissue  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 EventQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByTissue($tissue, $comparison = null)
-    {
-        if ($tissue instanceof Tissue) {
-            return $this
-                ->addUsingAlias(EventPeer::ID, $tissue->getEventId(), $comparison);
-        } elseif ($tissue instanceof PropelObjectCollection) {
-            return $this
-                ->useTissueQuery()
-                ->filterByPrimaryKeys($tissue->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByTissue() only accepts arguments of type Tissue or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Tissue relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return EventQuery The current query, for fluid interface
-     */
-    public function joinTissue($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Tissue');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Tissue');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Tissue relation Tissue object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   \Webmis\Models\TissueQuery A secondary query class using the current class as primary query
-     */
-    public function useTissueQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinTissue($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Tissue', '\Webmis\Models\TissueQuery');
+            ->joinEventType($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'EventType', '\Webmis\Models\EventTypeQuery');
     }
 
     /**
@@ -1979,7 +1817,7 @@ abstract class BaseEventQuery extends ModelCriteria
     public function prune($event = null)
     {
         if ($event) {
-            $this->addUsingAlias(EventPeer::ID, $event->getId(), Criteria::NOT_EQUAL);
+            $this->addUsingAlias(EventPeer::ID, $event->getid(), Criteria::NOT_EQUAL);
         }
 
         return $this;

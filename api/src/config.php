@@ -23,7 +23,7 @@ $app['jsonp'] = function ($app) {
 
 $app['propel.path'] = __DIR__.'../vendor/propel/propel1/runtime/lib/Propel.php';
 $app['propel.config_file'] = __DIR__.'/propel-conf.php';
-$app['propel.model_path'] = __DIR__.'/Webmis/build/classes';
+$app['propel.model_path'] = __DIR__.'/Webmis/Models';
 $app->register(new Propel\Silex\PropelServiceProvider());
 
 

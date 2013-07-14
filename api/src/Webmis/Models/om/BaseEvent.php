@@ -10,27 +10,21 @@ use \Exception;
 use \PDO;
 use \Persistent;
 use \Propel;
-use \PropelCollection;
 use \PropelDateTime;
 use \PropelException;
-use \PropelObjectCollection;
 use \PropelPDO;
 use Webmis\Models\Event;
 use Webmis\Models\EventPeer;
 use Webmis\Models\EventQuery;
-use Webmis\Models\Rbacheresult;
-use Webmis\Models\RbacheresultQuery;
-use Webmis\Models\Rbmesspecification;
-use Webmis\Models\RbmesspecificationQuery;
-use Webmis\Models\Tissue;
-use Webmis\Models\TissueQuery;
+use Webmis\Models\EventType;
+use Webmis\Models\EventTypeQuery;
 
 /**
  * Base class that represents a row from the 'Event' table.
  *
  *
  *
- * @package    propel.generator.Webmis.Models.om
+ * @package    propel.generator.Models.om
  */
 abstract class BaseEvent extends BaseObject implements Persistent
 {
@@ -270,20 +264,9 @@ abstract class BaseEvent extends BaseObject implements Persistent
     protected $lpu_transfer;
 
     /**
-     * @var        Rbacheresult
+     * @var        EventType
      */
-    protected $aRbacheresult;
-
-    /**
-     * @var        Rbmesspecification
-     */
-    protected $aRbmesspecification;
-
-    /**
-     * @var        PropelObjectCollection|Tissue[] Collection to store aggregation of Tissue objects.
-     */
-    protected $collTissues;
-    protected $collTissuesPartial;
+    protected $aEventType;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -304,12 +287,6 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $tissuesScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -342,7 +319,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getId()
+    public function getid()
     {
         return $this->id;
     }
@@ -356,7 +333,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getCreatedatetime($format = 'Y-m-d H:i:s')
+    public function getcreateDatetime($format = 'Y-m-d H:i:s')
     {
         if ($this->createdatetime === null) {
             return null;
@@ -392,7 +369,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getCreatepersonId()
+    public function getcreatePersonId()
     {
         return $this->createperson_id;
     }
@@ -406,7 +383,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getModifydatetime($format = 'Y-m-d H:i:s')
+    public function getmodifyDatetime($format = 'Y-m-d H:i:s')
     {
         if ($this->modifydatetime === null) {
             return null;
@@ -442,7 +419,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getModifypersonId()
+    public function getmodifyPersonId()
     {
         return $this->modifyperson_id;
     }
@@ -452,7 +429,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return boolean
      */
-    public function getDeleted()
+    public function getdeleted()
     {
         return $this->deleted;
     }
@@ -462,7 +439,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getExternalid()
+    public function getexternalid()
     {
         return $this->externalid;
     }
@@ -472,7 +449,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getEventtypeId()
+    public function geteventTypeId()
     {
         return $this->eventtype_id;
     }
@@ -482,7 +459,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getOrgId()
+    public function getorgId()
     {
         return $this->org_id;
     }
@@ -492,7 +469,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getClientId()
+    public function getclientId()
     {
         return $this->client_id;
     }
@@ -502,7 +479,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getContractId()
+    public function getcontractId()
     {
         return $this->contract_id;
     }
@@ -516,7 +493,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getPreveventdate($format = 'Y-m-d H:i:s')
+    public function getprevEventDate($format = 'Y-m-d H:i:s')
     {
         if ($this->preveventdate === null) {
             return null;
@@ -556,7 +533,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getSetdate($format = 'Y-m-d H:i:s')
+    public function getsetDate($format = 'Y-m-d H:i:s')
     {
         if ($this->setdate === null) {
             return null;
@@ -592,7 +569,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getSetpersonId()
+    public function getsetPersonId()
     {
         return $this->setperson_id;
     }
@@ -606,7 +583,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getExecdate($format = 'Y-m-d H:i:s')
+    public function getexecDate($format = 'Y-m-d H:i:s')
     {
         if ($this->execdate === null) {
             return null;
@@ -642,7 +619,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getExecpersonId()
+    public function getexecPersonId()
     {
         return $this->execperson_id;
     }
@@ -652,7 +629,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return boolean
      */
-    public function getIsprimary()
+    public function getisPrimary()
     {
         return $this->isprimary;
     }
@@ -662,7 +639,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return boolean
      */
-    public function getOrder()
+    public function getorder()
     {
         return $this->order;
     }
@@ -672,7 +649,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getResultId()
+    public function getresultId()
     {
         return $this->result_id;
     }
@@ -686,7 +663,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getNexteventdate($format = 'Y-m-d H:i:s')
+    public function getnextEventDate($format = 'Y-m-d H:i:s')
     {
         if ($this->nexteventdate === null) {
             return null;
@@ -722,7 +699,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getPaystatus()
+    public function getpayStatus()
     {
         return $this->paystatus;
     }
@@ -732,7 +709,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getTypeassetId()
+    public function gettypeAssetId()
     {
         return $this->typeasset_id;
     }
@@ -742,7 +719,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getNote()
+    public function getnote()
     {
         return $this->note;
     }
@@ -752,7 +729,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getCuratorId()
+    public function getcuratorId()
     {
         return $this->curator_id;
     }
@@ -762,7 +739,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getAssistantId()
+    public function getassistantId()
     {
         return $this->assistant_id;
     }
@@ -772,7 +749,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getPregnancyweek()
+    public function getpregnancyWeek()
     {
         return $this->pregnancyweek;
     }
@@ -782,7 +759,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getMesId()
+    public function getmesId()
     {
         return $this->mes_id;
     }
@@ -792,7 +769,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getMesspecificationId()
+    public function getmesSpecificationId()
     {
         return $this->messpecification_id;
     }
@@ -802,7 +779,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getRbacheresultId()
+    public function getrbAcheResultId()
     {
         return $this->rbacheresult_id;
     }
@@ -812,7 +789,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getVersion()
+    public function getversion()
     {
         return $this->version;
     }
@@ -822,7 +799,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return boolean
      */
-    public function getPrivilege()
+    public function getprivilege()
     {
         return $this->privilege;
     }
@@ -832,7 +809,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return boolean
      */
-    public function getUrgent()
+    public function geturgent()
     {
         return $this->urgent;
     }
@@ -842,7 +819,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getOrgstructureId()
+    public function getorgStructureId()
     {
         return $this->orgstructure_id;
     }
@@ -852,7 +829,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getUuidId()
+    public function getuuidId()
     {
         return $this->uuid_id;
     }
@@ -862,7 +839,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getLpuTransfer()
+    public function getlpuTransfer()
     {
         return $this->lpu_transfer;
     }
@@ -873,7 +850,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setId($v)
+    public function setid($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -886,7 +863,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setId()
+    } // setid()
 
     /**
      * Sets the value of [createdatetime] column to a normalized version of the date/time value specified.
@@ -895,7 +872,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *               Empty strings are treated as null.
      * @return Event The current object (for fluent API support)
      */
-    public function setCreatedatetime($v)
+    public function setcreateDatetime($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->createdatetime !== null || $dt !== null) {
@@ -909,7 +886,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setCreatedatetime()
+    } // setcreateDatetime()
 
     /**
      * Set the value of [createperson_id] column.
@@ -917,7 +894,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setCreatepersonId($v)
+    public function setcreatePersonId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -930,7 +907,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setCreatepersonId()
+    } // setcreatePersonId()
 
     /**
      * Sets the value of [modifydatetime] column to a normalized version of the date/time value specified.
@@ -939,7 +916,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *               Empty strings are treated as null.
      * @return Event The current object (for fluent API support)
      */
-    public function setModifydatetime($v)
+    public function setmodifyDatetime($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->modifydatetime !== null || $dt !== null) {
@@ -953,7 +930,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setModifydatetime()
+    } // setmodifyDatetime()
 
     /**
      * Set the value of [modifyperson_id] column.
@@ -961,7 +938,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setModifypersonId($v)
+    public function setmodifyPersonId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -974,7 +951,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setModifypersonId()
+    } // setmodifyPersonId()
 
     /**
      * Sets the value of the [deleted] column.
@@ -986,7 +963,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param boolean|integer|string $v The new value
      * @return Event The current object (for fluent API support)
      */
-    public function setDeleted($v)
+    public function setdeleted($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -1003,7 +980,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setDeleted()
+    } // setdeleted()
 
     /**
      * Set the value of [externalid] column.
@@ -1011,7 +988,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param string $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setExternalid($v)
+    public function setexternalid($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -1024,7 +1001,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setExternalid()
+    } // setexternalid()
 
     /**
      * Set the value of [eventtype_id] column.
@@ -1032,7 +1009,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setEventtypeId($v)
+    public function seteventTypeId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1043,9 +1020,13 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $this->modifiedColumns[] = EventPeer::EVENTTYPE_ID;
         }
 
+        if ($this->aEventType !== null && $this->aEventType->getid() !== $v) {
+            $this->aEventType = null;
+        }
+
 
         return $this;
-    } // setEventtypeId()
+    } // seteventTypeId()
 
     /**
      * Set the value of [org_id] column.
@@ -1053,7 +1034,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setOrgId($v)
+    public function setorgId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1066,7 +1047,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setOrgId()
+    } // setorgId()
 
     /**
      * Set the value of [client_id] column.
@@ -1074,7 +1055,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setClientId($v)
+    public function setclientId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1087,7 +1068,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setClientId()
+    } // setclientId()
 
     /**
      * Set the value of [contract_id] column.
@@ -1095,7 +1076,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setContractId($v)
+    public function setcontractId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1108,7 +1089,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setContractId()
+    } // setcontractId()
 
     /**
      * Sets the value of [preveventdate] column to a normalized version of the date/time value specified.
@@ -1117,7 +1098,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *               Empty strings are treated as null.
      * @return Event The current object (for fluent API support)
      */
-    public function setPreveventdate($v)
+    public function setprevEventDate($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->preveventdate !== null || $dt !== null) {
@@ -1131,7 +1112,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setPreveventdate()
+    } // setprevEventDate()
 
     /**
      * Sets the value of [setdate] column to a normalized version of the date/time value specified.
@@ -1140,7 +1121,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *               Empty strings are treated as null.
      * @return Event The current object (for fluent API support)
      */
-    public function setSetdate($v)
+    public function setsetDate($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->setdate !== null || $dt !== null) {
@@ -1154,7 +1135,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setSetdate()
+    } // setsetDate()
 
     /**
      * Set the value of [setperson_id] column.
@@ -1162,7 +1143,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setSetpersonId($v)
+    public function setsetPersonId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1175,7 +1156,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setSetpersonId()
+    } // setsetPersonId()
 
     /**
      * Sets the value of [execdate] column to a normalized version of the date/time value specified.
@@ -1184,7 +1165,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *               Empty strings are treated as null.
      * @return Event The current object (for fluent API support)
      */
-    public function setExecdate($v)
+    public function setexecDate($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->execdate !== null || $dt !== null) {
@@ -1198,7 +1179,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setExecdate()
+    } // setexecDate()
 
     /**
      * Set the value of [execperson_id] column.
@@ -1206,7 +1187,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setExecpersonId($v)
+    public function setexecPersonId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1219,7 +1200,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setExecpersonId()
+    } // setexecPersonId()
 
     /**
      * Sets the value of the [isprimary] column.
@@ -1231,7 +1212,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param boolean|integer|string $v The new value
      * @return Event The current object (for fluent API support)
      */
-    public function setIsprimary($v)
+    public function setisPrimary($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -1248,7 +1229,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setIsprimary()
+    } // setisPrimary()
 
     /**
      * Sets the value of the [order] column.
@@ -1260,7 +1241,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param boolean|integer|string $v The new value
      * @return Event The current object (for fluent API support)
      */
-    public function setOrder($v)
+    public function setorder($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -1277,7 +1258,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setOrder()
+    } // setorder()
 
     /**
      * Set the value of [result_id] column.
@@ -1285,7 +1266,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setResultId($v)
+    public function setresultId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1298,7 +1279,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setResultId()
+    } // setresultId()
 
     /**
      * Sets the value of [nexteventdate] column to a normalized version of the date/time value specified.
@@ -1307,7 +1288,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *               Empty strings are treated as null.
      * @return Event The current object (for fluent API support)
      */
-    public function setNexteventdate($v)
+    public function setnextEventDate($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->nexteventdate !== null || $dt !== null) {
@@ -1321,7 +1302,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setNexteventdate()
+    } // setnextEventDate()
 
     /**
      * Set the value of [paystatus] column.
@@ -1329,7 +1310,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setPaystatus($v)
+    public function setpayStatus($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1342,7 +1323,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setPaystatus()
+    } // setpayStatus()
 
     /**
      * Set the value of [typeasset_id] column.
@@ -1350,7 +1331,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setTypeassetId($v)
+    public function settypeAssetId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1363,7 +1344,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setTypeassetId()
+    } // settypeAssetId()
 
     /**
      * Set the value of [note] column.
@@ -1371,7 +1352,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param string $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setNote($v)
+    public function setnote($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -1384,7 +1365,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setNote()
+    } // setnote()
 
     /**
      * Set the value of [curator_id] column.
@@ -1392,7 +1373,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setCuratorId($v)
+    public function setcuratorId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1405,7 +1386,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setCuratorId()
+    } // setcuratorId()
 
     /**
      * Set the value of [assistant_id] column.
@@ -1413,7 +1394,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setAssistantId($v)
+    public function setassistantId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1426,7 +1407,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setAssistantId()
+    } // setassistantId()
 
     /**
      * Set the value of [pregnancyweek] column.
@@ -1434,7 +1415,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setPregnancyweek($v)
+    public function setpregnancyWeek($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1447,7 +1428,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setPregnancyweek()
+    } // setpregnancyWeek()
 
     /**
      * Set the value of [mes_id] column.
@@ -1455,7 +1436,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setMesId($v)
+    public function setmesId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1468,7 +1449,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setMesId()
+    } // setmesId()
 
     /**
      * Set the value of [messpecification_id] column.
@@ -1476,7 +1457,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setMesspecificationId($v)
+    public function setmesSpecificationId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1487,13 +1468,9 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $this->modifiedColumns[] = EventPeer::MESSPECIFICATION_ID;
         }
 
-        if ($this->aRbmesspecification !== null && $this->aRbmesspecification->getId() !== $v) {
-            $this->aRbmesspecification = null;
-        }
-
 
         return $this;
-    } // setMesspecificationId()
+    } // setmesSpecificationId()
 
     /**
      * Set the value of [rbacheresult_id] column.
@@ -1501,7 +1478,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setRbacheresultId($v)
+    public function setrbAcheResultId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1512,13 +1489,9 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $this->modifiedColumns[] = EventPeer::RBACHERESULT_ID;
         }
 
-        if ($this->aRbacheresult !== null && $this->aRbacheresult->getId() !== $v) {
-            $this->aRbacheresult = null;
-        }
-
 
         return $this;
-    } // setRbacheresultId()
+    } // setrbAcheResultId()
 
     /**
      * Set the value of [version] column.
@@ -1526,7 +1499,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setVersion($v)
+    public function setversion($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1539,7 +1512,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setVersion()
+    } // setversion()
 
     /**
      * Sets the value of the [privilege] column.
@@ -1551,7 +1524,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param boolean|integer|string $v The new value
      * @return Event The current object (for fluent API support)
      */
-    public function setPrivilege($v)
+    public function setprivilege($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -1568,7 +1541,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setPrivilege()
+    } // setprivilege()
 
     /**
      * Sets the value of the [urgent] column.
@@ -1580,7 +1553,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param boolean|integer|string $v The new value
      * @return Event The current object (for fluent API support)
      */
-    public function setUrgent($v)
+    public function seturgent($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -1597,7 +1570,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setUrgent()
+    } // seturgent()
 
     /**
      * Set the value of [orgstructure_id] column.
@@ -1605,7 +1578,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setOrgstructureId($v)
+    public function setorgStructureId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1618,7 +1591,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setOrgstructureId()
+    } // setorgStructureId()
 
     /**
      * Set the value of [uuid_id] column.
@@ -1626,7 +1599,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param int $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setUuidId($v)
+    public function setuuidId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1639,7 +1612,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setUuidId()
+    } // setuuidId()
 
     /**
      * Set the value of [lpu_transfer] column.
@@ -1647,7 +1620,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param string $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setLpuTransfer($v)
+    public function setlpuTransfer($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -1660,7 +1633,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setLpuTransfer()
+    } // setlpuTransfer()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -1784,11 +1757,8 @@ abstract class BaseEvent extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aRbmesspecification !== null && $this->messpecification_id !== $this->aRbmesspecification->getId()) {
-            $this->aRbmesspecification = null;
-        }
-        if ($this->aRbacheresult !== null && $this->rbacheresult_id !== $this->aRbacheresult->getId()) {
-            $this->aRbacheresult = null;
+        if ($this->aEventType !== null && $this->eventtype_id !== $this->aEventType->getid()) {
+            $this->aEventType = null;
         }
     } // ensureConsistency
 
@@ -1829,10 +1799,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aRbacheresult = null;
-            $this->aRbmesspecification = null;
-            $this->collTissues = null;
-
+            $this->aEventType = null;
         } // if (deep)
     }
 
@@ -1951,18 +1918,11 @@ abstract class BaseEvent extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aRbacheresult !== null) {
-                if ($this->aRbacheresult->isModified() || $this->aRbacheresult->isNew()) {
-                    $affectedRows += $this->aRbacheresult->save($con);
+            if ($this->aEventType !== null) {
+                if ($this->aEventType->isModified() || $this->aEventType->isNew()) {
+                    $affectedRows += $this->aEventType->save($con);
                 }
-                $this->setRbacheresult($this->aRbacheresult);
-            }
-
-            if ($this->aRbmesspecification !== null) {
-                if ($this->aRbmesspecification->isModified() || $this->aRbmesspecification->isNew()) {
-                    $affectedRows += $this->aRbmesspecification->save($con);
-                }
-                $this->setRbmesspecification($this->aRbmesspecification);
+                $this->setEventType($this->aEventType);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -1974,23 +1934,6 @@ abstract class BaseEvent extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
-            }
-
-            if ($this->tissuesScheduledForDeletion !== null) {
-                if (!$this->tissuesScheduledForDeletion->isEmpty()) {
-                    TissueQuery::create()
-                        ->filterByPrimaryKeys($this->tissuesScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->tissuesScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collTissues !== null) {
-                foreach ($this->collTissues as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             $this->alreadyInSave = false;
@@ -2253,7 +2196,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', $e);
         }
-        $this->setId($pk);
+        $this->setid($pk);
 
         $this->setNew(false);
     }
@@ -2339,15 +2282,9 @@ abstract class BaseEvent extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aRbacheresult !== null) {
-                if (!$this->aRbacheresult->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aRbacheresult->getValidationFailures());
-                }
-            }
-
-            if ($this->aRbmesspecification !== null) {
-                if (!$this->aRbmesspecification->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aRbmesspecification->getValidationFailures());
+            if ($this->aEventType !== null) {
+                if (!$this->aEventType->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aEventType->getValidationFailures());
                 }
             }
 
@@ -2356,14 +2293,6 @@ abstract class BaseEvent extends BaseObject implements Persistent
                 $failureMap = array_merge($failureMap, $retval);
             }
 
-
-                if ($this->collTissues !== null) {
-                    foreach ($this->collTissues as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
 
 
             $this->alreadyInValidation = false;
@@ -2401,109 +2330,109 @@ abstract class BaseEvent extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                return $this->getId();
+                return $this->getid();
                 break;
             case 1:
-                return $this->getCreatedatetime();
+                return $this->getcreateDatetime();
                 break;
             case 2:
-                return $this->getCreatepersonId();
+                return $this->getcreatePersonId();
                 break;
             case 3:
-                return $this->getModifydatetime();
+                return $this->getmodifyDatetime();
                 break;
             case 4:
-                return $this->getModifypersonId();
+                return $this->getmodifyPersonId();
                 break;
             case 5:
-                return $this->getDeleted();
+                return $this->getdeleted();
                 break;
             case 6:
-                return $this->getExternalid();
+                return $this->getexternalid();
                 break;
             case 7:
-                return $this->getEventtypeId();
+                return $this->geteventTypeId();
                 break;
             case 8:
-                return $this->getOrgId();
+                return $this->getorgId();
                 break;
             case 9:
-                return $this->getClientId();
+                return $this->getclientId();
                 break;
             case 10:
-                return $this->getContractId();
+                return $this->getcontractId();
                 break;
             case 11:
-                return $this->getPreveventdate();
+                return $this->getprevEventDate();
                 break;
             case 12:
-                return $this->getSetdate();
+                return $this->getsetDate();
                 break;
             case 13:
-                return $this->getSetpersonId();
+                return $this->getsetPersonId();
                 break;
             case 14:
-                return $this->getExecdate();
+                return $this->getexecDate();
                 break;
             case 15:
-                return $this->getExecpersonId();
+                return $this->getexecPersonId();
                 break;
             case 16:
-                return $this->getIsprimary();
+                return $this->getisPrimary();
                 break;
             case 17:
-                return $this->getOrder();
+                return $this->getorder();
                 break;
             case 18:
-                return $this->getResultId();
+                return $this->getresultId();
                 break;
             case 19:
-                return $this->getNexteventdate();
+                return $this->getnextEventDate();
                 break;
             case 20:
-                return $this->getPaystatus();
+                return $this->getpayStatus();
                 break;
             case 21:
-                return $this->getTypeassetId();
+                return $this->gettypeAssetId();
                 break;
             case 22:
-                return $this->getNote();
+                return $this->getnote();
                 break;
             case 23:
-                return $this->getCuratorId();
+                return $this->getcuratorId();
                 break;
             case 24:
-                return $this->getAssistantId();
+                return $this->getassistantId();
                 break;
             case 25:
-                return $this->getPregnancyweek();
+                return $this->getpregnancyWeek();
                 break;
             case 26:
-                return $this->getMesId();
+                return $this->getmesId();
                 break;
             case 27:
-                return $this->getMesspecificationId();
+                return $this->getmesSpecificationId();
                 break;
             case 28:
-                return $this->getRbacheresultId();
+                return $this->getrbAcheResultId();
                 break;
             case 29:
-                return $this->getVersion();
+                return $this->getversion();
                 break;
             case 30:
-                return $this->getPrivilege();
+                return $this->getprivilege();
                 break;
             case 31:
-                return $this->getUrgent();
+                return $this->geturgent();
                 break;
             case 32:
-                return $this->getOrgstructureId();
+                return $this->getorgStructureId();
                 break;
             case 33:
-                return $this->getUuidId();
+                return $this->getuuidId();
                 break;
             case 34:
-                return $this->getLpuTransfer();
+                return $this->getlpuTransfer();
                 break;
             default:
                 return null;
@@ -2534,51 +2463,45 @@ abstract class BaseEvent extends BaseObject implements Persistent
         $alreadyDumpedObjects['Event'][$this->getPrimaryKey()] = true;
         $keys = EventPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getId(),
-            $keys[1] => $this->getCreatedatetime(),
-            $keys[2] => $this->getCreatepersonId(),
-            $keys[3] => $this->getModifydatetime(),
-            $keys[4] => $this->getModifypersonId(),
-            $keys[5] => $this->getDeleted(),
-            $keys[6] => $this->getExternalid(),
-            $keys[7] => $this->getEventtypeId(),
-            $keys[8] => $this->getOrgId(),
-            $keys[9] => $this->getClientId(),
-            $keys[10] => $this->getContractId(),
-            $keys[11] => $this->getPreveventdate(),
-            $keys[12] => $this->getSetdate(),
-            $keys[13] => $this->getSetpersonId(),
-            $keys[14] => $this->getExecdate(),
-            $keys[15] => $this->getExecpersonId(),
-            $keys[16] => $this->getIsprimary(),
-            $keys[17] => $this->getOrder(),
-            $keys[18] => $this->getResultId(),
-            $keys[19] => $this->getNexteventdate(),
-            $keys[20] => $this->getPaystatus(),
-            $keys[21] => $this->getTypeassetId(),
-            $keys[22] => $this->getNote(),
-            $keys[23] => $this->getCuratorId(),
-            $keys[24] => $this->getAssistantId(),
-            $keys[25] => $this->getPregnancyweek(),
-            $keys[26] => $this->getMesId(),
-            $keys[27] => $this->getMesspecificationId(),
-            $keys[28] => $this->getRbacheresultId(),
-            $keys[29] => $this->getVersion(),
-            $keys[30] => $this->getPrivilege(),
-            $keys[31] => $this->getUrgent(),
-            $keys[32] => $this->getOrgstructureId(),
-            $keys[33] => $this->getUuidId(),
-            $keys[34] => $this->getLpuTransfer(),
+            $keys[0] => $this->getid(),
+            $keys[1] => $this->getcreateDatetime(),
+            $keys[2] => $this->getcreatePersonId(),
+            $keys[3] => $this->getmodifyDatetime(),
+            $keys[4] => $this->getmodifyPersonId(),
+            $keys[5] => $this->getdeleted(),
+            $keys[6] => $this->getexternalid(),
+            $keys[7] => $this->geteventTypeId(),
+            $keys[8] => $this->getorgId(),
+            $keys[9] => $this->getclientId(),
+            $keys[10] => $this->getcontractId(),
+            $keys[11] => $this->getprevEventDate(),
+            $keys[12] => $this->getsetDate(),
+            $keys[13] => $this->getsetPersonId(),
+            $keys[14] => $this->getexecDate(),
+            $keys[15] => $this->getexecPersonId(),
+            $keys[16] => $this->getisPrimary(),
+            $keys[17] => $this->getorder(),
+            $keys[18] => $this->getresultId(),
+            $keys[19] => $this->getnextEventDate(),
+            $keys[20] => $this->getpayStatus(),
+            $keys[21] => $this->gettypeAssetId(),
+            $keys[22] => $this->getnote(),
+            $keys[23] => $this->getcuratorId(),
+            $keys[24] => $this->getassistantId(),
+            $keys[25] => $this->getpregnancyWeek(),
+            $keys[26] => $this->getmesId(),
+            $keys[27] => $this->getmesSpecificationId(),
+            $keys[28] => $this->getrbAcheResultId(),
+            $keys[29] => $this->getversion(),
+            $keys[30] => $this->getprivilege(),
+            $keys[31] => $this->geturgent(),
+            $keys[32] => $this->getorgStructureId(),
+            $keys[33] => $this->getuuidId(),
+            $keys[34] => $this->getlpuTransfer(),
         );
         if ($includeForeignObjects) {
-            if (null !== $this->aRbacheresult) {
-                $result['Rbacheresult'] = $this->aRbacheresult->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aRbmesspecification) {
-                $result['Rbmesspecification'] = $this->aRbmesspecification->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->collTissues) {
-                $result['Tissues'] = $this->collTissues->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            if (null !== $this->aEventType) {
+                $result['EventType'] = $this->aEventType->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -2615,109 +2538,109 @@ abstract class BaseEvent extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                $this->setId($value);
+                $this->setid($value);
                 break;
             case 1:
-                $this->setCreatedatetime($value);
+                $this->setcreateDatetime($value);
                 break;
             case 2:
-                $this->setCreatepersonId($value);
+                $this->setcreatePersonId($value);
                 break;
             case 3:
-                $this->setModifydatetime($value);
+                $this->setmodifyDatetime($value);
                 break;
             case 4:
-                $this->setModifypersonId($value);
+                $this->setmodifyPersonId($value);
                 break;
             case 5:
-                $this->setDeleted($value);
+                $this->setdeleted($value);
                 break;
             case 6:
-                $this->setExternalid($value);
+                $this->setexternalid($value);
                 break;
             case 7:
-                $this->setEventtypeId($value);
+                $this->seteventTypeId($value);
                 break;
             case 8:
-                $this->setOrgId($value);
+                $this->setorgId($value);
                 break;
             case 9:
-                $this->setClientId($value);
+                $this->setclientId($value);
                 break;
             case 10:
-                $this->setContractId($value);
+                $this->setcontractId($value);
                 break;
             case 11:
-                $this->setPreveventdate($value);
+                $this->setprevEventDate($value);
                 break;
             case 12:
-                $this->setSetdate($value);
+                $this->setsetDate($value);
                 break;
             case 13:
-                $this->setSetpersonId($value);
+                $this->setsetPersonId($value);
                 break;
             case 14:
-                $this->setExecdate($value);
+                $this->setexecDate($value);
                 break;
             case 15:
-                $this->setExecpersonId($value);
+                $this->setexecPersonId($value);
                 break;
             case 16:
-                $this->setIsprimary($value);
+                $this->setisPrimary($value);
                 break;
             case 17:
-                $this->setOrder($value);
+                $this->setorder($value);
                 break;
             case 18:
-                $this->setResultId($value);
+                $this->setresultId($value);
                 break;
             case 19:
-                $this->setNexteventdate($value);
+                $this->setnextEventDate($value);
                 break;
             case 20:
-                $this->setPaystatus($value);
+                $this->setpayStatus($value);
                 break;
             case 21:
-                $this->setTypeassetId($value);
+                $this->settypeAssetId($value);
                 break;
             case 22:
-                $this->setNote($value);
+                $this->setnote($value);
                 break;
             case 23:
-                $this->setCuratorId($value);
+                $this->setcuratorId($value);
                 break;
             case 24:
-                $this->setAssistantId($value);
+                $this->setassistantId($value);
                 break;
             case 25:
-                $this->setPregnancyweek($value);
+                $this->setpregnancyWeek($value);
                 break;
             case 26:
-                $this->setMesId($value);
+                $this->setmesId($value);
                 break;
             case 27:
-                $this->setMesspecificationId($value);
+                $this->setmesSpecificationId($value);
                 break;
             case 28:
-                $this->setRbacheresultId($value);
+                $this->setrbAcheResultId($value);
                 break;
             case 29:
-                $this->setVersion($value);
+                $this->setversion($value);
                 break;
             case 30:
-                $this->setPrivilege($value);
+                $this->setprivilege($value);
                 break;
             case 31:
-                $this->setUrgent($value);
+                $this->seturgent($value);
                 break;
             case 32:
-                $this->setOrgstructureId($value);
+                $this->setorgStructureId($value);
                 break;
             case 33:
-                $this->setUuidId($value);
+                $this->setuuidId($value);
                 break;
             case 34:
-                $this->setLpuTransfer($value);
+                $this->setlpuTransfer($value);
                 break;
         } // switch()
     }
@@ -2743,41 +2666,41 @@ abstract class BaseEvent extends BaseObject implements Persistent
     {
         $keys = EventPeer::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setCreatedatetime($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setCreatepersonId($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setModifydatetime($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setModifypersonId($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setDeleted($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setExternalid($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setEventtypeId($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setOrgId($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setClientId($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setContractId($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setPreveventdate($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setSetdate($arr[$keys[12]]);
-        if (array_key_exists($keys[13], $arr)) $this->setSetpersonId($arr[$keys[13]]);
-        if (array_key_exists($keys[14], $arr)) $this->setExecdate($arr[$keys[14]]);
-        if (array_key_exists($keys[15], $arr)) $this->setExecpersonId($arr[$keys[15]]);
-        if (array_key_exists($keys[16], $arr)) $this->setIsprimary($arr[$keys[16]]);
-        if (array_key_exists($keys[17], $arr)) $this->setOrder($arr[$keys[17]]);
-        if (array_key_exists($keys[18], $arr)) $this->setResultId($arr[$keys[18]]);
-        if (array_key_exists($keys[19], $arr)) $this->setNexteventdate($arr[$keys[19]]);
-        if (array_key_exists($keys[20], $arr)) $this->setPaystatus($arr[$keys[20]]);
-        if (array_key_exists($keys[21], $arr)) $this->setTypeassetId($arr[$keys[21]]);
-        if (array_key_exists($keys[22], $arr)) $this->setNote($arr[$keys[22]]);
-        if (array_key_exists($keys[23], $arr)) $this->setCuratorId($arr[$keys[23]]);
-        if (array_key_exists($keys[24], $arr)) $this->setAssistantId($arr[$keys[24]]);
-        if (array_key_exists($keys[25], $arr)) $this->setPregnancyweek($arr[$keys[25]]);
-        if (array_key_exists($keys[26], $arr)) $this->setMesId($arr[$keys[26]]);
-        if (array_key_exists($keys[27], $arr)) $this->setMesspecificationId($arr[$keys[27]]);
-        if (array_key_exists($keys[28], $arr)) $this->setRbacheresultId($arr[$keys[28]]);
-        if (array_key_exists($keys[29], $arr)) $this->setVersion($arr[$keys[29]]);
-        if (array_key_exists($keys[30], $arr)) $this->setPrivilege($arr[$keys[30]]);
-        if (array_key_exists($keys[31], $arr)) $this->setUrgent($arr[$keys[31]]);
-        if (array_key_exists($keys[32], $arr)) $this->setOrgstructureId($arr[$keys[32]]);
-        if (array_key_exists($keys[33], $arr)) $this->setUuidId($arr[$keys[33]]);
-        if (array_key_exists($keys[34], $arr)) $this->setLpuTransfer($arr[$keys[34]]);
+        if (array_key_exists($keys[0], $arr)) $this->setid($arr[$keys[0]]);
+        if (array_key_exists($keys[1], $arr)) $this->setcreateDatetime($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setcreatePersonId($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setmodifyDatetime($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setmodifyPersonId($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setdeleted($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setexternalid($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->seteventTypeId($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setorgId($arr[$keys[8]]);
+        if (array_key_exists($keys[9], $arr)) $this->setclientId($arr[$keys[9]]);
+        if (array_key_exists($keys[10], $arr)) $this->setcontractId($arr[$keys[10]]);
+        if (array_key_exists($keys[11], $arr)) $this->setprevEventDate($arr[$keys[11]]);
+        if (array_key_exists($keys[12], $arr)) $this->setsetDate($arr[$keys[12]]);
+        if (array_key_exists($keys[13], $arr)) $this->setsetPersonId($arr[$keys[13]]);
+        if (array_key_exists($keys[14], $arr)) $this->setexecDate($arr[$keys[14]]);
+        if (array_key_exists($keys[15], $arr)) $this->setexecPersonId($arr[$keys[15]]);
+        if (array_key_exists($keys[16], $arr)) $this->setisPrimary($arr[$keys[16]]);
+        if (array_key_exists($keys[17], $arr)) $this->setorder($arr[$keys[17]]);
+        if (array_key_exists($keys[18], $arr)) $this->setresultId($arr[$keys[18]]);
+        if (array_key_exists($keys[19], $arr)) $this->setnextEventDate($arr[$keys[19]]);
+        if (array_key_exists($keys[20], $arr)) $this->setpayStatus($arr[$keys[20]]);
+        if (array_key_exists($keys[21], $arr)) $this->settypeAssetId($arr[$keys[21]]);
+        if (array_key_exists($keys[22], $arr)) $this->setnote($arr[$keys[22]]);
+        if (array_key_exists($keys[23], $arr)) $this->setcuratorId($arr[$keys[23]]);
+        if (array_key_exists($keys[24], $arr)) $this->setassistantId($arr[$keys[24]]);
+        if (array_key_exists($keys[25], $arr)) $this->setpregnancyWeek($arr[$keys[25]]);
+        if (array_key_exists($keys[26], $arr)) $this->setmesId($arr[$keys[26]]);
+        if (array_key_exists($keys[27], $arr)) $this->setmesSpecificationId($arr[$keys[27]]);
+        if (array_key_exists($keys[28], $arr)) $this->setrbAcheResultId($arr[$keys[28]]);
+        if (array_key_exists($keys[29], $arr)) $this->setversion($arr[$keys[29]]);
+        if (array_key_exists($keys[30], $arr)) $this->setprivilege($arr[$keys[30]]);
+        if (array_key_exists($keys[31], $arr)) $this->seturgent($arr[$keys[31]]);
+        if (array_key_exists($keys[32], $arr)) $this->setorgStructureId($arr[$keys[32]]);
+        if (array_key_exists($keys[33], $arr)) $this->setuuidId($arr[$keys[33]]);
+        if (array_key_exists($keys[34], $arr)) $this->setlpuTransfer($arr[$keys[34]]);
     }
 
     /**
@@ -2850,7 +2773,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getId();
+        return $this->getid();
     }
 
     /**
@@ -2861,7 +2784,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      */
     public function setPrimaryKey($key)
     {
-        $this->setId($key);
+        $this->setid($key);
     }
 
     /**
@@ -2871,7 +2794,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return null === $this->getId();
+        return null === $this->getid();
     }
 
     /**
@@ -2887,40 +2810,40 @@ abstract class BaseEvent extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setCreatedatetime($this->getCreatedatetime());
-        $copyObj->setCreatepersonId($this->getCreatepersonId());
-        $copyObj->setModifydatetime($this->getModifydatetime());
-        $copyObj->setModifypersonId($this->getModifypersonId());
-        $copyObj->setDeleted($this->getDeleted());
-        $copyObj->setExternalid($this->getExternalid());
-        $copyObj->setEventtypeId($this->getEventtypeId());
-        $copyObj->setOrgId($this->getOrgId());
-        $copyObj->setClientId($this->getClientId());
-        $copyObj->setContractId($this->getContractId());
-        $copyObj->setPreveventdate($this->getPreveventdate());
-        $copyObj->setSetdate($this->getSetdate());
-        $copyObj->setSetpersonId($this->getSetpersonId());
-        $copyObj->setExecdate($this->getExecdate());
-        $copyObj->setExecpersonId($this->getExecpersonId());
-        $copyObj->setIsprimary($this->getIsprimary());
-        $copyObj->setOrder($this->getOrder());
-        $copyObj->setResultId($this->getResultId());
-        $copyObj->setNexteventdate($this->getNexteventdate());
-        $copyObj->setPaystatus($this->getPaystatus());
-        $copyObj->setTypeassetId($this->getTypeassetId());
-        $copyObj->setNote($this->getNote());
-        $copyObj->setCuratorId($this->getCuratorId());
-        $copyObj->setAssistantId($this->getAssistantId());
-        $copyObj->setPregnancyweek($this->getPregnancyweek());
-        $copyObj->setMesId($this->getMesId());
-        $copyObj->setMesspecificationId($this->getMesspecificationId());
-        $copyObj->setRbacheresultId($this->getRbacheresultId());
-        $copyObj->setVersion($this->getVersion());
-        $copyObj->setPrivilege($this->getPrivilege());
-        $copyObj->setUrgent($this->getUrgent());
-        $copyObj->setOrgstructureId($this->getOrgstructureId());
-        $copyObj->setUuidId($this->getUuidId());
-        $copyObj->setLpuTransfer($this->getLpuTransfer());
+        $copyObj->setcreateDatetime($this->getcreateDatetime());
+        $copyObj->setcreatePersonId($this->getcreatePersonId());
+        $copyObj->setmodifyDatetime($this->getmodifyDatetime());
+        $copyObj->setmodifyPersonId($this->getmodifyPersonId());
+        $copyObj->setdeleted($this->getdeleted());
+        $copyObj->setexternalid($this->getexternalid());
+        $copyObj->seteventTypeId($this->geteventTypeId());
+        $copyObj->setorgId($this->getorgId());
+        $copyObj->setclientId($this->getclientId());
+        $copyObj->setcontractId($this->getcontractId());
+        $copyObj->setprevEventDate($this->getprevEventDate());
+        $copyObj->setsetDate($this->getsetDate());
+        $copyObj->setsetPersonId($this->getsetPersonId());
+        $copyObj->setexecDate($this->getexecDate());
+        $copyObj->setexecPersonId($this->getexecPersonId());
+        $copyObj->setisPrimary($this->getisPrimary());
+        $copyObj->setorder($this->getorder());
+        $copyObj->setresultId($this->getresultId());
+        $copyObj->setnextEventDate($this->getnextEventDate());
+        $copyObj->setpayStatus($this->getpayStatus());
+        $copyObj->settypeAssetId($this->gettypeAssetId());
+        $copyObj->setnote($this->getnote());
+        $copyObj->setcuratorId($this->getcuratorId());
+        $copyObj->setassistantId($this->getassistantId());
+        $copyObj->setpregnancyWeek($this->getpregnancyWeek());
+        $copyObj->setmesId($this->getmesId());
+        $copyObj->setmesSpecificationId($this->getmesSpecificationId());
+        $copyObj->setrbAcheResultId($this->getrbAcheResultId());
+        $copyObj->setversion($this->getversion());
+        $copyObj->setprivilege($this->getprivilege());
+        $copyObj->seturgent($this->geturgent());
+        $copyObj->setorgStructureId($this->getorgStructureId());
+        $copyObj->setuuidId($this->getuuidId());
+        $copyObj->setlpuTransfer($this->getlpuTransfer());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -2929,19 +2852,13 @@ abstract class BaseEvent extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
-            foreach ($this->getTissues() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addTissue($relObj->copy($deepCopy));
-                }
-            }
-
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
 
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setid(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -2986,24 +2903,24 @@ abstract class BaseEvent extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a Rbacheresult object.
+     * Declares an association between this object and a EventType object.
      *
-     * @param             Rbacheresult $v
+     * @param             EventType $v
      * @return Event The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setRbacheresult(Rbacheresult $v = null)
+    public function setEventType(EventType $v = null)
     {
         if ($v === null) {
-            $this->setRbacheresultId(NULL);
+            $this->seteventTypeId(NULL);
         } else {
-            $this->setRbacheresultId($v->getId());
+            $this->seteventTypeId($v->getid());
         }
 
-        $this->aRbacheresult = $v;
+        $this->aEventType = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Rbacheresult object, it will not be re-added.
+        // If this object has already been added to the EventType object, it will not be re-added.
         if ($v !== null) {
             $v->addEvent($this);
         }
@@ -3014,338 +2931,27 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
     /**
-     * Get the associated Rbacheresult object
+     * Get the associated EventType object
      *
      * @param PropelPDO $con Optional Connection object.
      * @param $doQuery Executes a query to get the object if required
-     * @return Rbacheresult The associated Rbacheresult object.
+     * @return EventType The associated EventType object.
      * @throws PropelException
      */
-    public function getRbacheresult(PropelPDO $con = null, $doQuery = true)
+    public function getEventType(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aRbacheresult === null && ($this->rbacheresult_id !== null) && $doQuery) {
-            $this->aRbacheresult = RbacheresultQuery::create()->findPk($this->rbacheresult_id, $con);
+        if ($this->aEventType === null && ($this->eventtype_id !== null) && $doQuery) {
+            $this->aEventType = EventTypeQuery::create()->findPk($this->eventtype_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aRbacheresult->addEvents($this);
+                $this->aEventType->addEvents($this);
              */
         }
 
-        return $this->aRbacheresult;
-    }
-
-    /**
-     * Declares an association between this object and a Rbmesspecification object.
-     *
-     * @param             Rbmesspecification $v
-     * @return Event The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setRbmesspecification(Rbmesspecification $v = null)
-    {
-        if ($v === null) {
-            $this->setMesspecificationId(NULL);
-        } else {
-            $this->setMesspecificationId($v->getId());
-        }
-
-        $this->aRbmesspecification = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Rbmesspecification object, it will not be re-added.
-        if ($v !== null) {
-            $v->addEvent($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Rbmesspecification object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Rbmesspecification The associated Rbmesspecification object.
-     * @throws PropelException
-     */
-    public function getRbmesspecification(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aRbmesspecification === null && ($this->messpecification_id !== null) && $doQuery) {
-            $this->aRbmesspecification = RbmesspecificationQuery::create()->findPk($this->messpecification_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aRbmesspecification->addEvents($this);
-             */
-        }
-
-        return $this->aRbmesspecification;
-    }
-
-
-    /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
-     *
-     * @param string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-        if ('Tissue' == $relationName) {
-            $this->initTissues();
-        }
-    }
-
-    /**
-     * Clears out the collTissues collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return Event The current object (for fluent API support)
-     * @see        addTissues()
-     */
-    public function clearTissues()
-    {
-        $this->collTissues = null; // important to set this to null since that means it is uninitialized
-        $this->collTissuesPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collTissues collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialTissues($v = true)
-    {
-        $this->collTissuesPartial = $v;
-    }
-
-    /**
-     * Initializes the collTissues collection.
-     *
-     * By default this just sets the collTissues collection to an empty array (like clearcollTissues());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initTissues($overrideExisting = true)
-    {
-        if (null !== $this->collTissues && !$overrideExisting) {
-            return;
-        }
-        $this->collTissues = new PropelObjectCollection();
-        $this->collTissues->setModel('Tissue');
-    }
-
-    /**
-     * Gets an array of Tissue objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this Event is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Tissue[] List of Tissue objects
-     * @throws PropelException
-     */
-    public function getTissues($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collTissuesPartial && !$this->isNew();
-        if (null === $this->collTissues || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collTissues) {
-                // return empty collection
-                $this->initTissues();
-            } else {
-                $collTissues = TissueQuery::create(null, $criteria)
-                    ->filterByEvent($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collTissuesPartial && count($collTissues)) {
-                      $this->initTissues(false);
-
-                      foreach($collTissues as $obj) {
-                        if (false == $this->collTissues->contains($obj)) {
-                          $this->collTissues->append($obj);
-                        }
-                      }
-
-                      $this->collTissuesPartial = true;
-                    }
-
-                    $collTissues->getInternalIterator()->rewind();
-                    return $collTissues;
-                }
-
-                if($partial && $this->collTissues) {
-                    foreach($this->collTissues as $obj) {
-                        if($obj->isNew()) {
-                            $collTissues[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collTissues = $collTissues;
-                $this->collTissuesPartial = false;
-            }
-        }
-
-        return $this->collTissues;
-    }
-
-    /**
-     * Sets a collection of Tissue objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $tissues A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return Event The current object (for fluent API support)
-     */
-    public function setTissues(PropelCollection $tissues, PropelPDO $con = null)
-    {
-        $tissuesToDelete = $this->getTissues(new Criteria(), $con)->diff($tissues);
-
-        $this->tissuesScheduledForDeletion = unserialize(serialize($tissuesToDelete));
-
-        foreach ($tissuesToDelete as $tissueRemoved) {
-            $tissueRemoved->setEvent(null);
-        }
-
-        $this->collTissues = null;
-        foreach ($tissues as $tissue) {
-            $this->addTissue($tissue);
-        }
-
-        $this->collTissues = $tissues;
-        $this->collTissuesPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Tissue objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Tissue objects.
-     * @throws PropelException
-     */
-    public function countTissues(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collTissuesPartial && !$this->isNew();
-        if (null === $this->collTissues || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collTissues) {
-                return 0;
-            }
-
-            if($partial && !$criteria) {
-                return count($this->getTissues());
-            }
-            $query = TissueQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByEvent($this)
-                ->count($con);
-        }
-
-        return count($this->collTissues);
-    }
-
-    /**
-     * Method called to associate a Tissue object to this object
-     * through the Tissue foreign key attribute.
-     *
-     * @param    Tissue $l Tissue
-     * @return Event The current object (for fluent API support)
-     */
-    public function addTissue(Tissue $l)
-    {
-        if ($this->collTissues === null) {
-            $this->initTissues();
-            $this->collTissuesPartial = true;
-        }
-        if (!in_array($l, $this->collTissues->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddTissue($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	Tissue $tissue The tissue object to add.
-     */
-    protected function doAddTissue($tissue)
-    {
-        $this->collTissues[]= $tissue;
-        $tissue->setEvent($this);
-    }
-
-    /**
-     * @param	Tissue $tissue The tissue object to remove.
-     * @return Event The current object (for fluent API support)
-     */
-    public function removeTissue($tissue)
-    {
-        if ($this->getTissues()->contains($tissue)) {
-            $this->collTissues->remove($this->collTissues->search($tissue));
-            if (null === $this->tissuesScheduledForDeletion) {
-                $this->tissuesScheduledForDeletion = clone $this->collTissues;
-                $this->tissuesScheduledForDeletion->clear();
-            }
-            $this->tissuesScheduledForDeletion[]= clone $tissue;
-            $tissue->setEvent(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Event is new, it will return
-     * an empty collection; or if this Event has previously
-     * been saved, it will retrieve related Tissues from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Event.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Tissue[] List of Tissue objects
-     */
-    public function getTissuesJoinRbtissuetype($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = TissueQuery::create(null, $criteria);
-        $query->joinWith('Rbtissuetype', $join_behavior);
-
-        return $this->getTissues($query, $con);
+        return $this->aEventType;
     }
 
     /**
@@ -3411,27 +3017,14 @@ abstract class BaseEvent extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->collTissues) {
-                foreach ($this->collTissues as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
-            if ($this->aRbacheresult instanceof Persistent) {
-              $this->aRbacheresult->clearAllReferences($deep);
-            }
-            if ($this->aRbmesspecification instanceof Persistent) {
-              $this->aRbmesspecification->clearAllReferences($deep);
+            if ($this->aEventType instanceof Persistent) {
+              $this->aEventType->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        if ($this->collTissues instanceof PropelCollection) {
-            $this->collTissues->clearIterator();
-        }
-        $this->collTissues = null;
-        $this->aRbacheresult = null;
-        $this->aRbmesspecification = null;
+        $this->aEventType = null;
     }
 
     /**

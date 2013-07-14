@@ -18,7 +18,7 @@ use Webmis\Models\map\MkbTableMap;
  *
  *
  *
- * @package propel.generator.Webmis.Models.om
+ * @package propel.generator.Models.om
  */
 abstract class BaseMkbPeer
 {
@@ -117,8 +117,8 @@ abstract class BaseMkbPeer
      * e.g. MkbPeer::$fieldNames[MkbPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Classid', 'Classname', 'Blockid', 'Blockname', 'Diagid', 'Diagname', 'Prim', 'Sex', 'Age', 'AgeBu', 'AgeBc', 'AgeEu', 'AgeEc', 'Characters', 'Duration', 'ServiceId', 'MkbsubclassId', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'classid', 'classname', 'blockid', 'blockname', 'diagid', 'diagname', 'prim', 'sex', 'age', 'ageBu', 'ageBc', 'ageEu', 'ageEc', 'characters', 'duration', 'serviceId', 'mkbsubclassId', ),
+        BasePeer::TYPE_PHPNAME => array ('id', 'classId', 'className', 'blockId', 'blockName', 'diagId', 'diagName', 'prim', 'sex', 'age', 'ageBu', 'ageBc', 'ageEu', 'ageEc', 'characters', 'duration', 'serviceId', 'MkbSubclassId', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'classId', 'className', 'blockId', 'blockName', 'diagId', 'diagName', 'prim', 'sex', 'age', 'ageBu', 'ageBc', 'ageEu', 'ageEc', 'characters', 'duration', 'serviceId', 'mkbSubclassId', ),
         BasePeer::TYPE_COLNAME => array (MkbPeer::ID, MkbPeer::CLASSID, MkbPeer::CLASSNAME, MkbPeer::BLOCKID, MkbPeer::BLOCKNAME, MkbPeer::DIAGID, MkbPeer::DIAGNAME, MkbPeer::PRIM, MkbPeer::SEX, MkbPeer::AGE, MkbPeer::AGE_BU, MkbPeer::AGE_BC, MkbPeer::AGE_EU, MkbPeer::AGE_EC, MkbPeer::CHARACTERS, MkbPeer::DURATION, MkbPeer::SERVICE_ID, MkbPeer::MKBSUBCLASS_ID, ),
         BasePeer::TYPE_RAW_COLNAME => array ('ID', 'CLASSID', 'CLASSNAME', 'BLOCKID', 'BLOCKNAME', 'DIAGID', 'DIAGNAME', 'PRIM', 'SEX', 'AGE', 'AGE_BU', 'AGE_BC', 'AGE_EU', 'AGE_EC', 'CHARACTERS', 'DURATION', 'SERVICE_ID', 'MKBSUBCLASS_ID', ),
         BasePeer::TYPE_FIELDNAME => array ('id', 'ClassID', 'ClassName', 'BlockID', 'BlockName', 'DiagID', 'DiagName', 'Prim', 'sex', 'age', 'age_bu', 'age_bc', 'age_eu', 'age_ec', 'characters', 'duration', 'service_id', 'MKBSubclass_id', ),
@@ -132,8 +132,8 @@ abstract class BaseMkbPeer
      * e.g. MkbPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Classid' => 1, 'Classname' => 2, 'Blockid' => 3, 'Blockname' => 4, 'Diagid' => 5, 'Diagname' => 6, 'Prim' => 7, 'Sex' => 8, 'Age' => 9, 'AgeBu' => 10, 'AgeBc' => 11, 'AgeEu' => 12, 'AgeEc' => 13, 'Characters' => 14, 'Duration' => 15, 'ServiceId' => 16, 'MkbsubclassId' => 17, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'classid' => 1, 'classname' => 2, 'blockid' => 3, 'blockname' => 4, 'diagid' => 5, 'diagname' => 6, 'prim' => 7, 'sex' => 8, 'age' => 9, 'ageBu' => 10, 'ageBc' => 11, 'ageEu' => 12, 'ageEc' => 13, 'characters' => 14, 'duration' => 15, 'serviceId' => 16, 'mkbsubclassId' => 17, ),
+        BasePeer::TYPE_PHPNAME => array ('id' => 0, 'classId' => 1, 'className' => 2, 'blockId' => 3, 'blockName' => 4, 'diagId' => 5, 'diagName' => 6, 'prim' => 7, 'sex' => 8, 'age' => 9, 'ageBu' => 10, 'ageBc' => 11, 'ageEu' => 12, 'ageEc' => 13, 'characters' => 14, 'duration' => 15, 'serviceId' => 16, 'MkbSubclassId' => 17, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'classId' => 1, 'className' => 2, 'blockId' => 3, 'blockName' => 4, 'diagId' => 5, 'diagName' => 6, 'prim' => 7, 'sex' => 8, 'age' => 9, 'ageBu' => 10, 'ageBc' => 11, 'ageEu' => 12, 'ageEc' => 13, 'characters' => 14, 'duration' => 15, 'serviceId' => 16, 'mkbSubclassId' => 17, ),
         BasePeer::TYPE_COLNAME => array (MkbPeer::ID => 0, MkbPeer::CLASSID => 1, MkbPeer::CLASSNAME => 2, MkbPeer::BLOCKID => 3, MkbPeer::BLOCKNAME => 4, MkbPeer::DIAGID => 5, MkbPeer::DIAGNAME => 6, MkbPeer::PRIM => 7, MkbPeer::SEX => 8, MkbPeer::AGE => 9, MkbPeer::AGE_BU => 10, MkbPeer::AGE_BC => 11, MkbPeer::AGE_EU => 12, MkbPeer::AGE_EC => 13, MkbPeer::CHARACTERS => 14, MkbPeer::DURATION => 15, MkbPeer::SERVICE_ID => 16, MkbPeer::MKBSUBCLASS_ID => 17, ),
         BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'CLASSID' => 1, 'CLASSNAME' => 2, 'BLOCKID' => 3, 'BLOCKNAME' => 4, 'DIAGID' => 5, 'DIAGNAME' => 6, 'PRIM' => 7, 'SEX' => 8, 'AGE' => 9, 'AGE_BU' => 10, 'AGE_BC' => 11, 'AGE_EU' => 12, 'AGE_EC' => 13, 'CHARACTERS' => 14, 'DURATION' => 15, 'SERVICE_ID' => 16, 'MKBSUBCLASS_ID' => 17, ),
         BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'ClassID' => 1, 'ClassName' => 2, 'BlockID' => 3, 'BlockName' => 4, 'DiagID' => 5, 'DiagName' => 6, 'Prim' => 7, 'sex' => 8, 'age' => 9, 'age_bu' => 10, 'age_bc' => 11, 'age_eu' => 12, 'age_ec' => 13, 'characters' => 14, 'duration' => 15, 'service_id' => 16, 'MKBSubclass_id' => 17, ),
@@ -374,7 +374,7 @@ abstract class BaseMkbPeer
     {
         if (Propel::isInstancePoolingEnabled()) {
             if ($key === null) {
-                $key = (string) $obj->getId();
+                $key = (string) $obj->getid();
             } // if key === null
             MkbPeer::$instances[$key] = $obj;
         }
@@ -397,7 +397,7 @@ abstract class BaseMkbPeer
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
             if (is_object($value) && $value instanceof Mkb) {
-                $key = (string) $value->getId();
+                $key = (string) $value->getid();
             } elseif (is_scalar($value)) {
                 // assume we've been passed a primary key
                 $key = (string) $value;

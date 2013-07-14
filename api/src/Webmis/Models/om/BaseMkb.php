@@ -9,22 +9,18 @@ use \Exception;
 use \PDO;
 use \Persistent;
 use \Propel;
-use \PropelCollection;
 use \PropelException;
-use \PropelObjectCollection;
 use \PropelPDO;
 use Webmis\Models\Mkb;
 use Webmis\Models\MkbPeer;
 use Webmis\Models\MkbQuery;
-use Webmis\Models\MkbQuotatypePacientmodel;
-use Webmis\Models\MkbQuotatypePacientmodelQuery;
 
 /**
  * Base class that represents a row from the 'MKB' table.
  *
  *
  *
- * @package    propel.generator.Webmis.Models.om
+ * @package    propel.generator.Models.om
  */
 abstract class BaseMkb extends BaseObject implements Persistent
 {
@@ -156,12 +152,6 @@ abstract class BaseMkb extends BaseObject implements Persistent
     protected $mkbsubclass_id;
 
     /**
-     * @var        PropelObjectCollection|MkbQuotatypePacientmodel[] Collection to store aggregation of MkbQuotatypePacientmodel objects.
-     */
-    protected $collMkbQuotatypePacientmodels;
-    protected $collMkbQuotatypePacientmodelsPartial;
-
-    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -182,17 +172,11 @@ abstract class BaseMkb extends BaseObject implements Persistent
     protected $alreadyInClearAllReferencesDeep = false;
 
     /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $mkbQuotatypePacientmodelsScheduledForDeletion = null;
-
-    /**
      * Get the [id] column value.
      *
      * @return int
      */
-    public function getId()
+    public function getid()
     {
         return $this->id;
     }
@@ -202,7 +186,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getClassid()
+    public function getclassId()
     {
         return $this->classid;
     }
@@ -212,7 +196,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getClassname()
+    public function getclassName()
     {
         return $this->classname;
     }
@@ -222,7 +206,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getBlockid()
+    public function getblockId()
     {
         return $this->blockid;
     }
@@ -232,7 +216,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getBlockname()
+    public function getblockName()
     {
         return $this->blockname;
     }
@@ -242,7 +226,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getDiagid()
+    public function getdiagId()
     {
         return $this->diagid;
     }
@@ -252,7 +236,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getDiagname()
+    public function getdiagName()
     {
         return $this->diagname;
     }
@@ -262,7 +246,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getPrim()
+    public function getprim()
     {
         return $this->prim;
     }
@@ -272,7 +256,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return boolean
      */
-    public function getSex()
+    public function getsex()
     {
         return $this->sex;
     }
@@ -282,7 +266,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getAge()
+    public function getage()
     {
         return $this->age;
     }
@@ -292,7 +276,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getAgeBu()
+    public function getageBu()
     {
         return $this->age_bu;
     }
@@ -302,7 +286,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getAgeBc()
+    public function getageBc()
     {
         return $this->age_bc;
     }
@@ -312,7 +296,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getAgeEu()
+    public function getageEu()
     {
         return $this->age_eu;
     }
@@ -322,7 +306,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getAgeEc()
+    public function getageEc()
     {
         return $this->age_ec;
     }
@@ -332,7 +316,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getCharacters()
+    public function getcharacters()
     {
         return $this->characters;
     }
@@ -342,7 +326,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getDuration()
+    public function getduration()
     {
         return $this->duration;
     }
@@ -352,7 +336,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getServiceId()
+    public function getserviceId()
     {
         return $this->service_id;
     }
@@ -362,7 +346,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getMkbsubclassId()
+    public function getMkbSubclassId()
     {
         return $this->mkbsubclass_id;
     }
@@ -373,7 +357,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param int $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setId($v)
+    public function setid($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -386,7 +370,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setId()
+    } // setid()
 
     /**
      * Set the value of [classid] column.
@@ -394,7 +378,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param string $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setClassid($v)
+    public function setclassId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -407,7 +391,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setClassid()
+    } // setclassId()
 
     /**
      * Set the value of [classname] column.
@@ -415,7 +399,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param string $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setClassname($v)
+    public function setclassName($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -428,7 +412,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setClassname()
+    } // setclassName()
 
     /**
      * Set the value of [blockid] column.
@@ -436,7 +420,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param string $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setBlockid($v)
+    public function setblockId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -449,7 +433,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setBlockid()
+    } // setblockId()
 
     /**
      * Set the value of [blockname] column.
@@ -457,7 +441,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param string $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setBlockname($v)
+    public function setblockName($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -470,7 +454,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setBlockname()
+    } // setblockName()
 
     /**
      * Set the value of [diagid] column.
@@ -478,7 +462,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param string $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setDiagid($v)
+    public function setdiagId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -491,7 +475,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setDiagid()
+    } // setdiagId()
 
     /**
      * Set the value of [diagname] column.
@@ -499,7 +483,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param string $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setDiagname($v)
+    public function setdiagName($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -512,7 +496,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setDiagname()
+    } // setdiagName()
 
     /**
      * Set the value of [prim] column.
@@ -520,7 +504,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param string $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setPrim($v)
+    public function setprim($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -533,7 +517,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setPrim()
+    } // setprim()
 
     /**
      * Sets the value of the [sex] column.
@@ -545,7 +529,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param boolean|integer|string $v The new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setSex($v)
+    public function setsex($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -562,7 +546,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setSex()
+    } // setsex()
 
     /**
      * Set the value of [age] column.
@@ -570,7 +554,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param string $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setAge($v)
+    public function setage($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -583,7 +567,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setAge()
+    } // setage()
 
     /**
      * Set the value of [age_bu] column.
@@ -591,7 +575,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param int $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setAgeBu($v)
+    public function setageBu($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -604,7 +588,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setAgeBu()
+    } // setageBu()
 
     /**
      * Set the value of [age_bc] column.
@@ -612,7 +596,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param int $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setAgeBc($v)
+    public function setageBc($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -625,7 +609,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setAgeBc()
+    } // setageBc()
 
     /**
      * Set the value of [age_eu] column.
@@ -633,7 +617,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param int $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setAgeEu($v)
+    public function setageEu($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -646,7 +630,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setAgeEu()
+    } // setageEu()
 
     /**
      * Set the value of [age_ec] column.
@@ -654,7 +638,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param int $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setAgeEc($v)
+    public function setageEc($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -667,7 +651,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setAgeEc()
+    } // setageEc()
 
     /**
      * Set the value of [characters] column.
@@ -675,7 +659,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param int $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setCharacters($v)
+    public function setcharacters($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -688,7 +672,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setCharacters()
+    } // setcharacters()
 
     /**
      * Set the value of [duration] column.
@@ -696,7 +680,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param int $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setDuration($v)
+    public function setduration($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -709,7 +693,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setDuration()
+    } // setduration()
 
     /**
      * Set the value of [service_id] column.
@@ -717,7 +701,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param int $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setServiceId($v)
+    public function setserviceId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -730,7 +714,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setServiceId()
+    } // setserviceId()
 
     /**
      * Set the value of [mkbsubclass_id] column.
@@ -738,7 +722,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      * @param int $v new value
      * @return Mkb The current object (for fluent API support)
      */
-    public function setMkbsubclassId($v)
+    public function setMkbSubclassId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -751,7 +735,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
 
 
         return $this;
-    } // setMkbsubclassId()
+    } // setMkbSubclassId()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -872,8 +856,6 @@ abstract class BaseMkb extends BaseObject implements Persistent
         $this->hydrate($row, 0, true); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
-
-            $this->collMkbQuotatypePacientmodels = null;
 
         } // if (deep)
     }
@@ -997,23 +979,6 @@ abstract class BaseMkb extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
-            }
-
-            if ($this->mkbQuotatypePacientmodelsScheduledForDeletion !== null) {
-                if (!$this->mkbQuotatypePacientmodelsScheduledForDeletion->isEmpty()) {
-                    MkbQuotatypePacientmodelQuery::create()
-                        ->filterByPrimaryKeys($this->mkbQuotatypePacientmodelsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->mkbQuotatypePacientmodelsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collMkbQuotatypePacientmodels !== null) {
-                foreach ($this->collMkbQuotatypePacientmodels as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             $this->alreadyInSave = false;
@@ -1174,7 +1139,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', $e);
         }
-        $this->setId($pk);
+        $this->setid($pk);
 
         $this->setNew(false);
     }
@@ -1260,14 +1225,6 @@ abstract class BaseMkb extends BaseObject implements Persistent
             }
 
 
-                if ($this->collMkbQuotatypePacientmodels !== null) {
-                    foreach ($this->collMkbQuotatypePacientmodels as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
 
             $this->alreadyInValidation = false;
         }
@@ -1304,58 +1261,58 @@ abstract class BaseMkb extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                return $this->getId();
+                return $this->getid();
                 break;
             case 1:
-                return $this->getClassid();
+                return $this->getclassId();
                 break;
             case 2:
-                return $this->getClassname();
+                return $this->getclassName();
                 break;
             case 3:
-                return $this->getBlockid();
+                return $this->getblockId();
                 break;
             case 4:
-                return $this->getBlockname();
+                return $this->getblockName();
                 break;
             case 5:
-                return $this->getDiagid();
+                return $this->getdiagId();
                 break;
             case 6:
-                return $this->getDiagname();
+                return $this->getdiagName();
                 break;
             case 7:
-                return $this->getPrim();
+                return $this->getprim();
                 break;
             case 8:
-                return $this->getSex();
+                return $this->getsex();
                 break;
             case 9:
-                return $this->getAge();
+                return $this->getage();
                 break;
             case 10:
-                return $this->getAgeBu();
+                return $this->getageBu();
                 break;
             case 11:
-                return $this->getAgeBc();
+                return $this->getageBc();
                 break;
             case 12:
-                return $this->getAgeEu();
+                return $this->getageEu();
                 break;
             case 13:
-                return $this->getAgeEc();
+                return $this->getageEc();
                 break;
             case 14:
-                return $this->getCharacters();
+                return $this->getcharacters();
                 break;
             case 15:
-                return $this->getDuration();
+                return $this->getduration();
                 break;
             case 16:
-                return $this->getServiceId();
+                return $this->getserviceId();
                 break;
             case 17:
-                return $this->getMkbsubclassId();
+                return $this->getMkbSubclassId();
                 break;
             default:
                 return null;
@@ -1374,11 +1331,10 @@ abstract class BaseMkb extends BaseObject implements Persistent
      *                    Defaults to BasePeer::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to true.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
         if (isset($alreadyDumpedObjects['Mkb'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
@@ -1386,30 +1342,25 @@ abstract class BaseMkb extends BaseObject implements Persistent
         $alreadyDumpedObjects['Mkb'][$this->getPrimaryKey()] = true;
         $keys = MkbPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getId(),
-            $keys[1] => $this->getClassid(),
-            $keys[2] => $this->getClassname(),
-            $keys[3] => $this->getBlockid(),
-            $keys[4] => $this->getBlockname(),
-            $keys[5] => $this->getDiagid(),
-            $keys[6] => $this->getDiagname(),
-            $keys[7] => $this->getPrim(),
-            $keys[8] => $this->getSex(),
-            $keys[9] => $this->getAge(),
-            $keys[10] => $this->getAgeBu(),
-            $keys[11] => $this->getAgeBc(),
-            $keys[12] => $this->getAgeEu(),
-            $keys[13] => $this->getAgeEc(),
-            $keys[14] => $this->getCharacters(),
-            $keys[15] => $this->getDuration(),
-            $keys[16] => $this->getServiceId(),
-            $keys[17] => $this->getMkbsubclassId(),
+            $keys[0] => $this->getid(),
+            $keys[1] => $this->getclassId(),
+            $keys[2] => $this->getclassName(),
+            $keys[3] => $this->getblockId(),
+            $keys[4] => $this->getblockName(),
+            $keys[5] => $this->getdiagId(),
+            $keys[6] => $this->getdiagName(),
+            $keys[7] => $this->getprim(),
+            $keys[8] => $this->getsex(),
+            $keys[9] => $this->getage(),
+            $keys[10] => $this->getageBu(),
+            $keys[11] => $this->getageBc(),
+            $keys[12] => $this->getageEu(),
+            $keys[13] => $this->getageEc(),
+            $keys[14] => $this->getcharacters(),
+            $keys[15] => $this->getduration(),
+            $keys[16] => $this->getserviceId(),
+            $keys[17] => $this->getMkbSubclassId(),
         );
-        if ($includeForeignObjects) {
-            if (null !== $this->collMkbQuotatypePacientmodels) {
-                $result['MkbQuotatypePacientmodels'] = $this->collMkbQuotatypePacientmodels->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-        }
 
         return $result;
     }
@@ -1444,58 +1395,58 @@ abstract class BaseMkb extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                $this->setId($value);
+                $this->setid($value);
                 break;
             case 1:
-                $this->setClassid($value);
+                $this->setclassId($value);
                 break;
             case 2:
-                $this->setClassname($value);
+                $this->setclassName($value);
                 break;
             case 3:
-                $this->setBlockid($value);
+                $this->setblockId($value);
                 break;
             case 4:
-                $this->setBlockname($value);
+                $this->setblockName($value);
                 break;
             case 5:
-                $this->setDiagid($value);
+                $this->setdiagId($value);
                 break;
             case 6:
-                $this->setDiagname($value);
+                $this->setdiagName($value);
                 break;
             case 7:
-                $this->setPrim($value);
+                $this->setprim($value);
                 break;
             case 8:
-                $this->setSex($value);
+                $this->setsex($value);
                 break;
             case 9:
-                $this->setAge($value);
+                $this->setage($value);
                 break;
             case 10:
-                $this->setAgeBu($value);
+                $this->setageBu($value);
                 break;
             case 11:
-                $this->setAgeBc($value);
+                $this->setageBc($value);
                 break;
             case 12:
-                $this->setAgeEu($value);
+                $this->setageEu($value);
                 break;
             case 13:
-                $this->setAgeEc($value);
+                $this->setageEc($value);
                 break;
             case 14:
-                $this->setCharacters($value);
+                $this->setcharacters($value);
                 break;
             case 15:
-                $this->setDuration($value);
+                $this->setduration($value);
                 break;
             case 16:
-                $this->setServiceId($value);
+                $this->setserviceId($value);
                 break;
             case 17:
-                $this->setMkbsubclassId($value);
+                $this->setMkbSubclassId($value);
                 break;
         } // switch()
     }
@@ -1521,24 +1472,24 @@ abstract class BaseMkb extends BaseObject implements Persistent
     {
         $keys = MkbPeer::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setClassid($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setClassname($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setBlockid($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setBlockname($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setDiagid($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setDiagname($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setPrim($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setSex($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setAge($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setAgeBu($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setAgeBc($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setAgeEu($arr[$keys[12]]);
-        if (array_key_exists($keys[13], $arr)) $this->setAgeEc($arr[$keys[13]]);
-        if (array_key_exists($keys[14], $arr)) $this->setCharacters($arr[$keys[14]]);
-        if (array_key_exists($keys[15], $arr)) $this->setDuration($arr[$keys[15]]);
-        if (array_key_exists($keys[16], $arr)) $this->setServiceId($arr[$keys[16]]);
-        if (array_key_exists($keys[17], $arr)) $this->setMkbsubclassId($arr[$keys[17]]);
+        if (array_key_exists($keys[0], $arr)) $this->setid($arr[$keys[0]]);
+        if (array_key_exists($keys[1], $arr)) $this->setclassId($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setclassName($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setblockId($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setblockName($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setdiagId($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setdiagName($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setprim($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setsex($arr[$keys[8]]);
+        if (array_key_exists($keys[9], $arr)) $this->setage($arr[$keys[9]]);
+        if (array_key_exists($keys[10], $arr)) $this->setageBu($arr[$keys[10]]);
+        if (array_key_exists($keys[11], $arr)) $this->setageBc($arr[$keys[11]]);
+        if (array_key_exists($keys[12], $arr)) $this->setageEu($arr[$keys[12]]);
+        if (array_key_exists($keys[13], $arr)) $this->setageEc($arr[$keys[13]]);
+        if (array_key_exists($keys[14], $arr)) $this->setcharacters($arr[$keys[14]]);
+        if (array_key_exists($keys[15], $arr)) $this->setduration($arr[$keys[15]]);
+        if (array_key_exists($keys[16], $arr)) $this->setserviceId($arr[$keys[16]]);
+        if (array_key_exists($keys[17], $arr)) $this->setMkbSubclassId($arr[$keys[17]]);
     }
 
     /**
@@ -1594,7 +1545,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getId();
+        return $this->getid();
     }
 
     /**
@@ -1605,7 +1556,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
      */
     public function setPrimaryKey($key)
     {
-        $this->setId($key);
+        $this->setid($key);
     }
 
     /**
@@ -1615,7 +1566,7 @@ abstract class BaseMkb extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return null === $this->getId();
+        return null === $this->getid();
     }
 
     /**
@@ -1631,44 +1582,26 @@ abstract class BaseMkb extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setClassid($this->getClassid());
-        $copyObj->setClassname($this->getClassname());
-        $copyObj->setBlockid($this->getBlockid());
-        $copyObj->setBlockname($this->getBlockname());
-        $copyObj->setDiagid($this->getDiagid());
-        $copyObj->setDiagname($this->getDiagname());
-        $copyObj->setPrim($this->getPrim());
-        $copyObj->setSex($this->getSex());
-        $copyObj->setAge($this->getAge());
-        $copyObj->setAgeBu($this->getAgeBu());
-        $copyObj->setAgeBc($this->getAgeBc());
-        $copyObj->setAgeEu($this->getAgeEu());
-        $copyObj->setAgeEc($this->getAgeEc());
-        $copyObj->setCharacters($this->getCharacters());
-        $copyObj->setDuration($this->getDuration());
-        $copyObj->setServiceId($this->getServiceId());
-        $copyObj->setMkbsubclassId($this->getMkbsubclassId());
-
-        if ($deepCopy && !$this->startCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-            // store object hash to prevent cycle
-            $this->startCopy = true;
-
-            foreach ($this->getMkbQuotatypePacientmodels() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addMkbQuotatypePacientmodel($relObj->copy($deepCopy));
-                }
-            }
-
-            //unflag object copy
-            $this->startCopy = false;
-        } // if ($deepCopy)
-
+        $copyObj->setclassId($this->getclassId());
+        $copyObj->setclassName($this->getclassName());
+        $copyObj->setblockId($this->getblockId());
+        $copyObj->setblockName($this->getblockName());
+        $copyObj->setdiagId($this->getdiagId());
+        $copyObj->setdiagName($this->getdiagName());
+        $copyObj->setprim($this->getprim());
+        $copyObj->setsex($this->getsex());
+        $copyObj->setage($this->getage());
+        $copyObj->setageBu($this->getageBu());
+        $copyObj->setageBc($this->getageBc());
+        $copyObj->setageEu($this->getageEu());
+        $copyObj->setageEc($this->getageEc());
+        $copyObj->setcharacters($this->getcharacters());
+        $copyObj->setduration($this->getduration());
+        $copyObj->setserviceId($this->getserviceId());
+        $copyObj->setMkbSubclassId($this->getMkbSubclassId());
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setid(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1710,290 +1643,6 @@ abstract class BaseMkb extends BaseObject implements Persistent
         }
 
         return self::$peer;
-    }
-
-
-    /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
-     *
-     * @param string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-        if ('MkbQuotatypePacientmodel' == $relationName) {
-            $this->initMkbQuotatypePacientmodels();
-        }
-    }
-
-    /**
-     * Clears out the collMkbQuotatypePacientmodels collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return Mkb The current object (for fluent API support)
-     * @see        addMkbQuotatypePacientmodels()
-     */
-    public function clearMkbQuotatypePacientmodels()
-    {
-        $this->collMkbQuotatypePacientmodels = null; // important to set this to null since that means it is uninitialized
-        $this->collMkbQuotatypePacientmodelsPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collMkbQuotatypePacientmodels collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialMkbQuotatypePacientmodels($v = true)
-    {
-        $this->collMkbQuotatypePacientmodelsPartial = $v;
-    }
-
-    /**
-     * Initializes the collMkbQuotatypePacientmodels collection.
-     *
-     * By default this just sets the collMkbQuotatypePacientmodels collection to an empty array (like clearcollMkbQuotatypePacientmodels());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initMkbQuotatypePacientmodels($overrideExisting = true)
-    {
-        if (null !== $this->collMkbQuotatypePacientmodels && !$overrideExisting) {
-            return;
-        }
-        $this->collMkbQuotatypePacientmodels = new PropelObjectCollection();
-        $this->collMkbQuotatypePacientmodels->setModel('MkbQuotatypePacientmodel');
-    }
-
-    /**
-     * Gets an array of MkbQuotatypePacientmodel objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this Mkb is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|MkbQuotatypePacientmodel[] List of MkbQuotatypePacientmodel objects
-     * @throws PropelException
-     */
-    public function getMkbQuotatypePacientmodels($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collMkbQuotatypePacientmodelsPartial && !$this->isNew();
-        if (null === $this->collMkbQuotatypePacientmodels || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collMkbQuotatypePacientmodels) {
-                // return empty collection
-                $this->initMkbQuotatypePacientmodels();
-            } else {
-                $collMkbQuotatypePacientmodels = MkbQuotatypePacientmodelQuery::create(null, $criteria)
-                    ->filterByMkb($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collMkbQuotatypePacientmodelsPartial && count($collMkbQuotatypePacientmodels)) {
-                      $this->initMkbQuotatypePacientmodels(false);
-
-                      foreach($collMkbQuotatypePacientmodels as $obj) {
-                        if (false == $this->collMkbQuotatypePacientmodels->contains($obj)) {
-                          $this->collMkbQuotatypePacientmodels->append($obj);
-                        }
-                      }
-
-                      $this->collMkbQuotatypePacientmodelsPartial = true;
-                    }
-
-                    $collMkbQuotatypePacientmodels->getInternalIterator()->rewind();
-                    return $collMkbQuotatypePacientmodels;
-                }
-
-                if($partial && $this->collMkbQuotatypePacientmodels) {
-                    foreach($this->collMkbQuotatypePacientmodels as $obj) {
-                        if($obj->isNew()) {
-                            $collMkbQuotatypePacientmodels[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collMkbQuotatypePacientmodels = $collMkbQuotatypePacientmodels;
-                $this->collMkbQuotatypePacientmodelsPartial = false;
-            }
-        }
-
-        return $this->collMkbQuotatypePacientmodels;
-    }
-
-    /**
-     * Sets a collection of MkbQuotatypePacientmodel objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $mkbQuotatypePacientmodels A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return Mkb The current object (for fluent API support)
-     */
-    public function setMkbQuotatypePacientmodels(PropelCollection $mkbQuotatypePacientmodels, PropelPDO $con = null)
-    {
-        $mkbQuotatypePacientmodelsToDelete = $this->getMkbQuotatypePacientmodels(new Criteria(), $con)->diff($mkbQuotatypePacientmodels);
-
-        $this->mkbQuotatypePacientmodelsScheduledForDeletion = unserialize(serialize($mkbQuotatypePacientmodelsToDelete));
-
-        foreach ($mkbQuotatypePacientmodelsToDelete as $mkbQuotatypePacientmodelRemoved) {
-            $mkbQuotatypePacientmodelRemoved->setMkb(null);
-        }
-
-        $this->collMkbQuotatypePacientmodels = null;
-        foreach ($mkbQuotatypePacientmodels as $mkbQuotatypePacientmodel) {
-            $this->addMkbQuotatypePacientmodel($mkbQuotatypePacientmodel);
-        }
-
-        $this->collMkbQuotatypePacientmodels = $mkbQuotatypePacientmodels;
-        $this->collMkbQuotatypePacientmodelsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related MkbQuotatypePacientmodel objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related MkbQuotatypePacientmodel objects.
-     * @throws PropelException
-     */
-    public function countMkbQuotatypePacientmodels(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collMkbQuotatypePacientmodelsPartial && !$this->isNew();
-        if (null === $this->collMkbQuotatypePacientmodels || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collMkbQuotatypePacientmodels) {
-                return 0;
-            }
-
-            if($partial && !$criteria) {
-                return count($this->getMkbQuotatypePacientmodels());
-            }
-            $query = MkbQuotatypePacientmodelQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByMkb($this)
-                ->count($con);
-        }
-
-        return count($this->collMkbQuotatypePacientmodels);
-    }
-
-    /**
-     * Method called to associate a MkbQuotatypePacientmodel object to this object
-     * through the MkbQuotatypePacientmodel foreign key attribute.
-     *
-     * @param    MkbQuotatypePacientmodel $l MkbQuotatypePacientmodel
-     * @return Mkb The current object (for fluent API support)
-     */
-    public function addMkbQuotatypePacientmodel(MkbQuotatypePacientmodel $l)
-    {
-        if ($this->collMkbQuotatypePacientmodels === null) {
-            $this->initMkbQuotatypePacientmodels();
-            $this->collMkbQuotatypePacientmodelsPartial = true;
-        }
-        if (!in_array($l, $this->collMkbQuotatypePacientmodels->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddMkbQuotatypePacientmodel($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	MkbQuotatypePacientmodel $mkbQuotatypePacientmodel The mkbQuotatypePacientmodel object to add.
-     */
-    protected function doAddMkbQuotatypePacientmodel($mkbQuotatypePacientmodel)
-    {
-        $this->collMkbQuotatypePacientmodels[]= $mkbQuotatypePacientmodel;
-        $mkbQuotatypePacientmodel->setMkb($this);
-    }
-
-    /**
-     * @param	MkbQuotatypePacientmodel $mkbQuotatypePacientmodel The mkbQuotatypePacientmodel object to remove.
-     * @return Mkb The current object (for fluent API support)
-     */
-    public function removeMkbQuotatypePacientmodel($mkbQuotatypePacientmodel)
-    {
-        if ($this->getMkbQuotatypePacientmodels()->contains($mkbQuotatypePacientmodel)) {
-            $this->collMkbQuotatypePacientmodels->remove($this->collMkbQuotatypePacientmodels->search($mkbQuotatypePacientmodel));
-            if (null === $this->mkbQuotatypePacientmodelsScheduledForDeletion) {
-                $this->mkbQuotatypePacientmodelsScheduledForDeletion = clone $this->collMkbQuotatypePacientmodels;
-                $this->mkbQuotatypePacientmodelsScheduledForDeletion->clear();
-            }
-            $this->mkbQuotatypePacientmodelsScheduledForDeletion[]= clone $mkbQuotatypePacientmodel;
-            $mkbQuotatypePacientmodel->setMkb(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Mkb is new, it will return
-     * an empty collection; or if this Mkb has previously
-     * been saved, it will retrieve related MkbQuotatypePacientmodels from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Mkb.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|MkbQuotatypePacientmodel[] List of MkbQuotatypePacientmodel objects
-     */
-    public function getMkbQuotatypePacientmodelsJoinRbpacientmodel($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = MkbQuotatypePacientmodelQuery::create(null, $criteria);
-        $query->joinWith('Rbpacientmodel', $join_behavior);
-
-        return $this->getMkbQuotatypePacientmodels($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Mkb is new, it will return
-     * an empty collection; or if this Mkb has previously
-     * been saved, it will retrieve related MkbQuotatypePacientmodels from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Mkb.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|MkbQuotatypePacientmodel[] List of MkbQuotatypePacientmodel objects
-     */
-    public function getMkbQuotatypePacientmodelsJoinQuotatype($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = MkbQuotatypePacientmodelQuery::create(null, $criteria);
-        $query->joinWith('Quotatype', $join_behavior);
-
-        return $this->getMkbQuotatypePacientmodels($query, $con);
     }
 
     /**
@@ -2041,19 +1690,10 @@ abstract class BaseMkb extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->collMkbQuotatypePacientmodels) {
-                foreach ($this->collMkbQuotatypePacientmodels as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        if ($this->collMkbQuotatypePacientmodels instanceof PropelCollection) {
-            $this->collMkbQuotatypePacientmodels->clearIterator();
-        }
-        $this->collMkbQuotatypePacientmodels = null;
     }
 
     /**

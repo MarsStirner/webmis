@@ -11,6 +11,9 @@ use \PropelException;
 use \PropelPDO;
 use Webmis\Models\ClientQuoting;
 use Webmis\Models\ClientQuotingPeer;
+use Webmis\Models\QuotaTypePeer;
+use Webmis\Models\RbPacientModelPeer;
+use Webmis\Models\RbTreatmentPeer;
 use Webmis\Models\map\ClientQuotingTableMap;
 
 /**
@@ -18,7 +21,7 @@ use Webmis\Models\map\ClientQuotingTableMap;
  *
  *
  *
- * @package propel.generator.Webmis.Models.om
+ * @package propel.generator.Models.om
  */
 abstract class BaseClientQuotingPeer
 {
@@ -147,8 +150,8 @@ abstract class BaseClientQuotingPeer
      * e.g. ClientQuotingPeer::$fieldNames[ClientQuotingPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Createdatetime', 'CreatepersonId', 'Modifydatetime', 'ModifypersonId', 'Deleted', 'MasterId', 'Identifier', 'Quotaticket', 'QuotatypeId', 'Stage', 'Directiondate', 'Freeinput', 'OrgId', 'Amount', 'Mkb', 'Status', 'Request', 'Statment', 'Dateregistration', 'Dateend', 'OrgstructureId', 'Regioncode', 'PacientmodelId', 'TreatmentId', 'EventId', 'PrevtalonEventId', 'Version', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'createdatetime', 'createpersonId', 'modifydatetime', 'modifypersonId', 'deleted', 'masterId', 'identifier', 'quotaticket', 'quotatypeId', 'stage', 'directiondate', 'freeinput', 'orgId', 'amount', 'mkb', 'status', 'request', 'statment', 'dateregistration', 'dateend', 'orgstructureId', 'regioncode', 'pacientmodelId', 'treatmentId', 'eventId', 'prevtalonEventId', 'version', ),
+        BasePeer::TYPE_PHPNAME => array ('Id', 'createDatetime', 'createPersonId', 'modifyDatetime', 'modifyPersonId', 'deleted', 'masterId', 'identifier', 'quotaTicket', 'quotaTypeId', 'stage', 'directionDate', 'freeInput', 'orgId', 'amount', 'mkb', 'status', 'request', 'statment', 'dateRegistration', 'dateEnd', 'orgStructureId', 'regionCode', 'pacientModelId', 'treatmentId', 'eventId', 'prevTalonEventId', 'version', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'createDatetime', 'createPersonId', 'modifyDatetime', 'modifyPersonId', 'deleted', 'masterId', 'identifier', 'quotaTicket', 'quotaTypeId', 'stage', 'directionDate', 'freeInput', 'orgId', 'amount', 'mkb', 'status', 'request', 'statment', 'dateRegistration', 'dateEnd', 'orgStructureId', 'regionCode', 'pacientModelId', 'treatmentId', 'eventId', 'prevTalonEventId', 'version', ),
         BasePeer::TYPE_COLNAME => array (ClientQuotingPeer::ID, ClientQuotingPeer::CREATEDATETIME, ClientQuotingPeer::CREATEPERSON_ID, ClientQuotingPeer::MODIFYDATETIME, ClientQuotingPeer::MODIFYPERSON_ID, ClientQuotingPeer::DELETED, ClientQuotingPeer::MASTER_ID, ClientQuotingPeer::IDENTIFIER, ClientQuotingPeer::QUOTATICKET, ClientQuotingPeer::QUOTATYPE_ID, ClientQuotingPeer::STAGE, ClientQuotingPeer::DIRECTIONDATE, ClientQuotingPeer::FREEINPUT, ClientQuotingPeer::ORG_ID, ClientQuotingPeer::AMOUNT, ClientQuotingPeer::MKB, ClientQuotingPeer::STATUS, ClientQuotingPeer::REQUEST, ClientQuotingPeer::STATMENT, ClientQuotingPeer::DATEREGISTRATION, ClientQuotingPeer::DATEEND, ClientQuotingPeer::ORGSTRUCTURE_ID, ClientQuotingPeer::REGIONCODE, ClientQuotingPeer::PACIENTMODEL_ID, ClientQuotingPeer::TREATMENT_ID, ClientQuotingPeer::EVENT_ID, ClientQuotingPeer::PREVTALON_EVENT_ID, ClientQuotingPeer::VERSION, ),
         BasePeer::TYPE_RAW_COLNAME => array ('ID', 'CREATEDATETIME', 'CREATEPERSON_ID', 'MODIFYDATETIME', 'MODIFYPERSON_ID', 'DELETED', 'MASTER_ID', 'IDENTIFIER', 'QUOTATICKET', 'QUOTATYPE_ID', 'STAGE', 'DIRECTIONDATE', 'FREEINPUT', 'ORG_ID', 'AMOUNT', 'MKB', 'STATUS', 'REQUEST', 'STATMENT', 'DATEREGISTRATION', 'DATEEND', 'ORGSTRUCTURE_ID', 'REGIONCODE', 'PACIENTMODEL_ID', 'TREATMENT_ID', 'EVENT_ID', 'PREVTALON_EVENT_ID', 'VERSION', ),
         BasePeer::TYPE_FIELDNAME => array ('id', 'createDatetime', 'createPerson_id', 'modifyDatetime', 'modifyPerson_id', 'deleted', 'master_id', 'identifier', 'quotaTicket', 'quotaType_id', 'stage', 'directionDate', 'freeInput', 'org_id', 'amount', 'MKB', 'status', 'request', 'statment', 'dateRegistration', 'dateEnd', 'orgStructure_id', 'regionCode', 'pacientModel_id', 'treatment_id', 'event_id', 'prevTalon_event_id', 'version', ),
@@ -162,8 +165,8 @@ abstract class BaseClientQuotingPeer
      * e.g. ClientQuotingPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Createdatetime' => 1, 'CreatepersonId' => 2, 'Modifydatetime' => 3, 'ModifypersonId' => 4, 'Deleted' => 5, 'MasterId' => 6, 'Identifier' => 7, 'Quotaticket' => 8, 'QuotatypeId' => 9, 'Stage' => 10, 'Directiondate' => 11, 'Freeinput' => 12, 'OrgId' => 13, 'Amount' => 14, 'Mkb' => 15, 'Status' => 16, 'Request' => 17, 'Statment' => 18, 'Dateregistration' => 19, 'Dateend' => 20, 'OrgstructureId' => 21, 'Regioncode' => 22, 'PacientmodelId' => 23, 'TreatmentId' => 24, 'EventId' => 25, 'PrevtalonEventId' => 26, 'Version' => 27, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'createdatetime' => 1, 'createpersonId' => 2, 'modifydatetime' => 3, 'modifypersonId' => 4, 'deleted' => 5, 'masterId' => 6, 'identifier' => 7, 'quotaticket' => 8, 'quotatypeId' => 9, 'stage' => 10, 'directiondate' => 11, 'freeinput' => 12, 'orgId' => 13, 'amount' => 14, 'mkb' => 15, 'status' => 16, 'request' => 17, 'statment' => 18, 'dateregistration' => 19, 'dateend' => 20, 'orgstructureId' => 21, 'regioncode' => 22, 'pacientmodelId' => 23, 'treatmentId' => 24, 'eventId' => 25, 'prevtalonEventId' => 26, 'version' => 27, ),
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'createDatetime' => 1, 'createPersonId' => 2, 'modifyDatetime' => 3, 'modifyPersonId' => 4, 'deleted' => 5, 'masterId' => 6, 'identifier' => 7, 'quotaTicket' => 8, 'quotaTypeId' => 9, 'stage' => 10, 'directionDate' => 11, 'freeInput' => 12, 'orgId' => 13, 'amount' => 14, 'mkb' => 15, 'status' => 16, 'request' => 17, 'statment' => 18, 'dateRegistration' => 19, 'dateEnd' => 20, 'orgStructureId' => 21, 'regionCode' => 22, 'pacientModelId' => 23, 'treatmentId' => 24, 'eventId' => 25, 'prevTalonEventId' => 26, 'version' => 27, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'createDatetime' => 1, 'createPersonId' => 2, 'modifyDatetime' => 3, 'modifyPersonId' => 4, 'deleted' => 5, 'masterId' => 6, 'identifier' => 7, 'quotaTicket' => 8, 'quotaTypeId' => 9, 'stage' => 10, 'directionDate' => 11, 'freeInput' => 12, 'orgId' => 13, 'amount' => 14, 'mkb' => 15, 'status' => 16, 'request' => 17, 'statment' => 18, 'dateRegistration' => 19, 'dateEnd' => 20, 'orgStructureId' => 21, 'regionCode' => 22, 'pacientModelId' => 23, 'treatmentId' => 24, 'eventId' => 25, 'prevTalonEventId' => 26, 'version' => 27, ),
         BasePeer::TYPE_COLNAME => array (ClientQuotingPeer::ID => 0, ClientQuotingPeer::CREATEDATETIME => 1, ClientQuotingPeer::CREATEPERSON_ID => 2, ClientQuotingPeer::MODIFYDATETIME => 3, ClientQuotingPeer::MODIFYPERSON_ID => 4, ClientQuotingPeer::DELETED => 5, ClientQuotingPeer::MASTER_ID => 6, ClientQuotingPeer::IDENTIFIER => 7, ClientQuotingPeer::QUOTATICKET => 8, ClientQuotingPeer::QUOTATYPE_ID => 9, ClientQuotingPeer::STAGE => 10, ClientQuotingPeer::DIRECTIONDATE => 11, ClientQuotingPeer::FREEINPUT => 12, ClientQuotingPeer::ORG_ID => 13, ClientQuotingPeer::AMOUNT => 14, ClientQuotingPeer::MKB => 15, ClientQuotingPeer::STATUS => 16, ClientQuotingPeer::REQUEST => 17, ClientQuotingPeer::STATMENT => 18, ClientQuotingPeer::DATEREGISTRATION => 19, ClientQuotingPeer::DATEEND => 20, ClientQuotingPeer::ORGSTRUCTURE_ID => 21, ClientQuotingPeer::REGIONCODE => 22, ClientQuotingPeer::PACIENTMODEL_ID => 23, ClientQuotingPeer::TREATMENT_ID => 24, ClientQuotingPeer::EVENT_ID => 25, ClientQuotingPeer::PREVTALON_EVENT_ID => 26, ClientQuotingPeer::VERSION => 27, ),
         BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'CREATEDATETIME' => 1, 'CREATEPERSON_ID' => 2, 'MODIFYDATETIME' => 3, 'MODIFYPERSON_ID' => 4, 'DELETED' => 5, 'MASTER_ID' => 6, 'IDENTIFIER' => 7, 'QUOTATICKET' => 8, 'QUOTATYPE_ID' => 9, 'STAGE' => 10, 'DIRECTIONDATE' => 11, 'FREEINPUT' => 12, 'ORG_ID' => 13, 'AMOUNT' => 14, 'MKB' => 15, 'STATUS' => 16, 'REQUEST' => 17, 'STATMENT' => 18, 'DATEREGISTRATION' => 19, 'DATEEND' => 20, 'ORGSTRUCTURE_ID' => 21, 'REGIONCODE' => 22, 'PACIENTMODEL_ID' => 23, 'TREATMENT_ID' => 24, 'EVENT_ID' => 25, 'PREVTALON_EVENT_ID' => 26, 'VERSION' => 27, ),
         BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'createDatetime' => 1, 'createPerson_id' => 2, 'modifyDatetime' => 3, 'modifyPerson_id' => 4, 'deleted' => 5, 'master_id' => 6, 'identifier' => 7, 'quotaTicket' => 8, 'quotaType_id' => 9, 'stage' => 10, 'directionDate' => 11, 'freeInput' => 12, 'org_id' => 13, 'amount' => 14, 'MKB' => 15, 'status' => 16, 'request' => 17, 'statment' => 18, 'dateRegistration' => 19, 'dateEnd' => 20, 'orgStructure_id' => 21, 'regionCode' => 22, 'pacientModel_id' => 23, 'treatment_id' => 24, 'event_id' => 25, 'prevTalon_event_id' => 26, 'version' => 27, ),
@@ -598,6 +601,983 @@ abstract class BaseClientQuotingPeer
         }
 
         return array($obj, $col);
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related RbTreatment table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinRbTreatment(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ClientQuotingPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ClientQuotingPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ClientQuotingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ClientQuotingPeer::TREATMENT_ID, RbTreatmentPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related RbPacientModel table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinRbPacientModel(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ClientQuotingPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ClientQuotingPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ClientQuotingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ClientQuotingPeer::PACIENTMODEL_ID, RbPacientModelPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related QuotaType table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinQuotaType(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ClientQuotingPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ClientQuotingPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ClientQuotingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ClientQuotingPeer::QUOTATYPE_ID, QuotaTypePeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Selects a collection of ClientQuoting objects pre-filled with their RbTreatment objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ClientQuoting objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinRbTreatment(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+        }
+
+        ClientQuotingPeer::addSelectColumns($criteria);
+        $startcol = ClientQuotingPeer::NUM_HYDRATE_COLUMNS;
+        RbTreatmentPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(ClientQuotingPeer::TREATMENT_ID, RbTreatmentPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ClientQuotingPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ClientQuotingPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = ClientQuotingPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ClientQuotingPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = RbTreatmentPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = RbTreatmentPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = RbTreatmentPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    RbTreatmentPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (ClientQuoting) to $obj2 (RbTreatment)
+                $obj2->addClientQuoting($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of ClientQuoting objects pre-filled with their RbPacientModel objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ClientQuoting objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinRbPacientModel(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+        }
+
+        ClientQuotingPeer::addSelectColumns($criteria);
+        $startcol = ClientQuotingPeer::NUM_HYDRATE_COLUMNS;
+        RbPacientModelPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(ClientQuotingPeer::PACIENTMODEL_ID, RbPacientModelPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ClientQuotingPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ClientQuotingPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = ClientQuotingPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ClientQuotingPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = RbPacientModelPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = RbPacientModelPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = RbPacientModelPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    RbPacientModelPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (ClientQuoting) to $obj2 (RbPacientModel)
+                $obj2->addClientQuoting($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of ClientQuoting objects pre-filled with their QuotaType objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ClientQuoting objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinQuotaType(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+        }
+
+        ClientQuotingPeer::addSelectColumns($criteria);
+        $startcol = ClientQuotingPeer::NUM_HYDRATE_COLUMNS;
+        QuotaTypePeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(ClientQuotingPeer::QUOTATYPE_ID, QuotaTypePeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ClientQuotingPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ClientQuotingPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = ClientQuotingPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ClientQuotingPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = QuotaTypePeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = QuotaTypePeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = QuotaTypePeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    QuotaTypePeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (ClientQuoting) to $obj2 (QuotaType)
+                $obj2->addClientQuoting($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining all related tables
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ClientQuotingPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ClientQuotingPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ClientQuotingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ClientQuotingPeer::TREATMENT_ID, RbTreatmentPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ClientQuotingPeer::PACIENTMODEL_ID, RbPacientModelPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ClientQuotingPeer::QUOTATYPE_ID, QuotaTypePeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+    /**
+     * Selects a collection of ClientQuoting objects pre-filled with all related objects.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ClientQuoting objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+        }
+
+        ClientQuotingPeer::addSelectColumns($criteria);
+        $startcol2 = ClientQuotingPeer::NUM_HYDRATE_COLUMNS;
+
+        RbTreatmentPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + RbTreatmentPeer::NUM_HYDRATE_COLUMNS;
+
+        RbPacientModelPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + RbPacientModelPeer::NUM_HYDRATE_COLUMNS;
+
+        QuotaTypePeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + QuotaTypePeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ClientQuotingPeer::TREATMENT_ID, RbTreatmentPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ClientQuotingPeer::PACIENTMODEL_ID, RbPacientModelPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ClientQuotingPeer::QUOTATYPE_ID, QuotaTypePeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ClientQuotingPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ClientQuotingPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ClientQuotingPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ClientQuotingPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+            // Add objects for joined RbTreatment rows
+
+            $key2 = RbTreatmentPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+            if ($key2 !== null) {
+                $obj2 = RbTreatmentPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = RbTreatmentPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    RbTreatmentPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 loaded
+
+                // Add the $obj1 (ClientQuoting) to the collection in $obj2 (RbTreatment)
+                $obj2->addClientQuoting($obj1);
+            } // if joined row not null
+
+            // Add objects for joined RbPacientModel rows
+
+            $key3 = RbPacientModelPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+            if ($key3 !== null) {
+                $obj3 = RbPacientModelPeer::getInstanceFromPool($key3);
+                if (!$obj3) {
+
+                    $cls = RbPacientModelPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    RbPacientModelPeer::addInstanceToPool($obj3, $key3);
+                } // if obj3 loaded
+
+                // Add the $obj1 (ClientQuoting) to the collection in $obj3 (RbPacientModel)
+                $obj3->addClientQuoting($obj1);
+            } // if joined row not null
+
+            // Add objects for joined QuotaType rows
+
+            $key4 = QuotaTypePeer::getPrimaryKeyHashFromRow($row, $startcol4);
+            if ($key4 !== null) {
+                $obj4 = QuotaTypePeer::getInstanceFromPool($key4);
+                if (!$obj4) {
+
+                    $cls = QuotaTypePeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    QuotaTypePeer::addInstanceToPool($obj4, $key4);
+                } // if obj4 loaded
+
+                // Add the $obj1 (ClientQuoting) to the collection in $obj4 (QuotaType)
+                $obj4->addClientQuoting($obj1);
+            } // if joined row not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related RbTreatment table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptRbTreatment(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ClientQuotingPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ClientQuotingPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ClientQuotingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ClientQuotingPeer::PACIENTMODEL_ID, RbPacientModelPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ClientQuotingPeer::QUOTATYPE_ID, QuotaTypePeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related RbPacientModel table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptRbPacientModel(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ClientQuotingPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ClientQuotingPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ClientQuotingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ClientQuotingPeer::TREATMENT_ID, RbTreatmentPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ClientQuotingPeer::QUOTATYPE_ID, QuotaTypePeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related QuotaType table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptQuotaType(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ClientQuotingPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ClientQuotingPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ClientQuotingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ClientQuotingPeer::TREATMENT_ID, RbTreatmentPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ClientQuotingPeer::PACIENTMODEL_ID, RbPacientModelPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Selects a collection of ClientQuoting objects pre-filled with all related objects except RbTreatment.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ClientQuoting objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptRbTreatment(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+        }
+
+        ClientQuotingPeer::addSelectColumns($criteria);
+        $startcol2 = ClientQuotingPeer::NUM_HYDRATE_COLUMNS;
+
+        RbPacientModelPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + RbPacientModelPeer::NUM_HYDRATE_COLUMNS;
+
+        QuotaTypePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + QuotaTypePeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ClientQuotingPeer::PACIENTMODEL_ID, RbPacientModelPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ClientQuotingPeer::QUOTATYPE_ID, QuotaTypePeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ClientQuotingPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ClientQuotingPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ClientQuotingPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ClientQuotingPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined RbPacientModel rows
+
+                $key2 = RbPacientModelPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = RbPacientModelPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = RbPacientModelPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    RbPacientModelPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (ClientQuoting) to the collection in $obj2 (RbPacientModel)
+                $obj2->addClientQuoting($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined QuotaType rows
+
+                $key3 = QuotaTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = QuotaTypePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = QuotaTypePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    QuotaTypePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (ClientQuoting) to the collection in $obj3 (QuotaType)
+                $obj3->addClientQuoting($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of ClientQuoting objects pre-filled with all related objects except RbPacientModel.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ClientQuoting objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptRbPacientModel(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+        }
+
+        ClientQuotingPeer::addSelectColumns($criteria);
+        $startcol2 = ClientQuotingPeer::NUM_HYDRATE_COLUMNS;
+
+        RbTreatmentPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + RbTreatmentPeer::NUM_HYDRATE_COLUMNS;
+
+        QuotaTypePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + QuotaTypePeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ClientQuotingPeer::TREATMENT_ID, RbTreatmentPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ClientQuotingPeer::QUOTATYPE_ID, QuotaTypePeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ClientQuotingPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ClientQuotingPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ClientQuotingPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ClientQuotingPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined RbTreatment rows
+
+                $key2 = RbTreatmentPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = RbTreatmentPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = RbTreatmentPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    RbTreatmentPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (ClientQuoting) to the collection in $obj2 (RbTreatment)
+                $obj2->addClientQuoting($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined QuotaType rows
+
+                $key3 = QuotaTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = QuotaTypePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = QuotaTypePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    QuotaTypePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (ClientQuoting) to the collection in $obj3 (QuotaType)
+                $obj3->addClientQuoting($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of ClientQuoting objects pre-filled with all related objects except QuotaType.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ClientQuoting objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptQuotaType(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ClientQuotingPeer::DATABASE_NAME);
+        }
+
+        ClientQuotingPeer::addSelectColumns($criteria);
+        $startcol2 = ClientQuotingPeer::NUM_HYDRATE_COLUMNS;
+
+        RbTreatmentPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + RbTreatmentPeer::NUM_HYDRATE_COLUMNS;
+
+        RbPacientModelPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + RbPacientModelPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ClientQuotingPeer::TREATMENT_ID, RbTreatmentPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ClientQuotingPeer::PACIENTMODEL_ID, RbPacientModelPeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ClientQuotingPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ClientQuotingPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ClientQuotingPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ClientQuotingPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined RbTreatment rows
+
+                $key2 = RbTreatmentPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = RbTreatmentPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = RbTreatmentPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    RbTreatmentPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (ClientQuoting) to the collection in $obj2 (RbTreatment)
+                $obj2->addClientQuoting($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined RbPacientModel rows
+
+                $key3 = RbPacientModelPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = RbPacientModelPeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = RbPacientModelPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    RbPacientModelPeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (ClientQuoting) to the collection in $obj3 (RbPacientModel)
+                $obj3->addClientQuoting($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
     }
 
     /**

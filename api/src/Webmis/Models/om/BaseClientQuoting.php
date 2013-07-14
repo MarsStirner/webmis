@@ -16,13 +16,19 @@ use \PropelPDO;
 use Webmis\Models\ClientQuoting;
 use Webmis\Models\ClientQuotingPeer;
 use Webmis\Models\ClientQuotingQuery;
+use Webmis\Models\QuotaType;
+use Webmis\Models\QuotaTypeQuery;
+use Webmis\Models\RbPacientModel;
+use Webmis\Models\RbPacientModelQuery;
+use Webmis\Models\RbTreatment;
+use Webmis\Models\RbTreatmentQuery;
 
 /**
  * Base class that represents a row from the 'Client_Quoting' table.
  *
  *
  *
- * @package    propel.generator.Webmis.Models.om
+ * @package    propel.generator.Models.om
  */
 abstract class BaseClientQuoting extends BaseObject implements Persistent
 {
@@ -218,6 +224,21 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
     protected $version;
 
     /**
+     * @var        RbTreatment
+     */
+    protected $aRbTreatment;
+
+    /**
+     * @var        RbPacientModel
+     */
+    protected $aRbPacientModel;
+
+    /**
+     * @var        QuotaType
+     */
+    protected $aQuotaType;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -280,7 +301,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getCreatedatetime($format = 'Y-m-d H:i:s')
+    public function getcreateDatetime($format = 'Y-m-d H:i:s')
     {
         if ($this->createdatetime === null) {
             return null;
@@ -316,7 +337,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getCreatepersonId()
+    public function getcreatePersonId()
     {
         return $this->createperson_id;
     }
@@ -330,7 +351,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getModifydatetime($format = 'Y-m-d H:i:s')
+    public function getmodifyDatetime($format = 'Y-m-d H:i:s')
     {
         if ($this->modifydatetime === null) {
             return null;
@@ -366,7 +387,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getModifypersonId()
+    public function getmodifyPersonId()
     {
         return $this->modifyperson_id;
     }
@@ -376,7 +397,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return boolean
      */
-    public function getDeleted()
+    public function getdeleted()
     {
         return $this->deleted;
     }
@@ -386,7 +407,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getMasterId()
+    public function getmasterId()
     {
         return $this->master_id;
     }
@@ -396,7 +417,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getIdentifier()
+    public function getidentifier()
     {
         return $this->identifier;
     }
@@ -406,7 +427,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getQuotaticket()
+    public function getquotaTicket()
     {
         return $this->quotaticket;
     }
@@ -416,7 +437,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getQuotatypeId()
+    public function getquotaTypeId()
     {
         return $this->quotatype_id;
     }
@@ -426,7 +447,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getStage()
+    public function getstage()
     {
         return $this->stage;
     }
@@ -440,7 +461,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getDirectiondate($format = 'Y-m-d H:i:s')
+    public function getdirectionDate($format = 'Y-m-d H:i:s')
     {
         if ($this->directiondate === null) {
             return null;
@@ -476,7 +497,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getFreeinput()
+    public function getfreeInput()
     {
         return $this->freeinput;
     }
@@ -486,7 +507,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getOrgId()
+    public function getorgId()
     {
         return $this->org_id;
     }
@@ -496,7 +517,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getAmount()
+    public function getamount()
     {
         return $this->amount;
     }
@@ -506,7 +527,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getMkb()
+    public function getmkb()
     {
         return $this->mkb;
     }
@@ -516,7 +537,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getStatus()
+    public function getstatus()
     {
         return $this->status;
     }
@@ -526,7 +547,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getRequest()
+    public function getrequest()
     {
         return $this->request;
     }
@@ -536,7 +557,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getStatment()
+    public function getstatment()
     {
         return $this->statment;
     }
@@ -550,7 +571,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getDateregistration($format = 'Y-m-d H:i:s')
+    public function getdateRegistration($format = 'Y-m-d H:i:s')
     {
         if ($this->dateregistration === null) {
             return null;
@@ -590,7 +611,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getDateend($format = 'Y-m-d H:i:s')
+    public function getdateEnd($format = 'Y-m-d H:i:s')
     {
         if ($this->dateend === null) {
             return null;
@@ -626,7 +647,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getOrgstructureId()
+    public function getorgStructureId()
     {
         return $this->orgstructure_id;
     }
@@ -636,7 +657,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getRegioncode()
+    public function getregionCode()
     {
         return $this->regioncode;
     }
@@ -646,7 +667,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getPacientmodelId()
+    public function getpacientModelId()
     {
         return $this->pacientmodel_id;
     }
@@ -656,7 +677,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getTreatmentId()
+    public function gettreatmentId()
     {
         return $this->treatment_id;
     }
@@ -666,7 +687,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getEventId()
+    public function geteventId()
     {
         return $this->event_id;
     }
@@ -676,7 +697,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getPrevtalonEventId()
+    public function getprevTalonEventId()
     {
         return $this->prevtalon_event_id;
     }
@@ -686,7 +707,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getVersion()
+    public function getversion()
     {
         return $this->version;
     }
@@ -719,7 +740,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *               Empty strings are treated as null.
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setCreatedatetime($v)
+    public function setcreateDatetime($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->createdatetime !== null || $dt !== null) {
@@ -733,7 +754,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setCreatedatetime()
+    } // setcreateDatetime()
 
     /**
      * Set the value of [createperson_id] column.
@@ -741,7 +762,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setCreatepersonId($v)
+    public function setcreatePersonId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -754,7 +775,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setCreatepersonId()
+    } // setcreatePersonId()
 
     /**
      * Sets the value of [modifydatetime] column to a normalized version of the date/time value specified.
@@ -763,7 +784,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *               Empty strings are treated as null.
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setModifydatetime($v)
+    public function setmodifyDatetime($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->modifydatetime !== null || $dt !== null) {
@@ -777,7 +798,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setModifydatetime()
+    } // setmodifyDatetime()
 
     /**
      * Set the value of [modifyperson_id] column.
@@ -785,7 +806,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setModifypersonId($v)
+    public function setmodifyPersonId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -798,7 +819,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setModifypersonId()
+    } // setmodifyPersonId()
 
     /**
      * Sets the value of the [deleted] column.
@@ -810,7 +831,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param boolean|integer|string $v The new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setDeleted($v)
+    public function setdeleted($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -827,7 +848,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setDeleted()
+    } // setdeleted()
 
     /**
      * Set the value of [master_id] column.
@@ -835,7 +856,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setMasterId($v)
+    public function setmasterId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -848,7 +869,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setMasterId()
+    } // setmasterId()
 
     /**
      * Set the value of [identifier] column.
@@ -856,7 +877,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param string $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setIdentifier($v)
+    public function setidentifier($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -869,7 +890,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setIdentifier()
+    } // setidentifier()
 
     /**
      * Set the value of [quotaticket] column.
@@ -877,7 +898,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param string $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setQuotaticket($v)
+    public function setquotaTicket($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -890,7 +911,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setQuotaticket()
+    } // setquotaTicket()
 
     /**
      * Set the value of [quotatype_id] column.
@@ -898,7 +919,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setQuotatypeId($v)
+    public function setquotaTypeId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -909,9 +930,13 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
             $this->modifiedColumns[] = ClientQuotingPeer::QUOTATYPE_ID;
         }
 
+        if ($this->aQuotaType !== null && $this->aQuotaType->getid() !== $v) {
+            $this->aQuotaType = null;
+        }
+
 
         return $this;
-    } // setQuotatypeId()
+    } // setquotaTypeId()
 
     /**
      * Set the value of [stage] column.
@@ -919,7 +944,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setStage($v)
+    public function setstage($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -932,7 +957,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setStage()
+    } // setstage()
 
     /**
      * Sets the value of [directiondate] column to a normalized version of the date/time value specified.
@@ -941,7 +966,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *               Empty strings are treated as null.
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setDirectiondate($v)
+    public function setdirectionDate($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->directiondate !== null || $dt !== null) {
@@ -955,7 +980,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setDirectiondate()
+    } // setdirectionDate()
 
     /**
      * Set the value of [freeinput] column.
@@ -963,7 +988,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param string $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setFreeinput($v)
+    public function setfreeInput($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -976,7 +1001,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setFreeinput()
+    } // setfreeInput()
 
     /**
      * Set the value of [org_id] column.
@@ -984,7 +1009,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setOrgId($v)
+    public function setorgId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -997,7 +1022,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setOrgId()
+    } // setorgId()
 
     /**
      * Set the value of [amount] column.
@@ -1005,7 +1030,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setAmount($v)
+    public function setamount($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1018,7 +1043,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setAmount()
+    } // setamount()
 
     /**
      * Set the value of [mkb] column.
@@ -1026,7 +1051,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param string $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setMkb($v)
+    public function setmkb($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -1039,7 +1064,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setMkb()
+    } // setmkb()
 
     /**
      * Set the value of [status] column.
@@ -1047,7 +1072,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setStatus($v)
+    public function setstatus($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1060,7 +1085,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setStatus()
+    } // setstatus()
 
     /**
      * Set the value of [request] column.
@@ -1068,7 +1093,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setRequest($v)
+    public function setrequest($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1081,7 +1106,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setRequest()
+    } // setrequest()
 
     /**
      * Set the value of [statment] column.
@@ -1089,7 +1114,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param string $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setStatment($v)
+    public function setstatment($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -1102,7 +1127,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setStatment()
+    } // setstatment()
 
     /**
      * Sets the value of [dateregistration] column to a normalized version of the date/time value specified.
@@ -1111,7 +1136,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *               Empty strings are treated as null.
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setDateregistration($v)
+    public function setdateRegistration($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->dateregistration !== null || $dt !== null) {
@@ -1125,7 +1150,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setDateregistration()
+    } // setdateRegistration()
 
     /**
      * Sets the value of [dateend] column to a normalized version of the date/time value specified.
@@ -1134,7 +1159,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *               Empty strings are treated as null.
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setDateend($v)
+    public function setdateEnd($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->dateend !== null || $dt !== null) {
@@ -1148,7 +1173,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setDateend()
+    } // setdateEnd()
 
     /**
      * Set the value of [orgstructure_id] column.
@@ -1156,7 +1181,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setOrgstructureId($v)
+    public function setorgStructureId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1169,7 +1194,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setOrgstructureId()
+    } // setorgStructureId()
 
     /**
      * Set the value of [regioncode] column.
@@ -1177,7 +1202,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param string $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setRegioncode($v)
+    public function setregionCode($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -1190,7 +1215,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setRegioncode()
+    } // setregionCode()
 
     /**
      * Set the value of [pacientmodel_id] column.
@@ -1198,7 +1223,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setPacientmodelId($v)
+    public function setpacientModelId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1209,9 +1234,13 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
             $this->modifiedColumns[] = ClientQuotingPeer::PACIENTMODEL_ID;
         }
 
+        if ($this->aRbPacientModel !== null && $this->aRbPacientModel->getid() !== $v) {
+            $this->aRbPacientModel = null;
+        }
+
 
         return $this;
-    } // setPacientmodelId()
+    } // setpacientModelId()
 
     /**
      * Set the value of [treatment_id] column.
@@ -1219,7 +1248,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setTreatmentId($v)
+    public function settreatmentId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1230,9 +1259,13 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
             $this->modifiedColumns[] = ClientQuotingPeer::TREATMENT_ID;
         }
 
+        if ($this->aRbTreatment !== null && $this->aRbTreatment->getid() !== $v) {
+            $this->aRbTreatment = null;
+        }
+
 
         return $this;
-    } // setTreatmentId()
+    } // settreatmentId()
 
     /**
      * Set the value of [event_id] column.
@@ -1240,7 +1273,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setEventId($v)
+    public function seteventId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1253,7 +1286,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setEventId()
+    } // seteventId()
 
     /**
      * Set the value of [prevtalon_event_id] column.
@@ -1261,7 +1294,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setPrevtalonEventId($v)
+    public function setprevTalonEventId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1274,7 +1307,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setPrevtalonEventId()
+    } // setprevTalonEventId()
 
     /**
      * Set the value of [version] column.
@@ -1282,7 +1315,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      * @param int $v new value
      * @return ClientQuoting The current object (for fluent API support)
      */
-    public function setVersion($v)
+    public function setversion($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -1295,7 +1328,7 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
 
         return $this;
-    } // setVersion()
+    } // setversion()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -1404,6 +1437,15 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
+        if ($this->aQuotaType !== null && $this->quotatype_id !== $this->aQuotaType->getid()) {
+            $this->aQuotaType = null;
+        }
+        if ($this->aRbPacientModel !== null && $this->pacientmodel_id !== $this->aRbPacientModel->getid()) {
+            $this->aRbPacientModel = null;
+        }
+        if ($this->aRbTreatment !== null && $this->treatment_id !== $this->aRbTreatment->getid()) {
+            $this->aRbTreatment = null;
+        }
     } // ensureConsistency
 
     /**
@@ -1443,6 +1485,9 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aRbTreatment = null;
+            $this->aRbPacientModel = null;
+            $this->aQuotaType = null;
         } // if (deep)
     }
 
@@ -1555,6 +1600,32 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
+
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their coresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aRbTreatment !== null) {
+                if ($this->aRbTreatment->isModified() || $this->aRbTreatment->isNew()) {
+                    $affectedRows += $this->aRbTreatment->save($con);
+                }
+                $this->setRbTreatment($this->aRbTreatment);
+            }
+
+            if ($this->aRbPacientModel !== null) {
+                if ($this->aRbPacientModel->isModified() || $this->aRbPacientModel->isNew()) {
+                    $affectedRows += $this->aRbPacientModel->save($con);
+                }
+                $this->setRbPacientModel($this->aRbPacientModel);
+            }
+
+            if ($this->aQuotaType !== null) {
+                if ($this->aQuotaType->isModified() || $this->aQuotaType->isNew()) {
+                    $affectedRows += $this->aQuotaType->save($con);
+                }
+                $this->setQuotaType($this->aQuotaType);
+            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -1866,6 +1937,30 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
             $failureMap = array();
 
 
+            // We call the validate method on the following object(s) if they
+            // were passed to this object by their coresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aRbTreatment !== null) {
+                if (!$this->aRbTreatment->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aRbTreatment->getValidationFailures());
+                }
+            }
+
+            if ($this->aRbPacientModel !== null) {
+                if (!$this->aRbPacientModel->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aRbPacientModel->getValidationFailures());
+                }
+            }
+
+            if ($this->aQuotaType !== null) {
+                if (!$this->aQuotaType->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aQuotaType->getValidationFailures());
+                }
+            }
+
+
             if (($retval = ClientQuotingPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
@@ -1910,85 +2005,85 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
                 return $this->getId();
                 break;
             case 1:
-                return $this->getCreatedatetime();
+                return $this->getcreateDatetime();
                 break;
             case 2:
-                return $this->getCreatepersonId();
+                return $this->getcreatePersonId();
                 break;
             case 3:
-                return $this->getModifydatetime();
+                return $this->getmodifyDatetime();
                 break;
             case 4:
-                return $this->getModifypersonId();
+                return $this->getmodifyPersonId();
                 break;
             case 5:
-                return $this->getDeleted();
+                return $this->getdeleted();
                 break;
             case 6:
-                return $this->getMasterId();
+                return $this->getmasterId();
                 break;
             case 7:
-                return $this->getIdentifier();
+                return $this->getidentifier();
                 break;
             case 8:
-                return $this->getQuotaticket();
+                return $this->getquotaTicket();
                 break;
             case 9:
-                return $this->getQuotatypeId();
+                return $this->getquotaTypeId();
                 break;
             case 10:
-                return $this->getStage();
+                return $this->getstage();
                 break;
             case 11:
-                return $this->getDirectiondate();
+                return $this->getdirectionDate();
                 break;
             case 12:
-                return $this->getFreeinput();
+                return $this->getfreeInput();
                 break;
             case 13:
-                return $this->getOrgId();
+                return $this->getorgId();
                 break;
             case 14:
-                return $this->getAmount();
+                return $this->getamount();
                 break;
             case 15:
-                return $this->getMkb();
+                return $this->getmkb();
                 break;
             case 16:
-                return $this->getStatus();
+                return $this->getstatus();
                 break;
             case 17:
-                return $this->getRequest();
+                return $this->getrequest();
                 break;
             case 18:
-                return $this->getStatment();
+                return $this->getstatment();
                 break;
             case 19:
-                return $this->getDateregistration();
+                return $this->getdateRegistration();
                 break;
             case 20:
-                return $this->getDateend();
+                return $this->getdateEnd();
                 break;
             case 21:
-                return $this->getOrgstructureId();
+                return $this->getorgStructureId();
                 break;
             case 22:
-                return $this->getRegioncode();
+                return $this->getregionCode();
                 break;
             case 23:
-                return $this->getPacientmodelId();
+                return $this->getpacientModelId();
                 break;
             case 24:
-                return $this->getTreatmentId();
+                return $this->gettreatmentId();
                 break;
             case 25:
-                return $this->getEventId();
+                return $this->geteventId();
                 break;
             case 26:
-                return $this->getPrevtalonEventId();
+                return $this->getprevTalonEventId();
                 break;
             case 27:
-                return $this->getVersion();
+                return $this->getversion();
                 break;
             default:
                 return null;
@@ -2007,10 +2102,11 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      *                    Defaults to BasePeer::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to true.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
         if (isset($alreadyDumpedObjects['ClientQuoting'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
@@ -2019,34 +2115,45 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
         $keys = ClientQuotingPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getCreatedatetime(),
-            $keys[2] => $this->getCreatepersonId(),
-            $keys[3] => $this->getModifydatetime(),
-            $keys[4] => $this->getModifypersonId(),
-            $keys[5] => $this->getDeleted(),
-            $keys[6] => $this->getMasterId(),
-            $keys[7] => $this->getIdentifier(),
-            $keys[8] => $this->getQuotaticket(),
-            $keys[9] => $this->getQuotatypeId(),
-            $keys[10] => $this->getStage(),
-            $keys[11] => $this->getDirectiondate(),
-            $keys[12] => $this->getFreeinput(),
-            $keys[13] => $this->getOrgId(),
-            $keys[14] => $this->getAmount(),
-            $keys[15] => $this->getMkb(),
-            $keys[16] => $this->getStatus(),
-            $keys[17] => $this->getRequest(),
-            $keys[18] => $this->getStatment(),
-            $keys[19] => $this->getDateregistration(),
-            $keys[20] => $this->getDateend(),
-            $keys[21] => $this->getOrgstructureId(),
-            $keys[22] => $this->getRegioncode(),
-            $keys[23] => $this->getPacientmodelId(),
-            $keys[24] => $this->getTreatmentId(),
-            $keys[25] => $this->getEventId(),
-            $keys[26] => $this->getPrevtalonEventId(),
-            $keys[27] => $this->getVersion(),
+            $keys[1] => $this->getcreateDatetime(),
+            $keys[2] => $this->getcreatePersonId(),
+            $keys[3] => $this->getmodifyDatetime(),
+            $keys[4] => $this->getmodifyPersonId(),
+            $keys[5] => $this->getdeleted(),
+            $keys[6] => $this->getmasterId(),
+            $keys[7] => $this->getidentifier(),
+            $keys[8] => $this->getquotaTicket(),
+            $keys[9] => $this->getquotaTypeId(),
+            $keys[10] => $this->getstage(),
+            $keys[11] => $this->getdirectionDate(),
+            $keys[12] => $this->getfreeInput(),
+            $keys[13] => $this->getorgId(),
+            $keys[14] => $this->getamount(),
+            $keys[15] => $this->getmkb(),
+            $keys[16] => $this->getstatus(),
+            $keys[17] => $this->getrequest(),
+            $keys[18] => $this->getstatment(),
+            $keys[19] => $this->getdateRegistration(),
+            $keys[20] => $this->getdateEnd(),
+            $keys[21] => $this->getorgStructureId(),
+            $keys[22] => $this->getregionCode(),
+            $keys[23] => $this->getpacientModelId(),
+            $keys[24] => $this->gettreatmentId(),
+            $keys[25] => $this->geteventId(),
+            $keys[26] => $this->getprevTalonEventId(),
+            $keys[27] => $this->getversion(),
         );
+        if ($includeForeignObjects) {
+            if (null !== $this->aRbTreatment) {
+                $result['RbTreatment'] = $this->aRbTreatment->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aRbPacientModel) {
+                $result['RbPacientModel'] = $this->aRbPacientModel->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aQuotaType) {
+                $result['QuotaType'] = $this->aQuotaType->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+        }
 
         return $result;
     }
@@ -2084,85 +2191,85 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
                 $this->setId($value);
                 break;
             case 1:
-                $this->setCreatedatetime($value);
+                $this->setcreateDatetime($value);
                 break;
             case 2:
-                $this->setCreatepersonId($value);
+                $this->setcreatePersonId($value);
                 break;
             case 3:
-                $this->setModifydatetime($value);
+                $this->setmodifyDatetime($value);
                 break;
             case 4:
-                $this->setModifypersonId($value);
+                $this->setmodifyPersonId($value);
                 break;
             case 5:
-                $this->setDeleted($value);
+                $this->setdeleted($value);
                 break;
             case 6:
-                $this->setMasterId($value);
+                $this->setmasterId($value);
                 break;
             case 7:
-                $this->setIdentifier($value);
+                $this->setidentifier($value);
                 break;
             case 8:
-                $this->setQuotaticket($value);
+                $this->setquotaTicket($value);
                 break;
             case 9:
-                $this->setQuotatypeId($value);
+                $this->setquotaTypeId($value);
                 break;
             case 10:
-                $this->setStage($value);
+                $this->setstage($value);
                 break;
             case 11:
-                $this->setDirectiondate($value);
+                $this->setdirectionDate($value);
                 break;
             case 12:
-                $this->setFreeinput($value);
+                $this->setfreeInput($value);
                 break;
             case 13:
-                $this->setOrgId($value);
+                $this->setorgId($value);
                 break;
             case 14:
-                $this->setAmount($value);
+                $this->setamount($value);
                 break;
             case 15:
-                $this->setMkb($value);
+                $this->setmkb($value);
                 break;
             case 16:
-                $this->setStatus($value);
+                $this->setstatus($value);
                 break;
             case 17:
-                $this->setRequest($value);
+                $this->setrequest($value);
                 break;
             case 18:
-                $this->setStatment($value);
+                $this->setstatment($value);
                 break;
             case 19:
-                $this->setDateregistration($value);
+                $this->setdateRegistration($value);
                 break;
             case 20:
-                $this->setDateend($value);
+                $this->setdateEnd($value);
                 break;
             case 21:
-                $this->setOrgstructureId($value);
+                $this->setorgStructureId($value);
                 break;
             case 22:
-                $this->setRegioncode($value);
+                $this->setregionCode($value);
                 break;
             case 23:
-                $this->setPacientmodelId($value);
+                $this->setpacientModelId($value);
                 break;
             case 24:
-                $this->setTreatmentId($value);
+                $this->settreatmentId($value);
                 break;
             case 25:
-                $this->setEventId($value);
+                $this->seteventId($value);
                 break;
             case 26:
-                $this->setPrevtalonEventId($value);
+                $this->setprevTalonEventId($value);
                 break;
             case 27:
-                $this->setVersion($value);
+                $this->setversion($value);
                 break;
         } // switch()
     }
@@ -2189,33 +2296,33 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
         $keys = ClientQuotingPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setCreatedatetime($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setCreatepersonId($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setModifydatetime($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setModifypersonId($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setDeleted($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setMasterId($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setIdentifier($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setQuotaticket($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setQuotatypeId($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setStage($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setDirectiondate($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setFreeinput($arr[$keys[12]]);
-        if (array_key_exists($keys[13], $arr)) $this->setOrgId($arr[$keys[13]]);
-        if (array_key_exists($keys[14], $arr)) $this->setAmount($arr[$keys[14]]);
-        if (array_key_exists($keys[15], $arr)) $this->setMkb($arr[$keys[15]]);
-        if (array_key_exists($keys[16], $arr)) $this->setStatus($arr[$keys[16]]);
-        if (array_key_exists($keys[17], $arr)) $this->setRequest($arr[$keys[17]]);
-        if (array_key_exists($keys[18], $arr)) $this->setStatment($arr[$keys[18]]);
-        if (array_key_exists($keys[19], $arr)) $this->setDateregistration($arr[$keys[19]]);
-        if (array_key_exists($keys[20], $arr)) $this->setDateend($arr[$keys[20]]);
-        if (array_key_exists($keys[21], $arr)) $this->setOrgstructureId($arr[$keys[21]]);
-        if (array_key_exists($keys[22], $arr)) $this->setRegioncode($arr[$keys[22]]);
-        if (array_key_exists($keys[23], $arr)) $this->setPacientmodelId($arr[$keys[23]]);
-        if (array_key_exists($keys[24], $arr)) $this->setTreatmentId($arr[$keys[24]]);
-        if (array_key_exists($keys[25], $arr)) $this->setEventId($arr[$keys[25]]);
-        if (array_key_exists($keys[26], $arr)) $this->setPrevtalonEventId($arr[$keys[26]]);
-        if (array_key_exists($keys[27], $arr)) $this->setVersion($arr[$keys[27]]);
+        if (array_key_exists($keys[1], $arr)) $this->setcreateDatetime($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setcreatePersonId($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setmodifyDatetime($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setmodifyPersonId($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setdeleted($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setmasterId($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setidentifier($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setquotaTicket($arr[$keys[8]]);
+        if (array_key_exists($keys[9], $arr)) $this->setquotaTypeId($arr[$keys[9]]);
+        if (array_key_exists($keys[10], $arr)) $this->setstage($arr[$keys[10]]);
+        if (array_key_exists($keys[11], $arr)) $this->setdirectionDate($arr[$keys[11]]);
+        if (array_key_exists($keys[12], $arr)) $this->setfreeInput($arr[$keys[12]]);
+        if (array_key_exists($keys[13], $arr)) $this->setorgId($arr[$keys[13]]);
+        if (array_key_exists($keys[14], $arr)) $this->setamount($arr[$keys[14]]);
+        if (array_key_exists($keys[15], $arr)) $this->setmkb($arr[$keys[15]]);
+        if (array_key_exists($keys[16], $arr)) $this->setstatus($arr[$keys[16]]);
+        if (array_key_exists($keys[17], $arr)) $this->setrequest($arr[$keys[17]]);
+        if (array_key_exists($keys[18], $arr)) $this->setstatment($arr[$keys[18]]);
+        if (array_key_exists($keys[19], $arr)) $this->setdateRegistration($arr[$keys[19]]);
+        if (array_key_exists($keys[20], $arr)) $this->setdateEnd($arr[$keys[20]]);
+        if (array_key_exists($keys[21], $arr)) $this->setorgStructureId($arr[$keys[21]]);
+        if (array_key_exists($keys[22], $arr)) $this->setregionCode($arr[$keys[22]]);
+        if (array_key_exists($keys[23], $arr)) $this->setpacientModelId($arr[$keys[23]]);
+        if (array_key_exists($keys[24], $arr)) $this->settreatmentId($arr[$keys[24]]);
+        if (array_key_exists($keys[25], $arr)) $this->seteventId($arr[$keys[25]]);
+        if (array_key_exists($keys[26], $arr)) $this->setprevTalonEventId($arr[$keys[26]]);
+        if (array_key_exists($keys[27], $arr)) $this->setversion($arr[$keys[27]]);
     }
 
     /**
@@ -2318,33 +2425,45 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setCreatedatetime($this->getCreatedatetime());
-        $copyObj->setCreatepersonId($this->getCreatepersonId());
-        $copyObj->setModifydatetime($this->getModifydatetime());
-        $copyObj->setModifypersonId($this->getModifypersonId());
-        $copyObj->setDeleted($this->getDeleted());
-        $copyObj->setMasterId($this->getMasterId());
-        $copyObj->setIdentifier($this->getIdentifier());
-        $copyObj->setQuotaticket($this->getQuotaticket());
-        $copyObj->setQuotatypeId($this->getQuotatypeId());
-        $copyObj->setStage($this->getStage());
-        $copyObj->setDirectiondate($this->getDirectiondate());
-        $copyObj->setFreeinput($this->getFreeinput());
-        $copyObj->setOrgId($this->getOrgId());
-        $copyObj->setAmount($this->getAmount());
-        $copyObj->setMkb($this->getMkb());
-        $copyObj->setStatus($this->getStatus());
-        $copyObj->setRequest($this->getRequest());
-        $copyObj->setStatment($this->getStatment());
-        $copyObj->setDateregistration($this->getDateregistration());
-        $copyObj->setDateend($this->getDateend());
-        $copyObj->setOrgstructureId($this->getOrgstructureId());
-        $copyObj->setRegioncode($this->getRegioncode());
-        $copyObj->setPacientmodelId($this->getPacientmodelId());
-        $copyObj->setTreatmentId($this->getTreatmentId());
-        $copyObj->setEventId($this->getEventId());
-        $copyObj->setPrevtalonEventId($this->getPrevtalonEventId());
-        $copyObj->setVersion($this->getVersion());
+        $copyObj->setcreateDatetime($this->getcreateDatetime());
+        $copyObj->setcreatePersonId($this->getcreatePersonId());
+        $copyObj->setmodifyDatetime($this->getmodifyDatetime());
+        $copyObj->setmodifyPersonId($this->getmodifyPersonId());
+        $copyObj->setdeleted($this->getdeleted());
+        $copyObj->setmasterId($this->getmasterId());
+        $copyObj->setidentifier($this->getidentifier());
+        $copyObj->setquotaTicket($this->getquotaTicket());
+        $copyObj->setquotaTypeId($this->getquotaTypeId());
+        $copyObj->setstage($this->getstage());
+        $copyObj->setdirectionDate($this->getdirectionDate());
+        $copyObj->setfreeInput($this->getfreeInput());
+        $copyObj->setorgId($this->getorgId());
+        $copyObj->setamount($this->getamount());
+        $copyObj->setmkb($this->getmkb());
+        $copyObj->setstatus($this->getstatus());
+        $copyObj->setrequest($this->getrequest());
+        $copyObj->setstatment($this->getstatment());
+        $copyObj->setdateRegistration($this->getdateRegistration());
+        $copyObj->setdateEnd($this->getdateEnd());
+        $copyObj->setorgStructureId($this->getorgStructureId());
+        $copyObj->setregionCode($this->getregionCode());
+        $copyObj->setpacientModelId($this->getpacientModelId());
+        $copyObj->settreatmentId($this->gettreatmentId());
+        $copyObj->seteventId($this->geteventId());
+        $copyObj->setprevTalonEventId($this->getprevTalonEventId());
+        $copyObj->setversion($this->getversion());
+
+        if ($deepCopy && !$this->startCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+            // store object hash to prevent cycle
+            $this->startCopy = true;
+
+            //unflag object copy
+            $this->startCopy = false;
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -2389,6 +2508,162 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
         }
 
         return self::$peer;
+    }
+
+    /**
+     * Declares an association between this object and a RbTreatment object.
+     *
+     * @param             RbTreatment $v
+     * @return ClientQuoting The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setRbTreatment(RbTreatment $v = null)
+    {
+        if ($v === null) {
+            $this->settreatmentId(NULL);
+        } else {
+            $this->settreatmentId($v->getid());
+        }
+
+        $this->aRbTreatment = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the RbTreatment object, it will not be re-added.
+        if ($v !== null) {
+            $v->addClientQuoting($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated RbTreatment object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return RbTreatment The associated RbTreatment object.
+     * @throws PropelException
+     */
+    public function getRbTreatment(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aRbTreatment === null && ($this->treatment_id !== null) && $doQuery) {
+            $this->aRbTreatment = RbTreatmentQuery::create()->findPk($this->treatment_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aRbTreatment->addClientQuotings($this);
+             */
+        }
+
+        return $this->aRbTreatment;
+    }
+
+    /**
+     * Declares an association between this object and a RbPacientModel object.
+     *
+     * @param             RbPacientModel $v
+     * @return ClientQuoting The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setRbPacientModel(RbPacientModel $v = null)
+    {
+        if ($v === null) {
+            $this->setpacientModelId(NULL);
+        } else {
+            $this->setpacientModelId($v->getid());
+        }
+
+        $this->aRbPacientModel = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the RbPacientModel object, it will not be re-added.
+        if ($v !== null) {
+            $v->addClientQuoting($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated RbPacientModel object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return RbPacientModel The associated RbPacientModel object.
+     * @throws PropelException
+     */
+    public function getRbPacientModel(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aRbPacientModel === null && ($this->pacientmodel_id !== null) && $doQuery) {
+            $this->aRbPacientModel = RbPacientModelQuery::create()->findPk($this->pacientmodel_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aRbPacientModel->addClientQuotings($this);
+             */
+        }
+
+        return $this->aRbPacientModel;
+    }
+
+    /**
+     * Declares an association between this object and a QuotaType object.
+     *
+     * @param             QuotaType $v
+     * @return ClientQuoting The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setQuotaType(QuotaType $v = null)
+    {
+        if ($v === null) {
+            $this->setquotaTypeId(NULL);
+        } else {
+            $this->setquotaTypeId($v->getid());
+        }
+
+        $this->aQuotaType = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the QuotaType object, it will not be re-added.
+        if ($v !== null) {
+            $v->addClientQuoting($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated QuotaType object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return QuotaType The associated QuotaType object.
+     * @throws PropelException
+     */
+    public function getQuotaType(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aQuotaType === null && ($this->quotatype_id !== null) && $doQuery) {
+            $this->aQuotaType = QuotaTypeQuery::create()->findPk($this->quotatype_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aQuotaType->addClientQuotings($this);
+             */
+        }
+
+        return $this->aQuotaType;
     }
 
     /**
@@ -2447,10 +2722,22 @@ abstract class BaseClientQuoting extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->aRbTreatment instanceof Persistent) {
+              $this->aRbTreatment->clearAllReferences($deep);
+            }
+            if ($this->aRbPacientModel instanceof Persistent) {
+              $this->aRbPacientModel->clearAllReferences($deep);
+            }
+            if ($this->aQuotaType instanceof Persistent) {
+              $this->aQuotaType->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        $this->aRbTreatment = null;
+        $this->aRbPacientModel = null;
+        $this->aQuotaType = null;
     }
 
     /**
