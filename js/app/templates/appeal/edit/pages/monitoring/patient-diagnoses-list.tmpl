@@ -1,3 +1,4 @@
+<h4>Диагнозы</h4>
 <% if (diagnoses.length && _(diagnoses.toJSON()).chain().pluck("mkb").pluck("code").any().value()) { %>
 	<div class="Diagnosis">
 		<% diagnoses.each(function (diagnosis) { %>
