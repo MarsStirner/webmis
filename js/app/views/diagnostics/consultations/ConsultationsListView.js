@@ -111,7 +111,7 @@ define(function(require) {
 				wait: true,
 				success: function(model, response) {
 					pubsub.trigger('noty', {
-						text: 'Направлениеудалено',
+						text: 'Направление удалено',
 						type: 'alert'
 					});
 					// this.collection.fetch();

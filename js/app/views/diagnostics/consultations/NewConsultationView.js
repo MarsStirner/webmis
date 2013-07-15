@@ -30,7 +30,7 @@ define(function(require) {
 			'change #finance': 'onChangeFinance',
 			'change input[name="diagnosis[mkb][code]"]': 'onMKBChange',
 			//'change #assign-person': 'onChangeAssignPerson',
-			'click #doctor-outer': 'openDoctorSelectPopup',
+			'click #assigner-outer': 'openAssignerSelectPopup',
 			'change #assign-date': 'onChangeAssignDate',
 			'change #assign-time': 'onChangeAssignDate',
 			'change #urgent': 'onChangeUrgent'
@@ -44,11 +44,12 @@ define(function(require) {
 
 			this.appealDiagnosis = this.options.appeal.getDiagnosis();
 			var appealDoctor = this.options.appeal.get('execPerson');
-
+			// console.log('appealDoctor',appealDoctor)
 			//"Направивший врач"
 			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
 				//юзер не врач
-				this.doctor = {
+				this.assigner = {
+					id: appealDoctor.id,
 					name: {
 						first: appealDoctor.name.first,
 						last: appealDoctor.name.last,
@@ -60,7 +61,8 @@ define(function(require) {
 			} else {
 				//юзер врач
 
-				this.doctor = {
+				this.assigner = {
+					id: Core.Cookies.get("userId"),
 					name: {
 						first: Core.Cookies.get("doctorFirstName"),
 						last: Core.Cookies.get("doctorLastName"),
@@ -71,7 +73,7 @@ define(function(require) {
 			}
 
 			this.data = {
-				'doctor': this.doctor
+				'assigner': this.assigner
 			};
 
 
@@ -92,7 +94,8 @@ define(function(require) {
 			this.consultation.eventId = this.options.appealId;
 			this.consultation.set('patientId', this.options.appeal.get('patient').get('id'));
 			this.consultation.set('createDateTime', moment().valueOf());
-			this.consultation.set('createPerson', this.doctor.id);
+			this.consultation.set('createPerson', this.assigner.id);
+			this.consultation.set('assignerId', this.assigner.id);
 
 			this.diagnosis = this.options.appeal.getDiagnosis();
 
@@ -131,12 +134,12 @@ define(function(require) {
 			this.consultation.on('change:plannedEndDate', this.loadConsultants, this);
 			this.consultation.on('change:plannedTime', this.updateSaveButton, this);
 
-			pubsub.on('person:changed', function(doctor) {
-				console.log('assign-person: changed', doctor);
-				this.consultation.set('createPerson', doctor.id)
-				this.consultation.set('assignerId', doctor.id)
+			pubsub.on('assigner:changed', function(assigner) {
+				console.log('assign-person: changed', assigner);
+				this.consultation.set('createPerson', assigner.id)
+				this.consultation.set('assignerId', assigner.id)
 
-				this.ui.$doctor.val(doctor.name.raw);
+				this.ui.$assigner.val(assigner.name.raw);
 
 			}, this);
 
@@ -144,14 +147,44 @@ define(function(require) {
 
 		//при выборе консультации
 		onConsultationSelect: function(code) {
-			var consultation = this.consultationsGroups.find(function(model) {
-				return model.get('code') === code;
-			})
+			// var consultation = this.consultationsGroups.find(function(model) {
+			// 	return model.get('code') === code;
+			// });
 
-			this.consultation.set('actionTypeId', consultation.get('id'));
+
+
+			var consultation;
+
+			function findR(list) {
+
+
+				_.each(list, function(model) {
+					//console.log('list, model', code, model.code, list, model)
+					if (model.code == code) {
+						consultation = model;
+					}
+
+					if (model.groups && (model.groups.length > 0)) {
+						findR(model.groups);
+					}
+				});
+
+				if (consultation) {
+					return consultation;
+				} else {
+
+				}
+
+			}
+
+			var consultation = findR(this.consultationsGroups.toJSON());
+
+			//console.log('consultationId',consultation.id)
+
+			this.consultation.set('actionTypeId', consultation.id);
 			this.ui.$datepicker.datepicker('enable');
 			var date = this.ui.$datepicker.datepicker("getDate");
-			console.log('date', date)
+			//console.log('date', date)
 			var timestamp = moment(date).valueOf();
 			this.consultation.set('plannedEndDate', timestamp);
 		},
@@ -214,11 +247,14 @@ define(function(require) {
 			//assignerId
 		},
 
-		openDoctorSelectPopup: function() {
+		openAssignerSelectPopup: function() {
 			console.log('openDoctorSelectPopup');
 			this.personDialogView = new PersonDialogView({
 				 title: 'Направивший врач',
-				appeal: this.options.appeal
+				appeal: this.options.appeal,
+                callback: function(person){
+                    pubsub.trigger('assigner:changed', person);
+                }
 			});
 
 			this.personDialogView.render().open();
@@ -284,11 +320,11 @@ define(function(require) {
 
 			this.ui.$saveButton.button("disable");
 			this.ui.$finance = this.$el.find('#finance');
-			this.ui.$assignPerson = this.$el.find('#assign-person');
+			//this.ui.$assignPerson = this.$el.find('#assign-person');
 			this.ui.$assignDatepicker = this.$el.find('#assign-date');
 			this.ui.$assignTimepicker = this.$el.find('#assign-time');
-			this.ui.$doctor = this.$el.find('#doctor');
-			this.$el.find('.change-doctor').button();
+			this.ui.$assigner = this.$el.find('#assigner');
+			this.$el.find('.change-assigner').button();
 
 			//календарь
 			this.ui.$datepicker.datepicker({

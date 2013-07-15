@@ -67,9 +67,15 @@
 		</div>
 		<div class="span5">
 			<label for="assign-person">Направивший врач</label><br />
-			<div id="doctor-outer">
-				<input name="doctor" id="doctor" type="text" style="" disabled value="${doctor.name.first} ${doctor.name.middle} ${doctor.name.last}">
-				<button class="change-doctor" style=""><i class="icon-user-md"></i></button>
+			<div id="assigner-outer">
+				<input
+				name="assigner"
+				id="assigner"
+				type="text"
+				style=""
+				disabled
+				value="${assigner.name.first} ${assigner.name.middle} ${assigner.name.last}">
+				<button class="change-assigner" style=""><i class="icon-user-md"></i></button>
 			</div>
 		</div>
 		<div class="span4">
