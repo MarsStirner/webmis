@@ -1,0 +1,8 @@
+<label>
+	<input type="checkbox" <% if(required || model.getValue()){%> checked<%}%> class="field-toggle">
+	<%=model.get('name')%>
+</label>
+<div class="field">
+	<input type="text" class="Disabled" value="Сотрудник не выбран" disabled>
+	<button data-icon-primary="icon-pencil" data-notext="true">Выбрать сотрудника</button>
+</div>

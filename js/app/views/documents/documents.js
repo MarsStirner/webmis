@@ -89,7 +89,8 @@ define(function (require) {
 			_string: _.template(require("text!templates/documents/edit/ui-elements/string.html")),
 			_mkb: _.template(require("text!templates/documents/edit/ui-elements/mkb.html")),
 			_flatDirectory: _.template(require("text!templates/documents/edit/ui-elements/flat-directory.html")),
-			_select: _.template(require("text!templates/documents/edit/ui-elements/select.html"))
+			_select: _.template(require("text!templates/documents/edit/ui-elements/select.html")),
+			_person: _.template(require("text!templates/documents/edit/ui-elements/person.html"))
 		}
 	};
 
@@ -2666,6 +2667,14 @@ define(function (require) {
 	});
 
 	/**
+	 * Поле типа Person
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.Person = UIElementBase.extend({
+		template: templates.uiElements._person
+	});
+
+	/**
 	 * Фабрика для создания элементов шаблона соответсвующего типа
 	 * @type {Function}
 	 */
@@ -2710,6 +2719,9 @@ define(function (require) {
 				break;
 			case "operationtype":
 				this.UIElementClass = Documents.Views.Edit.UIElement.OperationType;
+				break;
+			case "person":
+				this.UIElementClass = Documents.Views.Edit.UIElement.Person;
 				break;
 			default:
 				this.UIElementClass = Documents.Views.Edit.UIElement.Base;
