@@ -42,6 +42,7 @@ define(function(require) {
 			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
 				//юзер не врач
 				view.assigner = {
+					id:appealDoctor.id,
 					name: {
 						first: appealDoctor.name.first,
 						last: appealDoctor.name.last,
@@ -53,6 +54,7 @@ define(function(require) {
 				//юзер врач
 
 				view.assigner = {
+					id: Core.Cookies.get("userId"),
 					name: {
 						first: Core.Cookies.get("doctorFirstName"),
 						last: Core.Cookies.get("doctorLastName"),
@@ -62,6 +64,7 @@ define(function(require) {
 			}
 
 			view.executor = {
+				id:'',
 				name: {
 					first: '',
 					last: '',
@@ -211,11 +214,13 @@ define(function(require) {
 
 
 			pubsub.on('assigner:changed', function(assigner) {
+				console.log('assigner:changed',assigner)
 				view.assigner = assigner;
 				view.ui.$assigner.val(assigner.name.raw);
 			});
 
 			pubsub.on('executor:changed', function(executor) {
+				console.log('executor:changed',executor)
 				view.executor = executor;
 				view.ui.$executor.val(executor.name.raw);
 			});
@@ -307,10 +312,10 @@ define(function(require) {
 
 
 				var $datepicker = view.$('#start-date-' + id);
-				console.log('$datepicker', $datepicker.datepicker("getDate"))
+				//console.log('$datepicker', $datepicker.datepicker("getDate"))
 				var date = moment($datepicker.datepicker("getDate")).format('YYYY-MM-DD');
 				var $timepicker = view.$('#start-time-' + id);
-				console.log('timepicker', $timepicker)
+				//console.log('timepicker', $timepicker)
 				var time = $timepicker.val() + ':00';
 				model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 
@@ -379,7 +384,7 @@ define(function(require) {
 				assigner: this.assigner
 			}));
 
-			view.renderNested(view.mkbInputView, ".mbk");
+			view.renderNested(view.mkbInputView, ".mkb");
 
 			view.renderNested(view.labsCollectionView, ".labs");
 			view.labsCollection.fetch();

@@ -116,8 +116,10 @@ define(function(require) {
 			var assignerLastName = view.model.getProperty('assignerLastName');
 			var assignerFirstName = view.model.getProperty('assignerFirstName');
 			var assignerMiddleName = view.model.getProperty('assignerMiddleName');
+			var assignerId = view.model.getProperty('assignerId');
 
 			return {
+				id: assignerId ? assignerId : Core.Cookies.get("userId"),
 				name: {
 					first: assignerFirstName ? assignerFirstName : Core.Cookies.get("doctorFirstName"),
 					last: assignerLastName ? assignerLastName : Core.Cookies.get("doctorLastName"),
@@ -133,8 +135,10 @@ define(function(require) {
 			var executorLastName = view.model.getProperty('doctorLastName');
 			var executorFirstName = view.model.getProperty('doctorFirstName');
 			var executorMiddleName = view.model.getProperty('doctorMiddleName');
+			var executorId = view.model.getProperty('executorId');
 
 			return {
+				id: executorId ? executorId : '',
 				name: {
 					first: executorFirstName ? executorFirstName : '',
 					last: executorLastName ? executorLastName : '',
@@ -195,7 +199,7 @@ define(function(require) {
 				executor: view.executor
 			}));
 
-			view.renderNested(view.mkbInputView, ".mbk");
+			view.renderNested(view.mkbInputView, ".mkb");
 
 			view.ui = {};
 			view.ui.$mkbDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
@@ -339,10 +343,12 @@ define(function(require) {
 			view.model.setProperty('doctorFirstName', 'value', view.executor.name.first);
 			view.model.setProperty('doctorLastName', 'value', view.executor.name.last);
 			view.model.setProperty('doctorMiddleName', 'value', view.executor.name.middle);
+			view.model.setProperty('executorId', 'value', view.executor.id);
 
            view.model.setProperty('assignerFirstName', 'value', view.assigner.name.first);
            view.model.setProperty('assignerLastName', 'value', view.assigner.name.last);
            view.model.setProperty('assignerMiddleName', 'value', view.assigner.name.middle);
+           view.model.setProperty('assignerId', 'value', view.assigner.id);
 
 
 			view.model.setProperty('urgent', 'value', cito);
