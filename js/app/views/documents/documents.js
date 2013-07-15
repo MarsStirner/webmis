@@ -779,6 +779,7 @@ define(function (require) {
 				}),
 				".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
 					collection: this.documents,
+					selectedDocuments: this.selectedDocuments,
 					included: !!this.options.included
 				}),
 				".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents})
@@ -794,7 +795,8 @@ define(function (require) {
 		template: templates._documentsTableHead,
 
 		events: {
-			"click th.sortable": "onThSortableClick"
+			"click th.sortable": "onThSortableClick",
+			"change .select-all-flag": "onSelectAllFlagChange"
 		},
 
 		data: function () {
@@ -806,14 +808,12 @@ define(function (require) {
 		},
 
 		initialize: function () {
-
-			this.listenTo(this.collection, "reset", this.onCollectionReset);
 			_.bindAll(this, 'data');
+			this.listenTo(this.options.selectedDocuments, "reset", this.onSelectedDocumentsReset);
 		},
 
-		onCollectionReset: function () {
-			console.log('reset', this.collection)
-			//this.render();
+		onSelectedDocumentsReset: function () {
+			this.$(".select-all-flag").prop("checked", false);
 		},
 
 		onThSortableClick: function (event) {
@@ -850,15 +850,20 @@ define(function (require) {
 		},
 
 		onSelectAllFlagChange: function (event) {
-			this.updateSelectedItems($(event.currentTarget).is(":checked"));
+			this.markAllItems($(event.currentTarget).is(":checked"));
 		},
 
-		updateSelectedItems: function (selected) {
-			/*if (selected) {
-				this.options.selectedDocuments.add(new Documents.Models.Document({id: itemId}));
+		markAllItems: function (selected) {
+			console.log(selected);
+			if (selected) {
+				this.collection.each(function (document) {
+					this.options.selectedDocuments.add(new Documents.Models.Document({id: document.get("id")}));
+				}, this);
 			} else {
-				this.options.selectedDocuments.remove(this.options.selectedDocuments.get(itemId));
-			}*/
+				this.options.selectedDocuments.reset();
+			}
+			this.collection.trigger("mark-all", {selected: selected});
+			console.log(this.options.selectedDocuments);
 			//console.log(this.options.selectedDocuments);
 		}
 	});
@@ -884,12 +889,17 @@ define(function (require) {
 
 		initialize: function () {
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
+			this.listenTo(this.collection, "mark-all", this.onCollectionMarkAll);
 			this.listenTo(this.options.selectedDocuments, "review:quit", this.onCollectionReset);
 		},
 
 		onCollectionReset: function () {
 			this.options.selectedDocuments.reset();
 			this.render();
+		},
+
+		onCollectionMarkAll: function (event) {
+			this.$(".selected-flag").prop("checked", event.selected);
 		},
 
 		onQuitReviewState: function () {
@@ -1180,7 +1190,7 @@ define(function (require) {
 				title: "Выберите тип документа",
 				modal: true,
 				width: 800,
-				height: 600,
+				height: 550,
 				resizable: false,
 				close: _.bind(this.tearDown, this),
 				buttons: [
@@ -1466,10 +1476,10 @@ define(function (require) {
 					included: !!this.options.included,
 					editPageTypeName: this.getEditPageTypeName()
 				}),
-				".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
+				/*".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
 					collection: this.documents,
 					included: !!this.options.included
-				}),
+				}),*/
 				".documents-filters": new Documents.Views.List.Base.Filters({collection: this.documents})
 			}, subViews));
 		}
@@ -1541,10 +1551,10 @@ define(function (require) {
 
 		render: function (subViews) {
 			return ListLayoutBase.prototype.render.call(this, _.extend({
-				".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
+				/*".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
 					collection: this.documents,
 					included: !!this.options.included
-				}),
+				}),*/
 				".documents-table-body": new Documents.Views.List.Therapy.DocumentsTable({
 					collection: this.documents,
 					selectedDocuments: this.selectedDocuments,
@@ -2805,17 +2815,26 @@ define(function (require) {
 		},
 
 		onDocumentsReviewNext: function () {
-			var nextDocumentListItem = this.options.documents.at(this.getListItemIndex() + 1);
-			var nextDocument = new Documents.Models.Document({id: nextDocumentListItem.id});
-
-			this.collection.reset([nextDocument]);
+			this.reviewDocumentAtIndex(this.getListItemIndex() + 1);
 		},
 
 		onDocumentsReviewPrev: function () {
-			var prevDocumentListItem = this.options.documents.at(this.getListItemIndex() - 1);
-			var prevDocument = new Documents.Models.Document({id: prevDocumentListItem.id});
+			this.reviewDocumentAtIndex(this.getListItemIndex() - 1);
+		},
 
-			this.collection.reset([prevDocument]);
+		reviewDocumentAtIndex: function (index) {
+			if (index >= 0 && index < this.options.documents.length) {
+				var documentListItem = this.options.documents.at(index);
+				var document = new Documents.Models.Document({id: documentListItem.id});
+
+				this.collection.reset([document]);
+			} else {
+				//TODO: fetch next list page
+			}
+		},
+
+		reviewPrevDocument: function () {
+
 		},
 
 		getListItemIndex: function () {
