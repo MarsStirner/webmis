@@ -89,13 +89,15 @@ define(function (require) {
 			_string: _.template(require("text!templates/documents/edit/ui-elements/string.html")),
 			_mkb: _.template(require("text!templates/documents/edit/ui-elements/mkb.html")),
 			_flatDirectory: _.template(require("text!templates/documents/edit/ui-elements/flat-directory.html")),
-			_select: _.template(require("text!templates/documents/edit/ui-elements/select.html"))
+			_select: _.template(require("text!templates/documents/edit/ui-elements/select.html")),
+			_person: _.template(require("text!templates/documents/edit/ui-elements/person.html"))
 		}
 	};
 
 	var Thesaurus = require("views/appeal/edit/popups/thesaurus");
 	var FlatDirectory = require("models/flat-directory");
 	var MKB = require("views/mkb-directory");
+	var PersonDialog = require("views/ui/PersonDialog");
 
 	var FDLoader = {
 		fds: {},
@@ -349,18 +351,10 @@ define(function (require) {
 		},
 
 		getValueProperty: function () {
-			//TODO: Выяснить почему так падает хром....
 			if (_.isUndefined(this.valuePropertyIndex)) {
 				this.valuePropertyIndex = this.getValuePropertyIndex(this.get("properties"), this.get("type"));
 			}
 			return this.get("properties")[this.valuePropertyIndex];
-
-			/*if (_.isUndefined(this.valuePropertyIndex)) {
-			 this.valuePropertyIndex = this.getValuePropertyIndex(this.get("properties"), this.get("type"));
-			 return this.get("properties")[this.valuePropertyIndex];
-			 } else {
-			 return this.get("properties")[this.valuePropertyIndex];
-			 }*/
 		},
 
 		getValue: function () {
@@ -2143,13 +2137,16 @@ define(function (require) {
 				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
 			}, this);
 		},
-		getReadOnly: function(){
+
+		getReadOnly: function () {
 			return this.getDouble('readOnly');
 		},
-		getMandatory: function(){
+
+		getMandatory: function () {
 			return this.getDouble('mandatory');
 		},
-		getDouble: function(name){
+
+		getDouble: function (name) {
 			var value = this.model.get(name);
 
 			switch (value) {
@@ -2193,6 +2190,7 @@ define(function (require) {
 		onRequiredValidationFail: function () {
 			this.$(".Mandatory").addClass("WrongField");
 		},
+
 		onFieldToggleChange: function (event) {
 			this.$(".field").toggle($(event.currentTarget).is(":checked"));
 		}
@@ -2686,6 +2684,34 @@ define(function (require) {
 	});
 
 	/**
+	 * Поле типа Person
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.Person = UIElementBase.extend({
+		template: templates.uiElements._person,
+
+		events: _.extend({
+			"click .person-dialog-launcher": "onPersonDialogLauncherClick"
+		}, UIElementBase.prototype.events),
+
+		onPersonDialogLauncherClick: function (event) {
+			(new PersonDialog({
+				title: this.model.get("name"),
+				appeal: appeal,
+				callback: _.bind(this.onPersonSelected, this)
+			})).render().open();
+		},
+
+		onPersonSelected: function (person) {
+			this.model.setValue(person.id);
+			this.setAttributeValue();
+			this.$('.person-name').val(person.name.raw);
+
+			console.log(this.getAttributeValue(), this.model);
+		}
+	});
+
+	/**
 	 * Фабрика для создания элементов шаблона соответсвующего типа
 	 * @type {Function}
 	 */
@@ -2730,6 +2756,9 @@ define(function (require) {
 				break;
 			case "operationtype":
 				this.UIElementClass = Documents.Views.Edit.UIElement.OperationType;
+				break;
+			case "person":
+				this.UIElementClass = Documents.Views.Edit.UIElement.Person;
 				break;
 			default:
 				this.UIElementClass = Documents.Views.Edit.UIElement.Base;
