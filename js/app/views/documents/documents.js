@@ -72,7 +72,7 @@ define(function (require) {
 		_editDates: _.template(require("text!templates/documents/edit/dates.html")),
 		_editDocumentControls: _.template(require("text!templates/documents/edit/document-controls.html")),
 		_editCopySourceSelector: _.template(require("text!templates/documents/edit/copy-source-selector.html")),
-		_editGrid: _.template(require("text!templates/documents/edit/grid.html")),
+		//_editGrid: _.template(require("text!templates/documents/edit/grid.html")),
 		//_editGridSpan: _.template(require("text!templates/documents/edit/span.html")),
 		_reviewLayout: _.template(require("text!templates/documents/review/layout.html")),
 		_reviewControls: _.template(require("text!templates/documents/review/controls.html")),
@@ -412,6 +412,7 @@ define(function (require) {
 		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
 		dateRange: null,
 		typeId: null,
+		doctorId: null,
 		pageNumber: 1,
 		initialize: function (models, options) {
 			Collection.prototype.initialize.call(this);
@@ -442,6 +443,10 @@ define(function (require) {
 
 			if (this.pageNumber) {
 				params.push("page=" + this.pageNumber);
+			}
+
+			if (this.doctorId) {
+				params.push("filter[doctorId]=" + this.doctorId);
 			}
 
 			return url + params.join("&");
@@ -770,7 +775,10 @@ define(function (require) {
 
 		render: function (subViews) {
 			return LayoutBase.prototype.render.call(this, _.extend({
-				".table-controls": new Documents.Views.List.Base.TableControls({collection: this.selectedDocuments}),
+				".table-controls": new Documents.Views.List.Base.TableControls({
+					collection: this.selectedDocuments,
+					listItems: this.documents
+				}),
 				".documents-table-tbody": new Documents.Views.List.Base.DocumentsTable({
 					collection: this.documents,
 					selectedDocuments: this.selectedDocuments,
@@ -983,7 +991,10 @@ define(function (require) {
 		template: templates._listTableControls,
 
 		data: function () {
-			return {selectedDocuments: this.collection};
+			return {
+				selectedDocuments: this.collection,
+				filteredbyExecPerson: !!this.options.listItems.doctorId
+			};
 		},
 
 		events: {
@@ -1003,9 +1014,18 @@ define(function (require) {
 			this.render();
 		},
 
+		//TODO: this should be in filters
+		////////
 		onByExecPersonChange: function (event) {
-			/*if () {}*/
+			console.log(event);
+			this.applyExecPersonFilter($(event.currentTarget).is(":checked"));
+		},
+
+		applyExecPersonFilter: function (enabled) {
+			this.options.listItems.doctorId = enabled ? appeal.get("execPerson").id : null;
+			this.options.listItems.fetch();
 		}
+		///////
 
 		/*onSelectedDocumentsAdd: function () {
 		 this.render();
