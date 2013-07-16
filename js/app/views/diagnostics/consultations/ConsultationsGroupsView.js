@@ -23,11 +23,14 @@ define(function(require) {
                 .append(_.template(template, {
                 items: treeData,
                 template: template
-            })).on('click', 'li', function() {
-                view.$consultations_list.find('.clicked').removeClass('clicked');
-                $(this).addClass('clicked');
+            })).on('click', 'li', function(e) {
+                    e.stopPropagation();
 
-                    $(this).siblings().removeClass('open').addClass('closed');
+                    view.$consultations_list.find('.clicked').removeClass('clicked');
+
+                    //$(this).addClass('clicked').removeClass('closed').addClass('open');
+
+                    //$('.consultations-list li').removeClass('open').addClass('closed');
                     $(this).toggleClass('open').toggleClass('closed').addClass('clicked');
 
                 var code = $(this).data('code');

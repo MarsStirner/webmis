@@ -1,5 +1,5 @@
-<%if (collection.length) {%>
-	<%collection.each(function (item, index) {%>
+<%if (collection.length) { %>
+	<%_.each(collection,function (item, index) {%>
 		<tr <% if(index > 0){%>style="display:none;"<%}%>>
 			<td><%=Core.Date.formatDateTime(item.get("datetime"))%></td>
 			<td><%=item.get("temperature") || '-'%></td>

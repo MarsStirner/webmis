@@ -173,7 +173,7 @@ define(function (require) {
                         return fieldName !== "datetime" && field && field.toString().length;
                     });
                 })
-                .slice(0, 5);
+                ///.slice(0, 5);
 
             // console.log(rawByDate);
             console.log('raw', raw);
@@ -558,9 +558,7 @@ define(function (require) {
             /*this.$("tbody").empty().append(this.collection.map(function (item) {
              return _.template(this.itemTemplate, {item: item});
              }, this));*/
-            this.$("tbody").empty().append(_.template(this.itemTemplate, {
-                collection: this.collection
-            }));
+            this.$("tbody").empty().append(_.template(this.itemTemplate, this.data()));
         },
         data: function () {
             return {};
@@ -1286,9 +1284,11 @@ define(function (require) {
             this.$('tbody tr').not('tbody tr:first-child').toggle();
         },
 
-        data: function () {
-         return {collection: this.collection};
-         },
+        data: function() {
+            return {
+                collection: this.collection.models.slice(0, 5)
+            };
+        },
 
         initialize: function (options) {
             this.collection = new Monitoring.Collections.MonitoringInfos();
@@ -1312,9 +1312,9 @@ define(function (require) {
             this.$('tbody tr').not('tbody tr:first-child').toggle();
         },
 
-        data: function () {
+        data: function() {
             return {
-                analyses: this.collection,
+                collection: this.collection.models.slice(0, 5),
                 appealId: appeal.get('id'),
                 showLabsLink: this.showLabsLink
             };

@@ -12,7 +12,7 @@ define(function(require) {
 	return View.extend({
 		template: tmpl,
 		events: {
-			'click #doctor-outer': 'openDoctorSelectPopup',
+			'click #assigner-outer': 'openAssignerSelectPopup',
             'click #executor-outer': 'openExecutorSelectPopup'
 		},
 
@@ -27,17 +27,6 @@ define(function(require) {
 			this.model = this.options.model;
 			this.data = this.model.toJSON();
 
-			// //юзер
-			// this.doctor = {
-			// 	name: {
-			// 		first: Core.Cookies.get("doctorFirstName"),
-			// 		last: Core.Cookies.get("doctorLastName")
-			// 	}
-			// };
-			// this.data = {
-			// 	'doctor': this.doctor
-			// };
-
 			this.bfView = new BFView({
 				data: this.viewModel.toJSON()
 			});
@@ -45,20 +34,22 @@ define(function(require) {
 
 			this.depended(this.bfView);
 
-			pubsub.on('person:changed', function(doctor) {
-				console.log('assign-person: changed', doctor);
+			pubsub.on('assigner:changed', function(assigner) {
+				console.log('assign-person: changed', assigner);
 
-				this.viewModel.set('doctorFirstName',doctor.name.first);
-				this.viewModel.set('doctorMiddleName',doctor.name.middle);
-				this.viewModel.set('doctorLastName',doctor.name.last)
-				this.$doctor.val(doctor.name.raw);
+				this.viewModel.set('assignerId',assigner.id);
+				this.viewModel.set('assignerFirstName',assigner.name.first);
+				this.viewModel.set('assignerMiddleName',assigner.name.middle);
+				this.viewModel.set('assignerLastName',assigner.name.last);
+
+				this.$assigner.val(assigner.name.raw);
 
 			},this);
 
             pubsub.on('executor:changed', function(executor) {
-                this.executor = executor;
+                // this.executor = executor;
 
-
+				this.viewModel.set('executorId', executor.id);
                 this.viewModel.set('executorFirstName', executor.name.first);
                 this.viewModel.set('executorMiddleName', executor.name.middle);
                 this.viewModel.set('executorLastName', executor.name.last);
@@ -69,11 +60,14 @@ define(function(require) {
 
 		},
 
-		openDoctorSelectPopup: function() {
-			console.log('openDoctorSelectPopup');
+		openAssignerSelectPopup: function() {
+			console.log('openAssignerSelectPopup');
 			this.personDialogView = new PersonDialogView({
 				title: 'Направивший врач',
-				appeal: this.options.appeal
+				appeal: this.options.appeal,
+				callback: function(person){
+                    pubsub.trigger('assigner:changed', person);
+                }
 			});
 
 			this.personDialogView.render().open();
@@ -127,12 +121,12 @@ define(function(require) {
 			view.$plannedDatepicker = view.$("#dp");
 			view.$plannedTimepicker = view.$("#tp");
 			view.$urgent = view.$('input[name=urgent]');
-			view.$doctor = view.$('input[name=doctor]');
-            view.$executor = view.$('input[name=executor]');
+            view.$assigner = view.$('input[name=assigner]');
+			view.$executor = view.$('input[name=executor]');
 			view.$finance = view.$('#finance');
 			view.$mkbDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
 			view.$mkbCode = view.$("input[name='diagnosis[mkb][code]']");
-			this.$('.change-doctor,.change-executor').button();
+			this.$('.change-assigner,.change-executor').button();
 
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
 
@@ -152,7 +146,7 @@ define(function(require) {
 				view.$urgent.prop('checked', true);
 			}
 
-			view.$doctor.val(view.viewModel.get('doctorFirstName') + ' ' + view.viewModel.get('doctorLastName'));
+			//view.$doctor.val(view.viewModel.get('doctorFirstName') + ' ' + view.viewModel.get('doctorLastName'));
 
 			view.$mkbDiagnosis.val(view.viewModel.get('mkbText'));
 			view.$mkbCode.val(view.viewModel.get('mkbCode'));
@@ -194,6 +188,7 @@ define(function(require) {
 		onSave: function() {
 			var view = this;
 
+			view.model.setProperty('executorId', 'value', view.viewModel.get('executorId'));
 			//doctorFirstName - имя врача назначившего исследование
 			view.model.setProperty('doctorFirstName', 'value', view.viewModel.get('doctorFirstName'));
 			//doctorMiddleName - отчество врача назначившего исследование
@@ -201,13 +196,13 @@ define(function(require) {
 			//doctorLastName - фамилия врача назначившего исследование
 			view.model.setProperty('doctorLastName', 'value', view.viewModel.get('doctorLastName'));
 
-
-            //doctorFirstName - имя врача назначившего исследование
-            //view.model.setProperty('doctorFirstName', 'value', view.viewModel.get('doctorFirstName'));
-            //doctorMiddleName - отчество врача назначившего исследование
-            //view.model.setProperty('doctorMiddleName', 'value', view.viewModel.get('doctorMiddleName'));
-            //doctorLastName - фамилия врача назначившего исследование
-            //view.model.setProperty('doctorLastName', 'value', view.viewModel.get('doctorLastName'));
+			view.model.setProperty('assignerId', 'value', view.viewModel.get('assignerId'));
+            //assignerFirstName - имя врача назначившего исследование
+            view.model.setProperty('assignerFirstName', 'value', view.viewModel.get('assignerFirstName'));
+            //assignerMiddleName - отчество врача назначившего исследование
+            view.model.setProperty('assignerMiddleName', 'value', view.viewModel.get('assignerMiddleName'));
+            //assignerLastName - фамилия врача назначившего исследование
+            view.model.setProperty('assignerLastName', 'value', view.viewModel.get('assignerLastName'));
 
 			//assessmentDate - дата создания направления на исследование
 			var assessmentDay = view.viewModel.get('assessmentDay');
