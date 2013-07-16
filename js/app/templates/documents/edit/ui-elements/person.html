@@ -1,8 +1,15 @@
-<label>
-	<input type="checkbox" <% if(required || model.getValue()){%> checked<%}%> class="field-toggle">
-	<%=model.get('name')%>
-</label>
-<div class="field">
-	<input type="text" class="Disabled" value="Сотрудник не выбран" disabled>
-	<button data-icon-primary="icon-pencil" data-notext="true">Выбрать сотрудника</button>
+<div class="row-fluid">
+	<label>
+		<input type="checkbox" <% if(required || model.getValue()){%> checked<%}%> class="field-toggle">
+		<%=model.get('name')%>
+	</label>
+</div>
+<div class="row-fluid field" <% if(!required && !model.getValue()){%>style="display:none;"<%}%>>
+	<div class="span11">
+		<input type="hidden" class="attribute-value" value="<%=model.getValue()%>">
+		<input type="text" class="Disabled <%=required?'Mandatory':''%> person-name" value="<%=model.getValue()%>" disabled>
+	</div>
+	<div class="span1">
+		<button class="person-dialog-launcher" data-icon-primary="icon-user" data-notext="true" style="margin:0;" <%=disabled?'disabled':''%>>Выбрать сотрудника</button>
+	</div>
 </div>

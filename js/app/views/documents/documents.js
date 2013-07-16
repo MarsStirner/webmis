@@ -97,6 +97,7 @@ define(function (require) {
 	var Thesaurus = require("views/appeal/edit/popups/thesaurus");
 	var FlatDirectory = require("models/flat-directory");
 	var MKB = require("views/mkb-directory");
+	var PersonDialog = require("views/ui/PersonDialog");
 
 	var FDLoader = {
 		fds: {},
@@ -350,18 +351,10 @@ define(function (require) {
 		},
 
 		getValueProperty: function () {
-			//TODO: Выяснить почему так падает хром....
 			if (_.isUndefined(this.valuePropertyIndex)) {
 				this.valuePropertyIndex = this.getValuePropertyIndex(this.get("properties"), this.get("type"));
 			}
 			return this.get("properties")[this.valuePropertyIndex];
-
-			/*if (_.isUndefined(this.valuePropertyIndex)) {
-			 this.valuePropertyIndex = this.getValuePropertyIndex(this.get("properties"), this.get("type"));
-			 return this.get("properties")[this.valuePropertyIndex];
-			 } else {
-			 return this.get("properties")[this.valuePropertyIndex];
-			 }*/
 		},
 
 		getValue: function () {
@@ -2124,13 +2117,16 @@ define(function (require) {
 				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
 			}, this);
 		},
-		getReadOnly: function(){
+
+		getReadOnly: function () {
 			return this.getDouble('readOnly');
 		},
-		getMandatory: function(){
+
+		getMandatory: function () {
 			return this.getDouble('mandatory');
 		},
-		getDouble: function(name){
+
+		getDouble: function (name) {
 			var value = this.model.get(name);
 
 			switch (value) {
@@ -2174,6 +2170,7 @@ define(function (require) {
 		onRequiredValidationFail: function () {
 			this.$(".Mandatory").addClass("WrongField");
 		},
+
 		onFieldToggleChange: function (event) {
 			this.$(".field").toggle($(event.currentTarget).is(":checked"));
 		}
@@ -2671,7 +2668,27 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.Edit.UIElement.Person = UIElementBase.extend({
-		template: templates.uiElements._person
+		template: templates.uiElements._person,
+
+		events: _.extend({
+			"click .person-dialog-launcher": "onPersonDialogLauncherClick"
+		}, UIElementBase.prototype.events),
+
+		onPersonDialogLauncherClick: function (event) {
+			(new PersonDialog({
+				title: this.model.get("name"),
+				appeal: appeal,
+				callback: _.bind(this.onPersonSelected, this)
+			})).render().open();
+		},
+
+		onPersonSelected: function (person) {
+			this.model.setValue(person.id);
+			this.setAttributeValue();
+			this.$('.person-name').val(person.name.raw);
+
+			console.log(this.getAttributeValue(), this.model);
+		}
 	});
 
 	/**
