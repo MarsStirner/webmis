@@ -376,6 +376,18 @@ define(function (require) {
 			return copyAttr.properties[this.getValuePropertyIndex(copyAttr.properties, copyAttr.type)].value;
 		},
 
+		isReadOnly: function () {
+			return this.get("readOnly") === 'true';
+		},
+
+		isMandatory: function () {
+			return this.get("mandatory") === 'true';
+		},
+
+		hasValue: function () {
+			return !_.isEmpty(this.getValue());
+		},
+
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		getPropertyValueFor: function (name) {
 			var properties = this.get('properties');
@@ -2117,9 +2129,9 @@ define(function (require) {
 
 		data: function () {
 			return {
-				model: this.model,
+				model: this.model/*,
 				disabled: this.getReadOnly(),
-				required: this.getMandatory()
+				required: this.getMandatory()*/
 			}
 		},
 
@@ -2129,7 +2141,7 @@ define(function (require) {
 
 		initialize: function () {
 			this.mapLayoutAttributes();
-			this.listenTo(this.model, "copy", this.setAttributeValue);
+			this.listenTo(this.model, "copy", this.onModelCopy);
 			this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
 			//common attrs to fit into grid
 			this.$el.addClass("span" + this.layoutAttributes.width);
@@ -2145,7 +2157,7 @@ define(function (require) {
 			}, this);
 		},
 
-		getReadOnly: function () {
+		/*getReadOnly: function () {
 			return this.getDouble('readOnly');
 		},
 
@@ -2168,7 +2180,7 @@ define(function (require) {
 					break;
 			}
 			return value;
-		},
+		},*/
 
 		getAttributeValue: function () {
 			var $attributeValueEl = this.$(".attribute-value");
@@ -2199,7 +2211,28 @@ define(function (require) {
 		},
 
 		onFieldToggleChange: function (event) {
-			this.$(".field").toggle($(event.currentTarget).is(":checked"));
+			this.toggleField($(event.currentTarget).is(":checked"));
+		},
+
+		onModelCopy: function () {
+			this.setAttributeValue();
+			this.updateFieldCollapse();
+		},
+
+		toggleField: function (visible) {
+			this.$(".field").toggle(visible);
+		},
+
+		updateFieldCollapse: function () {
+			var fieldIsVisible = this.model.isMandatory() || this.model.hasValue();
+			this.$(".field-toggle").prop("checked", fieldIsVisible);
+			this.toggleField(fieldIsVisible);
+		},
+
+		render: function (subViews) {
+			ViewBase.prototype.render.call(this, subViews);
+			this.updateFieldCollapse();
+			return this;
 		}
 	});
 
@@ -2208,10 +2241,7 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({
-		template: templates.uiElements._text,
-		onFieldToggleChange: function (event) {
-			this.$(".field").toggle($(event.currentTarget).is(":checked"));
-		}
+		template: templates.uiElements._text
 	});
 
 	/**
@@ -2302,9 +2332,9 @@ define(function (require) {
 
 			return {
 				model: this.model,
-				time: this.getTime(),
+				time: this.getTime()/*,
 				disabled: this.getReadOnly(),
-				required: this.getMandatory()
+				required: this.getMandatory()*/
 			};
 		},
 
@@ -2346,9 +2376,9 @@ define(function (require) {
 		data: function () {
 			return {
 				model: this.model,
-				date: this.getDate(),
+				date: this.getDate()/*,
 				disabled: this.getReadOnly(),
-				required: this.getMandatory()
+				required: this.getMandatory()*/
 			};
 		},
 
@@ -2443,7 +2473,7 @@ define(function (require) {
 		}, UIElementBase.prototype.events),
 
 		data: function () {
-			var data = {};
+			var data = {model: this.model};
 			data.name = this.model.get('name');
 			data.mkbId = this.model.getPropertyValueFor('valueId');
 			data.mkbCode = '';
@@ -2456,8 +2486,8 @@ define(function (require) {
 				data.diagnosis = (array.splice(1)).join(' ');
 			}
 
-			data.disabled = this.getReadOnly();
-			data.required = this.getMandatory();
+			/*data.disabled = this.model.isReadOnly();
+			data.required = this.model.isMandatory();*/
 
 			return data;
 		},
@@ -2486,6 +2516,7 @@ define(function (require) {
 			this.model.setPropertyValueFor('valueId', mkbId);
 
 		},
+
 		render: function () {
 			var self = this;
 
@@ -2544,12 +2575,11 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({
 		template: templates.uiElements._flatDirectory,
 		data: function () {
-			//debugger;
 			return {
 				model: this.model, 
-				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON()),
+				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())/*,
 				disabled: this.getReadOnly(),
-				required: this.getMandatory()
+				required: this.getMandatory()*/
 			};			
 			//return {model: this.model, directoryEntries: _(this.directoryEntries.toBeautyJSON())};
 		},
@@ -2608,9 +2638,9 @@ define(function (require) {
 			return {
 				model: this.model,
 				options: this.options,
-				selected: this.selected,
+				selected: this.selected/*,
 				disabled: this.getReadOnly(),
-				required: this.getMandatory()
+				required: this.getMandatory()*/
 			};
 		},
 		initialize: function () {

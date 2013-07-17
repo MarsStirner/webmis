@@ -1,15 +1,9 @@
 <div class="SetComment">
 	<label>
-			<input
-		type="checkbox"
-		<% if(required || model.getValue()){%> checked<%}%>
-		class="field-toggle">
+		<input type="checkbox" class="field-toggle">
 		<%=model.get('name')%>
 	</label>
-	<div class="field" <% if(!required && _.isEmpty(model.getValue())){%>style="display:none;"<%}%>>
-	<input type="text"
-           class="attribute-value integer<% if(disabled){%> Disabled<%}%><% if(required){%> Mandatory<%}%>"
-           value="<%=model.getValue()%>"
-            <% if(disabled){%>disabled<%}%> />
-    </div>
+	<div class="field">
+		<input type="text" class="attribute-value integer <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>" value="<%=model.getValue()%>" <%=model.isReadOnly()?'disabled':''%>>
+	</div>
 </div>

@@ -1,11 +1,11 @@
 <label>
-	<input type="checkbox" <% if(required || model.getValue()){%> checked<%}%> class="field-toggle">
+	<input type="checkbox" class="field-toggle">
 	<%=model.get('name')%>
 </label>
-<div class="field" <% if(!required&& _.isEmpty(model.getValue())){%>style="display:none;"<%}%>>
+<div class="field">
 	<input type="text"
-				 class="Combo attribute-value <%=disabled?'Disabled':''%> <%required?'Mandatory':''%>"
+				 class="Combo attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
 				 data-options="<%=model.get('scope').replace(/\'/g,'').split(',').join('|')%>"
 				 value="<%=model.getValue()%>"
-				 <%=disabled?'disabled':''%>/>
+				 <%=model.isReadOnly()?'disabled':''%>>
 </div>
