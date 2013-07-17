@@ -128,13 +128,14 @@ define(function (require) {
 
 		groupedByRow: null,
 
+		anyCopiedAttrHasValue: false,
+
 		groupByRow: function () {
 			var attributes = this.get("group")[1].attribute;
 
 			attributes = _.reject(attributes, function (attribute) {
 				return _.contains(HIDDEN_TYPES, attribute.type)
 			}, this);
-
 
 			var groupedByRow = _(attributes).groupBy(function (item) {
 				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
@@ -156,8 +157,6 @@ define(function (require) {
 				rows[rows.length - 1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
 			}
 
-			//console.log("rows", rows);
-
 			return rows;
 		},
 
@@ -170,14 +169,18 @@ define(function (require) {
 		},
 
 		copyAttributes: function (document) {
+			this.anyCopiedAttrHasValue = false;
 			_(document.get("group")[1].attribute).each(function (copyAttr) {
 				_(this.getGroupedByRow()).each(function (row) {
 					row.spans.each(function (attr) {
 						if (attr.get("typeId") == copyAttr.typeId) {
 							attr.copyValue(copyAttr);
+							if (attr.hasValue()) {
+								this.anyCopiedAttrHasValue = true;
+							}
 						}
-					});
-				});
+					}, this);
+				}, this);
 			}, this);
 
 			return this;
@@ -199,7 +202,6 @@ define(function (require) {
 			} else {
 				return {};
 			}
-
 		},
 
 		parse: function (raw) {
@@ -214,23 +216,19 @@ define(function (require) {
 		setCloseDate: function () {
 			this.getDates().end.setValue(this.shouldBeClosed ? moment().format(CD_DATE_FORMAT) : "");
 		},
+
 		validate: function (arg1, arg2) {
-			console.log("VALIDATING DOC", arguments);
 			if (!arg2) {
 				var requiredValidationFail = false;
 
 				_(this.getGroupedByRow()).each(function (row) {
 					row.spans.each(function (templateAttr) {
-				//span.each(function (templateAttr) {
-					if (templateAttr.get("mandatory") === "true" && !templateAttr.getValue()) {
-						templateAttr.trigger("requiredValidation:fail");
-						requiredValidationFail = true;
-					}
-				//});
+						if (templateAttr.isMandatory() && !templateAttr.hasValue()) {
+							templateAttr.trigger("requiredValidation:fail");
+							requiredValidationFail = true;
+						}
+					});
 				});
-				});
-
-				console.log("VALIDATING DOC",requiredValidationFail);
 
 				if (requiredValidationFail) return requiredValidationFail;
 			}
@@ -1774,6 +1772,9 @@ define(function (require) {
 		onCopySourceReset: function (copySource) {
 			this.stopListening(copySource, "change", this.onCopySourceReset);
 			this.model.copyAttributes(copySource);
+			if (!this.model.anyCopiedAttrHasValue) {
+				alert("Скопированный документ не содержит заполненных полей.");
+			}
 		},
 
 		getDocumentTypeId: function () {
@@ -2089,8 +2090,9 @@ define(function (require) {
 
 		onModelReset: function () {
 			this.stopListening(this.model, "change", this.onModelReset);
-
 			this.collection.reset(this.model.getGroupedByRow());
+			this.collection.hasAnyValue = this.model.hasAnyValue;
+			console.log("this.collection.hasAnyValue", this.collection.hasAnyValue);
 		},
 
 		onCollectionReset: function () {
@@ -2129,9 +2131,7 @@ define(function (require) {
 
 		data: function () {
 			return {
-				model: this.model/*,
-				disabled: this.getReadOnly(),
-				required: this.getMandatory()*/
+				model: this.model
 			}
 		},
 
@@ -2145,8 +2145,6 @@ define(function (require) {
 			this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
 			//common attrs to fit into grid
 			this.$el.addClass("span" + this.layoutAttributes.width);
-			//this.model.set('readOnly', true)
-
 		},
 
 		mapLayoutAttributes: function () {
@@ -2156,31 +2154,6 @@ define(function (require) {
 				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
 			}, this);
 		},
-
-		/*getReadOnly: function () {
-			return this.getDouble('readOnly');
-		},
-
-		getMandatory: function () {
-			return this.getDouble('mandatory');
-		},
-
-		getDouble: function (name) {
-			var value = this.model.get(name);
-
-			switch (value) {
-				case 'true':
-					value = true;
-					break;
-				case 'false':
-					value = false;
-					break;
-				default:
-					value = false;
-					break;
-			}
-			return value;
-		},*/
 
 		getAttributeValue: function () {
 			var $attributeValueEl = this.$(".attribute-value");
@@ -2332,9 +2305,7 @@ define(function (require) {
 
 			return {
 				model: this.model,
-				time: this.getTime()/*,
-				disabled: this.getReadOnly(),
-				required: this.getMandatory()*/
+				time: this.getTime()
 			};
 		},
 
@@ -2376,9 +2347,7 @@ define(function (require) {
 		data: function () {
 			return {
 				model: this.model,
-				date: this.getDate()/*,
-				disabled: this.getReadOnly(),
-				required: this.getMandatory()*/
+				date: this.getDate()
 			};
 		},
 
@@ -2486,9 +2455,6 @@ define(function (require) {
 				data.diagnosis = (array.splice(1)).join(' ');
 			}
 
-			/*data.disabled = this.model.isReadOnly();
-			data.required = this.model.isMandatory();*/
-
 			return data;
 		},
 
@@ -2577,11 +2543,8 @@ define(function (require) {
 		data: function () {
 			return {
 				model: this.model, 
-				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())/*,
-				disabled: this.getReadOnly(),
-				required: this.getMandatory()*/
-			};			
-			//return {model: this.model, directoryEntries: _(this.directoryEntries.toBeautyJSON())};
+				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())
+			};
 		},
 		initialize: function () {
 			if (!fds[this.model.get("scope")]) {
@@ -2638,9 +2601,7 @@ define(function (require) {
 			return {
 				model: this.model,
 				options: this.options,
-				selected: this.selected/*,
-				disabled: this.getReadOnly(),
-				required: this.getMandatory()*/
+				selected: this.selected
 			};
 		},
 		initialize: function () {
