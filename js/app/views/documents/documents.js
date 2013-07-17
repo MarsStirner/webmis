@@ -329,7 +329,7 @@ define(function (require) {
 			var propName;
 			var valuePropertyIndex;
 
-			if (["MKB", "FlatDirectory"].indexOf(this.get("type")) != -1) {
+			if (["MKB", "FLATDIRECTORY", "PERSON"].indexOf(this.get("type")) != -1) {
 				propName = "valueId";
 			} else {
 				propName = "value";
@@ -374,26 +374,25 @@ define(function (require) {
 
 		getCopyValueProperty: function (copyAttr) {
 			return copyAttr.properties[this.getValuePropertyIndex(copyAttr.properties, copyAttr.type)].value;
-		}
+		},
 
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		, getPropertyValueFor: function (name) {
+		getPropertyValueFor: function (name) {
 			var properties = this.get('properties');
 			var property = _.find(properties, function (prop) {
 				return prop.name === name;
 			});
 
 			return property.value;
-		}, setPropertyValueFor: function (name, value) {
-			console.log(name, value)
+		},
+
+		setPropertyValueFor: function (name, value) {
 			var properties = this.get('properties');
 			var property = _.find(properties, function (prop) {
 				return prop.name === name;
 			});
 
 			property.value = value;
-
-
 		}
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	});
@@ -523,6 +522,10 @@ define(function (require) {
 			var result = [];
 			this.extractResult(this.originalModels, result, new RegExp(flatCode, "gi"), "flatCode");
 			return result[0];
+		},
+
+		comparator: function (model) {
+			return model.get("name");
 		}
 	});
 	//endregion
@@ -1265,9 +1268,13 @@ define(function (require) {
 			 this.options.originalModels);*/
 		},
 		render: function () {
-			return ViewBase.prototype.render.call(this, {
+			ViewBase.prototype.render.call(this, {
 				".search-result-count": new Documents.Views.List.Base.DocumentTypeSearchResultCount({collection: this.collection})
 			});
+			setTimeout(_.bind(function () {
+				this.$(".document-type-search").focus();
+			}, this), 100);
+			return this;
 		}
 	});
 
@@ -2344,25 +2351,22 @@ define(function (require) {
 				required: this.getMandatory()
 			};
 		},
+
 		inputFormat: 'DD.MM.YYYY',
+
 		inputMaskFormat: '99.99.9999',
 
 		getDate: function () {
 			var date = this.model.getValue();
-
 			return date ? moment(date, CD_DATE_FORMAT).format(this.inputFormat) : '';
 		},
 
 		setAttributeValue: function () {
-			var date = this.getDate();
-
-			this.ui.$input.val(date);
+			this.ui.$input.val(this.getDate());
 		},
 
 		getAttributeValue: function () {
-			var date = moment(this.ui.$input.val(), this.inputFormat).format(CD_DATE_FORMAT);
-
-			return date;
+			return moment(this.ui.$input.val(), this.inputFormat).format(CD_DATE_FORMAT);
 		},
 
 		render: function () {
@@ -2431,6 +2435,7 @@ define(function (require) {
 	 */
 	Documents.Views.Edit.UIElement.MKB = UIElementBase.extend({
 		template: templates.uiElements._mkb,
+
 		events: _.extend({
 			"click .MKBLauncher": "onMKBLauncherClick",
 			"keyup .mkb-code": "onMKBCodeKeyUp",
@@ -2471,6 +2476,7 @@ define(function (require) {
 			this.ui.$code.val(sd.get("code"));
 			this.ui.$code.data('mkb-id', sd.get("id")).trigger('change');
 		},
+
 		onMKBCodeKeyUp: function (event) {
 			$(event.currentTarget).val(Core.Strings.toLatin($(event.currentTarget).val()));
 		},
@@ -2482,7 +2488,6 @@ define(function (require) {
 		},
 		render: function () {
 			var self = this;
-
 
 			UIElementBase.prototype.render.call(this);
 
@@ -2527,7 +2532,6 @@ define(function (require) {
 						self.ui.$diagnosis.val("");
 					}
 				});
-
 
 			return this;
 		}
@@ -2691,7 +2695,8 @@ define(function (require) {
 		template: templates.uiElements._person,
 
 		events: _.extend({
-			"click .person-dialog-launcher": "onPersonDialogLauncherClick"
+			"click .person-dialog-launcher": "onPersonDialogLauncherClick",
+			"click .clean-person": "onCleanPersonClick"
 		}, UIElementBase.prototype.events),
 
 		onPersonDialogLauncherClick: function (event) {
@@ -2703,11 +2708,24 @@ define(function (require) {
 		},
 
 		onPersonSelected: function (person) {
-			this.model.setValue(person.id);
-			this.setAttributeValue();
-			this.$('.person-name').val(person.name.raw);
+			this.setPerson(person);
+		},
 
-			console.log(this.getAttributeValue(), this.model);
+		onCleanPersonClick: function () {
+			this.setPerson(false);
+		},
+
+		setPerson: function (person) {
+			this.model.setValue(person ? person.id : "");
+			this.setAttributeValue();
+			this.$('.person-name').val(person ? person.name.raw : "");
+			this.$('.clean-person').toggle(!!person);
+		},
+
+		render: function () {
+			UIElementBase.prototype.render.call(this);
+			this.$(".person-dialog-launcher .ui-button-text").css({padding:'.25em'});
+			return this;
 		}
 	});
 
