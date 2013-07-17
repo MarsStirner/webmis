@@ -20,6 +20,44 @@ define(function(require) {
 	var SelectView = require('views/ui/SelectView');
 
 
+	var TestsCollection = Collection.extend({
+		initialize: function(models, options){
+			this.options = options;
+			if(!this.options.appeal){
+				throw new Error('TestsCollection: Нет appeal')
+			}
+		},
+		url: function() {
+			return DATA_PATH + 'appeals/' + this.options.appeal.get('id') + '/diagnostics/laboratory'
+		},
+		updateAll: function() {
+			var collection = this;
+			options = {
+				dataType: "jsonp",
+				contentType: 'application/json',
+				success: function(data, status) {
+					//console.log('updateAll success', arguments);
+					if (status == 'success') {
+						collection.trigger('updateAll:success', arguments);
+					} else {
+						//collection.trigger('updateAll:error',status);
+					}
+				},
+				error: function(x, status) {
+
+					var response = $.parseJSON(x.responseText);
+					collection.trigger('updateAll:error', response);
+					//console.log('updateAll error', response.exception, response.errorCode, response.errorMessage, arguments);
+				},
+				data: JSON.stringify({
+					data: collection.toJSON()
+				})
+			};
+
+			return Backbone.sync('create', this, options);
+		}
+
+	});
 
 	var LaboratoryPopup = View.extend({
 		template: tmpl,
@@ -32,17 +70,15 @@ define(function(require) {
 		},
 		initialize: function() {
 			_.bindAll(this);
-			console.log('initialize add lab popup', this.options.appeal.toJSON());
+			//console.log('initialize add lab popup', this.options.appeal.toJSON());
 
 			var view = this;
 			var appealDoctor = this.options.appeal.get('execPerson');
 
-			//console.log('Core.Cookies.get("currentRole")', Core.Cookies.get("currentRole"));
-
 			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
 				//юзер не врач
 				view.assigner = {
-					id:appealDoctor.id,
+					id: appealDoctor.id,
 					name: {
 						first: appealDoctor.name.first,
 						last: appealDoctor.name.last,
@@ -64,7 +100,7 @@ define(function(require) {
 			}
 
 			view.executor = {
-				id:'',
+				id: '',
 				name: {
 					first: '',
 					last: '',
@@ -73,48 +109,14 @@ define(function(require) {
 			};
 
 
-
-			// view.data = {
-			// 	'doctor': view.doctor
-			// };
-
-
 			view.appeal = view.options.appeal;
 			//console.log('appeal', view.appeal);
 
 
-			var TestsCollection = Collection.extend({
-				url: DATA_PATH + 'appeals/' + this.appeal.get('id') + '/diagnostics/laboratory',
-				updateAll: function() {
-					var collection = this;
-					options = {
-						dataType: "jsonp",
-						contentType: 'application/json',
-						success: function(data, status) {
-							//console.log('updateAll success', arguments);
-							if (status == 'success') {
-								collection.trigger('updateAll:success', arguments);
-							} else {
-								//collection.trigger('updateAll:error',status);
-							}
-						},
-						error: function(x, status) {
 
-							var response = $.parseJSON(x.responseText);
-							collection.trigger('updateAll:error', response);
-							//console.log('updateAll error', response.exception, response.errorCode, response.errorMessage, arguments);
-						},
-						data: JSON.stringify({
-							data: collection.toJSON()
-						})
-					};
-
-					return Backbone.sync('create', this, options);
-				}
-
+			view.testsCollection = new TestsCollection([], {
+				appeal: view.options.appeal
 			});
-
-			view.testsCollection = new TestsCollection();
 
 
 			view.testsCollection.on('updateAll:success', function() {
@@ -202,27 +204,24 @@ define(function(require) {
 
 			});
 
-
-			view.groupTestsCollection.on('change:selected', function(model, value, options) {
-				console.log('change:selected', arguments);
-				if (!view.executor) { //если исполнитель не задан взять исполнителя из исследования
-					//view.executor = model.getProperty('sdhlkhshfsa','value');
-					//pubsub.trigger('assigner:changed',view.executor);
-
-				}
-			});
-
-
 			pubsub.on('assigner:changed', function(assigner) {
-				console.log('assigner:changed',assigner)
+				//console.log('assigner:changed', assigner)
 				view.assigner = assigner;
-				view.ui.$assigner.val(assigner.name.raw);
+				view.ui.$assigner.val(assigner.name.last + ' ' + assigner.name.first + ' ' + assigner.name.middle);
 			});
 
 			pubsub.on('executor:changed', function(executor) {
-				console.log('executor:changed',executor)
+				//console.log('executor:changed', executor)
 				view.executor = executor;
-				view.ui.$executor.val(executor.name.raw);
+				view.ui.$executor.val(executor.name.last + ' ' + executor.name.first + ' ' + executor.name.middle);
+			});
+
+			view.groupTestsCollection.on('change:selected', function(model, value, options) {
+				//console.log('change:selected', model, model.tests.getProperty('doctorFirstName', 'value'));
+				if (!view.executor.id) { //если исполнитель не задан взять исполнителя из исследования
+
+
+				}
 			});
 
 
@@ -344,7 +343,7 @@ define(function(require) {
 
 			});
 
-			console.log('view.testsCollection', view.testsCollection);
+			//console.log('view.testsCollection', view.testsCollection);
 
 			view.saveButton(false, 'Сохраняем...');
 			view.testsCollection.updateAll();

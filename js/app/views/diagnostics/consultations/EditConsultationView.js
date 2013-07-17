@@ -115,16 +115,18 @@ define(function (require) {
                 'assigner': this.assigner
             };
 
-            this.on('after:render', oneTime, this);
+            pubsub.on('consultations:render',function(){
+                setTimeout(oneTime.bind(this),0)
+            } , this);
 
             function oneTime() {
                 var self = this;
 
-                //console.log('oneTime')
-                self.off('after:render', oneTime, self);
+                //console.log('oneTime', self.consultationsGroupsView.$el.find("[data-code='" + consultationCode + "']"))
+                //self.off('after:render', oneTime, self);
+                pubsub.off('consultations:render')
 
-
-                self.$('#consultations').find("[data-code='" + consultationCode + "']").trigger('click');
+                self.$("#consultations [data-code='" + consultationCode + "']").trigger('click');
                 self.ui.$planedDate.datepicker('enable');
                 self.ui.$planedDate.datepicker("setDate", date);
                 self.consultation.trigger('change:plannedEndDate');
@@ -134,6 +136,7 @@ define(function (require) {
                 //this.scheduleView.collection.on('reset', clickTime, this);
 
                 function selectConsultant() {
+                    self.$("#consultations [data-code='" + consultationCode + "']").trigger('click');
                     self.consultantsFree.off('reset', selectConsultant);
                     self.scheduleView.on('after:render', showTime, self);
                     //console.log('selectConsultant')

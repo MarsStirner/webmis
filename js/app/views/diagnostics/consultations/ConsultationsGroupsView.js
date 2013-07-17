@@ -52,6 +52,7 @@ define(function(require) {
             } else {
                 this.renderNoResults();
             }
+            pubsub.trigger('consultations:render')
             return this;
         },
         close: function(){

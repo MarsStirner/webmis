@@ -21,7 +21,7 @@ define(function(require) {
 
 			view.collection.on('fetch', function() {
 				view.$el.html('<div class="msg">Загрузка...</div>');
-				console.log('fetch')
+				//console.log('fetch')
 			});
 
 		},
@@ -53,7 +53,7 @@ define(function(require) {
 				}
 
 				var code = $(this).data('code');
-				console.log('code', code, treeData);
+				//console.log('code', code, treeData);
 			});
 		},
 		renderNoResult: function() {
@@ -64,7 +64,7 @@ define(function(require) {
 		render: function() {
 			var view = this;
 			var treeData = view.collection.toJSON();
-			console.log('tree', treeData);
+			//console.log('tree', treeData);
 			if (treeData.length > 0) {
 				view.renderAll(treeData);
 			} else {
