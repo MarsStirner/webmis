@@ -72,6 +72,8 @@ define(["models/date"], function () {
 					var startDate = self.get("rangeDisabilityDate").get("start");
 					var endDate = self.get("rangeDisabilityDate").get("end");
 
+					var docDate = self.get("document").get("date");
+
 					if (!this.get("disabilityType").get("id")) {
 						errors.push({property: "disabilities-"+self.cid+"-disabilityType-id", msg: "Тип инвалидности"});
 					}
@@ -83,6 +85,9 @@ define(["models/date"], function () {
 					}
 					if (!endDate || isNaN(new Date(parseInt(endDate)).getTime()) || new Date(parseInt(endDate)) < new Date()) {
 						errors.push({property: "disabilities-"+self.cid+"-rangeDisabilityDate-end", msg: "Дата окончания инвалидности"});
+					}
+					if (!docDate || isNaN(new Date(parseInt(docDate)).getTime()) || new Date(parseInt(docDate)) > new Date()) {
+						errors.push({property: "disabilities-"+self.cid+"-document-date", msg: "Дата выдачи документа подтверждающего инвалидность"});
 					}
 				}
 
