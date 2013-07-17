@@ -3,28 +3,28 @@
  * Date: 08.06.12
  */
 define([
-		"text!templates/appeal/edit/main.tmpl",
-		"views/diagnostics/laboratory/LaboratoryView",
-		"views/diagnostics/laboratory/LaboratoryResultView",
-		"views/diagnostics/instrumental/InstrumentalView",
-		"views/diagnostics/instrumental/InstrumentalResultView",
-		"views/diagnostics/consultations/ConsultationsListView",
-		"views/diagnostics/consultations/ConsultationsResultView",
-		"views/appeal/edit/pages/QuotesView",
+	"text!templates/appeal/edit/main.tmpl",
+	"views/diagnostics/laboratory/LaboratoryView",
+	"views/diagnostics/laboratory/LaboratoryResultView",
+	"views/diagnostics/instrumental/InstrumentalView",
+	"views/diagnostics/instrumental/InstrumentalResultView",
+	"views/diagnostics/consultations/ConsultationsListView",
+	"views/diagnostics/consultations/ConsultationsResultView",
+	"views/appeal/edit/pages/QuotesView",
 
-	"views/appeal/edit/pages/monitoring",
-		"views/documents/documents",
-		"views/moves/moves",
-		"views/moves/HospitalBedView",
-		"models/appeal",
-		"collections/patient-appeals",
-		"views/breadcrumbs",
-		"views/menu",
-		"views/card-header",
-		"views/appeal/edit/pages/examinations",
-		"views/appeal/edit/pages/examination-edit",
-		"views/appeal/edit/pages/examination-primary",
-		"views/appeal/edit/pages/card"
+	"views/appeal/edit/pages/monitoring/monitoring",
+	"views/documents/documents",
+	"views/moves/moves",
+	"views/moves/HospitalBedView",
+	"models/appeal",
+	"collections/patient-appeals",
+	"views/breadcrumbs",
+	"views/menu",
+	"views/card-header",
+	"views/appeal/edit/pages/examinations",
+	"views/appeal/edit/pages/examination-edit",
+	"views/appeal/edit/pages/examination-primary",
+	"views/appeal/edit/pages/card"
 ], function(
 	template,
 	LaboratoryView,
@@ -35,7 +35,7 @@ define([
 	ConsultationResultView,
 	QuotesView,
 
-Monitoring,
+	Monitoring,
 	Documents,
 	Moves,
 	HospitalBed) {
@@ -168,7 +168,7 @@ Monitoring,
 		},
 
 		onViewStateChange: function(event) {
-			console.log('onViewStateChange',event);
+			console.log('onViewStateChange', event);
 			this.setContentView(event.type, event.options);
 		},
 
@@ -320,7 +320,7 @@ Monitoring,
 							uri: "/appeals/:id/therapy"
 						}, appealJSON),
 
-						 (function() {
+						(function() {
 							var appeal = self.appeal;
 							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (appeal.get('appealType').get('finance').get('name') === 'ВМП')) {
 								return {
