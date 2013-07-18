@@ -36,7 +36,8 @@ define(function (require) {
 	var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
 	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';//Формат даты в коммон дата
 	var FLAT_CODES = {
-		panic: "panic"
+		PANIC: "panic",
+		DUTY_DOCTOR: "dutyDoctor"
 	};
 
 
@@ -692,7 +693,7 @@ define(function (require) {
 				this.documentTypes = this.options.documentTypes;
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
-				this.documentTypes.fetch();
+				this.documentTypes.fetch({data: {filter: {flatCode: FLAT_CODES.PANIC}}});
 			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
@@ -703,7 +704,7 @@ define(function (require) {
 		},
 
 		onPanicClick: function () {
-			var panicType = this.documentTypes.findByFlatCode(FLAT_CODES.panic);
+			var panicType = this.documentTypes.findByFlatCode(FLAT_CODES.PANIC);
 			if (panicType) {
 				dispatcher.trigger("change:viewState", {
 					type: this.options.editPageTypeName,
