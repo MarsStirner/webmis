@@ -2207,6 +2207,7 @@ define(function (require) {
 		template: templates.uiElements._text,
 		initialize: function () {
 			UIElementBase.prototype.initialize.call(this, this.options);
+			this.model.convertValueToHtml();
 		}
 	});
 
