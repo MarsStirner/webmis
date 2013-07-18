@@ -8,6 +8,8 @@
 				<option value="${id}">${value}</option>
 				{{/each}}
 			</select>
+
+
 		</div>
 		<div class="QuartCol">
 			<span class="Label">Дата установления</span>
@@ -22,19 +24,20 @@
 			</div>-->
 		</div>
 	</div>
-	<!--<div class="LineBlock">
+	<div class="LineBlock">
 		 <div class="HalfCol">
-			 <span class="Label">История изменения группы крови</span>
-			 <ul class="ChangeHistory">
-				 <li>
-					 <span class="Field">A(II) Rh−</span> <span class="Field">18.04.1990</span>
-				 </li>
-				 <li>
-					 <span class="Field">A(II) Rh+</span> <span class="Field">18.05.1990</span>
-				 </li>
-			 </ul>
+			{{if bloodTypesHistory.length}}
+				<span class="Label">История изменения группы крови</span>
+				<ul class="ChangeHistory">
+					{{each bloodTypesHistory}}
+					 <li>
+						 <span class="Field">${bloodType.name}</span> <span class="Field">{{formatDate bloodDate}}</span>
+					 </li>
+					{{/each}}
+				 </ul>
+			 {{/if}}
 		 </div>
-	 </div>-->
+	 </div>
 </li>
 <li>
 	<h4>Аллергия</h4>

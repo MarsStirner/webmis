@@ -2,45 +2,32 @@
  * User: FKurilov
  * Date: 08.06.12
  */
-define([
-	"text!templates/appeal/edit/main.tmpl",
-	"views/diagnostics/laboratory/LaboratoryView",
-	"views/diagnostics/laboratory/LaboratoryResultView",
-	"views/diagnostics/instrumental/InstrumentalView",
-	"views/diagnostics/instrumental/InstrumentalResultView",
-	"views/diagnostics/consultations/ConsultationsListView",
-	"views/diagnostics/consultations/ConsultationsResultView",
-	"views/appeal/edit/pages/QuotesView",
-	"views/appeal/edit/pages/PatientMonitoringView",
+define(function(require){
 
-	"views/appeal/edit/pages/monitoring/monitoring",
-	"views/documents/documents",
-	"views/moves/moves",
-	"views/moves/HospitalBedView",
-	"models/appeal",
-	"collections/patient-appeals",
-	"views/breadcrumbs",
-	"views/menu",
-	"views/card-header",
-	"views/appeal/edit/pages/examinations",
-	"views/appeal/edit/pages/examination-edit",
-	"views/appeal/edit/pages/examination-primary",
-	"views/appeal/edit/pages/card"
-], function(
-	template,
-	LaboratoryView,
-	LaboratoryResultView,
-	InstrumentalView,
-	InstrumentalResultView,
-	ConsultationView,
-	ConsultationResultView,
-	QuotesView,
-	PatientMonitoringView,
+	var template = require("text!templates/appeal/edit/main.tmpl");
+	var LaboratoryView = require("views/diagnostics/laboratory/LaboratoryView");
+	var LaboratoryResultView = require("views/diagnostics/laboratory/LaboratoryResultView");
+	var InstrumentalView = require("views/diagnostics/instrumental/InstrumentalView");
+	var InstrumentalResultView = require("views/diagnostics/instrumental/InstrumentalResultView");
+	var ConsultationView = require("views/diagnostics/consultations/ConsultationsListView");
+	var ConsultationResultView= require("views/diagnostics/consultations/ConsultationsResultView");
+	var QuotesView = require("views/appeal/edit/pages/QuotesView");
+	var PatientMonitoringView = require("views/appeal/edit/pages/PatientMonitoringView");
 
-	Monitoring,
-	Documents,
-	Moves,
-	HospitalBed) {
+	var Monitoring = require("views/appeal/edit/pages/monitoring/monitoring");
+	var Documents = require("views/documents/documents");
+	var Moves = require("views/moves/moves");
+	var HospitalBed = require("views/moves/HospitalBedView");
+	require("models/appeal");
+	require("collections/patient-appeals");
+	require("views/breadcrumbs");
+	require("views/menu");
+	require("views/card-header");
+	require("views/appeal/edit/pages/examinations");
+	require("views/appeal/edit/pages/examination-edit");
+	require("views/appeal/edit/pages/examination-primary");
+	require("views/appeal/edit/pages/card");
+
 
 	App.Views.Main = View.extend({
 		template: template,

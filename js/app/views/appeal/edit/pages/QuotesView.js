@@ -343,6 +343,8 @@ define(function(require) {
 				model: this.vmpTalonPrev,
 				disable: true
 			});
+
+			this.vmpTalon.unset('id')
 		}
 
 	});

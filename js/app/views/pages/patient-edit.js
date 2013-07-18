@@ -1,43 +1,34 @@
-define([
-		"text!templates/patient-edit/main.tmpl",
-		"text!templates/patient-edit/general.tmpl",
-		"text!templates/patient-edit/relation.tmpl",
-		"text!templates/patient-edit/documents.tmpl",
-		"text!templates/patient-edit/policy.tmpl",
-		"text!templates/patient-edit/id-card.tmpl",
-		"text!templates/patient-edit/medical-info.tmpl",
-		"text!templates/patient-edit/drug-intolerance.tmpl",
-		"text!templates/patient-edit/allergy.tmpl",
-		"text!templates/patient-edit/other.tmpl",
-		"text!templates/patient-edit/address.tmpl",
-		"text!templates/patient-edit/contact.tmpl",
-		"text!templates/patient-edit/quotes.tmpl",
-		"models/patient",
-		"collections/flat-directories",
-		"collections/dictionary-values",
-		"collections/departments",
-		"collections/quotes",
-		"collections/patient-appeals",
-		"views/form/abstract-line",
-		"views/form/kladr-new",
-		"views/mkb-directory",
-		"views/menu",
-		"views/grid",
-		"views/paginator",
-		"views/breadcrumbs"
-], function(tmplMain,
-	tmplGeneral,
-	tmplRelation,
-	tmplDocuments,
-	tmplPolicy,
-	tmplIdCard,
-	tmplMedInfo,
-	tmplDrugIntolerance,
-	tmplAllergy,
-	tmplOther,
-	tmplAddress,
-	tmplContact,
-	tmplQuotes) {
+define(function(require){
+
+		var tmplMain = require("text!templates/patient-edit/main.tmpl");
+		var tmplGeneral = require("text!templates/patient-edit/general.tmpl");
+		var tmplRelation = require("text!templates/patient-edit/relation.tmpl");
+		var tmplDocuments = require("text!templates/patient-edit/documents.tmpl");
+		var tmplPolicy = require("text!templates/patient-edit/policy.tmpl");
+		var tmplIdCard = require("text!templates/patient-edit/id-card.tmpl");
+		var tmplMedInfo = require("text!templates/patient-edit/medical-info.tmpl");
+		var tmplDrugIntolerance = require("text!templates/patient-edit/drug-intolerance.tmpl");
+		var tmplAllergy = require("text!templates/patient-edit/allergy.tmpl");
+		var tmplOther = require("text!templates/patient-edit/other.tmpl");
+		var tmplAddress = require("text!templates/patient-edit/address.tmpl");
+		var tmplContact = require("text!templates/patient-edit/contact.tmpl");
+		var tmplQuotes = require("text!templates/patient-edit/quotes.tmpl");
+		require("models/patient");
+		require("collections/flat-directories");
+		var DictionaryValues = require("collections/dictionary-values");
+		require("collections/departments");
+		require("collections/quotes");
+		require("collections/patient-appeals");
+		require("views/form/abstract-line");
+		require("views/form/kladr-new");
+		require("views/mkb-directory");
+		require("views/menu");
+		require("views/grid");
+		require("views/paginator");
+		require("views/breadcrumbs");
+
+		var PatientBloodTypes = require('views/appeal/edit/pages/monitoring/collections/PatientBloodTypes');
+
 
 	/**
 	 * //////////////////////////////////
@@ -95,7 +86,7 @@ define([
 
 			this.attachModelHandlers();
 
-			console.log(this.model.toJSON());
+			//console.log(this.model.toJSON());
 
 			//this.model.on("change:id", this.render, this);
 
@@ -109,7 +100,8 @@ define([
 				model: self.model
 			});
 			this.steps.medicalInfo = new MedicalInfoView({
-				model: self.model.get("medicalInfo")
+				model: self.model.get("medicalInfo"),
+				patient: self.model
 			});
 			this.steps.other = new OtherView({
 				model: self.model
@@ -1591,12 +1583,17 @@ define([
 		template: tmplMedInfo,
 
 		initialize: function(options) {
+			var self = this;
+			console.log('MedicalInfoView init',options)
+			this.patient = options.patient;
+
 			this.drugIntolerances = new DrugIntolerancesView({
 				collection: this.model.get("drugIntolerances")
 			});
 			this.allergies = new AllergiesView({
 				collection: this.model.get("allergies")
 			});
+
 
 			var blood = this.model.get("blood");
 
@@ -1607,24 +1604,56 @@ define([
 				//console.log("blood", blood)
 			}, this);
 
-			this.initWithDictionaries([{
-					name: "bloodTypes",
-					pathPart: "bloodTypes"
-				}
-			], this.onDictionariesLoaded, this, true);
+			var prom = [];
+
+			this.bloodTypes = new DictionaryValues([],{
+				name: "bloodTypes"
+			});
+
+			prom.push(this.bloodTypes.fetch())
+
+			if(!this.patient.isNew()){
+				this.bloodTypesHistory = new PatientBloodTypes([], {
+					patientId: options.patient.id
+				});
+
+				prom.push(this.bloodTypesHistory.fetch());
+			}
+
+
+			$.when(prom).done(function(){
+				self.onDictionariesLoaded();
+			});
+
 		},
 
 		onDictionariesLoaded: function(dicts) {
-			this.bloodTypes = dicts.bloodTypes;
-			this.render();
+			var self = this;
+			//this.bloodTypes = dicts.bloodTypes;
+			setTimeout(function(){
+				self.render();
+			},1000)
+
+		},
+		data: function(){
+			console.log('data',this)
+			var data = {};
+
+			data.bloodTypes = this.bloodTypes ? this.bloodTypes.toJSON() : [];
+			data.bloodTypesHistory = [];
+
+			if(!this.patient.isNew()){
+				data.bloodTypesHistory = this.bloodTypesHistory ? this.bloodTypesHistory.toJSON() : [];
+			}
+
+			return data;
 		},
 
 		render: function() {
 			var self = this;
+			console.log('render',this.data());
 
-			this.$el.html($.tmpl(this.template, {
-				bloodTypes: self.bloodTypes
-			}));
+			this.$el.html($.tmpl(this.template, this.data()));
 
 			this.assign({
 				"#drug-intolerances": this.drugIntolerances,
