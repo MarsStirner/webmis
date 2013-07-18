@@ -11,6 +11,7 @@ define([
 	"views/diagnostics/consultations/ConsultationsListView",
 	"views/diagnostics/consultations/ConsultationsResultView",
 	"views/appeal/edit/pages/QuotesView",
+	"views/appeal/edit/pages/PatientMonitoringView",
 
 	"views/appeal/edit/pages/monitoring/monitoring",
 	"views/documents/documents",
@@ -34,6 +35,7 @@ define([
 	ConsultationView,
 	ConsultationResultView,
 	QuotesView,
+	PatientMonitoringView,
 
 	Monitoring,
 	Documents,
@@ -67,6 +69,7 @@ define([
 			"diagnostics-consultations": ConsultationView,
 			"diagnostics-consultations-result": ConsultationResultView,
 			"quotes": QuotesView,
+			"patient-monitoring": PatientMonitoringView,
 
 			//"first-examination-edit": App.Views.ExaminationEdit,
 
@@ -90,6 +93,7 @@ define([
 			"diagnostics-consultations": App.Router.cachedBreadcrumbs.CONSULTATION,
 			"diagnostics-consultations-result": App.Router.cachedBreadcrumbs.CONSULTATION_RESULT,
 			"quotes": App.Router.cachedBreadcrumbs.QUOTES,
+			"patient-monitoring": App.Router.cachedBreadcrumbs.PATIENT_MONITORING,
 			"examinations": App.Router.cachedBreadcrumbs.EXAMS,
 			//"first-examination-edit": App.Router.cachedBreadcrumbs.EXAMS,
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
@@ -286,6 +290,11 @@ define([
 							name: "monitoring",
 							title: "Основные&nbsp;сведения",
 							uri: "/appeals/:id/monitoring"
+						}, appealJSON),
+						App.Router.compile({
+							name: "patient-monitoring",
+							title: "Мониторинг&nbsp;состояния",
+							uri: "/appeals/:id/patient-monitoring"
 						}, appealJSON),
 						// App.Router.compile({
 						// 	name: "examinations",
