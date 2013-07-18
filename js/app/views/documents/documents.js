@@ -205,7 +205,6 @@ define(function (require) {
 		},
 
 		parse: function (raw) {
-			//console.log(raw);
 			return raw.data[0];
 		},
 
@@ -341,7 +340,6 @@ define(function (require) {
 			}
 
 			if (_.isUndefined(valuePropertyIndex)) {
-				console.log("value property added to attribute");
 				valuePropertyIndex = props.push({name: propName, value: ""}) - 1;
 			}
 
@@ -384,6 +382,15 @@ define(function (require) {
 
 		hasValue: function () {
 			return !_.isEmpty(this.getValue());
+		},
+
+		convertValueToHtml: function () {
+			return this.setValue(
+				this.getValue().
+					replace(/\r\n/g, '<br>').
+					replace(/\s/g, '&nbsp;')
+
+			);
 		},
 
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -585,7 +592,6 @@ define(function (require) {
 		},
 
 		tearDown: function () {
-			//console.log("tearing down " + this.$el.attr("class"));
 			this.tearDownSubviews();
 			this.stopListening();
 			this.undelegateEvents();
@@ -629,7 +635,6 @@ define(function (require) {
 
 		tearDown: function () {
 			if (this.topLevel) {
-				//console.log("dispatcher off");
 				dispatcher.off();
 			}
 			ViewBase.prototype.tearDown.call(this);
@@ -725,7 +730,6 @@ define(function (require) {
 			if (this.options.appealId) {
 				appealId = this.options.appealId;
 				appeal = this.options.appeal;
-				console.log("appeal", appeal);
 			}
 			this.appealId = appealId;
 
@@ -869,7 +873,6 @@ define(function (require) {
 		},
 
 		markAllItems: function (selected) {
-			console.log(selected);
 			if (selected) {
 				this.collection.each(function (document) {
 					this.options.selectedDocuments.add(new Documents.Models.Document({id: document.get("id")}));
@@ -878,8 +881,6 @@ define(function (require) {
 				this.options.selectedDocuments.reset();
 			}
 			this.collection.trigger("mark-all", {selected: selected});
-			console.log(this.options.selectedDocuments);
-			//console.log(this.options.selectedDocuments);
 		}
 	});
 
@@ -946,7 +947,6 @@ define(function (require) {
 		},
 
 		onItemClick: function (event) {
-			console.log($(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
 			this.updatedSelectedItems(true, $(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
 			this.options.selectedDocuments.trigger("review:enter");
 		},
@@ -976,7 +976,6 @@ define(function (require) {
 			this.$caret.appendTo($targetTh);
 
 			var sortField = $targetTh.data('sort-field');
-			console.log('sort by', sortField);
 			this.collection.fetch({data: {sortingField: sortField}})
 		},
 
@@ -986,7 +985,6 @@ define(function (require) {
 			} else {
 				this.options.selectedDocuments.remove(this.options.selectedDocuments.get(itemId));
 			}
-			//console.log(this.options.selectedDocuments);
 		}
 	});
 
@@ -1024,7 +1022,6 @@ define(function (require) {
 		//TODO: this should be in filters
 		////////
 		onByExecPersonChange: function (event) {
-			console.log(event);
 			this.applyExecPersonFilter($(event.currentTarget).is(":checked"));
 		},
 
@@ -1056,7 +1053,6 @@ define(function (require) {
 	Documents.Views.List.Base.Paging = ViewBase.extend({
 		template: templates._documentsTablePaging,
 		data: function () {
-			console.log(this.collection);
 			if (this.collection.requestData) {
 				return {
 					currentPage: this.collection.requestData.page,
@@ -1068,7 +1064,6 @@ define(function (require) {
 					pageCount: 0
 				}
 			}
-
 		},
 		events: {
 			"click .page-number": "onPageNumberClick"
@@ -1165,7 +1160,6 @@ define(function (require) {
 				if (!appeal.isClosed()) {
 					this.$(".new-document,.new-duty-doc-exam").button("enable");
 				}
-				//console.log(this.documentTypes);
 			});
 
 			this.listenTo(this.documentTypes, "document-type:selection-confirmed", this.onDocumentTypeSelected);
@@ -1221,7 +1215,7 @@ define(function (require) {
 				resizable: false,
 				close: _.bind(this.tearDown, this),
 				buttons: [
-					{text: "Создать", click: _.bind(this.onCreateDocumentClick, this)},
+					{text: "Создать", "class": "button-color-green", click: _.bind(this.onCreateDocumentClick, this)},
 					{text: "Отмена", click: _.bind(this.tearDown, this)}
 				]
 			};
@@ -1438,9 +1432,7 @@ define(function (require) {
 		}, Documents.Views.List.Base.Filters.prototype.events),
 
 		onDocumentTypeFilterChange: function (event) {
-			var type = $(event.currentTarget).val();
-			//console.log(type);
-			this.applyDocumentTypeFilter(type);
+			this.applyDocumentTypeFilter($(event.currentTarget).val());
 		},
 
 		applyDocumentTypeFilter: function (type) {
@@ -1655,7 +1647,6 @@ define(function (require) {
 					this.model = new Documents.Models.Document({id: this.options.documentId});
 					//this.model.id = this.options.documentId;
 				} else {
-					console.error("no doc or tmpl id!");
 					dispatcher.trigger("change:viewState", {type: "documents"});
 				}
 			}
@@ -1832,7 +1823,6 @@ define(function (require) {
 					.minute(this.$(".time-input").timepicker("getMinute"))
 					.format(CD_DATE_FORMAT)
 			);
-			console.log(this.model.getDates().begin.getValue());
 		},
 		onDocumentSetCloseDateChange: function () {
 			this.model.shouldBeClosed = this.$(".document-set-close-date").is(":checked");
@@ -1941,6 +1931,7 @@ define(function (require) {
 		},
 
 		onSaveDocumentError: function () {
+			alert("При сохранении документа произошла ошибка. Повторите попытку.");
 			console.log(arguments);
 		},
 
@@ -2063,7 +2054,6 @@ define(function (require) {
 		className: "row-fluid",
 
 		render: function () {
-			//console.log("GridRow", this);
 			var gridSpanList = new Documents.Views.Edit.GridSpanList({collection: this.model.get("spans")});
 			this.subViews = [gridSpanList];
 			gridSpanList.setElement(this.el);
@@ -2092,7 +2082,6 @@ define(function (require) {
 			this.stopListening(this.model, "change", this.onModelReset);
 			this.collection.reset(this.model.getGroupedByRow());
 			this.collection.hasAnyValue = this.model.hasAnyValue;
-			console.log("this.collection.hasAnyValue", this.collection.hasAnyValue);
 		},
 
 		onCollectionReset: function () {
@@ -2214,7 +2203,10 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({
-		template: templates.uiElements._text
+		template: templates.uiElements._text,
+		initialize: function () {
+			UIElementBase.prototype.initialize.call(this, this.options);
+		}
 	});
 
 	/**
@@ -2466,8 +2458,6 @@ define(function (require) {
 
 		onMKBConfirmed: function (event) {
 			var sd = event.selectedDiagnosis;
-			console.log('onMKBConfirmed', sd, arguments);
-
 			this.ui.$diagnosis.val(sd.get("diagnosis"));
 			this.ui.$code.val(sd.get("code"));
 			this.ui.$code.data('mkb-id', sd.get("id")).trigger('change');
@@ -2623,7 +2613,6 @@ define(function (require) {
 								text: self.getOptionText(option)
 							}
 						}, self);
-						//console.log('options',options, self.options);
 						self.render();
 					}, self));
 			});
@@ -3071,8 +3060,6 @@ define(function (require) {
 				};
 			}
 
-			console.log(tmplData);
-
 			return {document: tmplData};
 		},
 
@@ -3154,7 +3141,6 @@ define(function (require) {
 		},
 		initialize: function () {
 			ViewBase.prototype.initialize.call(this, this.options);
-			console.log(this.model);
 
 			if (this.model.get("type").toUpperCase() == "FLATDIRECTORY") {
 				if (!fds[this.model.get("scope")]) {

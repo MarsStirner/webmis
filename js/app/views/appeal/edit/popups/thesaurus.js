@@ -202,12 +202,12 @@ define([
 		},
 
 		onSelectedTermsChange: function () {
-			this.$(".selectedTerms").val(this.model.get("selectedTerms")).change();
+			this.$(".selectedTerms").html(this.model.get("selectedTerms")).change();
 		},
 
 		onSelTermsKeyUP: function (event) {
 			this.model.set({
-				selectedTerms: $(event.currentTarget).val()
+				selectedTerms: $(event.currentTarget).html()
 			}, {
 				silent: true
 			});

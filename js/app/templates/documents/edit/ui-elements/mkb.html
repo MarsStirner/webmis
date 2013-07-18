@@ -9,7 +9,7 @@
 
 <div class="row-fluid field">
 	<div class="span2">
-		<input class="mkb-code <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
+		<input type="text" class="mkb-code <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
 					 value="<%=mkbCode%>"
 					 data-mkb-id="<%=mkbId%>"
 					 <%=model.isReadOnly()?'disabled':''%>>
