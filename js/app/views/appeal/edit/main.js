@@ -3,28 +3,29 @@
  * Date: 08.06.12
  */
 define([
-		"text!templates/appeal/edit/main.tmpl",
-		"views/diagnostics/laboratory/LaboratoryView",
-		"views/diagnostics/laboratory/LaboratoryResultView",
-		"views/diagnostics/instrumental/InstrumentalView",
-		"views/diagnostics/instrumental/InstrumentalResultView",
-		"views/diagnostics/consultations/ConsultationsListView",
-		"views/diagnostics/consultations/ConsultationsResultView",
-		"views/appeal/edit/pages/QuotesView",
+	"text!templates/appeal/edit/main.tmpl",
+	"views/diagnostics/laboratory/LaboratoryView",
+	"views/diagnostics/laboratory/LaboratoryResultView",
+	"views/diagnostics/instrumental/InstrumentalView",
+	"views/diagnostics/instrumental/InstrumentalResultView",
+	"views/diagnostics/consultations/ConsultationsListView",
+	"views/diagnostics/consultations/ConsultationsResultView",
+	"views/appeal/edit/pages/QuotesView",
+	"views/appeal/edit/pages/PatientMonitoringView",
 
-	"views/appeal/edit/pages/monitoring",
-		"views/documents/documents",
-		"views/moves/moves",
-		"views/moves/HospitalBedView",
-		"models/appeal",
-		"collections/patient-appeals",
-		"views/breadcrumbs",
-		"views/menu",
-		"views/card-header",
-		"views/appeal/edit/pages/examinations",
-		"views/appeal/edit/pages/examination-edit",
-		"views/appeal/edit/pages/examination-primary",
-		"views/appeal/edit/pages/card"
+	"views/appeal/edit/pages/monitoring/monitoring",
+	"views/documents/documents",
+	"views/moves/moves",
+	"views/moves/HospitalBedView",
+	"models/appeal",
+	"collections/patient-appeals",
+	"views/breadcrumbs",
+	"views/menu",
+	"views/card-header",
+	"views/appeal/edit/pages/examinations",
+	"views/appeal/edit/pages/examination-edit",
+	"views/appeal/edit/pages/examination-primary",
+	"views/appeal/edit/pages/card"
 ], function(
 	template,
 	LaboratoryView,
@@ -34,8 +35,9 @@ define([
 	ConsultationView,
 	ConsultationResultView,
 	QuotesView,
+	PatientMonitoringView,
 
-Monitoring,
+	Monitoring,
 	Documents,
 	Moves,
 	HospitalBed) {
@@ -67,6 +69,7 @@ Monitoring,
 			"diagnostics-consultations": ConsultationView,
 			"diagnostics-consultations-result": ConsultationResultView,
 			"quotes": QuotesView,
+			"patient-monitoring": PatientMonitoringView,
 
 			//"first-examination-edit": App.Views.ExaminationEdit,
 
@@ -90,6 +93,7 @@ Monitoring,
 			"diagnostics-consultations": App.Router.cachedBreadcrumbs.CONSULTATION,
 			"diagnostics-consultations-result": App.Router.cachedBreadcrumbs.CONSULTATION_RESULT,
 			"quotes": App.Router.cachedBreadcrumbs.QUOTES,
+			"patient-monitoring": App.Router.cachedBreadcrumbs.PATIENT_MONITORING,
 			"examinations": App.Router.cachedBreadcrumbs.EXAMS,
 			//"first-examination-edit": App.Router.cachedBreadcrumbs.EXAMS,
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
@@ -168,7 +172,7 @@ Monitoring,
 		},
 
 		onViewStateChange: function(event) {
-			console.log('onViewStateChange',event);
+			console.log('onViewStateChange', event);
 			this.setContentView(event.type, event.options);
 		},
 
@@ -287,6 +291,11 @@ Monitoring,
 							title: "Основные&nbsp;сведения",
 							uri: "/appeals/:id/monitoring"
 						}, appealJSON),
+						App.Router.compile({
+							name: "patient-monitoring",
+							title: "Мониторинг&nbsp;состояния",
+							uri: "/appeals/:id/patient-monitoring"
+						}, appealJSON),
 						// App.Router.compile({
 						// 	name: "examinations",
 						// 	title: "Осмотры",
@@ -320,7 +329,7 @@ Monitoring,
 							uri: "/appeals/:id/therapy"
 						}, appealJSON),
 
-						 (function() {
+						(function() {
 							var appeal = self.appeal;
 							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (appeal.get('appealType').get('finance').get('name') === 'ВМП')) {
 								return {

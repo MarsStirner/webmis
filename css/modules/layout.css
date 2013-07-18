@@ -952,71 +952,72 @@ label.ui-button {
 /* line 823, ../../sass/modules/layout.scss */
 .monitoring-layout {
   display: table;
+  width: 100%;
 }
-/* line 826, ../../sass/modules/layout.scss */
+/* line 827, ../../sass/modules/layout.scss */
 .monitoring-layout .TreatmentBlock {
   padding-top: 2em;
 }
-/* line 830, ../../sass/modules/layout.scss */
+/* line 831, ../../sass/modules/layout.scss */
 .monitoring-layout h4 {
   padding-top: 2em;
   text-decoration: underline;
 }
-/* line 840, ../../sass/modules/layout.scss */
+/* line 841, ../../sass/modules/layout.scss */
 .monitoring-layout .monitoring-layout-header {
   margin-bottom: 2em;
 }
-/* line 842, ../../sass/modules/layout.scss */
+/* line 843, ../../sass/modules/layout.scss */
 .monitoring-layout .monitoring-layout-header .refresh-monitoring {
   cursor: pointer;
 }
-/* line 845, ../../sass/modules/layout.scss */
+/* line 846, ../../sass/modules/layout.scss */
 .monitoring-layout .monitoring-layout-header .label {
   margin-left: 1em;
   font-size: 100%;
 }
-/* line 850, ../../sass/modules/layout.scss */
+/* line 851, ../../sass/modules/layout.scss */
 .monitoring-layout .blood-type {
   font-size: 100%;
   padding: 4px;
   margin: 0.2em 0 0 1em;
   width: 100%;
 }
-/* line 857, ../../sass/modules/layout.scss */
+/* line 858, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type .row-fluid [class*="span"] {
   min-height: 0;
 }
-/* line 861, ../../sass/modules/layout.scss */
+/* line 862, ../../sass/modules/layout.scss */
 .monitoring-layout .ui-button-text {
   font-size: 0.8em !important;
 }
-/* line 865, ../../sass/modules/layout.scss */
+/* line 866, ../../sass/modules/layout.scss */
 .monitoring-layout .cancel-blood {
   margin-top: .2em;
 }
-/* line 869, ../../sass/modules/layout.scss */
+/* line 870, ../../sass/modules/layout.scss */
 .monitoring-layout .cancel-blood {
   padding-top: .4em;
   padding-left: .5em;
 }
-/* line 874, ../../sass/modules/layout.scss */
+/* line 875, ../../sass/modules/layout.scss */
 .monitoring-layout .blood-type-selector-controls {
   margin: 0;
 }
-/* line 879, ../../sass/modules/layout.scss */
+/* line 880, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history td:first-child {
   padding-left: 1em;
 }
-/* line 882, ../../sass/modules/layout.scss */
+/* line 883, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history ul {
   margin-top: 1em;
   padding-left: 1em;
 }
-/* line 885, ../../sass/modules/layout.scss */
+/* line 886, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history ul li span.blood-date {
   color: #414142;
 }
-/* line 891, ../../sass/modules/layout.scss */
+/* line 892, ../../sass/modules/layout.scss */
 .monitoring-layout .blood-type-selector {
   margin-top: 0.7em;
 }
