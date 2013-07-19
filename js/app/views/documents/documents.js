@@ -327,7 +327,7 @@ define(function (require) {
 			var propName;
 			var valuePropertyIndex;
 
-			if (["MKB", "FLATDIRECTORY", "PERSON"].indexOf(this.get("type")) != -1) {
+			if (["MKB", "FLATDIRECTORY", "PERSON"].indexOf(this.get("type").toUpperCase()) != -1) {
 				propName = "valueId";
 			} else {
 				propName = "value";
@@ -394,25 +394,19 @@ define(function (require) {
 			);
 		},
 
-		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		getPropertyValueFor: function (name) {
-			var properties = this.get('properties');
-			var property = _.find(properties, function (prop) {
+		getPropertyByName: function (name) {
+			return _.find(this.get('properties'), function (prop) {
 				return prop.name === name;
-			});
+			}) || this.get('properties')[this.get('properties').push({name: name, value: ""}) - 1];
+		},
 
-			return property.value;
+		getPropertyValueFor: function (name) {
+			return this.getPropertyByName(name).value;
 		},
 
 		setPropertyValueFor: function (name, value) {
-			var properties = this.get('properties');
-			var property = _.find(properties, function (prop) {
-				return prop.name === name;
-			});
-
-			property.value = value;
+			this.getPropertyByName(name).value = value;
 		}
-		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	});
 	//endregion
 
@@ -2412,6 +2406,11 @@ define(function (require) {
 			"keypress .integer": "onIntegerKeypress"
 		}, UIElementBase.prototype.events),
 
+		initialize: function () {
+			UIElementBase.prototype.initialize.call(this, this.options);
+			this.model.setPropertyValueFor("valueId", "");
+		},
+
 		onIntegerKeypress: function (eve) {
 			if (eve.which < 48 || eve.which > 57) {
 				eve.preventDefault();
@@ -2726,6 +2725,12 @@ define(function (require) {
 		},
 
 		setPerson: function (person) {
+			if (person) {
+				this.model.setValue(person.id);
+			} else {
+				this.model.setValue("");
+				this.model.setPropertyValueFor("value", "");
+			}
 			this.model.setValue(person ? person.id : "");
 			this.setAttributeValue();
 			this.$('.person-name').val(person ? person.name.raw : "");
