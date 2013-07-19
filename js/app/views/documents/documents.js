@@ -1932,6 +1932,7 @@ define(function (require) {
 		},
 
 		onSaveDocumentError: function () {
+			this.$('button').button('enable');
 			alert("При сохранении документа произошла ошибка. Повторите попытку.");
 			console.log(arguments);
 		},
@@ -1939,6 +1940,7 @@ define(function (require) {
 		saveDocument: function () {
 			//this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			if (this.model.isValid()) {
+				this.$('button').button('disable');
 				this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			}
 		},
@@ -2206,8 +2208,12 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({
 		template: templates.uiElements._text,
 		initialize: function () {
-			UIElementBase.prototype.initialize.call(this, this.options);
 			this.model.convertValueToHtml();
+			UIElementBase.prototype.initialize.call(this, this.options);
+		},
+		onModelCopy: function () {
+			this.model.convertValueToHtml();
+			UIElementBase.prototype.onModelCopy.call(this);
 		}
 	});
 
