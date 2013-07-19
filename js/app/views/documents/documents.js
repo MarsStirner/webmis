@@ -36,7 +36,8 @@ define(function (require) {
 	var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
 	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';//Формат даты в коммон дата
 	var FLAT_CODES = {
-		panic: "panic"
+		PANIC: "panic",
+		DUTY_DOCTOR: "dutyDoctor"
 	};
 
 
@@ -128,13 +129,14 @@ define(function (require) {
 
 		groupedByRow: null,
 
+		anyCopiedAttrHasValue: false,
+
 		groupByRow: function () {
 			var attributes = this.get("group")[1].attribute;
 
 			attributes = _.reject(attributes, function (attribute) {
 				return _.contains(HIDDEN_TYPES, attribute.type)
 			}, this);
-
 
 			var groupedByRow = _(attributes).groupBy(function (item) {
 				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
@@ -156,8 +158,6 @@ define(function (require) {
 				rows[rows.length - 1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
 			}
 
-			//console.log("rows", rows);
-
 			return rows;
 		},
 
@@ -170,14 +170,18 @@ define(function (require) {
 		},
 
 		copyAttributes: function (document) {
+			this.anyCopiedAttrHasValue = false;
 			_(document.get("group")[1].attribute).each(function (copyAttr) {
 				_(this.getGroupedByRow()).each(function (row) {
 					row.spans.each(function (attr) {
 						if (attr.get("typeId") == copyAttr.typeId) {
 							attr.copyValue(copyAttr);
+							if (attr.hasValue()) {
+								this.anyCopiedAttrHasValue = true;
+							}
 						}
-					});
-				});
+					}, this);
+				}, this);
 			}, this);
 
 			return this;
@@ -199,11 +203,9 @@ define(function (require) {
 			} else {
 				return {};
 			}
-
 		},
 
 		parse: function (raw) {
-			//console.log(raw);
 			return raw.data[0];
 		},
 
@@ -214,23 +216,19 @@ define(function (require) {
 		setCloseDate: function () {
 			this.getDates().end.setValue(this.shouldBeClosed ? moment().format(CD_DATE_FORMAT) : "");
 		},
+
 		validate: function (arg1, arg2) {
-			console.log("VALIDATING DOC", arguments);
 			if (!arg2) {
 				var requiredValidationFail = false;
 
 				_(this.getGroupedByRow()).each(function (row) {
 					row.spans.each(function (templateAttr) {
-				//span.each(function (templateAttr) {
-					if (templateAttr.get("mandatory") === "true" && !templateAttr.getValue()) {
-						templateAttr.trigger("requiredValidation:fail");
-						requiredValidationFail = true;
-					}
-				//});
+						if (templateAttr.isMandatory() && !templateAttr.hasValue()) {
+							templateAttr.trigger("requiredValidation:fail");
+							requiredValidationFail = true;
+						}
+					});
 				});
-				});
-
-				console.log("VALIDATING DOC",requiredValidationFail);
 
 				if (requiredValidationFail) return requiredValidationFail;
 			}
@@ -343,7 +341,6 @@ define(function (require) {
 			}
 
 			if (_.isUndefined(valuePropertyIndex)) {
-				console.log("value property added to attribute");
 				valuePropertyIndex = props.push({name: propName, value: ""}) - 1;
 			}
 
@@ -386,6 +383,15 @@ define(function (require) {
 
 		hasValue: function () {
 			return !_.isEmpty(this.getValue());
+		},
+
+		convertValueToHtml: function () {
+			return this.setValue(
+				this.getValue().
+					replace(/\r\n/g, '<br>').
+					replace(/\s/g, '&nbsp;')
+
+			);
 		},
 
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -587,7 +593,6 @@ define(function (require) {
 		},
 
 		tearDown: function () {
-			//console.log("tearing down " + this.$el.attr("class"));
 			this.tearDownSubviews();
 			this.stopListening();
 			this.undelegateEvents();
@@ -631,7 +636,6 @@ define(function (require) {
 
 		tearDown: function () {
 			if (this.topLevel) {
-				//console.log("dispatcher off");
 				dispatcher.off();
 			}
 			ViewBase.prototype.tearDown.call(this);
@@ -689,7 +693,7 @@ define(function (require) {
 				this.documentTypes = this.options.documentTypes;
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
-				this.documentTypes.fetch();
+				this.documentTypes.fetch({data: {filter: {flatCode: FLAT_CODES.PANIC}}});
 			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
@@ -700,7 +704,7 @@ define(function (require) {
 		},
 
 		onPanicClick: function () {
-			var panicType = this.documentTypes.findByFlatCode(FLAT_CODES.panic);
+			var panicType = this.documentTypes.findByFlatCode(FLAT_CODES.PANIC);
 			if (panicType) {
 				dispatcher.trigger("change:viewState", {
 					type: this.options.editPageTypeName,
@@ -727,7 +731,6 @@ define(function (require) {
 			if (this.options.appealId) {
 				appealId = this.options.appealId;
 				appeal = this.options.appeal;
-				console.log("appeal", appeal);
 			}
 			this.appealId = appealId;
 
@@ -871,7 +874,6 @@ define(function (require) {
 		},
 
 		markAllItems: function (selected) {
-			console.log(selected);
 			if (selected) {
 				this.collection.each(function (document) {
 					this.options.selectedDocuments.add(new Documents.Models.Document({id: document.get("id")}));
@@ -880,8 +882,6 @@ define(function (require) {
 				this.options.selectedDocuments.reset();
 			}
 			this.collection.trigger("mark-all", {selected: selected});
-			console.log(this.options.selectedDocuments);
-			//console.log(this.options.selectedDocuments);
 		}
 	});
 
@@ -948,7 +948,6 @@ define(function (require) {
 		},
 
 		onItemClick: function (event) {
-			console.log($(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
 			this.updatedSelectedItems(true, $(event.currentTarget).siblings(".selected-flag-col").find(".selected-flag").val());
 			this.options.selectedDocuments.trigger("review:enter");
 		},
@@ -978,7 +977,6 @@ define(function (require) {
 			this.$caret.appendTo($targetTh);
 
 			var sortField = $targetTh.data('sort-field');
-			console.log('sort by', sortField);
 			this.collection.fetch({data: {sortingField: sortField}})
 		},
 
@@ -988,7 +986,6 @@ define(function (require) {
 			} else {
 				this.options.selectedDocuments.remove(this.options.selectedDocuments.get(itemId));
 			}
-			//console.log(this.options.selectedDocuments);
 		}
 	});
 
@@ -1026,7 +1023,6 @@ define(function (require) {
 		//TODO: this should be in filters
 		////////
 		onByExecPersonChange: function (event) {
-			console.log(event);
 			this.applyExecPersonFilter($(event.currentTarget).is(":checked"));
 		},
 
@@ -1058,7 +1054,6 @@ define(function (require) {
 	Documents.Views.List.Base.Paging = ViewBase.extend({
 		template: templates._documentsTablePaging,
 		data: function () {
-			console.log(this.collection);
 			if (this.collection.requestData) {
 				return {
 					currentPage: this.collection.requestData.page,
@@ -1070,7 +1065,6 @@ define(function (require) {
 					pageCount: 0
 				}
 			}
-
 		},
 		events: {
 			"click .page-number": "onPageNumberClick"
@@ -1167,7 +1161,6 @@ define(function (require) {
 				if (!appeal.isClosed()) {
 					this.$(".new-document,.new-duty-doc-exam").button("enable");
 				}
-				//console.log(this.documentTypes);
 			});
 
 			this.listenTo(this.documentTypes, "document-type:selection-confirmed", this.onDocumentTypeSelected);
@@ -1223,7 +1216,7 @@ define(function (require) {
 				resizable: false,
 				close: _.bind(this.tearDown, this),
 				buttons: [
-					{text: "Создать", click: _.bind(this.onCreateDocumentClick, this)},
+					{text: "Создать", "class": "button-color-green", click: _.bind(this.onCreateDocumentClick, this)},
 					{text: "Отмена", click: _.bind(this.tearDown, this)}
 				]
 			};
@@ -1440,9 +1433,7 @@ define(function (require) {
 		}, Documents.Views.List.Base.Filters.prototype.events),
 
 		onDocumentTypeFilterChange: function (event) {
-			var type = $(event.currentTarget).val();
-			//console.log(type);
-			this.applyDocumentTypeFilter(type);
+			this.applyDocumentTypeFilter($(event.currentTarget).val());
 		},
 
 		applyDocumentTypeFilter: function (type) {
@@ -1657,7 +1648,6 @@ define(function (require) {
 					this.model = new Documents.Models.Document({id: this.options.documentId});
 					//this.model.id = this.options.documentId;
 				} else {
-					console.error("no doc or tmpl id!");
 					dispatcher.trigger("change:viewState", {type: "documents"});
 				}
 			}
@@ -1733,8 +1723,9 @@ define(function (require) {
 
 		events: {
 			"change .toggle-divided-state": "onToggleDividedStateClick",
+			"click .copy-from": "onCopyFromClick",
 			"click .copy-from-prev": "onCopyFromPrevClick",
-			"click .copy-from": "onCopyFromClick"
+			"click .copy-from-selected": "onCopyFromSelectedClick"
 		},
 
 		onToggleDividedStateClick: function () {
@@ -1746,12 +1737,28 @@ define(function (require) {
 			 }*/
 		},
 
+		onCopyFromClick: function () {
+			var menu = this.$(".copy-options");
+
+			menu.css({"min-width": this.$(".copy-from").width()}).show().position({
+				my: "right top",
+				at: "right bottom",
+				of: this.$(".copy-from")
+			});
+
+			$(document).one("click", function() {
+				menu.hide();
+			});
+
+			return false;
+		},
+
 		onCopyFromPrevClick: function () {
 			var documentLastByType = new Documents.Models.DocumentLastByType({id: this.getDocumentTypeId()});
 			this.fetchCopySource(documentLastByType);
 		},
 
-		onCopyFromClick: function () {
+		onCopyFromSelectedClick: function () {
 			this.copySourceList = new Documents.Collections.DocumentList([], {});
 			this.listenTo(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
 
@@ -1774,6 +1781,9 @@ define(function (require) {
 		onCopySourceReset: function (copySource) {
 			this.stopListening(copySource, "change", this.onCopySourceReset);
 			this.model.copyAttributes(copySource);
+			if (!this.model.anyCopiedAttrHasValue) {
+				alert("Скопированный документ не содержит заполненных полей.");
+			}
 		},
 
 		getDocumentTypeId: function () {
@@ -1787,6 +1797,11 @@ define(function (require) {
 			}
 
 			return documentTypeId;
+		},
+
+		render: function () {
+			ViewBase.prototype.render.call(this);
+			this.$(".copy-options").hide().menu();
 		}
 	});
 
@@ -1831,7 +1846,6 @@ define(function (require) {
 					.minute(this.$(".time-input").timepicker("getMinute"))
 					.format(CD_DATE_FORMAT)
 			);
-			console.log(this.model.getDates().begin.getValue());
 		},
 		onDocumentSetCloseDateChange: function () {
 			this.model.shouldBeClosed = this.$(".document-set-close-date").is(":checked");
@@ -1940,12 +1954,15 @@ define(function (require) {
 		},
 
 		onSaveDocumentError: function () {
+			this.$('button').button('enable');
+			alert("При сохранении документа произошла ошибка. Повторите попытку.");
 			console.log(arguments);
 		},
 
 		saveDocument: function () {
 			//this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			if (this.model.isValid()) {
+				this.$('button').button('disable');
 				this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			}
 		},
@@ -2062,7 +2079,6 @@ define(function (require) {
 		className: "row-fluid",
 
 		render: function () {
-			//console.log("GridRow", this);
 			var gridSpanList = new Documents.Views.Edit.GridSpanList({collection: this.model.get("spans")});
 			this.subViews = [gridSpanList];
 			gridSpanList.setElement(this.el);
@@ -2089,8 +2105,8 @@ define(function (require) {
 
 		onModelReset: function () {
 			this.stopListening(this.model, "change", this.onModelReset);
-
 			this.collection.reset(this.model.getGroupedByRow());
+			this.collection.hasAnyValue = this.model.hasAnyValue;
 		},
 
 		onCollectionReset: function () {
@@ -2129,9 +2145,7 @@ define(function (require) {
 
 		data: function () {
 			return {
-				model: this.model/*,
-				disabled: this.getReadOnly(),
-				required: this.getMandatory()*/
+				model: this.model
 			}
 		},
 
@@ -2145,8 +2159,6 @@ define(function (require) {
 			this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
 			//common attrs to fit into grid
 			this.$el.addClass("span" + this.layoutAttributes.width);
-			//this.model.set('readOnly', true)
-
 		},
 
 		mapLayoutAttributes: function () {
@@ -2156,31 +2168,6 @@ define(function (require) {
 				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
 			}, this);
 		},
-
-		/*getReadOnly: function () {
-			return this.getDouble('readOnly');
-		},
-
-		getMandatory: function () {
-			return this.getDouble('mandatory');
-		},
-
-		getDouble: function (name) {
-			var value = this.model.get(name);
-
-			switch (value) {
-				case 'true':
-					value = true;
-					break;
-				case 'false':
-					value = false;
-					break;
-				default:
-					value = false;
-					break;
-			}
-			return value;
-		},*/
 
 		getAttributeValue: function () {
 			var $attributeValueEl = this.$(".attribute-value");
@@ -2241,7 +2228,15 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({
-		template: templates.uiElements._text
+		template: templates.uiElements._text,
+		initialize: function () {
+			this.model.convertValueToHtml();
+			UIElementBase.prototype.initialize.call(this, this.options);
+		},
+		onModelCopy: function () {
+			this.model.convertValueToHtml();
+			UIElementBase.prototype.onModelCopy.call(this);
+		}
 	});
 
 	/**
@@ -2332,9 +2327,7 @@ define(function (require) {
 
 			return {
 				model: this.model,
-				time: this.getTime()/*,
-				disabled: this.getReadOnly(),
-				required: this.getMandatory()*/
+				time: this.getTime()
 			};
 		},
 
@@ -2376,9 +2369,7 @@ define(function (require) {
 		data: function () {
 			return {
 				model: this.model,
-				date: this.getDate()/*,
-				disabled: this.getReadOnly(),
-				required: this.getMandatory()*/
+				date: this.getDate()
 			};
 		},
 
@@ -2486,9 +2477,6 @@ define(function (require) {
 				data.diagnosis = (array.splice(1)).join(' ');
 			}
 
-			/*data.disabled = this.model.isReadOnly();
-			data.required = this.model.isMandatory();*/
-
 			return data;
 		},
 
@@ -2500,8 +2488,6 @@ define(function (require) {
 
 		onMKBConfirmed: function (event) {
 			var sd = event.selectedDiagnosis;
-			console.log('onMKBConfirmed', sd, arguments);
-
 			this.ui.$diagnosis.val(sd.get("diagnosis"));
 			this.ui.$code.val(sd.get("code"));
 			this.ui.$code.data('mkb-id', sd.get("id")).trigger('change');
@@ -2577,11 +2563,8 @@ define(function (require) {
 		data: function () {
 			return {
 				model: this.model, 
-				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())/*,
-				disabled: this.getReadOnly(),
-				required: this.getMandatory()*/
-			};			
-			//return {model: this.model, directoryEntries: _(this.directoryEntries.toBeautyJSON())};
+				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())
+			};
 		},
 		initialize: function () {
 			if (!fds[this.model.get("scope")]) {
@@ -2638,9 +2621,7 @@ define(function (require) {
 			return {
 				model: this.model,
 				options: this.options,
-				selected: this.selected/*,
-				disabled: this.getReadOnly(),
-				required: this.getMandatory()*/
+				selected: this.selected
 			};
 		},
 		initialize: function () {
@@ -2662,7 +2643,6 @@ define(function (require) {
 								text: self.getOptionText(option)
 							}
 						}, self);
-						//console.log('options',options, self.options);
 						self.render();
 					}, self));
 			});
@@ -3110,8 +3090,6 @@ define(function (require) {
 				};
 			}
 
-			console.log(tmplData);
-
 			return {document: tmplData};
 		},
 
@@ -3193,7 +3171,6 @@ define(function (require) {
 		},
 		initialize: function () {
 			ViewBase.prototype.initialize.call(this, this.options);
-			console.log(this.model);
 
 			if (this.model.get("type").toUpperCase() == "FLATDIRECTORY") {
 				if (!fds[this.model.get("scope")]) {

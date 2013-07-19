@@ -1,13 +1,12 @@
-<div class="SetComment">
-	<label>
-		<input type="checkbox" class="field-toggle">
-		<%=model.get('name')%>
-	</label>
-	<div class="RichTextWrapper field">
-		<div <%=!model.isReadOnly()?'contenteditable="true"':''%>
-		class="RichText attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
-		style="min-height: 8em;">
-			<%=model.getValue() || '<br>'%>
-		</div>
-	</div>
+<label>
+	<input type="checkbox" class="field-toggle">
+	<%=model.get('name')%>
+</label>
+<!--<div class="field">
+	<textarea class="attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>" style="min-height: 8em;"><%=model.getValue()%></textarea>
+</div>-->
+<div class="RichTextWrapper field">
+	<div <%=!model.isReadOnly()?'contenteditable="true"':''%>
+	class="RichText attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
+	style="min-height: 8em;"><%=model.getValue() || '<br>'%></div>
 </div>
