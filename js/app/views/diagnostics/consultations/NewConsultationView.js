@@ -94,7 +94,7 @@ define(function(require) {
 			this.consultation.eventId = this.options.appealId;
 			this.consultation.set('patientId', this.options.appeal.get('patient').get('id'));
 			this.consultation.set('createDateTime', moment().valueOf());
-			this.consultation.set('createPerson', this.assigner.id);
+			//this.consultation.set('createPerson', this.assigner.id);
 			this.consultation.set('assignerId', this.assigner.id);
 
 			this.diagnosis = this.options.appeal.getDiagnosis();
@@ -136,7 +136,7 @@ define(function(require) {
 
 			pubsub.on('assigner:changed', function(assigner) {
 				console.log('assign-person: changed', assigner);
-				this.consultation.set('createPerson', assigner.id)
+				//this.consultation.set('createPerson', assigner.id)
 				this.consultation.set('assignerId', assigner.id)
 
 				this.ui.$assigner.val(assigner.name.raw);
