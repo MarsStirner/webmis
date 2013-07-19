@@ -148,7 +148,7 @@ header {
 	margin: 0;
 }
 
-.profile-options {
+.profile-options, .copy-options {
 	position: absolute;
 	z-index: 9999;
 	font-size: 1.2em;
@@ -163,14 +163,17 @@ header {
 		&:hover {
 			background:#d2f0fd;
 		}
-		&:first-child {
-			border-top:none;
-			cursor:default;
-			background-color: #cccccc
-		}
-		&:last-child {
-			padding: 0;
-		}
+	}
+}
+
+.profile-options {
+	&:first-child {
+		border-top:none;
+		cursor:default;
+		background-color: #cccccc
+	}
+	&:last-child {
+		padding: 0;
 	}
 }
 

@@ -1723,8 +1723,9 @@ define(function (require) {
 
 		events: {
 			"change .toggle-divided-state": "onToggleDividedStateClick",
+			"click .copy-from": "onCopyFromClick",
 			"click .copy-from-prev": "onCopyFromPrevClick",
-			"click .copy-from": "onCopyFromClick"
+			"click .copy-from-selected": "onCopyFromSelectedClick"
 		},
 
 		onToggleDividedStateClick: function () {
@@ -1736,12 +1737,28 @@ define(function (require) {
 			 }*/
 		},
 
+		onCopyFromClick: function () {
+			var menu = this.$(".copy-options");
+
+			menu.css({"min-width": this.$(".copy-from").width()}).show().position({
+				my: "right top",
+				at: "right bottom",
+				of: this.$(".copy-from")
+			});
+
+			$(document).one("click", function() {
+				menu.hide();
+			});
+
+			return false;
+		},
+
 		onCopyFromPrevClick: function () {
 			var documentLastByType = new Documents.Models.DocumentLastByType({id: this.getDocumentTypeId()});
 			this.fetchCopySource(documentLastByType);
 		},
 
-		onCopyFromClick: function () {
+		onCopyFromSelectedClick: function () {
 			this.copySourceList = new Documents.Collections.DocumentList([], {});
 			this.listenTo(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
 
@@ -1780,6 +1797,11 @@ define(function (require) {
 			}
 
 			return documentTypeId;
+		},
+
+		render: function () {
+			ViewBase.prototype.render.call(this);
+			this.$(".copy-options").hide().menu();
 		}
 	});
 
