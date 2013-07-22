@@ -22,7 +22,7 @@ define(function(require) {
 
 		data: function() {
 			return {
-				collection: this.collection.models.slice(0, 5),
+				collection: this.collection.models,//.slice(0, 5),
 				appealId: shared.models.appeal.get('id'),
 				showLabsLink: this.showLabsLink
 			};

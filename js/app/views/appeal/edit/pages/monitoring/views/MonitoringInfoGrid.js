@@ -26,7 +26,7 @@ define(function(require) {
 
 		data: function() {
 			return {
-				collection: this.collection.models.slice(0, 5)
+				collection: this.collection.models//.slice(0, 5)
 			};
 		},
 

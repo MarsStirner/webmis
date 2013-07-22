@@ -41,6 +41,55 @@ define(function(require) {
 				};
 			});
 		},
+		merge: function(items) {
+			items = items.reverse();
+
+			var obj = {};
+
+			_.each(items, function(item) {
+				_.each(_.keys(item), function(key) {
+					if (!(item[key] === ''  || item[key] === 'weight' || item[key] === 'growth' || typeof item[key] === 'undefined')) {
+						obj[key] = item[key]
+						//console.log('key', key, item[key],  typeof item[key]);
+					}
+				});
+				console.log('obj', obj)
+			});
+			console.log('merge', items, obj);
+			return obj;
+		},
+
+		combine: function(items,combined) {
+
+			if (_.isEmpty(items)) return [];
+			items = items.slice();
+
+			var top = _.first(items);
+			var startTime = top.datetime;
+			var endTime = startTime - (1 * 60 * 60 * 1000);
+			var items4combine = [items.shift()];
+			var nextItems = [];
+			//var combined = [];
+
+
+			_.each(items, function(item) {
+				if (item.datetime <= endTime) {
+					items4combine.push(item);
+				} else {
+					nextItems.push(item);
+				}
+			});
+
+			combined.push(this.merge(items4combine));
+			console.log('combine',combined, this.merge(items4combine));
+
+			if (nextItems.length > 0) {
+				this.combine(nextItems,combined);
+			}
+
+			return combined;
+		},
+
 
 		parse: function(raw) {
 			var rawByDate = {};
@@ -76,6 +125,7 @@ define(function(require) {
 			// console.log(rawByDate);
 			console.log('raw', raw);
 			console.log('parsed', parsed);
+			this.combine(parsed,[]);
 
 			return parsed;
 		}
