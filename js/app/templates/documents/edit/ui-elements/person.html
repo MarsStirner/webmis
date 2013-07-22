@@ -11,6 +11,6 @@
 	<div class="span11" style="position: relative;">
 		<input type="hidden" class="attribute-value" value="<%=model.getValue()%>">
 		<input type="text" class="Disabled <%=model.isMandatory()?'Mandatory':''%> person-name" value="<%=model.getPropertyValueFor('value')%>" disabled>
-		<i class="icon-remove clean-person" title="Очистить" style="position:absolute; top:.5em; right:.5em; cursor:pointer;<%=model.hasValue()?'display: none;':''"></i>
+		<i class="icon-remove clean-person" title="Очистить" style="position:absolute; top:.5em; right:.5em; cursor:pointer;<%=!model.hasValue()?'display: none;':''%>"></i>
 	</div>
 </div>
