@@ -37,39 +37,82 @@ define(function(require){
 
 		documentEditorMode: false,
 
-		typeViews: {
-			"card": App.Views.Card,
+		/**
+		 * Structure: pageName: {
+		 *   //State list
+		 *   "REVIEW": {
+		 *     //State params
+		 *     //Page content view constructor
+		 *     "view": App.Views.Card,
+		 *     //Breadcrumb params
+		 *     "breadcrumb": App.Router.cachedBreadcrumbs.APPEAL
+		 *   }
+		 *   [,...]
+		 * }
+		 */
+		pageViews: {
+			"card": {
+				"REVIEW": App.Views.Card
+			},
 
-			/*"examinations": App.Views.Examinations,
-			 "examination-primary": App.Views.ExaminationPrimary,
-			 "examination-primary-preview": App.Views.ExaminationPrimaryPreview,
-			 "examination-primary-repeated": App.Views.ExaminationPrimary,
-			 "examination-primary-repeated-preview": App.Views.ExaminationPrimaryPreview,*/
+			"diagnostics-laboratory": {
+				"REVIEW": LaboratoryView,
+				"SUB_REVIEW": LaboratoryResultView,
+				"SUB_EDIT": LaboratoryResultView //TODO: impl edit mode
+			},
 
-			"examinations": Documents.Views.List.Examination.Layout,
-			"examination-edit": Documents.Views.Edit.Examination.Layout,
+			"diagnostics-instrumental": {
+				"REVIEW": InstrumentalView,
+				"SUB_REVIEW": InstrumentalResultView,
+				"SUB_EDIT": InstrumentalResultView //TODO: impl edit mode
+			},
 
-			"diagnostics-laboratory": LaboratoryView,
-			"diagnostics-laboratory-result": LaboratoryResultView,
-			"diagnostics-instrumental": InstrumentalView,
-			"diagnostics-instrumental-result": InstrumentalResultView,
-			"diagnostics-consultations": ConsultationView,
-			"diagnostics-consultations-result": ConsultationResultView,
-			"quotes": QuotesView,
-			"patient-monitoring": PatientMonitoringView,
+			"diagnostics-consultations": {
+				"REVIEW": ConsultationView,
+				"SUB_REVIEW": ConsultationResultView,
+				"SUB_EDIT": ConsultationResultView //TODO: impl edit mode
+			},
 
-			//"first-examination-edit": App.Views.ExaminationEdit,
+			"quotes": {
+				"REVIEW": QuotesView
+			},
 
-			"moves": Moves,
-			"hospitalbed": HospitalBed,
+			"patient-monitoring":  {
+				"REVIEW": PatientMonitoringView
+			},
 
-			"monitoring": Monitoring.Views.Layout,
+			"moves": {
+				"REVIEW": Moves
+			},
 
-			"documents": Documents.Views.List.Common.Layout,
-			"document-edit": Documents.Views.Edit.Common.Layout,
+			"hospitalbed": {
+				"REVIEW": HospitalBed
+			},
 
-			"therapy": Documents.Views.List.Therapy.Layout,
-			"therapy-edit": Documents.Views.Edit.Therapy.Layout
+			"monitoring": {
+				"REVIEW": Monitoring.Views.Layout
+			},
+
+			"documents": {
+				"REVIEW": Documents.Views.List.Common.Layout,
+				"SUB_REVIEW": Documents.Views.Review.Common.Layout,
+				"SUB_EDIT": Documents.Views.Edit.Common.Layout,
+				"SUB_NEW": Documents.Views.Edit.Common.Layout
+			},
+
+			"therapy": {
+				"REVIEW": Documents.Views.List.Therapy.Layout,
+				"SUB_REVIEW": Documents.Views.Review.Therapy.Layout,
+				"SUB_EDIT": Documents.Views.Edit.Therapy.Layout,
+				"SUB_NEW": Documents.Views.Edit.Therapy.Layout
+			},
+
+			"examinations": {
+				"REVIEW": Documents.Views.List.Examination.Layout,
+				"SUB_REVIEW": Documents.Views.Review.Examination.Layout,
+				"SUB_EDIT": Documents.Views.Edit.Examination.Layout,
+				"SUB_NEW": Documents.Views.Edit.Examination.Layout
+			}
 		},
 
 		breadCrumbsMap: {
@@ -92,11 +135,12 @@ define(function(require){
 		},
 
 		initialize: function() {
-			this.appealId = this.options.id;
-			this.type = this.options.type;
-			console.log('this', this)
+			this.appealId = this.options.appealId;
+			this.page = this.options.page;
 
-			if (!(this.appealId && this.typeViews[this.type])) {
+			console.log('this', this);
+
+			if (!(this.appealId && this.pageViews[this.page])) {
 				throw new Error("Invalid diagnostic type or empty appeal id");
 			}
 
@@ -114,10 +158,12 @@ define(function(require){
 			this.appeal.fetch();
 		},
 
-		setContentView: function(type, extraOptions) {
-			if (this.type !== type || !this.contentView || (extraOptions && extraOptions.force)) {
-				if (this.typeViews[type]) {
-					this.type = type;
+		setContentView: function(page, mode, extraOptions) {
+			mode = mode || "REVIEW";
+
+			//if (this.page !== page || !this.contentView || (extraOptions && extraOptions.force)) {
+				if (this.pageViews[page][mode]) {
+					this.page = page;
 
 					if (this.contentView) {
 						this.setBreadcrumbsStructure();
@@ -135,12 +181,14 @@ define(function(require){
 
 					//this.contentView = null;
 
-					this.contentView = new this.typeViews[type](_.extend({
+					this.contentView = new this.pageViews[page][mode](_.extend({
 						appealId: this.appealId,
 						appeal: this.appeal,
 						path: this.options.path,
 						referrer: this.options.referrer,
-						url: this.options.url
+						mode: this.options.mode,
+						page: this.options.page,
+						subId: this.options.subId
 					}, extraOptions));
 
 					this.contentView.on("change:printState", this.onPrintStateChange, this);
@@ -151,7 +199,7 @@ define(function(require){
 					this.cardHeader.hidePrintBtn();
 					this.renderPageContent();
 				}
-			}
+			//}
 		},
 
 		onPrintStateChange: function() {
@@ -160,7 +208,7 @@ define(function(require){
 
 		onViewStateChange: function(event) {
 			console.log('onViewStateChange', event);
-			this.setContentView(event.type, event.options);
+			this.setContentView(event.type, event.mode, event.options);
 		},
 
 		onMainStateChange: function(event) {
@@ -213,18 +261,18 @@ define(function(require){
 		onPatientLoaded: function(patient) {
 			Cache.Patient = patient;
 			this.ready();
-			this.setContentView(this.type);
+			this.setContentView(this.page, this.options.mode);
 			this.setBreadcrumbsStructure();
 
 			patient.off("change", this.onPatientLoaded, this);
 		},
 
 		setBreadcrumbsStructure: function() {
-			if (this.breadCrumbsMap[this.type]) {
+			if (this.breadCrumbsMap[this.page]) {
 				this.breadcrumbs.setStructure([
 					App.Router.cachedBreadcrumbs.PATIENTS,
 					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, this.appeal.get("patient").toJSON()),
-					this.breadCrumbsMap[this.type]
+					this.breadCrumbsMap[this.page]
 				]);
 
 				this.$("#page-head").html(this.breadcrumbs.render().el);
@@ -248,7 +296,7 @@ define(function(require){
 		},
 
 		renderPageContent: function() {
-			this.menu.setPage(this.type);
+			this.menu.setPage(this.page);
 			this.$(".ContentSide").html(this.contentView.render().el);
 		},
 

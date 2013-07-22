@@ -102,16 +102,26 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			//"appeals/:id/examinations/new/initial/": "newInitialExamination",
 
 			//appeal
-			"appeals/:id": "appeal",
-			"appeals/:id/": "appeal",
-			"appeals/:id/edit/": "editAppeal",
-			"appeals/:id/:page": "appeal",
-			"appeals/:id/:page/": "appeal",
-			"appeals/:id/:page/:query": "appeal",
+			"appeals/:id": "appealReview",
+			"appeals/:id/": "appealReview",
+			"appeals/:id/edit": "appealEdit",
+			"appeals/:id/edit/": "appealEdit",
+			"appeals/:id/:page": "appealReviewPage",
+			"appeals/:id/:page/": "appealReviewPage",
+			"appeals/:id/:page/:subid": "appealSubItemReview",
+			"appeals/:id/:page/:subid/": "appealSubItemReview",
+			"appeals/:id/:page/new/:subid": "appealSubItemNew",
+			"appeals/:id/:page/new/:subid/": "appealSubItemNew",
+			"appeals/:id/:page/:subid/edit": "appealSubItemEdit",
+			"appeals/:id/:page/:subid/edit/": "appealSubItemEdit",
+
+			/*"appeals/:id/:page/:query": "appeal",
 			"appeals/:id/:page/:subpage": "appeal",
 			"appeals/:id/:page/:subpage/": "appeal",
 			"appeals/:id/:page/:subpage/:query": "appeal",
+			"appeals/:id/:page/:subpage/:query/": "appeal",
 			"appeals/:id/:page/:subpage/:subpage/:subpageId": "appeal",
+			"appeals/:id/:page/:subpage/:subpage/:subpageId/": "appeal",*/
 
 			"biomaterials/": "biomaterials",
 			"reports/*path": "reports",
@@ -372,7 +382,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			});
 		},
 
-		editAppeal: function(appealId) {
+		appealEdit: function(appealId) {
 			if (!this.checkAuthToken()) {
 				return false
 			}
@@ -463,36 +473,18 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			});
 		},
 
-		appeal: function(id, page, subpage) {
-			if (!this.checkAuthToken()) {
-				return false
-			}
-			var url = arguments;
-
+		appeal: function(mode, appealId, page, subId) {
+			if (!this.checkAuthToken()) return false;
+			console.log(arguments);
 			this.currentPage = "appeals";
 
-			if (page) {
-				if (arguments[3]) {
-					page = page + "-" + subpage + "-" + arguments[3];
-
-				} else {
-					page = subpage ? page + "-" + subpage : page;
-				}
-			} else {
-				if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT) {
-					page = "monitoring";
-				} else {
-					page = "card";
-				}
-			}
-
 			require(["views/app", "views/appeal/edit/main"], function(AppView, AppealMainView) {
-
 				var view = new AppealMainView({
 					path: Backbone.history.fragment,
-					id: id,
-					type: page,
-					url: url
+					mode: mode,
+					appealId: appealId,
+					page: page,
+					subId: subId
 				});
 
 				if (!this.appView) {
@@ -507,6 +499,32 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 					//this.appView.changeRenderView(view);
 				}
 			});
+		},
+
+		appealReview: function (appealId) {
+			var page;
+			if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT) {
+				page = "monitoring";
+			} else {
+				page = "card";
+			}
+			this.appeal("REVIEW", appealId, page);
+		},
+
+		appealReviewPage: function (appealId, page) {
+			this.appeal("REVIEW", appealId, page);
+		},
+
+		appealSubItemReview: function (appealId, page, subId) {
+			this.appeal("SUB_REVIEW", appealId, page, subId);
+		},
+
+		appealSubItemEdit: function (appealId, page, subId) {
+			this.appeal("SUB_EDIT", appealId, page, subId);
+		},
+
+		appealSubItemNew: function (appealId, page, subId) {
+			this.appeal("SUB_NEW", appealId, page, subId);
 		},
 
 		/*appeal: function (id) {

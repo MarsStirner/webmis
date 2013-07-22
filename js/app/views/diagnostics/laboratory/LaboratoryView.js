@@ -83,7 +83,8 @@ define(function(require) {
 
 				if ((status === 0) || (status === 1) || (status === 2)) {
 					this.trigger("change:viewState", {
-						type: "diagnostics-laboratory-result",
+						type: "diagnostics-laboratory",
+						mode: "SUB_REVIEW",
 						options: {
 							modelId: model.get('id')
 						}

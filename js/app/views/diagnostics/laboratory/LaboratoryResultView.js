@@ -458,7 +458,8 @@ define(function(require) {
         navigate: function(id) {
 
             this.trigger("change:viewState", {
-                type: "diagnostics-laboratory-result",
+                type: "diagnostics-laboratory",
+								mode: "SUB_REVIEW",
                 options: {
                     modelId: id,
                     force: true
