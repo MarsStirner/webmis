@@ -42,13 +42,13 @@ define(function(require) {
 
 
             this.assign({
-                ".monitoring-layout-header": new Header(),
-                ".patient-info": new PatientInfo(),
-                ".signal-info": new SignalInfo(),
-                ".patient-diagnoses-list": new PatientDiagnosesList(),
-                ".chemotherapy-info": new ChemotherapyInfo(),
-                ".monitoring-info": new MonitoringInfoGrid(),
-                ".express-analyses": new ExpressAnalyses()
+                ".monitoring-layout-header": new Header()
+                ,".patient-info": new PatientInfo()
+                ,".signal-info": new SignalInfo()
+                ,".patient-diagnoses-list": new PatientDiagnosesList()
+                ,".chemotherapy-info": new ChemotherapyInfo()
+                // ,".monitoring-info": new MonitoringInfoGrid()
+                // ,".express-analyses": new ExpressAnalyses()
             });
 
             //console.timeEnd("layout render time");

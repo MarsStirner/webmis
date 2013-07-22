@@ -3,6 +3,7 @@ define(function(require) {
 	var template = require('text!templates/appeal/edit/pages/patient-monitoring.html');
 
 	var MonitoringInfoGrid = require('views/appeal/edit/pages/monitoring/views/MonitoringInfoGrid');
+	var ExpressAnalyses = require('views/appeal/edit/pages/monitoring/views/ExpressAnalysesView');
 
 	return Backbone.View.extend({
 		ui: {},
@@ -18,7 +19,8 @@ define(function(require) {
 			this.$el.html(_.template(template,this.options.appeal.toJSON()));
 
 			this.assign({
-				".monitoring-info": new MonitoringInfoGrid()
+				".monitoring-info": new MonitoringInfoGrid(),
+				".express-analyses": new ExpressAnalyses()
 			});
 
 			return this;
