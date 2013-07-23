@@ -15,6 +15,10 @@ define(function(require) {
 	 */
 	var MonitoringInfos = Collection.extend({
 		model: MonitoringInfo,
+		initialize: function() {
+			this.combined = [];
+			// console.log('init')
+		},
 
 		url: function() {
 			return DATA_PATH + "appeals/" + shared.models.appeal.get("id") + "/monitoring";
@@ -41,25 +45,15 @@ define(function(require) {
 				};
 			});
 		},
-
-		getKeys: function(){
-			var keys = _.keys(this.model.defaults)
-			return keys;
-		},
-
 		//преобразует коллекцию в список ключей с массивами значений
 
 		byKeys: function() {
-			this.getKeys();
-
 			var cj = (this.toJSON()).slice(0, 5);
-
 			var result = {};
 
 			if (cj.length > 0) {
 
-				// var keys = _.chain(cj).first().keys().value();
-				var keys = this.getKeys();
+				var keys = _.chain(cj).first().keys().value();
 
 				_.each(keys, function(key) {
 					result[key] = [];
@@ -76,6 +70,57 @@ define(function(require) {
 
 			return result;
 		},
+		merge: function(items) {
+			items = items.reverse();
+
+			var obj = {};
+
+			_.each(items, function(item) {
+				_.each(_.keys(item), function(key) {
+					if (!(item[key] === '' || item[key] === 'weight' || item[key] === 'growth' || typeof item[key] === 'undefined')) {
+						obj[key] = item[key]
+						//console.log('key', key, item[key],  typeof item[key]);
+					}
+				});
+				// console.log('obj', obj)
+			});
+			// console.log('merge', items, obj);
+			return obj;
+		},
+
+
+		combine: function(items) {
+
+			if (_.isEmpty(items)) return [];
+			items = items.slice();
+
+			var top = _.first(items);
+			var startTime = top.datetime;
+			var endTime = startTime - (1 * 60 * 60 * 1000);
+			var items4combine = [items.shift()];
+			var nextItems = [];
+			//var combined = [];
+
+
+			_.each(items, function(item) {
+				if (item.datetime >= endTime) {
+					items4combine.push(item);
+				} else {
+					nextItems.push(item);
+				}
+			});
+
+			var merged = this.merge(items4combine);
+			this.combined.push(merged);
+			// console.log('combine',top, items4combine, merged);
+
+			if (nextItems.length > 0) {
+				this.combine(nextItems);
+			}
+
+			return this.combined;
+		},
+
 
 		parse: function(raw) {
 			var rawByDate = {};
@@ -109,8 +154,9 @@ define(function(require) {
 			///.slice(0, 5);
 
 			// console.log(rawByDate);
-			console.log('raw', raw);
-			console.log('parsed', parsed);
+			//console.log('raw', raw);
+			//console.log('parsed', parsed);
+			parsed = this.combine(parsed, []);
 
 			return parsed;
 		}

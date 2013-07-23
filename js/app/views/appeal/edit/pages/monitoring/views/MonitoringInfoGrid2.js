@@ -5,7 +5,7 @@ define(function(require) {
 	var monitoringInfoItemTmpl = require('text!templates/appeal/edit/pages/monitoring/monitoring-info-item.tmpl');
 
 	var ClientSortableGrid = require('views/appeal/edit/pages/monitoring/views/ClientSortableGrid');
-	var MonitoringInfos = require('views/appeal/edit/pages/monitoring/collections/MonitoringInfos');
+	var MonitoringInfos2 = require('views/appeal/edit/pages/monitoring/collections/MonitoringInfos2');
 
 
 	/**
@@ -31,7 +31,7 @@ define(function(require) {
 		},
 
 		initialize: function(options) {
-			this.collection = new MonitoringInfos();
+			this.collection = new MonitoringInfos2();
 			ClientSortableGrid.prototype.initialize.apply(this);
 		}
 	});

@@ -10,7 +10,9 @@ define(function(require) {
 			spo2: "",
 			breathRate: "",
 			state: "",
-			health: ""
+			health: "",
+			weight: "",
+			height: ""
 		}
 	});
 

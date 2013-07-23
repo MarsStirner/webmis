@@ -3,7 +3,10 @@ define(function(require) {
 	var template = require('text!templates/appeal/edit/pages/patient-monitoring.html');
 
 	var MonitoringInfoGrid = require('views/appeal/edit/pages/monitoring/views/MonitoringInfoGrid');
+	var MonitoringInfoGrid2 = require('views/appeal/edit/pages/monitoring/views/MonitoringInfoGrid2');
+	var MonitoringInfoGrid3 = require('views/appeal/edit/pages/monitoring/views/MonitoringInfoGrid3');
 	var ExpressAnalyses = require('views/appeal/edit/pages/monitoring/views/ExpressAnalysesView');
+	var ExpressAnalyses2 = require('views/appeal/edit/pages/monitoring/views/ExpressAnalysesView2');
 
 	return Backbone.View.extend({
 		ui: {},
@@ -20,7 +23,10 @@ define(function(require) {
 
 			this.assign({
 				".monitoring-info": new MonitoringInfoGrid(),
-				".express-analyses": new ExpressAnalyses()
+				".monitoring-info2": new MonitoringInfoGrid2(),
+				//".monitoring-info3": new MonitoringInfoGrid3(),
+				//".express-analyses": new ExpressAnalyses(),
+				".express-analyses2": new ExpressAnalyses2()
 			});
 
 			return this;
