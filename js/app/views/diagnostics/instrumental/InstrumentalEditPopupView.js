@@ -133,13 +133,72 @@ define(function(require) {
 			view.$assessmentDatepicker.datepicker("setDate", moment(view.viewModel.get('assessmentDay'), 'YYYY-MM-DD').toDate());
 			view.$assessmentTimepicker.val(this.viewModel.get('assessmentTime'));
 
-			view.$plannedDatepicker.datepicker();
-			view.$plannedTimepicker.timepicker({
-				showPeriodLabels: false,
-				showOn: 'both',
-				button: '.icon-time'
-			});
-			view.$plannedDatepicker.datepicker("setDate", moment(view.viewModel.get('plannedEndDay'), 'YYYY-MM-DD').toDate());
+			// view.$plannedDatepicker.datepicker({
+			// 	minDate:0
+			// });
+			// view.$plannedTimepicker.timepicker({
+			// 	showPeriodLabels: false,
+			// 	showOn: 'both',
+			// 	button: '.icon-time'
+			// });
+
+			view.$plannedDatepicker.datepicker({
+                minDate: new Date(),
+                onSelect: function(dateText, inst) {
+                    view.viewModel.set('plannedDate', moment(dateText, 'DD.MM.YYYY').toDate());
+                    var day = moment(view.$(this).datepicker("getDate")).startOf('day');
+                    var currentDay = moment().startOf('day');
+                    var currentHour = moment().hour();
+                    var hour = view.$plannedTimepicker.timepicker('getHour');
+                    //если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
+                    if (day.diff(currentDay, 'days') === 0) {
+                        if (hour <= currentHour) {
+                            view.$plannedTimepicker.val('').trigger('change');
+                        }
+                    }
+                }
+            });
+
+            // view.$plannedDatepicker.datepicker("setDate", this.viewModel.get('plannedDate'));
+            view.$plannedDatepicker.datepicker("setDate", moment(view.viewModel.get('plannedEndDay'), 'YYYY-MM-DD').toDate());
+
+            view.$plannedTimepicker.timepicker({
+                onSelect: function(time) {
+                    //view.viewModel.set('plannedTime', time)
+                },
+                defaultTime: 'now',
+                onHourShow: function(hour) {
+                    var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
+                    var currentDay = moment().startOf('day');
+                    var currentHour = moment().hour();
+                    //если выбран текущий день, то часы меньше текущего нельзя выбрать
+                    if (day.diff(currentDay, 'days') === 0) {
+                        if (hour < currentHour) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                },
+                onMinuteShow: function(hour, minute) {
+                    var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
+                    var currentDay = moment().startOf('day');
+                    var currentHour = moment().hour();
+                    var currentMinute = moment().minute();
+                    //если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
+                    if (day.diff(currentDay, 'days') === 0) {
+                        if (hour === currentHour && minute <= currentMinute) {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                showPeriodLabels: false,
+                showOn: 'both',
+                button: '.icon-time'
+            });
+
+
 			view.$plannedTimepicker.val(this.viewModel.get('plannedEndTime'));
 
 			if (this.viewModel.get('urgent') == 'true') {

@@ -354,7 +354,7 @@ define(function (require) {
 
             //календарь
             this.ui.$planedDate.datepicker({
-                //minDate: 0,
+                minDate: 0,
                 onSelect: function (dateText, inst) {
                     var timestamp = moment(dateText, 'DD.MM.YYYY').valueOf();
                     pubsub.trigger('date:selected', timestamp)
