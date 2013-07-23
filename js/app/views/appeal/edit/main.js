@@ -23,10 +23,10 @@ define(function(require){
 	require("views/breadcrumbs");
 	require("views/menu");
 	require("views/card-header");
-	require("views/appeal/edit/pages/examinations");
+	/*require("views/appeal/edit/pages/examinations");
 	require("views/appeal/edit/pages/examination-edit");
 	require("views/appeal/edit/pages/examination-primary");
-	require("views/appeal/edit/pages/card");
+	require("views/appeal/edit/pages/card");*/
 
 
 	App.Views.Main = View.extend({
@@ -36,6 +36,13 @@ define(function(require){
 		patient: {},
 
 		documentEditorMode: false,
+
+		getBreadcrumbsRoot: function () {
+			return [
+				{title: "Пациенты", url: "/patients/"},
+				{title: this.patient.get("name").get("raw") + " (" + moment(this.patient.get("birthDate")).year() + ") г.р.", url: "/appeals/"}
+			];
+		},
 
 		/**
 		 * Structure: pageName: {
@@ -52,7 +59,20 @@ define(function(require){
 		 */
 		pageViews: {
 			"card": {
-				"REVIEW": App.Views.Card
+				REVIEW: function () {
+					var title = "Основное";
+					if (Core.Data.currentRole() === ROLES.DOCTOR_DEPARTMENT) {
+						title = "Титульный лист ИБ";
+					}
+
+					return {
+						title: title,
+						view: App.Views.Card,
+						breadcrumbs: _.union(this.getBreadcrumbsRoot(), [
+							{label: "Лабораторные исследования", path: false}
+						])
+					};
+				}
 			},
 
 			"diagnostics-laboratory": {
@@ -259,7 +279,7 @@ define(function(require){
 		},
 
 		onPatientLoaded: function(patient) {
-			Cache.Patient = patient;
+			this.patient = Cache.Patient = patient;
 			this.ready();
 			this.setContentView(this.page, this.options.mode);
 			this.setBreadcrumbsStructure();
