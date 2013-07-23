@@ -321,7 +321,7 @@ define(function(require){
 							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (appeal.get('appealType').get('finance').get('name') === 'ВМП')) {
 								return {
 									name: "quotes",
-									title: "Квоты",
+									title: "Квоты ВМП",
 									uri: "/appeals/" + appeal.get('id') + "/quotes"
 								};
 							} else {

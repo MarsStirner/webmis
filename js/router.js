@@ -715,7 +715,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			uri: "/appeals/:id/diagnostics/consultations/result/:test"
 		},
 		QUOTES: {
-			title: "Квоты",
+			title: "Квоты ВМП",
 			uri: "/appeals/:id/quotes"
 		},
 		REPORTS: {
