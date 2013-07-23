@@ -95,7 +95,7 @@ define(function(require){
 
 			"documents": {
 				"REVIEW": Documents.Views.List.Common.Layout,
-				"SUB_REVIEW": Documents.Views.Review.Common.Layout,
+				"SUB_REVIEW": Documents.Views.List.Common.Layout,
 				"SUB_EDIT": Documents.Views.Edit.Common.Layout,
 				"SUB_NEW": Documents.Views.Edit.Common.Layout
 			},

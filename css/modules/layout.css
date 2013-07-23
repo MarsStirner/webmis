@@ -188,13 +188,13 @@ header {
 }
 
 /* line 170, ../../sass/modules/layout.scss */
-.profile-options:first-child {
+.profile-options li:first-child {
   border-top: none;
   cursor: default;
   background-color: #cccccc;
 }
 /* line 175, ../../sass/modules/layout.scss */
-.profile-options:last-child {
+.profile-options li:last-child {
   padding: 0;
 }
 

@@ -167,12 +167,12 @@ header {
 }
 
 .profile-options {
-	&:first-child {
+	li:first-child {
 		border-top:none;
 		cursor:default;
 		background-color: #cccccc
 	}
-	&:last-child {
+	li:last-child {
 		padding: 0;
 	}
 }
