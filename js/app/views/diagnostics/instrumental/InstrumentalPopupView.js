@@ -260,8 +260,8 @@ define(function(require) {
         afterRender: function() {
             var view = this;
 
-            view.$assessmentDatepicker = $('#start-date');
-            view.$assessmentTimepicker = $('#start-time');
+            view.$assessmentDatepicker = view.$('#start-date');
+            view.$assessmentTimepicker = view.$('#start-time');
             view.$instrumentalGroups = view.$('.instrumental-groups');
             view.$instrumentalResearchs = view.$('.instrumental-researchs');
             view.$plannedDatepicker = view.$("#dp");
@@ -358,6 +358,13 @@ define(function(require) {
             view.$saveButton.button(view.viewModel.get('saveButtonState'));
             // view.viewModel.on('change', view.updateSaveButton, view);
 
+        },
+        close: function(){
+                this.$el.dialog("close");
+                this.bfView.close();
+                this.researchGroupsListView.close();
+                this.researchListView.close();
+                this.$el.remove();
         }
 
     }).mixin([popupMixin]);
