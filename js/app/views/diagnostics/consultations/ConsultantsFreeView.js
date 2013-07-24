@@ -12,10 +12,7 @@ define(function(require) {
         },
         renderAll: function(data) {
             var view = this;
-            //console.log('renderAll', arguments);
-            // view.$el.html('<div class="consultations-list tree"></div>');
-            // view.$consultations_list = view.$('.consultations-list');
-
+            view.$el.unbind('click')
 
             view.$el.html(_.template(template, {
                 items: data,
@@ -24,7 +21,6 @@ define(function(require) {
                 var $this = $(this);
                 view.$el.find('.clicked').removeClass('clicked');
                 $this.addClass('clicked');
-
 
                 var id = $this.data('id');
                 pubsub.trigger('consultant:selected', id);
@@ -50,6 +46,9 @@ define(function(require) {
 
         },
         close: function(){
+
+            this.collection.off(null,null,this);
+            this.$el.remove();
 
         }
     });

@@ -32,12 +32,12 @@ define(function(require) {
         },
 
         showTime: function(text){
-            console.log('showTime', text, this.$el);
-            this.$('#prev').addClass('dasas').html(text);
+            //console.log('showTime', text, this.$el);
+            //this.$('#prev').addClass('dasas').html(text);
         },
 
         render: function() {
-            console.log('schedule render', this.collection.toJSON())
+            //console.log('schedule render', this.collection.toJSON())
             this.$el.html(_.template(this.template, {
                 items: this.collection.toJSON()
             }));
@@ -48,8 +48,8 @@ define(function(require) {
         },
         close: function() {
             pubsub.off('date:selected');
-            pubsub.off('time:selected');
             this.collection.off();
+            this.$el.remove();
 
         }
     })

@@ -3,19 +3,9 @@ define(function(require) {
 
     var DoctorFreeModel = Model.extend({
         initialize: function() {
+            this.beginDate = this.collection.requestData.filter.beginDate;
             var schedule = new ScheduleCollection(this.get('schedule'));
             this.set('schedule', schedule);
-        },
-        convertTime: function(time){
-            var now = moment().startOf('day').valueOf();
-            return moment(now + time).format('HH:mm:ss')
-        },
-        parse: function(raw) {
-           // console.log('parse raw', raw);
-            _.each(raw.schedule, function(item){
-                item.parsedTime = this.convertTime(item.time);
-            },this)
-            return raw;
         }
     });
 
@@ -30,15 +20,46 @@ define(function(require) {
     });
 
     var DoctorsFreeCollection = Collection.extend({
-//        initialize: function(){
-//            this.on('all',function () {
-//                console.log('doctors free all', arguments);
-//            })
-//        },
         model: DoctorFreeModel,
         url: function() {
             return DATA_PATH + "dir/persons/free/"
-        }
+        },
+        convertTime: function(time) {
+            var now = moment().startOf('day').valueOf();
+            return moment(now + time).format('HH:mm:ss')
+        },
+        parse: function(raw) {
+            checkForWarnings(raw.requestData, "requestData was not found in the JSON");
+            this.requestData = raw.requestData || {};
+            this.requestData.filter = this.requestData.filter || {};
+
+            if (raw.requestData && this.requestData.coreVersion) {
+                CORE_VERSION = raw.requestData.coreVersion;
+                VersionInfo.show();
+            }
+
+
+            var beginDate = this.requestData.filter.beginDate;
+            var startOfDay = moment().startOf('day');
+
+            _.each(raw.data, function(person) {
+                var nowTime = 0;
+
+                if (beginDate === startOfDay.valueOf()) {
+                    nowTime = moment().diff(startOfDay);
+                }
+
+                _.each(person.schedule, function(item) {
+                    item.disabled = (nowTime > item.time)
+                    item.parsedTime = this.convertTime(item.time);
+                }, this);
+
+            }, this);
+
+
+
+            return raw.data
+        },
     });
 
     return DoctorsFreeCollection;

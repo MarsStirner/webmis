@@ -56,7 +56,7 @@ define(function(require) {
             return this;
         },
         close: function(){
-            pubsub.off('consultation:selected');
+            //pubsub.off('consultation:selected');
             this.collection.off();
 
         }
