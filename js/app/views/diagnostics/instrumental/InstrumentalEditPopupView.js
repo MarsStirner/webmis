@@ -116,8 +116,8 @@ define(function(require) {
 		afterRender: function() {
 			var view = this;
 
-			view.$assessmentDatepicker = $('#start-date');
-			view.$assessmentTimepicker = $('#start-time');
+			view.$assessmentDatepicker = view.$('#start-date');
+			view.$assessmentTimepicker = view.$('#start-time');
 			view.$plannedDatepicker = view.$("#dp");
 			view.$plannedTimepicker = view.$("#tp");
 			view.$urgent = view.$('input[name=urgent]');
