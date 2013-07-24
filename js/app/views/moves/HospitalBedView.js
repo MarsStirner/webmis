@@ -18,7 +18,7 @@ define(function(require) {
 		template: template,
 
 		events: {
-			//'change select.Departments': 'setDepartment',
+			'change .Departments':'onSelectDepartment',
 			'click .save': 'onSave',
 			'click .actions.cancel': 'onCancel'
 		},
@@ -40,13 +40,10 @@ define(function(require) {
 
 			this.setMoveDateAndMovedDepartment();
 
-
-
-			this.model.on("change:movedFromUnitId", this.onSelectDepartment, this);
 			this.model.on("change", this.validate, this);
 
 			this.model.on("change", function(m, o) {
-				console.log('model change', o.changes);
+				console.log('model change', m, o.changes);
 			});
 
 
@@ -63,19 +60,23 @@ define(function(require) {
 			this.moves.on("reset", function() {
 				this.moves.off(null, null, this);
 
-				var previousMove = this.moves.at(this.moves.length - 2);
-				var lastMove = this.moves.last();
+				this.previousMove = this.moves.at(this.moves.length - 2);
+				this.lastMove = this.moves.last();
 
 				//ид отделения из последнего движения
-				var movedFromUnitId = lastMove.get("unitId");
+				var movedToUnitId = this.lastMove.get("unitId");
 
 				//время предпоследнего движения, если нет в последнем то берём из предидущего движения
-				var moveDatetime = lastMove.get('admission') || previousMove.get('leave') || previousMove.get('admission');
+				var moveDatetime = this.lastMove.get('admission') || this.previousMove.get('leave') || this.previousMove.get('admission');
 
-				this.model.set({
-					'movedFromUnitId': movedFromUnitId
-				});
-				this.ui.$department.select2('val', movedFromUnitId);
+				if(this.previousMove && this.previousMove.get("unitId")){
+					this.model.set({
+						'movedFromUnitId': this.previousMove.get("unitId")
+					});
+				}
+
+				console.log('movedToUnitId',movedToUnitId)
+				this.ui.$department.select2('val', movedToUnitId).trigger('change');
 				this.model.set({
 					'moveDatetime': moveDatetime
 				});
@@ -103,6 +104,7 @@ define(function(require) {
 		onDepartmentsLoaded: function(departments) {
 			var view = this;
 
+
 			_(departments.toJSON()).each(function(d, index) {
 				view.ui.$department.append($("<option/>", {
 					"text": d.name,
@@ -111,39 +113,18 @@ define(function(require) {
 
 			}, this);
 
-			//console.log('onDepartmentsLoaded', view.model.get('movedFromUnitId'));
-
-			// view.once('change:movedFromUnitId',function(){
-
-			// 	view.ui.$department.select2('val', view.model.get('movedFromUnitId'));
-			// })
-
-
-			view.ui.$department.on('change', function() {
-				var val = $(this).val();
-				console.log('department change', val);
-
-				view.setDepartment(val);
-			})
-
-		},
-
-		setDepartment: function(id) {
-
-			this.model.set('movedFromUnitId', id);
-
-			//console.log('setDepartment', id, this.model);
-
 
 		},
 
 		onSelectDepartment: function(event) {
-			var view = this;
-			var departmentId = view.model.get('movedFromUnitId');
+			console.log('onSelectDepartment',event);
+			$target = this.$(event.target);
+			console.log($target.val())
+			var departmentId = $target.val();
 			this.bedsCollection.departmentId = departmentId;
 			this.bedsCollection.fetch();
-			//view.renderBeds();
-			view.model.set('bedId', '');
+			//this.renderBeds();
+			this.model.set('bedId', '');
 
 		},
 
