@@ -688,6 +688,10 @@ define(function (require) {
 			"click .panic": "onPanicClick"
 		},
 
+		data: function () {
+			return {btnsDisabled: !this.documentTypes.length};
+		},
+
 		initialize: function () {
 			if (this.options.documentTypes) {
 				this.documentTypes = this.options.documentTypes;
@@ -1383,9 +1387,13 @@ define(function (require) {
 		initialize: function () {
 			Documents.Views.List.Common.LayoutHistory.prototype.initialize.call(this, this.options);
 
-			this.documentTypes = new Documents.Collections.DocumentTypes();
-			this.documentTypes.fetch();
-			console.log("documentTypes.fetch");
+			if (this.options.documentTypes) {
+				this.documentTypes = this.options.documentTypes;
+			} else {
+				this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.fetch();
+				console.log("documentTypes.fetch");
+			}
 
 			//this.reviewStateToggles.push(".documents-controls");
 		},
@@ -1542,7 +1550,7 @@ define(function (require) {
 
 		initialize: function () {
 			Documents.Views.List.Examination.LayoutHistory.prototype.initialize.call(this, this.options);
-			this.reviewStateToggles.push(".documents-controls");
+			//this.reviewStateToggles.push(".documents-controls");
 		},
 
 		render: function () {
@@ -1624,9 +1632,14 @@ define(function (require) {
 		initialize: function () {
 			Documents.Views.List.Therapy.LayoutHistory.prototype.initialize.call(this, this.options);
 
-			this.documentTypes = new Documents.Collections.DocumentTypes();
-			this.documentTypes.mnems = ["THER"];
-			this.documentTypes.fetch();
+			if (this.options.documentTypes) {
+				this.documentTypes = this.options.documentTypes;
+			} else {
+				this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.mnems = ["THER"];
+				this.documentTypes.fetch();
+				console.log("documentTypes.fetch");
+			}
 
 			//this.reviewStateToggles.push(".controls-block");
 		},
@@ -3066,7 +3079,7 @@ define(function (require) {
 					type: this.options.reviewPageTypeName,
 					mode: "REVIEW",
 					options: {
-						documentTypes: this.documentTypes
+						documentTypes: this.options.documentTypes
 					}
 				});
 			}
