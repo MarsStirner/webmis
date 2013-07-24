@@ -516,7 +516,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		appealSubItemReview: function (appealId, page, subId) {
-			this.appeal("SUB_REVIEW", appealId, page, subId);
+			this.appeal("SUB_REVIEW", appealId, page, subId.split(","));
 		},
 
 		appealSubItemEdit: function (appealId, page, subId) {

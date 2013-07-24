@@ -694,6 +694,7 @@ define(function (require) {
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.fetch({data: {filter: {flatCode: FLAT_CODES.PANIC}}});
+				console.log("documentTypes.fetch");
 			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
@@ -768,7 +769,7 @@ define(function (require) {
 		},
 
 		getReviewLayout: function () {
-			return new Documents.Views.Review.Base.Layout({
+			return new Documents.Views.Review.Base.NoControlsLayout({
 				collection: this.selectedDocuments,
 				documents: this.documents,
 				included: true,
@@ -1152,6 +1153,7 @@ define(function (require) {
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.fetch();
+				console.log("documentTypes.fetch");
 			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
@@ -1379,15 +1381,28 @@ define(function (require) {
 
 			this.documentTypes = new Documents.Collections.DocumentTypes();
 			this.documentTypes.fetch();
+			console.log("documentTypes.fetch");
 
 			//this.reviewStateToggles.push(".documents-controls");
 		},
 
+		toggleReviewState: function () {
+			dispatcher.trigger("change:viewState", {
+				type: this.getEditPageTypeName(),
+				mode: "SUB_REVIEW",
+				options: {
+					collection: this.selectedDocuments,
+					documents: this.documents,
+					included: false,
+					showIcons: !this.options.included
+				}
+			});
+		},
+
 		getReviewLayout: function () {
-			return new Documents.Views.Review.Base.Layout({
+			return new Documents.Views.Review.Base.NoControlsLayout({
 				collection: this.selectedDocuments,
 				documents: this.documents,
-				documentTypes: this.documentTypes,
 				included: true,
 				showIcons: !this.options.included
 			});
@@ -1488,7 +1503,7 @@ define(function (require) {
 		},
 
 		getReviewLayout: function () {
-			return new Documents.Views.Review.Examination.Layout({
+			return new Documents.Views.Review.Examination.NoControlsLayout({
 				collection: this.selectedDocuments,
 				documents: this.documents,
 				included: true,
@@ -1569,7 +1584,7 @@ define(function (require) {
 		},
 
 		getReviewLayout: function () {
-			return new Documents.Views.Review.Therapy.Layout({
+			return new Documents.Views.Review.Therapy.NoControlsLayout({
 				collection: this.selectedDocuments,
 				documents: this.documents,
 				included: true,
@@ -2896,26 +2911,22 @@ define(function (require) {
 
 	//region VIEWS REVIEW BASE
 	//---------------------
-	Documents.Views.Review.Base.Layout = LayoutBase.extend({
+	Documents.Views.Review.Base.NoControlsLayout = LayoutBase.extend({
 		template: templates._reviewLayout,
 
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
 
-			if (!this.options.included && !this.options.documentTypes) {
-				this.documentTypes = new Documents.Collections.DocumentTypes();
-				this.documentTypes.fetch();
-			} else {
-				this.documentTypes = this.options.documentTypes;
-			}
-
-			if (!this.options.documents) {
-				this.documents = new Documents.Collections.DocumentList([], {appealId: this.appealId, defaultMnems: this.getDefaultDocumentsMnems()});
-				this.documents.fetch({data: {sortingField: "assesmentDate", sortingMethod: "desc"}});
-			}
-
 			if (!this.options.collection) {
 				this.collection = new Backbone.Collection();
+				if (this.options.subId) {
+					if (!_.isArray(this.options.subId)) {
+						this.options.subId = [this.options.subId];
+					}
+					_.each(this.options.subId, function (subId) {
+						this.collection.add(new Documents.Models.Document({id: subId}));
+					}, this);
+				}
 			}
 
 			this.listenTo(this.collection, "review:next", this.onDocumentsReviewNext);
@@ -2960,21 +2971,44 @@ define(function (require) {
 			return "documents";
 		},
 
-		render: function () {
-			return LayoutBase.prototype.render.call(this, {
-				".documents-controls": new Documents.Views.List.Common.Controls({
-					collection: this.documents,
-					documentTypes: this.documentTypes,
-					editPageTypeName: this.getEditPageTypeName()
+		getReviewPageTypeName: function () {
+			return "documents";
+		},
+
+		render: function (subViews) {
+			return LayoutBase.prototype.render.call(this, _.extend({
+				".review-controls": new Documents.Views.Review.Base.Controls({
+					collection: this.collection,
+					documents: this.options.documents,
+					reviewPageTypeName: this.getReviewPageTypeName(),
+					included: this.options.included
 				}),
-				".panic-btn": new PanicBtn({
-					documentTypes: this.documentTypes,
-					editPageTypeName: this.getEditPageTypeName()
-				}),
-				".review-controls": new Documents.Views.Review.Base.Controls({collection: this.collection}),
 				".sheets": new Documents.Views.Review.Base.SheetList({
 					collection: this.collection,
 					showIcons: this.options.showIcons && !appeal.isClosed(),
+					editPageTypeName: this.getEditPageTypeName()
+				})
+			}, subViews));
+		}
+	});
+
+	Documents.Views.Review.Base.Layout = Documents.Views.Review.Base.NoControlsLayout.extend({
+		initialize: function () {
+			if (this.options.documentTypes) {
+				this.documentTypes = this.options.documentTypes;
+			} else {
+				this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.fetch();
+				console.log("documentTypes.fetch");
+			}
+
+			Documents.Views.Review.Base.NoControlsLayout.prototype.initialize.call(this, this.options);
+		},
+
+		render: function () {
+			return Documents.Views.Review.Base.NoControlsLayout.prototype.render.call(this, {
+				".documents-controls": new Documents.Views.List.Common.Controls({
+					documentTypes: this.documentTypes,
 					editPageTypeName: this.getEditPageTypeName()
 				})
 			});
@@ -2989,7 +3023,10 @@ define(function (require) {
 		template: templates._reviewControls,
 
 		data: function () {
-			return {selectedDocuments: this.collection};
+			return {
+				selectedDocuments: this.collection,
+				showStepper: (this.collection.length == 1) && (this.options.documents && this.options.documents.length > 1)
+			};
 		},
 
 		events: {
@@ -3001,7 +3038,12 @@ define(function (require) {
 		},
 
 		onBackToDocumentListClick: function () {
-			this.collection.trigger("review:quit");
+			console.log(this.options);
+			if (this.options.included) {
+				this.collection.trigger("review:quit");
+			} else {
+				dispatcher.trigger("change:viewState", {type: this.options.reviewPageTypeName, mode: "REVIEW"});
+			}
 		},
 
 		onNextDocumentClick: function () {
@@ -3283,20 +3325,42 @@ define(function (require) {
 	//endregion
 
 
-	//region REVIEW EXAMINATION
-	Documents.Views.Review.Examination.Layout = Documents.Views.Review.Base.Layout.extend({
-		getEditPageTypeName: function () {
-			return "examinations";
+	//region REVIEW COMMON
+	Documents.Views.Review.Common.Layout = Documents.Views.Review.Base.Layout.extend({
+		render: function () {
+			return Documents.Views.Review.Base.Layout.prototype.render.call(this, {
+				".panic-btn": new PanicBtn({
+					documentTypes: this.documentTypes,
+					editPageTypeName: this.getEditPageTypeName()
+				})
+			});
 		}
 	});
 	//endregion
 
 
+	//region REVIEW EXAMINATION
+	Documents.Views.Review.Examination.NoControlsLayout = Documents.Views.Review.Base.NoControlsLayout.extend({
+		getEditPageTypeName: function () {
+			return "examinations";
+		}
+	});
+
+	Documents.Views.Review.Examination.Layout = Documents.Views.Review.Base.Layout.extend({
+		getEditPageTypeName: Documents.Views.Review.Examination.NoControlsLayout.prototype.getEditPageTypeName
+	});
+	//endregion
+
+
 	//region REVIEW THERAPY
-	Documents.Views.Review.Therapy.Layout = Documents.Views.Review.Base.Layout.extend({
+	Documents.Views.Review.Therapy.NoControlsLayout = Documents.Views.Review.Base.NoControlsLayout.extend({
 		getEditPageTypeName: function () {
 			return "therapy";
 		}
+	});
+
+	Documents.Views.Review.Therapy.Layout = Documents.Views.Review.Base.Layout.extend({
+		getEditPageTypeName: Documents.Views.Review.Therapy.NoControlsLayout.prototype.getEditPageTypeName
 	});
 	//endregion
 	//endregion
