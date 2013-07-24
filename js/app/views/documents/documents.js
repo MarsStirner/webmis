@@ -1143,6 +1143,10 @@ define(function (require) {
 	Documents.Views.List.Base.Controls = ViewBase.extend({
 		template: templates._listControlsBase,
 
+		data: function () {
+			return {btnsDisabled: !this.documentTypes.length};
+		},
+
 		events: {
 			"click .new-document": "onNewDocumentClick"
 		},
@@ -1393,20 +1397,21 @@ define(function (require) {
 				options: {
 					collection: this.selectedDocuments,
 					documents: this.documents,
+					documentTypes: this.documentTypes,
 					included: false,
 					showIcons: !this.options.included
 				}
 			});
 		},
 
-		getReviewLayout: function () {
+		/*getReviewLayout: function () {
 			return new Documents.Views.Review.Base.NoControlsLayout({
 				collection: this.selectedDocuments,
 				documents: this.documents,
 				included: true,
 				showIcons: !this.options.included
 			});
-		},
+		},*/
 
 		render: function () {
 			return Documents.Views.List.Common.LayoutHistory.prototype.render.call(this, {
@@ -1623,7 +1628,7 @@ define(function (require) {
 			this.documentTypes.mnems = ["THER"];
 			this.documentTypes.fetch();
 
-			this.reviewStateToggles.push(".controls-block");
+			//this.reviewStateToggles.push(".controls-block");
 		},
 
 		render: function () {
@@ -2993,6 +2998,8 @@ define(function (require) {
 	});
 
 	Documents.Views.Review.Base.Layout = Documents.Views.Review.Base.NoControlsLayout.extend({
+		attributes: {style: "display: table; width: 100%;"},
+
 		initialize: function () {
 			if (this.options.documentTypes) {
 				this.documentTypes = this.options.documentTypes;
@@ -3005,13 +3012,26 @@ define(function (require) {
 			Documents.Views.Review.Base.NoControlsLayout.prototype.initialize.call(this, this.options);
 		},
 
+		tearDown: LayoutBase.prototype.tearDown,
+
 		render: function () {
-			return Documents.Views.Review.Base.NoControlsLayout.prototype.render.call(this, {
+			Documents.Views.Review.Base.NoControlsLayout.prototype.render.call(this, {
 				".documents-controls": new Documents.Views.List.Common.Controls({
 					documentTypes: this.documentTypes,
 					editPageTypeName: this.getEditPageTypeName()
+				}),
+				".review-controls": new Documents.Views.Review.Base.Controls({
+					collection: this.collection,
+					documents: this.options.documents,
+					documentTypes: this.documentTypes,
+					reviewPageTypeName: this.getReviewPageTypeName(),
+					included: this.options.included
 				})
 			});
+
+			this.$(".controls-block-row").show();
+
+			return this;
 		}
 	});
 
@@ -3042,7 +3062,13 @@ define(function (require) {
 			if (this.options.included) {
 				this.collection.trigger("review:quit");
 			} else {
-				dispatcher.trigger("change:viewState", {type: this.options.reviewPageTypeName, mode: "REVIEW"});
+				dispatcher.trigger("change:viewState", {
+					type: this.options.reviewPageTypeName,
+					mode: "REVIEW",
+					options: {
+						documentTypes: this.documentTypes
+					}
+				});
 			}
 		},
 
