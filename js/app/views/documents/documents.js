@@ -32,9 +32,9 @@ define(function (require) {
 	};
 
 	//константы
-	var HIDDEN_TYPES = ['JobTicket', 'RLS'];//типы полей, которые не выводятся в ui.
+	var HIDDEN_TYPES = ['JobTicket', 'RLS']; //типы полей, которые не выводятся в ui.
 	var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
-	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';//Формат даты в коммон дата
+	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss'; //Формат даты в коммон дата
 	var FLAT_CODES = {
 		PANIC: "panic",
 		DUTY_DOCTOR: "dutyDoctor"
@@ -470,7 +470,7 @@ define(function (require) {
 
 		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
 
-		lastCrtiteria: "",
+		lastCriteria: "",
 
 		url: function () {
 			//filter[view]=tree
@@ -498,13 +498,13 @@ define(function (require) {
 		},
 
 		search: function (criteria) {
-			this.lastCrtiteria = criteria;
+			this.lastCriteria = criteria;
 
 			if (!this.originalModels) {
 				this.originalModels = this.toJSON();
 			}
-			if (this.lastCrtiteria) {
-				var criteriaRE = new RegExp(this.lastCrtiteria, "gi");
+			if (this.lastCriteria) {
+				var criteriaRE = new RegExp(this.lastCriteria, "gi");
 				var result = [];
 				this.extractResult(this.originalModels, result, criteriaRE, "name");
 				this.reset(result);
@@ -523,7 +523,7 @@ define(function (require) {
 			this.mnems = mnems;
 			this.fetch().then(_.bind(function () {
 				this.originalModels = null;
-				this.search(this.lastCrtiteria);
+				this.search(this.lastCriteria);
 			}, this));
 		},
 
@@ -1383,6 +1383,16 @@ define(function (require) {
 			//this.reviewStateToggles.push(".documents-controls");
 		},
 
+		getReviewLayout: function () {
+			return new Documents.Views.Review.Base.Layout({
+				collection: this.selectedDocuments,
+				documents: this.documents,
+				documentTypes: this.documentTypes,
+				included: true,
+				showIcons: !this.options.included
+			});
+		},
+
 		render: function () {
 			return Documents.Views.List.Common.LayoutHistory.prototype.render.call(this, {
 				".documents-controls": new Documents.Views.List.Common.Controls({
@@ -1963,6 +1973,7 @@ define(function (require) {
 			//this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			if (this.model.isValid()) {
 				this.$('button').button('disable');
+				console.log(JSON.stringify(this.model.toJSON()));
 				this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			}
 		},
@@ -2890,6 +2901,23 @@ define(function (require) {
 
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
+
+			if (!this.options.included && !this.options.documentTypes) {
+				this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.fetch();
+			} else {
+				this.documentTypes = this.options.documentTypes;
+			}
+
+			if (!this.options.documents) {
+				this.documents = new Documents.Collections.DocumentList([], {appealId: this.appealId, defaultMnems: this.getDefaultDocumentsMnems()});
+				this.documents.fetch({data: {sortingField: "assesmentDate", sortingMethod: "desc"}});
+			}
+
+			if (!this.options.collection) {
+				this.collection = new Backbone.Collection();
+			}
+
 			this.listenTo(this.collection, "review:next", this.onDocumentsReviewNext);
 			this.listenTo(this.collection, "review:prev", this.onDocumentsReviewPrev);
 		},
@@ -2921,10 +2949,6 @@ define(function (require) {
 			}
 		},
 
-		reviewPrevDocument: function () {
-
-		},
-
 		getListItemIndex: function () {
 			var currentDocument = this.collection.first();
 			var currentDocumentListItem = this.options.documents.get(currentDocument.id);
@@ -2938,6 +2962,15 @@ define(function (require) {
 
 		render: function () {
 			return LayoutBase.prototype.render.call(this, {
+				".documents-controls": new Documents.Views.List.Common.Controls({
+					collection: this.documents,
+					documentTypes: this.documentTypes,
+					editPageTypeName: this.getEditPageTypeName()
+				}),
+				".panic-btn": new PanicBtn({
+					documentTypes: this.documentTypes,
+					editPageTypeName: this.getEditPageTypeName()
+				}),
 				".review-controls": new Documents.Views.Review.Base.Controls({collection: this.collection}),
 				".sheets": new Documents.Views.Review.Base.SheetList({
 					collection: this.collection,

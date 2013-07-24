@@ -37,29 +37,17 @@ define(function(require){
 
 		documentEditorMode: false,
 
-		getBreadcrumbsRoot: function () {
+		/*getBreadcrumbsRoot: function () {
 			return [
 				{title: "Пациенты", url: "/patients/"},
 				{title: this.patient.get("name").get("raw") + " (" + moment(this.patient.get("birthDate")).year() + ") г.р.", url: "/appeals/"}
 			];
-		},
+		},*/
 
-		/**
-		 * Structure: pageName: {
-		 *   //State list
-		 *   "REVIEW": {
-		 *     //State params
-		 *     //Page content view constructor
-		 *     "view": App.Views.Card,
-		 *     //Breadcrumb params
-		 *     "breadcrumb": App.Router.cachedBreadcrumbs.APPEAL
-		 *   }
-		 *   [,...]
-		 * }
-		 */
 		pageViews: {
 			"card": {
-				REVIEW: function () {
+				REVIEW: App.Views.Card
+				/*REVIEW: function () {
 					var title = "Основное";
 					if (Core.Data.currentRole() === ROLES.DOCTOR_DEPARTMENT) {
 						title = "Титульный лист ИБ";
@@ -72,7 +60,7 @@ define(function(require){
 							{label: "Лабораторные исследования", path: false}
 						])
 					};
-				}
+				}*/
 			},
 
 			"diagnostics-laboratory": {
