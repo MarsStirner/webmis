@@ -1,28 +1,28 @@
-<% if(!allDocs){%>
+<% if(!data.allDocs){%>
 <h3>Нет документов:</h3>
     <ul>
-        <% if(vmp && !vmpTicket){ %>
+        <% if(data.vmp && !data.vmpTicket){ %>
             <li>Талон-направление на ВМП.</li>
         <% } %>
 
-        <% if(!epicrisis){ %>
+        <% if(!data.epicrisis){ %>
             <li>Эпикриз.</li>
         <% } %>
 
-        <% if(!discharge){ %>
+        <% if(!data.discharge){ %>
             <li>Выписка.</li>
         <% } %>
 
-        <% if(oncology){%>
-            <% if(!_.isUndefined(notice_090y) && !notice_090y){%>
+        <% if(data.oncology){%>
+            <% if(!_.isUndefined(data.notice_090y) && !data.notice_090y){%>
                 <li>Извещение о больном с впервые в жизни установленным диагнозом злокачественного новообразования.</li>
             <% } %>
 
-            <% if(!_.isUndefined(notice_027y_2) && !notice_027y_2){%>
+            <% if(!_.isUndefined(data.notice_027y_2) && !data.notice_027y_2){%>
                 <li>Протокол на случай выявления у больного запущенной формы злокачественного новообразования.</li>
             <% } %>
 
-            <% if(!_.isUndefined(notice_027y_1) && !notice_027y_1){%>
+            <% if(!_.isUndefined(data.notice_027y_1) && !data.notice_027y_1){%>
                 <li>Выписка из медицинской карты стационарного больного злокачественным новообразованием.</li>
             <% } %>
 
@@ -53,7 +53,7 @@
         </select>
     </div>
 
-    <% if(openDocs){ %>
+    <% if(data.openDocs){ %>
 
     <% } %>
 
