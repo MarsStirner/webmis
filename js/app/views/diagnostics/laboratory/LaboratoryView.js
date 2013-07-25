@@ -89,7 +89,7 @@ define(function(require) {
 							modelId: model.get('id')
 						}
 					});
-					App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics/laboratory/result/" + model.get('id'));
+					App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-laboratory/" + model.get('id'));
 				}
 
 			}

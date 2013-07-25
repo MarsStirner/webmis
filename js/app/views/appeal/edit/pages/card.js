@@ -122,9 +122,6 @@ define(function(require){
 					template: "f066"
 				});
 			});
-
-
-			PrintAppeal.fetch();
 		},
 
 		onEditAppealClick: function(event) {

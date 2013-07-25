@@ -710,11 +710,11 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 		LABORATORY: {
 			title: "Лабораторные исследования",
-			uri: "/appeals/:id/diagnostics/laboratory/"
+			uri: "/appeals/:id/diagnostics-laboratory/"
 		},
 		LABORATORY_RESULT: {
 			title: "Результаты лабораторного исследования",
-			uri: "/appeals/:id/diagnostics/laboratory/result/:test"
+			uri: "/appeals/:id/diagnostics-laboratory/:test"
 		},
 		INSTRUMENTAL: {
 			title: "Инструментальные исследования",

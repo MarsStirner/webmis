@@ -352,18 +352,18 @@ define(function(require){
 						App.Router.compile({
 							name: "diagnostics-laboratory",
 							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
+							uri: "/appeals/:id/diagnostics-laboratory/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-instrumental",
 							title: "Инструментальные исследования",
-							uri: "/appeals/:id/diagnostics/instrumental/"
+							uri: "/appeals/:id/diagnostics-instrumental/"
 						}, appealJSON),
 
 						App.Router.compile({
 							name: "diagnostics-consultations",
 							title: "Консультации",
-							uri: "/appeals/:id/diagnostics/consultations/"
+							uri: "/appeals/:id/diagnostics-consultations/"
 						}, appealJSON),
 
 						App.Router.compile({
@@ -439,17 +439,17 @@ define(function(require){
 						App.Router.compile({
 							name: "diagnostics-laboratory",
 							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
+							uri: "/appeals/:id/diagnostics-laboratory/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-instrumental",
 							title: "Инструментальные исследования",
-							uri: "/appeals/:id/diagnostics/instrumental/"
+							uri: "/appeals/:id/diagnostics-instrumental/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-consultations",
 							title: "Консультации",
-							uri: "/appeals/:id/diagnostics/consultations/"
+							uri: "/appeals/:id/diagnostics-consultations/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "moves",
