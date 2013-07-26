@@ -38,17 +38,30 @@
     <div class="span6">
         <span class="Label">Направивший врач</span>
 
-        <div id="doctor-outer">
-            <input name="doctor" id="doctor" type="text" style="" disabled
-                   value="${doctorFirstName} ${doctorMiddleName} ${doctorLastName}" class="Disabled">
-            <button class="change-doctor" style=""><i class="icon-user-md"></i></button>
+        <div id="assigner-outer">
+            <input
+            name="assigner"
+            id="assigner"
+            type="text"
+            style=""
+            disabled
+            value="${assignerLastName} ${assignerFirstName} ${assignerMiddleName} "
+            class="Disabled">
+            <button class="change-assigner" style=""><i class="icon-user-md"></i></button>
         </div>
     </div>
     <div class="span6">
         <span class="Label">Исполнитель</span>
 
         <div id="executor-outer">
-            <input name="executor" id="executor" type="text" style="" disabled value="" class="Disabled">
+            <input
+            name="executor"
+            id="executor"
+            type="text"
+            style=""
+            disabled
+            value="${doctorLastName} ${doctorFirstName} ${doctorMiddleName} "
+            class="Disabled">
             <button class="change-executor" style=""><i class="icon-user-md"></i></button>
         </div>
     </div>

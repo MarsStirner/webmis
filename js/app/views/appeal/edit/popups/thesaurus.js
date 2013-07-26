@@ -202,12 +202,12 @@ define([
 		},
 
 		onSelectedTermsChange: function () {
-			this.$(".selectedTerms").val(this.model.get("selectedTerms")).change();
+			this.$(".selectedTerms").html(this.model.get("selectedTerms")).change();
 		},
 
 		onSelTermsKeyUP: function (event) {
 			this.model.set({
-				selectedTerms: $(event.currentTarget).val()
+				selectedTerms: $(event.currentTarget).html()
 			}, {
 				silent: true
 			});
@@ -231,7 +231,20 @@ define([
 					autoOpen: false,
 					width: "60em",
 					modal: true,
-					dialogClass: "webmis"
+					dialogClass: "webmis",
+					title: "Тезаурус",
+					buttons: [
+						{
+							text: "Добавить",
+							"class": "Confirm button-color-green",
+							click: _.bind(this.onConfirm, this)
+						},
+						{
+							text: "Отмена",
+							"class": "ShowHidePopup",
+							click: _.bind(this.onCancel, this)
+						}
+					]
 				});
 
 				this.$("a").click(function (event) {
@@ -252,12 +265,12 @@ define([
 				propertyType: opts.propertyType || "value"
 			});
 
-			$(".ui-dialog-titlebar").hide();
+			//$(".ui-dialog-titlebar").hide();
 			this.$el.dialog("open");
 		},
 
 		close: function () {
-			$(".ui-dialog-titlebar").show();
+			//$(".ui-dialog-titlebar").show();
 			this.$el.dialog("close");
 		}
 	});

@@ -658,6 +658,10 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			title: "Создание карточки",
 			uri: "/patients/new/"
 		},
+		PATIENT_MONITORING: {
+			title: "Мониторинг состояния",
+			uri: "/appeals/:id/patient-monitoring"
+		},
 		PATIENTS_EDIT: {
 			title: "Редактирование карточки",
 			uri: "/patients/:id/edit/"
@@ -711,7 +715,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			uri: "/appeals/:id/diagnostics/consultations/result/:test"
 		},
 		QUOTES: {
-			title: "Квоты",
+			title: "Квоты ВМП",
 			uri: "/appeals/:id/quotes"
 		},
 		REPORTS: {

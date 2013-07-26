@@ -98,11 +98,12 @@ class AppealRouter implements ControllerProviderInterface
             if($oncology){
                 //Данные для онко диагнозов
                 $select_sql = "SELECT rbDiagnosisType.name as 'diagnosisTypeName',"
-                ." MKB.DiagId,"
+                ." MKB.DiagId  AS 'diagnosisId',"
                 ." MKB.DiagName AS 'diagnosisName',"
-                ." rbDiseaseCharacter.name AS 'diseaseCharacterName',"
-                ." rbDiseaseStage.code,"
-                ." rbDiseaseStage.name AS 'diseaseSstage'"
+                ." rbDiseaseCharacter.code AS 'characterCode',"
+                ." rbDiseaseCharacter.name AS 'characterName',"
+                ." rbDiseaseStage.code AS 'stageCode',"
+                ." rbDiseaseStage.name AS 'stageName'"
                 ." FROM Diagnostic"
                 ." JOIN Diagnosis ON Diagnostic.diagnosis_id = Diagnosis.id"
                 ." LEFT JOIN rbDiagnosisType ON Diagnostic.diagnosisType_id = rbDiagnosisType.id"
@@ -115,7 +116,7 @@ class AppealRouter implements ControllerProviderInterface
                 $json['onkoData'] = $onkoData;
             }
 
-            if($oncology){
+            if($oncology && ($onkoData['characterCode'] == 2)){
                 //проверка наличия извещения 090/у
                 $select_sql = "SELECT Action.id FROM Action "
                 ." JOIN ActionType ON Action.actionType_id = ActionType.id "
@@ -130,7 +131,7 @@ class AppealRouter implements ControllerProviderInterface
                 $json['allDocs'] = $json['allDocs'] && $json['notice_090y'];
             }
 
-            if($oncology){
+            if($oncology && ($onkoData['characterCode'] == 2) && ($onkoData['stageCode'] == 4) ){
                 //проверка наличия извещения 027/у-2
                 $select_sql = "SELECT Action.id FROM Action "
                 ." JOIN ActionType ON Action.actionType_id = ActionType.id "

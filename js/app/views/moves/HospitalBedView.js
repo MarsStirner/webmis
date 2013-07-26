@@ -4,13 +4,13 @@
  */
 
 define(function(require) {
-		var template = require('text!templates/moves/hospital-bed.tmpl');
-		var Beds = require('collections/moves/Beds');
-		var Moves = require('collections/moves/moves');
-		var HospitalBed = require('models/moves/HospitalBed');
-		//var Move = require('models/moves/move');
-		var Departments = require('collections/departments');
-		var BedView = require('views/moves/BedView');
+	var template = require('text!templates/moves/hospital-bed.tmpl');
+	var Beds = require('collections/moves/Beds');
+	var Moves = require('collections/moves/moves');
+	var HospitalBed = require('models/moves/HospitalBed');
+	//var Move = require('models/moves/move');
+	var Departments = require('collections/departments');
+	var BedView = require('views/moves/BedView');
 
 
 	return View.extend({
@@ -18,75 +18,29 @@ define(function(require) {
 		template: template,
 
 		events: {
-			//'change select.Departments': 'setDepartment',
+			'change .Departments': 'onSelectDepartment',
+			'change .movedFromUnitId': 'onChangeMovedFrom',
 			'click .save': 'onSave',
 			'click .actions.cancel': 'onCancel'
 		},
 
 		initialize: function() {
-			console.log('init HospitalBed', this);
+			var self = this;
+
 			_.bindAll(this);
 
 			this.model = new HospitalBed();
+			this.model.appealId = this.options.appeal.get("id");
+			this.model.set({
+				"clientId": this.options.appeal.get("patient").get("id")
+			});
+			self.model.on("change", this.validate, this);
+
 
 			this.bedsCollection = new Beds();
 			this.bedsCollection.on('reset', this.renderBeds, this);
 
 
-			this.model.appealId = this.options.appeal.get("id");
-			this.model.set({
-				"clientId": this.options.appeal.get("patient").get("id")
-			});
-
-			this.setMoveDateAndMovedDepartment();
-
-
-
-			this.model.on("change:movedFromUnitId", this.onSelectDepartment, this);
-			this.model.on("change", this.validate, this);
-
-			this.model.on("change", function(m, o) {
-				console.log('model change', o.changes);
-			});
-
-
-			this.loadDepartments();
-
-
-
-		},
-
-		setMoveDateAndMovedDepartment: function() {
-			//Список движений для госпитализации
-			this.moves = new Moves();
-			this.moves.appealId = this.options.appeal.get("id");
-			this.moves.on("reset", function() {
-				this.moves.off(null, null, this);
-
-				var previousMove = this.moves.at(this.moves.length - 2);
-				var lastMove = this.moves.last();
-
-				//ид отделения из последнего движения
-				var movedFromUnitId = lastMove.get("unitId");
-
-				//время предпоследнего движения, если нет в последнем то берём из предидущего движения
-				var moveDatetime = lastMove.get('admission') || previousMove.get('leave') || previousMove.get('admission');
-
-				this.model.set({
-					'movedFromUnitId': movedFromUnitId
-				});
-				this.ui.$department.select2('val', movedFromUnitId);
-				this.model.set({
-					'moveDatetime': moveDatetime
-				});
-
-			}, this);
-
-			this.moves.fetch();
-		},
-
-		loadDepartments: function() {
-			//Получаем список отделений с койками
 			this.departments = new Departments();
 			this.departments.setParams({
 				filter: {
@@ -96,77 +50,114 @@ define(function(require) {
 				sortingField: 'name',
 				sortingMethod: 'asc'
 			});
-			this.departments.on("reset", this.onDepartmentsLoaded, this);
-			this.departments.fetch();
-		},
-		//рисуем выпадающий список отделений
-		onDepartmentsLoaded: function(departments) {
-			var view = this;
-
-			_(departments.toJSON()).each(function(d, index) {
-				view.ui.$department.append($("<option/>", {
-					"text": d.name,
-					"value": d.id
-				}));
-
-			}, this);
-
-			//console.log('onDepartmentsLoaded', view.model.get('movedFromUnitId'));
-
-			// view.once('change:movedFromUnitId',function(){
-
-			// 	view.ui.$department.select2('val', view.model.get('movedFromUnitId'));
-			// })
 
 
-			view.ui.$department.on('change', function() {
-				var val = $(this).val();
-				console.log('department change', val);
+			this.moves = new Moves();
+			this.moves.appealId = this.options.appeal.get("id");
 
-				view.setDepartment(val);
+
+			$.when(this.departments.fetch(), this.moves.fetch()).done(function() {
+
+				self.setMoveDateAndMovedDepartment()
+
+				self.render();
+
+				self.loadBeds(self.getLastMoveDepartment());
+
 			})
 
 		},
 
-		setDepartment: function(id) {
+		getMoveNumber: function() {
+			return this.moves.length;
+		},
 
-			this.model.set('movedFromUnitId', id);
+		getLastMoveDepartment: function(){
+			return this.moves.last().get("unitId");
+		},
 
-			//console.log('setDepartment', id, this.model);
+		getMoveDatetime: function(){
 
+		},
+
+		setMoveDateAndMovedDepartment: function() {
+
+			this.moves.off(null, null, this);
+
+			this.previousMove = this.moves.at(this.moves.length - 2);
+			this.lastMove = this.moves.last();
+
+			//время предпоследнего движения, если нет в последнем то берём из предидущего движения
+			var moveDatetime = this.lastMove.get('admission') || this.previousMove.get('leave') || this.previousMove.get('admission');
+
+			if (this.getMoveNumber() === 2) {
+				this.model.set({
+					'movedFromUnitId': 26
+				});
+			} else {
+				if (this.previousMove && this.previousMove.get("unitId")) {
+					this.model.set({
+						'movedFromUnitId': this.previousMove.get("unitId")
+					});
+				}
+			}
+
+			this.model.set({
+				'moveDatetime': moveDatetime
+			});
+
+		},
+
+		onChangeMovedFrom: function(event) {
+			var $target = this.$(event.target);
+
+			if ($target.prop('checked')) {
+				this.model.set({
+					'movedFromUnitId': 26
+				});
+			} else {
+				this.model.set({
+					'movedFromUnitId': this.previousMove.get("unitId")
+				});
+			}
 
 		},
 
 		onSelectDepartment: function(event) {
-			var view = this;
-			var departmentId = view.model.get('movedFromUnitId');
-			this.bedsCollection.departmentId = departmentId;
-			this.bedsCollection.fetch();
-			//view.renderBeds();
-			view.model.set('bedId', '');
+			var $target = this.$(event.target);
+			var departmentId = $target.val();
 
+			if (departmentId) {
+				this.loadBeds(departmentId);
+			}
+
+			this.model.set('bedId', '');
+
+		},
+
+		loadBeds: function(departmentId){
+			return this.bedsCollection.setDepartmentId(departmentId).fetch();
 		},
 
 		validate: function() {
 
 			if (!this.model.get('movedFromUnitId') || !this.model.get('bedId')) {
 				this.disableSaveButton();
-			}else{
+			} else {
 				this.enableSaveButton();
 			}
 
 		},
+
 		enableSaveButton: function() {
-			this.ui.$saveButton.removeClass('Disabled').attr('disabled', false);//.on('click', this.onSave);
-
+			this.ui.$saveButton.removeClass('Disabled').attr('disabled', false); //.on('click', this.onSave);
 		},
+
 		disableSaveButton: function() {
-			this.ui.$saveButton.addClass('Disabled').attr('disabled', true);//.unbind('click', this.onSave);
+			this.ui.$saveButton.addClass('Disabled').attr('disabled', true); //.unbind('click', this.onSave);
 		},
-
 
 		renderBeds: function() {
-			console.log('renderBeds');
 			var view = this;
 
 			view.ui.$beds.html('');
@@ -174,7 +165,7 @@ define(function(require) {
 			view.bedsCollection.each(function(model) {
 				var bedView = new BedView({
 					model: model,
-					hb:view.model
+					hb: view.model
 				});
 
 				view.ui.$beds.append(bedView.render().el);
@@ -183,8 +174,8 @@ define(function(require) {
 
 			view.justifyBeds();
 
-
 		},
+
 		justifyBeds: function() {
 			var maxWidth = Math.max.apply(Math, this.$('.bedBox').map(function() {
 				return $(this).width();
@@ -193,6 +184,7 @@ define(function(require) {
 				$(this).width(maxWidth);
 			})
 		},
+
 		redirectToMoves: function() {
 			var view = this;
 			view.trigger("change:viewState", {
@@ -203,6 +195,7 @@ define(function(require) {
 			this.close();
 
 		},
+
 		onSave: function() {
 			var view = this;
 			//console.log('onSave view.model', view.model);
@@ -238,11 +231,22 @@ define(function(require) {
 			this.departments.off();
 			this.bedsCollection.off();
 		},
+		data: function() {
+			var data = {
+				model: this.model.toJSON(),
+				moveNumber: this.getMoveNumber(),
+				departments: this.departments.toJSON(),
+				movedToUnitId: this.moves.last() ? this.moves.last().get("unitId") : ''
+			};
+
+			return data;
+		},
 
 		render: function() {
 			var view = this;
 
-			view.$el.html($.tmpl(view.template, view.model.toJSON()));
+
+			view.$el.html(_.template(view.template, view.data()));
 
 			view.ui = {};
 			view.ui.$saveButton = view.$el.find('.save');
@@ -251,7 +255,7 @@ define(function(require) {
 
 
 			UIInitialize(view.el);
-			this.disableSaveButton();
+			view.disableSaveButton();
 
 			//view.model.connect("movedFromUnitId", "departments", view.$el);
 			view.model.connect("patronage", "patronage", view.$el);
@@ -265,6 +269,7 @@ define(function(require) {
 			view.delegateEvents();
 
 			return view;
+
 		}
 	});
 });

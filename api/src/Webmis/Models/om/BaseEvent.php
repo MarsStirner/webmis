@@ -10,9 +10,15 @@ use \Exception;
 use \PDO;
 use \Persistent;
 use \Propel;
+use \PropelCollection;
 use \PropelDateTime;
 use \PropelException;
+use \PropelObjectCollection;
 use \PropelPDO;
+use Webmis\Models\Action;
+use Webmis\Models\ActionQuery;
+use Webmis\Models\Client;
+use Webmis\Models\ClientQuery;
 use Webmis\Models\Event;
 use Webmis\Models\EventPeer;
 use Webmis\Models\EventQuery;
@@ -269,6 +275,17 @@ abstract class BaseEvent extends BaseObject implements Persistent
     protected $aEventType;
 
     /**
+     * @var        Client
+     */
+    protected $aClient;
+
+    /**
+     * @var        PropelObjectCollection|Action[] Collection to store aggregation of Action objects.
+     */
+    protected $collActions;
+    protected $collActionsPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -287,6 +304,12 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $actionsScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -1066,6 +1089,10 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $this->modifiedColumns[] = EventPeer::CLIENT_ID;
         }
 
+        if ($this->aClient !== null && $this->aClient->getid() !== $v) {
+            $this->aClient = null;
+        }
+
 
         return $this;
     } // setclientId()
@@ -1760,6 +1787,9 @@ abstract class BaseEvent extends BaseObject implements Persistent
         if ($this->aEventType !== null && $this->eventtype_id !== $this->aEventType->getid()) {
             $this->aEventType = null;
         }
+        if ($this->aClient !== null && $this->client_id !== $this->aClient->getid()) {
+            $this->aClient = null;
+        }
     } // ensureConsistency
 
     /**
@@ -1800,6 +1830,9 @@ abstract class BaseEvent extends BaseObject implements Persistent
         if ($deep) {  // also de-associate any related objects?
 
             $this->aEventType = null;
+            $this->aClient = null;
+            $this->collActions = null;
+
         } // if (deep)
     }
 
@@ -1925,6 +1958,13 @@ abstract class BaseEvent extends BaseObject implements Persistent
                 $this->setEventType($this->aEventType);
             }
 
+            if ($this->aClient !== null) {
+                if ($this->aClient->isModified() || $this->aClient->isNew()) {
+                    $affectedRows += $this->aClient->save($con);
+                }
+                $this->setClient($this->aClient);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -1934,6 +1974,24 @@ abstract class BaseEvent extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
+            }
+
+            if ($this->actionsScheduledForDeletion !== null) {
+                if (!$this->actionsScheduledForDeletion->isEmpty()) {
+                    foreach ($this->actionsScheduledForDeletion as $action) {
+                        // need to save related object because we set the relation to null
+                        $action->save($con);
+                    }
+                    $this->actionsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collActions !== null) {
+                foreach ($this->collActions as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -2288,11 +2346,25 @@ abstract class BaseEvent extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->aClient !== null) {
+                if (!$this->aClient->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aClient->getValidationFailures());
+                }
+            }
+
 
             if (($retval = EventPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
+
+                if ($this->collActions !== null) {
+                    foreach ($this->collActions as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
 
 
             $this->alreadyInValidation = false;
@@ -2502,6 +2574,12 @@ abstract class BaseEvent extends BaseObject implements Persistent
         if ($includeForeignObjects) {
             if (null !== $this->aEventType) {
                 $result['EventType'] = $this->aEventType->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aClient) {
+                $result['Client'] = $this->aClient->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collActions) {
+                $result['Actions'] = $this->collActions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -2852,6 +2930,12 @@ abstract class BaseEvent extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
+            foreach ($this->getActions() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addAction($relObj->copy($deepCopy));
+                }
+            }
+
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -2955,6 +3039,317 @@ abstract class BaseEvent extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a Client object.
+     *
+     * @param             Client $v
+     * @return Event The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setClient(Client $v = null)
+    {
+        if ($v === null) {
+            $this->setclientId(NULL);
+        } else {
+            $this->setclientId($v->getid());
+        }
+
+        $this->aClient = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Client object, it will not be re-added.
+        if ($v !== null) {
+            $v->addEvent($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Client object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Client The associated Client object.
+     * @throws PropelException
+     */
+    public function getClient(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aClient === null && ($this->client_id !== null) && $doQuery) {
+            $this->aClient = ClientQuery::create()->findPk($this->client_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aClient->addEvents($this);
+             */
+        }
+
+        return $this->aClient;
+    }
+
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('Action' == $relationName) {
+            $this->initActions();
+        }
+    }
+
+    /**
+     * Clears out the collActions collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Event The current object (for fluent API support)
+     * @see        addActions()
+     */
+    public function clearActions()
+    {
+        $this->collActions = null; // important to set this to null since that means it is uninitialized
+        $this->collActionsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collActions collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialActions($v = true)
+    {
+        $this->collActionsPartial = $v;
+    }
+
+    /**
+     * Initializes the collActions collection.
+     *
+     * By default this just sets the collActions collection to an empty array (like clearcollActions());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initActions($overrideExisting = true)
+    {
+        if (null !== $this->collActions && !$overrideExisting) {
+            return;
+        }
+        $this->collActions = new PropelObjectCollection();
+        $this->collActions->setModel('Action');
+    }
+
+    /**
+     * Gets an array of Action objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Event is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Action[] List of Action objects
+     * @throws PropelException
+     */
+    public function getActions($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collActionsPartial && !$this->isNew();
+        if (null === $this->collActions || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collActions) {
+                // return empty collection
+                $this->initActions();
+            } else {
+                $collActions = ActionQuery::create(null, $criteria)
+                    ->filterByEvent($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collActionsPartial && count($collActions)) {
+                      $this->initActions(false);
+
+                      foreach($collActions as $obj) {
+                        if (false == $this->collActions->contains($obj)) {
+                          $this->collActions->append($obj);
+                        }
+                      }
+
+                      $this->collActionsPartial = true;
+                    }
+
+                    $collActions->getInternalIterator()->rewind();
+                    return $collActions;
+                }
+
+                if($partial && $this->collActions) {
+                    foreach($this->collActions as $obj) {
+                        if($obj->isNew()) {
+                            $collActions[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collActions = $collActions;
+                $this->collActionsPartial = false;
+            }
+        }
+
+        return $this->collActions;
+    }
+
+    /**
+     * Sets a collection of Action objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $actions A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Event The current object (for fluent API support)
+     */
+    public function setActions(PropelCollection $actions, PropelPDO $con = null)
+    {
+        $actionsToDelete = $this->getActions(new Criteria(), $con)->diff($actions);
+
+        $this->actionsScheduledForDeletion = unserialize(serialize($actionsToDelete));
+
+        foreach ($actionsToDelete as $actionRemoved) {
+            $actionRemoved->setEvent(null);
+        }
+
+        $this->collActions = null;
+        foreach ($actions as $action) {
+            $this->addAction($action);
+        }
+
+        $this->collActions = $actions;
+        $this->collActionsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Action objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Action objects.
+     * @throws PropelException
+     */
+    public function countActions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collActionsPartial && !$this->isNew();
+        if (null === $this->collActions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collActions) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getActions());
+            }
+            $query = ActionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByEvent($this)
+                ->count($con);
+        }
+
+        return count($this->collActions);
+    }
+
+    /**
+     * Method called to associate a Action object to this object
+     * through the Action foreign key attribute.
+     *
+     * @param    Action $l Action
+     * @return Event The current object (for fluent API support)
+     */
+    public function addAction(Action $l)
+    {
+        if ($this->collActions === null) {
+            $this->initActions();
+            $this->collActionsPartial = true;
+        }
+        if (!in_array($l, $this->collActions->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddAction($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Action $action The action object to add.
+     */
+    protected function doAddAction($action)
+    {
+        $this->collActions[]= $action;
+        $action->setEvent($this);
+    }
+
+    /**
+     * @param	Action $action The action object to remove.
+     * @return Event The current object (for fluent API support)
+     */
+    public function removeAction($action)
+    {
+        if ($this->getActions()->contains($action)) {
+            $this->collActions->remove($this->collActions->search($action));
+            if (null === $this->actionsScheduledForDeletion) {
+                $this->actionsScheduledForDeletion = clone $this->collActions;
+                $this->actionsScheduledForDeletion->clear();
+            }
+            $this->actionsScheduledForDeletion[]= $action;
+            $action->setEvent(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Event is new, it will return
+     * an empty collection; or if this Event has previously
+     * been saved, it will retrieve related Actions from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Event.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Action[] List of Action objects
+     */
+    public function getActionsJoinActionType($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActionQuery::create(null, $criteria);
+        $query->joinWith('ActionType', $join_behavior);
+
+        return $this->getActions($query, $con);
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -3017,14 +3412,27 @@ abstract class BaseEvent extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->collActions) {
+                foreach ($this->collActions as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->aEventType instanceof Persistent) {
               $this->aEventType->clearAllReferences($deep);
+            }
+            if ($this->aClient instanceof Persistent) {
+              $this->aClient->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        if ($this->collActions instanceof PropelCollection) {
+            $this->collActions->clearIterator();
+        }
+        $this->collActions = null;
         $this->aEventType = null;
+        $this->aClient = null;
     }
 
     /**

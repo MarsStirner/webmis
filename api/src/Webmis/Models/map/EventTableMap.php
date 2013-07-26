@@ -51,7 +51,7 @@ class EventTableMap extends TableMap
         $this->addColumn('externalId', 'externalid', 'VARCHAR', true, 30, null);
         $this->addForeignKey('eventType_id', 'eventTypeId', 'INTEGER', 'EventType', 'id', true, null, null);
         $this->addColumn('org_id', 'orgId', 'INTEGER', false, null, null);
-        $this->addColumn('client_id', 'clientId', 'INTEGER', false, null, null);
+        $this->addForeignKey('client_id', 'clientId', 'INTEGER', 'Client', 'id', false, null, null);
         $this->addColumn('contract_id', 'contractId', 'INTEGER', false, null, null);
         $this->addColumn('prevEventDate', 'prevEventDate', 'TIMESTAMP', false, null, null);
         $this->addColumn('setDate', 'setDate', 'TIMESTAMP', true, null, null);
@@ -86,6 +86,8 @@ class EventTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('EventType', 'Webmis\\Models\\EventType', RelationMap::MANY_TO_ONE, array('eventType_id' => 'id', ), null, null);
+        $this->addRelation('Client', 'Webmis\\Models\\Client', RelationMap::MANY_TO_ONE, array('client_id' => 'id', ), null, null);
+        $this->addRelation('Action', 'Webmis\\Models\\Action', RelationMap::ONE_TO_MANY, array('id' => 'event_id', ), null, null, 'Actions');
     } // buildRelations()
 
 } // EventTableMap

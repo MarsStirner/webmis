@@ -12,6 +12,8 @@ use \PropelCollection;
 use \PropelException;
 use \PropelObjectCollection;
 use \PropelPDO;
+use Webmis\Models\Action;
+use Webmis\Models\Client;
 use Webmis\Models\Event;
 use Webmis\Models\EventPeer;
 use Webmis\Models\EventQuery;
@@ -101,6 +103,14 @@ use Webmis\Models\EventType;
  * @method EventQuery leftJoinEventType($relationAlias = null) Adds a LEFT JOIN clause to the query using the EventType relation
  * @method EventQuery rightJoinEventType($relationAlias = null) Adds a RIGHT JOIN clause to the query using the EventType relation
  * @method EventQuery innerJoinEventType($relationAlias = null) Adds a INNER JOIN clause to the query using the EventType relation
+ *
+ * @method EventQuery leftJoinClient($relationAlias = null) Adds a LEFT JOIN clause to the query using the Client relation
+ * @method EventQuery rightJoinClient($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Client relation
+ * @method EventQuery innerJoinClient($relationAlias = null) Adds a INNER JOIN clause to the query using the Client relation
+ *
+ * @method EventQuery leftJoinAction($relationAlias = null) Adds a LEFT JOIN clause to the query using the Action relation
+ * @method EventQuery rightJoinAction($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Action relation
+ * @method EventQuery innerJoinAction($relationAlias = null) Adds a INNER JOIN clause to the query using the Action relation
  *
  * @method Event findOne(PropelPDO $con = null) Return the first Event matching the query
  * @method Event findOneOrCreate(PropelPDO $con = null) Return the first Event matching the query, or a new Event object populated from the query conditions when no match is found
@@ -731,6 +741,8 @@ abstract class BaseEventQuery extends ModelCriteria
      * $query->filterByclientId(array('min' => 12)); // WHERE client_id >= 12
      * $query->filterByclientId(array('max' => 12)); // WHERE client_id <= 12
      * </code>
+     *
+     * @see       filterByClient()
      *
      * @param     mixed $clientId The value to use as filter.
      *              Use scalar values for equality.
@@ -1805,6 +1817,156 @@ abstract class BaseEventQuery extends ModelCriteria
         return $this
             ->joinEventType($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'EventType', '\Webmis\Models\EventTypeQuery');
+    }
+
+    /**
+     * Filter the query by a related Client object
+     *
+     * @param   Client|PropelObjectCollection $client The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 EventQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByClient($client, $comparison = null)
+    {
+        if ($client instanceof Client) {
+            return $this
+                ->addUsingAlias(EventPeer::CLIENT_ID, $client->getid(), $comparison);
+        } elseif ($client instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(EventPeer::CLIENT_ID, $client->toKeyValue('PrimaryKey', 'id'), $comparison);
+        } else {
+            throw new PropelException('filterByClient() only accepts arguments of type Client or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Client relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return EventQuery The current query, for fluid interface
+     */
+    public function joinClient($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Client');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Client');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Client relation Client object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\ClientQuery A secondary query class using the current class as primary query
+     */
+    public function useClientQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinClient($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Client', '\Webmis\Models\ClientQuery');
+    }
+
+    /**
+     * Filter the query by a related Action object
+     *
+     * @param   Action|PropelObjectCollection $action  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 EventQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByAction($action, $comparison = null)
+    {
+        if ($action instanceof Action) {
+            return $this
+                ->addUsingAlias(EventPeer::ID, $action->geteventId(), $comparison);
+        } elseif ($action instanceof PropelObjectCollection) {
+            return $this
+                ->useActionQuery()
+                ->filterByPrimaryKeys($action->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByAction() only accepts arguments of type Action or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Action relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return EventQuery The current query, for fluid interface
+     */
+    public function joinAction($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Action');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Action');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Action relation Action object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\ActionQuery A secondary query class using the current class as primary query
+     */
+    public function useActionQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinAction($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Action', '\Webmis\Models\ActionQuery');
     }
 
     /**

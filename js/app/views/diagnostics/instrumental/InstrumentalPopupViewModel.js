@@ -30,16 +30,17 @@ define(function(require) {
 			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
 				//юзер не врач,назначивший доктор = лечащий врач
 
-				this.set('doctorFirstName', appealDoctor.name.first);
-				this.set('doctorLastName', appealDoctor.name.last);
-				this.set('doctorMiddleName', appealDoctor.name.middle);
+				this.set('assignerId', appealDoctor.id);
+				this.set('assignerFirstName', appealDoctor.name.first);
+				this.set('assignerLastName', appealDoctor.name.last);
+				this.set('assignerMiddleName', appealDoctor.name.middle);
 
 			} else {
-				//юзер врач ,назначивший доктор = врач
-
-				this.set('doctorFirstName', Core.Cookies.get("doctorFirstName"));
-				this.set('doctorLastName', Core.Cookies.get("doctorLastName"));
-				this.set('doctorMiddleName', '');
+				//юзер врач ,назначивший = врач
+				this.set('assignerId', Core.Cookies.get("userId"));
+				this.set('assignerFirstName', Core.Cookies.get("doctorFirstName"));
+				this.set('assignerLastName', Core.Cookies.get("doctorLastName"));
+				this.set('assignerMiddleName', '');
 			}
 
 			this.set('patientId', options.appeal.get('patient').get('id'));

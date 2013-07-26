@@ -29,3 +29,12 @@
         @extend .twocol
 
     }
+
+#consultants li, #timetable-items label{
+    cursor: pointer;
+
+}
+#timetable-items .disabled label{
+    color: #bbb;
+    cursor: auto;
+}

@@ -134,7 +134,6 @@ define(function(require) {
 
         triggerTestsList: function(select) {
             if (select) {
-                // $('.tests')
                 this.ui.$tests.show();
             } else {
                 this.ui.$tests.hide();
@@ -145,10 +144,10 @@ define(function(require) {
         triggerTestSelection: function(code, select) {
             var view = this;
 
-            var model = view.collection.filter(function(model) {
+            var model = view.collection.find(function(model) {
                 return model.get('code') == code;
             });
-            model = model[0];
+            //model = model[0];
 
             model.set('selected', select);
 
@@ -179,6 +178,21 @@ define(function(require) {
 
                 view.model.tests.fetch({
                     success: function() {
+                        //console.log('load tests', view.model.tests)
+                        if (view.model.tests.getProperty('doctorFirstName', 'value')) {
+                            var executor = {
+                                id: view.model.tests.getProperty('executorId', 'value'),
+                                name: {
+                                    first: view.model.tests.getProperty('doctorFirstName', 'value'),
+                                    middle: view.model.tests.getProperty('doctorMiddleName', 'value'),
+                                    last: view.model.tests.getProperty('doctorLastName', 'value')
+                                }
+                            }
+
+                            pubsub.trigger('executor:changed', executor);
+
+                        }
+
                         view.renderTests();
                     }
                 });
@@ -198,7 +212,7 @@ define(function(require) {
         },
 
         modelData: function() {
-            console.log('this.model',this.model)
+            //console.log('this.model',this.model)
             var data = _.extend(this.model.toJSON(), {
                 cid: this.model.cid
             });
@@ -211,7 +225,7 @@ define(function(require) {
             var data = view.model.tests.getTree();
             view.ui.$tests.html('');
             _.each(data, function(item, key, data) {
-                console.log('item', item, key);
+                //console.log('item', item, key);
                 view.ui.$tests.append(_.template('<li <% if(select){%>class="selected"<%}%> ><label><input class="tests-checkbox" type="checkbox" <% if(select){%>checked="checked"<%}%> value="<%= title%>"/><%= title%></label></li>', item))
 
             });
@@ -276,12 +290,6 @@ define(function(require) {
                                 .find('input:checkbox').prop('checked', false)
                                 .trigger('change');
 
-
-
-                            // .each(function(){
-                            //     console.log('callback each',arguments)
-                            //     $(this).prop('checked', false)
-                            // })
                         }
                     }
                 }
@@ -295,96 +303,3 @@ define(function(require) {
     return ItemView;
 
 });
-
-
-//console.log('render .lab-tests-list',view.collection.toJSON())
-
-//view.$el.html('<table><tr><td class="title-col"></td><td class="cito-col">cito</td><td class="time-col"></td></tr></table><div class="lab-tests-list2"></div>');
-
-
-// view.$('.lab-tests-list2').dynatree({
-//  clickFolderMode: 2,
-//  generateIds: true,
-//  noLink: true,
-//  checkbox: true,
-//  onCustomRender: function(node) {
-//      var html = '';
-
-//      if (node.data.noCustomRender) {
-//          html = _.template('<span class="title-col"><%=title%></span>', node.data);
-//      } else {
-//          html = _.template(nodeTestTmpl, node.data);
-//      }
-
-//      return html;
-//  },
-
-//  onRender: function(node, nodeSpan) {
-//      //console.log(node, nodeSpan)
-//      var $nodeSpan = $(nodeSpan);
-//      UIInitialize($nodeSpan);
-
-
-//      $nodeSpan.find(".SelectDate").datepicker("setDate", "+1");
-
-//      $nodeSpan.find(".HourPicker").mask("99:99").timepicker({
-//          showPeriodLabels: false
-//      });
-
-//      var $citoCheckbox = $nodeSpan.find("input[name='cito']");
-
-//      $citoCheckbox.on('click', function(e) {
-//          //.dynatree("option", "autoCollapse", true);
-//          node.data.cito = $citoCheckbox.prop('checked');
-//          if (node.data.code) {
-//              pubsub.trigger('test:cito:changed', node.data.code, $citoCheckbox.prop('checked'));
-//          }
-//      });
-//  },
-//  fx: {
-//      height: "toggle",
-//      duration: 200
-//  },
-//  autoFocus: false,
-//  onBlur: function(node) {
-
-
-//      setTimeout(function() {
-//          var $dateInput = $(node.span).find('#date' + node.data.key);
-//          var time = $(node.span).find('#time').val();
-
-//          var date = $.datepicker.formatDate("yy-mm-dd", $dateInput.datepicker("getDate"));
-//          pubsub.trigger('test:date:changed', node.data.code, date);
-
-//          //console.log('onblur',date,time, arguments);
-
-//      }, 100);
-
-
-//  },
-
-//  onFocus: function() {
-//      // console.log('onFocus',arguments);
-//  },
-
-//  onSelect: function(select, node) {
-//      var code = node.data.code;
-//      //console.log('select', select, node)
-
-//      if (select && code) {
-//          view.loadTest(code, function(tree) {
-//              node.addChild(tree);
-//              //node.expand(true);
-//          });
-//      }
-
-//      if (!select && code) {
-//          view.removeTest(code);
-//          node.removeChildren();
-//      }
-//  },
-
-//  children: view.collection.toJSON()
-// });
-
-//UIInitialize(this.el);

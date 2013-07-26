@@ -17,9 +17,16 @@ define(function(require) {
 			this.model = options.model;
 			this.set('finance', this.model.getProperty('finance'));
 			this.set('urgent', this.model.getProperty('urgent'));
+
+			this.set('executorId', this.model.getProperty('executorId'));
 			this.set('doctorFirstName', this.model.getProperty('doctorFirstName'));
 			this.set('doctorMiddleName', this.model.getProperty('doctorMiddleName'));
 			this.set('doctorLastName', this.model.getProperty('doctorLastName'));
+
+			this.set('assignerId', this.model.getProperty('assignerId'));
+			this.set('assignerFirstName', this.model.getProperty('assignerFirstName'));
+			this.set('assignerMiddleName', this.model.getProperty('assignerMiddleName'));
+			this.set('assignerLastName', this.model.getProperty('assignerLastName'));
 
 			var assessmentBeginDate = this.model.getProperty('assessmentBeginDate');
 			var assessmentDay = moment((assessmentBeginDate.split(' '))[0], 'YYYY-MM-DD').format('YYYY-MM-DD');

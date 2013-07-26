@@ -20,13 +20,7 @@
 				</a>
 			<%}%>
 		</div>
-		<ul class="document-values">
-			<% _.each(document.attributes, function (attr) { %>
-			<li>
-				<strong><%= attr.name %>:</strong> <%= attr.value %>
-			</li>
-			<% }); %>
-		</ul>
+		<ul class="sheet-rows"></ul>
 	</div>
 <%} else {%>
 	<div class="SingleHeader Clearfix">

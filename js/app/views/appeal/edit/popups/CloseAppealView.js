@@ -122,7 +122,7 @@ define(function(require) {
             this.docs4closing.on('change', function() {
 
                 console.log('docs4closing', this.docs4closing.toJSON());
-                this.$el.html(_.template(template, this.docs4closing.toJSON()));
+                this.$el.html(_.template(template, this.docs4closing.toJSON(),{variable:'data'}));
 
                 this.ui.$appealCloseDate = this.$('.appeal-close-date');
                 this.ui.$appealCloseTime = this.$('.appeal-close-time');

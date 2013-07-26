@@ -90,122 +90,8 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="Action" phpName="Action" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="createDatetime" phpName="Createdatetime" type="TIMESTAMP" required="true"/>
-    <column name="createPerson_id" phpName="CreatepersonId" type="INTEGER" required="false"/>
-    <column name="modifyDatetime" phpName="Modifydatetime" type="TIMESTAMP" required="true"/>
-    <column name="modifyPerson_id" phpName="ModifypersonId" type="INTEGER" required="false"/>
-    <column name="deleted" phpName="Deleted" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
-    <column name="actionType_id" phpName="ActiontypeId" type="INTEGER" required="true"/>
-    <column name="event_id" phpName="EventId" type="INTEGER" required="false"/>
-    <column name="idx" phpName="Idx" type="INTEGER" required="true" defaultValue="0"/>
-    <column name="directionDate" phpName="Directiondate" type="TIMESTAMP" required="false"/>
-    <column name="status" phpName="Status" type="TINYINT" required="true"/>
-    <column name="setPerson_id" phpName="SetpersonId" type="INTEGER" required="false"/>
-    <column name="isUrgent" phpName="Isurgent" type="INTEGER" size="1" required="true" defaultValue="0"/>
-    <column name="begDate" phpName="Begdate" type="TIMESTAMP" required="false"/>
-    <column name="plannedEndDate" phpName="Plannedenddate" type="TIMESTAMP" required="true"/>
-    <column name="endDate" phpName="Enddate" type="TIMESTAMP" required="false"/>
-    <column name="note" phpName="Note" type="LONGVARCHAR" required="true"/>
-    <column name="person_id" phpName="PersonId" type="INTEGER" required="false"/>
-    <column name="office" phpName="Office" type="VARCHAR" size="16" required="true"/>
-    <column name="amount" phpName="Amount" type="DOUBLE" required="true"/>
-    <column name="uet" phpName="Uet" type="DOUBLE" required="false" defaultValue="0"/>
-    <column name="expose" phpName="Expose" type="INTEGER" size="1" required="true" defaultValue="1"/>
-    <column name="payStatus" phpName="Paystatus" type="INTEGER" required="true"/>
-    <column name="account" phpName="Account" type="BOOLEAN" size="1" required="true"/>
-    <column name="finance_id" phpName="FinanceId" type="INTEGER" required="false"/>
-    <column name="prescription_id" phpName="PrescriptionId" type="INTEGER" required="false"/>
-    <column name="takenTissueJournal_id" phpName="TakentissuejournalId" type="INTEGER" required="false"/>
-    <column name="contract_id" phpName="ContractId" type="INTEGER" required="false"/>
-    <column name="coordDate" phpName="Coorddate" type="TIMESTAMP" required="false"/>
-    <column name="coordAgent" phpName="Coordagent" type="VARCHAR" size="128" required="true" defaultValue=""/>
-    <column name="coordInspector" phpName="Coordinspector" type="VARCHAR" size="128" required="true" defaultValue=""/>
-    <column name="coordText" phpName="Coordtext" type="VARCHAR" required="true"/>
-    <column name="hospitalUidFrom" phpName="Hospitaluidfrom" type="VARCHAR" size="128" required="true" defaultValue="0"/>
-    <column name="pacientInQueueType" phpName="Pacientinqueuetype" type="TINYINT" required="false" defaultValue="0"/>
-    <column name="AppointmentType" phpName="Appointmenttype" type="CHAR" sqlType="enum('0','amb','hospital','polyclinic','diagnostics','portal','otherLPU')" required="true"/>
-    <column name="version" phpName="Version" type="INTEGER" required="true" defaultValue="0"/>
-    <column name="parentAction_id" phpName="ParentactionId" type="INTEGER" required="false"/>
-    <column name="uuid_id" phpName="UuidId" type="INTEGER" required="true" defaultValue="0"/>
-    <column name="dcm_study_uid" phpName="DcmStudyUid" type="VARCHAR" size="50" required="false"/>
-    <foreign-key foreignTable="TakenTissueJournal" name="Action_takenTissueJournal_id" onDelete="SET NULL">
-      <reference local="takenTissueJournal_id" foreign="id"/>
-    </foreign-key>
-    <index name="createPerson_id">
-      <index-column name="createPerson_id"/>
-    </index>
-    <index name="modifyPerson_id">
-      <index-column name="modifyPerson_id"/>
-    </index>
-    <index name="actionType_id">
-      <index-column name="actionType_id"/>
-    </index>
-    <index name="event_id">
-      <index-column name="event_id"/>
-    </index>
-    <index name="person_id">
-      <index-column name="person_id"/>
-    </index>
-    <index name="setPerson_id">
-      <index-column name="setPerson_id"/>
-    </index>
-    <index name="finance_id">
-      <index-column name="finance_id"/>
-    </index>
-    <index name="prescription_id">
-      <index-column name="prescription_id"/>
-    </index>
-    <index name="contract_id">
-      <index-column name="contract_id"/>
-    </index>
-    <index name="Action_takenTissueJournal_id">
-      <index-column name="takenTissueJournal_id"/>
-    </index>
-    <index name="parentAction_id">
-      <index-column name="parentAction_id"/>
-    </index>
-    <index name="uuid_id">
-      <index-column name="uuid_id"/>
-    </index>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
-  <table name="ActionProperty" phpName="Actionproperty" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="createDatetime" phpName="Createdatetime" type="TIMESTAMP" required="true"/>
-    <column name="createPerson_id" phpName="CreatepersonId" type="INTEGER" required="false"/>
-    <column name="modifyDatetime" phpName="Modifydatetime" type="TIMESTAMP" required="true"/>
-    <column name="modifyPerson_id" phpName="ModifypersonId" type="INTEGER" required="false"/>
-    <column name="deleted" phpName="Deleted" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
-    <column name="action_id" phpName="ActionId" type="INTEGER" required="true"/>
-    <column name="type_id" phpName="TypeId" type="INTEGER" required="true"/>
-    <column name="unit_id" phpName="UnitId" type="INTEGER" required="false"/>
-    <column name="norm" phpName="Norm" type="VARCHAR" size="64" required="true"/>
-    <column name="isAssigned" phpName="Isassigned" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
-    <column name="evaluation" phpName="Evaluation" type="BOOLEAN" size="1" required="false"/>
-    <column name="version" phpName="Version" type="INTEGER" required="true" defaultValue="0"/>
-    <index name="createPerson_id">
-      <index-column name="createPerson_id"/>
-    </index>
-    <index name="modifyPerson_id">
-      <index-column name="modifyPerson_id"/>
-    </index>
-    <index name="action_id">
-      <index-column name="action_id"/>
-    </index>
-    <index name="unit_id">
-      <index-column name="unit_id"/>
-    </index>
-    <index name="type_id">
-      <index-column name="type_id"/>
-    </index>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
+
+
   <table name="ActionPropertyTemplate" phpName="Actionpropertytemplate" idMethod="native">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="createDatetime" phpName="Createdatetime" type="TIMESTAMP" required="true"/>
@@ -297,33 +183,9 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="ActionProperty_Action" phpName="ActionpropertyAction" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
-    <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
-    <column name="value" phpName="Value" type="INTEGER" required="false"/>
-    <index name="value">
-      <index-column name="value"/>
-    </index>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
-  <table name="ActionProperty_Date" phpName="ActionpropertyDate" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
-    <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
-    <column name="value" phpName="Value" type="DATE" required="false"/>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
-  <table name="ActionProperty_Double" phpName="ActionpropertyDouble" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
-    <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
-    <column name="value" phpName="Value" type="DOUBLE" required="true"/>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
+
+
+
   <table name="ActionProperty_FDRecord" phpName="ActionpropertyFdrecord" idMethod="native">
     <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="index" phpName="Index" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true" defaultValue="0"/>
@@ -338,23 +200,7 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="ActionProperty_HospitalBed" phpName="ActionpropertyHospitalbed" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
-    <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
-    <column name="value" phpName="Value" type="INTEGER" required="false"/>
-    <foreign-key foreignTable="ActionProperty" name="ActionProperty_HospitalBed_id" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="id" foreign="id"/>
-    </foreign-key>
-    <foreign-key foreignTable="OrgStructure_HospitalBed" name="ActionProperty_HospitalBed_value" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="value" foreign="id"/>
-    </foreign-key>
-    <index name="value">
-      <index-column name="value"/>
-    </index>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
+
   <table name="ActionProperty_HospitalBedProfile" phpName="ActionpropertyHospitalbedprofile" idMethod="native">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
     <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
@@ -382,14 +228,7 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="ActionProperty_Integer" phpName="ActionpropertyInteger" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
-    <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
-    <column name="value" phpName="Value" type="INTEGER" required="true"/>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
+
   <table name="ActionProperty_Job_Ticket" phpName="ActionpropertyJobTicket" idMethod="native">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
     <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
@@ -401,17 +240,7 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="ActionProperty_MKB" phpName="ActionpropertyMkb" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
-    <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
-    <column name="value" phpName="Value" type="INTEGER" required="false"/>
-    <index name="ActionProperty_MKB_value">
-      <index-column name="value"/>
-    </index>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
+
   <table name="ActionProperty_OrgStructure" phpName="ActionpropertyOrgstructure" idMethod="native">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
     <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
@@ -459,22 +288,8 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="ActionProperty_String" phpName="ActionpropertyString" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
-    <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
-    <column name="value" phpName="Value" type="LONGVARCHAR" required="true"/>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
-  <table name="ActionProperty_Time" phpName="ActionpropertyTime" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
-    <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
-    <column name="value" phpName="Value" type="TIME" required="true"/>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
+
+
   <table name="ActionProperty_rbBloodComponentType" phpName="ActionpropertyRbbloodcomponenttype" idMethod="native">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="index" phpName="Index" type="INTEGER" primaryKey="true" required="true"/>
@@ -565,104 +380,7 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="ActionType" phpName="Actiontype" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="createDatetime" phpName="Createdatetime" type="TIMESTAMP" required="true"/>
-    <column name="createPerson_id" phpName="CreatepersonId" type="INTEGER" required="false"/>
-    <column name="modifyDatetime" phpName="Modifydatetime" type="TIMESTAMP" required="true"/>
-    <column name="modifyPerson_id" phpName="ModifypersonId" type="INTEGER" required="false"/>
-    <column name="deleted" phpName="Deleted" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
-    <column name="class" peerName="Clazz" type="BOOLEAN" size="1" required="true"/>
-    <column name="group_id" phpName="GroupId" type="INTEGER" required="false"/>
-    <column name="code" phpName="Code" type="VARCHAR" size="25" required="true"/>
-    <column name="name" phpName="Name" type="VARCHAR" size="255" required="true"/>
-    <column name="title" phpName="Title" type="VARCHAR" size="255" required="true"/>
-    <column name="flatCode" phpName="Flatcode" type="VARCHAR" size="64" required="true"/>
-    <column name="sex" phpName="Sex" type="TINYINT" required="true"/>
-    <column name="age" phpName="Age" type="VARCHAR" size="9" required="true"/>
-    <column name="age_bu" phpName="AgeBu" type="TINYINT" required="false"/>
-    <column name="age_bc" phpName="AgeBc" type="SMALLINT" required="false"/>
-    <column name="age_eu" phpName="AgeEu" type="TINYINT" required="false"/>
-    <column name="age_ec" phpName="AgeEc" type="SMALLINT" required="false"/>
-    <column name="office" phpName="Office" type="VARCHAR" size="32" required="true"/>
-    <column name="showInForm" phpName="Showinform" type="BOOLEAN" size="1" required="true"/>
-    <column name="genTimetable" phpName="Gentimetable" type="BOOLEAN" size="1" required="true"/>
-    <column name="service_id" phpName="ServiceId" type="INTEGER" required="false"/>
-    <column name="quotaType_id" phpName="QuotatypeId" type="INTEGER" required="false"/>
-    <column name="context" phpName="Context" type="VARCHAR" size="64" required="true"/>
-    <column name="amount" phpName="Amount" type="DOUBLE" required="true" defaultValue="1"/>
-    <column name="amountEvaluation" phpName="Amountevaluation" type="INTEGER" size="1" required="true" defaultValue="0"/>
-    <column name="defaultStatus" phpName="Defaultstatus" type="TINYINT" required="true" defaultValue="0"/>
-    <column name="defaultDirectionDate" phpName="Defaultdirectiondate" type="TINYINT" required="true" defaultValue="0"/>
-    <column name="defaultPlannedEndDate" phpName="Defaultplannedenddate" type="BOOLEAN" size="1" required="true"/>
-    <column name="defaultEndDate" phpName="Defaultenddate" type="TINYINT" required="true" defaultValue="0"/>
-    <column name="defaultExecPerson_id" phpName="DefaultexecpersonId" type="INTEGER" required="false"/>
-    <column name="defaultPersonInEvent" phpName="Defaultpersoninevent" type="TINYINT" required="true" defaultValue="0"/>
-    <column name="defaultPersonInEditor" phpName="Defaultpersonineditor" type="TINYINT" required="true" defaultValue="0"/>
-    <column name="maxOccursInEvent" phpName="Maxoccursinevent" type="INTEGER" required="true" defaultValue="0"/>
-    <column name="showTime" phpName="Showtime" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
-    <column name="isMES" phpName="Ismes" type="INTEGER" required="false"/>
-    <column name="nomenclativeService_id" phpName="NomenclativeserviceId" type="INTEGER" required="false"/>
-    <column name="isPreferable" phpName="Ispreferable" type="BOOLEAN" size="1" required="true" defaultValue="true"/>
-    <column name="prescribedType_id" phpName="PrescribedtypeId" type="INTEGER" required="false"/>
-    <column name="shedule_id" phpName="SheduleId" type="INTEGER" required="false"/>
-    <column name="isRequiredCoordination" phpName="Isrequiredcoordination" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
-    <column name="isRequiredTissue" phpName="Isrequiredtissue" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
-    <column name="testTubeType_id" phpName="TesttubetypeId" type="INTEGER" required="false"/>
-    <column name="jobType_id" phpName="JobtypeId" type="INTEGER" required="false"/>
-    <column name="mnem" phpName="Mnem" type="VARCHAR" size="32" required="false" defaultValue=""/>
-    <foreign-key foreignTable="Person" name="ActionType_defaultExecPerson_id" onDelete="SET NULL">
-      <reference local="defaultExecPerson_id" foreign="id"/>
-    </foreign-key>
-    <foreign-key foreignTable="rbJobType" name="rbJobType_id_fk" onUpdate="CASCADE">
-      <reference local="jobType_id" foreign="id"/>
-    </foreign-key>
-    <foreign-key foreignTable="rbTestTubeType" name="rbTestTubeType_id_fk" onUpdate="CASCADE">
-      <reference local="testTubeType_id" foreign="id"/>
-    </foreign-key>
-    <index name="createPerson_id">
-      <index-column name="createPerson_id"/>
-    </index>
-    <index name="modifyPerson_id">
-      <index-column name="modifyPerson_id"/>
-    </index>
-    <index name="group_id">
-      <index-column name="group_id"/>
-    </index>
-    <index name="service_id">
-      <index-column name="service_id"/>
-    </index>
-    <index name="class">
-      <index-column name="class"/>
-    </index>
-    <index name="flatCode">
-      <index-column name="flatCode"/>
-    </index>
-    <index name="nomenclativeService_id">
-      <index-column name="nomenclativeService_id"/>
-    </index>
-    <index name="prescribedType_id">
-      <index-column name="prescribedType_id"/>
-    </index>
-    <index name="shedule_id">
-      <index-column name="shedule_id"/>
-    </index>
-    <index name="quotaType_id">
-      <index-column name="quotaType_id"/>
-    </index>
-    <index name="ActionType_defaultExecPerson_id">
-      <index-column name="defaultExecPerson_id"/>
-    </index>
-    <index name="rbTestTubeType_id_fk">
-      <index-column name="testTubeType_id"/>
-    </index>
-    <index name="rbJobType_id_fk">
-      <index-column name="jobType_id"/>
-    </index>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
+
   <table name="ActionType_EventType_check" phpName="ActiontypeEventtypeCheck" idMethod="native">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="actionType_id" phpName="ActiontypeId" type="INTEGER" required="true"/>

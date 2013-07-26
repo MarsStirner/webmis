@@ -25,13 +25,12 @@ define(function(require) {
 				if (this.options.options.length === 0) {
 					this.options.model.set(this.options.selectedProperty, '')
 				}
-				console.log('on reset', this.options.options, this.options.model, this.options.selectedProperty)
+				//console.log('on reset', this.options.options, this.options.model, this.options.selectedProperty)
 			}, this);
 
-
-			this.options.model.on('change:' + this.options.selectedProperty, function(model) {
-				console.log('change:' + this.options.selectedProperty, model)
-			}, this);
+			// this.options.model.on('change:' + this.options.selectedProperty, function(model) {
+			// 	console.log('change:' + this.options.selectedProperty, model)
+			// }, this);
 		},
 
 		select: function(model) {
@@ -67,12 +66,12 @@ define(function(require) {
 				selected: selected,
 				text: text
 			}
-			console.log('data ' + this.options.selectedProperty, data)
+			// console.log('data ' + this.options.selectedProperty, data)
 			return data;
 		},
 
 		render: function() {
-			console.log('render', this.options.selectedProperty, this.options.model)
+			// console.log('render', this.options.selectedProperty, this.options.model)
 			var view = this;
 			view.$el.html(view.template(view.data()));
 
@@ -84,6 +83,10 @@ define(function(require) {
 			if (this.options.options.length == 0) {
 				view.ui.$select.select2('disable');
 			}
+
+			// if (this.options.options.length === 1 && !view.data().selected && this.options.options.first()) {
+			// 	view.ui.$select.select2('val',this.options.options.first().get('id')).trigger('change');
+			// }
 			this.options.model.on('change:' + this.options.selectedProperty, this.select, this)
 
 			return view;
@@ -121,12 +124,12 @@ define(function(require) {
 				selectedProperty: 'quotaType_id'
 			});
 
-			this.quotaType.on('reset', function(){
+			this.quotaType.on('reset', function() {
 				var $warning = this.$('#quota-type-error');
 
-				if(this.quotaType.length === 0){
+				if (this.quotaType.length === 0) {
 					$warning.html('Кода вида ВМП для диагноза нет! Измените диагноз').addClass('error');
-				}else{
+				} else {
 					$warning.html('').removeClass('error');
 				}
 
@@ -163,7 +166,7 @@ define(function(require) {
 
 
 		},
-
+		//VIEW->> MODEL
 		onChangeDiagNameInput: function() {
 			var mkbDiagName = this.ui.$mkbDiagnosis.val();
 
@@ -182,17 +185,13 @@ define(function(require) {
 			this.vmpTalon.set('MKB', mkbCode);
 		},
 
+		//MODEL >> VIEW
 		onChangeDiagName: function(model, diagName) {
 			this.ui.$mkbDiagnosis.val(diagName)
 		},
 
 		onChangeMkbCode: function(model, mkbCode) {
 			this.ui.$mkbCode.val(mkbCode);
-
-			if (mkbCode = '') {
-				this.vmpTalon.set('quotaType_id', '');
-				this.vmpTalon.set('pacientModel_id', '');
-			}
 		},
 
 		onChangeMkbId: function(model, mkbId) {
@@ -214,7 +213,7 @@ define(function(require) {
 			var mkbId = this.vmpTalon.get('mkbId');
 
 			if (quotaTypeId != '') {
-				//фильтрация справочника "модель пациента" по виду вмп
+				//фильтрация справочника "модель пациента" по виду вмп и диагнозу
 				this.pacientModel.fetch({
 					data: {
 						quotaTypeId: quotaTypeId,
@@ -223,11 +222,11 @@ define(function(require) {
 				});
 
 			} else {
-				this.pacientModel.reset()
+				this.pacientModel.reset();
 			}
 		},
 
-		onChangePacientModelId: function(model, pacientModelId){
+		onChangePacientModelId: function(model, pacientModelId) {
 			if (pacientModelId != '') {
 				//фильтрация справочника "метод лечения" по "модели пациента"
 				this.treatment.fetch({
@@ -237,23 +236,23 @@ define(function(require) {
 				});
 
 			} else {
-				this.treatment.reset()
+				this.treatment.reset();
 			}
 		},
 
+		////////////////////////////////////////////////
+
+
 		validate: function() {
-			var talon = this.vmpTalon;
-			// console.log('validate',this.quotaType)
-			// if(this.quotaType.length === 0){
-			// 	talon.set('quotaType_id','');
-			// }
+			var model = this.vmpTalon;
+			var required = ['MKB','quotaType_id','pacientModel_id','treatment_id']
+			console.log('validate', model.toJSON());
 
-			// if(this.pacientModel === 0){
-			// 	talon.set('pacientModel_id','');
-			// }
-			console.log('validate', talon.toJSON(), talon.get('quotaType_id'));
+			var allRequiredProp = _.every(required, function(name){
+				return !_.isEmpty(model.get(name));
+			});
 
-			if (talon.get('MKB') && talon.get('quotaType_id') && talon.get('pacientModel_id') && talon.get('treatment_id')) {
+			if (allRequiredProp) {
 				this.ui.$save.button('enable');
 			} else {
 				this.ui.$save.button('disable');
@@ -262,7 +261,7 @@ define(function(require) {
 		},
 
 		renderNested: function(view, selector) {
-			console.log('renderNested', view, selector)
+			//console.log('renderNested', view, selector)
 			var $element = (selector instanceof $) ? selector : this.$el.find(selector);
 			view.setElement($element).render();
 		},
@@ -300,6 +299,8 @@ define(function(require) {
 				view.renderNested(view.quotaTypeView, view.ui.$quotaType);
 				view.renderNested(view.pacientModelView, view.ui.$pacientModel);
 				view.renderNested(view.treatmentView, view.ui.$treatment);
+
+				view.vmpTalon.onChange();
 			});
 
 			this.vmpTalonPrev.fetch().done(function() {
@@ -314,7 +315,7 @@ define(function(require) {
 
 		onSave: function() {
 			var self = this;
-			console.log('onSave', this.vmpTalon);
+			//console.log('onSave', this.vmpTalon);
 			this.ui.$save.button("option", "label", 'Сохраняем...').button("disable");
 
 			this.vmpTalon.save({}, {
@@ -343,6 +344,8 @@ define(function(require) {
 				model: this.vmpTalonPrev,
 				disable: true
 			});
+
+			this.vmpTalon.unset('id')
 		}
 
 	});

@@ -302,10 +302,10 @@ cursor: pointer;
 }
 
 
-#doctor-outer #doctor{
+#doctor-outer #doctor,#assigner-outer #assigner{
     color: #777;cursor: pointer;display: inline-block;width:88%;
 }
-#doctor-outer .change-doctor{
+#doctor-outer .change-doctor,#assigner-outer .change-assigner{
     display: inline-block;
 }
 
