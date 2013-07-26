@@ -12,7 +12,7 @@ define(function(require) {
         },
         getResult: function(success, error) {
             var self = this;
-            console.log('getResult', this);
+            //console.log('getResult', this);
             this.result = new Result();
             this.result.eventId = this.options.appealId
 
@@ -106,9 +106,8 @@ define(function(require) {
                         // case 'Date':
                         //     value = moment(self.result.getProperty(item.name, 'value'),'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
                         //     break;
-                        default:
-                            value = emptyFalse(self.result.getProperty(item.name, 'value'));
-                            break;
+                        default: value = emptyFalse(self.result.getProperty(item.name, 'value'));
+                        break;
                     }
 
                     json.tests.push({
@@ -128,7 +127,7 @@ define(function(require) {
         render: function() {
             var self = this;
             self.getResult(function() {
-                console.log('render instrumentalResultView', self, self.resultData());
+
                 self.$el.html(_.template(self.template, self.resultData(), {
                     variable: 'data'
                 }));

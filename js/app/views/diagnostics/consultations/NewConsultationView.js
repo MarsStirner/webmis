@@ -39,7 +39,7 @@ define(function(require) {
 
 		initialize: function(options) {
 			// var self = this;
-			console.log('init new consultation view', this);
+			//console.log('init new consultation view', this);
 			_.bindAll(this);
 
 			this.appealDiagnosis = this.options.appeal.getDiagnosis();
@@ -135,7 +135,7 @@ define(function(require) {
 			this.consultation.on('change:plannedTime', this.updateSaveButton, this);
 
 			pubsub.on('assigner:changed', function(assigner) {
-				console.log('assign-person: changed', assigner);
+				// console.log('assign-person: changed', assigner);
 				//this.consultation.set('createPerson', assigner.id)
 				this.consultation.set('assignerId', assigner.id)
 
@@ -159,7 +159,7 @@ define(function(require) {
 
 
 				_.each(list, function(model) {
-					//console.log('list, model', code, model.code, list, model)
+					// console.log('list, model', code, model.code, list, model)
 					if (model.code == code) {
 						consultation = model;
 					}
@@ -201,13 +201,13 @@ define(function(require) {
 
 		//при выборе даты
 		onDateSelect: function(date) {
-			console.log('onDateSelect', date);
+			//console.log('onDateSelect', date);
 			this.consultation.set('plannedEndDate', date);
 		},
 
 		//при выборе времени
 		onTimeSelect: function(plannedTime) {
-			console.log('onTimeSelect', plannedTime);
+			//console.log('onTimeSelect', plannedTime);
 			this.consultation.set('plannedTime', plannedTime);
 		},
 		onChangeAssignDate: function() {
@@ -248,7 +248,7 @@ define(function(require) {
 		},
 
 		openAssignerSelectPopup: function() {
-			console.log('openDoctorSelectPopup');
+			//console.log('openDoctorSelectPopup');
 			this.personDialogView = new PersonDialogView({
 				 title: 'Направивший врач',
 				appeal: this.options.appeal,
@@ -280,7 +280,7 @@ define(function(require) {
 		//при клике на кнопку "Сохранить"
 		onSave: function() {
 			var self = this;
-			console.log('onSave', this.consultation);
+			//console.log('onSave', this.consultation);
 			this.consultation.save({}, {
 				success: function() {
 
@@ -389,6 +389,11 @@ define(function(require) {
 			this.consultationsGroupsView.close();
 			this.consultantsFreeView.close();
 			this.scheduleView.close();
+
+			pubsub.off('consultation:selected');
+			pubsub.off('consultant:selected');
+			pubsub.off('date:selected');
+			pubsub.off('time:selected');
 
 			this.$el.dialog("close");
 			this.$el.remove();

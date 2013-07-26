@@ -116,8 +116,8 @@ define(function(require) {
 		afterRender: function() {
 			var view = this;
 
-			view.$assessmentDatepicker = $('#start-date');
-			view.$assessmentTimepicker = $('#start-time');
+			view.$assessmentDatepicker = view.$('#start-date');
+			view.$assessmentTimepicker = view.$('#start-time');
 			view.$plannedDatepicker = view.$("#dp");
 			view.$plannedTimepicker = view.$("#tp");
 			view.$urgent = view.$('input[name=urgent]');
@@ -145,7 +145,8 @@ define(function(require) {
 			view.$plannedDatepicker.datepicker({
                 minDate: new Date(),
                 onSelect: function(dateText, inst) {
-                    view.viewModel.set('plannedDate', moment(dateText, 'DD.MM.YYYY').toDate());
+                    // view.viewModel.set('plannedDate', moment(dateText, 'DD.MM.YYYY').toDate());
+                    view.viewModel.set('plannedEndDay', moment(dateText, 'DD.MM.YYYY').format('YYYY-MM-DD'));
                     var day = moment(view.$(this).datepicker("getDate")).startOf('day');
                     var currentDay = moment().startOf('day');
                     var currentHour = moment().hour();
@@ -164,7 +165,7 @@ define(function(require) {
 
             view.$plannedTimepicker.timepicker({
                 onSelect: function(time) {
-                    //view.viewModel.set('plannedTime', time)
+                    view.viewModel.set('plannedEndTime', time);
                 },
                 defaultTime: 'now',
                 onHourShow: function(hour) {
@@ -215,19 +216,13 @@ define(function(require) {
 			view.$finance.select2("val", parseInt(view.viewModel.get('finance')));
 
 			view.$assessmentDatepicker.on('change', function() {
+				console.log('$assessmentDatepicker',view.$assessmentDatepicker.val())
 				view.viewModel.set('assessmentDay', moment(view.$assessmentDatepicker.val(), 'DD.MM.YYYY').format('YYYY-MM-DD'));
 			});
 
 			view.$assessmentTimepicker.on('change', function() {
+				console.log('$assessmentTimepicker',view.$assessmentTimepicker.val())
 				view.viewModel.set('assessmentTime', view.$assessmentTimepicker.val());
-			});
-
-			view.$plannedDatepicker.on('change', function() {
-				view.viewModel.set('plannedEndDay', moment(view.$plannedDatepicker.val(), 'DD.MM.YYYY').format('YYYY-MM-DD'));
-			});
-
-			view.$plannedTimepicker.on('change', function() {
-				view.viewModel.set('plannedEndTime', view.$plannedTimepicker.val());
 			});
 
 			view.$urgent.on('change', function() {
@@ -294,6 +289,13 @@ define(function(require) {
 			});
 
 
+		}
+		,close: function(){
+                var self = this;
+                //console.log('popup view close',self)
+                self.$el.dialog("close");
+                this.bfView.close();
+                self.$el.remove();
 		}
 	}).mixin([popupMixin]);
 

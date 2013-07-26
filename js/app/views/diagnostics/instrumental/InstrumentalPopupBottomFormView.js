@@ -37,6 +37,11 @@ define(function(require) {
 			var $element = (selector instanceof $) ? selector : this.$el.find(selector);
 			view.setElement($element).render();
 		},
+		close: function(){
+               this.$el.remove();
+               this.mkb.close();
+
+		},
 
 		render: function() {
 			this.$el.html($.tmpl(this.template, this.data));

@@ -1,8 +1,8 @@
 define(function(require) {
 	var shared = require('views/appeal/edit/pages/monitoring/shared');
 
-	var expressAnalysesItemTmpl = require('text!templates/appeal/edit/pages/monitoring/express-analyses-item.tmpl');
-	var expressAnalysesTmpl = require('text!templates/appeal/edit/pages/monitoring/express-analyses.tmpl');
+	var expressAnalysesItemTmpl = require('text!templates/appeal/edit/pages/monitoring/express-analyses-item2.tmpl');
+	var expressAnalysesTmpl = require('text!templates/appeal/edit/pages/monitoring/express-analyses2.tmpl');
 
 	var ClientSortableGrid = require('views/appeal/edit/pages/monitoring/views/ClientSortableGrid');
 	var ExpressAnalyses = require('views/appeal/edit/pages/monitoring/collections/ExpressAnalyses');
@@ -21,7 +21,10 @@ define(function(require) {
 		},
 
 		data: function() {
+			var result = this.collection.byKeys();
+			console.log('result',result)
 			return {
+				result: result,
 				collection: this.collection.models,//.slice(0, 5),
 				appealId: shared.models.appeal.get('id'),
 				showLabsLink: this.showLabsLink

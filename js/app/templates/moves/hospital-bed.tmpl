@@ -6,16 +6,6 @@
 </div>
 <div class="EditForm Clearfix">
 <ul class="LineBlockHolder">
-	<!--<li>-->
-		<!--<div class="LineBlock">-->
-			<!--<div class="ColHalf">-->
-				<!--<span class="Label">Переведён из отделения</span>-->
-				<!--<b>${previousDepartment}</b>-->
-			<!--</div>-->
-
-		<!--</div>-->
-
-	<!--</li>-->
 <li>
 	<div class="LineBlock">
 		<div class="ColHalf">
@@ -24,6 +14,9 @@
 			</label>
 			<select class="Departments select2"  name="departments">
 				<option value="">...</option>
+				<%_.each(departments, function(department){%>
+					<option value="<%= department.id %>"  <% if(department.id == movedToUnitId){%>selected<% } %> ><%= department.name %></option>
+				<%});%>
 			</select>
 		</div>
 		<div class="QuartCol">
@@ -31,43 +24,52 @@
 				Дата и время поступления
 			</label>
 			<div class="date">
-				<input type="text" name="move-date" id="move-date" placeholder="дд.мм.гггг" class="SelectDate"
-							 data-relation="#move-time"/>
+				<input
+				type="text"
+				name="move-date"
+				id="move-date"
+				placeholder="дд.мм.гггг"
+				class="SelectDate"
+				data-relation="#move-time"/>
 				<i class="icon-calendar date-icon"></i>
 			</div>
-			<!--<div class="DateTime">
-				<div class="DatePeriod SingleDate">
-					<div class="FromTo">
-						<input type="text" name="move-date" id="move-date" placeholder="дд.мм.гггг" class="SelectDate"
-									 data-relation="#move-time"/>
-					</div>
-					<i class="DateIcon Icon"></i>
-				</div>
-				<div class="SemiCol">
-					<input type="text" class="Styled HourPicker" id="move-time" data-relation="#move-date" placeholder="чч:мм"/>
-				</div>
 
-			</div>-->
 		</div>
 		<div class="DecCol WithoutName">
 			<div class="time">
-				<input type="text" class="Styled HourPicker" id="move-time" data-relation="#move-date" placeholder="чч:мм"/>
+				<input
+				type="text"
+				class="Styled HourPicker"
+				id="move-time"
+				data-relation="#move-date"
+				placeholder="чч:мм"/>
 				<i class="icon-time time-icon"></i>
 			</div>
 		</div>
-		<div class="HalfCol">
+		<div class="QuartCol">
 			<span class="Label">Патронаж </span>
 			<div class="InlineForm">
 				<label>
-					<input type="radio" name="patronage" class="patronage" {{if bedRegistration.patronage == 'Да'}} checked {{/if}} value="Да">
+					<input type="radio" name="patronage" class="patronage" <% if (model.bedRegistration.patronage == 'Да'){%> checked <%}%> value="Да">
 					Да
 				</label>
 				<label>
-					<input type="radio" name="patronage" class="patronage" {{if bedRegistration.patronage == 'Нет'}} checked {{/if}} value="Нет">
+					<input type="radio" name="patronage" class="patronage" <% if (model.bedRegistration.patronage == 'Нет'){%> checked <%}%> value="Нет">
 					Нет
 				</label>
 			</div>
 		</div>
+		<% if (moveNumber === 2){ %>
+		<div class="QuartCol">
+			<span class="Label">Поступил из отделения</span>
+			<div class="InlineForm">
+				<label>
+					<input type="checkbox" name="movedFromUnitId" class="movedFromUnitId" checked value="26"/>
+					Дневное
+				</label>
+			</div>
+		</div>
+		<% } %>
 	</div>
 </li>
 <li>

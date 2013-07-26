@@ -1,6 +1,6 @@
 define(function(require) {
 	var shared = require('views/appeal/edit/pages/monitoring/shared');
-	var MonitoringInfos = require('views/appeal/edit/pages/monitoring/collections/MonitoringInfos');
+	var MonitoringInfos = require('views/appeal/edit/pages/monitoring/collections/MonitoringInfos2');
 	var MonitoringInfo = require('views/appeal/edit/pages/monitoring/models/MonitoringInfo');
 
 
@@ -18,7 +18,12 @@ define(function(require) {
 			"protein": "",
 			"urea": "",
 			"bilubrinOb": "",
-			"bilubrinPr": ""
+			"bilubrinPr": "",
+			"wbc": "",
+			"gran": "",
+			"neut": "",
+			"hgb": "",
+			"plt": ""
 		}
 	});
 
@@ -44,7 +49,7 @@ define(function(require) {
 					"bilubrinOb": rawRow["TB"],
 					"bilubrinPr": rawRow["CB"],
 					"wbc": rawRow["WBC"],
-					"gran": rawRow["GRAN"],
+					"gran": "",
 					"neut": rawRow["NEUT"],
 					"hgb": rawRow["HGB"],
 					"plt": rawRow["PLT"]

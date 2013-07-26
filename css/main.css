@@ -485,6 +485,17 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
   width: 100%;
 }
 
+/* line 33, ../sass/modules/_consultations.scss */
+#consultants li, #timetable-items label {
+  cursor: pointer;
+}
+
+/* line 37, ../sass/modules/_consultations.scss */
+#timetable-items .disabled label {
+  color: #bbb;
+  cursor: auto;
+}
+
 /* line 2, ../sass/modules/_reports.scss */
 .form-list {
   font-size: 13px;
