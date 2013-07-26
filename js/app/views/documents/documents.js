@@ -2038,7 +2038,7 @@ define(function (require) {
 		},
 
 		onSaveDocumentSuccess: function () {
-			this.returnToList();
+			this.goToDocReview();
 		},
 
 		onSaveDocumentError: function () {
@@ -2054,6 +2054,14 @@ define(function (require) {
 				console.log(JSON.stringify(this.model.toJSON()));
 				this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			}
+		},
+
+		goToDocReview: function () {
+			this.model.trigger("toggle:dividedState", false);
+			App.Router.updateUrl(["appeals", appealId, "documents", this.model.get("id")].join("/"));
+			dispatcher.trigger("change:viewState", {mode: "SUB_REVIEW", type: "documents", options: {
+				subId: this.model.get("id")
+			}});
 		},
 
 		returnToList: function () {
