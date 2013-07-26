@@ -194,7 +194,7 @@ define(function(require){
 						appeal: this.appeal,
 						path: this.options.path,
 						referrer: this.options.referrer,
-						mode: this.options.mode,
+						mode: mode,
 						page: this.options.page,
 						subId: this.options.subId
 					}, extraOptions));

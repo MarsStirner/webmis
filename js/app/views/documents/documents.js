@@ -267,6 +267,10 @@ define(function (require) {
 			}
 		},
 
+		getTypeId: function () {
+			return this.model.get("typeId");
+		},
+
 		save: function (attrs, options) {
 			this.setCloseDate();
 			Documents.Models.DocumentBase.prototype.save.call(this, attrs, options);
@@ -275,6 +279,10 @@ define(function (require) {
 
 	Documents.Models.DocumentTemplate = Documents.Models.DocumentBase.extend({
 		urlRoot: DATA_PATH + "dir/actionTypes/",
+
+		getTypeId: function () {
+			return this.id;
+		},
 
 		save: function (attrs, options) {
 			options.dataType = "jsonp";
@@ -1724,6 +1732,7 @@ define(function (require) {
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
 
+			debugger;
 			if (!this.model) {
 				if (this.options.templateId || this.options.mode === "SUB_NEW" && this.options.subId) {
 					this.model = new Documents.Models.DocumentTemplate({
@@ -1842,7 +1851,7 @@ define(function (require) {
 		},
 
 		onCopyFromPrevClick: function () {
-			var documentLastByType = new Documents.Models.DocumentLastByType({id: this.getDocumentTypeId()});
+			var documentLastByType = new Documents.Models.DocumentLastByType({id: this.model.getTypeId()});
 			this.fetchCopySource(documentLastByType);
 		},
 
@@ -1851,7 +1860,7 @@ define(function (require) {
 			this.listenTo(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
 
 			new Documents.Views.Edit.CopySourceSelector({
-				typeId: this.getDocumentTypeId(),
+				typeId: this.getTypeId(),
 				collection: this.copySourceList
 			});
 		},
@@ -1872,19 +1881,6 @@ define(function (require) {
 			if (!this.model.anyCopiedAttrHasValue) {
 				alert("Скопированный документ не содержит заполненных полей.");
 			}
-		},
-
-		getDocumentTypeId: function () {
-			var documentTypeId;
-			if (this.model instanceof Documents.Models.DocumentTemplate) {
-				documentTypeId = this.model.id;
-			} else if (this.model instanceof Documents.Models.Document) {
-				documentTypeId = this.model.get("typeId");
-			} else {
-				console.error("can't resolve documentTypeId for ", this.model);
-			}
-
-			return documentTypeId;
 		},
 
 		render: function () {
@@ -2037,11 +2033,12 @@ define(function (require) {
 			this.returnToList();
 		},
 
-		onSaveDocumentSuccess: function () {
-			this.goToDocReview();
+		onSaveDocumentSuccess: function (result) {
+			var resultId = result.id || result.data[0].id;
+			this.goToDocReview(resultId);
 		},
 
-		onSaveDocumentError: function () {
+		onSaveDocumentError: function (resultId) {
 			this.$('button').button('enable');
 			alert("При сохранении документа произошла ошибка. Повторите попытку.");
 			console.log(arguments);
@@ -2051,16 +2048,16 @@ define(function (require) {
 			//this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			if (this.model.isValid()) {
 				this.$('button').button('disable');
-				console.log(JSON.stringify(this.model.toJSON()));
+				//console.log(JSON.stringify(this.model.toJSON()));
 				this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			}
 		},
 
-		goToDocReview: function () {
+		goToDocReview: function (resultId) {
 			this.model.trigger("toggle:dividedState", false);
-			App.Router.updateUrl(["appeals", appealId, "documents", this.model.get("id")].join("/"));
+			App.Router.updateUrl(["appeals", appealId, "documents", resultId].join("/"));
 			dispatcher.trigger("change:viewState", {mode: "SUB_REVIEW", type: "documents", options: {
-				subId: this.model.get("id")
+				subId: resultId
 			}});
 		},
 
@@ -3259,7 +3256,9 @@ define(function (require) {
 					//attributes: this.model.getFilledAttrs(),
 					name: summaryAttrs[1]["properties"][0]["value"],
 					//endDate: summaryAttrs[3]["properties"][0]["value"],
-					beginDate: moment(this.model.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:ss"),
+					beginDate: this.model.getDates().begin.getValue() ?
+						moment(this.model.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:ss") :
+						false,
 					endDate: this.model.getDates().end.getValue() ?
 						moment(this.model.getDates().end.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:ss") :
 						false,
@@ -3298,10 +3297,11 @@ define(function (require) {
 		onEditDocumentClick: function (event) {
 			event.preventDefault();
 			if ($(event.currentTarget).data('document-id')) {
+				App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, $(event.currentTarget).data('document-id'), "edit"].join("/"));
 				dispatcher.trigger("change:viewState", {
 					type: this.options.editPageTypeName,
 					mode: "SUB_EDIT",
-					options: {documentId: $(event.currentTarget).data('document-id')}
+					options: {subId: $(event.currentTarget).data('document-id')}
 				});
 			}
 		},
