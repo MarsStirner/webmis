@@ -16,7 +16,7 @@ define(function(require) {
             this.result = new Result();
             this.result.eventId = this.options.appealId
 
-            this.result.id = this.options.subId ? this.options.subId[0] : this.options.url[4]; //;
+            this.result.id = this.options.modelId ? this.options.modelId : this.options.subId[0];
 
             this.result.fetch({
                 success: function(model, response, options) {
