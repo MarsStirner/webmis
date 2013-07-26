@@ -96,7 +96,8 @@ define(function(require) {
 			console.log('openResult', model);
 			var self = this;
 			this.trigger("change:viewState", {
-				type: "diagnostics-instrumental-result",
+				type: "diagnostics-instrumental",
+				mode: "SUB_REVIEW",
 				options: {
 					modelId: model.get('id'),
 					appealId: self.options.appealId

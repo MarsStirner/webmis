@@ -306,14 +306,14 @@ define(function(require) {
             this.trigger("change:viewState", {
                 type: "diagnostics-laboratory"
             });
-            App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics/laboratory/");
+            App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-laboratory/");
 
         },
         getResult: function(success, error) {
             var self = this;
             this.result = new Result();
             this.result.eventId = this.options.appealId;
-            this.result.id = this.options.modelId ? this.options.modelId : this.options.url[4]; //;
+						this.result.id = this.options.subId ? this.options.subId[0] : this.options.url[4]; //;
 
             this.result.fetch({
                 success: function(model, response, options) {
@@ -458,13 +458,14 @@ define(function(require) {
         navigate: function(id) {
 
             this.trigger("change:viewState", {
-                type: "diagnostics-laboratory-result",
+                type: "diagnostics-laboratory",
+								mode: "SUB_REVIEW",
                 options: {
                     modelId: id,
                     force: true
                 }
             });
-            App.Router.navigate("/appeals/" + this.options.appealId + "/diagnostics/laboratory/result/" + id, {
+            App.Router.navigate("/appeals/" + this.options.appealId + "/diagnostics-laboratory/" + id, {
                 trigger: false
             });
         },
