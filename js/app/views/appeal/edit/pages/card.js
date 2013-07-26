@@ -115,7 +115,6 @@ define(function(require){
 				id: this.model.get("id")
 			});
 
-
 			$.when(PrintAppeal.fetch()).then(function() {
 				new App.Views.Print({
 					data: _.extend(PrintAppeal.toJSON(),{age: self.model.getAge()}),
