@@ -11,6 +11,10 @@ define(function (require) {
 		initialize: function (models, options) {
 			//this.departmentId = options.departmentId;
 		},
+		setDepartmentId: function(departmentId){
+			this.departmentId = departmentId;
+			return this;
+		},
 		url: function () {
 			if (this.departmentId) {
 				return DATA_PATH + "hospitalbed/vacant?filter[departmentId]=" + this.departmentId;
