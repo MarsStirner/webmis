@@ -1732,7 +1732,6 @@ define(function (require) {
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
 
-			debugger;
 			if (!this.model) {
 				if (this.options.templateId || this.options.mode === "SUB_NEW" && this.options.subId) {
 					this.model = new Documents.Models.DocumentTemplate({
@@ -2025,7 +2024,6 @@ define(function (require) {
 		},
 
 		onSaveClick: function (event) {
-			//debugger;
 			this.saveDocument();
 		},
 
