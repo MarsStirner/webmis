@@ -18,4 +18,32 @@ use Webmis\Models\om\BaseActionQuery;
  */
 class ActionQuery extends BaseActionQuery
 {
+	public function getProperties()
+	{
+		return $this->useActionPropertyQuery('ActionProperty', 'left join')
+						->useActionPropertyTypeQuery('apt', 'join')
+						->endUse()
+						->useActionPropertyStringQuery('string', 'left join')
+						->endUse()
+						->useActionPropertyDateQuery('date', 'left join')
+						->endUse()
+					->endUse()
+					->groupBy('id');
+	}
+
+	public function filterByPatientId($patientId)
+	{
+			return $this->_if($patientId)
+							->useEventQuery()
+								->filterByClientId($patientId)
+							->endUse()
+						->_endif();
+	}
+
+	public function onlyTherapy()
+	{
+		return $this->useActionTypeQuery()
+						->filterByFlatCode('therapy')
+					->endUse();
+	}
 }

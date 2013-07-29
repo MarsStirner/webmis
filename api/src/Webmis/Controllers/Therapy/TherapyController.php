@@ -3,7 +3,6 @@ namespace Webmis\Controllers\Therapy;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
-//use Webmis\Models\QuotaTypeQuery;
 use Webmis\Models\ActionQuery;
 
 class TherapyController
@@ -16,27 +15,64 @@ class TherapyController
             ->_if($eventId)
                 ->filterByEventId($eventId)
             ->_endif()
-            ->useActionTypeQuery()
-                ->filterByFlatCode('therapy')
-            ->endUse()
-            ->useActionPropertyQuery('ActionProperty', 'left join')
-                ->useActionPropertyTypeQuery('apt', 'join')
-                ->endUse()
-                ->useActionPropertyStringQuery('string', 'left join')
-                ->endUse()
-                ->useActionPropertyDateQuery('date', 'left join')
-                ->endUse()
-            ->endUse()
-            // ->with('ActionType')
-            // ->with('ActionProperty')
-            // ->with('apt')
-            // ->with('string')
-            // ->with('date')
+            ->onlyTherapy()
+            ->getProperties()
             ->orderByCreateDatetime()
             ->groupBy('id')
             ->limit(5)
             ->find();
             //->toArray();
+
+            $data = $this->serializeActions($actions);
+
+            return $app['jsonp']->jsonp(array('data'=>$data));
+    }
+
+    public function lastAction(Request $request, Application $app)
+    {
+            $route_params = $request->get('_route_params') ;
+            $eventId = $route_params['eventId'];
+
+            $actions = ActionQuery::create()
+            ->onlyTherapy()
+            ->getProperties()
+            //->_if($eventId)
+            ->filterByEventId($eventId)
+            //->_endif()
+            ->orderByCreateDatetime('desc')
+            ->limit(1)
+            ->find();
+
+            $data = $this->serializeTherapyActions($actions);
+
+            return $app['jsonp']->jsonp(array('data'=>$data));
+    }
+
+
+
+
+
+    public function restAction(Request $request, Application $app)
+    {
+            $route_params = $request->get('_route_params') ;
+            $patientId = $route_params['patientId'];
+
+            $actions = ActionQuery::create()
+            ->onlyTherapy()
+            ->getProperties()
+            ->filterByPatientId($patientId)
+            ->orderByCreateDatetime('desc')
+            ->offset(1)
+            ->find();
+
+            $data = $this->serializeTherapyActions($actions);
+
+            return $app['jsonp']->jsonp(array('data'=>$data));
+    }
+
+
+    private function serializeActions($actions)
+    {
 
             $data = array();
 
@@ -84,35 +120,12 @@ class TherapyController
                 $data[] = $a;
             }
 
-            return $app['jsonp']->jsonp(array('data'=>$data));
+            return $data;
+
     }
 
-    public function lastAction(Request $request, Application $app)
+    private function serializeTherapyActions($actions)
     {
-            $route_params = $request->get('_route_params') ;
-            $eventId = $route_params['eventId'];
-
-            $actions = ActionQuery::create()
-            ->useActionTypeQuery()
-                ->filterByFlatCode('therapy')
-            ->endUse()
-            ->useActionPropertyQuery('ActionProperty', 'left join')
-                ->useActionPropertyTypeQuery('apt', 'join')
-                ->endUse()
-                ->useActionPropertyStringQuery('string', 'left join')
-                ->endUse()
-                ->useActionPropertyDateQuery('date', 'left join')
-                ->endUse()
-            ->endUse()
-            ->groupBy('id')
-
-            ->_if($eventId)
-                ->filterByEventId($eventId)
-            ->_endif()
-            ->orderByCreateDatetime('desc')
-            ->limit(1)
-            ->find();
-
             $data = array();
 
             foreach ($actions as $action){
@@ -127,11 +140,8 @@ class TherapyController
                 foreach ($actionProperties as $actionProperty){
                     $actionPropertyType = $actionProperty->getActionPropertyType();
                     $p = array();
-                    //$p['actionProperty.id'] = $actionProperty->getId();
                     $p['name'] = $actionPropertyType -> getName();
                     $name = $actionPropertyType -> getName();
-                    // $p['mandatory'] = $actionPropertyType -> getMandatory();
-                    // $p['readonly'] = $actionPropertyType -> getReadOnly();
                     $typeName = $actionPropertyType -> getTypeName();
 
                     switch ($typeName) {
@@ -142,9 +152,11 @@ class TherapyController
                             if($name == 'День терапии'){
                                 $a['day'] = $string;
                             }
+
                             if($name == 'Наименование терапии'){
                                 $a['title'] = $string;
                             }
+
                             if($name == 'Статус терапии'){
                                 $a['status'] = $string;
                             }
@@ -169,101 +181,6 @@ class TherapyController
                 $data[] = $a;
             }
 
-
-
-
-
-            return $app['jsonp']->jsonp(array('data'=>$data));
-    }
-
-
-
-
-
-    public function restAction(Request $request, Application $app)
-    {
-            $route_params = $request->get('_route_params') ;
-            $patientId = $route_params['patientId'];
-
-            $actions = ActionQuery::create()
-            ->useActionTypeQuery()
-                ->filterByFlatCode('therapy')
-            ->endUse()
-            ->useActionPropertyQuery('ActionProperty', 'left join')
-                ->useActionPropertyTypeQuery('apt', 'join')
-                ->endUse()
-                ->useActionPropertyStringQuery('string', 'left join')
-                ->endUse()
-                ->useActionPropertyDateQuery('date', 'left join')
-                ->endUse()
-            ->endUse()
-            ->groupBy('id')
-
-            ->_if($patientId)
-                ->useEventQuery()
-                    ->filterByClientId($patientId)
-                ->endUse()
-            ->_endif()
-            ->orderByCreateDatetime('desc')
-            ->offset(1)
-            ->find();
-
-            $data = array();
-
-            foreach ($actions as $action){
-                $a = array();
-                $a['id'] = $action->getId();
-                $a['name'] = $action->getActionType()->getName();
-                $createDatetime = $action->getCreateDatetime();
-                $a['endDate'] = strtotime($createDatetime)*1000;
-                $actionProperties = $action->getActionPropertys();
-
-
-                foreach ($actionProperties as $actionProperty){
-                    $actionPropertyType = $actionProperty->getActionPropertyType();
-                    $p = array();
-                    //$p['actionProperty.id'] = $actionProperty->getId();
-                    $p['name'] = $actionPropertyType -> getName();
-                    $name = $actionPropertyType -> getName();
-                    // $p['mandatory'] = $actionPropertyType -> getMandatory();
-                    // $p['readonly'] = $actionPropertyType -> getReadOnly();
-                    $typeName = $actionPropertyType -> getTypeName();
-
-                    switch ($typeName) {
-                        case 'String':
-                        case 'Text':
-                            $string = $actionProperty->getActionPropertyString()->getValue();
-
-                            if($name == 'День терапии'){
-                                $a['day'] = $string;
-                            }
-                            if($name == 'Наименование терапии'){
-                                $a['title'] = $string;
-                            }
-                            if($name == 'Статус терапии'){
-                                $a['status'] = $string;
-                            }
-
-                        break;
-                        case 'Date':
-                            $date = $actionProperty->getActionPropertyDate()->getValue();
-                            if($name == 'Дата начала'){
-                                $a['begDate'] = strtotime($date)*1000;
-                            }
-
-                        break;
-                        default:
-                            $p['value'] = '';//'этот тип пока не поддерживается';
-                        break;
-                    }
-
-                    $p['type'] = $typeName;
-
-                }
-
-                $data[] = $a;
-            }
-
-            return $app['jsonp']->jsonp(array('data'=>$data));
+            return $data;
     }
 }
