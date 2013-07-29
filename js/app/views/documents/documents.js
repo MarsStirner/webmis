@@ -32,9 +32,9 @@ define(function (require) {
 	};
 
 	//константы
-	var HIDDEN_TYPES = ['JobTicket', 'RLS'];//типы полей, которые не выводятся в ui.
+	var HIDDEN_TYPES = ['JobTicket', 'RLS']; //типы полей, которые не выводятся в ui.
 	var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
-	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';//Формат даты в коммон дата
+	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss'; //Формат даты в коммон дата
 	var FLAT_CODES = {
 		PANIC: "panic",
 		DUTY_DOCTOR: "dutyDoctor"
@@ -267,6 +267,10 @@ define(function (require) {
 			}
 		},
 
+		getTypeId: function () {
+			return this.model.get("typeId");
+		},
+
 		save: function (attrs, options) {
 			this.setCloseDate();
 			Documents.Models.DocumentBase.prototype.save.call(this, attrs, options);
@@ -275,6 +279,10 @@ define(function (require) {
 
 	Documents.Models.DocumentTemplate = Documents.Models.DocumentBase.extend({
 		urlRoot: DATA_PATH + "dir/actionTypes/",
+
+		getTypeId: function () {
+			return this.id;
+		},
 
 		save: function (attrs, options) {
 			options.dataType = "jsonp";
@@ -327,7 +335,7 @@ define(function (require) {
 			var propName;
 			var valuePropertyIndex;
 
-			if (["MKB", "FLATDIRECTORY", "PERSON"].indexOf(this.get("type")) != -1) {
+			if (["MKB", "FLATDIRECTORY", "PERSON"].indexOf(this.get("type").toUpperCase()) != -1) {
 				propName = "valueId";
 			} else {
 				propName = "value";
@@ -394,25 +402,19 @@ define(function (require) {
 			);
 		},
 
-		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		getPropertyValueFor: function (name) {
-			var properties = this.get('properties');
-			var property = _.find(properties, function (prop) {
+		getPropertyByName: function (name) {
+			return _.find(this.get('properties'), function (prop) {
 				return prop.name === name;
-			});
+			}) || this.get('properties')[this.get('properties').push({name: name, value: ""}) - 1];
+		},
 
-			return property.value;
+		getPropertyValueFor: function (name) {
+			return this.getPropertyByName(name).value;
 		},
 
 		setPropertyValueFor: function (name, value) {
-			var properties = this.get('properties');
-			var property = _.find(properties, function (prop) {
-				return prop.name === name;
-			});
-
-			property.value = value;
+			this.getPropertyByName(name).value = value;
 		}
-		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	});
 	//endregion
 
@@ -476,7 +478,7 @@ define(function (require) {
 
 		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
 
-		lastCrtiteria: "",
+		lastCriteria: "",
 
 		url: function () {
 			//filter[view]=tree
@@ -504,13 +506,13 @@ define(function (require) {
 		},
 
 		search: function (criteria) {
-			this.lastCrtiteria = criteria;
+			this.lastCriteria = criteria;
 
 			if (!this.originalModels) {
 				this.originalModels = this.toJSON();
 			}
-			if (this.lastCrtiteria) {
-				var criteriaRE = new RegExp(this.lastCrtiteria, "gi");
+			if (this.lastCriteria) {
+				var criteriaRE = new RegExp(this.lastCriteria, "i");
 				var result = [];
 				this.extractResult(this.originalModels, result, criteriaRE, "name");
 				this.reset(result);
@@ -529,7 +531,7 @@ define(function (require) {
 			this.mnems = mnems;
 			this.fetch().then(_.bind(function () {
 				this.originalModels = null;
-				this.search(this.lastCrtiteria);
+				this.search(this.lastCriteria);
 			}, this));
 		},
 
@@ -631,6 +633,12 @@ define(function (require) {
 		topLevel: false,
 
 		initialize: function () {
+			if (this.options.appealId) {
+				appealId = this.options.appealId;
+				appeal = this.options.appeal;
+			}
+			this.appealId = appealId;
+
 			this.topLevel = !this.options.included;
 		},
 
@@ -688,12 +696,17 @@ define(function (require) {
 			"click .panic": "onPanicClick"
 		},
 
+		data: function () {
+			return {btnsDisabled: !this.documentTypes.length || appeal.isClosed()};
+		},
+
 		initialize: function () {
 			if (this.options.documentTypes) {
 				this.documentTypes = this.options.documentTypes;
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.fetch({data: {filter: {flatCode: FLAT_CODES.PANIC}}});
+				console.log("documentTypes.fetch");
 			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
@@ -706,8 +719,10 @@ define(function (require) {
 		onPanicClick: function () {
 			var panicType = this.documentTypes.findByFlatCode(FLAT_CODES.PANIC);
 			if (panicType) {
+				App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, "new", panicType.id].join("/"));
 				dispatcher.trigger("change:viewState", {
 					type: this.options.editPageTypeName,
+					mode: "SUB_EDIT",
 					options: {templateId: panicType.id, force: true}
 				});
 			} else {
@@ -728,16 +743,18 @@ define(function (require) {
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
 
-			if (this.options.appealId) {
-				appealId = this.options.appealId;
-				appeal = this.options.appeal;
+			if (this.options.documents) {
+				this.documents = this.options.documents;
+			} else {
+				this.documents = new Documents.Collections.DocumentList([], {appealId: this.appealId, defaultMnems: this.getDefaultDocumentsMnems()});
+				this.documents.fetch({data: {sortingField: "assesmentDate", sortingMethod: "desc"}});
 			}
-			this.appealId = appealId;
 
-			this.documents = new Documents.Collections.DocumentList([], {appealId: this.appealId, defaultMnems: this.getDefaultDocumentsMnems()});
-			this.documents.fetch({data: {sortingField: "assesmentDate", sortingMethod: "desc"}});
-
-			this.selectedDocuments = new Backbone.Collection();
+			if (this.options.selectedDocuments) {
+				this.selectedDocuments = this.options.selectedDocuments;
+			} else {
+				this.selectedDocuments = new Backbone.Collection();
+			}
 			this.listenTo(this.selectedDocuments, "review:enter", this.onEnteredReviewState);
 			this.listenTo(this.selectedDocuments, "review:quit", this.onQuitReviewState);
 
@@ -773,7 +790,7 @@ define(function (require) {
 		},
 
 		getReviewLayout: function () {
-			return new Documents.Views.Review.Base.Layout({
+			return new Documents.Views.Review.Base.NoControlsLayout({
 				collection: this.selectedDocuments,
 				documents: this.documents,
 				included: true,
@@ -782,7 +799,7 @@ define(function (require) {
 		},
 
 		getEditPageTypeName: function () {
-			return "document-edit";
+			return "documents";
 		},
 
 		render: function (subViews) {
@@ -837,7 +854,15 @@ define(function (require) {
 		},
 
 		onThSortableClick: function (event) {
-			var $targetTh = $(event.currentTarget);
+			var sortParams = this.getUpdatedSortParams($(event.currentTarget));
+
+			this.collection.fetch({data: {
+				sortingField: sortParams.sortingField,
+				sortingMethod: sortParams.sortingMethod
+			}})
+		},
+
+		getUpdatedSortParams: function ($targetTh, sortDirection) {
 			if (!this.$caret) {
 				this.$caret = $('<i style="color: black;margin-left: .3em;"/>');
 			}
@@ -860,13 +885,10 @@ define(function (require) {
 
 			this.$caret.appendTo($targetTh);
 
-			var sortingField = $targetTh.data('sort-field');
-			var sortingMethod = $targetTh.hasClass("desc") ? "desc" : "asc";
-
-			this.collection.fetch({data: {
-				sortingField: sortingField,
-				sortingMethod: sortingMethod
-			}})
+			return {
+				sortingField: $targetTh.data('sort-field'),
+				sortingMethod: $targetTh.hasClass("desc") ? "desc" : "asc"
+			};
 		},
 
 		onSelectAllFlagChange: function (event) {
@@ -882,6 +904,17 @@ define(function (require) {
 				this.options.selectedDocuments.reset();
 			}
 			this.collection.trigger("mark-all", {selected: selected});
+		},
+
+		render: function () {
+			ViewBase.prototype.render.call(this);
+			if (this.collection.requestData && this.collection.requestData.sortingField) {
+				this.getUpdatedSortParams(
+					this.$("[data-sort-field="+this.collection.requestData.sortingField+"]")
+						.addClass("sorted "+(this.collection.requestData.sortingMethod == "asc" ? "desc" : "asc"))
+				);
+			}
+			return this;
 		}
 	});
 
@@ -931,8 +964,10 @@ define(function (require) {
 
 		onEditDocumentClick: function (event) {
 			if ($(event.currentTarget).data('document-id')) {
+				App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, $(event.currentTarget).data('document-id'), "edit"].join("/"));
 				dispatcher.trigger("change:viewState", {
 					type: this.options.editPageTypeName,
+					mode: "SUB_EDIT",
 					options: {documentId: $(event.currentTarget).data('document-id')}
 				});
 			}
@@ -940,8 +975,10 @@ define(function (require) {
 
 		onDuplicateDocumentClick: function (event) {
 			if ($(event.currentTarget).data('template-id')) {
+				App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, "new", $(event.currentTarget).data('template-id')].join("/"));
 				dispatcher.trigger("change:viewState", {
 					type: this.options.editPageTypeName,
+					mode: "SUB_EDIT",
 					options: {templateId: $(event.currentTarget).data('template-id')}
 				});
 			}
@@ -1127,6 +1164,7 @@ define(function (require) {
 					break;
 			}
 
+			this.collection.dateFilter = rangeMnem;
 			this.collection.dateRange = dateRange;
 			this.collection.pageNumber = 1;
 			this.collection.fetch();
@@ -1134,7 +1172,7 @@ define(function (require) {
 
 		render: function () {
 			ViewBase.prototype.render.apply(this);
-			this.$(".document-create-date-filter-buttonset").buttonset();
+			this.$("[name=document-create-date-filter][value="+(this.collection.dateFilter || "ALL")+"]").prop("checked", true).parent().buttonset();
 		}
 	});
 
@@ -1144,6 +1182,10 @@ define(function (require) {
 	 */
 	Documents.Views.List.Base.Controls = ViewBase.extend({
 		template: templates._listControlsBase,
+
+		data: function () {
+			return {btnsDisabled: !this.documentTypes.length || appeal.isClosed()};
+		},
 
 		events: {
 			"click .new-document": "onNewDocumentClick"
@@ -1155,6 +1197,7 @@ define(function (require) {
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.fetch();
+				console.log("documentTypes.fetch");
 			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
@@ -1167,9 +1210,11 @@ define(function (require) {
 		},
 
 		onDocumentTypeSelected: function (event) {
+			App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, "new", event.selectedType].join("/"));
 			dispatcher.trigger("change:viewState", {
 				type: this.options.editPageTypeName,
-				options: {templateId: event.selectedType, force: true}
+				mode: "SUB_EDIT",
+				options: {templateId: event.selectedType}
 			});
 		},
 
@@ -1379,11 +1424,40 @@ define(function (require) {
 		initialize: function () {
 			Documents.Views.List.Common.LayoutHistory.prototype.initialize.call(this, this.options);
 
-			this.documentTypes = new Documents.Collections.DocumentTypes();
-			this.documentTypes.fetch();
+			if (this.options.documentTypes) {
+				this.documentTypes = this.options.documentTypes;
+			} else {
+				this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.fetch();
+				console.log("documentTypes.fetch");
+			}
 
 			//this.reviewStateToggles.push(".documents-controls");
 		},
+
+		toggleReviewState: function () {
+			App.Router.updateUrl(["appeals",appealId,this.getEditPageTypeName(),this.selectedDocuments.pluck("id").join(",")].join("/"));
+			dispatcher.trigger("change:viewState", {
+				type: this.getEditPageTypeName(),
+				mode: "SUB_REVIEW",
+				options: {
+					collection: this.selectedDocuments,
+					documents: this.documents,
+					documentTypes: this.documentTypes,
+					included: false,
+					showIcons: !this.options.included
+				}
+			});
+		},
+
+		/*getReviewLayout: function () {
+			return new Documents.Views.Review.Base.NoControlsLayout({
+				collection: this.selectedDocuments,
+				documents: this.documents,
+				included: true,
+				showIcons: !this.options.included
+			});
+		},*/
 
 		render: function () {
 			return Documents.Views.List.Common.LayoutHistory.prototype.render.call(this, {
@@ -1417,7 +1491,7 @@ define(function (require) {
 
 		openDutyDocExamTemplate: function () {
 			//TODO: HARCODED
-			dispatcher.trigger("change:viewState", {type: this.options.editPageTypeName, options: {templateId: 2844}});
+			dispatcher.trigger("change:viewState", {type: this.options.editPageTypeName, mode: "SUB_EDIT", options: {templateId: 2844}});
 		}
 	});
 
@@ -1462,9 +1536,16 @@ define(function (require) {
 					mnems = ["OTH"];
 					break;
 			}
+			this.collection.mnemFilter = type;
 			this.collection.mnems = mnems;
 			this.collection.pageNumber = 1;
 			this.collection.fetch();
+		},
+
+		render: function () {
+			Documents.Views.List.Base.Filters.prototype.render.apply(this);
+			this.$(".document-type-filter").val(this.collection.mnemFilter || "ALL");
+			return this;
 		}
 	});
 	//endregion
@@ -1480,7 +1561,7 @@ define(function (require) {
 		},
 
 		getReviewLayout: function () {
-			return new Documents.Views.Review.Examination.Layout({
+			return new Documents.Views.Review.Examination.NoControlsLayout({
 				collection: this.selectedDocuments,
 				documents: this.documents,
 				included: true,
@@ -1489,7 +1570,7 @@ define(function (require) {
 		},
 
 		getEditPageTypeName: function () {
-			return "examination-edit";
+			return "examinations";
 		},
 
 		render: function (subViews) {
@@ -1514,8 +1595,10 @@ define(function (require) {
 
 		initialize: function () {
 			Documents.Views.List.Examination.LayoutHistory.prototype.initialize.call(this, this.options);
-			this.reviewStateToggles.push(".documents-controls");
+			//this.reviewStateToggles.push(".documents-controls");
 		},
+
+		toggleReviewState: Documents.Views.List.Common.Layout.prototype.toggleReviewState,
 
 		render: function () {
 			return Documents.Views.List.Examination.LayoutHistory.prototype.render.call(this, {
@@ -1538,12 +1621,14 @@ define(function (require) {
 
 		onNewExaminationPrimaryClick: function () {
 			//TODO: HARCODED
-			dispatcher.trigger("change:viewState", {type: this.options.editPageTypeName, options: {templateId: 139}});
+			App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, "new", 139].join("/"));
+			dispatcher.trigger("change:viewState", {type: this.options.editPageTypeName, mode: "SUB_EDIT", options: {templateId: 139}});
 		},
 
 		onNewExaminationPrimaryRepeatedClick: function () {
 			//TODO: HARCODED
-			dispatcher.trigger("change:viewState", {type: this.options.editPageTypeName, options: {templateId: 2456}});
+			App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, "new", 2456].join("/"));
+			dispatcher.trigger("change:viewState", {type: this.options.editPageTypeName, mode: "SUB_EDIT", options: {templateId: 2456}});
 		}
 	});
 
@@ -1561,7 +1646,7 @@ define(function (require) {
 		},
 
 		getReviewLayout: function () {
-			return new Documents.Views.Review.Therapy.Layout({
+			return new Documents.Views.Review.Therapy.NoControlsLayout({
 				collection: this.selectedDocuments,
 				documents: this.documents,
 				included: true,
@@ -1570,7 +1655,7 @@ define(function (require) {
 		},
 
 		getEditPageTypeName: function () {
-			return "therapy-edit";
+			return "therapy";
 		},
 
 		render: function (subViews) {
@@ -1596,12 +1681,19 @@ define(function (require) {
 		initialize: function () {
 			Documents.Views.List.Therapy.LayoutHistory.prototype.initialize.call(this, this.options);
 
-			this.documentTypes = new Documents.Collections.DocumentTypes();
-			this.documentTypes.mnems = ["THER"];
-			this.documentTypes.fetch();
+			if (this.options.documentTypes) {
+				this.documentTypes = this.options.documentTypes;
+			} else {
+				this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.mnems = ["THER"];
+				this.documentTypes.fetch();
+				console.log("documentTypes.fetch");
+			}
 
-			this.reviewStateToggles.push(".controls-block");
+			//this.reviewStateToggles.push(".controls-block");
 		},
+
+		toggleReviewState: Documents.Views.List.Common.Layout.prototype.toggleReviewState,
 
 		render: function () {
 			return Documents.Views.List.Therapy.LayoutHistory.prototype.render.call(this, {
@@ -1640,15 +1732,20 @@ define(function (require) {
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
 
+			debugger;
 			if (!this.model) {
-				if (this.options.templateId) {
-					this.model = new Documents.Models.DocumentTemplate({id: this.options.templateId});
-					//this.model.id = this.options.templateId;
-				} else if (this.options.documentId) {
-					this.model = new Documents.Models.Document({id: this.options.documentId});
-					//this.model.id = this.options.documentId;
+				if (this.options.templateId || this.options.mode === "SUB_NEW" && this.options.subId) {
+					this.model = new Documents.Models.DocumentTemplate({
+						id: this.options.templateId || this.options.subId
+					});
+				} else if (this.options.documentId || this.options.mode === "SUB_EDIT" && this.options.subId) {
+					this.model = new Documents.Models.Document({
+						id: this.options.documentId || this.options.subId
+					});
 				} else {
-					dispatcher.trigger("change:viewState", {type: "documents"});
+					console.error("Oops! No template or document id!");
+					/*App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, "new", 139].join("/"));
+					dispatcher.trigger("change:viewState", {type: "documents", mode: "REVIEW"});*/
 				}
 			}
 
@@ -1754,7 +1851,7 @@ define(function (require) {
 		},
 
 		onCopyFromPrevClick: function () {
-			var documentLastByType = new Documents.Models.DocumentLastByType({id: this.getDocumentTypeId()});
+			var documentLastByType = new Documents.Models.DocumentLastByType({id: this.model.getTypeId()});
 			this.fetchCopySource(documentLastByType);
 		},
 
@@ -1763,7 +1860,7 @@ define(function (require) {
 			this.listenTo(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
 
 			new Documents.Views.Edit.CopySourceSelector({
-				typeId: this.getDocumentTypeId(),
+				typeId: this.getTypeId(),
 				collection: this.copySourceList
 			});
 		},
@@ -1784,19 +1881,6 @@ define(function (require) {
 			if (!this.model.anyCopiedAttrHasValue) {
 				alert("Скопированный документ не содержит заполненных полей.");
 			}
-		},
-
-		getDocumentTypeId: function () {
-			var documentTypeId;
-			if (this.model instanceof Documents.Models.DocumentTemplate) {
-				documentTypeId = this.model.id;
-			} else if (this.model instanceof Documents.Models.Document) {
-				documentTypeId = this.model.get("typeId");
-			} else {
-				console.error("can't resolve documentTypeId for ", this.model);
-			}
-
-			return documentTypeId;
 		},
 
 		render: function () {
@@ -1949,11 +2033,12 @@ define(function (require) {
 			this.returnToList();
 		},
 
-		onSaveDocumentSuccess: function () {
-			this.returnToList();
+		onSaveDocumentSuccess: function (result) {
+			var resultId = result.id || result.data[0].id;
+			this.goToDocReview(resultId);
 		},
 
-		onSaveDocumentError: function () {
+		onSaveDocumentError: function (resultId) {
 			this.$('button').button('enable');
 			alert("При сохранении документа произошла ошибка. Повторите попытку.");
 			console.log(arguments);
@@ -1963,13 +2048,23 @@ define(function (require) {
 			//this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			if (this.model.isValid()) {
 				this.$('button').button('disable');
+				//console.log(JSON.stringify(this.model.toJSON()));
 				this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			}
 		},
 
+		goToDocReview: function (resultId) {
+			this.model.trigger("toggle:dividedState", false);
+			App.Router.updateUrl(["appeals", appealId, "documents", resultId].join("/"));
+			dispatcher.trigger("change:viewState", {mode: "SUB_REVIEW", type: "documents", options: {
+				subId: resultId
+			}});
+		},
+
 		returnToList: function () {
 			this.model.trigger("toggle:dividedState", false);
-			dispatcher.trigger("change:viewState", {type: "documents"});
+			App.Router.updateUrl(["appeals", appealId, "documents"].join("/"));
+			dispatcher.trigger("change:viewState", {mode: "REVIEW", type: "documents"});
 		}
 	});
 	//endregion
@@ -2015,7 +2110,8 @@ define(function (require) {
 	Documents.Views.Edit.Examination.DocControls = Documents.Views.Edit.DocControls.extend({
 		returnToList: function () {
 			this.model.trigger("toggle:dividedState", false);
-			dispatcher.trigger("change:viewState", {type: "examinations"});
+			App.Router.updateUrl(["appeals", appealId, "examinations"].join("/"));
+			dispatcher.trigger("change:viewState", {mode: "REVIEW", type: "examinations"});
 		}
 	});
 
@@ -2050,7 +2146,8 @@ define(function (require) {
 	Documents.Views.Edit.Therapy.DocControls = Documents.Views.Edit.DocControls.extend({
 		returnToList: function () {
 			this.model.trigger("toggle:dividedState", false);
-			dispatcher.trigger("change:viewState", {type: "therapy"});
+			App.Router.updateUrl(["appeals", appealId, "therapy"].join("/"));
+			dispatcher.trigger("change:viewState", {mode: "REVIEW", type: "therapy"});
 		}
 	});
 
@@ -2412,6 +2509,11 @@ define(function (require) {
 			"keypress .integer": "onIntegerKeypress"
 		}, UIElementBase.prototype.events),
 
+		initialize: function () {
+			UIElementBase.prototype.initialize.call(this, this.options);
+			this.model.setPropertyValueFor("valueId", "");
+		},
+
 		onIntegerKeypress: function (eve) {
 			if (eve.which < 48 || eve.which > 57) {
 				eve.preventDefault();
@@ -2478,6 +2580,13 @@ define(function (require) {
 			}
 
 			return data;
+		},
+
+		setAttributeValue: function () {
+			var data = this.data();
+			this.ui.$code.val(data.mkbCode);
+			this.ui.$code.data('mkb-id', data.mkbId);
+			this.ui.$diagnosis.val(data.diagnosis);
 		},
 
 		onMKBLauncherClick: function () {
@@ -2726,6 +2835,12 @@ define(function (require) {
 		},
 
 		setPerson: function (person) {
+			if (person) {
+				this.model.setValue(person.id);
+			} else {
+				this.model.setValue("");
+				this.model.setPropertyValueFor("value", "");
+			}
 			this.model.setValue(person ? person.id : "");
 			this.setAttributeValue();
 			this.$('.person-name').val(person ? person.name.raw : "");
@@ -2874,11 +2989,24 @@ define(function (require) {
 
 	//region VIEWS REVIEW BASE
 	//---------------------
-	Documents.Views.Review.Base.Layout = LayoutBase.extend({
+	Documents.Views.Review.Base.NoControlsLayout = LayoutBase.extend({
 		template: templates._reviewLayout,
 
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
+
+			if (!this.options.collection) {
+				this.collection = new Backbone.Collection();
+				if (this.options.subId) {
+					if (!_.isArray(this.options.subId)) {
+						this.options.subId = [this.options.subId];
+					}
+					_.each(this.options.subId, function (subId) {
+						this.collection.add(new Documents.Models.Document({id: subId}));
+					}, this);
+				}
+			}
+
 			this.listenTo(this.collection, "review:next", this.onDocumentsReviewNext);
 			this.listenTo(this.collection, "review:prev", this.onDocumentsReviewPrev);
 		},
@@ -2910,10 +3038,6 @@ define(function (require) {
 			}
 		},
 
-		reviewPrevDocument: function () {
-
-		},
-
 		getListItemIndex: function () {
 			var currentDocument = this.collection.first();
 			var currentDocumentListItem = this.options.documents.get(currentDocument.id);
@@ -2922,18 +3046,61 @@ define(function (require) {
 		},
 
 		getEditPageTypeName: function () {
-			return "document-edit";
+			return "documents";
 		},
 
-		render: function () {
-			return LayoutBase.prototype.render.call(this, {
-				".review-controls": new Documents.Views.Review.Base.Controls({collection: this.collection}),
+		render: function (subViews) {
+			return LayoutBase.prototype.render.call(this, _.extend({
+				".review-controls": new Documents.Views.Review.Base.Controls({
+					collection: this.collection,
+					documents: this.options.documents,
+					reviewPageTypeName: this.getEditPageTypeName(),
+					included: this.options.included
+				}),
 				".sheets": new Documents.Views.Review.Base.SheetList({
 					collection: this.collection,
-					showIcons: this.options.showIcons && !appeal.isClosed(),
+					showIcons: !this.options.included && !appeal.isClosed(),
 					editPageTypeName: this.getEditPageTypeName()
 				})
+			}, subViews));
+		}
+	});
+
+	Documents.Views.Review.Base.Layout = Documents.Views.Review.Base.NoControlsLayout.extend({
+		attributes: {style: "display: table; width: 100%;"},
+
+		initialize: function () {
+			if (this.options.documentTypes) {
+				this.documentTypes = this.options.documentTypes;
+			} else {
+				this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.fetch();
+				console.log("documentTypes.fetch");
+			}
+
+			Documents.Views.Review.Base.NoControlsLayout.prototype.initialize.call(this, this.options);
+		},
+
+		tearDown: LayoutBase.prototype.tearDown,
+
+		render: function () {
+			Documents.Views.Review.Base.NoControlsLayout.prototype.render.call(this, {
+				".documents-controls": new Documents.Views.List.Common.Controls({
+					documentTypes: this.documentTypes,
+					editPageTypeName: this.getEditPageTypeName()
+				}),
+				".review-controls": new Documents.Views.Review.Base.Controls({
+					collection: this.collection,
+					documents: this.options.documents,
+					documentTypes: this.documentTypes,
+					reviewPageTypeName: this.getEditPageTypeName(),
+					included: this.options.included
+				})
 			});
+
+			this.$(".controls-block-row").show();
+
+			return this;
 		}
 	});
 
@@ -2945,7 +3112,10 @@ define(function (require) {
 		template: templates._reviewControls,
 
 		data: function () {
-			return {selectedDocuments: this.collection};
+			return {
+				selectedDocuments: this.collection,
+				showStepper: (this.collection.length == 1) && (this.options.documents && this.options.documents.length > 1)
+			};
 		},
 
 		events: {
@@ -2957,7 +3127,20 @@ define(function (require) {
 		},
 
 		onBackToDocumentListClick: function () {
-			this.collection.trigger("review:quit");
+			console.log(this.options);
+			if (this.options.included) {
+				this.collection.trigger("review:quit");
+			} else {
+				App.Router.updateUrl(["appeals",appealId,this.options.reviewPageTypeName].join("/"));
+				dispatcher.trigger("change:viewState", {
+					type: this.options.reviewPageTypeName,
+					mode: "REVIEW",
+					options: {
+						documentTypes: this.options.documentTypes,
+						documents: this.options.documents
+					}
+				});
+			}
 		},
 
 		onNextDocumentClick: function () {
@@ -3059,6 +3242,8 @@ define(function (require) {
 		template: templates._reviewSheet,
 
 		data: function () {
+
+			console.log(this.options);
 			var tmplData = {};
 			var documentJSON = this.model.toJSON()[0];
 
@@ -3071,7 +3256,9 @@ define(function (require) {
 					//attributes: this.model.getFilledAttrs(),
 					name: summaryAttrs[1]["properties"][0]["value"],
 					//endDate: summaryAttrs[3]["properties"][0]["value"],
-					beginDate: moment(this.model.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:ss"),
+					beginDate: this.model.getDates().begin.getValue() ?
+						moment(this.model.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:ss") :
+						false,
 					endDate: this.model.getDates().end.getValue() ?
 						moment(this.model.getDates().end.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:ss") :
 						false,
@@ -3110,9 +3297,11 @@ define(function (require) {
 		onEditDocumentClick: function (event) {
 			event.preventDefault();
 			if ($(event.currentTarget).data('document-id')) {
+				App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, $(event.currentTarget).data('document-id'), "edit"].join("/"));
 				dispatcher.trigger("change:viewState", {
 					type: this.options.editPageTypeName,
-					options: {documentId: $(event.currentTarget).data('document-id')}
+					mode: "SUB_EDIT",
+					options: {subId: $(event.currentTarget).data('document-id')}
 				});
 			}
 		},
@@ -3120,8 +3309,10 @@ define(function (require) {
 		onDuplicateDocumentClick: function (event) {
 			event.preventDefault();
 			if ($(event.currentTarget).data('template-id')) {
+				App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, "new", $(event.currentTarget).data('template-id')].join("/"));
 				dispatcher.trigger("change:viewState", {
 					type: this.options.editPageTypeName,
+					mode: "SUB_EDIT",
 					options: {templateId: $(event.currentTarget).data('template-id')}
 				});
 			}
@@ -3237,20 +3428,42 @@ define(function (require) {
 	//endregion
 
 
-	//region REVIEW EXAMINATION
-	Documents.Views.Review.Examination.Layout = Documents.Views.Review.Base.Layout.extend({
-		getEditPageTypeName: function () {
-			return "examination-edit";
+	//region REVIEW COMMON
+	Documents.Views.Review.Common.Layout = Documents.Views.Review.Base.Layout.extend({
+		render: function () {
+			return Documents.Views.Review.Base.Layout.prototype.render.call(this, {
+				".panic-btn": new PanicBtn({
+					documentTypes: this.documentTypes,
+					editPageTypeName: this.getEditPageTypeName()
+				})
+			});
 		}
 	});
 	//endregion
 
 
-	//region REVIEW THERAPY
-	Documents.Views.Review.Therapy.Layout = Documents.Views.Review.Base.Layout.extend({
+	//region REVIEW EXAMINATION
+	Documents.Views.Review.Examination.NoControlsLayout = Documents.Views.Review.Base.NoControlsLayout.extend({
 		getEditPageTypeName: function () {
-			return "therapy-edit";
+			return "examinations";
 		}
+	});
+
+	Documents.Views.Review.Examination.Layout = Documents.Views.Review.Base.Layout.extend({
+		getEditPageTypeName: Documents.Views.Review.Examination.NoControlsLayout.prototype.getEditPageTypeName
+	});
+	//endregion
+
+
+	//region REVIEW THERAPY
+	Documents.Views.Review.Therapy.NoControlsLayout = Documents.Views.Review.Base.NoControlsLayout.extend({
+		getEditPageTypeName: function () {
+			return "therapy";
+		}
+	});
+
+	Documents.Views.Review.Therapy.Layout = Documents.Views.Review.Base.Layout.extend({
+		getEditPageTypeName: Documents.Views.Review.Therapy.NoControlsLayout.prototype.getEditPageTypeName
 	});
 	//endregion
 	//endregion

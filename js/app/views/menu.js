@@ -28,7 +28,7 @@ App.Views.Menu = View.extend({
 			var structure = $(event.currentTarget).data("structure");
 			this.options.structure.trigger("change-page", structure);
 
-			App.Router.updateUrl( structure.uri );
+			App.Router.updateUrl(structure.uri);
 		}
 	},
 
