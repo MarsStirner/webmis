@@ -9,7 +9,9 @@ use \Exception;
 use \PDO;
 use \Persistent;
 use \Propel;
+use \PropelCollection;
 use \PropelException;
+use \PropelObjectCollection;
 use \PropelPDO;
 use Webmis\Models\ActionProperty;
 use Webmis\Models\ActionPropertyQuery;
@@ -65,9 +67,9 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
     protected $value;
 
     /**
-     * @var        ActionProperty
+     * @var        ActionProperty one-to-one related ActionProperty object
      */
-    protected $aActionProperty;
+    protected $singleActionProperty;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -88,6 +90,12 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $actionPropertysScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -155,10 +163,6 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
         if ($this->id !== $v) {
             $this->id = $v;
             $this->modifiedColumns[] = ActionPropertyStringPeer::ID;
-        }
-
-        if ($this->aActionProperty !== null && $this->aActionProperty->getid() !== $v) {
-            $this->aActionProperty = null;
         }
 
 
@@ -277,9 +281,6 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aActionProperty !== null && $this->id !== $this->aActionProperty->getid()) {
-            $this->aActionProperty = null;
-        }
     } // ensureConsistency
 
     /**
@@ -319,7 +320,8 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aActionProperty = null;
+            $this->singleActionProperty = null;
+
         } // if (deep)
     }
 
@@ -433,18 +435,6 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their coresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aActionProperty !== null) {
-                if ($this->aActionProperty->isModified() || $this->aActionProperty->isNew()) {
-                    $affectedRows += $this->aActionProperty->save($con);
-                }
-                $this->setActionProperty($this->aActionProperty);
-            }
-
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -454,6 +444,21 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
+            }
+
+            if ($this->actionPropertysScheduledForDeletion !== null) {
+                if (!$this->actionPropertysScheduledForDeletion->isEmpty()) {
+                    ActionPropertyQuery::create()
+                        ->filterByPrimaryKeys($this->actionPropertysScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->actionPropertysScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->singleActionProperty !== null) {
+                if (!$this->singleActionProperty->isDeleted() && ($this->singleActionProperty->isNew() || $this->singleActionProperty->isModified())) {
+                        $affectedRows += $this->singleActionProperty->save($con);
+                }
             }
 
             $this->alreadyInSave = false;
@@ -594,22 +599,16 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            // We call the validate method on the following object(s) if they
-            // were passed to this object by their coresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aActionProperty !== null) {
-                if (!$this->aActionProperty->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aActionProperty->getValidationFailures());
-                }
-            }
-
-
             if (($retval = ActionPropertyStringPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
+
+                if ($this->singleActionProperty !== null) {
+                    if (!$this->singleActionProperty->validate($columns)) {
+                        $failureMap = array_merge($failureMap, $this->singleActionProperty->getValidationFailures());
+                    }
+                }
 
 
             $this->alreadyInValidation = false;
@@ -689,8 +688,8 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
             $keys[2] => $this->getvalue(),
         );
         if ($includeForeignObjects) {
-            if (null !== $this->aActionProperty) {
-                $result['ActionProperty'] = $this->aActionProperty->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            if (null !== $this->singleActionProperty) {
+                $result['ActionProperty'] = $this->singleActionProperty->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
             }
         }
 
@@ -857,6 +856,11 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
+            $relObj = $this->getActionProperty();
+            if ($relObj) {
+                $copyObj->setActionProperty($relObj->copy($deepCopy));
+            }
+
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -906,56 +910,53 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
         return self::$peer;
     }
 
+
     /**
-     * Declares an association between this object and a ActionProperty object.
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
      *
-     * @param             ActionProperty $v
+     * @param string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+    }
+
+    /**
+     * Gets a single ActionProperty object, which is related to this object by a one-to-one relationship.
+     *
+     * @param PropelPDO $con optional connection object
+     * @return ActionProperty
+     * @throws PropelException
+     */
+    public function getActionProperty(PropelPDO $con = null)
+    {
+
+        if ($this->singleActionProperty === null && !$this->isNew()) {
+            $this->singleActionProperty = ActionPropertyQuery::create()->findPk($this->getPrimaryKey(), $con);
+        }
+
+        return $this->singleActionProperty;
+    }
+
+    /**
+     * Sets a single ActionProperty object as related to this object by a one-to-one relationship.
+     *
+     * @param             ActionProperty $v ActionProperty
      * @return ActionPropertyString The current object (for fluent API support)
      * @throws PropelException
      */
     public function setActionProperty(ActionProperty $v = null)
     {
-        if ($v === null) {
-            $this->setid(NULL);
-        } else {
-            $this->setid($v->getid());
+        $this->singleActionProperty = $v;
+
+        // Make sure that that the passed-in ActionProperty isn't already associated with this object
+        if ($v !== null && $v->getActionPropertyString(null, false) === null) {
+            $v->setActionPropertyString($this);
         }
-
-        $this->aActionProperty = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ActionProperty object, it will not be re-added.
-        if ($v !== null) {
-            $v->addActionPropertyString($this);
-        }
-
 
         return $this;
-    }
-
-
-    /**
-     * Get the associated ActionProperty object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return ActionProperty The associated ActionProperty object.
-     * @throws PropelException
-     */
-    public function getActionProperty(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aActionProperty === null && ($this->id !== null) && $doQuery) {
-            $this->aActionProperty = ActionPropertyQuery::create()->findPk($this->id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aActionProperty->addActionPropertyStrings($this);
-             */
-        }
-
-        return $this->aActionProperty;
     }
 
     /**
@@ -989,14 +990,17 @@ abstract class BaseActionPropertyString extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aActionProperty instanceof Persistent) {
-              $this->aActionProperty->clearAllReferences($deep);
+            if ($this->singleActionProperty) {
+                $this->singleActionProperty->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aActionProperty = null;
+        if ($this->singleActionProperty instanceof PropelCollection) {
+            $this->singleActionProperty->clearIterator();
+        }
+        $this->singleActionProperty = null;
     }
 
     /**

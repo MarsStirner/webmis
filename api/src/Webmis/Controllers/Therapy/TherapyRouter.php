@@ -20,6 +20,9 @@ class TherapyRouter implements ControllerProviderInterface
 		$dirRouter = $app['controllers_factory'];
 
 		$dirRouter->get('/', getController('Therapy/list'));
+		$dirRouter->get('/last4event/{eventId}', getController('Therapy/last'));
+		$dirRouter->get('/rest4patient/{patientId}', getController('Therapy/rest'));
+		//rest4patient
 
 		return $dirRouter;
 	}

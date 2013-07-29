@@ -5,9 +5,9 @@
     <column name="index" phpName="index" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
     <column name="value" phpName="value" type="DATE" required="false"/>
 
-    <foreign-key foreignTable="ActionProperty" name="ActionProperty_Date" onDelete="CASCADE" onUpdate="CASCADE">
+<!--     <foreign-key foreignTable="ActionProperty" name="ActionProperty_Date" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="id" foreign="id"/>
-    </foreign-key>
+    </foreign-key> -->
 
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>

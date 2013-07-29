@@ -250,8 +250,6 @@ abstract class BaseActionPropertyDateQuery extends ModelCriteria
      * $query->filterByid(array('max' => 12)); // WHERE id <= 12
      * </code>
      *
-     * @see       filterByActionProperty()
-     *
      * @param     mixed $id The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
@@ -371,7 +369,7 @@ abstract class BaseActionPropertyDateQuery extends ModelCriteria
     /**
      * Filter the query by a related ActionProperty object
      *
-     * @param   ActionProperty|PropelObjectCollection $actionProperty The related object(s) to use as filter
+     * @param   ActionProperty|PropelObjectCollection $actionProperty  the related object to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return                 ActionPropertyDateQuery The current query, for fluid interface
@@ -383,12 +381,10 @@ abstract class BaseActionPropertyDateQuery extends ModelCriteria
             return $this
                 ->addUsingAlias(ActionPropertyDatePeer::ID, $actionProperty->getid(), $comparison);
         } elseif ($actionProperty instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
             return $this
-                ->addUsingAlias(ActionPropertyDatePeer::ID, $actionProperty->toKeyValue('PrimaryKey', 'id'), $comparison);
+                ->useActionPropertyQuery()
+                ->filterByPrimaryKeys($actionProperty->getPrimaryKeys())
+                ->endUse();
         } else {
             throw new PropelException('filterByActionProperty() only accepts arguments of type ActionProperty or PropelCollection');
         }
