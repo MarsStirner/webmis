@@ -7,7 +7,7 @@ define(function(require) {
 
     return View.extend({
         initialize: function() {
-            console.log('initialize close appeal popup', this);
+            //console.log('initialize close appeal popup', this);
 
         },
         //template:'',
@@ -16,7 +16,7 @@ define(function(require) {
             'change #results':'validate'
         },
         validate: function(){
-            console.log(this.ui.$results.val())
+            //console.log(this.ui.$results.val())
             if(this.ui.$results.val() != '...'){
                 this.ui.$saveButton.button('enable');
             }else{
@@ -107,6 +107,16 @@ define(function(require) {
 
 
         },
+
+        data: function(){
+            var data = {};
+
+            data.docs = this.docs4closing.toJSON();
+            data.appealId = this.options.appeal.get('id');
+
+            return data;
+        },
+
         render: function() {
             var self = this;
 
@@ -122,7 +132,7 @@ define(function(require) {
             this.docs4closing.on('change', function() {
 
                 console.log('docs4closing', this.docs4closing.toJSON());
-                this.$el.html(_.template(template, this.docs4closing.toJSON(),{variable:'data'}));
+                this.$el.html(_.template(template, this.data(),{variable:'data'}));
 
                 this.ui.$appealCloseDate = this.$('.appeal-close-date');
                 this.ui.$appealCloseTime = this.$('.appeal-close-time');
