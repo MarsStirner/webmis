@@ -297,6 +297,10 @@ define(function(require) {
 
 
             return this;
+        },
+        close: function(){
+            this.ui.$date.datepicker('destroy');
+
         }
     });
 
