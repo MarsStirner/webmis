@@ -13,7 +13,7 @@
 	<%documents.each(function (document) {%>
 	<tr class="document-item-row" data-document-id="<%=document.id%>">
 		<td><i class="icon-check transparent"> </i></td>
-		<td><%=Core.Date.format(document.get('assessmentDate'))%></td>
+		<td><%=Core.Date.formatDateTime(document.get('assessmentDate'))%></td>
 		<td><%=document.get('assessmentName').name%></td>
 		<td><%=document.get('doctor').name.raw%></td>
 		<td><%=document.get('doctor').specs.name%></td>
