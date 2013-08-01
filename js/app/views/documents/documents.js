@@ -375,6 +375,9 @@ define(function (require) {
 
 		copyValue: function (copyAttr) {
 			this.setValue(this.getCopyValueProperty(copyAttr));
+			if (this.isIdType()) {
+				this.setPropertyValueFor("value", this.getPropertyByName("value", copyAttr.properties).value);
+			}
 			this.trigger("copy");
 		},
 
@@ -413,10 +416,11 @@ define(function (require) {
 			);
 		},
 
-		getPropertyByName: function (name) {
-			return _.find(this.get('properties'), function (prop) {
+		getPropertyByName: function (name, props) {
+			props = props || this.get('properties');
+			return _.find(props, function (prop) {
 				return prop.name === name;
-			}) || this.get('properties')[this.get('properties').push({name: name, value: ""}) - 1];
+			}) || props[props.push({name: name, value: ""}) - 1];
 		},
 
 		getPropertyValueFor: function (name) {
