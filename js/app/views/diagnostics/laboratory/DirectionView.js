@@ -264,7 +264,7 @@ define(function(require) {
 
 			});
 
-			//console.log('view.analyzesSelected', view.analyzesSelected);
+			console.log('view.analyzesSelected', view.analyzesSelected);
 
 			view.saveButton(false, 'Сохраняем...');
 			view.analyzesSelected.updateAll();
@@ -291,7 +291,8 @@ define(function(require) {
 			view.mkbInputView.close();
 			view.financeSelect.close();
 
-			pubsub.off('person:changed');
+			pubsub.off('executor:changed');
+			pubsub.off('assigner:changed');
 
 			//console.log('close', view);
 

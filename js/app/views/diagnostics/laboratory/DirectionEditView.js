@@ -6,7 +6,7 @@
 //попап редактирования направления на лабисследование
 
 define(function(require) {
-	var tmpl = require('text!templates/diagnostics/laboratory/laboratory-edit-popup.tmpl');
+	var tmpl = require('text!templates/diagnostics/laboratory/direction-edit.tmpl');
 	var popupMixin = require('mixins/PopupMixin');
 	var SelectView = require("views/ui/SelectView");
 	var test4EditTmpl = require('text!templates/diagnostics/laboratory/node-test4edit.html');
