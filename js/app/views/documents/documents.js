@@ -268,7 +268,7 @@ define(function (require) {
 		},
 
 		getTypeId: function () {
-			return this.model.get("typeId");
+			return this.get("typeId");
 		},
 
 		save: function (attrs, options) {
@@ -1859,7 +1859,7 @@ define(function (require) {
 			this.listenTo(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
 
 			new Documents.Views.Edit.CopySourceSelector({
-				typeId: this.getTypeId(),
+				typeId: this.model.getTypeId(),
 				collection: this.copySourceList
 			});
 		},
