@@ -37,41 +37,61 @@ define(function(require) {
 		model: PatientDiagnosis,
 
 		diagKinds: {
-			"final": {
+			"finalMkb": {
 				priority: 0,
 				title: "Заключительный"
 			},
 
-			"clinical": {
+			"mainDiagMkb": {
 				priority: 1,
 				title: "Клинический"
 			},
-			"secondaryToClinical": {
+			"assocDiagMkb": {
 				priority: 2,
 				title: "Сопутствующий к клиническому"
 			},
-			"complicateToClinical": {
+			"diagComplMkb": {
 				priority: 3,
 				title: "Осложнения к клиническому"
 			},
 
-			"admission": {
+			"admissionMkb": {
 				priority: 4,
 				title: "Диагноз при поступлении"
 			},
 
-			"assignment": {
+			"diagReceivedMkb": {
 				priority: 5,
 				title: "Направительный диагноз"
 			},
 
-			"aftereffect": {
+			"aftereffectMkb": {
 				priority: 6,
 				title: "Сопутствующий к направительному"
 			},
-			"attendant": {
+			"attendantMkb": {
 				priority: 7,
 				title: "Осложнения к направительному"
+			},
+			"mainDiagMkbPat": {
+				priority: 8,
+				title: "Патологоанатомический диагноз. Основное заболевание по МКБ"
+			},
+			"complDi1_1_01agMkbPat": {
+				priority: 9,
+				title: "Патологоанатомический диагноз. Осложнения по МКБ"
+			},
+			"assocDiagMkbPat": {
+				priority: 10,
+				title: "Патологоанатомический диагноз. Сопутствующие заболевания по МКБ."
+			},
+			"aftereffectFinalMkb": {
+				priority: 11,
+				title: "Сопутствующий к заключительному клиническому"
+			},
+			"attendantFinalMkb": {
+				priority: 12,
+				title: "Осложнения к заключительному клиническому"
 			}
 		},
 
