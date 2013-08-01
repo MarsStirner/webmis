@@ -11,8 +11,8 @@ define(function(require) {
 	var LabTests = require('collections/diagnostics/laboratory/LabTests');
 	var LabTestsView = require('views/diagnostics/laboratory/LabTestsView');
 
+	var SelectedLabTests = require('collections/diagnostics/laboratory/SelectedLabTests')
 	var SelectedLabTestsView = require('views/diagnostics/laboratory/SelectedLabTestsView');
-	var SelectedLabTestsCollection = require('collections/diagnostics/laboratory/SelectedLabTestsCollection')
 
 	var MkbInputView = require('views/ui/MkbInputView');
 	var PersonDialogView = require('views/ui/PersonDialog');
@@ -76,25 +76,6 @@ define(function(require) {
 
 
 
-			view.selectedLabTestsCollection = new SelectedLabTestsCollection([], {
-				appeal: view.options.appeal
-			});
-
-
-			view.selectedLabTestsCollection.on('updateAll:success', function() {
-				pubsub.trigger('lab-diagnostic:added');
-
-				view.close();
-			});
-
-			view.selectedLabTestsCollection.on('updateAll:error', function(response) {
-				pubsub.trigger('noty', {
-					text: 'Ошибка при создании направления',
-					// text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode,
-					type: 'error'
-				});
-			});
-
 
 			//диагнозы из госпитализации
 			view.appealDiagnosis = view.appeal.getDiagnosis();
@@ -118,8 +99,26 @@ define(function(require) {
 			view.depended(view.labTestsView);
 
 			//выбранные исследования
-			 view.selectedLabTestsView = new SelectedLabTestsView({
-				collection: view.selectedLabTestsCollection,
+
+			view.selectedLabTests = new SelectedLabTests([], {
+				appeal: view.options.appeal
+			});
+
+			view.selectedLabTests.on('updateAll:success', function() {
+				pubsub.trigger('lab-diagnostic:added');
+				view.close();
+			});
+
+			view.selectedLabTests.on('updateAll:error', function(response) {
+				pubsub.trigger('noty', {
+					text: 'Ошибка при создании направления',
+					// text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode,
+					type: 'error'
+				});
+			});
+
+			view.selectedLabTestsView = new SelectedLabTestsView({
+				collection: view.selectedLabTests,
 				patientId: view.options.appeal.get('patient').get('id')
 			});
 
@@ -129,12 +128,14 @@ define(function(require) {
 			view.mkbInputView = new MkbInputView();
 			view.depended(view.mkbInputView);
 
+			//изменение назначившего исследование
 			pubsub.on('assigner:changed', function(assigner) {
 				//console.log('assigner:changed', assigner)
 				view.assigner = assigner;
 				view.ui.$assigner.val(assigner.name.last + ' ' + assigner.name.first + ' ' + assigner.name.middle);
 			});
 
+			//изменение исполнителя исследования
 			pubsub.on('executor:changed', function(executor) {
 				//console.log('executor:changed', executor)
 				view.executor = executor;
@@ -153,7 +154,6 @@ define(function(require) {
 			});
 
 			this.personDialogView.render().open();
-
 		},
 
 
@@ -167,7 +167,6 @@ define(function(require) {
 			});
 
 			this.personDialogView.render().open();
-
 		},
 
 		initFinanseSelect: function() {
@@ -177,8 +176,6 @@ define(function(require) {
 			var financeDictionary = new App.Collections.DictionaryValues([], {
 				name: 'finance'
 			});
-
-			//financeDictionary.fetch();
 
 			view.financeSelect = new SelectView({
 				collection: financeDictionary,
@@ -213,14 +210,14 @@ define(function(require) {
 			// });
 
 			_.each(selected, function(item) {
-				view.selectedLabTestsCollection.add(item.tests)
+				view.selectedLabTests.add(item.tests)
 			});
 
 
 			var startDate = moment(view.ui.$startDate.datepicker("getDate")).format('YYYY-MM-DD');
 			var startTime = view.ui.$startTime.val() + ':00';
 
-			view.selectedLabTestsCollection.forEach(function(model) {
+			view.selectedLabTests.forEach(function(model) {
 				console.log('model', model)
 				var id = model.get('id');
 
@@ -258,10 +255,10 @@ define(function(require) {
 
 			});
 
-			//console.log('view.selectedLabTestsCollection', view.selectedLabTestsCollection);
+			//console.log('view.selectedLabTests', view.selectedLabTests);
 
 			view.saveButton(false, 'Сохраняем...');
-			view.selectedLabTestsCollection.updateAll();
+			view.selectedLabTests.updateAll();
 
 		},
 
@@ -280,6 +277,7 @@ define(function(require) {
 			// view.labsCollectionView.close();
 			view.labTestsView.close();
 			view.selectedLabTestsView.close();
+
 			view.mkbInputView.close();
 			view.financeSelect.close();
 

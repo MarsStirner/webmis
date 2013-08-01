@@ -1,59 +1,57 @@
 //окошко с деревом лабтестов
 define(function(require) {
 
-	//var setOfTestsViewTemplate = require('text!templates/appeal/edit/popups/set-of-tests.tmpl');
-	//var SetOfTests = require('models/diagnostics/SetOfTests');
-	//var nodeTestTmpl = require('text!templates/diagnostics/laboratory/node-test.html');
 	var listTemplate = require('text!templates/diagnostics/laboratory/test-list.html');
-	var ItemView = require('views/diagnostics/laboratory/LabGroupTestView');
+	var ItemView = require('views/diagnostics/laboratory/LabTestView');
 
-	var Tests = require('models/diagnostics/laboratory/SetOfTests');
+	var Test = require('models/diagnostics/laboratory/SetOfTests');
 
 	var SelectedLabTestsView = View.extend({
 		el: 'ul',
 		initialize: function() {
 			var view = this;
 
-			view.collection.on('reset', function() {
+			view.collection.on('reset add remove', function() {
+				console.log('view.collection', view.collection);
 				view.render();
 			});
 
-			// view.collection.on('fetch', function() {
-			// 	//console.log('view.collection',view.collection)
-			// 	view.renderOnFetch();
-			// });
-
-			view.collection.on('change', function() {
-				///console.log('view.collection',view.collection);
-
-			});
-
-			// pubsub.on('lab:click group:parent:click group:click', function() {
-			// 	view.$el.html('');
-			// });
-
 			pubsub.on('test:click', function(code) {
-				console.log('test:click',code);
-				var test = new Tests({
-                    code: code,
-                    patientId: view.options.patientId
-                });
+				// console.log('test:click', code);
+				var test = new Test({
+					code: code,
+					patientId: view.options.patientId
+				});
 
-                test.fetch({success: function() {
-                	console.log('success', test)
+				test.fetch({
+					success: function() {
+						console.log('success', test)
+						view.collection.add(test);
+						view.setExecutorFromTest(test);
 
-                }});
 
-				// view.collection.fetch({
-				// 	data: {
-				// 		'patientId': view.options.patientId,
-				// 		'filter[code]': code
-				// 	}
-				// });
+					}
+				});
+
 			});
 
-			//view.testCollection = view.options.testCollection;
+		},
 
+
+		setExecutorFromTest: function(test) {
+			if (test.getProperty('doctorFirstName', 'value')) {
+				var executor = {
+					id: test.getProperty('executorId', 'value'),
+					name: {
+						first: test.getProperty('doctorFirstName', 'value'),
+						middle: test.getProperty('doctorMiddleName', 'value'),
+						last: test.getProperty('doctorLastName', 'value')
+					}
+				}
+
+				pubsub.trigger('executor:changed', executor);
+
+			}
 		},
 
 
@@ -68,8 +66,6 @@ define(function(require) {
 			return data;
 		},
 
-
-
 		renderAll: function(testsData) {
 			var view = this;
 			//console.log('renderAll', testsData, view);
@@ -80,7 +76,7 @@ define(function(require) {
 			//view.$tests_list.append(_.template(listTemplate , {}));
 
 			this.collection.each(function(model) {
-				//console.log('collection item', model);
+				console.log('collection item', model);
 				var itemView = new ItemView({
 					model: model,
 					collection: view.collection,

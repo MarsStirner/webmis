@@ -14,6 +14,24 @@ define(function(require) {
             'click .icon': 'onArrowClick',
             'click .title2': 'onTitleClick'
         },
+        initialize: function(options) {
+            //console.log('options', options);
+            this.$el.attr('data-code', this.model.get('code'));
+            this.$el.attr('data-cid', this.model.cid);
+            this.$el.addClass('context-menu-' + this.cid);
+
+            //this.model.on('change:')
+
+        },
+
+        modelData: function() {
+            //console.log('this.model',this.model)
+            var data = _.extend(this.model.toJSON(), {
+                cid: this.model.cid,
+                tests: this.model.getTestList()
+            });
+            return data;
+        },
 
         onTestSelect: function(event) {
             var $target = $(event.target);
@@ -201,23 +219,7 @@ define(function(require) {
             return view.model.tests.deferred;
 
         },
-        initialize: function(options) {
-            //console.log('options', options);
-            this.$el.attr('data-code', this.model.get('code'));
-            this.$el.attr('data-cid', this.model.cid);
-            this.$el.addClass('context-menu-' + this.cid);
 
-            //this.model.on('change:')
-
-        },
-
-        modelData: function() {
-            //console.log('this.model',this.model)
-            var data = _.extend(this.model.toJSON(), {
-                cid: this.model.cid
-            });
-            return data;
-        },
 
         renderTests: function() {
             var view = this;
@@ -229,7 +231,7 @@ define(function(require) {
                 view.ui.$tests.append(_.template('<li <% if(select){%>class="selected"<%}%> ><label><input class="tests-checkbox" type="checkbox" <% if(select){%>checked="checked"<%}%> value="<%= title%>"/><%= title%></label></li>', item))
 
             });
-            view.$el.find('.tests-checkbox').each(function(){
+            view.$el.find('.tests-checkbox').each(function() {
                 $(this).trigger('change');
             })
 
@@ -298,7 +300,7 @@ define(function(require) {
 
             return this;
         },
-        close: function(){
+        close: function() {
             this.ui.$date.datepicker('destroy');
 
         }

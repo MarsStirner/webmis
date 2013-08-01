@@ -8,7 +8,7 @@ define(function(require) {
             this.deferred = this.fetch();
         },
 
-        getTree: function() {
+        getTestList: function() {
 
             //console.log('getTree', this.get('group')[1].attribute)
             var tests = this.get('group')[1].attribute;
@@ -41,15 +41,7 @@ define(function(require) {
                         icon: false,
                         noCustomRender: true,
                         unselectable: unselectable,
-                        select: select,
-                        onCustomRender: function(node) {
-                            var html = '';
-                            html += "<a class='dynatree-title' href='#'>";
-                            html += node.data.title;
-                            html += "</a>";
-
-                            return html;
-                        }
+                        select: select
                     });
 
                 }

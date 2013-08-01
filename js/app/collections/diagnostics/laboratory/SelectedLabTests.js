@@ -1,10 +1,10 @@
 define(function(require) {
 
-	var SelectedTestsCollection = Collection.extend({
+	var SelectedTests = Collection.extend({
 		initialize: function(models, options) {
 			this.options = options;
 			if (!this.options.appeal) {
-				throw new Error('SelectedTestsCollection: Нет appeal')
+				throw new Error('SelectedTests: Нет appeal')
 			}
 		},
 		url: function() {
@@ -40,6 +40,6 @@ define(function(require) {
 	});
 
 
-	return SelectedTestsCollection;
+	return SelectedTests;
 
 });

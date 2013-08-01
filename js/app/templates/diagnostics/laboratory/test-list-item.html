@@ -7,8 +7,16 @@
           <input type="checkbox" class="select">
         </td>
         <td  style="width:95%;">
-          <span class="title2"><%= data.title %></span>
-          <ul class="tests"></ul>
+          <span class="title2"><%= data.name %></span>
+          <ul class="tests">
+            <%_.each(data.tests, function(test){%>
+              <li <% if(test.select){%>class="selected"<%}%> >
+                <label>
+                  <input class="tests-checkbox" type="checkbox" <% if(test.select){%>checked="checked"<%}%> value="<%= test.title%>"/><%= test.title%>
+                </label>
+              </li>
+            <%});%>
+          </ul>
         </td>
         </tr>
     </table>
