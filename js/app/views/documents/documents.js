@@ -33,6 +33,7 @@ define(function (require) {
 
 	//константы
 	var HIDDEN_TYPES = ['JobTicket', 'RLS']; //типы полей, которые не выводятся в ui.
+	var ID_TYPES = ["MKB", "FLATDIRECTORY", "PERSON"];
 	var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
 	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss'; //Формат даты в коммон дата
 	var FLAT_CODES = {
@@ -335,7 +336,7 @@ define(function (require) {
 			var propName;
 			var valuePropertyIndex;
 
-			if (["MKB", "FLATDIRECTORY", "PERSON"].indexOf(this.get("type").toUpperCase()) != -1) {
+			if (this.isIdType()) {
 				propName = "valueId";
 			} else {
 				propName = "value";
@@ -389,8 +390,18 @@ define(function (require) {
 			return this.get("mandatory") === 'true';
 		},
 
+		isIdType: function () {
+			return ID_TYPES.indexOf(this.get("type").toUpperCase()) != -1;
+		},
+
 		hasValue: function () {
 			return !_.isEmpty(this.getValue());
+		},
+
+		cleanValue: function () {
+			return this.
+				setPropertyValueFor("value", "").
+				setPropertyValueFor("valueId", "");
 		},
 
 		convertValueToHtml: function () {
@@ -414,6 +425,7 @@ define(function (require) {
 
 		setPropertyValueFor: function (name, value) {
 			this.getPropertyByName(name).value = value;
+			return this;
 		}
 	});
 	//endregion
@@ -2249,6 +2261,9 @@ define(function (require) {
 		},
 
 		initialize: function () {
+			if (!this.model.isIdType()) {
+				this.model.setPropertyValueFor("valueId", "");
+			}
 			this.mapLayoutAttributes();
 			this.listenTo(this.model, "copy", this.onModelCopy);
 			this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
@@ -2580,6 +2595,10 @@ define(function (require) {
 			return data;
 		},
 
+		/*initialize: function () {
+			this.model.cleanValue();
+		},*/
+
 		setAttributeValue: function () {
 			var data = this.data();
 			this.ui.$code.val(data.mkbCode);
@@ -2607,7 +2626,6 @@ define(function (require) {
 		onMKBCodeChange: function () {
 			var mkbId = this.ui.$code.data('mkb-id');
 			this.model.setPropertyValueFor('valueId', mkbId);
-
 		},
 
 		render: function () {
@@ -2654,6 +2672,8 @@ define(function (require) {
 			}).on("keyup", function () {
 					if (!$(this).val().length) {
 						self.ui.$diagnosis.val("");
+						self.ui.$code.data('mkb-id', "").trigger('change');
+						self.model.setPropertyValueFor('value', "");
 					}
 				});
 
