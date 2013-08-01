@@ -2,7 +2,7 @@
 define(function(require) {
 	var template = require('text!templates/diagnostics/laboratory/labs-list-item.html');
 
-	var GroupOfTestsListView = View.extend({
+	var LabTestsView = View.extend({
 		initialize: function() {
 			var view = this;
 
@@ -10,7 +10,9 @@ define(function(require) {
 				view.$el.html('');
 				view.collection.fetch({
 					data: {
-						'filter[code]': labCode
+						'filter[code]': 2,
+						sortingField: "name",
+						sortingMethod: "asc"
 					}
 				});
 			});
@@ -28,7 +30,7 @@ define(function(require) {
 		renderAll: function(treeData) {
 			var view = this;
 
-			view.$el.html('<div class="tree"></div>');
+			view.$el.html('<input type="text" placeholder="Ключевое слово" style="margin-bottom: .5em;"/><div class="tree"></div>');
 			view.$groups_list = view.$('.tree');
 
 			view.$groups_list.append(_.template(template, {
@@ -45,11 +47,8 @@ define(function(require) {
 				view.$groups_list.find('.clicked').removeClass('clicked');
 				$this.addClass('clicked');
 
-				if ($this.hasClass('parent')) {
-					//pubsub.trigger('group:parent:click');
-					pubsub.trigger('group:click', code);
-				} else {
-					pubsub.trigger('group:click', code);
+				if (!$this.hasClass('parent')) {
+					pubsub.trigger('test:click', code);
 				}
 
 				var code = $(this).data('code');
@@ -84,6 +83,6 @@ define(function(require) {
 	});
 
 
-	return GroupOfTestsListView;
+	return LabTestsView;
 
 });

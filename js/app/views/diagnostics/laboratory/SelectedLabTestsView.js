@@ -7,7 +7,9 @@ define(function(require) {
 	var listTemplate = require('text!templates/diagnostics/laboratory/test-list.html');
 	var ItemView = require('views/diagnostics/laboratory/LabGroupTestView');
 
-	var SetOfTestsView = View.extend({
+	var Tests = require('models/diagnostics/laboratory/SetOfTests');
+
+	var SelectedLabTestsView = View.extend({
 		el: 'ul',
 		initialize: function() {
 			var view = this;
@@ -16,28 +18,38 @@ define(function(require) {
 				view.render();
 			});
 
-			view.collection.on('fetch', function() {
-				//console.log('view.collection',view.collection)
-				view.renderOnFetch();
-			});
+			// view.collection.on('fetch', function() {
+			// 	//console.log('view.collection',view.collection)
+			// 	view.renderOnFetch();
+			// });
 
 			view.collection.on('change', function() {
 				///console.log('view.collection',view.collection);
 
 			});
 
-			pubsub.on('lab:click group:parent:click group:click', function() {
-				view.$el.html('');
-			});
+			// pubsub.on('lab:click group:parent:click group:click', function() {
+			// 	view.$el.html('');
+			// });
 
-			pubsub.on('group:click', function(code) {
-				//console.log('group:click',code);
-				view.collection.fetch({
-					data: {
-						'patientId': view.options.patientId,
-						'filter[code]': code
-					}
-				});
+			pubsub.on('test:click', function(code) {
+				console.log('test:click',code);
+				var test = new Tests({
+                    code: code,
+                    patientId: view.options.patientId
+                });
+
+                test.fetch({success: function() {
+                	console.log('success', test)
+
+                }});
+
+				// view.collection.fetch({
+				// 	data: {
+				// 		'patientId': view.options.patientId,
+				// 		'filter[code]': code
+				// 	}
+				// });
 			});
 
 			//view.testCollection = view.options.testCollection;
@@ -111,6 +123,6 @@ define(function(require) {
 	});
 
 
-	return SetOfTestsView;
+	return SelectedLabTestsView;
 
 });

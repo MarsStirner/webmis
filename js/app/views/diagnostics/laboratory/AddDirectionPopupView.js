@@ -8,56 +8,18 @@ define(function(require) {
 	var popupMixin = require('mixins/PopupMixin');
 	var tmpl = require('text!templates/diagnostics/laboratory/laboratory-popup.tmpl');
 
-	var GroupsCollection = require('collections/diagnostics/laboratory/LabGroups');
-	var GroupTestsCollection = require('collections/diagnostics/laboratory/LabGroupTests');
-	var LabsCollection = require('collections/diagnostics/laboratory/Labs');
+	var LabTests = require('collections/diagnostics/laboratory/LabTests');
+	var LabTestsView = require('views/diagnostics/laboratory/LabTestsView');
 
-	var GroupsView = require('views/diagnostics/laboratory/LabGroupsView');
-	var GroupTestsView = require('views/diagnostics/laboratory/LabGroupTestsView');
-	var LabsCollectionView = require('views/diagnostics/laboratory/LabsView');
+	var SelectedLabTestsView = require('views/diagnostics/laboratory/SelectedLabTestsView');
+	var SelectedLabTestsCollection = require('collections/diagnostics/laboratory/SelectedLabTestsCollection')
+
 	var MkbInputView = require('views/ui/MkbInputView');
 	var PersonDialogView = require('views/ui/PersonDialog');
 	var SelectView = require('views/ui/SelectView');
 
 
-	var TestsCollection = Collection.extend({
-		initialize: function(models, options){
-			this.options = options;
-			if(!this.options.appeal){
-				throw new Error('TestsCollection: Нет appeal')
-			}
-		},
-		url: function() {
-			return DATA_PATH + 'appeals/' + this.options.appeal.get('id') + '/diagnostics/laboratory'
-		},
-		updateAll: function() {
-			var collection = this;
-			options = {
-				dataType: "jsonp",
-				contentType: 'application/json',
-				success: function(data, status) {
-					//console.log('updateAll success', arguments);
-					if (status == 'success') {
-						collection.trigger('updateAll:success', arguments);
-					} else {
-						//collection.trigger('updateAll:error',status);
-					}
-				},
-				error: function(x, status) {
 
-					var response = $.parseJSON(x.responseText);
-					collection.trigger('updateAll:error', response);
-					//console.log('updateAll error', response.exception, response.errorCode, response.errorMessage, arguments);
-				},
-				data: JSON.stringify({
-					data: collection.toJSON()
-				})
-			};
-
-			return Backbone.sync('create', this, options);
-		}
-
-	});
 
 	var LaboratoryPopup = View.extend({
 		template: tmpl,
@@ -114,18 +76,18 @@ define(function(require) {
 
 
 
-			view.testsCollection = new TestsCollection([], {
+			view.selectedLabTestsCollection = new SelectedLabTestsCollection([], {
 				appeal: view.options.appeal
 			});
 
 
-			view.testsCollection.on('updateAll:success', function() {
+			view.selectedLabTestsCollection.on('updateAll:success', function() {
 				pubsub.trigger('lab-diagnostic:added');
 
 				view.close();
 			});
 
-			view.testsCollection.on('updateAll:error', function(response) {
+			view.selectedLabTestsCollection.on('updateAll:error', function(response) {
 				pubsub.trigger('noty', {
 					text: 'Ошибка при создании направления',
 					// text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode,
@@ -133,77 +95,39 @@ define(function(require) {
 				});
 			});
 
-			pubsub.on('group:click group:parent:click', function() {
-				view.testsCollection.reset();
-			}, view);
-
 
 			//диагнозы из госпитализации
 			view.appealDiagnosis = view.appeal.getDiagnosis();
 
 
-			//лаборатории
-			view.labsCollection = new LabsCollection();
+			// лаб.исследования
+			view.laboratoryTests = new LabTests();
 
-			view.labsCollection.setParams({
-				'filter[code]': 2,
-				sortingField: "name",
-				sortingMethod: "asc"
-			});
-
-			view.labsCollectionView = new LabsCollectionView({
-				collection: view.labsCollection
-			});
-
-			view.depended(view.labsCollectionView);
-
-
-			//группы лаб.исследований
-			view.groupsCollection = new GroupsCollection();
-
-			view.groupsCollection.setParams({
+			view.laboratoryTests.setParams({
 				'filter[view]': 'tree',
 				sortingField: "name",
 				sortingMethod: "asc"
 			});
 
-			view.groupsView = new GroupsView({
-				collection: view.groupsCollection
+			view.labTestsView = new LabTestsView({
+				collection: view.laboratoryTests,
+				patientId: view.options.appeal.get('patient').get('id')
 			});
 
 
-			view.depended(view.groupsView);
+			view.depended(view.labTestsView);
 
-
-			//лаб.исследования из определённой группы
-			view.groupTestsCollection = new GroupTestsCollection();
-
-			view.groupTestsCollection.setParams({
-				sortingField: "name",
-				sortingMethod: "asc"
+			//выбранные исследования
+			 view.selectedLabTestsView = new SelectedLabTestsView({
+				collection: view.selectedLabTestsCollection,
+				patientId: view.options.appeal.get('patient').get('id')
 			});
 
-			view.groupTestsView = new GroupTestsView({
-				collection: view.groupTestsCollection,
-				patientId: view.options.appeal.get('patient').get('id') //,
-				//testCollection: view.testCollection
-			});
-
-			view.depended(view.groupTestsView);
+			view.depended(view.selectedLabTestsView);
 
 			//инпут классификатора диагнозов
 			view.mkbInputView = new MkbInputView();
 			view.depended(view.mkbInputView);
-
-
-			view.groupTestsCollection.on('change', function() {
-				var selected = view.groupTestsCollection.filter(function(model) {
-					return model.get('selected') === true;
-				});
-
-				view.saveButton(selected.length);
-
-			});
 
 			pubsub.on('assigner:changed', function(assigner) {
 				//console.log('assigner:changed', assigner)
@@ -216,16 +140,6 @@ define(function(require) {
 				view.executor = executor;
 				view.ui.$executor.val(executor.name.last + ' ' + executor.name.first + ' ' + executor.name.middle);
 			});
-
-			view.groupTestsCollection.on('change:selected', function(model, value, options) {
-				//console.log('change:selected', model, model.tests.getProperty('doctorFirstName', 'value'));
-				if (!view.executor.id) { //если исполнитель не задан взять исполнителя из исследования
-
-
-				}
-			});
-
-
 
 		},
 
@@ -294,19 +208,19 @@ define(function(require) {
 		onSave: function() {
 			var view = this;
 
-			var selected = _.filter(view.groupTestsCollection.models, function(model) {
-				return model.get('selected') === true;
-			});
+			 var selected = [];//_.filter(view.groupTestsCollection.models, function(model) {
+			// 	return model.get('selected') === true;
+			// });
 
 			_.each(selected, function(item) {
-				view.testsCollection.add(item.tests)
+				view.selectedLabTestsCollection.add(item.tests)
 			});
 
 
 			var startDate = moment(view.ui.$startDate.datepicker("getDate")).format('YYYY-MM-DD');
 			var startTime = view.ui.$startTime.val() + ':00';
 
-			view.testsCollection.forEach(function(model) {
+			view.selectedLabTestsCollection.forEach(function(model) {
 				console.log('model', model)
 				var id = model.get('id');
 
@@ -344,10 +258,10 @@ define(function(require) {
 
 			});
 
-			//console.log('view.testsCollection', view.testsCollection);
+			//console.log('view.selectedLabTestsCollection', view.selectedLabTestsCollection);
 
 			view.saveButton(false, 'Сохраняем...');
-			view.testsCollection.updateAll();
+			view.selectedLabTestsCollection.updateAll();
 
 		},
 
@@ -363,9 +277,9 @@ define(function(require) {
 			view.$el.dialog("close");
 			view.remove();
 
-			view.labsCollectionView.close();
-			view.groupsView.close();
-			view.groupTestsView.close();
+			// view.labsCollectionView.close();
+			view.labTestsView.close();
+			view.selectedLabTestsView.close();
 			view.mkbInputView.close();
 			view.financeSelect.close();
 
@@ -387,8 +301,8 @@ define(function(require) {
 
 			view.renderNested(view.mkbInputView, ".mkb");
 
-			view.renderNested(view.labsCollectionView, ".labs");
-			view.labsCollection.fetch();
+			// view.renderNested(view.labsCollectionView, ".labs");
+			// view.labsCollection.fetch();
 
 			view.ui = {};
 			view.ui.$startDate = this.$("#start-date");
@@ -406,8 +320,11 @@ define(function(require) {
 			//селект вида оплаты
 			view.initFinanseSelect();
 
-			view.groupsView.setElement(this.$el.find('.groups'));
-			view.groupTestsView.setElement(this.$el.find('.group-tests'));
+			view.labTestsView.setElement(this.$el.find('.groups'));
+
+			view.selectedLabTestsView.setElement(this.$el.find('.group-tests'));
+
+			pubsub.trigger('lab:click');
 
 
 
