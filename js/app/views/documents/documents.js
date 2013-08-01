@@ -2714,6 +2714,12 @@ define(function (require) {
 		onDirectoryReady: function () {
 			//this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
 			this.render();
+		},
+		onAttributeValueChange: function (event) {
+			if (_.isEmpty(this.getAttributeValue())) {
+				this.model.setPropertyValueFor("value", "");
+			}
+			UIElementBase.prototype.onAttributeValueChange.call(this, event);
 		}
 	});
 
