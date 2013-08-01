@@ -1,14 +1,14 @@
   <td>
     <table>
       <tr>
-        <td class="icons" style="width:5%;">
-          <span class="icon icon-closed icon-caret-right"></span>
-          <span class="icon icon-open icon-caret-down"></span>
-          <input type="checkbox" class="select">
+        <td class="icons <% if(data.tests.length > 0){%>closed<%}%>" style="width:3%;">
+          <span class="icon icon-closed icon-caret-right" style="cursor:pointer;"></span>
+          <span class="icon icon-open icon-caret-down" style="cursor:pointer;"></span>
+          <!-- <input type="checkbox" class="select"> -->
         </td>
         <td  style="width:95%;">
-          <span class="title2"><%= data.name %></span>
-          <ul class="tests">
+          <span class="title2" <% if(data.tests.length > 0){%>style="cursor:pointer;"<%}%>><%= data.name %></span>
+          <ul class="tests" style="display:none;">
             <%_.each(data.tests, function(test){%>
               <li <% if(test.select){%>class="selected"<%}%> >
                 <label>
@@ -22,7 +22,7 @@
     </table>
   </td>
   <td style="width:3em;">
-    <input type="checkbox" class="cito">
+    <label><input type="checkbox" class="cito"></label>
   </td>
   <td style="width:8.5em;">
     <div class="date">

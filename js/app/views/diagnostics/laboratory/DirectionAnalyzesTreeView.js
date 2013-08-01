@@ -1,8 +1,8 @@
 //окошко с деревом групп лабораторных исследований
 define(function(require) {
-	var template = require('text!templates/diagnostics/laboratory/labs-list-item.html');
+	var template = require('text!templates/diagnostics/laboratory/direction-analyzes-tree.html');
 
-	var LabTestsView = View.extend({
+	var AnalyzesTreeView = View.extend({
 		initialize: function() {
 			var view = this;
 
@@ -31,9 +31,9 @@ define(function(require) {
 			var view = this;
 
 			view.$el.html('<input type="text" placeholder="Ключевое слово" style="margin-bottom: .5em;"/><div class="tree"></div>');
-			view.$groups_list = view.$('.tree');
+			view.$analyzesList = view.$('.tree');
 
-			view.$groups_list.append(_.template(template, {
+			view.$analyzesList.append(_.template(template, {
 				items: treeData,
 				template: template
 			})).on('click', 'li', function(event) {
@@ -44,11 +44,11 @@ define(function(require) {
 				$this.siblings().removeClass('open').addClass('closed');
 				$this.toggleClass('open').toggleClass('closed').addClass('clicked');
 
-				view.$groups_list.find('.clicked').removeClass('clicked');
+				view.$analyzesList.find('.clicked').removeClass('clicked');
 				$this.addClass('clicked');
 
 				if (!$this.hasClass('parent')) {
-					pubsub.trigger('test:click', code);
+					pubsub.trigger('analysis:click', code);
 				}
 
 				var code = $(this).data('code');
@@ -83,6 +83,6 @@ define(function(require) {
 	});
 
 
-	return LabTestsView;
+	return AnalyzesTreeView;
 
 });

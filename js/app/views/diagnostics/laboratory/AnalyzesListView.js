@@ -10,8 +10,8 @@ define(function(require) {
 	var laboratoryDiagsForm = require('models/diagnostics/laboratory/laboratory-diag-form');
 
 	var GridView = require('views/grid');
-	var AddDirectionPopupView = require('views/diagnostics/laboratory/AddDirectionPopupView');
-	var EditDirectionPopupView = require('views/diagnostics/laboratory/EditDirectionPopupView');
+	var AddDirectionPopupView = require('views/diagnostics/laboratory/DirectionView');
+	var EditDirectionPopupView = require('views/diagnostics/laboratory/DirectionEditView');
 
 	var template = require('text!templates/diagnostics/laboratory/laboratory-page.tmpl');
 

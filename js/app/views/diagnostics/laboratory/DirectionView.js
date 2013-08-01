@@ -6,22 +6,20 @@
 define(function(require) {
 
 	var popupMixin = require('mixins/PopupMixin');
-	var tmpl = require('text!templates/diagnostics/laboratory/laboratory-popup.tmpl');
+	var tmpl = require('text!templates/diagnostics/laboratory/direction.tmpl');
 
-	var LabTests = require('collections/diagnostics/laboratory/LabTests');
-	var LabTestsView = require('views/diagnostics/laboratory/LabTestsView');
+	var Analyzes = require('collections/diagnostics/laboratory/Analyzes');
+	var AnalyzesTreeView = require('views/diagnostics/laboratory/DirectionAnalyzesTreeView');
 
-	var SelectedLabTests = require('collections/diagnostics/laboratory/SelectedLabTests')
-	var SelectedLabTestsView = require('views/diagnostics/laboratory/SelectedLabTestsView');
+	var AnalyzesSelected = require('collections/diagnostics/laboratory/AnalyzesSelected')
+	var AnalyzesSelectedView = require('views/diagnostics/laboratory/DirectionAnalyzesSelectedView');
 
 	var MkbInputView = require('views/ui/MkbInputView');
 	var PersonDialogView = require('views/ui/PersonDialog');
 	var SelectView = require('views/ui/SelectView');
 
 
-
-
-	var LaboratoryPopup = View.extend({
+	var DirectionPopup = View.extend({
 		template: tmpl,
 		className: "popup",
 
@@ -32,13 +30,12 @@ define(function(require) {
 		},
 		initialize: function() {
 			_.bindAll(this);
-			//console.log('initialize add lab popup', this.options.appeal.toJSON());
 
 			var view = this;
 			var appealDoctor = this.options.appeal.get('execPerson');
-
+			//назначивший исследование
 			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
-				//юзер не врач
+				//если юзер не врач
 				view.assigner = {
 					id: appealDoctor.id,
 					name: {
@@ -49,8 +46,7 @@ define(function(require) {
 				};
 
 			} else {
-				//юзер врач
-
+				//если юзер врач
 				view.assigner = {
 					id: Core.Cookies.get("userId"),
 					name: {
@@ -61,6 +57,7 @@ define(function(require) {
 				};
 			}
 
+			//исполнитель
 			view.executor = {
 				id: '',
 				name: {
@@ -72,44 +69,50 @@ define(function(require) {
 
 
 			view.appeal = view.options.appeal;
-			//console.log('appeal', view.appeal);
-
-
 
 
 			//диагнозы из госпитализации
 			view.appealDiagnosis = view.appeal.getDiagnosis();
 
 
-			// лаб.исследования
-			view.laboratoryTests = new LabTests();
+			// коллекция с деревом лаб.исследований
+			view.analyzes = new Analyzes();
 
-			view.laboratoryTests.setParams({
+			view.analyzes.setParams({
 				'filter[view]': 'tree',
 				sortingField: "name",
 				sortingMethod: "asc"
 			});
 
-			view.labTestsView = new LabTestsView({
-				collection: view.laboratoryTests,
+			// вью для коллекции с деревом лаб.исследований
+			view.analyzesTreeView = new AnalyzesTreeView({
+				collection: view.analyzes,
 				patientId: view.options.appeal.get('patient').get('id')
 			});
 
+			view.depended(view.analyzesTreeView);
 
-			view.depended(view.labTestsView);
-
-			//выбранные исследования
-
-			view.selectedLabTests = new SelectedLabTests([], {
+			//коллекция с выбранными лаб.исследованиями
+			view.analyzesSelected = new AnalyzesSelected([], {
 				appeal: view.options.appeal
 			});
 
-			view.selectedLabTests.on('updateAll:success', function() {
+			view.analyzesSelected.on('updateAll:success', function() {
 				pubsub.trigger('lab-diagnostic:added');
 				view.close();
 			});
 
-			view.selectedLabTests.on('updateAll:error', function(response) {
+			view.analyzesSelected.on('add remove', function(){
+
+				if(view.analyzesSelected.length > 0){
+					view.saveButton(true);
+				}else{
+					view.saveButton(false);
+				}
+
+			})
+
+			view.analyzesSelected.on('updateAll:error', function(response) {
 				pubsub.trigger('noty', {
 					text: 'Ошибка при создании направления',
 					// text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode,
@@ -117,12 +120,13 @@ define(function(require) {
 				});
 			});
 
-			view.selectedLabTestsView = new SelectedLabTestsView({
-				collection: view.selectedLabTests,
+			//вью для коллекции с выбранными лаб.исследованиями
+			view.analyzesSelectedView = new AnalyzesSelectedView({
+				collection: view.analyzesSelected,
 				patientId: view.options.appeal.get('patient').get('id')
 			});
 
-			view.depended(view.selectedLabTestsView);
+			view.depended(view.analyzesSelectedView);
 
 			//инпут классификатора диагнозов
 			view.mkbInputView = new MkbInputView();
@@ -144,6 +148,7 @@ define(function(require) {
 
 		},
 
+		//открывает попап для выбора направившего врача
 		openAssignerSelectPopup: function() {
 			this.personDialogView = new PersonDialogView({
 				appeal: this.options.appeal,
@@ -156,7 +161,7 @@ define(function(require) {
 			this.personDialogView.render().open();
 		},
 
-
+		//открывает попап для выбора исполнителя
 		openExecutorSelectPopup: function() {
 			this.personDialogView = new PersonDialogView({
 				appeal: this.options.appeal,
@@ -169,6 +174,7 @@ define(function(require) {
 			this.personDialogView.render().open();
 		},
 
+		//селект выбора типа финансирования
 		initFinanseSelect: function() {
 			var view = this;
 			var appealFinanceId = view.options.appeal.get('appealType').get('finance').get('id');
@@ -186,6 +192,7 @@ define(function(require) {
 			view.depended(view.financeSelect);
 		},
 
+
 		saveButton: function(enabled, msg) {
 			var $saveButton = this.$el.closest(".ui-dialog").find('.save');
 
@@ -202,22 +209,24 @@ define(function(require) {
 
 		},
 
+		//создание выбранных исследований
 		onSave: function() {
 			var view = this;
 
-			 var selected = [];//_.filter(view.groupTestsCollection.models, function(model) {
-			// 	return model.get('selected') === true;
-			// });
+			// var selected = []; //_.filter(view.groupTestsCollection.models, function(model) {
+			// // 	return model.get('selected') === true;
+			// // });
 
-			_.each(selected, function(item) {
-				view.selectedLabTests.add(item.tests)
-			});
+			// _.each(selected, function(item) {
+			// 	view.analyzesSelected.add(item.tests)
+			// });
+			// view.analyzesSelected;
 
 
 			var startDate = moment(view.ui.$startDate.datepicker("getDate")).format('YYYY-MM-DD');
 			var startTime = view.ui.$startTime.val() + ':00';
 
-			view.selectedLabTests.forEach(function(model) {
+			view.analyzesSelected.forEach(function(model) {
 				console.log('model', model)
 				var id = model.get('id');
 
@@ -235,14 +244,14 @@ define(function(require) {
 				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
 
 				model.setProperty('executorId', 'value', view.executor.id);
-				model.setProperty('doctorFirstName', 'value', view.executor.name.first);
-				model.setProperty('doctorLastName', 'value', view.executor.name.last);
-				model.setProperty('doctorMiddleName', 'value', view.executor.name.middle);
+				// model.setProperty('doctorFirstName', 'value', view.executor.name.first);
+				// model.setProperty('doctorLastName', 'value', view.executor.name.last);
+				// model.setProperty('doctorMiddleName', 'value', view.executor.name.middle);
 
 				model.setProperty('assignerId', 'value', view.assigner.id);
-				model.setProperty('assignerFirstName', 'value', view.assigner.name.first);
-				model.setProperty('assignerLastName', 'value', view.assigner.name.last);
-				model.setProperty('assignerMiddleName', 'value', view.assigner.name.middle);
+				// model.setProperty('assignerFirstName', 'value', view.assigner.name.first);
+				// model.setProperty('assignerLastName', 'value', view.assigner.name.last);
+				// model.setProperty('assignerMiddleName', 'value', view.assigner.name.middle);
 
 
 				model.setProperty('finance', 'value', view.ui.$finance.val());
@@ -255,10 +264,10 @@ define(function(require) {
 
 			});
 
-			//console.log('view.selectedLabTests', view.selectedLabTests);
+			//console.log('view.analyzesSelected', view.analyzesSelected);
 
 			view.saveButton(false, 'Сохраняем...');
-			view.selectedLabTests.updateAll();
+			view.analyzesSelected.updateAll();
 
 		},
 
@@ -268,6 +277,7 @@ define(function(require) {
 			view.setElement($element).render();
 		},
 
+		//закрытие попапа
 		close: function() {
 			var view = this;
 			view.ui.$startDate.datepicker('destroy');
@@ -275,8 +285,8 @@ define(function(require) {
 			view.remove();
 
 			// view.labsCollectionView.close();
-			view.labTestsView.close();
-			view.selectedLabTestsView.close();
+			view.analyzesTreeView.close();
+			view.analyzesSelectedView.close();
 
 			view.mkbInputView.close();
 			view.financeSelect.close();
@@ -318,9 +328,9 @@ define(function(require) {
 			//селект вида оплаты
 			view.initFinanseSelect();
 
-			view.labTestsView.setElement(this.$el.find('.groups'));
+			view.analyzesTreeView.setElement(this.$el.find('.groups'));
 
-			view.selectedLabTestsView.setElement(this.$el.find('.group-tests'));
+			view.analyzesSelectedView.setElement(this.$el.find('.group-tests'));
 
 			pubsub.trigger('lab:click');
 
@@ -353,5 +363,5 @@ define(function(require) {
 
 	}).mixin([popupMixin]);
 
-	return LaboratoryPopup;
+	return DirectionPopup;
 });
