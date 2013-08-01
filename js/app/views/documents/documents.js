@@ -2122,6 +2122,13 @@ define(function (require) {
 	});
 
 	Documents.Views.Edit.Examination.DocControls = Documents.Views.Edit.DocControls.extend({
+		goToDocReview: function (resultId) {
+			this.model.trigger("toggle:dividedState", false);
+			App.Router.updateUrl(["appeals", appealId, "documents", resultId].join("/"));
+			dispatcher.trigger("change:viewState", {mode: "SUB_REVIEW", type: "examinations", options: {
+				subId: resultId
+			}});
+		},
 		returnToList: function () {
 			this.model.trigger("toggle:dividedState", false);
 			App.Router.updateUrl(["appeals", appealId, "examinations"].join("/"));
@@ -2158,6 +2165,13 @@ define(function (require) {
 	});
 
 	Documents.Views.Edit.Therapy.DocControls = Documents.Views.Edit.DocControls.extend({
+		goToDocReview: function (resultId) {
+			this.model.trigger("toggle:dividedState", false);
+			App.Router.updateUrl(["appeals", appealId, "documents", resultId].join("/"));
+			dispatcher.trigger("change:viewState", {mode: "SUB_REVIEW", type: "therapy", options: {
+				subId: resultId
+			}});
+		},
 		returnToList: function () {
 			this.model.trigger("toggle:dividedState", false);
 			App.Router.updateUrl(["appeals", appealId, "therapy"].join("/"));
