@@ -32,6 +32,9 @@ define(function(require){
 						label: "Статкарта",
 						handler: this.printStatisticCard
 					}, {
+						label: "Статкарта (Полная версия)",
+						handler: this.printStatisticCardFull
+					}, {
 						label: "Согласие на обследование ВИЧ",
 						handler: this.printConsentToExam
 					}, {
@@ -119,6 +122,20 @@ define(function(require){
 				new App.Views.Print({
 					data: _.extend(PrintAppeal.toJSON(),{age: self.model.getAge()}),
 					template: "f066"
+				});
+			});
+		},
+
+		printStatisticCardFull: function () {
+			var self = this;
+			var PrintAppeal = new App.Models.PrintAppeal({
+				id: this.model.get("id")
+			});
+
+			$.when(PrintAppeal.fetch()).then(function() {
+				new App.Views.Print({
+					data: _.extend(PrintAppeal.toJSON(),{age: self.model.getAge()}),
+					template: "f066Full"
 				});
 			});
 		},
