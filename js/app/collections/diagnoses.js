@@ -5,21 +5,21 @@ define( ["models/diagnosis"], function (){
 		{
 			return this.filter( function ( model )
 			{
-				return ( model.get( "diagnosisKind" ) == "assignment" )
+				return ( model.get( "diagnosisKind" ) == "diagReceivedMkb" )
 			} )
 		},
 		getAftereffects: function ()
 		{
 			return this.filter( function ( model )
 			{
-				return ( model.get( "diagnosisKind" ) == "aftereffect" )
+				return ( model.get( "diagnosisKind" ) == "aftereffectMkb" )
 			} )
 		},
 		getAttendants: function ()
 		{
 			return this.filter( function ( model )
 			{
-				return ( model.get( "diagnosisKind" ) == "attendant" )
+				return ( model.get( "diagnosisKind" ) == "attendantMkb" )
 			} )
 		}
 	})

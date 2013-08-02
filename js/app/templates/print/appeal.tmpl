@@ -104,7 +104,7 @@
 					Диагноз направившего учреждения
 					<span class="EditLine">
 						{{each(i, diagnosis) diagnoses}}
-							{{if diagnosis.diagnosisKind == "assignment"}}
+							{{if diagnosis.diagnosisKind == "diagReceivedMkb"}}
 								${diagnosis.mkb.code} - ${diagnosis.mkb.diagnosis}
 							{{/if}}
 						{{/each}}

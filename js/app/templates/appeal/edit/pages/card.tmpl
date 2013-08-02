@@ -166,7 +166,7 @@
 			<td>
 				{{if diagnoses && diagnoses.length}}
 					{{each(i, diagnosis) diagnoses}}
-						{{if diagnosis.diagnosisKind == "assignment"}}
+						{{if diagnosis.diagnosisKind == "diagReceivedMkb"}}
 							${diagnosis.mkb.code} - ${diagnosis.mkb.diagnosis}
 						{{/if}}
 					{{/each}}
@@ -181,7 +181,7 @@
 			<td>
 				{{if diagnoses && diagnoses.length}}
 					{{each(i, diagnosis) diagnoses}}
-						{{if diagnosis.diagnosisKind == "assignment"}}
+						{{if diagnosis.diagnosisKind == "diagReceivedMkb"}}
 							{{html diagnosis.description}}
 						{{/if}}
 					{{/each}}

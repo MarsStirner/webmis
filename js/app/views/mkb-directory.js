@@ -249,7 +249,12 @@ define(["text!templates/mkb-directory.tmpl", "models/mkb-directory"], function (
 
 		onConfirmSelectionClick: function () {
 			// TODO: имя ивента поменять на 'mkb:confirmed', возвращать .toJSON()
-			this.trigger("selectionConfirmed", {selectedDiagnosis: this.selectedDiagnosis});
+			if (this.diagnosis) {
+				this.diagnosis.trigger("selectionConfirmed", {selectedDiagnosis: this.selectedDiagnosis});
+			} else {
+				this.trigger("selectionConfirmed", {selectedDiagnosis: this.selectedDiagnosis});
+			}
+
 
 			//this.close();
 		},
@@ -397,7 +402,8 @@ define(["text!templates/mkb-directory.tmpl", "models/mkb-directory"], function (
 			return this;
 		},
 
-		open: function () {
+		open: function (options) {
+			this.diagnosis = options ? options.diagnosis : undefined;
 			//$(".ui-dialog-titlebar").hide();
 			this.$el.dialog("open");
 

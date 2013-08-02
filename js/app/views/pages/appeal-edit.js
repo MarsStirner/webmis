@@ -12,6 +12,9 @@ define([
 	"views/pages/appeal-representative",
 	"views/appeals-history"
 ], function (representativeTmpl, Widget) {
+
+	var mkbDirView;
+
 	App.Views.AppealEdit = Form.extend({
 		model: App.Models.Appeal,
 
@@ -31,6 +34,7 @@ define([
 			Cache.Patient.fetch({
 				success: function () {
 					view.loadTemplate("pages/appeal-edit");
+					mkbDirView = (new App.Views.MkbDirectory()).render();
 				}
 			});
 
@@ -169,7 +173,7 @@ define([
 				//collection: diagnoses
 			});
 
-			if (model.get("diagnosisKind") == "assignment") {
+			if (model.get("diagnosisKind") == "diagReceivedMkb") {
 				diagnosisView.on("diagnosis:change", function (event) {
 					this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
 				}, this);
@@ -178,9 +182,9 @@ define([
 			this.depended(diagnosisView);
 
 			var selectors = {
-				assignment: "#diagnosis-assignments",
-				aftereffect: "#diagnosis-aftereffects",
-				attendant: "#diagnosis-attendants"
+				diagReceivedMkb: "#diagnosis-assignments",
+				aftereffectMkb: "#diagnosis-aftereffects",
+				attendantMkb: "#diagnosis-attendants"
 			};
 
 			this.$el.find(selectors[model.get("diagnosisKind")]).append(diagnosisView.render().el);
@@ -448,21 +452,21 @@ define([
 			if (Diagnoses.getAssignments() < 1) {
 				DiagnosisModel = new App.Models.Diagnosis;
 				DiagnosisModel.set({
-					diagnosisKind: "assignment"
+					diagnosisKind: "diagReceivedMkb"
 				});
 				Diagnoses.add(DiagnosisModel);
 			}
 			if (Diagnoses.getAftereffects() < 1) {
 				DiagnosisModel = new App.Models.Diagnosis;
 				DiagnosisModel.set({
-					diagnosisKind: "aftereffect"
+					diagnosisKind: "aftereffectMkb"
 				});
 				Diagnoses.add(DiagnosisModel);
 			}
 			if (Diagnoses.getAttendants() < 1) {
 				DiagnosisModel = new App.Models.Diagnosis;
 				DiagnosisModel.set({
-					diagnosisKind: "attendant"
+					diagnosisKind: "attendantMkb"
 				});
 				Diagnoses.add(DiagnosisModel);
 			}
@@ -607,16 +611,6 @@ define([
 
 		initialize: function () {
 			var mkb = this.model.get("mkb");
-
-			this.mkbDirView = new App.Views.MkbDirectory();
-
-			this.mkbDirView.on("selectionConfirmed", function (event) {
-				mkb.set({
-					code: event.selectedDiagnosis.get("code") || event.selectedDiagnosis.get("id"),
-					diagnosis: event.selectedDiagnosis.get("diagnosis")
-				});
-			}, this);
-
 			mkb.on("change", function () {
 				this.$("input[name='diagnosis[mkb][code]']").val(mkb.get("code"));
 				this.$("input[name='diagnosis[mkb][diagnosis]']").val(mkb.get("diagnosis"));
@@ -629,10 +623,18 @@ define([
 				//this.$("input[name='injury']").toggleClass("Mandatory", mkb.get("code") && mkb.get("code")[0].toUpperCase() === "S");
 
 			}, this);
+			this.model.on("selectionConfirmed", this.onSelectionConfirmed, this);
 		},
 
 		launchMKB: function () {
-			this.mkbDirView.open();
+			mkbDirView.open({diagnosis: this.model});
+		},
+
+		onSelectionConfirmed: function (event) {
+			this.model.get("mkb").set({
+				code: event.selectedDiagnosis.get("code") || event.selectedDiagnosis.get("id"),
+				diagnosis: event.selectedDiagnosis.get("diagnosis")
+			});
 		},
 
 		onMKBCodeKeyUp: function (event) {
@@ -655,7 +657,7 @@ define([
 
 			this.$el.html($("#appeal-edit-diagnosis").tmpl({mkb: this.model.get("mkb").toJSON()}));
 
-			this.mkbDirView.render();
+			//this.mkbDirView.render();
 
 			this.model.connect("description", "diagnosis[description]", this.$el);
 
