@@ -166,7 +166,7 @@
 			<td>
 				{{if diagnoses && diagnoses.length}}
 					{{each(i, diagnosis) diagnoses}}
-						{{if diagnosis.diagnosisKind == "assignment"}}
+						{{if diagnosis.diagnosisKind == "diagReceivedMkb"}}
 							${diagnosis.mkb.code} - ${diagnosis.mkb.diagnosis}
 						{{/if}}
 					{{/each}}
@@ -181,7 +181,7 @@
 			<td>
 				{{if diagnoses && diagnoses.length}}
 					{{each(i, diagnosis) diagnoses}}
-						{{if diagnosis.diagnosisKind == "assignment"}}
+						{{if diagnosis.diagnosisKind == "diagReceivedMkb"}}
 							{{html diagnosis.description}}
 						{{/if}}
 					{{/each}}
@@ -235,26 +235,26 @@
 				</tr>
 			{{/each}}
 		{{/if}}
-		{{if nextHospDate || nextHospDepartment || nextHospFinanceType}}
+		{{if leaved.nextHospDate || leaved.nextHospDepartment || leaved.nextHospFinanceType}}
 			<tr>
 				<td colspan="2" style="padding-top: 2em;"><b style="color: black;">Информация о следующей госпитализации</b></td>
 			</tr>
-			{{if nextHospDate}}
+			{{if leaved.nextHospDate}}
 				<tr>
 					<td>Дата следующей госпитализации</td>
-					<td>${nextHospDate}</td>
+					<td>${leaved.nextHospDate}</td>
 				</tr>
 			{{/if}}
-			{{if nextHospDepartment}}
+			{{if leaved.nextHospDepartment}}
 				<tr>
 					<td>Отделение госпитализации</td>
-					<td>${nextHospDepartment}</td>
+					<td>${leaved.nextHospDepartment}</td>
 				</tr>
 			{{/if}}
-			{{if nextHospFinanceType}}
+			{{if leaved.nextHospFinanceType}}
 				<tr>
 					<td>Тип финансирования</td>
-					<td>${nextHospFinanceType}</td>
+					<td>${leaved.nextHospFinanceType}</td>
 				</tr>
 			{{/if}}
 		{{/if}}

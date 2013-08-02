@@ -356,9 +356,11 @@ define([
 			havePrimary: false,
 			setPerson: {},
 			contract: {},
-			nextHospDate: null,
-			nextHospDepartment: null,
-			nextHospFinanceType: null
+			leaved: {
+				nextHospDate: null,
+				nextHospDepartment: null,
+				nextHospFinanceType: null
+			}
 		},
 		relations: [
 			{

@@ -3,7 +3,7 @@ define( ["models/mkb"], function ()
 	App.Models.Diagnosis = Model.extend({
 		defaults: {
 			diagnosticId: "",
-			diagnosisKind: "assignment",
+			diagnosisKind: "diagReceivedMkb",
 			description: "",
 			mkb: {}
 		},

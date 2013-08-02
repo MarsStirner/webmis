@@ -156,21 +156,21 @@
 		<div class="Diagnosis">
 			{{each(i, diagnosis) diagnoses}}
 				{{if diagnosis.diagnosisKind && diagnosis.mkb && diagnosis.mkb.code}}
-					{{if diagnosis.diagnosisKind == "assignment"}}
+					{{if diagnosis.diagnosisKind == "diagReceivedMkb"}}
 						<h3>Направительный диагноз</h3>
-					{{else diagnosis.diagnosisKind == "admission"}}
+					{{else diagnosis.diagnosisKind == "admissionMkb"}}
 						<h3>Диагноз при поступлении</h3>
-					{{else diagnosis.diagnosisKind == "clinical"}}
+					{{else diagnosis.diagnosisKind == "mainDiagMkb"}}
 						<h3>Клинический диагноз</h3>
-					{{else diagnosis.diagnosisKind == "final"}}
+					{{else diagnosis.diagnosisKind == "finalMkb"}}
 						<h3>Заключительный диагноз</h3>
-					{{else diagnosis.diagnosisKind == "aftereffect"}}
+					{{else diagnosis.diagnosisKind == "aftereffectMkb"}}
 						<h3>Сопутствующий к направительному</h3>
-					{{else diagnosis.diagnosisKind == "attendant"}}
+					{{else diagnosis.diagnosisKind == "attendantMkb"}}
 						<h3>Осложнения к направительному</h3>
-					{{else diagnosis.diagnosisKind == "secondaryToClinical"}}
+					{{else diagnosis.diagnosisKind == "assocDiagMkb"}}
 						<h3>Сопутствующий к клиническому</h3>
-					{{else diagnosis.diagnosisKind == "complicateToClinical"}}
+					{{else diagnosis.diagnosisKind == "diagComplMkb"}}
 						<h3>Осложнения к клиническому</h3>
 					{{/if}}
 					<dl>

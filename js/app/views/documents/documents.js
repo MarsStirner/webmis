@@ -33,6 +33,7 @@ define(function (require) {
 
 	//константы
 	var HIDDEN_TYPES = ['JobTicket', 'RLS']; //типы полей, которые не выводятся в ui.
+	var ID_TYPES = ["MKB", "FLATDIRECTORY", "PERSON"];
 	var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
 	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss'; //Формат даты в коммон дата
 	var FLAT_CODES = {
@@ -268,7 +269,7 @@ define(function (require) {
 		},
 
 		getTypeId: function () {
-			return this.model.get("typeId");
+			return this.get("typeId");
 		},
 
 		save: function (attrs, options) {
@@ -335,7 +336,7 @@ define(function (require) {
 			var propName;
 			var valuePropertyIndex;
 
-			if (["MKB", "FLATDIRECTORY", "PERSON"].indexOf(this.get("type").toUpperCase()) != -1) {
+			if (this.isIdType()) {
 				propName = "valueId";
 			} else {
 				propName = "value";
@@ -374,6 +375,9 @@ define(function (require) {
 
 		copyValue: function (copyAttr) {
 			this.setValue(this.getCopyValueProperty(copyAttr));
+			if (this.isIdType()) {
+				this.setPropertyValueFor("value", this.getPropertyByName("value", copyAttr.properties).value);
+			}
 			this.trigger("copy");
 		},
 
@@ -389,8 +393,18 @@ define(function (require) {
 			return this.get("mandatory") === 'true';
 		},
 
+		isIdType: function () {
+			return ID_TYPES.indexOf(this.get("type").toUpperCase()) != -1;
+		},
+
 		hasValue: function () {
 			return !_.isEmpty(this.getValue());
+		},
+
+		cleanValue: function () {
+			return this.
+				setPropertyValueFor("value", "").
+				setPropertyValueFor("valueId", "");
 		},
 
 		convertValueToHtml: function () {
@@ -402,10 +416,11 @@ define(function (require) {
 			);
 		},
 
-		getPropertyByName: function (name) {
-			return _.find(this.get('properties'), function (prop) {
+		getPropertyByName: function (name, props) {
+			props = props || this.get('properties');
+			return _.find(props, function (prop) {
 				return prop.name === name;
-			}) || this.get('properties')[this.get('properties').push({name: name, value: ""}) - 1];
+			}) || props[props.push({name: name, value: ""}) - 1];
 		},
 
 		getPropertyValueFor: function (name) {
@@ -414,6 +429,7 @@ define(function (require) {
 
 		setPropertyValueFor: function (name, value) {
 			this.getPropertyByName(name).value = value;
+			return this;
 		}
 	});
 	//endregion
@@ -1859,7 +1875,7 @@ define(function (require) {
 			this.listenTo(this.copySourceList, "copy-source:selected", this.onCopySourceSelected);
 
 			new Documents.Views.Edit.CopySourceSelector({
-				typeId: this.getTypeId(),
+				typeId: this.model.getTypeId(),
 				collection: this.copySourceList
 			});
 		},
@@ -2106,6 +2122,13 @@ define(function (require) {
 	});
 
 	Documents.Views.Edit.Examination.DocControls = Documents.Views.Edit.DocControls.extend({
+		goToDocReview: function (resultId) {
+			this.model.trigger("toggle:dividedState", false);
+			App.Router.updateUrl(["appeals", appealId, "documents", resultId].join("/"));
+			dispatcher.trigger("change:viewState", {mode: "SUB_REVIEW", type: "examinations", options: {
+				subId: resultId
+			}});
+		},
 		returnToList: function () {
 			this.model.trigger("toggle:dividedState", false);
 			App.Router.updateUrl(["appeals", appealId, "examinations"].join("/"));
@@ -2142,6 +2165,13 @@ define(function (require) {
 	});
 
 	Documents.Views.Edit.Therapy.DocControls = Documents.Views.Edit.DocControls.extend({
+		goToDocReview: function (resultId) {
+			this.model.trigger("toggle:dividedState", false);
+			App.Router.updateUrl(["appeals", appealId, "documents", resultId].join("/"));
+			dispatcher.trigger("change:viewState", {mode: "SUB_REVIEW", type: "therapy", options: {
+				subId: resultId
+			}});
+		},
 		returnToList: function () {
 			this.model.trigger("toggle:dividedState", false);
 			App.Router.updateUrl(["appeals", appealId, "therapy"].join("/"));
@@ -2249,6 +2279,9 @@ define(function (require) {
 		},
 
 		initialize: function () {
+			if (!this.model.isIdType()) {
+				this.model.setPropertyValueFor("valueId", "");
+			}
 			this.mapLayoutAttributes();
 			this.listenTo(this.model, "copy", this.onModelCopy);
 			this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
@@ -2582,6 +2615,10 @@ define(function (require) {
 			return data;
 		},
 
+		/*initialize: function () {
+			this.model.cleanValue();
+		},*/
+
 		setAttributeValue: function () {
 			var data = this.data();
 			this.ui.$code.val(data.mkbCode);
@@ -2609,7 +2646,6 @@ define(function (require) {
 		onMKBCodeChange: function () {
 			var mkbId = this.ui.$code.data('mkb-id');
 			this.model.setPropertyValueFor('valueId', mkbId);
-
 		},
 
 		render: function () {
@@ -2656,6 +2692,8 @@ define(function (require) {
 			}).on("keyup", function () {
 					if (!$(this).val().length) {
 						self.ui.$diagnosis.val("");
+						self.ui.$code.data('mkb-id', "").trigger('change');
+						self.model.setPropertyValueFor('value', "");
 					}
 				});
 
@@ -2696,6 +2734,12 @@ define(function (require) {
 		onDirectoryReady: function () {
 			//this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
 			this.render();
+		},
+		onAttributeValueChange: function (event) {
+			if (_.isEmpty(this.getAttributeValue())) {
+				this.model.setPropertyValueFor("value", "");
+			}
+			UIElementBase.prototype.onAttributeValueChange.call(this, event);
 		}
 	});
 
