@@ -248,6 +248,19 @@ def application(environ, start_response):
 
         return _zeroFirst(birth_date.day) + '.' + _zeroFirst(birth_date.month) + '.' + str(birth_date.year)
 
+
+    def formatTime( path_string, data=dataJSON ):
+        data = data if len(data) > 0 else dataJSON
+        date_string = getData(path_string, data)
+
+        if not len(str(date_string)) > 0:
+            return ''
+
+        birth_date = datetime.datetime.fromtimestamp( int(date_string) / 1000 )
+
+        return _zeroFirst(birth_date.hour)+ ":" + _zeroFirst(birth_date.minute)
+
+
     def formatDateTime( path_string, data=dataJSON ):
         data = data if len(data) > 0 else dataJSON
         date_string = getData(path_string, data)
@@ -410,6 +423,7 @@ def application(environ, start_response):
         conditionIf = conditionIf,
         getAge = getAge,
         formatDate = formatDate,
+        formatTime = formatTime,
         formatDateTime = formatDateTime,
         getFullName = getFullName,
         getShotName = getShotName,
