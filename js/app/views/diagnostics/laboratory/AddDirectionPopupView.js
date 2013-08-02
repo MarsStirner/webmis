@@ -127,7 +127,8 @@ define(function(require) {
 
 			view.testsCollection.on('updateAll:error', function(response) {
 				pubsub.trigger('noty', {
-					text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode,
+					text: 'Ошибка при создании направления',
+					// text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode,
 					type: 'error'
 				});
 			});
@@ -358,6 +359,7 @@ define(function(require) {
 
 		close: function() {
 			var view = this;
+			view.ui.$startDate.datepicker('destroy');
 			view.$el.dialog("close");
 			view.remove();
 

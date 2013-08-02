@@ -325,11 +325,6 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
   cursor: pointer;
   padding: 2px 4px 2px 0px;
 }
-/* line 132, ../sass/modules/_labs.scss */
-.tests li.selected label {
-  background-color: #118EDC;
-  color: #fff;
-}
 
 /* line 138, ../sass/modules/_labs.scss */
 .selected .title2 {
@@ -543,7 +538,7 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
   padding: 2px 4px;
   background-color: #fff;
   margin-bottom: -4px;
-  border: 1px solid #bbb;
+  border: 1px solid #bbbbbb;
 }
 
 /* line 13, ../sass/modules/_biomaterials.scss */
@@ -687,7 +682,7 @@ td.status-code-2, td.status-code-2 .Warning {
 /* line 140, ../sass/modules/_biomaterials.scss */
 .Grid td.highlight-it {
   background: #FFCBCB;
-  border-bottom: 1px solid #CF8E8E;
+  border-bottom: 1px solid #cf8e8e;
 }
 
 /* line 1, ../sass/modules/_vmp.scss */

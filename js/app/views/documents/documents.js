@@ -2317,6 +2317,7 @@ define(function (require) {
 		},
 
 		onAttributeValueChange: function (event) {
+			console.log('onAttributeValueChange',this.getAttributeValue())
 			this.model.setValue(this.getAttributeValue());
 			this.$(".Mandatory").removeClass("WrongField");
 		},
@@ -2460,6 +2461,7 @@ define(function (require) {
 		},
 
 		getAttributeValue: function () {
+			console.log('getAttributeValue',this,this.ui,this.ui.$attributeValueEl.val() )
 			return "1970-01-01 " + this.ui.$attributeValueEl.val() + ':00';
 		},
 
@@ -2476,10 +2478,10 @@ define(function (require) {
 		},
 
 		render: function () {
+			UIElementBase.prototype.render.call(this);
+
 			this.ui = {};
 			this.ui.$attributeValueEl = this.$el.find(".attribute-value");
-
-			UIElementBase.prototype.render.call(this);
 
 			this.ui.$attributeValueEl.mask("99:99");
 
@@ -2519,10 +2521,10 @@ define(function (require) {
 		},
 
 		render: function () {
+			UIElementBase.prototype.render.call(this);
+
 			this.ui = {};
 			this.ui.$input = this.$el.find(".attribute-value");
-
-			UIElementBase.prototype.render.call(this);
 			this.ui.$input.mask(this.inputMaskFormat);
 
 			return this;
@@ -2707,7 +2709,7 @@ define(function (require) {
 		template: templates.uiElements._flatDirectory,
 		data: function () {
 			return {
-				model: this.model, 
+				model: this.model,
 				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())
 			};
 		},
