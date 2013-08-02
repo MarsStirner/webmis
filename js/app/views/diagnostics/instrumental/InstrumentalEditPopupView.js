@@ -116,7 +116,7 @@ define(function(require) {
 		afterRender: function() {
 			var view = this;
 
-			view.$assessmentDatepicker = view.$('#start-date');
+			view.$assessmentDatepicker = view.bfView.$el.find('#start-date');
 			view.$assessmentTimepicker = view.$('#start-time');
 			view.$plannedDatepicker = view.$("#dp");
 			view.$plannedTimepicker = view.$("#tp");
@@ -130,17 +130,32 @@ define(function(require) {
 
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
 
-			view.$assessmentDatepicker.datepicker("setDate", moment(view.viewModel.get('assessmentDay'), 'YYYY-MM-DD').toDate());
-			view.$assessmentTimepicker.val(this.viewModel.get('assessmentTime'));
+			view.$assessmentDatepicker
+			.val(moment(view.viewModel.get('assessmentDay'), 'YYYY-MM-DD').format('DD.MM.YYYY'))
+			.addClass('Disabled')
+			.prop('disabled', true);
+			//datepicker().datepicker("setDate", moment(view.viewModel.get('assessmentDay'), 'YYYY-MM-DD').toDate());
+			view.$assessmentTimepicker
+			.val(view.viewModel.get('assessmentTime'))
+			.addClass('Disabled')
+			.prop('disabled', true);
 
-			// view.$plannedDatepicker.datepicker({
-			// 	minDate:0
+			// .mask("99:99").timepicker({
+			// 	showPeriodLabels: false
 			// });
-			// view.$plannedTimepicker.timepicker({
-			// 	showPeriodLabels: false,
-			// 	showOn: 'both',
-			// 	button: '.icon-time'
+			view.$assessmentDatepicker.datepicker('disable');
+			view.$assessmentTimepicker.datepicker('disable');
+
+			// view.$assessmentDatepicker.on('change', function() {
+			// 	console.log('$assessmentDatepicker',view.$assessmentDatepicker.val())
+			// 	view.viewModel.set('assessmentDay', moment(view.$assessmentDatepicker.val(), 'DD.MM.YYYY').format('YYYY-MM-DD'));
 			// });
+
+			// view.$assessmentTimepicker.on('change', function() {
+			// 	console.log('$assessmentTimepicker',view.$assessmentTimepicker.val())
+			// 	view.viewModel.set('assessmentTime', view.$assessmentTimepicker.val());
+			// });
+
 
 			view.$plannedDatepicker.datepicker({
                 minDate: new Date(),
@@ -196,7 +211,7 @@ define(function(require) {
                 },
                 showPeriodLabels: false,
                 showOn: 'both',
-                button: '.icon-time'
+                button: '.timepicker .icon-time'
             });
 
 
@@ -215,15 +230,7 @@ define(function(require) {
 			//console.log('finance',view.viewModel.get('finance'));
 			view.$finance.select2("val", parseInt(view.viewModel.get('finance')));
 
-			view.$assessmentDatepicker.on('change', function() {
-				console.log('$assessmentDatepicker',view.$assessmentDatepicker.val())
-				view.viewModel.set('assessmentDay', moment(view.$assessmentDatepicker.val(), 'DD.MM.YYYY').format('YYYY-MM-DD'));
-			});
 
-			view.$assessmentTimepicker.on('change', function() {
-				console.log('$assessmentTimepicker',view.$assessmentTimepicker.val())
-				view.viewModel.set('assessmentTime', view.$assessmentTimepicker.val());
-			});
 
 			view.$urgent.on('change', function() {
 				view.viewModel.set('urgent', '' + view.$urgent.prop('checked'));
@@ -291,11 +298,11 @@ define(function(require) {
 
 		}
 		,close: function(){
-                var self = this;
-                //console.log('popup view close',self)
-                self.$el.dialog("close");
+
+                this.$plannedDatepicker.datepicker('destroy');
+                this.$el.dialog("close");
                 this.bfView.close();
-                self.$el.remove();
+                this.$el.remove();
 		}
 	}).mixin([popupMixin]);
 

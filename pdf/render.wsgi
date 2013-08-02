@@ -351,9 +351,9 @@ def application(environ, start_response):
             return '3'
         elif financeCode == 5:
             return '7'
-        elif financeCode == 6:
-            return '5'
         elif financeCode == 7:
+            return '5'
+        elif financeCode == 9:
             return '6'
         else:
             return ''      

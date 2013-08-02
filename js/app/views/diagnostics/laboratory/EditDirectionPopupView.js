@@ -385,6 +385,7 @@ define(function(require) {
 
 		close: function() {
 			this.$el.dialog("close");
+			this.ui.$startDate.datepicker('destroy');
 			this.$el.remove();
 			pubsub.off('assigner:changed');
 			pubsub.off('executor:changed');

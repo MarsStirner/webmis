@@ -63,8 +63,8 @@
 <tr>
 	<td>Исход госпитализации</td>
 	<td>
-		<% if (false) { %>
-			
+		<% if (appeal.leaved && appeal.leaved.hospOutcome) { %>
+			<%= appeal.leaved.hospOutcome %>
 		<% } else { %>
 			-
 		<% } %>
@@ -73,8 +73,8 @@
 <tr>
 	<td>Результат госпитализации</td>
 	<td>
-		<% if (false) { %>
-			
+		<% if (appeal.result && appeal.result.name) { %>
+			<%= appeal.result.name %>
 		<% } else { %>
 			-
 		<% } %>

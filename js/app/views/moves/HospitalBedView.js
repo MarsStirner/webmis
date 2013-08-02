@@ -90,17 +90,17 @@ define(function(require) {
 			//время предпоследнего движения, если нет в последнем то берём из предидущего движения
 			var moveDatetime = this.lastMove.get('admission') || this.previousMove.get('leave') || this.previousMove.get('admission');
 
-			if (this.getMoveNumber() === 2) {
-				this.model.set({
-					'movedFromUnitId': 26
-				});
-			} else {
+			// if (this.getMoveNumber() === 2) {
+			// 	this.model.set({
+			// 		'movedFromUnitId': 26
+			// 	});
+			// } else {
 				if (this.previousMove && this.previousMove.get("unitId")) {
 					this.model.set({
 						'movedFromUnitId': this.previousMove.get("unitId")
 					});
 				}
-			}
+			// }
 
 			this.model.set({
 				'moveDatetime': moveDatetime
