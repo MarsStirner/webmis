@@ -27,7 +27,13 @@ define(function(require) {
 			"click .ShowHidePopup": "close",
 			"click #assigner-outer": "openAssignerSelectPopup",
 			"click #executor-outer": "openExecutorSelectPopup",
-			"change #start-time":"validateForm"
+			"change #start-time": "validateForm"
+		},
+		detach_event: function(e_name) {
+			delete this.events[e_name]
+			this.delegateEvents();
+
+
 		},
 		initialize: function() {
 			_.bindAll(this);
@@ -103,6 +109,8 @@ define(function(require) {
 				view.close();
 			});
 
+			view.analyzesSelected.on('reset add remove', this.executorInputState, this);
+
 			view.analyzesSelected.on('all', function() {
 				view.validateForm();
 			});
@@ -146,18 +154,18 @@ define(function(require) {
 			var view = this;
 			var valid = true;
 
-			if(!view.ui.$assessmentTimepicker.val()){
+			if (!view.ui.$assessmentTimepicker.val()) {
 				valid = false;
 			}
-			if(view.analyzesSelected.length === 0){
+			if (view.analyzesSelected.length === 0) {
 				valid = false;
 			}
 
 			view.analyzesSelected.each(function(analysis) {
-				var plannedEndDate = analysis.getProperty('plannedEndDate','value');
-				console.log('plannedEndDate',plannedEndDate)
+				var plannedEndDate = analysis.getProperty('plannedEndDate', 'value');
+				console.log('plannedEndDate', plannedEndDate)
 
-				if(!moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid()){
+				if (!moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid()) {
 					valid = false;
 				}
 
@@ -195,6 +203,18 @@ define(function(require) {
 			});
 
 			this.personDialogView.render().open();
+		},
+
+		executorInputState: function() {
+			if (this.analyzesSelected.length > 1) {
+				this.detach_event("click #executor-outer");
+				this.$('.change-executor').button('disable');
+
+			} else {
+				this.events['click #executor-outer']= "openExecutorSelectPopup";
+				this.delegateEvents();
+				this.$('.change-executor').button('enable');
+			}
 		},
 
 		//селект выбора типа финансирования
@@ -266,10 +286,13 @@ define(function(require) {
 
 				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
 
-				model.setProperty('executorId', 'value', view.executor.id);
-				// model.setProperty('doctorFirstName', 'value', view.executor.name.first);
-				// model.setProperty('doctorLastName', 'value', view.executor.name.last);
-				// model.setProperty('doctorMiddleName', 'value', view.executor.name.middle);
+				if(view.analyzesSelected.length === 1){
+					model.setProperty('executorId', 'value', view.executor.id);
+					// model.setProperty('doctorFirstName', 'value', view.executor.name.first);
+					// model.setProperty('doctorLastName', 'value', view.executor.name.last);
+					// model.setProperty('doctorMiddleName', 'value', view.executor.name.middle);
+				}
+
 
 				model.setProperty('assignerId', 'value', view.assigner.id);
 				// model.setProperty('assignerFirstName', 'value', view.assigner.name.first);
@@ -434,7 +457,7 @@ define(function(require) {
 
 
 			//до того как выбран тест кнопка сохранить не активна
-			this.$el.closest(".ui-dialog").find('.save');//.button("disable");
+			this.$el.closest(".ui-dialog").find('.save'); //.button("disable");
 
 
 			return view;
