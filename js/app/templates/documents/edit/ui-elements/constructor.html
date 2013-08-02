@@ -10,7 +10,7 @@
 	<div class="RichTextWrapper">
 		<div class="RichText attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
 				 <%=!model.isReadOnly()?'contenteditable="true"':''%>
-				 style="min-height: 8em;"><%=model.getValue() || '<br>'%></div>
+				 style="min-height: 8em;"><%=model.getValue()%></div>
 	</div>
 	</div>
 
