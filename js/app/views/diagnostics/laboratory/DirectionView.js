@@ -145,8 +145,11 @@ define(function(require) {
 			//изменение исполнителя исследования
 			pubsub.on('executor:changed', function(executor) {
 				//console.log('executor:changed', executor)
-				view.executor = executor;
-				view.ui.$executor.val(executor.name.last + ' ' + executor.name.first + ' ' + executor.name.middle);
+				if (view.analyzesSelected.length === 1) {
+					view.executor = executor;
+					view.ui.$executor.val(executor.name.last + ' ' + executor.name.first + ' ' + executor.name.middle);
+				}
+
 			});
 
 		},
@@ -208,10 +211,19 @@ define(function(require) {
 		executorInputState: function() {
 			if (this.analyzesSelected.length > 1) {
 				this.detach_event("click #executor-outer");
+				this.ui.$executor.val('');
 				this.$('.change-executor').button('disable');
+				this.executor = {
+					id: '',
+					name: {
+						first: '',
+						last: '',
+						middle: ''
+					}
+				};
 
 			} else {
-				this.events['click #executor-outer']= "openExecutorSelectPopup";
+				this.events['click #executor-outer'] = "openExecutorSelectPopup";
 				this.delegateEvents();
 				this.$('.change-executor').button('enable');
 			}
@@ -286,7 +298,7 @@ define(function(require) {
 
 				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
 
-				if(view.analyzesSelected.length === 1){
+				if (view.analyzesSelected.length === 1) {
 					model.setProperty('executorId', 'value', view.executor.id);
 					// model.setProperty('doctorFirstName', 'value', view.executor.name.first);
 					// model.setProperty('doctorLastName', 'value', view.executor.name.last);
