@@ -1,17 +1,20 @@
 <?php
-//use Silex\Provider\MonologServiceProvider;
+
 use Webmis\Services\JsonpResponce;
+
+
 
 $app['debug'] = true;
 $app["log.level"] = 100;
 
+require __DIR__.'/db-config.php';
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver'   => 'pdo_mysql',
-        'host'=> '10.1.2.106',//хост базы данных
-        'dbname'=> 's11r64',//имя базы данных
-        'user'=> 'root',//пользователь базы данных
-        'password'=> 'root',//пароль пользователя базы данных
+        'host'=> $db_host,
+        'dbname'=> $db_name,
+        'user'=> $db_user,
+        'password'=> $db_password,
         'charset'=>'utf8'
     ),
 ));
