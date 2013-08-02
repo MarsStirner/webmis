@@ -282,9 +282,12 @@ define(function(require) {
 			//.datepicker('disable')
 			.prop('disabled', true);
 
-			view.ui.$startTime.addClass('Disabled').prop('disabled', true).val(('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2)).mask("99:99").timepicker({
-				showPeriodLabels: false
-			});
+			view.ui.$startTime.addClass('Disabled').prop('disabled', true).val(moment(date).format('HH:mm'));
+			//.mask("99:99");
+
+			// .timepicker({
+			// 	showPeriodLabels: false
+			// });
 
 
 

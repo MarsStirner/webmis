@@ -30,7 +30,7 @@ define(function(require) {
 		renderAll: function(treeData) {
 			var view = this;
 
-			view.$el.html('<input type="text" placeholder="Ключевое слово" style="margin-bottom: .5em;"/><div class="tree"></div>');
+			view.$el.html('<div class="tree"></div>');
 			view.$analyzesList = view.$('.tree');
 
 			view.$analyzesList.append(_.template(template, {
