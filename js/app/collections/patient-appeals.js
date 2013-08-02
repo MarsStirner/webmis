@@ -105,7 +105,12 @@ define(["models/doctor", "models/date", "models/department", "models/diagnosis"]
 					}
 				});
 				_.each(patientAppeal.diagnoses, function (diag) {
-					diag.diagnosisKindLabel = diagKinds[diag.diagnosisKind].title;
+					if (diagKinds[diag.diagnosisKind]) {
+						diag.diagnosisKindLabel = diagKinds[diag.diagnosisKind].title;
+					} else {
+						console.warn("Unknown diagnosisKind:", diag.diagnosisKind);
+						diag.diagnosisKindLabel = diag.diagnosisKind;
+					}
 				});
 			});
 
