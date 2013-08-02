@@ -26,7 +26,8 @@ define(function(require) {
 		events: {
 			"click .ShowHidePopup": "close",
 			"click #assigner-outer": "openAssignerSelectPopup",
-			"click #executor-outer": "openExecutorSelectPopup"
+			"click #executor-outer": "openExecutorSelectPopup",
+			"change #start-time":"validateForm"
 		},
 		initialize: function() {
 			_.bindAll(this);
@@ -102,15 +103,9 @@ define(function(require) {
 				view.close();
 			});
 
-			view.analyzesSelected.on('add remove', function(){
-
-				if(view.analyzesSelected.length > 0){
-					view.saveButton(true);
-				}else{
-					view.saveButton(false);
-				}
-
-			})
+			view.analyzesSelected.on('all', function() {
+				view.validateForm();
+			});
 
 			view.analyzesSelected.on('updateAll:error', function(response) {
 				pubsub.trigger('noty', {
@@ -147,6 +142,34 @@ define(function(require) {
 			});
 
 		},
+		validateForm: function() {
+			var view = this;
+			var valid = true;
+
+			if(!view.ui.$assessmentTimepicker.val()){
+				valid = false;
+			}
+			if(view.analyzesSelected.length === 0){
+				valid = false;
+			}
+
+			view.analyzesSelected.each(function(analysis) {
+				var plannedEndDate = analysis.getProperty('plannedEndDate','value');
+				console.log('plannedEndDate',plannedEndDate)
+
+				if(!moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid()){
+					valid = false;
+				}
+
+
+			});
+
+
+			view.saveButton(valid);
+
+
+		},
+
 
 		//открывает попап для выбора направившего врача
 		openAssignerSelectPopup: function() {
@@ -223,21 +246,21 @@ define(function(require) {
 			// view.analyzesSelected;
 
 
-			var startDate = moment(view.ui.$startDate.datepicker("getDate")).format('YYYY-MM-DD');
-			var startTime = view.ui.$startTime.val() + ':00';
+			var startDate = moment(view.ui.$assessmentDatepicker.datepicker("getDate")).format('YYYY-MM-DD');
+			var startTime = view.ui.$assessmentTimepicker.val() + ':00';
 
 			view.analyzesSelected.forEach(function(model) {
 				console.log('model', model)
 				var id = model.get('id');
 
 
-				var $datepicker = view.$('#start-date-' + id);
+				//var $datepicker = view.$('#start-date-' + id);
 				//console.log('$datepicker', $datepicker.datepicker("getDate"))
-				var date = moment($datepicker.datepicker("getDate")).format('YYYY-MM-DD');
-				var $timepicker = view.$('#start-time-' + id);
+				//var date = moment($datepicker.datepicker("getDate")).format('YYYY-MM-DD');
+				//var $timepicker = view.$('#start-time-' + id);
 				//console.log('timepicker', $timepicker)
-				var time = $timepicker.val() + ':00';
-				model.setProperty('plannedEndDate', 'value', date + ' ' + time);
+				//var time = $timepicker.val() + ':00';
+				//model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 
 
 
@@ -264,7 +287,7 @@ define(function(require) {
 
 			});
 
-			console.log('view.analyzesSelected', view.analyzesSelected);
+			//console.log('view.analyzesSelected', view.analyzesSelected);
 
 			view.saveButton(false, 'Сохраняем...');
 			view.analyzesSelected.updateAll();
@@ -280,8 +303,9 @@ define(function(require) {
 		//закрытие попапа
 		close: function() {
 			var view = this;
-			view.ui.$startDate.datepicker('destroy');
+			view.ui.$assessmentDatepicker.datepicker('destroy');
 			view.$el.dialog("close");
+			view.$el.remove();
 			view.remove();
 
 			// view.labsCollectionView.close();
@@ -314,8 +338,8 @@ define(function(require) {
 			// view.labsCollection.fetch();
 
 			view.ui = {};
-			view.ui.$startDate = this.$("#start-date");
-			view.ui.$startTime = this.$("#start-time");
+			view.ui.$assessmentDatepicker = this.$("#start-date");
+			view.ui.$assessmentTimepicker = this.$("#start-time");
 			view.ui.$mbkCode = view.$("input[name='diagnosis[mkb][code]']");
 			view.ui.$mbkDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
 			view.ui.$finance = view.$('#finance');
@@ -348,15 +372,69 @@ define(function(require) {
 
 			//Дата и время создания
 			var now = new Date();
-			view.ui.$startDate.datepicker();
-			view.ui.$startDate.datepicker("setDate", now);
-			view.ui.$startTime.val(('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2)).mask("99:99").timepicker({
-				showPeriodLabels: false
-			});
+			// view.ui.$assessmentDatepicker.datepicker();
+			// view.ui.$assessmentDatepicker.datepicker("setDate", now);
+
+			view.ui.$assessmentDatepicker.datepicker({
+				minDate: now,
+				onSelect: function(dateText, inst) {
+
+					var day = moment(view.$(this).datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					var hour = view.ui.$assessmentTimepicker.timepicker('getHour');
+					//если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour <= currentHour) {
+							view.ui.$assessmentTimepicker.val('').trigger('change');
+						}
+					}
+				}
+			}).datepicker("setDate", now);
+
+
+			view.ui.$assessmentTimepicker.mask("99:99").timepicker({
+				showPeriodLabels: false,
+				defaultTime: 'now',
+				onHourShow: function(hour) {
+					var day = moment(view.ui.$assessmentDatepicker.datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					//если выбран текущий день, то часы меньше текущего нельзя выбрать
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour < currentHour) {
+							return false;
+						}
+					}
+
+					return true;
+				},
+				onMinuteShow: function(hour, minute) {
+					var day = moment(view.ui.$assessmentDatepicker.datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					var currentMinute = moment().minute();
+					//если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour === currentHour && minute <= currentMinute) {
+							return false;
+						}
+					}
+					return true;
+				},
+				showPeriodLabels: false,
+				showOn: 'both' //,
+				//button: '.bottom-form .icon-time'
+			}).timepicker('setTime', now);
+
+
+			// view.ui.$assessmentTimepicker.val(('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2)).mask("99:99").timepicker({
+			// 	showPeriodLabels: false
+			// });
 
 
 			//до того как выбран тест кнопка сохранить не активна
-			this.$el.closest(".ui-dialog").find('.save').button("disable");
+			this.$el.closest(".ui-dialog").find('.save');//.button("disable");
 
 
 			return view;

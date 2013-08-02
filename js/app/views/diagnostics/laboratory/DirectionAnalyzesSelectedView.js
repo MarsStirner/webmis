@@ -28,14 +28,20 @@ define(function(require) {
 				analysis.fetch({
 					success: function() {
 						console.log('success', analysis)
+						var date = moment(new Date())
+						.startOf('day').add('days', 1).add('hours', 7)
+						.format('YYYY-MM-DD HH:mm:ss');
+
+						analysis.setProperty('plannedEndDate','value', date);
 						view.analyzes.add(analysis);
 						view.setExecutorFromAnalysis(analysis);
-
-
 					}
 				});
 
 			});
+
+
+			this.childViews = [];
 
 		},
 
@@ -75,7 +81,6 @@ define(function(require) {
 			view.$el.html(_.template(analyzesListTemplate, {}));
 			view.$analyzesList = view.$el.find('tbody.item-container');
 
-			//view.$analyzesList.append(_.template(listTemplate , {}));
 
 			this.analyzes.each(function(model) {
 				console.log('analyzes item', model);
@@ -84,6 +89,10 @@ define(function(require) {
 					collection: view.analyzes,
 					patientId: view.options.patientId
 				});
+
+				view.childViews.push(analysisView);
+
+
 
 				view.$analyzesList.append(analysisView.render().el)
 			}, this);
@@ -112,9 +121,15 @@ define(function(require) {
 			return view;
 		},
 		close: function() {
+			var view = this;
 
 			pubsub.off('lab:click group:parent:click group:click');
-			this.analyzes.off();
+			view.analyzes.off();
+
+			_.each(view.childViews, function(childView){
+				console.log('close',view,childView);
+				childView.close();
+			}, view);
 
 		}
 

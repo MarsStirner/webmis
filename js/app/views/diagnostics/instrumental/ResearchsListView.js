@@ -1,3 +1,4 @@
+
 define(function(require) {
 
     var listTemplate = require('text!templates/diagnostics/instrumental/researchs-list.html');
@@ -108,7 +109,8 @@ define(function(require) {
 
             pubsub.off('lab:click group:parent:click group:click');
             this.collection.off();
-
+            this.$el.remove();
+            this.remove();
         }
 
     });

@@ -276,9 +276,13 @@ define(function(require) {
 			//Дата и время создания
 			var assessmentBeginDate = view.model.getProperty('assessmentBeginDate');
 			var date = new Date(assessmentBeginDate);
-			view.ui.$startDate.datepicker();
-			view.ui.$startDate.datepicker("setDate", date);
-			view.ui.$startTime.val(('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2)).mask("99:99").timepicker({
+
+			view.ui.$startDate.addClass('Disabled')
+			.val(moment(date).format('DD.MM.YYYY'))
+			//.datepicker('disable')
+			.prop('disabled', true);
+
+			view.ui.$startTime.addClass('Disabled').prop('disabled', true).val(('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2)).mask("99:99").timepicker({
 				showPeriodLabels: false
 			});
 
@@ -294,7 +298,7 @@ define(function(require) {
 			var tree = view.$('.edit-tree').dynatree("getTree");
 
 
-			var startDate = moment(view.ui.$startDate.datepicker("getDate")).format('YYYY-MM-DD');
+			var startDate = moment(view.ui.$startDate.val(),'DD.MM.YYYY').format('YYYY-MM-DD');
 			var startTime = view.ui.$startTime.val() + ':00';
 
 
@@ -387,6 +391,7 @@ define(function(require) {
 			this.$el.dialog("close");
 			this.ui.$startDate.datepicker('destroy');
 			this.$el.remove();
+			this.remove();
 			pubsub.off('assigner:changed');
 			pubsub.off('executor:changed');
 
