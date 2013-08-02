@@ -147,6 +147,7 @@ class TherapyController
                     switch ($typeName) {
                         case 'String':
                         case 'Text':
+                        case 'Html':
                             $string = $actionProperty->getActionPropertyString()->getValue();
 
                             if($name == 'День терапии'){

@@ -58,8 +58,8 @@ class ClientQuotingController
             ->join('QuotaType')
             //->join('MKB')
             ->select(array('id', 'mkb', 'treatmentId', 'RbTreatment.name','pacientModelId','RbPacientModel.name','quotaTypeId','QuotaType.name'))
-            ->find()
-            ->toArray();
+            ->findOne();
+            //->toArray();
             return $app['jsonp']->jsonp(array("data" => $vmpTalon,'$route_params'=>$route_params));
     }
 }
