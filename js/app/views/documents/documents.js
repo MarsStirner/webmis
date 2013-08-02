@@ -407,14 +407,14 @@ define(function (require) {
 				setPropertyValueFor("valueId", "");
 		},
 
-		convertValueToHtml: function () {
+		/*convertValueToHtml: function () {
 			return this.setValue(
 				this.getValue().
 					replace(/\r\n/g, '<br>').
 					replace(/\s/g, '&nbsp;')
 
 			);
-		},
+		},*/
 
 		getPropertyByName: function (name, props) {
 			props = props || this.get('properties');
@@ -2357,15 +2357,15 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({
-		template: templates.uiElements._text,
-		initialize: function () {
+		template: templates.uiElements._text//,
+		/*initialize: function () {
 			this.model.convertValueToHtml();
 			UIElementBase.prototype.initialize.call(this, this.options);
-		},
-		onModelCopy: function () {
+		},*/
+		/*onModelCopy: function () {
 			this.model.convertValueToHtml();
 			UIElementBase.prototype.onModelCopy.call(this);
-		}
+		}*/
 	});
 
 	/**
