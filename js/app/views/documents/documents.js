@@ -3222,7 +3222,7 @@ define(function (require) {
 
 					id: document.get("id"),
 					name: summaryAttrs[1]["properties"][0]["value"],
-					endDate: moment(document.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:ss"),
+					endDate: moment(document.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm"),
 					doctorName: [
 						summaryAttrs[4]["properties"][0]["value"],
 						summaryAttrs[5]["properties"][0]["value"],
@@ -3301,10 +3301,10 @@ define(function (require) {
 					name: summaryAttrs[1]["properties"][0]["value"],
 					//endDate: summaryAttrs[3]["properties"][0]["value"],
 					beginDate: this.model.getDates().begin.getValue() ?
-						moment(this.model.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:ss") :
+						moment(this.model.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm") :
 						false,
 					endDate: this.model.getDates().end.getValue() ?
-						moment(this.model.getDates().end.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:ss") :
+						moment(this.model.getDates().end.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm") :
 						false,
 					doctorName: [
 						summaryAttrs[4]["properties"][0]["value"],
