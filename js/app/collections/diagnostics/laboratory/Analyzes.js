@@ -1,11 +1,11 @@
 define(function(require) {
 
 
-	var LabGroup = Model.extend();
+	var LabTest = Model.extend();
 
-	var LabGroups = Collection.extend({
+	var LabTests = Collection.extend({
 
-		model: LabGroup,
+		model: LabTest,
 
 		url: function() {
 			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=LAB";
@@ -62,14 +62,14 @@ define(function(require) {
 			var tree = [];
 
 			tree = this.convertToTree(raw.data);
-			var parents = this.onlyParents(tree);
+			//var parents = this.onlyParents(tree);
 
-			return parents;
+			return tree;//parents;
 		}
 
 	});
 
 
-	return LabGroups;
+	return LabTests;
 
 });

@@ -303,6 +303,7 @@ define(function(require) {
                 this.$el.dialog("close");
                 this.bfView.close();
                 this.$el.remove();
+                this.remove();
 		}
 	}).mixin([popupMixin]);
 

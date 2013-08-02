@@ -76,9 +76,9 @@
 
 	//proxy_url("http://test.localhost".$_SERVER["REQUEST_URI"]);
 	if ( preg_match("/^\\/data\\/(auth|roles)\\//", $_SERVER["REQUEST_URI"]) ) {
-		proxy_url("http://10.1.2.106:8080/tmis-ws-medipad/rest/tms-auth/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
+		proxy_url("http://10.1.2.149:8080/tmis-ws-medipad/rest/tms-auth/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
 	}else {
-		proxy_url("http://10.1.2.106:8080/tmis-ws-medipad/rest/tms-registry/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
+		proxy_url("http://10.1.2.149:8080/tmis-ws-medipad/rest/tms-registry/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
 	}
 
 ?>

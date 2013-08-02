@@ -1,3 +1,4 @@
+@import "base";
 .labs .dynatree-container,
 .groups .dynatree-container,
 .group-tests .dynatree-container{
@@ -5,6 +6,26 @@
 	font-size:inherit;
 }
 
+
+.labs-column{
+	display: inline-block;
+	vertical-align: top;
+	height:35em;
+	overflow:auto;
+	margin-left: -0.3em;
+    overflow: auto;
+	border:1px solid #CCCCCC;
+	@include box-sizing(border-box);
+	&.labs-column-left{
+		height:35em;
+		width: 40%;
+	}
+	&.labs-column-right{
+		height:35em;
+		width:55%;
+	}
+
+}
 ul.dynatree-container a:focus, span.dynatree-focused a:link{
 	outline: 0;
 }
@@ -200,69 +221,11 @@ cursor: pointer;
 	}
 }
 
-
-
-// .group-tests{
-// 		table{
-// 		width: 100%;
-// 		display: inline-block;
-// 		position: relative;
-// 		//z-index: 5;
-// 		top: -3px;
-// 		td{
-// 			vertical-align: top;
-// 			//border: 1px solid;
-
-// 			&.title-col{
-// 				padding-left: 40px;
-// 				//min-width: 370px;
-// 				width: 100%;
-// 			}
-// 			&.cito-col{
-// 				min-width: 25px;
-// 			}
-// 			&.time-col{
-// 				min-width: 14.6em;
-// 			}
-// 		}
-// 	}
-// }
-
 .edit-tree .dynatree-checkbox:first-child{
 		display: none;
 	}
 
-// .lab-tests-list2{
-// 	.dynatree-container{
-// 		white-space: normal;
-// 		overflow: hidden;
-// 	}
-// 	span.dynatree-node{
-// 		position: relative;
-// 		display: block;
-// 		.dynatree-connector, .dynatree-expander{
-// 			position: absolute;
-// 			top: 0;
-// 			left:0;
-// 			z-index: 10;
-// 		}
-// 		.dynatree-checkbox{
-// 			position: absolute;
-// 			top: 0;
-// 			left: 18px;
-// 			z-index: 10;
-// 		}
-// 		span.title-col{
-// 			left: 40px;
-// 			position: relative;
-// 			top: -3px;
-// 		}
 
-
-
-// 	}
-
-// }
 
 .datetime{
 	.date{
