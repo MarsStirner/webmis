@@ -49,7 +49,7 @@ define(function(require) {
 			this.set('plannedDate', moment().add('day', 1).toDate()); //format('YYYY-MM-DD'));
 			this.set('plannedTime', '07:00');
 
-			this.on('change:code change:plannedTime', this.updateSaveButtonState, this);
+			this.on('change:code change:plannedTime change:assessmentTime change:assessmentDate', this.updateSaveButtonState, this);
 
 
 			this.instrumntalGroups = new InstrumntalGroups();
@@ -65,7 +65,7 @@ define(function(require) {
 
 		updateSaveButtonState: function() {
 
-			if (this.get('code') && this.get('plannedTime')) {
+			if (this.get('code') && this.get('plannedTime') && this.get('assessmentTime') && this.get('assessmentDate')) {
 				this.set('saveButtonState', 'enable');
 			} else {
 				this.set('saveButtonState', 'disable');

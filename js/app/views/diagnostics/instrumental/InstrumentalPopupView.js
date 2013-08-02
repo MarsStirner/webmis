@@ -261,6 +261,7 @@ define(function(require) {
             var view = this;
 
             view.$assessmentDatepicker = view.$('#start-date');
+            view.$assessmentDatepickerIcon = view.bfView.$el.find('.icon-calendar');
             view.$assessmentTimepicker = view.$('#start-time');
             view.$instrumentalGroups = view.$('.instrumental-groups');
             view.$instrumentalResearchs = view.$('.instrumental-researchs');
@@ -273,6 +274,68 @@ define(function(require) {
             view.$mbkDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
 
             this.$('.change-assigner,.change-executor').button();
+
+
+            var now = new Date();
+
+            view.$assessmentDatepicker.datepicker({
+                minDate: now,
+                onSelect: function(dateText, inst) {
+                    view.viewModel.set('assessmentDate', moment(dateText, 'DD.MM.YYYY').toDate());
+                    var day = moment(view.$(this).datepicker("getDate")).startOf('day');
+                    var currentDay = moment().startOf('day');
+                    var currentHour = moment().hour();
+                    var hour = view.$assessmentTimepicker.timepicker('getHour');
+                    //если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
+                    if (day.diff(currentDay, 'days') === 0) {
+                        if (hour <= currentHour) {
+                            view.$assessmentTimepicker.val('').trigger('change');
+                        }
+                    }
+                }
+            }).datepicker("setDate", now);
+
+            view.$assessmentDatepickerIcon.on("click", function() {
+                view.$assessmentDatepicker.datepicker("show");
+            });
+
+            view.$assessmentTimepicker.mask("99:99").timepicker({
+                showPeriodLabels: false,
+                defaultTime: 'now',
+                onHourShow: function(hour) {
+                    var day = moment(view.$assessmentDatepicker.datepicker("getDate")).startOf('day');
+                    var currentDay = moment().startOf('day');
+                    var currentHour = moment().hour();
+                    //если выбран текущий день, то часы меньше текущего нельзя выбрать
+                    if (day.diff(currentDay, 'days') === 0) {
+                        if (hour < currentHour) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                },
+                onMinuteShow: function(hour, minute) {
+                    var day = moment(view.$assessmentDatepicker.datepicker("getDate")).startOf('day');
+                    var currentDay = moment().startOf('day');
+                    var currentHour = moment().hour();
+                    var currentMinute = moment().minute();
+                    //если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
+                    if (day.diff(currentDay, 'days') === 0) {
+                        if (hour === currentHour && minute <= currentMinute) {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                showPeriodLabels: false,
+                showOn: 'both',
+                button: '.bottom-form .icon-time'
+            }).timepicker('setTime', now);
+
+            view.$assessmentTimepicker.on('change', function() {
+                view.viewModel.set('assessmentTime', view.$assessmentTimepicker.val());
+            });
 
 
             //установка диагноза
@@ -359,12 +422,16 @@ define(function(require) {
             // view.viewModel.on('change', view.updateSaveButton, view);
 
         },
-        close: function(){
-                this.$el.dialog("close");
-                this.bfView.close();
-                this.researchGroupsListView.close();
-                this.researchListView.close();
-                this.$el.remove();
+        close: function() {
+
+            this.$plannedDatepicker.datepicker('destroy');
+            this.$assessmentDatepicker.datepicker('destroy');
+            this.$el.dialog("close");
+            this.bfView.close();
+            this.researchGroupsListView.close();
+            this.researchListView.close();
+            this.$el.remove();
+            this.remove();
         }
 
     }).mixin([popupMixin]);

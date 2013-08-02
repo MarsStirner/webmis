@@ -60,4 +60,24 @@
 		</div>
 	</td>
 </tr>
+<tr>
+	<td>Исход госпитализации</td>
+	<td>
+		<% if (appeal.leaved && appeal.leaved.hospOutcome) { %>
+			<%= appeal.leaved.hospOutcome %>
+		<% } else { %>
+			-
+		<% } %>
+	</td>
+</tr>
+<tr>
+	<td>Результат госпитализации</td>
+	<td>
+		<% if (appeal.result && appeal.result.name) { %>
+			<%= appeal.result.name %>
+		<% } else { %>
+			-
+		<% } %>
+	</td>
+</tr>
 </tbody>

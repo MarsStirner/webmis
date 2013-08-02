@@ -332,7 +332,12 @@ Collection = Backbone.Collection.extend({
 		var errorHandler = $.extend(function (model, xhr) {
 			// TODO Отрабатывать ошибки
 			if (xhr.responseText.length) {
-				var json = JSON.parse(xhr.responseText);
+				var json;
+				try {
+					json = JSON.parse(xhr.responseText);
+				} catch (e) {
+					
+				}
 				if (json && json.errorCode == 3) {
 					Core.Cookies.clear();
 					window.location.href = "/auth/";

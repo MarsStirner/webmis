@@ -5,8 +5,8 @@
 define(function(require){
 
 	var template = require("text!templates/appeal/edit/main.tmpl");
-	var LaboratoryView = require("views/diagnostics/laboratory/LaboratoryView");
-	var LaboratoryResultView = require("views/diagnostics/laboratory/LaboratoryResultView");
+	var LaboratoryView = require("views/diagnostics/laboratory/AnalyzesListView");
+	var LaboratoryResultView = require("views/diagnostics/laboratory/AnalysisResultView");
 	var InstrumentalView = require("views/diagnostics/instrumental/InstrumentalView");
 	var InstrumentalResultView = require("views/diagnostics/instrumental/InstrumentalResultView");
 	var ConsultationView = require("views/diagnostics/consultations/ConsultationsListView");
@@ -23,10 +23,10 @@ define(function(require){
 	require("views/breadcrumbs");
 	require("views/menu");
 	require("views/card-header");
-	require("views/appeal/edit/pages/examinations");
+	/*require("views/appeal/edit/pages/examinations");
 	require("views/appeal/edit/pages/examination-edit");
 	require("views/appeal/edit/pages/examination-primary");
-	require("views/appeal/edit/pages/card");
+	require("views/appeal/edit/pages/card");*/
 
 
 	App.Views.Main = View.extend({
@@ -37,39 +37,90 @@ define(function(require){
 
 		documentEditorMode: false,
 
-		typeViews: {
-			"card": App.Views.Card,
+		/*getBreadcrumbsRoot: function () {
+			return [
+				{title: "Пациенты", url: "/patients/"},
+				{title: this.patient.get("name").get("raw") + " (" + moment(this.patient.get("birthDate")).year() + ") г.р.", url: "/appeals/"}
+			];
+		},*/
 
-			/*"examinations": App.Views.Examinations,
-			 "examination-primary": App.Views.ExaminationPrimary,
-			 "examination-primary-preview": App.Views.ExaminationPrimaryPreview,
-			 "examination-primary-repeated": App.Views.ExaminationPrimary,
-			 "examination-primary-repeated-preview": App.Views.ExaminationPrimaryPreview,*/
+		pageViews: {
+			"card": {
+				REVIEW: App.Views.Card
+				/*REVIEW: function () {
+					var title = "Основное";
+					if (Core.Data.currentRole() === ROLES.DOCTOR_DEPARTMENT) {
+						title = "Титульный лист ИБ";
+					}
 
-			"examinations": Documents.Views.List.Examination.Layout,
-			"examination-edit": Documents.Views.Edit.Examination.Layout,
+					return {
+						title: title,
+						view: App.Views.Card,
+						breadcrumbs: _.union(this.getBreadcrumbsRoot(), [
+							{label: "Лабораторные исследования", path: false}
+						])
+					};
+				}*/
+			},
 
-			"diagnostics-laboratory": LaboratoryView,
-			"diagnostics-laboratory-result": LaboratoryResultView,
-			"diagnostics-instrumental": InstrumentalView,
-			"diagnostics-instrumental-result": InstrumentalResultView,
-			"diagnostics-consultations": ConsultationView,
-			"diagnostics-consultations-result": ConsultationResultView,
-			"quotes": QuotesView,
-			"patient-monitoring": PatientMonitoringView,
+			"diagnostics-laboratory": {
+				"REVIEW": LaboratoryView,
+				"SUB_REVIEW": LaboratoryResultView,
+				"SUB_EDIT": LaboratoryResultView //TODO: impl edit mode
+			},
 
-			//"first-examination-edit": App.Views.ExaminationEdit,
+			"diagnostics-instrumental": {
+				"REVIEW": InstrumentalView,
+				"SUB_REVIEW": InstrumentalResultView,
+				"SUB_EDIT": InstrumentalResultView //TODO: impl edit mode
+			},
 
-			"moves": Moves,
-			"hospitalbed": HospitalBed,
+			"diagnostics-consultations": {
+				"REVIEW": ConsultationView,
+				"SUB_REVIEW": ConsultationResultView,
+				"SUB_EDIT": ConsultationResultView //TODO: impl edit mode
+			},
 
-			"monitoring": Monitoring.Views.Layout,
+			"quotes": {
+				"REVIEW": QuotesView
+			},
 
-			"documents": Documents.Views.List.Common.Layout,
-			"document-edit": Documents.Views.Edit.Common.Layout,
+			"patient-monitoring":  {
+				"REVIEW": PatientMonitoringView
+			},
 
-			"therapy": Documents.Views.List.Therapy.Layout,
-			"therapy-edit": Documents.Views.Edit.Therapy.Layout
+			"moves": {
+				"REVIEW": Moves
+			},
+
+			"hospitalbed": {
+				"REVIEW": HospitalBed
+			},
+
+			"monitoring": {
+				"REVIEW": Monitoring.Views.Layout
+			},
+
+			"documents": {
+				"REVIEW": Documents.Views.List.Common.Layout,
+				"SUB_REVIEW": Documents.Views.Review.Common.Layout,
+				"SUB_EDIT": Documents.Views.Edit.Common.Layout,
+				"SUB_NEW": Documents.Views.Edit.Common.Layout
+			},
+
+			"therapy": {
+				"REVIEW": Documents.Views.List.Therapy.Layout,
+				"SUB_REVIEW": Documents.Views.Review.Therapy.Layout,
+				"SUB_EDIT": Documents.Views.Edit.Therapy.Layout,
+				"SUB_NEW": Documents.Views.Edit.Therapy.Layout
+			},
+
+			"examinations": {
+				"REVIEW": Documents.Views.List.Examination.Layout,
+				"SUB_REVIEW": Documents.Views.Review.Examination.Layout,
+				"SUB_EDIT": Documents.Views.Edit.Examination.Layout,
+				"SUB_NEW": Documents.Views.Edit.Examination.Layout
+			}
 		},
 
 		breadCrumbsMap: {
@@ -92,11 +143,12 @@ define(function(require){
 		},
 
 		initialize: function() {
-			this.appealId = this.options.id;
-			this.type = this.options.type;
-			console.log('this', this)
+			this.appealId = this.options.appealId;
+			this.page = this.options.page;
 
-			if (!(this.appealId && this.typeViews[this.type])) {
+			console.log('this', this);
+
+			if (!(this.appealId && this.pageViews[this.page])) {
 				throw new Error("Invalid diagnostic type or empty appeal id");
 			}
 
@@ -114,10 +166,12 @@ define(function(require){
 			this.appeal.fetch();
 		},
 
-		setContentView: function(type, extraOptions) {
-			if (this.type !== type || !this.contentView || (extraOptions && extraOptions.force)) {
-				if (this.typeViews[type]) {
-					this.type = type;
+		setContentView: function(page, mode, extraOptions) {
+			mode = mode || "REVIEW";
+
+			//if (this.page !== page || !this.contentView || (extraOptions && extraOptions.force)) {
+				if (this.pageViews[page][mode]) {
+					this.page = page;
 
 					if (this.contentView) {
 						this.setBreadcrumbsStructure();
@@ -135,12 +189,14 @@ define(function(require){
 
 					//this.contentView = null;
 
-					this.contentView = new this.typeViews[type](_.extend({
+					this.contentView = new this.pageViews[page][mode](_.extend({
 						appealId: this.appealId,
 						appeal: this.appeal,
 						path: this.options.path,
 						referrer: this.options.referrer,
-						url: this.options.url
+						mode: mode,
+						page: this.options.page,
+						subId: this.options.subId
 					}, extraOptions));
 
 					this.contentView.on("change:printState", this.onPrintStateChange, this);
@@ -151,7 +207,7 @@ define(function(require){
 					this.cardHeader.hidePrintBtn();
 					this.renderPageContent();
 				}
-			}
+			//}
 		},
 
 		onPrintStateChange: function() {
@@ -160,7 +216,7 @@ define(function(require){
 
 		onViewStateChange: function(event) {
 			console.log('onViewStateChange', event);
-			this.setContentView(event.type, event.options);
+			this.setContentView(event.type, event.mode, event.options);
 		},
 
 		onMainStateChange: function(event) {
@@ -211,20 +267,20 @@ define(function(require){
 		},
 
 		onPatientLoaded: function(patient) {
-			Cache.Patient = patient;
+			this.patient = Cache.Patient = patient;
 			this.ready();
-			this.setContentView(this.type);
+			this.setContentView(this.page, this.options.mode);
 			this.setBreadcrumbsStructure();
 
 			patient.off("change", this.onPatientLoaded, this);
 		},
 
 		setBreadcrumbsStructure: function() {
-			if (this.breadCrumbsMap[this.type]) {
+			if (this.breadCrumbsMap[this.page]) {
 				this.breadcrumbs.setStructure([
 					App.Router.cachedBreadcrumbs.PATIENTS,
 					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, this.appeal.get("patient").toJSON()),
-					this.breadCrumbsMap[this.type]
+					this.breadCrumbsMap[this.page]
 				]);
 
 				this.$("#page-head").html(this.breadcrumbs.render().el);
@@ -248,7 +304,7 @@ define(function(require){
 		},
 
 		renderPageContent: function() {
-			this.menu.setPage(this.type);
+			this.menu.setPage(this.page);
 			this.$(".ContentSide").html(this.contentView.render().el);
 		},
 
@@ -296,18 +352,18 @@ define(function(require){
 						App.Router.compile({
 							name: "diagnostics-laboratory",
 							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
+							uri: "/appeals/:id/diagnostics-laboratory/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-instrumental",
 							title: "Инструментальные исследования",
-							uri: "/appeals/:id/diagnostics/instrumental/"
+							uri: "/appeals/:id/diagnostics-instrumental/"
 						}, appealJSON),
 
 						App.Router.compile({
 							name: "diagnostics-consultations",
 							title: "Консультации",
-							uri: "/appeals/:id/diagnostics/consultations/"
+							uri: "/appeals/:id/diagnostics-consultations/"
 						}, appealJSON),
 
 						App.Router.compile({
@@ -383,17 +439,17 @@ define(function(require){
 						App.Router.compile({
 							name: "diagnostics-laboratory",
 							title: "Лабораторные исследования",
-							uri: "/appeals/:id/diagnostics/laboratory/"
+							uri: "/appeals/:id/diagnostics-laboratory/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-instrumental",
 							title: "Инструментальные исследования",
-							uri: "/appeals/:id/diagnostics/instrumental/"
+							uri: "/appeals/:id/diagnostics-instrumental/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "diagnostics-consultations",
 							title: "Консультации",
-							uri: "/appeals/:id/diagnostics/consultations/"
+							uri: "/appeals/:id/diagnostics-consultations/"
 						}, appealJSON),
 						App.Router.compile({
 							name: "moves",

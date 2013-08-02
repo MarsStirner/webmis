@@ -10,8 +10,8 @@ define(function(require) {
 	var laboratoryDiagsForm = require('models/diagnostics/laboratory/laboratory-diag-form');
 
 	var GridView = require('views/grid');
-	var AddDirectionPopupView = require('views/diagnostics/laboratory/AddDirectionPopupView');
-	var EditDirectionPopupView = require('views/diagnostics/laboratory/EditDirectionPopupView');
+	var AddDirectionPopupView = require('views/diagnostics/laboratory/DirectionView');
+	var EditDirectionPopupView = require('views/diagnostics/laboratory/DirectionEditView');
 
 	var template = require('text!templates/diagnostics/laboratory/laboratory-page.tmpl');
 
@@ -83,12 +83,13 @@ define(function(require) {
 
 				if ((status === 0) || (status === 1) || (status === 2)) {
 					this.trigger("change:viewState", {
-						type: "diagnostics-laboratory-result",
+						type: "diagnostics-laboratory",
+						mode: "SUB_REVIEW",
 						options: {
 							modelId: model.get('id')
 						}
 					});
-					App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics/laboratory/result/" + model.get('id'));
+					App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-laboratory/" + model.get('id'));
 				}
 
 			}

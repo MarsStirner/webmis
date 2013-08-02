@@ -37,12 +37,11 @@ define(function(require) {
 			var $element = (selector instanceof $) ? selector : this.$el.find(selector);
 			view.setElement($element).render();
 		},
-		close: function(){
-               this.$el.remove();
-               this.mkb.close();
+		close: function() {
+			this.$el.remove();
+			this.mkb.close();
 
 		},
-
 		render: function() {
 			this.$el.html($.tmpl(this.template, this.data));
 
@@ -58,13 +57,19 @@ define(function(require) {
 
 			this.initFinanseSelect();
 
-			UIInitialize(this.$el);
-			//Дата и время создания
-			var now = new Date();
-			this.$("#start-date").datepicker("setDate", this.data.assessmentDate);
-			this.$("#start-time").val(this.data.assessmentTime).mask("99:99").timepicker({
-				showPeriodLabels: false
-			});
+			// this.ui = {};
+			// this.ui.$datepicker = this.$el.find("#start-date");
+			// this.ui.$timepicker = this.$el.find("#start-time");
+
+			// //UIInitialize(this.$el);
+			// //Дата и время создания
+			// var now = new Date();
+
+			// //this.ui.$datepicker.datepicker().datepicker("setDate", this.data.assessmentDate);
+
+			// this.ui.$timepicker.val(this.data.assessmentTime).mask("99:99").timepicker({
+			// 	showPeriodLabels: false
+			// });
 
 
 

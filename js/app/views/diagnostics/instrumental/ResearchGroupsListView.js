@@ -66,6 +66,8 @@ define(function(require) {
             pubsub.off('group:click');
             pubsub.off('group:parent:click');
             this.collection.off();
+            this.$el.remove();
+            this.remove();
         }
 
     });
