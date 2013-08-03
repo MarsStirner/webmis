@@ -224,113 +224,6 @@
         ]
     },
     {
-        "name": "symfony/http-foundation",
-        "version": "v2.3.1",
-        "version_normalized": "2.3.1.0",
-        "target-dir": "Symfony/Component/HttpFoundation",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/HttpFoundation.git",
-            "reference": "v2.3.1"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/v2.3.1",
-            "reference": "v2.3.1",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "time": "2013-05-10 06:00:03",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.3-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\HttpFoundation\\": ""
-            },
-            "classmap": [
-                "Symfony/Component/HttpFoundation/Resources/stubs"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony HttpFoundation Component",
-        "homepage": "http://symfony.com"
-    },
-    {
-        "name": "symfony/console",
-        "version": "v2.3.1",
-        "version_normalized": "2.3.1.0",
-        "target-dir": "Symfony/Component/Console",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Console.git",
-            "reference": "v2.3.1"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Console/zipball/v2.3.1",
-            "reference": "v2.3.1",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "symfony/event-dispatcher": ">=2.1,<3.0"
-        },
-        "suggest": {
-            "symfony/event-dispatcher": ""
-        },
-        "time": "2013-06-11 07:15:14",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.3-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Console\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony Console Component",
-        "homepage": "http://symfony.com"
-    },
-    {
         "name": "monolog/monolog",
         "version": "1.5.0",
         "version_normalized": "1.5.0.0",
@@ -395,19 +288,322 @@
         ]
     },
     {
+        "name": "phing/phing",
+        "version": "2.5.0",
+        "version_normalized": "2.5.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/phingofficial/phing.git",
+            "reference": "2.5.0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/phingofficial/phing/zipball/2.5.0",
+            "reference": "2.5.0",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.0"
+        },
+        "time": "2013-02-16 14:23:57",
+        "bin": [
+            "bin/phing"
+        ],
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "classes/phing/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            "classes"
+        ],
+        "license": [
+            "LGPL3"
+        ],
+        "authors": [
+            {
+                "name": "Michiel Rook",
+                "email": "mrook@php.net"
+            },
+            {
+                "name": "Phing Community",
+                "homepage": "http://www.phing.info/trac/wiki/Development/Contributors"
+            }
+        ],
+        "description": "PHing Is Not GNU make; it's a PHP project build system or build tool based on Apache Ant.",
+        "homepage": "http://www.phing.info/",
+        "keywords": [
+            "build",
+            "task",
+            "tool"
+        ]
+    },
+    {
+        "name": "propel/propel1",
+        "version": "1.6.9",
+        "version_normalized": "1.6.9.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/propelorm/Propel.git",
+            "reference": "1.6.9"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/propelorm/Propel/zipball/1.6.9",
+            "reference": "1.6.9",
+            "shasum": ""
+        },
+        "require": {
+            "phing/phing": ">=2.4,<3.0",
+            "php": ">=5.2.4"
+        },
+        "time": "2013-03-31 17:20:51",
+        "bin": [
+            "generator/bin/propel-gen",
+            "generator/bin/propel-gen.bat"
+        ],
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "runtime/lib",
+                "generator/lib"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            "runtime/lib",
+            "generator/lib"
+        ],
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "William Durand",
+                "email": "william.durand1@gmail.com",
+                "homepage": "http://www.willdurand.fr"
+            }
+        ],
+        "description": "Propel is an open-source Object-Relational Mapping (ORM) for PHP5.",
+        "homepage": "http://www.propelorm.org/",
+        "keywords": [
+            "Active Record",
+            "database",
+            "mapping",
+            "orm",
+            "persistence"
+        ]
+    },
+    {
+        "name": "silex/silex",
+        "version": "v1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/fabpot/Silex.git",
+            "reference": "v1.0.1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/fabpot/Silex/zipball/v1.0.1",
+            "reference": "v1.0.1",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3",
+            "pimple/pimple": "1.*",
+            "symfony/event-dispatcher": ">=2.1,<2.4-dev",
+            "symfony/http-foundation": ">=2.1,<2.4-dev",
+            "symfony/http-kernel": ">=2.1,<2.4-dev",
+            "symfony/routing": ">=2.1,<2.4-dev"
+        },
+        "require-dev": {
+            "doctrine/dbal": ">=2.2.0,<2.4.0-dev",
+            "monolog/monolog": "~1.4,>=1.4.1",
+            "swiftmailer/swiftmailer": "5.*",
+            "symfony/browser-kit": ">=2.1,<2.4-dev",
+            "symfony/config": ">=2.1,<2.4-dev",
+            "symfony/css-selector": ">=2.1,<2.4-dev",
+            "symfony/dom-crawler": ">=2.1,<2.4-dev",
+            "symfony/finder": ">=2.1,<2.4-dev",
+            "symfony/form": ">=2.1.4,<2.4-dev",
+            "symfony/locale": ">=2.1,<2.4-dev",
+            "symfony/monolog-bridge": ">=2.1,<2.4-dev",
+            "symfony/options-resolver": ">=2.1,<2.4-dev",
+            "symfony/process": ">=2.1,<2.4-dev",
+            "symfony/security": ">=2.1,<2.4-dev",
+            "symfony/serializer": ">=2.1,<2.4-dev",
+            "symfony/translation": ">=2.1,<2.4-dev",
+            "symfony/twig-bridge": ">=2.1,<2.4-dev",
+            "symfony/validator": ">=2.1,<2.4-dev",
+            "twig/twig": ">=1.8.0,<2.0-dev"
+        },
+        "suggest": {
+            "symfony/browser-kit": ">=2.1,<2.4-dev",
+            "symfony/css-selector": ">=2.1,<2.4-dev",
+            "symfony/dom-crawler": ">=2.1,<2.4-dev",
+            "symfony/form": ">= 2.1.4,<2.4-dev"
+        },
+        "time": "2013-07-04 06:25:40",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Silex": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Igor Wiedler",
+                "email": "igor@wiedler.ch",
+                "homepage": "http://wiedler.ch/igor/"
+            }
+        ],
+        "description": "The PHP micro-framework based on the Symfony2 Components",
+        "homepage": "http://silex.sensiolabs.org",
+        "keywords": [
+            "microframework"
+        ]
+    },
+    {
+        "name": "propel/propel-service-provider",
+        "version": "0.0.1",
+        "version_normalized": "0.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "git://github.com/propelorm/PropelServiceProvider.git",
+            "reference": "0.0.1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/propelorm/PropelServiceProvider/zipball/0.0.1",
+            "reference": "0.0.1",
+            "shasum": ""
+        },
+        "require": {
+            "propel/propel1": "1.6.*",
+            "silex/silex": "1.0.*"
+        },
+        "time": "2012-06-17 10:12:41",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Propel\\Silex": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "William Durand",
+                "email": "william.durand1@gmail.com",
+                "homepage": "http://www.willdurand.fr"
+            },
+            {
+                "name": "Cristiano Cinotti",
+                "email": "cristianocinotti@gmail.com"
+            }
+        ],
+        "description": "Propel integrationfor Silex.",
+        "keywords": [
+            "propel",
+            "silex"
+        ]
+    },
+    {
+        "name": "symfony/console",
+        "version": "v2.3.2",
+        "version_normalized": "2.3.2.0",
+        "target-dir": "Symfony/Component/Console",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/Console.git",
+            "reference": "v2.3.2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/Console/zipball/v2.3.2",
+            "reference": "v2.3.2",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "symfony/event-dispatcher": "~2.1"
+        },
+        "suggest": {
+            "symfony/event-dispatcher": ""
+        },
+        "time": "2013-07-11 19:36:36",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.3-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Console\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony Console Component",
+        "homepage": "http://symfony.com"
+    },
+    {
         "name": "symfony/stopwatch",
-        "version": "v2.3.1",
-        "version_normalized": "2.3.1.0",
+        "version": "v2.3.2",
+        "version_normalized": "2.3.2.0",
         "target-dir": "Symfony/Component/Stopwatch",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/Stopwatch.git",
-            "reference": "v2.3.1"
+            "reference": "v2.3.2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Stopwatch/zipball/v2.3.1",
-            "reference": "v2.3.1",
+            "url": "https://api.github.com/repos/symfony/Stopwatch/zipball/v2.3.2",
+            "reference": "v2.3.2",
             "shasum": ""
         },
         "require": {
@@ -444,36 +640,34 @@
         "homepage": "http://symfony.com"
     },
     {
-        "name": "symfony/routing",
-        "version": "v2.3.1",
-        "version_normalized": "2.3.1.0",
-        "target-dir": "Symfony/Component/Routing",
+        "name": "symfony/debug",
+        "version": "v2.3.2",
+        "version_normalized": "2.3.2.0",
+        "target-dir": "Symfony/Component/Debug",
         "source": {
             "type": "git",
-            "url": "https://github.com/symfony/Routing.git",
-            "reference": "v2.3.1"
+            "url": "https://github.com/symfony/Debug.git",
+            "reference": "v2.3.2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Routing/zipball/v2.3.1",
-            "reference": "v2.3.1",
+            "url": "https://api.github.com/repos/symfony/Debug/zipball/v2.3.2",
+            "reference": "v2.3.2",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3"
         },
         "require-dev": {
-            "doctrine/common": ">=2.2,<3.0",
-            "psr/log": ">=1.0,<2.0",
-            "symfony/config": ">=2.2,<3.0",
-            "symfony/yaml": ">=2.0,<3.0"
+            "symfony/http-foundation": "~2.1",
+            "symfony/http-kernel": "~2.1"
         },
         "suggest": {
-            "doctrine/common": "",
-            "symfony/config": "",
-            "symfony/yaml": ""
+            "symfony/class-loader": "",
+            "symfony/http-foundation": "",
+            "symfony/http-kernel": ""
         },
-        "time": "2013-05-20 08:57:26",
+        "time": "2013-07-01 12:24:43",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -483,7 +677,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-0": {
-                "Symfony\\Component\\Routing\\": ""
+                "Symfony\\Component\\Debug\\": ""
             }
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -500,30 +694,82 @@
                 "homepage": "http://symfony.com/contributors"
             }
         ],
-        "description": "Symfony Routing Component",
+        "description": "Symfony Debug Component",
+        "homepage": "http://symfony.com"
+    },
+    {
+        "name": "symfony/http-foundation",
+        "version": "v2.3.2",
+        "version_normalized": "2.3.2.0",
+        "target-dir": "Symfony/Component/HttpFoundation",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/HttpFoundation.git",
+            "reference": "v2.3.2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/v2.3.2",
+            "reference": "v2.3.2",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "time": "2013-07-17 05:57:53",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.3-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\HttpFoundation\\": ""
+            },
+            "classmap": [
+                "Symfony/Component/HttpFoundation/Resources/stubs"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony HttpFoundation Component",
         "homepage": "http://symfony.com"
     },
     {
         "name": "symfony/event-dispatcher",
-        "version": "v2.3.1",
-        "version_normalized": "2.3.1.0",
+        "version": "v2.3.2",
+        "version_normalized": "2.3.2.0",
         "target-dir": "Symfony/Component/EventDispatcher",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/EventDispatcher.git",
-            "reference": "v2.3.1"
+            "reference": "v2.3.2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/v2.3.1",
-            "reference": "v2.3.1",
+            "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/v2.3.2",
+            "reference": "v2.3.2",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3"
         },
         "require-dev": {
-            "symfony/dependency-injection": ">=2.0,<3.0"
+            "symfony/dependency-injection": "~2.0"
         },
         "suggest": {
             "symfony/dependency-injection": "",
@@ -560,96 +806,38 @@
         "homepage": "http://symfony.com"
     },
     {
-        "name": "symfony/debug",
-        "version": "v2.3.1",
-        "version_normalized": "2.3.1.0",
-        "target-dir": "Symfony/Component/Debug",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Debug.git",
-            "reference": "v2.3.1"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Debug/zipball/v2.3.1",
-            "reference": "v2.3.1",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "symfony/http-foundation": ">=2.1,<3.0",
-            "symfony/http-kernel": ">=2.1,<3.0"
-        },
-        "suggest": {
-            "symfony/class-loader": "",
-            "symfony/http-foundation": "",
-            "symfony/http-kernel": ""
-        },
-        "time": "2013-06-02 11:58:44",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.3-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Debug\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony Debug Component",
-        "homepage": "http://symfony.com"
-    },
-    {
         "name": "symfony/http-kernel",
-        "version": "v2.3.1",
-        "version_normalized": "2.3.1.0",
+        "version": "v2.3.2",
+        "version_normalized": "2.3.2.0",
         "target-dir": "Symfony/Component/HttpKernel",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/HttpKernel.git",
-            "reference": "v2.3.1"
+            "reference": "v2.3.2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/v2.3.1",
-            "reference": "v2.3.1",
+            "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/v2.3.2",
+            "reference": "v2.3.2",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3",
-            "psr/log": ">=1.0,<2.0",
-            "symfony/debug": ">=2.3,<3.0",
-            "symfony/event-dispatcher": ">=2.1,<3.0",
-            "symfony/http-foundation": ">=2.2,<3.0"
+            "psr/log": "~1.0",
+            "symfony/debug": "~2.3",
+            "symfony/event-dispatcher": "~2.1",
+            "symfony/http-foundation": "~2.2"
         },
         "require-dev": {
             "symfony/browser-kit": "2.2.*",
-            "symfony/class-loader": ">=2.1,<3.0",
-            "symfony/config": ">=2.0,<3.0",
+            "symfony/class-loader": "~2.1",
+            "symfony/config": "~2.0",
             "symfony/console": "2.2.*",
-            "symfony/dependency-injection": ">=2.0,<3.0",
-            "symfony/finder": ">=2.0,<3.0",
-            "symfony/process": ">=2.0,<3.0",
-            "symfony/routing": ">=2.2,<3.0",
-            "symfony/stopwatch": ">=2.2,<3.0"
+            "symfony/dependency-injection": "~2.0",
+            "symfony/finder": "~2.0",
+            "symfony/process": "~2.0",
+            "symfony/routing": "~2.2",
+            "symfony/stopwatch": "~2.2"
         },
         "suggest": {
             "symfony/browser-kit": "",
@@ -659,7 +847,7 @@
             "symfony/dependency-injection": "",
             "symfony/finder": ""
         },
-        "time": "2013-06-11 11:46:38",
+        "time": "2013-07-17 06:22:21",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -690,67 +878,46 @@
         "homepage": "http://symfony.com"
     },
     {
-        "name": "silex/silex",
-        "version": "v1.1.0",
-        "version_normalized": "1.1.0.0",
+        "name": "symfony/routing",
+        "version": "v2.3.2",
+        "version_normalized": "2.3.2.0",
+        "target-dir": "Symfony/Component/Routing",
         "source": {
             "type": "git",
-            "url": "https://github.com/fabpot/Silex.git",
-            "reference": "v1.1.0"
+            "url": "https://github.com/symfony/Routing.git",
+            "reference": "v2.3.2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fabpot/Silex/zipball/v1.1.0",
-            "reference": "v1.1.0",
+            "url": "https://api.github.com/repos/symfony/Routing/zipball/v2.3.2",
+            "reference": "v2.3.2",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.3",
-            "pimple/pimple": "1.*",
-            "symfony/event-dispatcher": ">=2.3,<2.4-dev",
-            "symfony/http-foundation": ">=2.3,<2.4-dev",
-            "symfony/http-kernel": ">=2.3,<2.4-dev",
-            "symfony/routing": ">=2.3,<2.4-dev"
+            "php": ">=5.3.3"
         },
         "require-dev": {
-            "doctrine/dbal": ">=2.2.0,<2.4.0-dev",
-            "monolog/monolog": "~1.4,>=1.4.1",
-            "phpunit/phpunit": "~3.7",
-            "swiftmailer/swiftmailer": "5.*",
-            "symfony/browser-kit": ">=2.3,<2.4-dev",
-            "symfony/config": ">=2.3,<2.4-dev",
-            "symfony/css-selector": ">=2.3,<2.4-dev",
-            "symfony/dom-crawler": ">=2.3,<2.4-dev",
-            "symfony/finder": ">=2.3,<2.4-dev",
-            "symfony/form": ">=2.3,<2.4-dev",
-            "symfony/locale": ">=2.3,<2.4-dev",
-            "symfony/monolog-bridge": ">=2.3,<2.4-dev",
-            "symfony/options-resolver": ">=2.3,<2.4-dev",
-            "symfony/process": ">=2.3,<2.4-dev",
-            "symfony/security": ">=2.3,<2.4-dev",
-            "symfony/serializer": ">=2.3,<2.4-dev",
-            "symfony/translation": ">=2.3,<2.4-dev",
-            "symfony/twig-bridge": ">=2.3,<2.4-dev",
-            "symfony/validator": ">=2.3,<2.4-dev",
-            "twig/twig": ">=1.8.0,<2.0-dev"
+            "doctrine/common": "~2.2",
+            "psr/log": "~1.0",
+            "symfony/config": "~2.2",
+            "symfony/yaml": "~2.0"
         },
         "suggest": {
-            "symfony/browser-kit": ">=2.3,<2.4-dev",
-            "symfony/css-selector": ">=2.3,<2.4-dev",
-            "symfony/dom-crawler": ">=2.3,<2.4-dev",
-            "symfony/form": ">=2.3,<2.4-dev"
+            "doctrine/common": "",
+            "symfony/config": "",
+            "symfony/yaml": ""
         },
-        "time": "2013-07-04 07:15:36",
+        "time": "2013-06-23 08:16:02",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.1.x-dev"
+                "dev-master": "2.3-dev"
             }
         },
         "installation-source": "dist",
         "autoload": {
             "psr-0": {
-                "Silex": "src/"
+                "Symfony\\Component\\Routing\\": ""
             }
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -763,15 +930,11 @@
                 "email": "fabien@symfony.com"
             },
             {
-                "name": "Igor Wiedler",
-                "email": "igor@wiedler.ch",
-                "homepage": "http://wiedler.ch/igor/"
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
             }
         ],
-        "description": "The PHP micro-framework based on the Symfony2 Components",
-        "homepage": "http://silex.sensiolabs.org",
-        "keywords": [
-            "microframework"
-        ]
+        "description": "Symfony Routing Component",
+        "homepage": "http://symfony.com"
     }
 ]

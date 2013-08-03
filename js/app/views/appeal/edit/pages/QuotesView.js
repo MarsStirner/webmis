@@ -296,6 +296,7 @@ define(function(require) {
 
 
 			view.vmpTalon.fetch().done(function(model) {
+				console.log('view.vmpTalon',view.vmpTalon)
 				view.renderNested(view.quotaTypeView, view.ui.$quotaType);
 				view.renderNested(view.pacientModelView, view.ui.$pacientModel);
 				view.renderNested(view.treatmentView, view.ui.$treatment);

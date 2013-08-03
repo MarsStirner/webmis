@@ -5,8 +5,8 @@
 define(function(require){
 
 	var template = require("text!templates/appeal/edit/main.tmpl");
-	var LaboratoryView = require("views/diagnostics/laboratory/LaboratoryView");
-	var LaboratoryResultView = require("views/diagnostics/laboratory/LaboratoryResultView");
+	var LaboratoryView = require("views/diagnostics/laboratory/AnalyzesListView");
+	var LaboratoryResultView = require("views/diagnostics/laboratory/AnalysisResultView");
 	var InstrumentalView = require("views/diagnostics/instrumental/InstrumentalView");
 	var InstrumentalResultView = require("views/diagnostics/instrumental/InstrumentalResultView");
 	var ConsultationView = require("views/diagnostics/consultations/ConsultationsListView");

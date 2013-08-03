@@ -3,8 +3,11 @@
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-use Webmis\Controllers\Dir\DirControllerProvider;
-use Webmis\Controllers\Appeal\AppealControllerProvider;
+use Webmis\Controllers\Dir\DirRouter;
+use Webmis\Controllers\Appeal\AppealRouter;
+use Webmis\Controllers\Therapy\TherapyRouter;
+
+
 
 
 
@@ -16,5 +19,6 @@ $app->before(function (Request $request) {
 });
 
 
-$app->mount('/api/v1/appeals', new AppealControllerProvider());
-$app->mount('/api/v1/dir', new DirControllerProvider());
+$app->mount('/api/v1/appeals', new AppealRouter());
+$app->mount('/api/v1/dir', new DirRouter());
+$app->mount('/api/v1/therapy', new TherapyRouter());

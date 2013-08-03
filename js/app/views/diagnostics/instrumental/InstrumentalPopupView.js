@@ -431,6 +431,7 @@ define(function(require) {
             this.researchGroupsListView.close();
             this.researchListView.close();
             this.$el.remove();
+            this.remove();
         }
 
     }).mixin([popupMixin]);
