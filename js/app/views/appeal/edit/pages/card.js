@@ -3,6 +3,7 @@ define(function(require){
 	//var require('text!templates/appeal/edit/pages/monitoring.tmpl');
 	var cardTemplate = require('text!templates/appeal/edit/pages/card.tmpl');
 	var Moves = require('collections/moves/moves');
+	var VmpTalon = require('models/VmpTalon');
 	require('views/print');
 	require('models/print/appeal');
 
@@ -131,10 +132,15 @@ define(function(require){
 			var PrintAppeal = new App.Models.PrintAppeal({
 				id: this.model.get("id")
 			});
+			var moves = new Moves();
+			moves.appealId = this.model.get("id");
 
-			$.when(PrintAppeal.fetch()).then(function() {
+			var vmp = new VmpTalon();
+			vmp.appealId = this.model.get("id");
+
+			$.when(PrintAppeal.fetch(), moves.fetch(), vmp.fetch()).then(function() {
 				new App.Views.Print({
-					data: _.extend(PrintAppeal.toJSON(),{age: self.model.getAge()}),
+					data: _.extend(PrintAppeal.toJSON(),{age: self.model.getAge(), moves: moves.toJSON(), quoting: vmp.toJSON()}),
 					template: "f066Full"
 				});
 			});
