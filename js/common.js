@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "RC-1.2.4";
+var GUI_VERSION = "RC-1.2.5-050813";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
