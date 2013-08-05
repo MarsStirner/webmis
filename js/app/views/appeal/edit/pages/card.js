@@ -140,7 +140,13 @@ define(function(require){
 
 			$.when(PrintAppeal.fetch(), moves.fetch(), vmp.fetch()).then(function() {
 				new App.Views.Print({
-					data: _.extend(PrintAppeal.toJSON(),{age: self.model.getAge(), moves: moves.toJSON(), quoting: vmp.toJSON()}),
+					data: _.extend(PrintAppeal.toJSON(),{
+						age: self.model.getAge(),
+						moves: _.filter(moves.toJSON(), function (move) {
+							return move.unit !== "Приемное отделение";
+						}),
+						quoting: vmp.toJSON()
+					}),
 					template: "f066Full"
 				});
 			});
