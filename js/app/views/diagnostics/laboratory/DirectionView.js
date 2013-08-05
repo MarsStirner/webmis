@@ -27,7 +27,8 @@ define(function(require) {
 			"click .ShowHidePopup": "close",
 			"click #assigner-outer": "openAssignerSelectPopup",
 			"click #executor-outer": "openExecutorSelectPopup",
-			"change #start-time": "validateForm"
+			"change #start-time": "validateForm",
+			"keyup #tree-search": "onSearchKeyup",
 		},
 		detach_event: function(e_name) {
 			delete this.events[e_name]
@@ -152,6 +153,11 @@ define(function(require) {
 
 			});
 
+		},
+		onSearchKeyup: function(event){
+			var $target = $(event.currentTarget);
+
+			this.analyzes.search($target.val());
 		},
 		validateForm: function() {
 			var view = this;

@@ -58,13 +58,43 @@ define(function(require) {
 			return results;
 		},
 
+		extractResult: function(groups, result, criteriaRE, testTargetProp) {
+
+			_.each(groups, function(model) {
+				if (!model.children && criteriaRE.test(model[testTargetProp])) {
+					result.push(model);
+				}
+				if (model.children && (model.children.length > 0)) {
+					this.extractResult(model.children, result, criteriaRE, testTargetProp);
+				}
+			}, this);
+		},
+
+		search: function(criteria) {
+			this.lastCriteria = criteria;
+			this.trigger('search');
+
+			if (!this.originalModels) {
+				this.originalModels = this.toJSON();
+			}
+			if (this.lastCriteria && (this.lastCriteria.length>2)) {
+				var criteriaRE = new RegExp(this.lastCriteria, "i");
+				var result = [];
+				this.extractResult(this.originalModels, result, criteriaRE, "title");
+				this.reset(result);
+			} else {
+				this.reset(this.originalModels);
+			}
+
+		},
+
 		parse: function(raw) {
 			var tree = [];
 
 			tree = this.convertToTree(raw.data);
 			//var parents = this.onlyParents(tree);
 
-			return tree;//parents;
+			return tree; //parents;
 		}
 
 	});
