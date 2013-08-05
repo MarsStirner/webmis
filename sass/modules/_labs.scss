@@ -14,17 +14,21 @@
 	overflow:auto;
 	margin-left: -0.3em;
     overflow: auto;
-	border:1px solid #CCCCCC;
+
 	@include box-sizing(border-box);
-	&.labs-column-left{
-		height:35em;
-		width: 40%;
+	.labs-column-left{
+		// height:35em;
+		// width: 40%;
 	}
 	&.labs-column-right{
-		height:35em;
+		// height:35em;
 		width:55%;
 	}
 
+}
+
+.column-box{
+	border:1px solid #CCCCCC;
 }
 ul.dynatree-container a:focus, span.dynatree-focused a:link{
 	outline: 0;

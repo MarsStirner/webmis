@@ -21,6 +21,11 @@ define(function(require) {
 				view.render();
 			});
 
+			view.collection.on('search', function() {
+				view.$el.html('<div class="msg">Поиск...</div>');
+				//console.log('fetch')
+			});
+
 			view.collection.on('fetch', function() {
 				view.$el.html('<div class="msg">Загрузка...</div>');
 				//console.log('fetch')
