@@ -3,11 +3,13 @@ define(function(require) {
 
 	var Analysis = Model.extend({
 		initialize: function(options) {
-
 			this.code = options.code;
 			this.patientId = options.patientId;
 			this.deferred = this.fetch();
+
 		},
+
+
 
 		getTests: function() {
 			var self = this;
@@ -19,16 +21,19 @@ define(function(require) {
 			_.each(tests, function(test) {
 
 				if (test.type == "String") {
-
+					var select = true;
 					var unselectable = false;
+
+					self.setProperty(test.name, 'isAssigned', 'true');
+					console.log(test.name, self.getProperty(test.name, 'isAssigned'))
 
 					if (self.getProperty(test.name, 'isAssignable') == 'false') {
 						unselectable = true;
 					}
 
-					//все тесты выбраны по умолчанию, в не зависимости от проперти isAssigned
-					self.setProperty(test.name, 'isAssigned', 'true');
-					var select = true;
+					if (self.getProperty(test.name, 'isAssigned') == 'false') {
+						select = false;
+					}
 
 					testsList.push({
 						title: test.name,
