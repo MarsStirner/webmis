@@ -14,7 +14,7 @@ define(function(require) {
 			view.analyzes = view.collection;
 
 			view.analyzes.on('reset add remove', function() {
-				console.log('view.analyzes', view.analyzes);
+
 				view.render();
 			});
 
