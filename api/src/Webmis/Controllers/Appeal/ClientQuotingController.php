@@ -57,7 +57,7 @@ class ClientQuotingController
             ->join('RbPacientModel')
             ->join('QuotaType')
             //->join('MKB')
-            ->select(array('id', 'mkb', 'treatmentId', 'RbTreatment.name','pacientModelId','RbPacientModel.name','quotaTypeId','QuotaType.name'))
+            ->select(array('id', 'mkb', 'treatmentId', 'RbTreatment.name','pacientModelId','RbPacientModel.name','quotaTypeId','QuotaType.name','QuotaType.code'))
             ->findOne();
             //->toArray();
             return $app['jsonp']->jsonp(array("data" => $vmpTalon,'$route_params'=>$route_params));
