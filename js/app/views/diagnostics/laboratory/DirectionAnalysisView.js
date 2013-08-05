@@ -6,9 +6,9 @@ define(function(require) {
 		tagName: 'tr',
 		// className: 'context-menu-'+this.cid,
 		events: {
-			'change .cito': 'onCitoChange',
 			'change .select_date': 'setPlannedEndDate',
 			'change .select_time': 'setPlannedEndDate',
+			'change .cito': 'onCitoChange',
 			'change .tests-checkbox': 'onTestSelect',
 			'click .icon': 'onArrowClick',
 			'click .title2': 'onTitleClick'
@@ -56,6 +56,7 @@ define(function(require) {
 			var $target = $(event.target);
 			var name = $target.val();
 			var value = $target.prop('checked');
+			console.log('value',value)
 			if (value) {
 				$target.parents('li').addClass('selected');
 			} else {
@@ -65,7 +66,7 @@ define(function(require) {
 		},
 
 		onTitleClick: function() {
-			//console.log('onTitleClick');
+			console.log('onTitleClick', this.model);
 		},
 
 		onCitoChange: function() {
@@ -258,9 +259,7 @@ define(function(require) {
 		close: function() {
 			var view = this;
 			view.$el.remove();
-			//console.log('analysis close', view.$plannedDatepicker.datepicker().datepicker('destroy'),view.$plannedDatepicker);
-			//view.$plannedDatepicker.datepicker('destroy');
-
+			view.remove();
 		}
 	});
 
