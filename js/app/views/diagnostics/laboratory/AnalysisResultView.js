@@ -51,14 +51,19 @@ define(function(require) {
             var beginDate = moment(this.result.getProperty('plannedEndDate'), 'YYYY-MM-DD HH:mm:ss').valueOf();
             var departmentId = this.options.appeal.get('currentDepartment').id;
 
-            this.biomaterials = new Biomaterials();
-            this.biomaterials.setParams({
-                filter: {
-                    jobTicketId : jobTicketId,
+            var filter = {
                     departmentId : departmentId,
                     beginDate : beginDate,
                     endDate : beginDate + (60*60*24*1000)
-                }
+                };
+
+            if(jobTicketId){
+                filter.jobTicketId = jobTicketId;
+            }
+
+            this.biomaterials = new Biomaterials();
+            this.biomaterials.setParams({
+                filter: filter
             });
             return this.biomaterials.fetch();
         },
@@ -72,7 +77,8 @@ define(function(require) {
                 var actions = biomaterial? biomaterial.get('actions') : [];
                 var action = _.find(actions, function(action) {
                     return action.id === result.id
-                })
+                });
+
 
                 var rbTissueTypeName = '';
                 var rbTestTubeTypeNamе = '';
@@ -138,6 +144,7 @@ define(function(require) {
                 var rbTissueTypeName = '';
                 var rbTestTubeTypeNamе = '';
                 var jobTicketDatetime = '';
+                var takenTissueJournal = '';
                 if(action){
                     if(action.tubeType && action.tubeType.name){
                         rbTestTubeTypeNamе = action.tubeType.name;
@@ -199,6 +206,7 @@ define(function(require) {
                 var rbTissueTypeName = '';
                 var rbTestTubeTypeNamе = '';
                 var jobTicketDatetime = '';
+                var takenTissueJournal = '';
                 if(action){
                     if(action.tubeType && action.tubeType.name){
                         rbTestTubeTypeNamе = action.tubeType.name;
