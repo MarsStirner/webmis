@@ -1,5 +1,7 @@
 <?php
 	function proxy_url ($url) {
+		set_time_limit(120);
+
 		$ch = curl_init( $url );
 
 
@@ -41,6 +43,8 @@
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
 		curl_setopt( $ch, CURLOPT_USERAGENT, !empty($_GET['user_agent']) ? $_GET['user_agent'] : $_SERVER['HTTP_USER_AGENT'] );
+
+		curl_setopt( $ch, CURLOPT_TIMEOUT, 120 );
 
 
 		$result = curl_exec($ch);
