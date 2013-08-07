@@ -502,17 +502,14 @@ define(function(require) {
         render: function() {
             var self = this;
             self.getResult(function() {
-                console.log('render LaboratoryResultView', self, self.resultData());
+                // console.log('render LaboratoryResultView', self, self.resultData());
                 self.$el.html(_.template(self.template, self.resultData(), {
                     variable: 'data'
                 }));
 
-
                 self.$('.actions button').button();
                 self.showPrintBtn(self.printOptions());
             });
-
-
 
             return self;
         }

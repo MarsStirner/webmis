@@ -93,7 +93,7 @@ define(function(require) {
 					appealId: self.options.appealId
 				}
 			});
-			App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics/consultations/result/" + model.get('id'));
+			App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-consultations/" + model.get('id'));
 
 		},
 
