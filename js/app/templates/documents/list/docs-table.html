@@ -2,7 +2,7 @@
 	<%documents.each(function (document) {%>
 		<tr class="document-item-row">
 			<td class="selected-flag-col" style="background-color: white;"><input type="checkbox" class="selected-flag" value="<%=document.id%>"></td>
-			<td class="single-item-select"><%=Core.Date.format(document.get('assessmentDate'))%></td>
+			<td class="single-item-select"><%=Core.Date.formatDateTime(document.get('assessmentDate'))%></td>
 			<td class="single-item-select"><%=document.get('assessmentName').name%></td>
 			<td class="single-item-select"><%=document.get('doctor').name.raw%></td>
 			<td class="single-item-select"><%=document.get('doctor').specs ? document.get('doctor').specs.name : ''%></td>
