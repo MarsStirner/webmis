@@ -175,6 +175,9 @@ div.RichText {
 	width:100%;
 	overflow-y: auto;
 	@include box-sizing(border-box);
+	i {
+		font-style: italic;
+	}
 }
 div.RichTextWrapper {
 	@include box-sizing(border-box);

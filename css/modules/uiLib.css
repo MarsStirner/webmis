@@ -147,7 +147,7 @@
 .Styled.Button .Icon {
   margin-left: -0.8em;
 }
-/* line 69, C:/WebServers/home/webmis/www/sass/_base.scss */
+/* line 69, ../../sass/_base.scss */
 .Styled.Button:not([ie]) {
   filter: progid:DXImageTransform.Microsoft.gradient(enabled='false');
 }
@@ -316,7 +316,7 @@ a.Button:active i {
   		height:14px;
   	}*/
 }
-/* line 43, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .RemoveIcon:hover, .RemoveIcon.remove_tiny_hover, .RemoveIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -355,7 +355,7 @@ a.Button:active i {
   		margin-right:0.2em;
   	}*/
 }
-/* line 43, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .DeleteIcon:hover, .DeleteIcon.remove_tiny_hover, .DeleteIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -528,7 +528,7 @@ a.Button:active i {
   margin-bottom: 1.4em;
   zoom: 1;
 }
-/* line 59, C:/WebServers/home/webmis/www/sass/_base.scss */
+/* line 59, ../../sass/_base.scss */
 .FormList > li:after {
   clear: both;
   content: "";
@@ -542,7 +542,7 @@ a.Button:active i {
   width: 100%;
   display: block;
 }
-/* line 59, C:/WebServers/home/webmis/www/sass/_base.scss */
+/* line 59, ../../sass/_base.scss */
 .FormList > li h4:after {
   clear: both;
   content: "";
@@ -618,8 +618,12 @@ div.RichText {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+/* line 178, ../../sass/modules/uiLib.scss */
+div.RichText i {
+  font-style: italic;
+}
 
-/* line 179, ../../sass/modules/uiLib.scss */
+/* line 182, ../../sass/modules/uiLib.scss */
 div.RichTextWrapper {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -629,33 +633,33 @@ div.RichTextWrapper {
   min-height: 2.7em;
 }
 
-/* line 186, ../../sass/modules/uiLib.scss */
+/* line 189, ../../sass/modules/uiLib.scss */
 input[type="text"], input[type="password"], div.RichText, textarea {
   -webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
   box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.1);
 }
-/* line 190, ../../sass/modules/uiLib.scss */
+/* line 193, ../../sass/modules/uiLib.scss */
 input[type="text"]:focus, input[type="password"]:focus, div.RichText:focus, textarea:focus {
   -webkit-box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
   box-shadow: inset 1px 3px 3px 0px rgba(128, 128, 128, 0.3);
 }
 
-/* line 196, ../../sass/modules/uiLib.scss */
+/* line 199, ../../sass/modules/uiLib.scss */
 .Mandatory {
   outline: 1px solid #7FCCFF;
 }
 
-/* line 199, ../../sass/modules/uiLib.scss */
+/* line 202, ../../sass/modules/uiLib.scss */
 .WrongField {
   outline: 2px solid #FF4040;
 }
 
-/* line 202, ../../sass/modules/uiLib.scss */
+/* line 205, ../../sass/modules/uiLib.scss */
 .Error {
   color: #FF4040;
 }
 
-/* line 205, ../../sass/modules/uiLib.scss */
+/* line 208, ../../sass/modules/uiLib.scss */
 textarea {
   border: 1px solid #737477;
   background: #fff;
@@ -670,46 +674,46 @@ textarea {
   box-sizing: border-box;
 }
 
-/* line 217, ../../sass/modules/uiLib.scss */
+/* line 220, ../../sass/modules/uiLib.scss */
 input[type="text"]:focus, textarea:focus, input.Dirty {
   border: 1px solid #0099FF;
   color: black;
 }
 
-/* line 221, ../../sass/modules/uiLib.scss */
+/* line 224, ../../sass/modules/uiLib.scss */
 input[type="text"].Disabled, textarea.Disabled, .DDSelect.Disabled, .RichText.Disabled {
   background: #F5F4F4;
   border: 1px solid #D9D9D9;
 }
 
-/* line 225, ../../sass/modules/uiLib.scss */
+/* line 228, ../../sass/modules/uiLib.scss */
 input[type="checkbox"], input[type="radio"] {
   vertical-align: middle;
   position: relative;
   top: -2px;
 }
 
-/* line 230, ../../sass/modules/uiLib.scss */
+/* line 233, ../../sass/modules/uiLib.scss */
 ::-webkit-input-placeholder {
   color: #B3B3B3;
 }
 
-/* line 234, ../../sass/modules/uiLib.scss */
+/* line 237, ../../sass/modules/uiLib.scss */
 input:focus::-webkit-input-placeholder {
   display: none;
 }
 
-/* line 238, ../../sass/modules/uiLib.scss */
+/* line 241, ../../sass/modules/uiLib.scss */
 input:-moz-placeholder, textarea:-moz-placeholder {
   color: #B3B3B3;
 }
 
-/* line 241, ../../sass/modules/uiLib.scss */
+/* line 244, ../../sass/modules/uiLib.scss */
 input.Quant {
   width: 3em;
 }
 
-/* line 244, ../../sass/modules/uiLib.scss */
+/* line 247, ../../sass/modules/uiLib.scss */
 select.Regular {
   white-space: nowrap;
   font-size: 1.2em;
@@ -723,19 +727,19 @@ select.Regular {
   width: 100%;
 }
 
-/* line 256, ../../sass/modules/uiLib.scss */
+/* line 259, ../../sass/modules/uiLib.scss */
 select.Regular:disabled {
   background-color: #F5F4F4;
 }
 
-/* line 260, ../../sass/modules/uiLib.scss */
+/* line 263, ../../sass/modules/uiLib.scss */
 .AnyNum input[type="text"], .AnyNum input[type="password"] {
   display: inline-block;
   vertical-align: middle;
   margin-right: 0.3em;
 }
 
-/* line 268, ../../sass/modules/uiLib.scss */
+/* line 271, ../../sass/modules/uiLib.scss */
 .Field {
   float: left;
   vertical-align: bottom;
@@ -745,14 +749,14 @@ select.Regular:disabled {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-/* line 275, ../../sass/modules/uiLib.scss */
+/* line 278, ../../sass/modules/uiLib.scss */
 .Field:last-child {
   padding-right: 0;
   text-align: right;
   padding-left: 8px;
 }
 
-/* line 286, ../../sass/modules/uiLib.scss */
+/* line 289, ../../sass/modules/uiLib.scss */
 .DatePeriod {
   border: 1px solid #737477;
   width: 17em;
@@ -766,17 +770,17 @@ select.Regular:disabled {
   *display: inline;
   background: #fff;
 }
-/* line 295, ../../sass/modules/uiLib.scss */
+/* line 298, ../../sass/modules/uiLib.scss */
 .DatePeriod input[type="text"] {
   border: none;
   height: 2.25em;
 }
-/* line 299, ../../sass/modules/uiLib.scss */
+/* line 302, ../../sass/modules/uiLib.scss */
 .DatePeriod input[type="text"]:focus {
   border: none;
   outline: none;
 }
-/* line 303, ../../sass/modules/uiLib.scss */
+/* line 306, ../../sass/modules/uiLib.scss */
 .DatePeriod .FromTo {
   display: -moz-inline-stack;
   display: inline-block;
@@ -787,36 +791,36 @@ select.Regular:disabled {
   width: 7.1em;
   position: relative;
 }
-/* line 308, ../../sass/modules/uiLib.scss */
+/* line 311, ../../sass/modules/uiLib.scss */
 .DatePeriod.SingleDate {
   width: 8em !important;
 }
-/* line 311, ../../sass/modules/uiLib.scss */
+/* line 314, ../../sass/modules/uiLib.scss */
 .DatePeriod.Dirty {
   border: 1px solid #0099FF;
   color: black;
 }
-/* line 315, ../../sass/modules/uiLib.scss */
+/* line 318, ../../sass/modules/uiLib.scss */
 .DatePeriod.Focused {
   outline: auto #ffba00;
 }
-/* line 318, ../../sass/modules/uiLib.scss */
+/* line 321, ../../sass/modules/uiLib.scss */
 .DatePeriod.Disabled {
   background: #F5F4F4;
   border: 1px solid #D9D9D9;
 }
 
-/* line 328, ../../sass/modules/uiLib.scss */
+/* line 331, ../../sass/modules/uiLib.scss */
 .HourPicker {
   vertical-align: top;
 }
 
-/* line 332, ../../sass/modules/uiLib.scss */
+/* line 335, ../../sass/modules/uiLib.scss */
 .HalfCol .SingleDate {
   width: 10em;
 }
 
-/* line 335, ../../sass/modules/uiLib.scss */
+/* line 338, ../../sass/modules/uiLib.scss */
 .PairValue input[type="text"] {
   display: inline-block;
   width: 3em;
@@ -826,7 +830,7 @@ select.Regular:disabled {
   vertical-align: bottom;
 }
 
-/* line 342, ../../sass/modules/uiLib.scss */
+/* line 345, ../../sass/modules/uiLib.scss */
 .PairValue .DDSelect {
   width: 7em;
   display: inline-block;
@@ -836,7 +840,7 @@ select.Regular:disabled {
   vertical-align: bottom;
 }
 
-/* line 350, ../../sass/modules/uiLib.scss */
+/* line 353, ../../sass/modules/uiLib.scss */
 .DDSelect {
   border: 1px solid #737477;
   display: block;
@@ -848,7 +852,7 @@ select.Regular:disabled {
   background: #fff;
   min-width: 3.5em;
 }
-/* line 360, ../../sass/modules/uiLib.scss */
+/* line 363, ../../sass/modules/uiLib.scss */
 .DDSelect > .Title .Actions {
   font-size: 1.2em;
   line-height: 2.25em;
@@ -859,18 +863,18 @@ select.Regular:disabled {
   white-space: nowrap;
   overflow: hidden;
 }
-/* line 369, ../../sass/modules/uiLib.scss */
+/* line 372, ../../sass/modules/uiLib.scss */
 .DDSelect > .Title .Actions input {
   border: none;
   font-size: 1em;
   padding: 0;
   background: none;
 }
-/* line 375, ../../sass/modules/uiLib.scss */
+/* line 378, ../../sass/modules/uiLib.scss */
 .DDSelect > .Title .Actions input:focus {
   outline: none;
 }
-/* line 379, ../../sass/modules/uiLib.scss */
+/* line 382, ../../sass/modules/uiLib.scss */
 .DDSelect > .Title .Actions:after {
   content: "▼";
   font-size: 0.8em;
@@ -879,7 +883,7 @@ select.Regular:disabled {
   top: 0.15em;
   background: #fff;
 }
-/* line 389, ../../sass/modules/uiLib.scss */
+/* line 392, ../../sass/modules/uiLib.scss */
 .DDSelect > .Content {
   top: 2em;
   /*right:-1px;*/
@@ -888,116 +892,116 @@ select.Regular:disabled {
   border-top: 1px solid #737477;
   display: none;
 }
-/* line 396, ../../sass/modules/uiLib.scss */
+/* line 399, ../../sass/modules/uiLib.scss */
 .DDSelect > .Content li {
   white-space: normal;
   padding: 0.6em 0.4em 0.7em 0.4em;
 }
-/* line 402, ../../sass/modules/uiLib.scss */
+/* line 405, ../../sass/modules/uiLib.scss */
 .DDSelect.Focused {
   outline: auto #ffba00;
 }
 
-/* line 409, ../../sass/modules/uiLib.scss */
+/* line 412, ../../sass/modules/uiLib.scss */
 .DDSelect.Disabled > .Title .Actions:after {
   background: #F5F4F4;
 }
 
-/* line 416, ../../sass/modules/uiLib.scss */
+/* line 419, ../../sass/modules/uiLib.scss */
 .DateTime {
   display: inline-block;
   vertical-align: middle;
   word-spacing: normal;
 }
-/* line 420, ../../sass/modules/uiLib.scss */
+/* line 423, ../../sass/modules/uiLib.scss */
 .DateTime .DDSelect {
   display: inline-block;
   width: 5.5em;
   vertical-align: bottom;
 }
-/* line 425, ../../sass/modules/uiLib.scss */
+/* line 428, ../../sass/modules/uiLib.scss */
 .DateTime .DDList > .Content {
   min-width: 5.5em;
   max-height: 20em;
   overflow-y: auto;
 }
-/* line 430, ../../sass/modules/uiLib.scss */
+/* line 433, ../../sass/modules/uiLib.scss */
 .DateTime .DDList > .Content.NoScroll {
   overflow-y: visible;
   max-height: auto;
 }
-/* line 435, ../../sass/modules/uiLib.scss */
+/* line 438, ../../sass/modules/uiLib.scss */
 .DateTime .SingleTime {
   display: inline-block;
   vertical-align: middle;
   width: 3.25em;
   margin: 0 2em 0 0;
 }
-/* line 441, ../../sass/modules/uiLib.scss */
+/* line 444, ../../sass/modules/uiLib.scss */
 .DateTime .SingleTime input {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
 
-/* line 447, ../../sass/modules/uiLib.scss */
+/* line 450, ../../sass/modules/uiLib.scss */
 .PairValue .DDList > .Content {
   min-width: 6.5em;
 }
 
-/* line 452, ../../sass/modules/uiLib.scss */
+/* line 455, ../../sass/modules/uiLib.scss */
 .ButtonContent {
   font-size: 1.2em;
   line-height: 1.4em;
 }
 
-/* line 457, ../../sass/modules/uiLib.scss */
+/* line 460, ../../sass/modules/uiLib.scss */
 .DDSelect.Active {
   z-index: 10;
 }
-/* line 460, ../../sass/modules/uiLib.scss */
+/* line 463, ../../sass/modules/uiLib.scss */
 .DDSelect.Active .DDSecondLevel {
   display: block;
 }
 
-/* line 465, ../../sass/modules/uiLib.scss */
+/* line 468, ../../sass/modules/uiLib.scss */
 .DDSelect.Disabled .Content {
   display: none;
 }
 
-/* line 469, ../../sass/modules/uiLib.scss */
+/* line 472, ../../sass/modules/uiLib.scss */
 .DrugHolder {
   padding-right: 2em;
   position: relative;
   border: 1px solid #737477;
   background: #fff;
 }
-/* line 474, ../../sass/modules/uiLib.scss */
+/* line 477, ../../sass/modules/uiLib.scss */
 .DrugHolder .SearchIcon {
   position: absolute;
   right: 0;
   top: 0.9em;
 }
 
-/* line 481, ../../sass/modules/uiLib.scss */
+/* line 484, ../../sass/modules/uiLib.scss */
 .DrugHolder input[type="text"], .DrugHolder input[type="password"] {
   border: none;
 }
 
 /*Paginator*/
-/* line 488, ../../sass/modules/uiLib.scss */
+/* line 491, ../../sass/modules/uiLib.scss */
 .Paginator {
   word-spacing: -0.3em;
 }
 
-/* line 491, ../../sass/modules/uiLib.scss */
+/* line 494, ../../sass/modules/uiLib.scss */
 .Paginator > li {
   display: inline-block;
   word-spacing: normal;
   margin-right: 0.5em;
   font-size: 1.3em;
 }
-/* line 496, ../../sass/modules/uiLib.scss */
+/* line 499, ../../sass/modules/uiLib.scss */
 .Paginator > li a {
   display: block;
   width: 2em;
@@ -1008,31 +1012,31 @@ select.Regular:disabled {
   text-decoration: none;
   color: #404041;
 }
-/* line 506, ../../sass/modules/uiLib.scss */
+/* line 509, ../../sass/modules/uiLib.scss */
 .Paginator > li a:hover {
   background: #DFF4FD;
   border: 1px solid #118EDC;
   color: #118EDC;
 }
 
-/* line 513, ../../sass/modules/uiLib.scss */
+/* line 516, ../../sass/modules/uiLib.scss */
 .Paginator > li.PrevPage a, .Paginator > li.NextPage a {
   color: #6D6E71;
 }
 
-/* line 517, ../../sass/modules/uiLib.scss */
+/* line 520, ../../sass/modules/uiLib.scss */
 .Paginator > li.PrevPage a:hover, .Paginator > li.NextPage a:hover {
   color: #118EDC;
 }
 
-/* line 521, ../../sass/modules/uiLib.scss */
+/* line 524, ../../sass/modules/uiLib.scss */
 .Paginator > li.Active a {
   background: #DFF4FD;
   border: 1px solid #118EDC;
   color: #118EDC;
 }
 
-/* line 527, ../../sass/modules/uiLib.scss */
+/* line 530, ../../sass/modules/uiLib.scss */
 .Paginator > li.Disabled a, .Paginator > li.Disabled a:hover {
   border: 1px solid #D9D9D9;
   color: #404041;
@@ -1041,7 +1045,7 @@ select.Regular:disabled {
   background: none;
 }
 
-/* line 536, ../../sass/modules/uiLib.scss */
+/* line 539, ../../sass/modules/uiLib.scss */
 .Button .Icon.Arrow.Down {
   vertical-align: top;
   font-size: 0.5em;
@@ -1051,38 +1055,38 @@ select.Regular:disabled {
   margin-left: 0.1em;
 }
 
-/* line 546, ../../sass/modules/uiLib.scss */
+/* line 549, ../../sass/modules/uiLib.scss */
 .DayPaginator {
   margin-bottom: 2em;
 }
-/* line 548, ../../sass/modules/uiLib.scss */
+/* line 551, ../../sass/modules/uiLib.scss */
 .DayPaginator h2 {
   text-align: center;
 }
 
-/* line 552, ../../sass/modules/uiLib.scss */
+/* line 555, ../../sass/modules/uiLib.scss */
 .PrevDay {
   float: left;
   font-size: 1.3em;
   color: #6D6D71;
 }
-/* line 556, ../../sass/modules/uiLib.scss */
+/* line 559, ../../sass/modules/uiLib.scss */
 .PrevDay.Disabled {
   opacity: 0.6;
 }
 
-/* line 560, ../../sass/modules/uiLib.scss */
+/* line 563, ../../sass/modules/uiLib.scss */
 .NextDay {
   float: right;
   font-size: 1.3em;
   color: #6D6D71;
 }
-/* line 564, ../../sass/modules/uiLib.scss */
+/* line 567, ../../sass/modules/uiLib.scss */
 .NextDay.Disabled {
   opacity: 0.6;
 }
 
-/* line 568, ../../sass/modules/uiLib.scss */
+/* line 571, ../../sass/modules/uiLib.scss */
 a.ScrollPage {
   border: 1px solid #D9D9D9;
   color: #6D6E71;
@@ -1094,14 +1098,14 @@ a.ScrollPage {
   width: 2em;
   margin: 0 0.2em;
 }
-/* line 578, ../../sass/modules/uiLib.scss */
+/* line 581, ../../sass/modules/uiLib.scss */
 a.ScrollPage:hover {
   background: #DFF4FD;
   border: 1px solid #118EDC;
   color: #118EDC;
 }
 
-/* line 584, ../../sass/modules/uiLib.scss */
+/* line 587, ../../sass/modules/uiLib.scss */
 a.ScrollDay {
   border: 1px solid #bababa;
   -webkit-border-radius: 6px;
@@ -1127,7 +1131,7 @@ a.ScrollDay {
   width: 2.7em;
   margin: 0 1em;
 }
-/* line 597, ../../sass/modules/uiLib.scss */
+/* line 600, ../../sass/modules/uiLib.scss */
 a.ScrollDay:hover {
   background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2QzZDNkMyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2Y3ZjdmNyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d3d3d3), color-stop(100%, #f7f7f7));
@@ -1139,14 +1143,14 @@ a.ScrollDay:hover {
   color: #118EDC;
 }
 
-/* line 603, ../../sass/modules/uiLib.scss */
+/* line 606, ../../sass/modules/uiLib.scss */
 .MDash {
   display: inline-block;
   vertical-align: middle;
   margin-right: 1em;
 }
 
-/* line 611, ../../sass/modules/uiLib.scss */
+/* line 614, ../../sass/modules/uiLib.scss */
 .Disabled a.ScrollPage:hover {
   background: none;
   border: 1px solid #D9D9D9;
@@ -1155,11 +1159,11 @@ a.ScrollDay:hover {
 }
 
 /*ColorTheme*/
-/* line 622, ../../sass/modules/uiLib.scss */
+/* line 625, ../../sass/modules/uiLib.scss */
 .VarColor {
   background: #f7ffef;
 }
-/* line 625, ../../sass/modules/uiLib.scss */
+/* line 628, ../../sass/modules/uiLib.scss */
 .VarColor body {
   background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ViZmFkYiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2Y3ZmZlZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ebfadb), color-stop(100%, #f7ffef));
@@ -1168,11 +1172,11 @@ a.ScrollDay:hover {
   background: -o-linear-gradient(#ebfadb, #f7ffef);
   background: linear-gradient(#ebfadb, #f7ffef);
 }
-/* line 628, ../../sass/modules/uiLib.scss */
+/* line 631, ../../sass/modules/uiLib.scss */
 .VarColor a {
   color: #509d01;
 }
-/* line 634, ../../sass/modules/uiLib.scss */
+/* line 637, ../../sass/modules/uiLib.scss */
 .VarColor .Tabs li a:hover {
   background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdjZDQyMSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRmOTgwMiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7cd421), color-stop(100%, #4f9802));
@@ -1183,7 +1187,7 @@ a.ScrollDay:hover {
   border: 1px solid #4f9802;
   border-bottom: none;
 }
-/* line 642, ../../sass/modules/uiLib.scss */
+/* line 645, ../../sass/modules/uiLib.scss */
 .VarColor .Tabs li.Active a {
   background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdjZDQyMSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRmOTgwMiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7cd421), color-stop(100%, #4f9802));
@@ -1194,36 +1198,36 @@ a.ScrollDay:hover {
   border: 1px solid #4f9802;
   border-bottom: none;
 }
-/* line 647, ../../sass/modules/uiLib.scss */
+/* line 650, ../../sass/modules/uiLib.scss */
 .VarColor #page {
   border-top: 3px solid #4f9802;
 }
-/* line 651, ../../sass/modules/uiLib.scss */
+/* line 654, ../../sass/modules/uiLib.scss */
 .VarColor .Styled.Button:hover, .VarColor .Styled.Button.Green:hover, .VarColor .Styled.Button.BlueBorder, .VarColor .Styled.Button.BlueBorder {
   border: 2px solid #4f9802;
 }
-/* line 654, ../../sass/modules/uiLib.scss */
+/* line 657, ../../sass/modules/uiLib.scss */
 .VarColor .Styled.Button.BlueBorder {
   border-width: 4px;
 }
-/* line 661, ../../sass/modules/uiLib.scss */
+/* line 664, ../../sass/modules/uiLib.scss */
 .VarColor .Paginator > li a:hover {
   background: #e8f7d9;
   border: 1px solid #4f9802;
   color: #509D01;
 }
-/* line 668, ../../sass/modules/uiLib.scss */
+/* line 671, ../../sass/modules/uiLib.scss */
 .VarColor .Paginator > li.Active a {
   background: #e8f7d9;
   border: 1px solid #4f9802;
   color: #509d01;
 }
 
-/* line 675, ../../sass/modules/uiLib.scss */
+/* line 678, ../../sass/modules/uiLib.scss */
 .InlineList {
   white-space: nowrap !important;
 }
-/* line 677, ../../sass/modules/uiLib.scss */
+/* line 680, ../../sass/modules/uiLib.scss */
 .InlineList li {
   display: -moz-inline-stack;
   display: inline-block;
@@ -1233,18 +1237,18 @@ a.ScrollDay:hover {
   *display: inline;
   padding-right: 0.5em;
 }
-/* line 680, ../../sass/modules/uiLib.scss */
+/* line 683, ../../sass/modules/uiLib.scss */
 .InlineList li label {
   line-height: 2.25em;
   margin: 0 0.5em 0 0;
 }
 
-/* line 687, ../../sass/modules/uiLib.scss */
+/* line 690, ../../sass/modules/uiLib.scss */
 .SelectValue {
   white-space: nowrap;
   word-spacing: -0.3em;
 }
-/* line 690, ../../sass/modules/uiLib.scss */
+/* line 693, ../../sass/modules/uiLib.scss */
 .SelectValue .Field {
   display: inline-block;
   vertical-align: middle;
@@ -1254,7 +1258,7 @@ a.ScrollDay:hover {
   float: none;
   word-spacing: normal;
 }
-/* line 699, ../../sass/modules/uiLib.scss */
+/* line 702, ../../sass/modules/uiLib.scss */
 .SelectValue .MDash {
   display: inline-block;
   vertical-align: middle;
@@ -1262,7 +1266,7 @@ a.ScrollDay:hover {
   text-align: center;
 }
 
-/* line 707, ../../sass/modules/uiLib.scss */
+/* line 710, ../../sass/modules/uiLib.scss */
 .Throbber {
   width: 9em;
   height: 50px;
@@ -1282,7 +1286,7 @@ a.ScrollDay:hover {
   color: white;
 }
 
-/* line 726, ../../sass/modules/uiLib.scss */
+/* line 729, ../../sass/modules/uiLib.scss */
 .ToolTip {
   background: #f9edbe;
   border: 1px solid #f0c36d;
@@ -1294,7 +1298,7 @@ a.ScrollDay:hover {
   display: inline-block;
   position: relative;
 }
-/* line 736, ../../sass/modules/uiLib.scss */
+/* line 739, ../../sass/modules/uiLib.scss */
 .ToolTip:after {
   display: block;
   position: absolute;
@@ -1302,7 +1306,7 @@ a.ScrollDay:hover {
   background: transparent;
   overflow: hidden;
 }
-/* line 743, ../../sass/modules/uiLib.scss */
+/* line 746, ../../sass/modules/uiLib.scss */
 .ToolTip.TopTail:after {
   width: 18px;
   height: 9px;
@@ -1311,7 +1315,7 @@ a.ScrollDay:hover {
   margin-left: -9px;
   background: url(../../images/tail.png) no-repeat left top;
 }
-/* line 751, ../../sass/modules/uiLib.scss */
+/* line 754, ../../sass/modules/uiLib.scss */
 .ToolTip.BottomTail:after {
   width: 18px;
   height: 9px;
@@ -1320,7 +1324,7 @@ a.ScrollDay:hover {
   margin-left: -9px;
   background: url(../../images/tail.png) no-repeat -18px top;
 }
-/* line 759, ../../sass/modules/uiLib.scss */
+/* line 762, ../../sass/modules/uiLib.scss */
 .ToolTip.LeftTail:after {
   width: 9px;
   height: 18px;
@@ -1329,7 +1333,7 @@ a.ScrollDay:hover {
   margin-top: -9px;
   background: url(../../images/tail.png) no-repeat -9px -9px;
 }
-/* line 767, ../../sass/modules/uiLib.scss */
+/* line 770, ../../sass/modules/uiLib.scss */
 .ToolTip.RightTail:after {
   width: 9px;
   height: 18px;
@@ -1338,7 +1342,7 @@ a.ScrollDay:hover {
   margin-top: -9px;
   background: url(../../images/tail.png) no-repeat left -9px;
 }
-/* line 775, ../../sass/modules/uiLib.scss */
+/* line 778, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip {
   background: #ffffff;
   border: 1px solid #d0d0d0;
@@ -1346,47 +1350,47 @@ a.ScrollDay:hover {
   -webkit-box-shadow: 0 0 0.6em rgba(0, 0, 0, 0.3);
   box-shadow: 0 0 0.6em rgba(0, 0, 0, 0.3);
 }
-/* line 781, ../../sass/modules/uiLib.scss */
+/* line 784, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip.TopTail:after {
   background: url(../../images/tail_white.png) no-repeat left top;
   left: 2em;
 }
-/* line 785, ../../sass/modules/uiLib.scss */
+/* line 788, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip.BottomTail:after {
   background: url(../../images/tail_white.png) no-repeat -18px top;
 }
-/* line 788, ../../sass/modules/uiLib.scss */
+/* line 791, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip.LeftTail:after {
   background: url(../../images/tail_white.png) no-repeat -9px -9px;
 }
-/* line 791, ../../sass/modules/uiLib.scss */
+/* line 794, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip.RightTail:after {
   background: url(../../images/tail_white.png) no-repeat left -9px;
 }
-/* line 795, ../../sass/modules/uiLib.scss */
+/* line 798, ../../sass/modules/uiLib.scss */
 .ToolTip.WhiteTip .TooltipList li {
   line-height: 1.5em;
 }
-/* line 800, ../../sass/modules/uiLib.scss */
+/* line 803, ../../sass/modules/uiLib.scss */
 .ToolTip .TooltipList {
   text-align: left;
 }
-/* line 802, ../../sass/modules/uiLib.scss */
+/* line 805, ../../sass/modules/uiLib.scss */
 .ToolTip .TooltipList li {
   line-height: 2.5em;
   white-space: nowrap;
 }
-/* line 805, ../../sass/modules/uiLib.scss */
+/* line 808, ../../sass/modules/uiLib.scss */
 .ToolTip .TooltipList li dfn {
   display: inline-block;
   width: 7em;
 }
-/* line 809, ../../sass/modules/uiLib.scss */
+/* line 812, ../../sass/modules/uiLib.scss */
 .ToolTip .TooltipList li label {
   font-size: 0.9em;
   color: #000;
 }
-/* line 813, ../../sass/modules/uiLib.scss */
+/* line 816, ../../sass/modules/uiLib.scss */
 .ToolTip .TooltipList li .TimeLabel {
   display: inline-block;
   vertical-align: middle;
@@ -1394,18 +1398,18 @@ a.ScrollDay:hover {
   margin: 0 0.5em;
   background: #bfe5bf;
 }
-/* line 822, ../../sass/modules/uiLib.scss */
+/* line 825, ../../sass/modules/uiLib.scss */
 .ToolTip .ToolTipButtons {
   font-size: 0.7em;
   padding-top: 1em;
 }
 
-/* line 827, ../../sass/modules/uiLib.scss */
+/* line 830, ../../sass/modules/uiLib.scss */
 .ToolTipHolder {
   position: relative;
   cursor: pointer;
 }
-/* line 830, ../../sass/modules/uiLib.scss */
+/* line 833, ../../sass/modules/uiLib.scss */
 .ToolTipHolder .ToolTip {
   position: absolute;
   top: 100%;
@@ -1413,22 +1417,22 @@ a.ScrollDay:hover {
   left: 0;
   display: none;
 }
-/* line 837, ../../sass/modules/uiLib.scss */
+/* line 840, ../../sass/modules/uiLib.scss */
 .ToolTipHolder.Active {
   z-index: 2;
 }
-/* line 839, ../../sass/modules/uiLib.scss */
+/* line 842, ../../sass/modules/uiLib.scss */
 .ToolTipHolder.Active .ToolTip {
   display: block;
 }
 
-/* line 845, ../../sass/modules/uiLib.scss */
+/* line 848, ../../sass/modules/uiLib.scss */
 div.HasValidationToolTip {
   display: inline-block;
   padding-right: 0em;
 }
 
-/* line 851, ../../sass/modules/uiLib.scss */
+/* line 854, ../../sass/modules/uiLib.scss */
 .ClearButton {
   display: none;
   margin-left: -22px;
