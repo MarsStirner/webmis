@@ -2124,7 +2124,7 @@ define(function (require) {
 	Documents.Views.Edit.Examination.DocControls = Documents.Views.Edit.DocControls.extend({
 		goToDocReview: function (resultId) {
 			this.model.trigger("toggle:dividedState", false);
-			App.Router.updateUrl(["appeals", appealId, "documents", resultId].join("/"));
+			App.Router.updateUrl(["appeals", appealId, "examinations", resultId].join("/"));
 			dispatcher.trigger("change:viewState", {mode: "SUB_REVIEW", type: "examinations", options: {
 				subId: resultId
 			}});
@@ -2167,7 +2167,7 @@ define(function (require) {
 	Documents.Views.Edit.Therapy.DocControls = Documents.Views.Edit.DocControls.extend({
 		goToDocReview: function (resultId) {
 			this.model.trigger("toggle:dividedState", false);
-			App.Router.updateUrl(["appeals", appealId, "documents", resultId].join("/"));
+			App.Router.updateUrl(["appeals", appealId, "therapy", resultId].join("/"));
 			dispatcher.trigger("change:viewState", {mode: "SUB_REVIEW", type: "therapy", options: {
 				subId: resultId
 			}});
@@ -3118,6 +3118,7 @@ define(function (require) {
 				this.documentTypes = this.options.documentTypes;
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
+				this.documentTypes.mnems = this.getDefaultDocumentsMnems();
 				this.documentTypes.fetch();
 				console.log("documentTypes.fetch");
 			}
@@ -3125,10 +3126,14 @@ define(function (require) {
 			Documents.Views.Review.Base.NoControlsLayout.prototype.initialize.call(this, this.options);
 		},
 
+		getDefaultDocumentsMnems: function () {
+			return Documents.Collections.DocumentTypes.prototype.mnems;
+		},
+
 		tearDown: LayoutBase.prototype.tearDown,
 
-		render: function () {
-			Documents.Views.Review.Base.NoControlsLayout.prototype.render.call(this, {
+		render: function (subViews) {
+			Documents.Views.Review.Base.NoControlsLayout.prototype.render.call(this, _.extend({
 				".documents-controls": new Documents.Views.List.Common.Controls({
 					documentTypes: this.documentTypes,
 					editPageTypeName: this.getEditPageTypeName()
@@ -3140,7 +3145,7 @@ define(function (require) {
 					reviewPageTypeName: this.getEditPageTypeName(),
 					included: this.options.included
 				})
-			});
+			}, subViews || {}));
 
 			this.$(".controls-block-row").show();
 
@@ -3494,7 +3499,19 @@ define(function (require) {
 	});
 
 	Documents.Views.Review.Examination.Layout = Documents.Views.Review.Base.Layout.extend({
-		getEditPageTypeName: Documents.Views.Review.Examination.NoControlsLayout.prototype.getEditPageTypeName
+		getEditPageTypeName: Documents.Views.Review.Examination.NoControlsLayout.prototype.getEditPageTypeName,
+		getDefaultDocumentsMnems: function () {
+			return ["EXAM"];
+		},
+		render: function () {
+			Documents.Views.Review.Base.Layout.prototype.render.call(this, {
+				".documents-controls": new Documents.Views.List.Examination.Controls({editPageTypeName: this.getEditPageTypeName()})
+			});
+
+			this.$(".controls-block-row").show();
+
+			return this;
+		}
 	});
 	//endregion
 
@@ -3507,7 +3524,10 @@ define(function (require) {
 	});
 
 	Documents.Views.Review.Therapy.Layout = Documents.Views.Review.Base.Layout.extend({
-		getEditPageTypeName: Documents.Views.Review.Therapy.NoControlsLayout.prototype.getEditPageTypeName
+		getEditPageTypeName: Documents.Views.Review.Therapy.NoControlsLayout.prototype.getEditPageTypeName,
+		getDefaultDocumentsMnems: function () {
+			return ["THER"];
+		}
 	});
 	//endregion
 	//endregion
