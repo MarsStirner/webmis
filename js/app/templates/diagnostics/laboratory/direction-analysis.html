@@ -12,7 +12,7 @@
             <%_.each(data.tests, function(test){%>
               <li <% if(test.select){%>class="selected"<%}%> >
                 <label>
-                  <input class="tests-checkbox" type="checkbox" <% if(test.select){%>checked="checked"<%}%> value="<%= test.title%>"/><%= test.title%>
+                  <input class="test-select" type="checkbox" <% if(test.select){%>checked="checked"<%}%> value="<%= test.title%>"/><%= test.title%>
                 </label>
               </li>
             <%});%>
@@ -41,8 +41,8 @@
       <input type="text"
       value="<%= data.time %>"
       class="select_time"
-      name="start-time-<%= data.id %>"
-      id="start-time-<%= data.id %>"
+      name="start-time-<%= data.cid %>"
+      id="start-time-<%= data.cid %>"
       placeholder="чч:мм">
       <i class="icon-time time-icon"  style="right:0.3em;"></i>
     </div>

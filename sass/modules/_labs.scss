@@ -198,7 +198,10 @@ cursor: pointer;
 		white-space: normal;
 		overflow: hidden;
 	}
-	span.dynatree-node{
+
+}
+
+span.dynatree-node{
 		position: relative;
 		display: block;
 		table{
@@ -223,7 +226,6 @@ cursor: pointer;
 			}
 		}
 	}
-}
 
 .edit-tree .dynatree-checkbox:first-child{
 		display: none;

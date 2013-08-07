@@ -127,7 +127,7 @@ define([], function() {
 				});
 
 				model.set('group', group);
-				model.trigger('change:'+attributeName);
+				model.trigger('change:'+attributeName, model, value);
 
 				//console.log('setProperty', attributeName, propertyName, value, group);
 

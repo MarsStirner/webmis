@@ -32,7 +32,7 @@ define(function(require) {
             this.trigger("change:viewState", {
                 type: "diagnostics-instrumental"
             });
-            App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics/instrumental/");
+            App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-instrumental/");
 
         },
         printData: function(){

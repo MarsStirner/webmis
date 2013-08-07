@@ -14,12 +14,11 @@ define(function(require) {
 			view.analyzes = view.collection;
 
 			view.analyzes.on('reset add remove', function() {
-
 				view.render();
 			});
 
 			pubsub.on('analysis:click', function(code) {
-				// console.log('analysis:click', code);
+				console.log('analysis:click', code);
 				var analysis = new Analysis({
 					code: code,
 					patientId: view.options.patientId
@@ -27,7 +26,7 @@ define(function(require) {
 
 				analysis.fetch({
 					success: function() {
-						console.log('success', analysis)
+						//console.log('success', analysis)
 						var date = moment(new Date())
 						.startOf('day').add('days', 1).add('hours', 7)
 						.format('YYYY-MM-DD HH:mm:ss');
@@ -83,7 +82,7 @@ define(function(require) {
 
 
 			this.analyzes.each(function(model) {
-				console.log('analyzes item', model);
+				//console.log('analyzes item', model);
 				var analysisView = new AnalysisView({
 					model: model,
 					collection: view.analyzes,
@@ -91,8 +90,6 @@ define(function(require) {
 				});
 
 				view.childViews.push(analysisView);
-
-
 
 				view.$analyzesList.append(analysisView.render().el)
 			}, this);
@@ -109,6 +106,7 @@ define(function(require) {
 		},
 
 		render: function() {
+			console.log('render as')
 			var view = this;
 			var analysisData = view.analyzesData();
 
@@ -123,11 +121,9 @@ define(function(require) {
 		close: function() {
 			var view = this;
 
-			pubsub.off('lab:click group:parent:click group:click');
 			view.analyzes.off();
 
 			_.each(view.childViews, function(childView){
-				console.log('close',view,childView);
 				childView.close();
 			}, view);
 

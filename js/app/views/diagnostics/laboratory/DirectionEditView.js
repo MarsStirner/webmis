@@ -17,7 +17,7 @@ define(function(require) {
 		template: tmpl,
 		events: {
 			'click #assigner-outer': 'openAssignerSelectPopup',
-            "click #executor-outer": "openExecutorSelectPopup"
+			"click #executor-outer": "openExecutorSelectPopup"
 		},
 		initialize: function() {
 			_.bindAll(this);
@@ -46,49 +46,49 @@ define(function(require) {
 			view.depended(view.mkbInputView);
 
 			pubsub.on('assigner:changed', function(assigner) {
-				console.log('assigner:changed',arguments, view)
+				console.log('assigner:changed', arguments, view)
 				view.assigner = assigner;
 				view.ui.$assigner.val(assigner.name.raw);
 
 			});
 
-            pubsub.on('executor:changed', function(executor) {
-            	console.log('executor:changed',arguments, view)
-                view.executor = executor;
-                view.ui.$executor.val(executor.name.raw);
+			pubsub.on('executor:changed', function(executor) {
+				console.log('executor:changed', arguments, view)
+				view.executor = executor;
+				view.ui.$executor.val(executor.name.raw);
 
-            });
+			});
 
 
-            console.log('view',view);
+			console.log('view', view);
 
 		},
 
-        openAssignerSelectPopup: function() {
-            this.personDialogView = new PersonDialogView({
-                appeal: this.options.appeal,
-                title: 'Направивший врач',
-                callback: function(person){
-                    pubsub.trigger('assigner:changed', person);
-                }
-            });
+		openAssignerSelectPopup: function() {
+			this.personDialogView = new PersonDialogView({
+				appeal: this.options.appeal,
+				title: 'Направивший врач',
+				callback: function(person) {
+					pubsub.trigger('assigner:changed', person);
+				}
+			});
 
-            this.personDialogView.render().open();
+			this.personDialogView.render().open();
 
-        },
+		},
 
-        openExecutorSelectPopup: function() {
-            this.personDialogView = new PersonDialogView({
-                appeal: this.options.appeal,
-                title: 'Исполнитель',
-                callback: function(person){
-                    pubsub.trigger('executor:changed', person);
-                }
-            });
+		openExecutorSelectPopup: function() {
+			this.personDialogView = new PersonDialogView({
+				appeal: this.options.appeal,
+				title: 'Исполнитель',
+				callback: function(person) {
+					pubsub.trigger('executor:changed', person);
+				}
+			});
 
-            this.personDialogView.render().open();
+			this.personDialogView.render().open();
 
-        },
+		},
 
 		initFinanseSelect: function(elSelector) {
 			var view = this;
@@ -208,7 +208,7 @@ define(function(require) {
 			view.ui.$startTime = view.$("#start-time");
 			view.ui.$finance = view.$('#finance');
 			view.ui.$assigner = view.$('#assigner');
-            view.ui.$executor = view.$('#executor');
+			view.ui.$executor = view.$('#executor');
 
 			this.$('.change-assigner,.change-executor').button();
 
@@ -278,7 +278,7 @@ define(function(require) {
 			var date = new Date(assessmentBeginDate);
 
 			view.ui.$startDate.addClass('Disabled')
-			.val(moment(date).format('DD.MM.YYYY'))
+				.val(moment(date).format('DD.MM.YYYY'))
 			//.datepicker('disable')
 			.prop('disabled', true);
 
@@ -301,7 +301,7 @@ define(function(require) {
 			var tree = view.$('.edit-tree').dynatree("getTree");
 
 
-			var startDate = moment(view.ui.$startDate.val(),'DD.MM.YYYY').format('YYYY-MM-DD');
+			var startDate = moment(view.ui.$startDate.val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
 			var startTime = view.ui.$startTime.val() + ':00';
 
 
@@ -352,23 +352,23 @@ define(function(require) {
 			view.model.setProperty('doctorMiddleName', 'value', view.executor.name.middle);
 			view.model.setProperty('executorId', 'value', view.executor.id);
 
-           view.model.setProperty('assignerFirstName', 'value', view.assigner.name.first);
-           view.model.setProperty('assignerLastName', 'value', view.assigner.name.last);
-           view.model.setProperty('assignerMiddleName', 'value', view.assigner.name.middle);
-           view.model.setProperty('assignerId', 'value', view.assigner.id);
+			view.model.setProperty('assignerFirstName', 'value', view.assigner.name.first);
+			view.model.setProperty('assignerLastName', 'value', view.assigner.name.last);
+			view.model.setProperty('assignerMiddleName', 'value', view.assigner.name.middle);
+			view.model.setProperty('assignerId', 'value', view.assigner.id);
 
 
 			view.model.setProperty('urgent', 'value', cito);
 			view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 			view.model.setProperty('assessmentBeginDate', 'value', startDate + ' ' + startTime);
 			view.model.setProperty('finance', 'value', view.ui.$finance.val());
-			if(view.ui.$mkbCode.data('mkb-id')){
+			if (view.ui.$mkbCode.data('mkb-id')) {
 				view.model.setProperty('Направительный диагноз', 'valueId', view.ui.$mkbCode.data('mkb-id'));
 			}
 
 
 
-			console.log('attr',view.model.get('group'))
+			console.log('attr', view.model.get('group'))
 			view.model.set('group', group);
 
 			view.model.save({}, {
@@ -377,10 +377,13 @@ define(function(require) {
 					//pubsub.trigger('noty', {text:'Направление обновлено'});
 					view.close();
 				},
-				error: function(a,b,c){
+				error: function(a, b, c) {
 					var errorMessage = (JSON.parse(b.responseText)).errorMessage;
 
-					pubsub.trigger('noty', {text:errorMessage,type:'error'});
+					pubsub.trigger('noty', {
+						text: errorMessage,
+						type: 'error'
+					});
 					//console.log('save error', (JSON.parse(b.responseText)).errorMessage);
 
 				}

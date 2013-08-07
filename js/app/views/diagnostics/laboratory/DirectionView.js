@@ -33,8 +33,6 @@ define(function(require) {
 		detach_event: function(e_name) {
 			delete this.events[e_name]
 			this.delegateEvents();
-
-
 		},
 		initialize: function() {
 			_.bindAll(this);
@@ -172,7 +170,7 @@ define(function(require) {
 
 			view.analyzesSelected.each(function(analysis) {
 				var plannedEndDate = analysis.getProperty('plannedEndDate', 'value');
-				console.log('plannedEndDate', plannedEndDate)
+				//console.log('plannedEndDate', plannedEndDate)
 
 				if (!moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid()) {
 					valid = false;
@@ -341,32 +339,8 @@ define(function(require) {
 			view.setElement($element).render();
 		},
 
-		//закрытие попапа
-		close: function() {
-			var view = this;
-			view.ui.$assessmentDatepicker.datepicker('destroy');
-			view.$el.dialog("close");
-			view.$el.remove();
-			view.remove();
-
-			// view.labsCollectionView.close();
-			view.analyzesTreeView.close();
-			view.analyzesSelectedView.close();
-
-			view.mkbInputView.close();
-			view.financeSelect.close();
-
-			pubsub.off('executor:changed');
-			pubsub.off('assigner:changed');
-
-			//console.log('close', view);
-
-		},
-
 		render: function() {
 			var view = this;
-
-			//if ($(view.$el.parent().length).length === 0) {
 
 			view.$el.html(_.template(this.template, {
 				executor: this.executor,
@@ -374,9 +348,6 @@ define(function(require) {
 			}));
 
 			view.renderNested(view.mkbInputView, ".mkb");
-
-			// view.renderNested(view.labsCollectionView, ".labs");
-			// view.labsCollection.fetch();
 
 			view.ui = {};
 			view.ui.$assessmentDatepicker = this.$("#start-date");
@@ -404,7 +375,6 @@ define(function(require) {
 
 			//установка диагноза
 			if (view.appealDiagnosis) {
-				console.log('view.appealDiagnosis', view.appeal, view.appealDiagnosis.get('mkb').get('diagnosis'));
 				view.ui.$mbkDiagnosis.val(view.appealDiagnosis.get('mkb').get('diagnosis'));
 				view.ui.$mbkCode.val(view.appealDiagnosis.get('mkb').get('code'));
 				view.ui.$mbkCode.data('mkb-id', view.appealDiagnosis.get('mkb').get('id'));
@@ -413,8 +383,6 @@ define(function(require) {
 
 			//Дата и время создания
 			var now = new Date();
-			// view.ui.$assessmentDatepicker.datepicker();
-			// view.ui.$assessmentDatepicker.datepicker("setDate", now);
 
 			view.ui.$assessmentDatepicker.datepicker({
 				minDate: now,
@@ -468,17 +436,29 @@ define(function(require) {
 				//button: '.bottom-form .icon-time'
 			}).timepicker('setTime', now);
 
-
-			// view.ui.$assessmentTimepicker.val(('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2)).mask("99:99").timepicker({
-			// 	showPeriodLabels: false
-			// });
-
-
-			//до того как выбран тест кнопка сохранить не активна
-			this.$el.closest(".ui-dialog").find('.save'); //.button("disable");
+			this.$el.closest(".ui-dialog").find('.save');
 
 
 			return view;
+		},
+
+		//закрытие попапа
+		close: function() {
+			var view = this;
+			view.ui.$assessmentDatepicker.datepicker('destroy');
+			view.$el.dialog("close");
+			view.$el.remove();
+			view.remove();
+
+			view.analyzesTreeView.close();
+			view.analyzesSelectedView.close();
+
+			view.mkbInputView.close();
+			view.financeSelect.close();
+
+			pubsub.off('executor:changed');
+			pubsub.off('assigner:changed');
+
 		}
 
 	}).mixin([popupMixin]);

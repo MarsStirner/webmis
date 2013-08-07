@@ -21,18 +21,18 @@ define(function(require) {
 			_.each(tests, function(test) {
 
 				if (test.type == "String") {
-					var select = true;
+					var select = false;
 					var unselectable = false;
 
 					self.setProperty(test.name, 'isAssigned', 'true');
-					console.log(test.name, self.getProperty(test.name, 'isAssigned'))
+					//console.log(test.name, self.getProperty(test.name, 'isAssigned'))
 
 					if (self.getProperty(test.name, 'isAssignable') == 'false') {
 						unselectable = true;
 					}
 
-					if (self.getProperty(test.name, 'isAssigned') == 'false') {
-						select = false;
+					if (self.getProperty(test.name, 'isAssigned') == 'true') {
+						select = true;
 					}
 
 					testsList.push({
