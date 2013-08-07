@@ -28,7 +28,6 @@ define([
 			var json = App.Models.Appeal.prototype.toJSON.apply(this);
 			if (json.diagnoses.length) {
 				_.each(json.diagnoses, function (d) {
-
 					d.description = this.getTextWithSpaces($("<div/>").html(d.description)[0]);
 				}, this);
 			}

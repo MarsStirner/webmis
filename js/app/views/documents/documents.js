@@ -268,6 +268,31 @@ define(function (require) {
 			}
 		},
 
+		collectTextNodes: function (element, texts) {
+			for (var child = element.firstChild; child !== null; child = child.nextSibling) {
+				if (child.nodeType === 3)
+					texts.push(child);
+				else if (child.nodeType === 1)
+					this.collectTextNodes(child, texts);
+			}
+		},
+
+		getTextWithSpaces: function (element) {
+			var texts = [];
+			this.collectTextNodes(element, texts);
+			for (var i = texts.length; i-- > 0;)
+				texts[i] = texts[i].data;
+			return texts.join(' ');
+		},
+
+		getCleanHtmlFilledAttrs: function () {
+			var filledAttrs = this.getFilledAttrs();
+			_.each(filledAttrs, function (attr) {
+				attr.value = this.getTextWithSpaces($("<div/>").html(attr.value)[0]);
+			}, this);
+			return filledAttrs;
+		},
+
 		getTypeId: function () {
 			return this.get("typeId");
 		},
@@ -3234,7 +3259,7 @@ define(function (require) {
 						summaryAttrs[6]["properties"][0]["value"]
 					].join(" "),
 					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
-					attributes: document.getFilledAttrs()
+					attributes: document.getCleanHtmlFilledAttrs()
 				};
 
 
