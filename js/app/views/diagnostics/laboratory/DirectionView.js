@@ -170,7 +170,7 @@ define(function(require) {
 
 			view.analyzesSelected.each(function(analysis) {
 				var plannedEndDate = analysis.getProperty('plannedEndDate', 'value');
-				console.log('plannedEndDate', plannedEndDate)
+				//console.log('plannedEndDate', plannedEndDate)
 
 				if (!moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid()) {
 					valid = false;
@@ -339,25 +339,6 @@ define(function(require) {
 			view.setElement($element).render();
 		},
 
-		//закрытие попапа
-		close: function() {
-			var view = this;
-			view.ui.$assessmentDatepicker.datepicker('destroy');
-			view.$el.dialog("close");
-			view.$el.remove();
-			view.remove();
-
-			view.analyzesTreeView.close();
-			view.analyzesSelectedView.close();
-
-			view.mkbInputView.close();
-			view.financeSelect.close();
-
-			pubsub.off('executor:changed');
-			pubsub.off('assigner:changed');
-
-		},
-
 		render: function() {
 			var view = this;
 
@@ -459,6 +440,25 @@ define(function(require) {
 
 
 			return view;
+		},
+
+		//закрытие попапа
+		close: function() {
+			var view = this;
+			view.ui.$assessmentDatepicker.datepicker('destroy');
+			view.$el.dialog("close");
+			view.$el.remove();
+			view.remove();
+
+			view.analyzesTreeView.close();
+			view.analyzesSelectedView.close();
+
+			view.mkbInputView.close();
+			view.financeSelect.close();
+
+			pubsub.off('executor:changed');
+			pubsub.off('assigner:changed');
+
 		}
 
 	}).mixin([popupMixin]);

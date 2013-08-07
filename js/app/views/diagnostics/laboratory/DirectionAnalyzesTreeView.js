@@ -80,8 +80,7 @@ define(function(require) {
 			return this;
 		},
 		close: function() {
-			pubsub.off('group:click');
-			pubsub.off('group:parent:click');
+			pubsub.off('analysis:click');
 			this.collection.off();
 		}
 

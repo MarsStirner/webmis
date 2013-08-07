@@ -4,14 +4,13 @@ define(function(require) {
 
 	var AnalysisView = Backbone.View.extend({
 		tagName: 'tr',
-		// className: 'context-menu-'+this.cid,
 		events: {
-			'change .select_date': 'setPlannedEndDate',
-			'change .select_time': 'setPlannedEndDate',
-			'change .cito': 'onCitoChange',
-			'change .tests-checkbox': 'onTestSelect',
-			'click .icon': 'onArrowClick',
-			'click .title2': 'onTitleClick'
+			'change .select_date': 'onChangePlannedEndDate',
+			'change .select_time': 'onChangePlannedEndDate',
+			'change .cito': 'onChangeCito',
+			'change .test-select': 'onSelectTest',
+			'click .icon': 'onClickArrow',
+			'click .title2': 'onClickTitle'
 		},
 		initialize: function(options) {
 			//console.log('options', options);
@@ -19,18 +18,17 @@ define(function(require) {
 			this.$el.attr('data-cid', this.model.cid);
 			this.$el.addClass('context-menu-' + this.cid);
 
+			this.model.on('change:urgent change:plannedEndDate', function(model, value) {
+				console.log('change', value)
+			}, this);
+
 		},
 
 		analysisData: function() {
-			//console.log('this.model',this.model)
-			var urgent = false;
-			if (this.model.getProperty('urgent', 'value') == 'true') {
-				urgent = true;
-			}
 
+			var urgent = (this.model.getProperty('urgent', 'value') == 'true') ? true : false;
 
-			//view.$plannedDatepicker.datepicker("setDate", "+1");
-			var date = ''
+			var date, time;
 
 			if (this.model.getProperty('plannedEndDate', 'value')) {
 				var plannedEndDate = moment(this.model.getProperty('plannedEndDate', 'value'), 'YYYY-MM-DD HH:mm:ss');
@@ -49,27 +47,19 @@ define(function(require) {
 				urgent: urgent,
 				tests: this.model.getTests()
 			});
+
 			return data;
 		},
 
-		onTestSelect: function(event) {
+		onSelectTest: function(event) {
 			var $target = $(event.target);
 			var name = $target.val();
 			var value = $target.prop('checked');
-			console.log('value',value)
-			if (value) {
-				$target.parents('li').addClass('selected');
-			} else {
-				$target.parents('li').removeClass('selected');
-			}
+
 			this.model.setProperty(name, 'isAssigned', "" + value);
 		},
 
-		onTitleClick: function() {
-			console.log('onTitleClick', this.model);
-		},
-
-		onCitoChange: function() {
+		onChangeCito: function() {
 			var view = this;
 			var value = this.ui.$cito.prop('checked');
 
@@ -77,26 +67,36 @@ define(function(require) {
 
 		},
 
-		setPlannedEndDate: function() {
+		onChangePlannedEndDate: function() {
 			var view = this;
-			var rawDate = this.$plannedDatepicker.val();
-			var rawTime = this.$plannedTimepicker.val();
+			var rawDate = this.ui.$plannedDatepicker.val();
+			var rawTime = this.ui.$plannedTimepicker.val();
 
 			var date = moment(rawDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
 			var time = rawTime + ':00';
 
 			view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 
-			console.log('setPlannedEndDate', date + ' ' + time, view.model)
-			// if (!view.ui.$select.prop('checked')) {
-			// 	view.ui.$select.prop('checked', true).trigger('change');
-			// }
+			console.log('onChangePlannedEndDate', date + ' ' + time, view.model);
 
 		},
 
-		onArrowClick: function(e) {
-			var $target = $(e.target);
+		onClickTitle: function() {
+			var closed = this.$el.find('.icons').hasClass('closed');
+			var open = this.$el.find('.icons').hasClass('open');
 
+			if (closed || open) {
+				if (closed) {
+					this.expand();
+				} else {
+					this.collapse();
+				}
+			}
+
+		},
+
+		onClickArrow: function(e) {
+			var $target = $(e.target);
 
 			if ($target.hasClass('icon-open')) {
 				this.collapse();
@@ -123,16 +123,13 @@ define(function(require) {
 		},
 
 		expand: function() {
-			//console.log('expand');
 			this.triggerTestsList(true);
 			this.triggerIcons(true);
-
 		},
+
 		collapse: function() {
-			//console.log('collapse');
 			this.triggerTestsList(false);
 			this.triggerIcons(false);
-
 		},
 
 		render: function() {
@@ -145,52 +142,38 @@ define(function(require) {
 
 
 			view.ui = {};
-			// view.$plannedDatepicker = view.$el.find(".select_date");
-			view.$plannedDatepicker = view.$el.find("#start-date-" + view.model.cid);
-			console.log("#start-date-" + view.model.cid)
 
-			view.$plannedTimepicker = view.$el.find(".select_time");
+			view.ui.$plannedDatepicker = view.$el.find(".select_date");
+			view.ui.$plannedTimepicker = view.$el.find(".select_time");
+
 			view.ui.$cito = view.$el.find(".cito");
-			view.ui.$select = view.$el.find(".select");
+			// view.ui.$select = view.$el.find(".select");
 			view.ui.$tests = view.$el.find(".tests");
 			view.ui.$icons = view.$el.find(".icons");
 
 
-			// view.$plannedDatepicker.datepicker({
-			// 	minDate: 0
-			// });
-
-
-			// view.$plannedTimepicker.mask("99:99").timepicker({
-			// 	showPeriodLabels: false
-			// });
-
-			view.$plannedDatepicker.datepicker({
+			view.ui.$plannedDatepicker.datepicker({
 				minDate: new Date(),
 				onSelect: function(dateText, inst) {
-					//view.viewModel.set('plannedDate', moment(dateText, 'DD.MM.YYYY').toDate());
 					var day = moment(view.$(this).datepicker("getDate")).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
-					var hour = view.$plannedTimepicker.timepicker('getHour');
+					var hour = view.ui.$plannedTimepicker.timepicker('getHour');
 					//если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
 					if (day.diff(currentDay, 'days') === 0) {
 						if (hour <= currentHour) {
-							view.$plannedTimepicker.val('').trigger('change');
+							view.ui.$plannedTimepicker.val('').trigger('change');
 						}
 					}
+
+					$(this).change();
 				}
 			});
 
-			//view.$plannedDatepicker.datepicker("setDate", this.viewModel.get('plannedDate'));
-
-			view.$plannedTimepicker.timepicker({
-				onSelect: function(time) {
-					//view.viewModel.set('plannedTime', time)
-				},
+			view.ui.$plannedTimepicker.timepicker({
 				defaultTime: 'now',
 				onHourShow: function(hour) {
-					var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
+					var day = moment(view.ui.$plannedDatepicker.datepicker("getDate")).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
 					//если выбран текущий день, то часы меньше текущего нельзя выбрать
@@ -203,7 +186,7 @@ define(function(require) {
 					return true;
 				},
 				onMinuteShow: function(hour, minute) {
-					var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
+					var day = moment(view.ui.$plannedDatepicker.datepicker("getDate")).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
 					var currentMinute = moment().minute();
@@ -216,8 +199,7 @@ define(function(require) {
 					return true;
 				},
 				showPeriodLabels: false,
-				showOn: 'both' //,
-				//button: '.icon-time'
+				showOn: 'both'
 			});
 
 			$.contextMenu({
@@ -230,23 +212,25 @@ define(function(require) {
 				},
 				items: {
 					"select": {
-						name: "Выбрать все",
+						name: "Выбрать все тесты",
 						callback: function() {
-							//console.log('select all')
 							$('.context-menu-' + view.cid + ' .tests ')
 								.find('input:checkbox').prop('checked', true)
 								.trigger('change');
 						}
 					},
 					"deselect": {
-						name: "Снять выделение",
+						name: "Снять выделение со всех тестов",
 						callback: function() {
-							//console.log('deselect all')
-
 							$('.context-menu-' + view.cid + ' .tests ')
 								.find('input:checkbox').prop('checked', false)
 								.trigger('change');
-
+						}
+					},
+					"delete": {
+						name: "Удалить исследование из списка",
+						callback: function() {
+							view.model.collection.remove(view.model);
 						}
 					}
 				}
