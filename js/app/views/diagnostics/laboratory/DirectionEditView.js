@@ -25,11 +25,6 @@ define(function(require) {
 			var view = this;
 
 
-
-			// this.data = {
-			// 	'assigner': view.assigner
-			// }
-
 			view.appeal = view.options.appeal;
 			view.diagnosis = view.appeal.getDiagnosis();
 
@@ -58,9 +53,6 @@ define(function(require) {
 				view.ui.$executor.val(executor.name.raw);
 
 			});
-
-
-			console.log('view', view);
 
 		},
 
@@ -149,40 +141,34 @@ define(function(require) {
 		},
 
 
-		modelToTree: function() {
+		data: function() {
 			var view = this;
-			var tree = [];
-			var root = {};
-			root.title = view.model.get('name');
-			root.expand = true;
-			root.icon = false;
-			root.select = true;
-			root.unselectable = true;
+			var data = {};
+
+			data.id = view.model.get('id');
+			data.title = view.model.get('name');
+
 			var plannedEndDate = moment(view.model.getProperty('plannedEndDate'), "YYYY-MM-DD HH:mm:ss"); //2013-03-30 07:00:00
-			console.log('plannedEndDate', plannedEndDate);
-			root.date = moment(plannedEndDate).format('DD.MM.YYYY');
-			root.time = moment(plannedEndDate).format('HH:mm');
+			data.plannedDate = moment(plannedEndDate).format('DD.MM.YYYY');
+			data.plannedTime = moment(plannedEndDate).format('HH:mm');
 
-			root.cito = view.model.getProperty('urgent');
+			data.cito = (view.model.getProperty('urgent') === "true") ? true : false;
 
-
-			root.children = [];
+			data.tests = [];
 
 			var attributes = view.model.get('group')[1].attribute;
 			var stringAttributes = _.filter(attributes, function(attr) {
 				return attr.type == "String";
 			});
 
-			root.children = _.map(stringAttributes, function(attr) {
+			data.tests = _.map(stringAttributes, function(attr) {
 				return {
 					title: attr.name,
-					noCustomRender: true,
-					icon: false,
-					select: attr.properties[0].value == 'true' ? true : false
+					select: view.model.getProperty(attr.name, 'isAssigned') == 'true' ? true : false
 				};
 			});
 
-			return [root];
+			return data;
 		},
 
 		renderNested: function(view, selector) {
@@ -192,11 +178,11 @@ define(function(require) {
 
 		render: function() {
 			var view = this;
-			console.log('render', view);
 
 			view.$el.html(_.template(view.template, {
 				assigner: view.assigner,
-				executor: view.executor
+				executor: view.executor,
+				analysis: view.data()
 			}));
 
 			view.renderNested(view.mkbInputView, ".mkb");
@@ -212,45 +198,45 @@ define(function(require) {
 
 			this.$('.change-assigner,.change-executor').button();
 
-			view.$('.edit-tree').dynatree({
-				clickFolderMode: 2,
-				minExpandLevel: 2,
+			// view.$('.edit-tree').dynatree({
+			// 	clickFolderMode: 2,
+			// 	minExpandLevel: 2,
 
-				generateIds: true,
-				noLink: true,
-				checkbox: true,
-				children: view.modelToTree(),
-				onRender: function(node, nodeSpan) {
-					//console.log(node, nodeSpan)
-					UIInitialize($(nodeSpan));
+			// 	generateIds: true,
+			// 	noLink: true,
+			// 	checkbox: true,
+			// 	children: view.data(),
+			// 	onRender: function(node, nodeSpan) {
+			// 		//console.log(node, nodeSpan)
+			// 		UIInitialize($(nodeSpan));
 
-					$(nodeSpan).find(".HourPicker").mask("99:99").timepicker({
-						showPeriodLabels: false
-					});
+			// 		$(nodeSpan).find(".HourPicker").mask("99:99").timepicker({
+			// 			showPeriodLabels: false
+			// 		});
 
-				},
-				onCustomRender: function(node) {
+			// 	},
+			// 	onCustomRender: function(node) {
 
-					var html = '';
-					if (node.data.noCustomRender) {
+			// 		var html = '';
+			// 		if (node.data.noCustomRender) {
 
-						html += '<span class="title-col">';
-						html += node.data.title;
-						html += '</span>';
+			// 			html += '<span class="title-col">';
+			// 			html += node.data.title;
+			// 			html += '</span>';
 
-					} else {
+			// 		} else {
 
-						if (node.data.cito == "true") {
-							node.data.checked = 'checked="checked"';
-						} else {
-							node.data.checked = '';
-						}
-						html = _.template(test4EditTmpl, node.data);
-					}
+			// 			if (node.data.cito == "true") {
+			// 				node.data.checked = 'checked="checked"';
+			// 			} else {
+			// 				node.data.checked = '';
+			// 			}
+			// 			html = _.template(test4EditTmpl, node.data);
+			// 		}
 
-					return html;
-				}
-			});
+			// 		return html;
+			// 	}
+			// });
 
 
 
@@ -279,15 +265,10 @@ define(function(require) {
 
 			view.ui.$startDate.addClass('Disabled')
 				.val(moment(date).format('DD.MM.YYYY'))
-			//.datepicker('disable')
+
 			.prop('disabled', true);
 
 			view.ui.$startTime.addClass('Disabled').prop('disabled', true).val(moment(date).format('HH:mm'));
-			//.mask("99:99");
-
-			// .timepicker({
-			// 	showPeriodLabels: false
-			// });
 
 
 

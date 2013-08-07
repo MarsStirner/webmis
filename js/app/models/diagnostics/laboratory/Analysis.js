@@ -8,8 +8,7 @@ define(function(require) {
 			this.deferred = this.fetch();
 
 		},
-
-
+		idAttribute: "blablabla",
 
 		getTests: function() {
 			var self = this;

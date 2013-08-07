@@ -24,17 +24,22 @@ define(function(require) {
 					patientId: view.options.patientId
 				});
 
-				analysis.fetch({
-					success: function() {
-						//console.log('success', analysis)
-						var date = moment(new Date())
+				analysis.fetch().done(function() {
+					console.log('a fetch')
+
+					var date = moment(new Date())
 						.startOf('day').add('days', 1).add('hours', 7)
 						.format('YYYY-MM-DD HH:mm:ss');
 
-						analysis.setProperty('plannedEndDate','value', date);
-						view.analyzes.add(analysis);
-						view.setExecutorFromAnalysis(analysis);
-					}
+					analysis.setProperty('plannedEndDate', 'value', date);
+					view.setExecutorFromAnalysis(analysis);
+
+
+					view.analyzes.add([analysis]);
+					console.log(analysis.getProperty('plannedEndDate', 'value'),view.analyzes, analysis, arguments)
+
+
+
 				});
 
 			});
@@ -123,7 +128,7 @@ define(function(require) {
 
 			view.analyzes.off();
 
-			_.each(view.childViews, function(childView){
+			_.each(view.childViews, function(childView) {
 				childView.close();
 			}, view);
 
