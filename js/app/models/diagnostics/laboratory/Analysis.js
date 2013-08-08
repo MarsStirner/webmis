@@ -2,10 +2,11 @@ define(function(require) {
 	var commonData = require('mixins/commonData');
 
 	var Analysis = Model.extend({
-		initialize: function(options) {
+		initialize: function(attr, options) {
+			console.log('init a', arguments)
 			this.code = options.code;
 			this.patientId = options.patientId;
-			this.deferred = this.fetch();
+			//this.deferred = this.fetch();
 
 		},
 		idAttribute: "blablabla",

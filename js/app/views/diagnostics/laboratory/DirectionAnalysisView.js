@@ -35,8 +35,10 @@ define(function(require) {
 				date = plannedEndDate.format('DD.MM.YYYY');
 				time = plannedEndDate.format('HH:mm');
 			} else {
-				date = moment(new Date()).add('days', 1).format('DD.MM.YYYY');
+				var now = new Date()
+				date = moment(now).add('days', 1).format('DD.MM.YYYY');
 				time = '07:00';
+				this.model.setProperty('plannedEndDate', 'value', moment(now).format('YYYY-MM-DD HH:mm:ss'))
 			}
 
 
@@ -231,6 +233,12 @@ define(function(require) {
 						name: "Удалить исследование из списка",
 						callback: function() {
 							view.model.collection.remove(view.model);
+						}
+					},
+					"delete all": {
+						name: "Удалить все исследования",
+						callback: function() {
+							view.model.collection.reset();
 						}
 					}
 				}

@@ -17,7 +17,13 @@ define(function(require) {
 		template: tmpl,
 		events: {
 			'click #assigner-outer': 'openAssignerSelectPopup',
-			"click #executor-outer": "openExecutorSelectPopup"
+			"click #executor-outer": "openExecutorSelectPopup",
+			'change .select_date': 'onChangePlannedEndDate',
+			'change .select_time': 'onChangePlannedEndDate',
+			'change .cito': 'onChangeCito',
+			'change .test-select': 'onSelectTest',
+			'click .icon': 'onClickArrow',
+			'click .title2': 'onClickTitle'
 		},
 		initialize: function() {
 			_.bindAll(this);
@@ -81,6 +87,88 @@ define(function(require) {
 			this.personDialogView.render().open();
 
 		},
+
+		onSelectTest: function(event) {
+			var $target = $(event.target);
+			var name = $target.val();
+			var value = $target.prop('checked');
+
+			this.model.setProperty(name, 'isAssigned', "" + value);
+		},
+
+		onChangeCito: function() {
+			var view = this;
+			var value = this.ui.$cito.prop('checked');
+
+			view.model.setProperty('urgent', 'value', "" + value);
+
+		},
+
+		onChangePlannedEndDate: function() {
+			var view = this;
+			var rawDate = this.ui.$plannedDatepicker.val();
+			var rawTime = this.ui.$plannedTimepicker.val();
+
+			var date = moment(rawDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
+			var time = rawTime + ':00';
+
+			view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
+
+			console.log('onChangePlannedEndDate', date + ' ' + time, view.model);
+
+		},
+
+		onClickTitle: function() {
+			var closed = this.$el.find('.icons').hasClass('closed');
+			var open = this.$el.find('.icons').hasClass('open');
+
+			if (closed || open) {
+				if (closed) {
+					this.expand();
+				} else {
+					this.collapse();
+				}
+			}
+
+		},
+
+		onClickArrow: function(e) {
+			var $target = $(e.target);
+
+			if ($target.hasClass('icon-open')) {
+				this.collapse();
+			} else {
+				this.expand();
+			}
+
+		},
+
+		triggerIcons: function(select) {
+			if (select) {
+				this.ui.$icons.removeClass('closed').addClass('open');
+			} else {
+				this.ui.$icons.removeClass('open').addClass('closed');
+			}
+		},
+
+		triggerTestsList: function(select) {
+			if (select) {
+				this.ui.$tests.show();
+			} else {
+				this.ui.$tests.hide();
+			}
+		},
+
+		expand: function() {
+			this.triggerTestsList(true);
+			this.triggerIcons(true);
+		},
+
+		collapse: function() {
+			this.triggerTestsList(false);
+			this.triggerIcons(false);
+		},
+
 
 		initFinanseSelect: function(elSelector) {
 			var view = this;
@@ -196,50 +284,64 @@ define(function(require) {
 			view.ui.$assigner = view.$('#assigner');
 			view.ui.$executor = view.$('#executor');
 
+			view.ui.$plannedDatepicker = view.$el.find(".select_date");
+			view.ui.$plannedTimepicker = view.$el.find(".select_time");
+			view.ui.$cito = view.$el.find(".cito");
+			view.ui.$tests = view.$el.find(".tests");
+			view.ui.$icons = view.$el.find(".icons");
+
 			this.$('.change-assigner,.change-executor').button();
 
-			// view.$('.edit-tree').dynatree({
-			// 	clickFolderMode: 2,
-			// 	minExpandLevel: 2,
 
-			// 	generateIds: true,
-			// 	noLink: true,
-			// 	checkbox: true,
-			// 	children: view.data(),
-			// 	onRender: function(node, nodeSpan) {
-			// 		//console.log(node, nodeSpan)
-			// 		UIInitialize($(nodeSpan));
+			view.ui.$plannedDatepicker.datepicker({
+				minDate: new Date(),
+				onSelect: function(dateText, inst) {
+					var day = moment(view.$(this).datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					var hour = view.ui.$plannedTimepicker.timepicker('getHour');
+					//если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour <= currentHour) {
+							view.ui.$plannedTimepicker.val('').trigger('change');
+						}
+					}
 
-			// 		$(nodeSpan).find(".HourPicker").mask("99:99").timepicker({
-			// 			showPeriodLabels: false
-			// 		});
+					$(this).change();
+				}
+			});
 
-			// 	},
-			// 	onCustomRender: function(node) {
+			view.ui.$plannedTimepicker.timepicker({
+				defaultTime: 'now',
+				onHourShow: function(hour) {
+					var day = moment(view.ui.$plannedDatepicker.datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					//если выбран текущий день, то часы меньше текущего нельзя выбрать
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour < currentHour) {
+							return false;
+						}
+					}
 
-			// 		var html = '';
-			// 		if (node.data.noCustomRender) {
-
-			// 			html += '<span class="title-col">';
-			// 			html += node.data.title;
-			// 			html += '</span>';
-
-			// 		} else {
-
-			// 			if (node.data.cito == "true") {
-			// 				node.data.checked = 'checked="checked"';
-			// 			} else {
-			// 				node.data.checked = '';
-			// 			}
-			// 			html = _.template(test4EditTmpl, node.data);
-			// 		}
-
-			// 		return html;
-			// 	}
-			// });
-
-
-
+					return true;
+				},
+				onMinuteShow: function(hour, minute) {
+					var day = moment(view.ui.$plannedDatepicker.datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					var currentMinute = moment().minute();
+					//если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour === currentHour && minute <= currentMinute) {
+							return false;
+						}
+					}
+					return true;
+				},
+				showPeriodLabels: false,
+				showOn: 'both'
+			});
 			//Вид оплаты
 			view.initFinanseSelect('#finance');
 
@@ -279,54 +381,54 @@ define(function(require) {
 			var view = this;
 
 
-			var tree = view.$('.edit-tree').dynatree("getTree");
+			// var tree = view.$('.edit-tree').dynatree("getTree");
 
 
 			var startDate = moment(view.ui.$startDate.val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
 			var startTime = view.ui.$startTime.val() + ':00';
 
 
-			var modelTree = tree.toDict().children[0];
-			//console.log('modelTree', modelTree)
-			var $dateInput = view.$('#date' + modelTree.key);
-			var date = moment($dateInput.datepicker("getDate")).format('YYYY-MM-DD');
+			// var modelTree = tree.toDict().children[0];
+			// //console.log('modelTree', modelTree)
+			// var $dateInput = view.$('#date' + modelTree.key);
+			// var date = moment($dateInput.datepicker("getDate")).format('YYYY-MM-DD');
 
-			var $timeInput = view.$('#time' + modelTree.key);
-			var time = $timeInput.val() + ':00';
+			// var $timeInput = view.$('#time' + modelTree.key);
+			// var time = $timeInput.val() + ':00';
 
-			var $citoInput = view.$('#cito' + modelTree.key);
-			var cito = $citoInput.prop('checked');
+			// var $citoInput = view.$('#cito' + modelTree.key);
+			// var cito = $citoInput.prop('checked');
 
-			//console.log('node inputs', date, time, cito)
+			// //console.log('node inputs', date, time, cito)
 
-			var selected_params = _.filter(modelTree.children, function(node) {
-				return node.select === true;
-			});
+			// var selected_params = _.filter(modelTree.children, function(node) {
+			// 	return node.select === true;
+			// });
 
-			var unselected_params = _.filter(modelTree.children, function(node) {
-				return node.select === false;
-			});
+			// var unselected_params = _.filter(modelTree.children, function(node) {
+			// 	return node.select === false;
+			// });
 
-			var group = view.model.get('group');
+			// var group = view.model.get('group');
 
-			//выбранные тесты
-			_.each(selected_params, function(param) {
-				//view.model.setProperty(param.title, 'isAssigned', "true");
-				_.each(group[1].attribute, function(attribute, index) {
-					if (attribute.name == param.title) {
-						group[1].attribute[index].properties[0].value = 'true';
-					}
-				});
-			});
+			// //выбранные тесты
+			// _.each(selected_params, function(param) {
+			// 	//view.model.setProperty(param.title, 'isAssigned', "true");
+			// 	_.each(group[1].attribute, function(attribute, index) {
+			// 		if (attribute.name == param.title) {
+			// 			group[1].attribute[index].properties[0].value = 'true';
+			// 		}
+			// 	});
+			// });
 
-			_.each(unselected_params, function(param) {
-				//view.model.setProperty(param.title, 'isAssigned', "false");
-				_.each(group[1].attribute, function(attribute, index) {
-					if (attribute.name == param.title) {
-						group[1].attribute[index].properties[0].value = 'false';
-					}
-				});
-			});
+			// _.each(unselected_params, function(param) {
+			// 	//view.model.setProperty(param.title, 'isAssigned', "false");
+			// 	_.each(group[1].attribute, function(attribute, index) {
+			// 		if (attribute.name == param.title) {
+			// 			group[1].attribute[index].properties[0].value = 'false';
+			// 		}
+			// 	});
+			// });
 
 			view.model.setProperty('doctorFirstName', 'value', view.executor.name.first);
 			view.model.setProperty('doctorLastName', 'value', view.executor.name.last);
@@ -339,8 +441,8 @@ define(function(require) {
 			view.model.setProperty('assignerId', 'value', view.assigner.id);
 
 
-			view.model.setProperty('urgent', 'value', cito);
-			view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
+			// view.model.setProperty('urgent', 'value', cito);
+			// view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 			view.model.setProperty('assessmentBeginDate', 'value', startDate + ' ' + startTime);
 			view.model.setProperty('finance', 'value', view.ui.$finance.val());
 			if (view.ui.$mkbCode.data('mkb-id')) {
@@ -349,8 +451,8 @@ define(function(require) {
 
 
 
-			console.log('attr', view.model.get('group'))
-			view.model.set('group', group);
+			// console.log('attr', view.model.get('group'))
+			// view.model.set('group', group);
 
 			view.model.save({}, {
 				success: function() {

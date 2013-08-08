@@ -19,7 +19,8 @@ define(function(require) {
 
 			pubsub.on('analysis:click', function(code) {
 				console.log('analysis:click', code);
-				var analysis = new Analysis({
+				//debugger;
+				var analysis = new Analysis([],{
 					code: code,
 					patientId: view.options.patientId
 				});
@@ -37,7 +38,6 @@ define(function(require) {
 
 					view.analyzes.add([analysis]);
 					console.log(analysis.getProperty('plannedEndDate', 'value'),view.analyzes, analysis, arguments)
-
 
 
 				});

@@ -27,8 +27,18 @@
 						</tbody>
 					</table>
 				</span> -->
-
-<table><tr>
+<div class="list">
+<table>
+  <thead>
+    <tr>
+      <td>&nbsp;</td>
+      <td style="width:3em;">Cito</td>
+      <td style="width:8em;">&nbsp;</td>
+      <td style="width:5.5em;">&nbsp;</td>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
   <td>
     <table>
       <tr>
@@ -43,7 +53,7 @@
             <%_.each(analysis.tests, function(test){%>
               <li <% if(test.select){%>class="selected"<%}%> >
                 <label>
-                  <input class="tests-checkbox" type="checkbox" <% if(test.select){%>checked="checked"<%}%> value="<%= test.title%>"/><%= test.title%>
+                  <input class="test-select" type="checkbox" <% if(test.select){%>checked="checked"<%}%> value="<%= test.title%>"/><%= test.title%>
                 </label>
               </li>
             <%});%>
@@ -53,12 +63,12 @@
     </table>
   </td>
   <td style="width:3em;">
-    <label><input type="checkbox" <% if(analysis.urgent){%>checked="checked"<%}%> class="cito"></label>
+    <label><input type="checkbox" <% if(analysis.cito){%>checked="checked"<%}%> class="cito"></label>
   </td>
   <td style="width:8.5em;">
     <div class="date">
       <input type="text"
-      value="<%= analysis.date %>"
+      value="<%= analysis.plannedDate %>"
       data-mindate="0"
       class="select_date"
       name="start-date-<%= analysis.id %>"
@@ -70,7 +80,7 @@
   <td style="width:5.5em;">
     <div class="time">
       <input type="text"
-      value="<%= analysis.time %>"
+      value="<%= analysis.plannedTime %>"
       class="select_time"
       name="start-time-<%= analysis.id %>"
       id="start-time-<%= analysis.id %>"
@@ -78,8 +88,10 @@
       <i class="icon-time time-icon"  style="right:0.3em;"></i>
     </div>
   </td>
-</tr></table>
-
+</tr>
+  </tbody>
+</table>
+</div>
 
 
 			</div>
