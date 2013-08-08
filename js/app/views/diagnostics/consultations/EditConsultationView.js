@@ -235,7 +235,7 @@ define(function (require) {
         onChangeFinance: function (e) {
             var $target = this.$(e.target);
 
-            //this.consultation.setProperty('finance', 'value', $target.val());
+            this.consultation.setProperty('finance', 'value', $target.val());
         },
 
         onChangeUrgent: function (e) {
