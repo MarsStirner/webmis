@@ -8,6 +8,7 @@ define(function(require) {
 			'change .select_date': 'onChangePlannedEndDate',
 			'change .select_time': 'onChangePlannedEndDate',
 			'change .cito': 'onChangeCito',
+			'change .picked': 'onChangePicked',
 			'change .test-select': 'onSelectTest',
 			'click .icon': 'onClickArrow',
 			'click .title2': 'onClickTitle'
@@ -18,14 +19,14 @@ define(function(require) {
 			this.$el.attr('data-cid', this.model.cid);
 			this.$el.addClass('context-menu-' + this.cid);
 
-			// this.model.on('change:urgent change:plannedEndDate', function(model, value) {
-			// 	console.log('change', value)
-			// }, this);
+			this.model.on('change:plannedEndDate', function(model, value) {
+				this.render();
+			}, this);
 
 		},
 
 		analysisData: function() {
-
+			// this.model.set('picked', true)
 			var urgent = (this.model.getProperty('urgent', 'value') == 'true') ? true : false;
 
 			var date, time;
@@ -43,6 +44,7 @@ define(function(require) {
 
 
 			var data = _.extend(this.model.toJSON(), {
+
 				cid: this.model.cid,
 				date: date,
 				time: time,
@@ -69,6 +71,13 @@ define(function(require) {
 
 		},
 
+		onChangePicked: function() {
+			var view = this;
+			var value = this.ui.$picked.prop('checked');
+
+			view.model.set('picked', value);
+		},
+
 		onChangePlannedEndDate: function() {
 			var view = this;
 			var rawDate = this.ui.$plannedDatepicker.val();
@@ -76,10 +85,22 @@ define(function(require) {
 
 			var date = moment(rawDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
 			var time = rawTime + ':00';
+			var datetime = date + ' ' + time;
 
-			view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
+			view.model.setProperty('plannedEndDate', 'value', datetime);
 
-			console.log('onChangePlannedEndDate', date + ' ' + time, view.model);
+			if (view.model.get('picked')) {
+				//если анализ "выбран", то его дату ставим всем выбранным анализам
+				var picked = view.model.collection.getPicked()
+				_.each(picked, function(pickedModel) {
+					console.log('picked', pickedModel.get('name'));
+					pickedModel.setProperty('plannedEndDate', 'value', datetime);
+				});
+			}
+
+
+
+			console.log('onChangePlannedEndDate', date + ' ' + time, view.model, picked);
 
 		},
 
@@ -149,6 +170,7 @@ define(function(require) {
 			view.ui.$plannedTimepicker = view.$el.find(".select_time");
 
 			view.ui.$cito = view.$el.find(".cito");
+			this.ui.$picked = view.$el.find(".picked");
 			// view.ui.$select = view.$el.find(".select");
 			view.ui.$tests = view.$el.find(".tests");
 			view.ui.$icons = view.$el.find(".icons");
