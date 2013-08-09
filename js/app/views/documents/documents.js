@@ -288,6 +288,7 @@ define(function (require) {
 		getCleanHtmlFilledAttrs: function () {
 			var filledAttrs = this.getFilledAttrs();
 			_.each(filledAttrs, function (attr) {
+				//attr.value = this.getTextWithSpaces($("<div/>").html(attr.value.replace(/<br>/gi, '\r\n'))[0]);
 				attr.value = this.getTextWithSpaces($("<div/>").html(attr.value)[0]);
 			}, this);
 			return filledAttrs;
@@ -760,6 +761,10 @@ define(function (require) {
 		onPanicClick: function () {
 			var panicType = this.documentTypes.findByFlatCode(FLAT_CODES.PANIC);
 			if (panicType) {
+				if (this.currentDocument) {
+					this.currentDocument.save({}, {success: this.onSaveCurrentDocumentSuccess, error: this.onSaveCurrentDocumentError});
+				}
+
 				App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, "new", panicType.id].join("/"));
 				dispatcher.trigger("change:viewState", {
 					type: this.options.editPageTypeName,
@@ -769,6 +774,22 @@ define(function (require) {
 			} else {
 				alert("Шаблон документа для экстренной записи не определён.");
 			}
+		},
+
+		onSaveCurrentDocumentSuccess: function () {
+			console.info("SaveCurrentDocumentSuccess");
+			pubsub.trigger('noty', {
+				text: 'Текущий документ сохранён.',
+				type: 'alert'
+			});
+		},
+
+		onSaveCurrentDocumentError: function () {
+			console.info("SaveCurrentDocumentError");
+			pubsub.trigger('noty', {
+				text: 'При сохранении текущего документа произошла ошибка.',
+				type: 'error'
+			});
 		}
 	});
 	//endregion
