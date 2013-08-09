@@ -36,10 +36,10 @@ define(function(require) {
 			//продолжительность лечения
 			if (appealJSON.appealType.requestType.id === 1) {
 				//дневной стационар
-				days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days") + 1;
+				days = moment().startOf('day').diff(moment(appealJSON.rangeAppealDateTime.start).startOf('day'), "days") + 1;
 			} else if (appealJSON.appealType.requestType.id === 2) {
 				//круглосуточный стационар
-				days = moment().diff(moment(appealJSON.rangeAppealDateTime.start), "days");
+				days = moment().startOf('day').diff(moment(appealJSON.rangeAppealDateTime.start).startOf('day'), "days");
 			}
 
 
