@@ -26,19 +26,14 @@ define(function(require) {
 				});
 
 				analysis.fetch().done(function() {
-					console.log('a fetch')
+					// var date = moment(new Date())
+					// 	.startOf('day').add('days', 1).add('hours', 7)
+					// 	.format('YYYY-MM-DD HH:mm:ss');
 
-					var date = moment(new Date())
-						.startOf('day').add('days', 1).add('hours', 7)
-						.format('YYYY-MM-DD HH:mm:ss');
-
-					analysis.setProperty('plannedEndDate', 'value', date);
+					// analysis.setProperty('plannedEndDate', 'value', date);
 					view.setExecutorFromAnalysis(analysis);
 
-
 					view.analyzes.add([analysis]);
-					console.log(analysis.getProperty('plannedEndDate', 'value'),view.analyzes, analysis, arguments)
-
 
 				});
 

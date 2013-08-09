@@ -18,9 +18,9 @@ define(function(require) {
 			this.$el.attr('data-cid', this.model.cid);
 			this.$el.addClass('context-menu-' + this.cid);
 
-			this.model.on('change:urgent change:plannedEndDate', function(model, value) {
-				console.log('change', value)
-			}, this);
+			// this.model.on('change:urgent change:plannedEndDate', function(model, value) {
+			// 	console.log('change', value)
+			// }, this);
 
 		},
 
