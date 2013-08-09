@@ -35,7 +35,9 @@ define(function(require) {
 			});
 
 			this.collection.extra = {
-				userId: Core.Cookies.get("userId")
+				doctorId: (this.options.appeal.get('execPerson')).id,
+				userId: Core.Cookies.get("userId"),
+				appealClosed: this.options.appeal.get('closed')
 			};
 
 			this.grid = new Grid({
