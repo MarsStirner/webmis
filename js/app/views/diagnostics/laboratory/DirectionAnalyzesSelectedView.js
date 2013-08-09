@@ -27,7 +27,9 @@ define(function(require) {
 
 				analysis.fetch().done(function() {
 					var date = moment(new Date())
-						.startOf('day').add('days', 1).add('hours', 7)
+						.startOf('day')
+						//.add('days', 1)
+						.add('hours', 7)
 						.format('YYYY-MM-DD HH:mm:ss');
 
 					analysis.setProperty('plannedEndDate', 'value', date);
