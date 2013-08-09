@@ -59,10 +59,16 @@ define(function(require) {
 		},
 
 		extractResult: function(groups, result, criteriaRE, testTargetProp) {
+			console.log(groups, result, criteriaRE, testTargetProp)
 
 			_.each(groups, function(model) {
-				if (!model.children && criteriaRE.test(model[testTargetProp])) {
-					result.push(model);
+				if (!model.children) {
+					_.each(testTargetProp, function(targetProp){
+						if(criteriaRE.test(model[targetProp])){
+							result.push(model);
+						}
+					});
+
 				}
 				if (model.children && (model.children.length > 0)) {
 					this.extractResult(model.children, result, criteriaRE, testTargetProp);
@@ -77,10 +83,10 @@ define(function(require) {
 			if (!this.originalModels) {
 				this.originalModels = this.toJSON();
 			}
-			if (this.lastCriteria && (this.lastCriteria.length>2)) {
+			if (this.lastCriteria && (this.lastCriteria.length>1)) {//&& (this.lastCriteria.length>2)
 				var criteriaRE = new RegExp(this.lastCriteria, "i");
 				var result = [];
-				this.extractResult(this.originalModels, result, criteriaRE, "title");
+				this.extractResult(this.originalModels, result, criteriaRE, ["code","title"]);
 				this.reset(result);
 			} else {
 				this.reset(this.originalModels);
