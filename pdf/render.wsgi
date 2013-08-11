@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import struct
 from cgi import parse_qs, escape
+from datetime import datetime
 
 # Мистика. Зачем перегружать sys, когда он был объявлен несколькими строчками выше?
 reload(sys)
@@ -370,6 +371,15 @@ def application(environ, start_response):
             return '6'
         else:
             return ''      
+
+    def getAttributeValue(attr):
+        value = attr['value']
+        valueType = attr['type']
+
+        if valueType == 'Time':
+            return value = datetime.strptime(attr['value'], '%Y-%m-%d %H:%M:%S').strftime('%H:%M')
+        else:
+            return attr['value']
 
 
     def getData( path_string, data=dataJSON ):
