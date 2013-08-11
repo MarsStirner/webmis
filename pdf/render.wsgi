@@ -377,9 +377,11 @@ def application(environ, start_response):
         valueType = attr['type']
 
         if valueType == 'Time':
-            return value = datetime.strptime(attr['value'], '%Y-%m-%d %H:%M:%S').strftime('%H:%M')
-        else:
-            return attr['value']
+            value = datetime.strptime(attr['value'], '%Y-%m-%d %H:%M:%S').strftime('%H:%M')
+        if valueType == 'Date':
+            value = datetime.strptime(attr['value'], '%Y-%m-%d %H:%M:%S').strftime('%d.%m.%Y')
+
+        return value
 
 
     def getData( path_string, data=dataJSON ):
@@ -444,6 +446,7 @@ def application(environ, start_response):
         findDiagnosis = findDiagnosis,
         getAddress = getAddress,
         getFinanceCode = getFinanceCode,
+        getAttributeValue = getAttributeValue,
         getDaysDelta=getDaysDelta), rendered_file_name)
 
     renderer.run()
