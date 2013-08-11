@@ -53,8 +53,8 @@ define(function(require) {
                 doctorSpecs: result.getProperty('doctorSpecs'),
                 assignerName: [result.getProperty('assignerFirstName'),result.getProperty('assignerMiddleName'),result.getProperty('assignerLastName')].join(" "),
                 assignerSpecs: result.getProperty('assignerSpecs'),
-                attributes:result.getFlattenedDetails()
-            }
+                attributes:result.getMarkupFreeFlattenedDetails()
+            };
 
             // console.log('printData',data);
 

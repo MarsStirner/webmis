@@ -268,7 +268,7 @@ define(function (require) {
 			}
 		},
 
-		collectTextNodes: function (element, texts) {
+		/*collectTextNodes: function (element, texts) {
 			for (var child = element.firstChild; child !== null; child = child.nextSibling) {
 				if (child.nodeType === 3)
 					texts.push(child);
@@ -283,12 +283,12 @@ define(function (require) {
 			for (var i = texts.length; i-- > 0;)
 				texts[i] = texts[i].data;
 			return texts.join(' ');
-		},
+		},*/
 
 		getCleanHtmlFilledAttrs: function () {
 			var filledAttrs = this.getFilledAttrs();
 			_.each(filledAttrs, function (attr) {
-				attr.value = this.getTextWithSpaces($("<div/>").html(attr.value)[0]);
+				attr.value = Core.Strings.cleanTextMarkup(attr.value);
 			}, this);
 			return filledAttrs;
 		},

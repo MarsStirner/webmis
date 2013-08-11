@@ -32,9 +32,18 @@ define([], function() {
 				var details = this.getGroup('Details');
 				return details.attribute;
 			},
+
 			getFlattenedDetails: function() {
 				return this.flatten(this.getDetailsAttributes());
 			},
+
+      getMarkupFreeFlattenedDetails: function () {
+        var flattenedDetails = this.getFlattenedDetails();
+        _.each(flattenedDetails, function (attr) {
+          attr.value = Core.Strings.cleanTextMarkup(attr.value);
+        }, this);
+        return flattenedDetails;
+      },
 
 			flatten: function(attributes) {
 				var flattened = [];
