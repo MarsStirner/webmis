@@ -35,7 +35,8 @@ define(function(require) {
 						date.add('minutes', 1);
 					}
 
-					date.format('YYYY-MM-DD HH:mm:ss');
+					date = date.format('YYYY-MM-DD HH:mm:ss');
+					// console.log(date)
 
 					analysis.setProperty('plannedEndDate', 'value', date);
 
