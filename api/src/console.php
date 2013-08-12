@@ -26,13 +26,32 @@ $console->register( 'close-appeals-docs' )
       $output->write( "Закрываем ...\n");
 
       $closeDate = new \DateTime('NOW');//дата закрытия
-      $checkDate = new \DateTime('-3 day');
-      // $checkDate->modify('-3 day');
+      $checkDate = new \DateTime('NOW');
+      $days = 3;
 
-      // $closeDate = $closeDate->format('Y-m-d');
-      $date = $checkDate->format('Y-m-d');
-      // $output->write( $closeDate."...\n");
-      $output->write("проверяем документы для иб закрытых раньше ".$date."\n");
+      $t = $checkDate->getTimestamp();
+
+        for($i=0; $i < $days; $i++){
+
+            // один день..
+            $day = 86400;
+
+            // каким днём недели является следующий день
+            $nextDay = date('w', ($t-$day));
+
+            // если суббота или воскресенье
+            if($nextDay == 0 || $nextDay == 6) {
+                $t = $t-$day;// отнимаем день
+            }
+
+            // отнимаем день
+            $t = $t-$day;
+        }
+
+        $checkDate->setTimestamp($t);
+
+        $date = $checkDate->format('Y-m-d');
+        $output->write("проверяем документы для иб закрытых раньше ".$date."\n");
 
 
         $sql = "SELECT a.endDate, at.* FROM Event as e join Action as a on a.event_id = e.id join ActionType as at on at.id = a.actionType_id where e.execDate < :checkDate and a.endDate is null and at.mnem in ('EXAM','EPI','JOUR','ORD','NOT','OTH')";
@@ -43,6 +62,10 @@ $console->register( 'close-appeals-docs' )
         $count = count($actions);
 
         $output->write( "незакрытых документов: ".$count."  \n");
+
+        if($count == 0){
+            return;
+        }
 
         $output->write( "закрываем  \n");
         $update_sql = "UPDATE Action as a"
@@ -56,18 +79,19 @@ $console->register( 'close-appeals-docs' )
         $statment->bindValue('closeDate', $closeDate, "datetime");
         $statment->bindValue('checkDate', $checkDate, "datetime");
         $count = $statment->execute();
+
         $output->write( "закрыли \n");
 
 
 
-        $sql = "SELECT a.endDate, at.* FROM Event as e join Action as a on a.event_id = e.id join ActionType as at on at.id = a.actionType_id where e.execDate < :checkDate and a.endDate is null and at.mnem in ('EXAM','EPI','JOUR','ORD','NOT','OTH')";
-        $stmt = $app['db']->prepare($sql);
-        $stmt->bindValue('checkDate', $checkDate, "datetime");
-        $stmt->execute();
-        $actions = $stmt->fetchAll();
-        $count = count($actions);
+        // $sql = "SELECT a.endDate, at.* FROM Event as e join Action as a on a.event_id = e.id join ActionType as at on at.id = a.actionType_id where e.execDate < :checkDate and a.endDate is null and at.mnem in ('EXAM','EPI','JOUR','ORD','NOT','OTH')";
+        // $stmt = $app['db']->prepare($sql);
+        // $stmt->bindValue('checkDate', $checkDate, "datetime");
+        // $stmt->execute();
+        // $actions = $stmt->fetchAll();
+        // $count = count($actions);
 
-        $output->write( "незакрытых документов: ".$count."  \n");
+        // $output->write( "незакрытых документов: ".$count."  \n");
 
 
     }
