@@ -30,7 +30,7 @@ define(function(require) {
 			//console.log('LaboratoryVIew init', this);
 
 
-			view.canAddDirection = view.options.appeal.closed ? false : true;
+			view.canAddDirection = this.options.appeal.get('closed') ? false : true;
 
 
 			this.collection = new App.Collections.LaboratoryDiags();
@@ -42,7 +42,8 @@ define(function(require) {
 
 			this.collection.extra = {
 				doctorId: (this.options.appeal.get('execPerson')).id,
-				userId: Core.Cookies.get("userId")
+				userId: Core.Cookies.get("userId"),
+				appealClosed: this.options.appeal.get('closed')
 			};
 
 			this.grid = new GridView({

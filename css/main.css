@@ -365,91 +365,96 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
 
 /* line 171, ../sass/modules/_labs.scss */
 .tests {
-  margin: 0 0 4px 0;
+  margin: 0 0 4px 2em;
 }
 
-/* line 197, ../sass/modules/_labs.scss */
+/* line 174, ../sass/modules/_labs.scss */
+.edit .tests {
+  margin: 0 0 4px 0.4em;
+}
+
+/* line 200, ../sass/modules/_labs.scss */
 .edit-tree .dynatree-container {
   white-space: normal;
   overflow: hidden;
 }
 
-/* line 204, ../sass/modules/_labs.scss */
+/* line 207, ../sass/modules/_labs.scss */
 span.dynatree-node {
   position: relative;
   display: block;
 }
-/* line 207, ../sass/modules/_labs.scss */
+/* line 210, ../sass/modules/_labs.scss */
 span.dynatree-node table {
   width: 100%;
   display: inline-block;
   position: relative;
 }
-/* line 211, ../sass/modules/_labs.scss */
+/* line 214, ../sass/modules/_labs.scss */
 span.dynatree-node table td {
   vertical-align: top;
 }
-/* line 215, ../sass/modules/_labs.scss */
+/* line 218, ../sass/modules/_labs.scss */
 span.dynatree-node table td.title-col {
   padding-left: 5px;
   width: 100%;
 }
-/* line 220, ../sass/modules/_labs.scss */
+/* line 223, ../sass/modules/_labs.scss */
 span.dynatree-node table td.sito-col {
   min-width: 25px;
 }
-/* line 223, ../sass/modules/_labs.scss */
+/* line 226, ../sass/modules/_labs.scss */
 span.dynatree-node table td.time-col {
   min-width: 14.6em;
 }
 
-/* line 230, ../sass/modules/_labs.scss */
+/* line 233, ../sass/modules/_labs.scss */
 .edit-tree .dynatree-checkbox:first-child {
   display: none;
 }
 
-/* line 237, ../sass/modules/_labs.scss */
+/* line 240, ../sass/modules/_labs.scss */
 .datetime .date {
   width: 8.67em;
 }
-/* line 239, ../sass/modules/_labs.scss */
+/* line 242, ../sass/modules/_labs.scss */
 .datetime .date .date-icon {
   right: 0.1em;
 }
-/* line 243, ../sass/modules/_labs.scss */
+/* line 246, ../sass/modules/_labs.scss */
 .datetime .time {
   width: 5.33em;
 }
-/* line 245, ../sass/modules/_labs.scss */
+/* line 248, ../sass/modules/_labs.scss */
 .datetime .time .HourPicker {
   vertical-align: baseline;
 }
-/* line 248, ../sass/modules/_labs.scss */
+/* line 251, ../sass/modules/_labs.scss */
 .datetime .time .time-icon {
   right: 0em;
 }
 
-/* line 257, ../sass/modules/_labs.scss */
+/* line 260, ../sass/modules/_labs.scss */
 .lab-status-0 {
   color: blue;
 }
 
-/* line 261, ../sass/modules/_labs.scss */
+/* line 264, ../sass/modules/_labs.scss */
 .lab-status-1 {
   color: black;
 }
 
-/* line 265, ../sass/modules/_labs.scss */
+/* line 268, ../sass/modules/_labs.scss */
 .lab-status-2 {
   color: green;
 }
 
-/* line 269, ../sass/modules/_labs.scss */
+/* line 272, ../sass/modules/_labs.scss */
 .lab-status-3 {
   color: #bbb;
 }
 
-/* line 274, ../sass/modules/_labs.scss */
+/* line 277, ../sass/modules/_labs.scss */
 #doctor-outer #doctor, #assigner-outer #assigner {
   color: #777;
   cursor: pointer;
@@ -457,12 +462,12 @@ span.dynatree-node table td.time-col {
   width: 88%;
 }
 
-/* line 277, ../sass/modules/_labs.scss */
+/* line 280, ../sass/modules/_labs.scss */
 #doctor-outer .change-doctor, #assigner-outer .change-assigner {
   display: inline-block;
 }
 
-/* line 281, ../sass/modules/_labs.scss */
+/* line 284, ../sass/modules/_labs.scss */
 #executor-outer #executor {
   color: #777;
   cursor: pointer;
@@ -470,7 +475,7 @@ span.dynatree-node table td.time-col {
   width: 88%;
 }
 
-/* line 284, ../sass/modules/_labs.scss */
+/* line 287, ../sass/modules/_labs.scss */
 #executor-outer .change-executor {
   display: inline-block;
 }

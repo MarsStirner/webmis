@@ -7,6 +7,7 @@
           <!-- <input type="checkbox" class="select"> -->
         </td>
         <td  style="width:95%;">
+        <input type="checkbox" <% if(data.picked){%>checked="checked"<%}%> class="picked"/>
           <span class="title2" <% if(data.tests.length > 0){%>style="cursor:pointer;"<%}%>><%= data.name %></span>
           <ul class="tests" style="display:none;">
             <%_.each(data.tests, function(test){%>

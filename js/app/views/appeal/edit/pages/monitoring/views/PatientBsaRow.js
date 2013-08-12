@@ -21,7 +21,7 @@ define(function(require) {
 					return (model.get('weight') && model.get('growth'))
 				});
 				//последняя модель
-				var model = _.last(wah);
+				var model = _.first(wah);
 				//console.log('model', model);
 
 				if (!model) { //ели нет моделей с ростом и весом
@@ -31,7 +31,7 @@ define(function(require) {
 					});
 				}
 
-				model = _.last(wah);
+				model = _.first(wah);
 
 				if (model) {
 					var weight = model.get('weight');

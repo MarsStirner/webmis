@@ -11,6 +11,9 @@ define(function(require) {
             pubsub.on('date:selected', function() {
                 self.$el.html('');
             });
+            pubsub.on('consultation:selected', function() {
+                self.$el.html('');
+            })
         },
         events: {
             'change input': 'timeSelected'

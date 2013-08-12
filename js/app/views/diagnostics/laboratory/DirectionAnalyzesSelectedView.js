@@ -19,22 +19,30 @@ define(function(require) {
 
 			pubsub.on('analysis:click', function(code) {
 				console.log('analysis:click', code);
-				var analysis = new Analysis({
+				//debugger;
+				var analysis = new Analysis([],{
 					code: code,
 					patientId: view.options.patientId
 				});
 
-				analysis.fetch({
-					success: function() {
-						//console.log('success', analysis)
-						var date = moment(new Date())
-						.startOf('day').add('days', 1).add('hours', 7)
-						.format('YYYY-MM-DD HH:mm:ss');
+				analysis.fetch().done(function() {
+					//текуший день, время округляем текущее до ближайшего часа, но если 23:30, то 23:59 надо ....
+					var now = moment(new Date());
 
-						analysis.setProperty('plannedEndDate','value', date);
-						view.analyzes.add(analysis);
-						view.setExecutorFromAnalysis(analysis);
+					var date = now.endOf("hour").seconds(0);//округляем текущее время до 59:00
+
+					if(date.hour() != 23){//если не 23 часа, то добавляем минуту
+						date.add('minutes', 1);
 					}
+
+					date.format('YYYY-MM-DD HH:mm:ss');
+
+					analysis.setProperty('plannedEndDate', 'value', date);
+
+					view.setExecutorFromAnalysis(analysis);
+
+					view.analyzes.add([analysis]);
+
 				});
 
 			});
@@ -123,7 +131,7 @@ define(function(require) {
 
 			view.analyzes.off();
 
-			_.each(view.childViews, function(childView){
+			_.each(view.childViews, function(childView) {
 				childView.close();
 			}, view);
 

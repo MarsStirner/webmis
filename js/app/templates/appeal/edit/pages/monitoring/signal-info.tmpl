@@ -9,8 +9,8 @@
 	<td>Продолжительность лечения (дней) или дата выписки</td>
 	<td>
 		<% if (appeal.closed) { %>
-			<% if (appealExtraData.rangeAppealDateTime.end){ %>
-				<%= Core.Date.format(appealExtraData.rangeAppealDateTime.end) %>
+			<% if (appeal.closeDateTime){ %>
+				<%= Core.Date.format(appeal.closeDateTime) %>
 			<%}%>
 		<% } else { %>
 			<%= days %>

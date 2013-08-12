@@ -41,7 +41,7 @@ define(function(require) {
 			view.$analyzesList.append(_.template(template, {
 				items: treeData,
 				template: template
-			})).on('click', 'li', function(event) {
+			})).unbind().on('click', 'li', function(event) {
 				event.stopPropagation();
 				var $this = $(this);
 				var code = $this.data('code');

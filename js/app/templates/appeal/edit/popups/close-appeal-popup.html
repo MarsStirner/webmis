@@ -2,7 +2,7 @@
 <h3>Нет документов:</h3>
     <ul>
         <% if(data.docs.vmp && !data.docs.vmpTicket){ %>
-            <li>Талон-направление на ВМП.</li>
+            <li>Талон-направление на ВМП. <a href="/appeals/<%= data.appealId %>/quotes" target="_blank">Создать</a></li>
         <% } %>
 
         <% if(!data.docs.epicrisis){ %>

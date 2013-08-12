@@ -68,7 +68,7 @@
 		{{/if}}
 	</td>
 
-	{{if status && (status.id === 0) && (userId == assignPerson.id || userId == createPerson.id || userId == doctorId )}}
+	{{if !appealClosed && status && (status.id === 0) && (userId == assignPerson.id || userId == createPerson.id || userId == doctorId )}}
 		<td><i class="icon-pencil edit-direction"></i></td>
 		<td><span class=" icon-remove cancel-direction"></span></td>
 	{{else}}

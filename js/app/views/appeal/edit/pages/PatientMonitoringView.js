@@ -22,7 +22,7 @@ define(function(require) {
 			this.$el.html(_.template(template,this.options.appeal.toJSON()));
 
 			this.assign({
-				".monitoring-info": new MonitoringInfoGrid(),
+				// ".monitoring-info": new MonitoringInfoGrid(),
 				".monitoring-info2": new MonitoringInfoGrid2(),
 				//".monitoring-info3": new MonitoringInfoGrid3(),
 				//".express-analyses": new ExpressAnalyses(),

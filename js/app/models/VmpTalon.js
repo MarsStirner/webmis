@@ -8,21 +8,27 @@ define(function() {
 
 		},
 
-		onChange: function(){
-			this.on('change:MKB', function() {
-				this.resetQuotaType();
-				this.resetPacientModel();
-				this.resetTreatment();
-			}, this);
-
-			this.on('change:quotaType_id', function() {
-				this.resetPacientModel();
-				this.resetTreatment();
-			}, this);
-
-			this.on('change:pacientModel_id', function() {
-				this.resetTreatment();
-			}, this);
+		onChange: function() {
+			this.on('change:MKB', this.onChangeMkb, this);
+			this.on('change:quotaType_id', this.onChangeQuotaTypeId, this);
+			this.on('change:pacientModel_id', this.onChangePacientModelId, this);
+		},
+		onChangeMkb: function() {
+			this.resetQuotaType();
+			this.resetPacientModel();
+			this.resetTreatment();
+		},
+		onChangeQuotaTypeId: function() {
+			this.resetPacientModel();
+			this.resetTreatment();
+		},
+		onChangePacientModelId: function() {
+			this.resetTreatment();
+		},
+		offChange: function() {
+			this.off('change:MKB', this.onChangeMkb, this);
+			this.off('change:quotaType_id', this.onChangeQuotaTypeId, this);
+			this.off('change:pacientModel_id', this.onChangePacientModelId, this);
 		},
 
 		resetQuotaType: function() {

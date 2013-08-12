@@ -341,12 +341,15 @@ define(function(require) {
 		},
 
 		onCopy: function() {
+			this.vmpTalon.offChange();
+			var id = this.vmpTalon.get('id');
 			this.fillForm({
 				model: this.vmpTalonPrev,
 				disable: true
 			});
 
-			this.vmpTalon.unset('id')
+			this.vmpTalon.set('id',id);
+			this.vmpTalon.onChange();
 		}
 
 	});

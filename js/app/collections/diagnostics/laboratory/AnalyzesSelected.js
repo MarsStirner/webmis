@@ -10,6 +10,11 @@ define(function(require) {
 		url: function() {
 			return DATA_PATH + 'appeals/' + this.options.appeal.get('id') + '/diagnostics/laboratory'
 		},
+		getPicked: function() {
+			return this.filter(function(model) {
+				return model.get('picked');
+			});
+		},
 		updateAll: function() {
 			var collection = this;
 			options = {

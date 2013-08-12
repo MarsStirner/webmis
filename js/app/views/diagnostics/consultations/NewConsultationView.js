@@ -99,12 +99,11 @@ define(function(require) {
 
 			this.diagnosis = this.options.appeal.getDiagnosis();
 
-			if(this.diagnosis){
+			if (this.diagnosis) {
 				this.consultation.set('diagnosis', {
 					code: this.diagnosis.get('mkb').get('code')
 				});
 			}
-
 
 
 
@@ -187,6 +186,9 @@ define(function(require) {
 			//console.log('date', date)
 			var timestamp = moment(date).valueOf();
 			this.consultation.set('plannedEndDate', timestamp);
+
+			this.consultation.set('plannedTime', '');
+			this.renderShedule();
 		},
 
 		//при выборе консультанта
@@ -226,9 +228,9 @@ define(function(require) {
 			this.consultation.get('finance').id = $target.val();
 		},
 
-		onChangeUrgent: function(e){
+		onChangeUrgent: function(e) {
 			var $target = this.$(e.target);
-			this.consultation.set('urgent',$target.prop('checked'));
+			this.consultation.set('urgent', $target.prop('checked'));
 		},
 
 		//при изменении диагноза
@@ -250,11 +252,11 @@ define(function(require) {
 		openAssignerSelectPopup: function() {
 			//console.log('openDoctorSelectPopup');
 			this.personDialogView = new PersonDialogView({
-				 title: 'Направивший врач',
+				title: 'Направивший врач',
 				appeal: this.options.appeal,
-                callback: function(person){
-                    pubsub.trigger('assigner:changed', person);
-                }
+				callback: function(person) {
+					pubsub.trigger('assigner:changed', person);
+				}
 			});
 
 			this.personDialogView.render().open();
@@ -274,8 +276,14 @@ define(function(require) {
 		},
 		//расписание приёма консультанта на определённый день
 		renderShedule: function(consultant) {
-			this.scheduleView.collection.reset(consultant.get('schedule').toJSON());
+			if (consultant) {
+				this.scheduleView.collection.reset(consultant.get('schedule').toJSON());
+			} else {
+				this.scheduleView.collection.reset();
+			}
+
 			this.scheduleView.render();
+
 		},
 		//при клике на кнопку "Сохранить"
 		onSave: function() {
