@@ -2299,6 +2299,10 @@ define(function (require) {
 				$(this).prop("tabindex", ++i);
 			});
 
+			this.$(".doc-sub-header").each(function () {
+				$(this).parent().before($(this).detach());
+			});
+
 			return this;
 		}
 	});
@@ -2951,6 +2955,25 @@ define(function (require) {
 	});
 
 	/**
+	 * Подзаголовок, создаётся для полей типа String с valueDomain(scope)="''"
+	 * @type {Function}
+	 */
+	Documents.Views.Edit.UIElement.SubHeader = ViewBase.extend({
+		className: "row-fluid doc-sub-header",
+		template: _.template("<h3><%=model.get('name')%></h3>"),
+		data: function () {
+			return {
+				model: this.model
+			}
+		}/*,
+		render: function () {
+			ViewBase.prototype.render.call(this);
+			//this.$el.parent().prepend(this.$el.detach());
+			return this;
+		}*/
+	});
+
+	/**
 	 * Фабрика для создания элементов шаблона соответсвующего типа
 	 * @type {Function}
 	 */
@@ -2964,7 +2987,11 @@ define(function (require) {
 				this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
 				break;
 			case "string":
-				this.UIElementClass = Documents.Views.Edit.UIElement.String;
+				if (options.model.get("scope") === "''") {
+					this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
+				} else {
+					this.UIElementClass = Documents.Views.Edit.UIElement.String;
+				}
 				break;
 			case "text":
 				this.UIElementClass = Documents.Views.Edit.UIElement.Text;
