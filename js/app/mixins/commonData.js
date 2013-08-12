@@ -56,9 +56,11 @@ define([], function() {
 
 					if (valueProperty && valueProperty.value && valueProperty.value !== "0.0") {
 						flattened.push({
-							//id: attribute.typeId,
+							id: attribute.typeId,
 							name: attribute.name,
-							value: valueProperty.value
+							value: valueProperty.value,
+							type: attribute.type,
+							scope: attribute.scope
 						});
 					}
 
