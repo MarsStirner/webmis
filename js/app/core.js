@@ -376,7 +376,28 @@ Core = {
 
 		startsWith: function (str, chr) {
 			return str.length ? str[0] === chr : false;
-		}
+		},
+
+    collectTextNodes: function (element, texts) {
+      for (var child = element.firstChild; child !== null; child = child.nextSibling) {
+        if (child.nodeType === 3)
+          texts.push(child);
+        else if (child.nodeType === 1)
+          this.collectTextNodes(child, texts);
+      }
+    },
+
+    getTextWithSpaces: function (element) {
+      var texts = [];
+      this.collectTextNodes(element, texts);
+      for (var i = texts.length; i-- > 0;)
+        texts[i] = texts[i].data;
+      return texts.join(' ');
+    },
+
+    cleanTextMarkup: function (text) {
+      return this.getTextWithSpaces($("<div/>").html(text)[0]);
+    }
 	},
 
 	Url: {
