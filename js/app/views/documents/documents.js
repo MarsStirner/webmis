@@ -37,7 +37,7 @@ define(function (require) {
 	var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
 	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss'; //Формат даты в коммон дата
 	var FLAT_CODES = {
-		PANIC: "panic",
+		PANIC: "firstExam",
 		DUTY_DOCTOR: "dutyDoctor"
 	};
 
@@ -761,8 +761,12 @@ define(function (require) {
 		onPanicClick: function () {
 			var panicType = this.documentTypes.findByFlatCode(FLAT_CODES.PANIC);
 			if (panicType) {
-				if (this.currentDocument) {
-					this.currentDocument.save({}, {success: this.onSaveCurrentDocumentSuccess, error: this.onSaveCurrentDocumentError});
+				if (this.options.currentDocument) {
+					pubsub.trigger('noty', {
+						text: 'Текущий документ будет сохранён.',
+						type: 'information'
+					});
+					this.options.currentDocument.save({}, {success: this.onSaveCurrentDocumentSuccess, error: this.onSaveCurrentDocumentError});
 				}
 
 				App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, "new", panicType.id].join("/"));
@@ -779,15 +783,15 @@ define(function (require) {
 		onSaveCurrentDocumentSuccess: function () {
 			console.info("SaveCurrentDocumentSuccess");
 			pubsub.trigger('noty', {
-				text: 'Текущий документ сохранён.',
-				type: 'alert'
+				text: 'Документ успешно сохранён.',
+				type: 'success'
 			});
 		},
 
 		onSaveCurrentDocumentError: function () {
 			console.info("SaveCurrentDocumentError");
 			pubsub.trigger('noty', {
-				text: 'При сохранении текущего документа произошла ошибка.',
+				text: 'При сохранении документа произошла ошибка.',
 				type: 'error'
 			});
 		}
@@ -2141,7 +2145,10 @@ define(function (require) {
 
 		render: function (subViews) {
 			return Documents.Views.Edit.Base.Layout.prototype.render.call(this, _.extend({
-				".panic-control": new Documents.Views.PanicBtn({editPageTypeName: this.getEditPageTypeName()})
+				".panic-control": new Documents.Views.PanicBtn({
+					editPageTypeName: this.getEditPageTypeName(),
+					currentDocument: this.model
+				})
 			}, subViews));
 		}
 	});
@@ -2363,7 +2370,7 @@ define(function (require) {
 		},
 
 		onAttributeValueChange: function (event) {
-			console.log('onAttributeValueChange',this.getAttributeValue())
+			//console.log('onAttributeValueChange',this.getAttributeValue())
 			this.model.setValue(this.getAttributeValue());
 			this.$(".Mandatory").removeClass("WrongField");
 		},
