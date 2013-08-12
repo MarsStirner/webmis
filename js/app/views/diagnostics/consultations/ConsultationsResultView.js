@@ -70,10 +70,10 @@ define(function(require) {
             var result = this.result;
 
             var data = {
-                //patientId: patient.get('id'),
+                patientId: patient.get('id'),
                 patientName: patient.get('name').toJSON(),
-                // appealId: appeal.get('id'),
-                // appealNumber: appeal.get('number'),
+                appealId: appeal.get('id'),
+                appealNumber: appeal.get('number'),
                 //id: result.get('id'),
                 examName: result.get('name'),
                 // endDate: moment(result.getProperty('plannedEndDate'), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss"),
