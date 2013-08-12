@@ -26,13 +26,19 @@ define(function(require) {
 				});
 
 				analysis.fetch().done(function() {
-					var date = moment(new Date())
-						.startOf('day')
-						//.add('days', 1)
-						.add('hours', 7)
-						.format('YYYY-MM-DD HH:mm:ss');
+					//текуший день, время округляем текущее до ближайшего часа, но если 23:30, то 23:59 надо ....
+					var now = moment(new Date());
+
+					var date = now.endOf("hour").seconds(0);//округляем текущее время до 59:00
+
+					if(date.hour() != 23){//если не 23 часа, то добавляем минуту
+						date.add('minutes', 1);
+					}
+
+					date.format('YYYY-MM-DD HH:mm:ss');
 
 					analysis.setProperty('plannedEndDate', 'value', date);
+
 					view.setExecutorFromAnalysis(analysis);
 
 					view.analyzes.add([analysis]);
