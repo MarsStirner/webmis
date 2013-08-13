@@ -77,10 +77,13 @@ define(function(require) {
                 //id: result.get('id'),
                 examName: result.get('name'),
                 // endDate: moment(result.getProperty('plannedEndDate'), "YYYY-MM-DD HH:mm:ss").format("DD.MM.YYYY HH:ss"),
-                examDoctorName: [result.getProperty('doctorFirstName'), result.getProperty('doctorMiddleName'), result.getProperty('doctorLastName')].join(" "),
+               /* examDoctorName: [result.getProperty('doctorFirstName'), result.getProperty('doctorMiddleName'), result.getProperty('doctorLastName')].join(" "),
                 examDoctorSpecs: result.getProperty('doctorSpecs'),
                 // assignerName: [result.getProperty('assignerFirstName'), result.getProperty('assignerMiddleName'), result.getProperty('assignerLastName')].join(" "),
-                // assignerSpecs: result.getProperty('assignerSpecs'),
+                // assignerSpecs: result.getProperty('assignerSpecs'),*/
+							  // TODO: это направивший врач. Название свойств оставил старое чтобы не менять шаблон.
+								examDoctorName: [result.getProperty('assignerFirstName'), result.getProperty('assignerMiddleName'), result.getProperty('assignerLastName')].join(" "),
+								examDoctorSpecs: result.getProperty('assignerSpecs'),
                 attributes: result.getMarkupFreeFlattenedDetails()
             }
 
