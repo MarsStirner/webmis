@@ -196,7 +196,7 @@ class AppealRouter implements ControllerProviderInterface
 
             $update_sql = "UPDATE Action "
                 ." JOIN ActionType ON Action.actionType_id = ActionType.id "
-                ." SET Action.endDate = :endDate "
+                ." SET Action.endDate = :endDate, Action.status = 2 "
                 ." WHERE Action.event_id = :appealId "
                 ." AND Action.endDate IS NULL";
 
@@ -233,7 +233,7 @@ class AppealRouter implements ControllerProviderInterface
             $lastMoveId = $lastMove['id'];
 
             $update_sql = "UPDATE Action "
-            ."SET Action.endDate= :endDate "
+            ."SET Action.endDate= :endDate, Action.status = 2 "
             ."WHERE Action.id = :lastMoveId";
 
             $stmt = $app['db']->prepare($update_sql);

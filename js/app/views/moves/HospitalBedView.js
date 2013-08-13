@@ -89,18 +89,18 @@ define(function(require) {
 
 			//время предпоследнего движения, если нет в последнем то берём из предидущего движения
 			var moveDatetime = this.lastMove.get('admission') || this.previousMove.get('leave') || this.previousMove.get('admission');
-
-			// if (this.getMoveNumber() === 2) {
-			// 	this.model.set({
-			// 		'movedFromUnitId': 26
-			// 	});
-			// } else {
+			console.log(this.getMoveNumber())
+			if (this.getMoveNumber() === 2) {//Для первого движения по умолчанию не передаём отделение
+				this.model.set({
+					'movedFromUnitId': ''
+				});
+			} else {
 				if (this.previousMove && this.previousMove.get("unitId")) {
 					this.model.set({
 						'movedFromUnitId': this.previousMove.get("unitId")
 					});
 				}
-			// }
+			}
 
 			this.model.set({
 				'moveDatetime': moveDatetime
@@ -113,11 +113,11 @@ define(function(require) {
 
 			if ($target.prop('checked')) {
 				this.model.set({
-					'movedFromUnitId': 26
+					'movedFromUnitId': 26//дневное отделение
 				});
 			} else {
 				this.model.set({
-					'movedFromUnitId': this.previousMove.get("unitId")
+					'movedFromUnitId': ''//this.previousMove.get("unitId")
 				});
 			}
 
@@ -141,7 +141,7 @@ define(function(require) {
 
 		validate: function() {
 
-			if (!this.model.get('movedFromUnitId') || !this.model.get('bedId')) {
+			if (!this.model.get('bedId')) {//!this.model.get('movedFromUnitId') ||
 				this.disableSaveButton();
 			} else {
 				this.enableSaveButton();
