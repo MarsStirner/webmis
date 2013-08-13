@@ -71,7 +71,7 @@ $console->register( 'close-appeals-docs' )
         $update_sql = "UPDATE Action as a"
                 ." JOIN ActionType as at ON a.actionType_id = at.id "
                 ." JOIN Event as e ON a.event_id = e.id "
-                ." SET a.endDate = :closeDate "
+                ." SET a.endDate = :closeDate, a.status = 2 "
                 ." WHERE e.execDate < :checkDate "
                 ." AND a.endDate IS NULL";
 
