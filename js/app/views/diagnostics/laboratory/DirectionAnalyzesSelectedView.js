@@ -89,6 +89,11 @@ define(function(require) {
 			view.$el.html(_.template(analyzesListTemplate, {}));
 			view.$analyzesList = view.$el.find('tbody.item-container');
 
+			_.each(view.childViews, function(childView){
+				childView.close();
+			});
+			view.childViews.length = 0;
+
 
 			this.analyzes.each(function(model) {
 				//console.log('analyzes item', model);

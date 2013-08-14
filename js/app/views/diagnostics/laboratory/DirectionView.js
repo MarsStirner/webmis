@@ -164,6 +164,7 @@ define(function(require) {
 
 		isValid: function() {
 			var view = this;
+			var valid = true;
 
 			var assessmentDate = view.ui.$assessmentDatepicker.datepicker("getDate");
 			assessmentDate = assessmentDate ? assessmentDate : new Date();
@@ -172,32 +173,23 @@ define(function(require) {
 			var assessmentTime = view.ui.$assessmentTimepicker.val();
 			var assessmentDatetime = assessmentDate + ' ' + assessmentTime + ':00';
 
-			if (!assessmentTime) {
-				return false;
-			}
-
-			if (!moment(assessmentDatetime, "YYYY-MM-DD HH:mm:ss").isValid() || !(moment(assessmentDatetime, "YYYY-MM-DD HH:mm:ss").diff(moment()) > 0)) {
-				return false;
+			if (!assessmentTime || !moment(assessmentDatetime, "YYYY-MM-DD HH:mm:ss").isValid() || !(moment(assessmentDatetime, "YYYY-MM-DD HH:mm:ss").diff(moment()) > 0)) {
+				valid = false;
 			}
 
 			if (view.analyzesSelected.length === 0) {
-				return false;
+				valid = false;
 			}
-
-			// model.setProperty('assessmentDate'
 
 			view.analyzesSelected.each(function(analysis) {
 				var plannedEndDate = analysis.getProperty('plannedEndDate', 'value');
 
 				if (!plannedEndDate || !moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid() || !(moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").diff(moment()) > 0)) {
-
-					return false;
+					valid = false;
 				}
-
-
 			});
 
-			return true;
+			return valid;
 		},
 
 
@@ -287,16 +279,6 @@ define(function(require) {
 		onSave: function() {
 			var view = this;
 
-			// var selected = []; //_.filter(view.groupTestsCollection.models, function(model) {
-			// // 	return model.get('selected') === true;
-			// // });
-
-			// _.each(selected, function(item) {
-			// 	view.analyzesSelected.add(item.tests)
-			// });
-			// view.analyzesSelected;
-
-
 			var startDate = moment(view.ui.$assessmentDatepicker.datepicker("getDate")).format('YYYY-MM-DD');
 			var startTime = view.ui.$assessmentTimepicker.val() + ':00';
 
@@ -329,8 +311,6 @@ define(function(require) {
 
 
 			});
-
-			//console.log('view.analyzesSelected', view.analyzesSelected);
 
 			view.saveButton(false, 'Сохраняем...');
 			view.analyzesSelected.updateAll();
