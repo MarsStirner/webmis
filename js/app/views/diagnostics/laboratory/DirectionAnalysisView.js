@@ -36,10 +36,10 @@ define(function(require) {
 				date = plannedEndDate.format('DD.MM.YYYY');
 				time = plannedEndDate.format('HH:mm');
 			} else {
-				var now = new Date()
-				date = moment(now).add('days', 1).format('DD.MM.YYYY');
-				time = '07:00';
-				this.model.setProperty('plannedEndDate', 'value', moment(now).format('YYYY-MM-DD HH:mm:ss'))
+				//var now = new Date()
+				date = ''; //moment(now).add('days', 1).format('DD.MM.YYYY');
+				time = ''; //'07:00';
+				//this.model.setProperty('plannedEndDate', 'value', moment(now).format('YYYY-MM-DD HH:mm:ss'))
 			}
 
 
@@ -81,9 +81,20 @@ define(function(require) {
 		onChangePlannedEndDate: function() {
 			var view = this;
 			var rawDate = this.ui.$plannedDatepicker.val();
+			if(!rawDate) return;
+
 			var rawTime = this.ui.$plannedTimepicker.val();
+			console.log(rawDate, rawTime)
+
 
 			var date = moment(rawDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
+			// if(!rawTime){
+			// 	console.log(date.)
+
+			// }
+			rawTime = rawTime ? rawTime : '00:00';
+
+
 			var time = rawTime + ':00';
 			var datetime = date + ' ' + time;
 
@@ -93,14 +104,14 @@ define(function(require) {
 				//если анализ "выбран", то его дату ставим всем выбранным анализам
 				var picked = view.model.collection.getPicked()
 				_.each(picked, function(pickedModel) {
-					console.log('picked', pickedModel.get('name'));
+					///console.log('picked', pickedModel.get('name'));
 					pickedModel.setProperty('plannedEndDate', 'value', datetime);
 				});
 			}
 
 
 
-			console.log('onChangePlannedEndDate', date + ' ' + time, view.model, picked);
+			//console.log('onChangePlannedEndDate', date + ' ' + time, view.model, picked);
 
 		},
 
@@ -179,9 +190,12 @@ define(function(require) {
 			view.ui.$plannedDatepicker.datepicker({
 				minDate: new Date(),
 				onSelect: function(dateText, inst) {
-					var day = moment(view.$(this).datepicker("getDate")).startOf('day');
+					var date = view.$(this).datepicker("getDate");
+					date = date ? date : new Date;
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
+
+					var day = moment(date).startOf('day');
 					var hour = view.ui.$plannedTimepicker.timepicker('getHour');
 					//если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
 					if (day.diff(currentDay, 'days') === 0) {
@@ -197,9 +211,11 @@ define(function(require) {
 			view.ui.$plannedTimepicker.timepicker({
 				defaultTime: 'now',
 				onHourShow: function(hour) {
-					var day = moment(view.ui.$plannedDatepicker.datepicker("getDate")).startOf('day');
+					var date = view.ui.$plannedDatepicker.datepicker("getDate");
+					date = date ? date : new Date;
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
+					var day = moment(date).startOf('day');
 					//если выбран текущий день, то часы меньше текущего нельзя выбрать
 					if (day.diff(currentDay, 'days') === 0) {
 						if (hour < currentHour) {
@@ -210,9 +226,11 @@ define(function(require) {
 					return true;
 				},
 				onMinuteShow: function(hour, minute) {
-					var day = moment(view.ui.$plannedDatepicker.datepicker("getDate")).startOf('day');
+					var date = view.ui.$plannedDatepicker.datepicker("getDate");
+					date = date ? date : new Date;
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
+					var day = moment().startOf('day');
 					var currentMinute = moment().minute();
 					//если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
 					if (day.diff(currentDay, 'days') === 0) {

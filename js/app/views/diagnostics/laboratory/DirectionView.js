@@ -170,7 +170,10 @@ define(function(require) {
 
 			view.analyzesSelected.each(function(analysis) {
 				var plannedEndDate = analysis.getProperty('plannedEndDate', 'value');
-				//console.log('plannedEndDate', plannedEndDate)
+
+				if (!plannedEndDate) {
+					valid = false;
+				}
 
 				if (!moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid()) {
 					valid = false;

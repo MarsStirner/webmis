@@ -27,18 +27,18 @@ define(function(require) {
 
 				analysis.fetch().done(function() {
 					//текуший день, время округляем текущее до ближайшего часа, но если 23:30, то 23:59 надо ....
-					var now = moment(new Date());
+					// var now = moment(new Date());
 
-					var date = now.endOf("hour").seconds(0);//округляем текущее время до 59:00
+					// var date = now.endOf("hour").seconds(0);//округляем текущее время до 59:00
 
-					if(date.hour() != 23){//если не 23 часа, то добавляем минуту
-						date.add('minutes', 1);
-					}
+					// if(date.hour() != 23){//если не 23 часа, то добавляем минуту
+					// 	date.add('minutes', 1);
+					// }
 
-					date = date.format('YYYY-MM-DD HH:mm:ss');
-					// console.log(date)
+					// date = date.format('YYYY-MM-DD HH:mm:ss');
+					// // console.log(date)
 
-					analysis.setProperty('plannedEndDate', 'value', date);
+					//analysis.setProperty('plannedEndDate', 'value', '');
 
 					view.setExecutorFromAnalysis(analysis);
 
