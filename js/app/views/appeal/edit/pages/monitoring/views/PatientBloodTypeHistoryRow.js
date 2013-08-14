@@ -1,5 +1,5 @@
 define(function(require) {
-    var shared = require('views/appeal/edit/pages/monitoring/shared');
+    // var shared = require('views/appeal/edit/pages/monitoring/shared');
 
     var patientBloodTypeHistoryRowTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-blood-type-history-row.tmpl');
 
@@ -21,14 +21,6 @@ define(function(require) {
         initialize: function(options) {
             BaseView.prototype.initialize.apply(this);
 
-            var PatientBloodTypes = options.PatientBloodTypes;
-
-            if (!shared.collections.bloodTypes) {
-                shared.collections.bloodTypes = new PatientBloodTypes([], {
-                    patientId: shared.models.appeal.get("patient").get("id")
-                });
-            }
-            this.collection = shared.collections.bloodTypes;
             this.collection
                 .on("request:show", this.toggleVisible, this)
                 .on("request:hide", this.toggleVisible, this)

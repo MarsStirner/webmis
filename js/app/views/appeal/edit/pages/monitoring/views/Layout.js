@@ -4,20 +4,39 @@ define(function(require) {
     var monitoringTmpl = require('text!templates/appeal/edit/pages/monitoring/layout.tmpl');
 
     var Card = require('views/appeal/edit/pages/card');
+
     var ChemotherapyInfo = require('views/appeal/edit/pages/monitoring/views/ChemotherapyInfo');
+    var LastTherapyCollection = require('collections/therapy/LastTherapy');
+    var RestTherapyCollection = require('collections/therapy/RestTherapy');
+
     var ExpressAnalyses = require('views/appeal/edit/pages/monitoring/views/ExpressAnalysesView');
     var Header = require('views/appeal/edit/pages/monitoring/views/Header');
     var MonitoringInfoGrid = require('views/appeal/edit/pages/monitoring/views/MonitoringInfoGrid');
+
     var PatientDiagnosesList = require('views/appeal/edit/pages/monitoring/views/PatientDiagnosesList');
+    var PatientDiagnoses = require('views/appeal/edit/pages/monitoring/collections/PatientDiagnoses');
+
     var PatientInfo = require('views/appeal/edit/pages/monitoring/views/PatientInfo');
+    var PatientBloodTypeHistoryRow = require('views/appeal/edit/pages/monitoring/views/PatientBloodTypeHistoryRow');
+    var PatientBloodTypeRow = require('views/appeal/edit/pages/monitoring/views/PatientBloodTypeRow');
+    var PatientBsaRow = require('views/appeal/edit/pages/monitoring/views/PatientBsaRow');
+
+    var DictionaryValues = require('collections/dictionary-values');
+    var PatientBloodTypes = require('views/appeal/edit/pages/monitoring/collections/PatientBloodTypes');
+
     var SignalInfo = require('views/appeal/edit/pages/monitoring/views/SignalInfo');
+
+    var Moves = require('collections/moves/moves');
+
+    var MonitoringInfos = require('views/appeal/edit/pages/monitoring/collections/MonitoringInfos');
+
 
     var Layout = Card.extend({
         className: "monitoring-layout",
 
         template: monitoringTmpl,
 
-        initialize: function() {
+        initialize: function(options) {
             shared.models.appeal = this.model = this.options.appeal;
             shared.appealJSON = shared.models.appeal.toJSON();
             this.canPrint = false;
@@ -31,6 +50,84 @@ define(function(require) {
                 this.render();
             }, this);
 
+            var eventId = shared.models.appeal.get('id');
+            var patientId = shared.models.appeal.get('patient').get('id');
+
+            //collections
+            this.lastTherapyCollection = new LastTherapyCollection(null, {
+                eventId: eventId
+            });
+
+            this.restTherapyCollection = new RestTherapyCollection(null, {
+                patientId: patientId
+            });
+
+            this.patientDiagnoses = new PatientDiagnoses(null, {
+                appealId: eventId
+            });
+
+            this.patientBloodTypes = new PatientBloodTypes([], {
+                patientId: patientId
+            });
+
+            this.bloodTypesDict = new DictionaryValues([], {
+                name: "bloodTypes"
+            });
+
+            this.moves = new Moves();
+            this.moves.appealId = options.appeal.get("id");
+
+            this.monitoringInfos = new MonitoringInfos(null, {
+                appealId: eventId
+            });
+
+            //views
+
+            this.chemotherapyInfo = new ChemotherapyInfo({
+                lastTherapyCollection: this.lastTherapyCollection,
+                restTherapyCollection: this.restTherapyCollection
+            });
+
+            this.patientDiagnosesList = new PatientDiagnosesList({
+                collection: this.patientDiagnoses
+            });
+
+            this.signalInfo = new SignalInfo({
+                moves: this.moves,
+                appeal: options.appeal,
+                appealJSON: options.appeal.toJSON()
+            });
+
+
+            this.patientBloodTypeRow = new PatientBloodTypeRow({
+                appeal: options.appeal,
+                patientBloodTypes: this.patientBloodTypes,
+                bloodTypesDict: this.bloodTypesDict
+            });
+
+
+            this.patientBloodTypeHistoryRow = new PatientBloodTypeHistoryRow({
+                collection: this.patientBloodTypes
+            });
+
+            this.patientBsaRow = new PatientBsaRow({
+                collection: this.monitoringInfos
+            });
+
+
+            this.patientInfo = new PatientInfo({
+                appealJSON: options.appeal.toJSON(),
+                patientBsaRow: this.patientBsaRow,
+                patientBloodTypeRow: this.patientBloodTypeRow,
+                patientBloodTypeHistoryRow: this.patientBloodTypeHistoryRow
+            });
+
+
+
+            this.header = new Header({
+                appeal: options.appeal
+            });
+
         },
 
         render: function() {
@@ -40,16 +137,19 @@ define(function(require) {
 
             this.$el.html(_.template(this.template, shared.appealJSON));
 
-
             this.assign({
-                ".monitoring-layout-header": new Header()
-                ,".patient-info": new PatientInfo()
-                ,".signal-info": new SignalInfo()
-                ,".patient-diagnoses-list": new PatientDiagnosesList()
-                ,".chemotherapy-info": new ChemotherapyInfo()
+                ".monitoring-layout-header": this.header,
+                ".patient-info": this.patientInfo,
+                ".signal-info": this.signalInfo,
+                ".patient-diagnoses-list": this.patientDiagnosesList,
+                ".chemotherapy-info": this.chemotherapyInfo
                 // ,".monitoring-info": new MonitoringInfoGrid()
                 // ,".express-analyses": new ExpressAnalyses()
             });
+
+            this.patientDiagnoses.fetch();
+            this.moves.fetch();
+            this.bloodTypesDict.fetch();
 
             //console.timeEnd("layout render time");
 

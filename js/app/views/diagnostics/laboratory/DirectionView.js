@@ -14,6 +14,8 @@ define(function(require) {
 	var AnalyzesSelected = require('collections/diagnostics/laboratory/AnalyzesSelected')
 	var AnalyzesSelectedView = require('views/diagnostics/laboratory/DirectionAnalyzesSelectedView');
 
+	var PatientDiagnoses = require('views/appeal/edit/pages/monitoring/collections/PatientDiagnoses')
+
 	var MkbInputView = require('views/ui/MkbInputView');
 	var PersonDialogView = require('views/ui/PersonDialog');
 	var SelectView = require('views/ui/SelectView');

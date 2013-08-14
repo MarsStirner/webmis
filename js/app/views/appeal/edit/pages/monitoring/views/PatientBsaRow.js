@@ -5,10 +5,16 @@ define(function(require) {
 
 	var BaseView = require('views/appeal/edit/pages/monitoring/views/BaseView');
 
-	var MonitoringInfos = require('views/appeal/edit/pages/monitoring/collections/MonitoringInfos');
 
 	var PatientBsaRow = BaseView.extend({
 		template: patientBsaRowTmpl,
+
+		initialize: function() {
+			BaseView.prototype.initialize.apply(this);
+
+			this.collection.on("reset", this.render, this).fetch();
+		},
+
 		data: function() {
 			var data = {
 				weight: '',
@@ -72,12 +78,6 @@ define(function(require) {
 
 			return bsa;
 
-		},
-
-		initialize: function() {
-			BaseView.prototype.initialize.apply(this);
-			this.collection = new MonitoringInfos();
-			this.collection.on("reset", this.render, this).fetch();
 		}
 
 	});

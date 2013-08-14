@@ -4,17 +4,25 @@ define(function(require) {
 	var patientInfoTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-info.tmpl');
 
 	var BaseView = require('views/appeal/edit/pages/monitoring/views/BaseView');
-	var PatientBloodTypeHistoryRow = require('views/appeal/edit/pages/monitoring/views/PatientBloodTypeHistoryRow');
-	var PatientBloodTypeRow = require('views/appeal/edit/pages/monitoring/views/PatientBloodTypeRow');
-	var PatientBsaRow = require('views/appeal/edit/pages/monitoring/views/PatientBsaRow');
+	// var PatientBloodTypeHistoryRow = require('views/appeal/edit/pages/monitoring/views/PatientBloodTypeHistoryRow');
+	// var PatientBloodTypeRow = require('views/appeal/edit/pages/monitoring/views/PatientBloodTypeRow');
+	// var PatientBsaRow = require('views/appeal/edit/pages/monitoring/views/PatientBsaRow');
 
-	var PatientBloodTypes = require('views/appeal/edit/pages/monitoring/collections/PatientBloodTypes');
+	// var PatientBloodTypes = require('views/appeal/edit/pages/monitoring/collections/PatientBloodTypes');
 
 	var PatientInfo = BaseView.extend({
 		template: patientInfoTmpl,
+		initialize: function(options){
+			this.appealJSON = options.appealJSON;
+			this.patientBsaRow = options.patientBsaRow;
+			this.patientBloodTypeRow = options.patientBloodTypeRow;
+			this.patientBloodTypeHistoryRow = options.patientBloodTypeHistoryRow
+
+			BaseView.prototype.initialize.apply(this);
+		},
 
 		data: function() {
-			var appealJSON = shared.appealJSON;
+			var appealJSON = this.appealJSON;
 			var bsa = this.getBSA();
 			var weight = appealJSON.physicalParameters.weight;
 
@@ -34,7 +42,7 @@ define(function(require) {
 		},
 
 		getBSA: function() {
-			var appealJSON = shared.appealJSON;
+			var appealJSON = this.appealJSON;
 			var height = appealJSON.physicalParameters.height;
 			var weight = appealJSON.physicalParameters.weight;
 			var bsa;
@@ -58,13 +66,9 @@ define(function(require) {
 			BaseView.prototype.render.apply(this);
 
 			this.assign({
-				".patient-blood-type": new PatientBloodTypeRow({
-					PatientBloodTypes: PatientBloodTypes
-				}),
-				".patient-blood-type-history": new PatientBloodTypeHistoryRow({
-					PatientBloodTypes: PatientBloodTypes
-				}),
-				".patient-bsa": new PatientBsaRow()
+				".patient-blood-type": this.patientBloodTypeRow,
+				".patient-blood-type-history": this.patientBloodTypeHistoryRow,
+				".patient-bsa": this.patientBsaRow
 			});
 
 			this.$(".patient-blood-type-history").hide();

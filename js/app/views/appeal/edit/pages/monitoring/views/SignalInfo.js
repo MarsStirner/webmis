@@ -1,12 +1,12 @@
 define(function(require) {
-	var shared = require('views/appeal/edit/pages/monitoring/shared');
+	// var shared = require('views/appeal/edit/pages/monitoring/shared');
 
 	var signalInfoTmpl = require('text!templates/appeal/edit/pages/monitoring/signal-info.tmpl');
 
 	var BaseView = require('views/appeal/edit/pages/monitoring/views/BaseView');
 	var ExecPersonAssignmentDialog = require('views/appeal/edit/pages/monitoring/views/ExecPersonAssignmentDialog')
 
-	var Moves = require('collections/moves/moves');
+
 	/**
 	 * Блок сигнальной информации о пациенте
 	 * @type {*}
@@ -17,7 +17,7 @@ define(function(require) {
 		data: function() {
 			var data = {
 				lastMove: this.moves.last(),
-				appeal: shared.models.appeal.toJSON(),
+				appeal: this.appeal.toJSON(),
 				appealExtraData: Core.Data.appealExtraData.toJSON(),
 				days: this.days(),
 				canAssign: this.canAssign()
@@ -32,7 +32,7 @@ define(function(require) {
 		},
 		days: function() {
 			var days;
-			var appealJSON = shared.appealJSON;
+			var appealJSON = this.appealJSON;
 			//продолжительность лечения
 			if (appealJSON.appealType.requestType.id === 1) {
 				//дневной стационар
@@ -46,19 +46,20 @@ define(function(require) {
 			return days;
 		},
 
-		initialize: function() {
-			var appeal = shared.models.appeal;
+		initialize: function(options) {
+			this.appeal = options.appeal;
+			this.appealJSON = options.appealJSON;
 			BaseView.prototype.initialize.apply(this);
 
-			this.moves = new Moves();
-			this.moves.appealId = appeal.get("id");
+			this.moves = options.moves;
+			//this.moves.appealId = appeal.get("id");
 			//console.log("fetching moves");
-			this.moves.on("reset", this.render, this).fetch();
+			this.moves.on("reset", this.render, this); //.fetch();
 
 
-			appeal.on("change:execPerson", this.onExecPersonDoctorChange, this);
+			this.appeal.on("change:execPerson", this.onExecPersonDoctorChange, this);
 
-			if (!appeal.get("execPerson").id) {
+			if (!this.appeal.get("execPerson").id) {
 				pubsub.trigger("noty", {
 					text: "Требуется назначить лечащего врача.",
 					type: "warning"
@@ -67,7 +68,7 @@ define(function(require) {
 		},
 
 		canAssign: function() {
-			if (shared.models.appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
+			if (this.appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
 				return false;
 			} else {
 				return true;

@@ -1,10 +1,10 @@
 define(function(require) {
-	var shared = require('views/appeal/edit/pages/monitoring/shared');
+	// var shared = require('views/appeal/edit/pages/monitoring/shared');
 	var BaseView = require('views/appeal/edit/pages/monitoring/views/BaseView');
 
 	var patientDiagnosesListTmpl = require('text!templates/appeal/edit/pages/monitoring/patient-diagnoses-list.tmpl');
 
-	var PatientDiagnoses = require('views/appeal/edit/pages/monitoring/collections/PatientDiagnoses');
+
 	/**
 	 * Список диагнозов пациента
 	 * @type {*}
@@ -21,9 +21,7 @@ define(function(require) {
 		initialize: function(options) {
 			BaseView.prototype.initialize.apply(this);
 
-			this.collection = new PatientDiagnoses();
-			// console.log("fetching diagnoses");
-			this.collection.on("reset", this.render, this).fetch();
+			this.collection.on("reset", this.render, this);//.fetch();
 		},
 
 		render: function() {

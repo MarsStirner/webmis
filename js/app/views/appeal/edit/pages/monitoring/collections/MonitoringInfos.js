@@ -1,6 +1,6 @@
 define(function(require) {
 
-	var shared = require('views/appeal/edit/pages/monitoring/shared');
+	// var shared = require('views/appeal/edit/pages/monitoring/shared');
 
 	/**
 	 * Модель для таблицы "Мониторинг"
@@ -15,16 +15,19 @@ define(function(require) {
 	 */
 	var MonitoringInfos = Collection.extend({
 		model: MonitoringInfo,
+		initialize: function(models, options) {
+			this.appealId = options.appealId;
+		},
 
 		url: function() {
-			return DATA_PATH + "appeals/" + shared.models.appeal.get("id") + "/monitoring";
+			return DATA_PATH + "appeals/" + this.appealId + "/monitoring";
 			//return "/monitoring-info.json";
 		},
 
 		getParseMap: function(rawByDate) {
-			console.log('rawByDate', rawByDate)
+			//console.log('rawByDate', rawByDate)
 			return _.map(rawByDate, function(rawRow, date) {
-				console.log('rawRow, date', rawRow, date)
+				//console.log('rawRow, date', rawRow, date)
 				return {
 					datetime: +date,
 					temperature: rawRow["TEMPERATURE"],
@@ -42,7 +45,7 @@ define(function(require) {
 			});
 		},
 
-		getKeys: function(){
+		getKeys: function() {
 			var keys = _.keys(this.model.defaults)
 			return keys;
 		},
@@ -109,8 +112,8 @@ define(function(require) {
 			///.slice(0, 5);
 
 			// console.log(rawByDate);
-			console.log('raw', raw);
-			console.log('parsed', parsed);
+			// console.log('raw', raw);
+			// console.log('parsed', parsed);
 
 			return parsed;
 		}

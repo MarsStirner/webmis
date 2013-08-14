@@ -1,5 +1,5 @@
 define(function(require) {
-	var shared = require('views/appeal/edit/pages/monitoring/shared');
+	// var shared = require('views/appeal/edit/pages/monitoring/shared');
 
 	/**
 	 * Модель диагноза пациента
@@ -34,6 +34,10 @@ define(function(require) {
 	 */
 
 	var PatientDiagnoses = Collection.extend({
+		initialize: function(models, options) {
+			this.appealId = options.appealId;
+		},
+
 		model: PatientDiagnosis,
 
 		diagKinds: {
@@ -96,7 +100,7 @@ define(function(require) {
 		},
 
 		url: function() {
-			return DATA_PATH + "appeals/" + shared.models.appeal.get("id") + "/diagnoses/";
+			return DATA_PATH + "appeals/" + this.appealId + "/diagnoses/";
 		},
 
 		comparator: function(a, b) {

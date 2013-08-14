@@ -5,8 +5,7 @@ define(function(require) {
 
 	var BaseView = require('views/appeal/edit/pages/monitoring/views/BaseView');
 
-	var DictionaryValues = require('collections/dictionary-values');
-	var PatientBloodTypes = require('views/appeal/edit/pages/monitoring/collections/PatientBloodTypes');
+
 
 	/*
 	 * Текущая группа крови пациента
@@ -18,7 +17,7 @@ define(function(require) {
 
 		data: function() {
 			return {
-				currentBloodType: shared.models.appeal.get("patient").get("medicalInfo").get("blood"),
+				currentBloodType: this.appeal.get("patient").get("medicalInfo").get("blood"),
 				bloodTypes: this.bloodTypesDict,
 				canChangeBloodType: this.canChangeBloodType()
 			};
@@ -36,24 +35,17 @@ define(function(require) {
 		initialize: function(options) {
 			BaseView.prototype.initialize.apply(this);
 
-			if (!shared.collections.bloodTypes) {
-				shared.collections.bloodTypes = new PatientBloodTypes([], {
-					patientId: shared.models.appeal.get("patient").get("id")
-				});
-			}
-			this.collection = shared.collections.bloodTypes;
+			this.appeal = options.appeal;
+			this.collection = options.patientBloodTypes;
 
-			this.bloodTypesDict = new DictionaryValues([], {
-				name: "bloodTypes"
-			});
-
-			this.bloodTypesDict.on("reset", this.render, this).fetch();
+			this.bloodTypesDict = options.bloodTypesDict;
+			this.bloodTypesDict.on("reset", this.render, this);//.fetch();
 
 
 		},
 
 		canChangeBloodType: function() {
-			if (shared.models.appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
+			if (this.appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
 				return false;
 			} else {
 				return true;
@@ -97,7 +89,7 @@ define(function(require) {
 			}
 
 			//this.$(".show-patient-blood-history").text(this.$(".blood-type option:selected").html());
-			shared.models.appeal.get("patient")
+			this.appeal.get("patient")
 				.get("medicalInfo")
 				.get("blood")
 				.set({

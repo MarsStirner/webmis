@@ -12,10 +12,15 @@ define(function(require) {
      */
     var Header = BaseView.extend({
         template: headerTmpl,
+        initialize: function(options){
+            BaseView.prototype.initialize.apply(this);
+            this.appeal = options.appeal;
+
+        },
 
         data: function() {
             //console.log('canClose',this.canClose())
-            var appeal = shared.models.appeal;
+            var appeal = this.appeal;
             return {
                 appealNumber: appeal.get("number"),
                 appealIsUrgent: appeal.get("urgent"),
@@ -28,7 +33,7 @@ define(function(require) {
             'click .close-appeal': 'openCloseAppealPopup'
         },
         canClose: function() {
-            if (shared.models.appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
+            if (this.appeal.get('closed') || ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT))) {
                 return false;
             } else {
                 return true;
