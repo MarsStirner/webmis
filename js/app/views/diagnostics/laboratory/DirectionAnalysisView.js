@@ -6,6 +6,7 @@ define(function(require) {
 		tagName: 'tr',
 		events: {
 			'change .select_date': 'onChangePlannedEndDate',
+			'blur .select_date': 'onBlurPlannedEndDate',
 			'change .select_time': 'onChangePlannedEndDate',
 			'change .cito': 'onChangeCito',
 			'change .picked': 'onChangePicked',
@@ -22,6 +23,11 @@ define(function(require) {
 			this.model.on('change:plannedEndDate', function(model, value) {
 				this.render();
 			}, this);
+
+		},
+		onBlurPlannedEndDate: function(){
+			//console.log('onBlurPlannedEndDate')
+			this.ui.$plannedDatepicker.trigger('change');
 
 		},
 
@@ -186,6 +192,9 @@ define(function(require) {
 			view.ui.$tests = view.$el.find(".tests");
 			view.ui.$icons = view.$el.find(".icons");
 
+
+			view.ui.$plannedDatepicker.mask("99.99.9999");
+			view.ui.$plannedTimepicker.mask("99:99");
 
 			view.ui.$plannedDatepicker.datepicker({
 				minDate: new Date(),

@@ -28,6 +28,7 @@ define(function(require) {
 			"click #assigner-outer": "openAssignerSelectPopup",
 			"click #executor-outer": "openExecutorSelectPopup",
 			"change #start-time": "validateForm",
+			"change #start-date": "validateForm",
 			"keyup #tree-search": "onSearchKeyup",
 		},
 		detach_event: function(e_name) {
@@ -152,40 +153,51 @@ define(function(require) {
 			});
 
 		},
-		onSearchKeyup: function(event){
+		onSearchKeyup: function(event) {
 			var $target = $(event.currentTarget);
 
 			this.analyzes.search($target.val());
 		},
 		validateForm: function() {
-			var view = this;
-			var valid = true;
+			this.saveButton(this.isValid());
+		},
 
-			if (!view.ui.$assessmentTimepicker.val()) {
-				valid = false;
+		isValid: function() {
+			var view = this;
+
+			var assessmentDate = view.ui.$assessmentDatepicker.datepicker("getDate");
+			assessmentDate = assessmentDate ? assessmentDate : new Date();
+			var assessmentDate = moment(assessmentDate).format('YYYY-MM-DD');
+
+			var assessmentTime = view.ui.$assessmentTimepicker.val();
+			var assessmentDatetime = assessmentDate + ' ' + assessmentTime + ':00';
+
+			if (!assessmentTime) {
+				return false;
 			}
+
+			if (!moment(assessmentDatetime, "YYYY-MM-DD HH:mm:ss").isValid() || !(moment(assessmentDatetime, "YYYY-MM-DD HH:mm:ss").diff(moment()) > 0)) {
+				return false;
+			}
+
 			if (view.analyzesSelected.length === 0) {
-				valid = false;
+				return false;
 			}
+
+			// model.setProperty('assessmentDate'
 
 			view.analyzesSelected.each(function(analysis) {
 				var plannedEndDate = analysis.getProperty('plannedEndDate', 'value');
 
-				if (!plannedEndDate) {
-					valid = false;
-				}
+				if (!plannedEndDate || !moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid() || !(moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").diff(moment()) > 0)) {
 
-				if (!moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid()) {
-					valid = false;
+					return false;
 				}
 
 
 			});
 
-
-			view.saveButton(valid);
-
-
+			return true;
 		},
 
 
@@ -289,19 +301,8 @@ define(function(require) {
 			var startTime = view.ui.$assessmentTimepicker.val() + ':00';
 
 			view.analyzesSelected.forEach(function(model) {
-				console.log('model', model)
+				//console.log('model', model)
 				var id = model.get('id');
-
-
-				//var $datepicker = view.$('#start-date-' + id);
-				//console.log('$datepicker', $datepicker.datepicker("getDate"))
-				//var date = moment($datepicker.datepicker("getDate")).format('YYYY-MM-DD');
-				//var $timepicker = view.$('#start-time-' + id);
-				//console.log('timepicker', $timepicker)
-				//var time = $timepicker.val() + ':00';
-				//model.setProperty('plannedEndDate', 'value', date + ' ' + time);
-
-
 
 				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
 
@@ -387,7 +388,7 @@ define(function(require) {
 			//Дата и время создания
 			var now = new Date();
 
-			view.ui.$assessmentDatepicker.datepicker({
+			view.ui.$assessmentDatepicker.mask("99.99.9999").datepicker({
 				minDate: now,
 				onSelect: function(dateText, inst) {
 
