@@ -3,6 +3,7 @@ define(function(require){
 	//var require('text!templates/appeal/edit/pages/monitoring.tmpl');
 	var cardTemplate = require('text!templates/appeal/edit/pages/card.tmpl');
 	var Moves = require('collections/moves/moves');
+	var PatientDiagnoses = require('views/appeal/edit/pages/monitoring/collections/PatientDiagnoses');
 	var VmpTalon = require('models/VmpTalon');
 	require('views/print');
 	require('models/print/appeal');
@@ -138,14 +139,17 @@ define(function(require){
 			var vmp = new VmpTalon();
 			vmp.appealId = this.model.get("id");
 
-			$.when(PrintAppeal.fetch(), moves.fetch(), vmp.fetch()).then(function() {
+			var diags = new PatientDiagnoses([], {appealId: this.model.get("id")});
+
+			$.when(PrintAppeal.fetch(), moves.fetch(), vmp.fetch(), diags.fetch()).then(function() {
 				new App.Views.Print({
 					data: _.extend(PrintAppeal.toJSON(),{
 						age: self.model.getAge(),
 						moves: _.filter(moves.toJSON(), function (move) {
 							return move.unit !== "Приемное отделение";
 						}),
-						quoting: vmp.toJSON()
+						quoting: vmp.toJSON(),
+						diagnoses: diags.toJSON()
 					}),
 					template: "f066Full"
 				});
