@@ -87,6 +87,7 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 			}).on("keyup", function() {
 				if (!$(this).val().length) {
 					view.$("input[name='diagnosis[mkb][diagnosis]']").val("");
+					view.$("input[name='diagnosis[mkb][code]']").data('mkb-id', "");
 				}
 			});
 
@@ -101,7 +102,7 @@ define(["text!templates/ui/mkbInput.tmpl"], function(tmpl) {
 
 		},
 		disable: function() {
-			console.log('disable')
+			//console.log('disable')
 			this.$(".MKBLauncher").button('disable');
 			this.$("input[name='diagnosis[mkb][code]']").prop('disabled', true).addClass('Disabled NotEditable');
 		},

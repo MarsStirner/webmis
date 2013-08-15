@@ -178,7 +178,7 @@ define(function(require) {
 			var assessmentTime = view.ui.$assessmentTimepicker.val();
 			var assessmentDatetime = assessmentDate + ' ' + assessmentTime + ':00';
 
-			if (!assessmentTime || !moment(assessmentDatetime, "YYYY-MM-DD HH:mm:ss").isValid() || !(moment(assessmentDatetime, "YYYY-MM-DD HH:mm:ss").diff(moment()) > 0)) {
+			if (!assessmentTime || !moment(assessmentDatetime, "YYYY-MM-DD HH:mm:ss").isValid() || !(moment(assessmentDatetime, "YYYY-MM-DD HH:mm:ss").diff(moment()) > -(60*1000) )) {
 				valid = false;
 			}
 
@@ -188,8 +188,10 @@ define(function(require) {
 
 			view.analyzesSelected.each(function(analysis) {
 				var plannedEndDate = analysis.getProperty('plannedEndDate', 'value');
+				//console.log('diff',moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").diff(moment()), moment(assessmentDatetime, "YYYY-MM-DD HH:mm:ss").diff(moment()))
 
-				if (!plannedEndDate || !moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid() || !(moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").diff(moment()) > 0)) {
+				if (!plannedEndDate || !moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid() || !(moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").diff(moment()) > -(60*1000))) {
+
 					valid = false;
 				}
 			});
@@ -310,9 +312,9 @@ define(function(require) {
 				model.setProperty('finance', 'value', view.ui.$finance.val());
 
 				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
-				if (mkbId) {
+				//if (mkbId) {
 					model.setProperty('Направительный диагноз', 'valueId', mkbId);
-				}
+				//}
 
 
 			});
