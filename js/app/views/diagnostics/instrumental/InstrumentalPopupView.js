@@ -17,6 +17,7 @@ define(function(require) {
     var ViewModel = require('views/diagnostics/instrumental/InstrumentalPopupViewModel');
 
     var popupTmpl = require('text!templates/diagnostics/instrumental/instrumental-popup.tmpl');
+    var PatientDiagnoses = require('views/appeal/edit/pages/monitoring/collections/PatientDiagnoses');
 
 
     var InstrumentalPopup = View.extend({
@@ -40,7 +41,11 @@ define(function(require) {
             this.viewModel.on('change:saveButtonState', this.updateSaveButton, this);
 
             //диагнозы из госпитализации
-            this.appealDiagnosis = this.options.appeal.getDiagnosis();
+            //this.appealDiagnosis = this.options.appeal.getDiagnosis();
+
+            this.appealDiagnosis = new PatientDiagnoses(null,{
+                appealId : this.options.appeal.get('id')
+            })
 
             //список групп исследований
             this.instrumntalResearchs = new InstrumntalGroups();
@@ -339,12 +344,25 @@ define(function(require) {
 
 
             //установка диагноза
-            if (view.appealDiagnosis) {
-                console.log('view.appealDiagnosis', view.appeal, view.appealDiagnosis.get('mkb').get('diagnosis'));
-                view.$mbkDiagnosis.val(view.appealDiagnosis.get('mkb').get('diagnosis'));
-                view.$mbkCode.val(view.appealDiagnosis.get('mkb').get('code'));
-                view.$mbkCode.data('mkb-id', view.appealDiagnosis.get('mkb').get('id'));
-            }
+            // if (view.appealDiagnosis) {
+            //     console.log('view.appealDiagnosis', view.appeal, view.appealDiagnosis.get('mkb').get('diagnosis'));
+            //     view.$mbkDiagnosis.val(view.appealDiagnosis.get('mkb').get('diagnosis'));
+            //     view.$mbkCode.val(view.appealDiagnosis.get('mkb').get('code'));
+            //     view.$mbkCode.data('mkb-id', view.appealDiagnosis.get('mkb').get('id'));
+            // }
+
+            view.appealDiagnosis.fetch().done(function(){
+                //установка диагноза
+                // console.log('view.appealDiagnosis',view.appealDiagnosis.first())
+                if ((view.appealDiagnosis.length > 0) && view.appealDiagnosis.first()) {
+                    var diagnosis = view.appealDiagnosis.first().get('mkb');
+                    view.viewModel.set('mkbId', diagnosis.id);
+                    view.$mbkDiagnosis.val(diagnosis.diagnosis);
+                    view.$mbkCode.val(diagnosis.code);
+                    view.$mbkCode.data('mkb-id', diagnosis.id);
+                }
+
+            });
 
             view.$plannedDatepicker.datepicker({
                 minDate: new Date(),

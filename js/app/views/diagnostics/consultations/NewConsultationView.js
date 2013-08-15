@@ -19,6 +19,7 @@ define(function(require) {
 	var PersonDialogView = require('views/ui/PersonDialog');
 	var ScheduleView = require('views/diagnostics/consultations/ScheduleView');
 	var SelectView = require('views/ui/SelectView');
+	var PatientDiagnoses = require('views/appeal/edit/pages/monitoring/collections/PatientDiagnoses');
 
 
 
@@ -42,7 +43,11 @@ define(function(require) {
 			//console.log('init new consultation view', this);
 			_.bindAll(this);
 
-			this.appealDiagnosis = this.options.appeal.getDiagnosis();
+
+            this.appealDiagnosis = new PatientDiagnoses(null,{
+                appealId : this.options.appeal.get('id')
+            });
+
 			var appealDoctor = this.options.appeal.get('execPerson');
 			// console.log('appealDoctor',appealDoctor)
 			//"Направивший врач"
@@ -98,12 +103,6 @@ define(function(require) {
 			this.consultation.set('assignerId', this.assigner.id);
 
 			this.diagnosis = this.options.appeal.getDiagnosis();
-
-			if (this.diagnosis) {
-				this.consultation.set('diagnosis', {
-					code: this.diagnosis.get('mkb').get('code')
-				});
-			}
 
 
 
@@ -359,11 +358,22 @@ define(function(require) {
 
 			//диагнозы
 			this.renderNested(this.mkbInputView, "#mkb");
-			if (this.appealDiagnosis) {
-				this.$("input[name='diagnosis[mkb][diagnosis]']").val(this.appealDiagnosis.get('mkb').get('diagnosis'));
-				this.$("input[name='diagnosis[mkb][code]']").val(this.appealDiagnosis.get('mkb').get('code'));
-				this.$("input[name='diagnosis[mkb][code]']").data('mkb-id', this.appealDiagnosis.get('mkb').get('id'));
-			}
+
+			self.appealDiagnosis.fetch().done(function() {
+				//установка диагноза
+				// console.log('self.appealDiagnosis',self.appealDiagnosis.first())
+				if ((self.appealDiagnosis.length > 0) && self.appealDiagnosis.first()) {
+					var diagnosis = self.appealDiagnosis.first().get('mkb');
+					self.consultation.set('diagnosis', {
+						code: diagnosis.code
+					});
+
+					self.$("input[name='diagnosis[mkb][diagnosis]']").val(diagnosis.diagnosis);
+					self.$("input[name='diagnosis[mkb][code]']").val(diagnosis.code);
+					self.$("input[name='diagnosis[mkb][code]']").data('mkb-id', diagnosis.id);
+				}
+
+			});
 
 			//список консультаций
 			this.renderNested(this.consultationsGroupsView, "#consultations");

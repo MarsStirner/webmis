@@ -37,7 +37,7 @@ define(function(require) {
 			delete this.events[e_name]
 			this.delegateEvents();
 		},
-		initialize: function() {
+		initialize: function(options) {
 			_.bindAll(this);
 
 			var view = this;
@@ -79,9 +79,12 @@ define(function(require) {
 
 			view.appeal = view.options.appeal;
 
+			view.appealDiagnosis = new PatientDiagnoses(null,{
+				appealId : view.appeal.get('id')
+			})
 
 			//диагнозы из госпитализации
-			view.appealDiagnosis = view.appeal.getDiagnosis();
+			//view.appealDiagnosis = view.appeal.getDiagnosis();
 
 
 			// коллекция с деревом лаб.исследований
@@ -358,13 +361,18 @@ define(function(require) {
 			pubsub.trigger('lab:click');
 
 
+			view.appealDiagnosis.fetch().done(function(){
+				//установка диагноза
+				// console.log('view.appealDiagnosis',view.appealDiagnosis.first())
+				if ((view.appealDiagnosis.length > 0) && view.appealDiagnosis.first()) {
+					var diagnosis = view.appealDiagnosis.first().get('mkb');
+					view.ui.$mbkDiagnosis.val(diagnosis.diagnosis);
+					view.ui.$mbkCode.val(diagnosis.code);
+					view.ui.$mbkCode.data('mkb-id', diagnosis.id);
+				}
 
-			//установка диагноза
-			if (view.appealDiagnosis) {
-				view.ui.$mbkDiagnosis.val(view.appealDiagnosis.get('mkb').get('diagnosis'));
-				view.ui.$mbkCode.val(view.appealDiagnosis.get('mkb').get('code'));
-				view.ui.$mbkCode.data('mkb-id', view.appealDiagnosis.get('mkb').get('id'));
-			}
+			});
+
 
 
 			//Дата и время создания

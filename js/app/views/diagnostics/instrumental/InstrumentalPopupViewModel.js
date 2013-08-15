@@ -19,10 +19,10 @@ define(function(require) {
 			this.set('assessmentDate', moment().toDate()); //.format('YYYY-MM-DD'));
 			this.set('assessmentTime', moment().format('HH:mm'));
 
-			if (options.appeal && options.appeal.getDiagnosis() && options.appeal.getDiagnosis().get('mkb')) {
-				var mkb = options.appeal.getDiagnosis().get('mkb');
-				this.set('mkbId', mkb.get('id'));
-			}
+			// if (options.appeal && options.appeal.getDiagnosis() && options.appeal.getDiagnosis().get('mkb')) {
+			// 	var mkb = options.appeal.getDiagnosis().get('mkb');
+			// 	this.set('mkbId', mkb.get('id'));
+			// }
 
 
 			var appealDoctor = options.appeal.get('execPerson');
