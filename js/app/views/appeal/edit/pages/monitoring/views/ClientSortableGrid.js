@@ -1,4 +1,4 @@
-define(function(require){
+define(function(require) {
     /**
      * Базовый класс для виджетов-таблиц сортируемых на клиенте
      * @type {*}
@@ -8,14 +8,14 @@ define(function(require){
             "click th.sortable": "onThSortableClick"
         },
 
-        initialize: function () {
+        initialize: function() {
             //вызывается и после фетча и после сорта
             this.collection.on("reset", this.render, this).fetch();
             //в нашей версии бэкбона - нету :(
             //this.collection.on("sort", this.renderItems, this);
         },
 
-        onThSortableClick: function (event) {
+        onThSortableClick: function(event) {
             var $target = $(event.currentTarget);
 
             var sortConditions = this.updateSortConditions($target);
@@ -26,7 +26,7 @@ define(function(require){
          * Применяет сортировку коллекции по переданным памметрам
          * @param sortConditions {{sortField: string, sortType: string, sortDirection: "desc" || "asc"}}
          */
-        applySort: function (sortConditions) {
+        applySort: function(sortConditions) {
             this.collection.comparator = this.getComparator(sortConditions.sortField, sortConditions.sortType, sortConditions.sortDirection);
             this.collection.sort({
                 sortRequest: true
@@ -39,7 +39,7 @@ define(function(require){
          * @returns {{sortField: string, sortType: string, sortDirection: "desc" || "asc"}}
          */
 
-        updateSortConditions: function ($targetTh) {
+        updateSortConditions: function($targetTh) {
             if (!this.$caret) {
                 this.$caret = $('<i/>');
             }
@@ -76,11 +76,11 @@ define(function(require){
          * @param sortDirection
          * @returns {Function}
          */
-        getComparator: function (fieldName, sortType, sortDirection) {
+        getComparator: function(fieldName, sortType, sortDirection) {
             switch (sortType) {
                 case "datetime":
                 case "numeric":
-                    return function (itemA, itemB) {
+                    return function(itemA, itemB) {
                         var a = parseFloat(itemA.get(fieldName)),
                             b = parseFloat(itemB.get(fieldName));
 
@@ -88,8 +88,32 @@ define(function(require){
                         else if (a < b || isNaN(a)) return sortDirection === "asc" ? -1 : 1;
                         else return 0;
                     };
+                    break;
+                case "bloodPressure":
+                    var fieldsNames = fieldName.split("/");
+                    var firstField = fieldsNames[0];
+                    var secondField = fieldsNames[1];
+                    return function(itemA, itemB) {
+                        var a1 = parseFloat(itemA.get(firstField)),
+                            a2 = parseFloat(itemA.get(secondField)),
+                            b1 = parseFloat(itemB.get(firstField)),
+                            b2 = parseFloat(itemB.get(secondField));
+
+                        if (a1 > b1 || isNaN(b1)) {
+                            return sortDirection === "asc" ? 1 : -1;
+                        } else if (a1 < b1 || isNaN(a1)) {
+                            return sortDirection === "asc" ? -1 : 1;
+                        } else if (((a1 === b1) && (a2 > b2)) || ((a1 === b1) && isNaN(b2))) {
+                            return sortDirection === "asc" ? 1 : -1;
+                        } else if (((a1 === b1) && (a2 < b2)) || ((a1 === b1) && isNaN(a2))) {
+                            return sortDirection === "asc" ? -1 : 1;
+                        } else {
+                            return 0;
+                        }
+                    };
+                    break;
                 default:
-                    return function (itemA, itemB) {
+                    return function(itemA, itemB) {
                         var a = itemA.get(fieldName).toString(),
                             b = itemB.get(fieldName).toString();
 
@@ -103,17 +127,17 @@ define(function(require){
         /**
          * Перерисовывает только ряды таблицы
          */
-        renderItems: function () {
+        renderItems: function() {
             /*this.$("tbody").empty().append(this.collection.map(function (item) {
              return _.template(this.itemTemplate, {item: item});
              }, this));*/
             this.$("tbody").empty().append(_.template(this.itemTemplate, this.data()));
         },
-        data: function () {
+        data: function() {
             return {};
         },
 
-        render: function (c, options) {
+        render: function(c, options) {
             //этот параметр передаётся только при сортировке, и в этом случае
             //мы хотим отрендерить только ряды
             options = options || {
@@ -131,5 +155,5 @@ define(function(require){
         }
     });
 
-	return ClientSortableGrid;
+    return ClientSortableGrid;
 });
