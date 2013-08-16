@@ -5,9 +5,7 @@ define(function(require) {
 
 	var BaseView = require('views/appeal/edit/pages/monitoring/views/BaseView');
 
-	var Persons = require('views/appeal/edit/pages/monitoring/collections/Persons');
 
-	var AppealExecPerson = require('views/appeal/edit/pages/monitoring/models/AppealExecPerson');
 
 	/**
 	 * Диалог назначения врача
@@ -30,25 +28,32 @@ define(function(require) {
 		initialize: function(options) {
 			BaseView.prototype.initialize.apply(this);
 			_.bindAll(this);
+			this.appeal = options.appeal;
+			this.allPersons = options.allPersons;
+			this.departmentPersons = options.departmentPersons;
+			this.appealExecPerson = options.appealExecPerson;
+			this.collections = [];
 
 			//Все врачи
-			this.allPersons = new Persons();
 			this.allPersons.setParams({
 				limit: 999,
 				sortingField: 'lastname'
 			});
-			this.allPersons.on("reset", this.addAllPersons, this).fetch();
+			//this.allPersons.on("reset", this.addAllPersons, this).fetch();
+
+			this.getCollection('allPersons');
+			// console.log('col', this.getCollection('allPersons'))
 
 			//Врачи отделения
-			this.departmentPersons = new Persons();
 			this.departmentPersons.setParams({
 				limit: 999,
 				sortingField: 'lastname',
 				filter: {
-					departmentId: shared.models.appeal.get("currentDepartment").id
+					departmentId: this.appeal.get("currentDepartment").id
 				}
 			});
-			this.departmentPersons.on("reset", this.addDepartmentPersons, this).fetch();
+			this.getCollection('departmentPersons');
+			// this.departmentPersons.on("reset", this.addDepartmentPersons, this).fetch();
 
 			this.assignMe = true;
 
@@ -56,6 +61,14 @@ define(function(require) {
 				this.assignMe = false;
 			}
 
+		},
+
+		getCollection: function(collectionName) {
+			if (!this.collections[collectionName]) {
+				this[collectionName].fetch();
+				this.collections[collectionName] = this[collectionName];
+			}
+			return this.collections[collectionName];
 		},
 
 		open: function() {
@@ -126,38 +139,42 @@ define(function(require) {
 			}
 
 			if (selectedExecPersonId) {
-				var appealExecPerson = new AppealExecPerson();
+				var appealExecPerson = this.appealExecPerson;
 				appealExecPerson.save({
 					id: selectedExecPersonId
 				});
 
-				shared.models.appeal.set("execPerson", this.allPersons.get(selectedExecPersonId).toJSON());
+				this.appeal.set("execPerson", this.allPersons.get(selectedExecPersonId).toJSON());
 
 				this.close();
 			}
 		},
 
 		addAllPersons: function() {
-			this.$(".all-persons").append(this.allPersons.map(function(person) {
+			var allPersons = this.getCollection('departmentPersons');
+			this.$(".all-persons").append(allPersons.map(function(person) {
 				return "<option value='" + person.get('id') + "'>" + person.get("name").raw + "</option>";
 			})).select2("enable");
 		},
 
 		addDepartmentPersons: function() {
-			this.$(".department-persons").append(this.departmentPersons.map(function(person) {
+			var departmentPersons = this.getCollection('departmentPersons');
+			this.$(".department-persons").append(departmentPersons.map(function(person) {
 				return "<option value='" + person.get('id') + "'>" + person.get("name").raw + "</option>";
 			})).select2("enable");
 		},
 
 		render: function() {
 			BaseView.prototype.render.apply(this);
+			this.addAllPersons();
+			this.addDepartmentPersons();
 
 			this.$("#filter-persons-container").buttonset();
 			this.$(".all-persons, .department-persons").select2({
 				matcher: function(term, text, opt) {
 					return text.split(' ')[0].toUpperCase().indexOf(term.toUpperCase()) >= 0
 				}
-			}).select2("disable");
+			})//.select2("disable");
 			this.$(".all-persons").hide();
 
 			return this;
