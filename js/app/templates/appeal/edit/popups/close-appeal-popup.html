@@ -1,15 +1,15 @@
 <% if(!data.docs.allDocs){%>
 <h3>Нет документов:</h3>
-    <ul>
+    <ul class="docs-list">
         <% if(data.docs.vmp && !data.docs.vmpTicket){ %>
             <li>Талон-направление на ВМП. <a href="/appeals/<%= data.appealId %>/quotes" target="_blank">Создать</a></li>
         <% } %>
 
         <% if(!data.docs.epicrisis){ %>
             <li>Эпикриз.
-            <a href="/appeals/<%= data.appealId %>/documents/new/427"  target="_blank">Заключительный эпикриз</a>
-            <a href="/appeals/<%= data.appealId %>/documents/new/2467"  target="_blank">Промежуточная выписка</a>
-            <a href="/appeals/<%= data.appealId %>/documents/new/567"  target="_blank">Посмертный эпикриз</a></li>
+            <a href="/appeals/<%= data.appealId %>/documents/new/427"  target="_blank">Заключительный эпикриз</a> |
+ <a href="/appeals/<%= data.appealId %>/documents/new/2467"  target="_blank">Промежуточная выписка</a> |
+ <a href="/appeals/<%= data.appealId %>/documents/new/567"  target="_blank">Посмертный эпикриз</a></li>
         <% } %>
 
         <% if(!data.docs.discharge){ %>

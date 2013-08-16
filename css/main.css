@@ -522,6 +522,23 @@ span.dynatree-node table td.time-col {
   cursor: auto;
 }
 
+/* line 1, ../sass/modules/_close_appeal.scss */
+.docs-list {
+  font-size: 1.2em;
+}
+/* line 4, ../sass/modules/_close_appeal.scss */
+.docs-list li {
+  padding-top: .5em;
+}
+/* line 7, ../sass/modules/_close_appeal.scss */
+.docs-list li a {
+  color: #118ddc;
+}
+/* line 11, ../sass/modules/_close_appeal.scss */
+.docs-list li a:hover {
+  color: #dd1111;
+}
+
 /* line 2, ../sass/modules/_reports.scss */
 .form-list {
   font-size: 13px;

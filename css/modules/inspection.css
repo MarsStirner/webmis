@@ -13,7 +13,7 @@
   background: -moz-linear-gradient(#eaf7fe, #d8f1fd);
   background: -o-linear-gradient(#eaf7fe, #d8f1fd);
   background: linear-gradient(#eaf7fe, #d8f1fd);
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid white;
 }
 /* line 10, ../../sass/modules/inspection.scss */
 .PatientInfo ul {
@@ -24,7 +24,7 @@
   word-spacing: normal;
   display: inline-block;
   padding: 0 0.5em;
-  border-right: 1px solid #118CDC;
+  border-right: 1px solid #118cdc;
 }
 /* line 17, ../../sass/modules/inspection.scss */
 .PatientInfo ul li:last-child {
