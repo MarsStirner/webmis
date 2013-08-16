@@ -6,7 +6,10 @@
         <% } %>
 
         <% if(!data.docs.epicrisis){ %>
-            <li>Эпикриз. <a href="/appeals/<%= data.appealId %>/documents/new/427"  target="_blank">Создать</a></li>
+            <li>Эпикриз.
+            <a href="/appeals/<%= data.appealId %>/documents/new/427"  target="_blank">Заключительный эпикриз</a>
+            <a href="/appeals/<%= data.appealId %>/documents/new/2467"  target="_blank">Промежуточная выписка</a></li>
+            <a href="/appeals/<%= data.appealId %>/documents/new/567"  target="_blank">Посмертный эпикриз</a>
         <% } %>
 
         <% if(!data.docs.discharge){ %>
