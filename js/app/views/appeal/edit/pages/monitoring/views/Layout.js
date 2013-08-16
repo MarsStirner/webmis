@@ -25,6 +25,9 @@ define(function(require) {
     var PatientBloodTypes = require('views/appeal/edit/pages/monitoring/collections/PatientBloodTypes');
 
     var SignalInfo = require('views/appeal/edit/pages/monitoring/views/SignalInfo');
+    var ExecPersonAssignmentDialog = require('views/appeal/edit/pages/monitoring/views/ExecPersonAssignmentDialog')
+    var Persons = require('views/appeal/edit/pages/monitoring/collections/Persons');
+    var AppealExecPerson = require('views/appeal/edit/pages/monitoring/models/AppealExecPerson');
 
     var Moves = require('collections/moves/moves');
 
@@ -81,6 +84,10 @@ define(function(require) {
                 appealId: eventId
             });
 
+            this.allPersons = new Persons();
+            this.departmentPersons = new Persons();
+            this.appealExecPerson = new AppealExecPerson();
+
             //views
 
             this.chemotherapyInfo = new ChemotherapyInfo({
@@ -92,10 +99,18 @@ define(function(require) {
                 collection: this.patientDiagnoses
             });
 
+            this.execPersonAssignmentDialog = new ExecPersonAssignmentDialog({
+                appeal: options.appeal,
+                appealExecPerson: this.appealExecPerson,
+                allPersons: this.allPersons,
+                departmentPersons: this.departmentPersons
+            });
+
             this.signalInfo = new SignalInfo({
                 moves: this.moves,
                 appeal: options.appeal,
-                appealJSON: options.appeal.toJSON()
+                appealJSON: options.appeal.toJSON(),
+                execPersonAssignmentDialog: this.execPersonAssignmentDialog
             });
 
 

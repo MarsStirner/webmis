@@ -4,8 +4,6 @@ define(function(require) {
 	var signalInfoTmpl = require('text!templates/appeal/edit/pages/monitoring/signal-info.tmpl');
 
 	var BaseView = require('views/appeal/edit/pages/monitoring/views/BaseView');
-	var ExecPersonAssignmentDialog = require('views/appeal/edit/pages/monitoring/views/ExecPersonAssignmentDialog')
-
 
 	/**
 	 * Блок сигнальной информации о пациенте
@@ -49,6 +47,7 @@ define(function(require) {
 		initialize: function(options) {
 			this.appeal = options.appeal;
 			this.appealJSON = options.appealJSON;
+			this.execPersonAssignmentDialog = options.execPersonAssignmentDialog;
 			BaseView.prototype.initialize.apply(this);
 
 			this.moves = options.moves;
@@ -85,7 +84,7 @@ define(function(require) {
 		},
 
 		openExecPersonAssignmentDialog: function() {
-			new ExecPersonAssignmentDialog().render().open();
+			this.execPersonAssignmentDialog.render().open();
 		},
 
 		render: function() {
