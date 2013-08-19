@@ -19,22 +19,15 @@ class ClientQuotingController
                 ."JOIN rbPacientModel AS pm on cq.pacientModel_id = pm.id "
                 ."JOIN QuotaType AS qt on cq.quotaType_id = qt.id "
                 ."JOIN rbTreatment AS t ON cq.treatment_id = t.id "
-                ." WHERE cq.event_id = ? ";
+                ."WHERE cq.event_id = ? "
+                ."ORDER BY cq.createDatetime DESC ";
 
                 $vmpTalon = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
 
                 if(!$vmpTalon){
                     $vmpTalon = array();
                 }
-            // $vmpTalon = ClientQuotingQuery::create()
-            // ->filterByEventId($appealId)
-            // ->join('RbTreatment')
-            // ->join('RbPacientModel')
-            // ->join('QuotaType')
-            // //->join('MKB')
-            // ->select(array('id', 'mkb', 'treatmentId', 'RbTreatment.name','pacientModelId','RbPacientModel.name','quotaTypeId','QuotaType.name','QuotaType.code'))
-            // ->findOne();
-            // //->toArray();
+
             return $app['jsonp']->jsonp(array("data" => $vmpTalon,'$route_params'=>$route_params));
     }
 
