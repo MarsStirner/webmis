@@ -81,6 +81,7 @@ define(function(require) {
 		},
 		close: function() {
 			pubsub.off('analysis:click');
+			pubsub.off('lab:click');
 			this.collection.off();
 		}
 
