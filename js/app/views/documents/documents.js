@@ -100,6 +100,7 @@ define(function (require) {
 	var FlatDirectory = require("models/flat-directory");
 	var MKB = require("views/mkb-directory");
 	var PersonDialog = require("views/ui/PersonDialog");
+	var wysisyg = require("views/ui/wysisyg");
 
 	var FDLoader = {
 		fds: {},
@@ -2432,8 +2433,18 @@ define(function (require) {
 		template: templates.uiElements._constructor,
 
 		events: _.extend({
-			"click .thesaurus-open": "onThesaurusOpenClick"
+			"click .thesaurus-open": "onThesaurusOpenClick",
+			"focus [contenteditable]": "onFocus"//,
+			//"blur [contenteditable]": "onBlur"
 		}, Documents.Views.Edit.UIElement.Text.prototype.events),
+
+		onFocus: function () {
+			wysisyg.showAt(this.$el);
+		},
+
+		/*onBlur: function () {
+			wysisyg.hide();
+		},*/
 
 		onThesaurusOpenClick: function (event) {
 			event.preventDefault();
