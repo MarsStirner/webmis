@@ -33,11 +33,13 @@ define(function(require) {
             var date = this.ui.$appealCloseDate.datepicker('getDate');
             var closeDate = moment(date).minutes(minute).hours(hour).valueOf();
 
+            this.appeal = this.options.appeal;
             var appealId = this.options.appeal.get('id');
 
             var closeDocs = this.ui.$closeDocs.prop('checked');
 
             var resultId = this.ui.$results.val();
+            var resultText = this.$('option:selected', this.ui.$results).text()
 
             var when;
             if (closeDocs) {
@@ -46,9 +48,14 @@ define(function(require) {
                 when = $.when(vacateBed(), closeAppeal());
             }
 
+
+
             when.then(function() {
-                //console.log('всё закрыли', arguments);
-                pubsub.trigger('appeal:closed');
+                pubsub.trigger('appeal:closed',{
+                    closed: true,
+                    closeDate: closeDate,
+                    resultText: resultText
+                });
                 self.close();
 
             }, function() {
