@@ -232,24 +232,8 @@ define(function(require){
 
 		onAppealLoaded: function() {
 			var self = this;
-			var appealExtraData = new App.Collections.PatientAppeals();
-			appealExtraData.patient = this.appeal.get("patient");
-			appealExtraData.setParams({
-				filter: {
-					number: self.appeal.get("number")
-				}
-			});
-			appealExtraData.on("reset", this.onAppealExtraDataLoaded, this);
-			appealExtraData.fetch();
 
-			this.appeal.off("change", this.onAppealLoaded, this);
-		},
-
-		onAppealExtraDataLoaded: function(appealExtraData) {
-			//TODO: Replace this fast fix (made for monitoring page)
-			Core.Data.appealExtraData = appealExtraData = appealExtraData.first();
-
-			this.appeal.closed = appealExtraData ? appealExtraData.get("rangeAppealDateTime").get("end") : false;
+			this.appeal.closed = this.appeal.get('closed') ? this.appeal.get('closed') : false;
 
 			var patient = this.appeal.get("patient");
 			patient.on("change", this.onPatientLoaded, this);
@@ -263,8 +247,9 @@ define(function(require){
 				this.setContentView(step.name);
 			}, this);
 
-			appealExtraData.off("reset", this.onAppealExtraDataLoaded, this);
+			this.appeal.off("change", this.onAppealLoaded, this);
 		},
+
 
 		onPatientLoaded: function(patient) {
 			this.patient = Cache.Patient = patient;
