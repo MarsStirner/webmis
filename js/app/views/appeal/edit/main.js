@@ -2,7 +2,7 @@
  * User: FKurilov
  * Date: 08.06.12
  */
-define(function(require){
+define(function(require) {
 
 	var template = require("text!templates/appeal/edit/main.tmpl");
 	var LaboratoryView = require("views/diagnostics/laboratory/AnalyzesListView");
@@ -10,7 +10,7 @@ define(function(require){
 	var InstrumentalView = require("views/diagnostics/instrumental/InstrumentalView");
 	var InstrumentalResultView = require("views/diagnostics/instrumental/InstrumentalResultView");
 	var ConsultationView = require("views/diagnostics/consultations/ConsultationsListView");
-	var ConsultationResultView= require("views/diagnostics/consultations/ConsultationsResultView");
+	var ConsultationResultView = require("views/diagnostics/consultations/ConsultationsResultView");
 	var QuotesView = require("views/appeal/edit/pages/QuotesView");
 	var PatientMonitoringView = require("views/appeal/edit/pages/PatientMonitoringView");
 
@@ -85,7 +85,7 @@ define(function(require){
 				"REVIEW": QuotesView
 			},
 
-			"patient-monitoring":  {
+			"patient-monitoring": {
 				"REVIEW": PatientMonitoringView
 			},
 
@@ -143,6 +143,7 @@ define(function(require){
 		},
 
 		initialize: function() {
+			var self = this;
 			this.appealId = this.options.appealId;
 			this.page = this.options.page;
 
@@ -162,6 +163,15 @@ define(function(require){
 				model: this.appeal
 			});
 
+			pubsub.on('appeal:closed', function(opt) {
+				self.appeal.set('closed', opt.closed);
+				self.appeal.set('closeDateTime', opt.closeDate);
+				self.appeal.set('result', {
+					name: opt.resultText
+				});
+
+			}, this)
+
 			this.appeal.on("change", this.onAppealLoaded, this);
 			this.appeal.fetch();
 		},
@@ -170,43 +180,43 @@ define(function(require){
 			mode = mode || "REVIEW";
 
 			//if (this.page !== page || !this.contentView || (extraOptions && extraOptions.force)) {
-				if (this.pageViews[page][mode]) {
-					this.page = page;
+			if (this.pageViews[page][mode]) {
+				this.page = page;
 
-					if (this.contentView) {
-						this.setBreadcrumbsStructure();
-						this.contentView.off(null, null, this);
-						if (this.contentView.model) {
-							this.contentView.model.off(null, null, this.contentView);
-						}
-						if (this.contentView.cleanUp) {
-							this.contentView.cleanUp();
-						}
-						if (this.contentView.tearDown) {
-							this.contentView.tearDown();
-						}
+				if (this.contentView) {
+					this.setBreadcrumbsStructure();
+					this.contentView.off(null, null, this);
+					if (this.contentView.model) {
+						this.contentView.model.off(null, null, this.contentView);
 					}
-
-					//this.contentView = null;
-
-					this.contentView = new this.pageViews[page][mode](_.extend({
-						appealId: this.appealId,
-						appeal: this.appeal,
-						path: this.options.path,
-						referrer: this.options.referrer,
-						mode: mode,
-						page: this.options.page,
-						subId: this.options.subId
-					}, extraOptions));
-
-					this.contentView.on("change:printState", this.onPrintStateChange, this);
-					this.contentView.on("change:viewState", this.onViewStateChange, this);
-					this.contentView.on("change:mainState", this.onMainStateChange, this);
-
-					//this.togglePrintBtn();
-					this.cardHeader.hidePrintBtn();
-					this.renderPageContent();
+					if (this.contentView.cleanUp) {
+						this.contentView.cleanUp();
+					}
+					if (this.contentView.tearDown) {
+						this.contentView.tearDown();
+					}
 				}
+
+				//this.contentView = null;
+
+				this.contentView = new this.pageViews[page][mode](_.extend({
+					appealId: this.appealId,
+					appeal: this.appeal,
+					path: this.options.path,
+					referrer: this.options.referrer,
+					mode: mode,
+					page: this.options.page,
+					subId: this.options.subId
+				}, extraOptions));
+
+				this.contentView.on("change:printState", this.onPrintStateChange, this);
+				this.contentView.on("change:viewState", this.onViewStateChange, this);
+				this.contentView.on("change:mainState", this.onMainStateChange, this);
+
+				//this.togglePrintBtn();
+				this.cardHeader.hidePrintBtn();
+				this.renderPageContent();
+			}
 			//}
 		},
 
@@ -232,25 +242,9 @@ define(function(require){
 
 		onAppealLoaded: function() {
 			var self = this;
-			var appealExtraData = new App.Collections.PatientAppeals();
-			appealExtraData.patient = this.appeal.get("patient");
-			appealExtraData.setParams({
-				filter: {
-					number: self.appeal.get("number")
-				}
-			});
-			appealExtraData.on("reset", this.onAppealExtraDataLoaded, this);
-			appealExtraData.fetch();
 
-			this.appeal.off("change", this.onAppealLoaded, this);
-		},
-
-		onAppealExtraDataLoaded: function(appealExtraData) {
-			//TODO: Replace this fast fix (made for monitoring page)
-			Core.Data.appealExtraData = appealExtraData = appealExtraData.first();
-
-			this.appeal.closed = appealExtraData ? appealExtraData.get("rangeAppealDateTime").get("end") : false;
-
+			this.appeal.closed = this.appeal.get('closed') ? this.appeal.get('closed') : false;
+			console.log('appeal', this.appeal)
 			var patient = this.appeal.get("patient");
 			patient.on("change", this.onPatientLoaded, this);
 			patient.fetch();
@@ -263,8 +257,9 @@ define(function(require){
 				this.setContentView(step.name);
 			}, this);
 
-			appealExtraData.off("reset", this.onAppealExtraDataLoaded, this);
+			this.appeal.off("change", this.onAppealLoaded, this);
 		},
+
 
 		onPatientLoaded: function(patient) {
 			this.patient = Cache.Patient = patient;

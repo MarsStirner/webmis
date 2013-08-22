@@ -16,7 +16,6 @@ define(function(require) {
 			var data = {
 				lastMove: this.moves.last(),
 				appeal: this.appeal.toJSON(),
-				appealExtraData: Core.Data.appealExtraData.toJSON(),
 				days: this.days(),
 				canAssign: this.canAssign()
 			};
