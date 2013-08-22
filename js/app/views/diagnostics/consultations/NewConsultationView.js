@@ -43,43 +43,19 @@ define(function(require) {
 			//console.log('init new consultation view', this);
 			_.bindAll(this);
 
+			this.appeal = this.options.appeal;
+			this.appealId = this.options.appealId;
+
+			var financeId = this.appeal.get('appealType').get('finance').get('id');
+			var eventId = this.appealId;
+			var patientId = this.appeal.get('patient').get('id');
+			var assignerId = this.getAssigner().id;
+
 
 			this.appealDiagnosis = new PatientDiagnoses(null, {
-				appealId: this.options.appeal.get('id')
+				appealId: eventId
 			});
 
-			var appealDoctor = this.options.appeal.get('execPerson');
-			// console.log('appealDoctor',appealDoctor)
-			//"Направивший врач"
-			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
-				//юзер не врач
-				this.assigner = {
-					id: appealDoctor.id,
-					name: {
-						first: appealDoctor.name.first,
-						last: appealDoctor.name.last,
-						middle: appealDoctor.name.middle
-					},
-					id: appealDoctor.id
-				};
-
-			} else {
-				//юзер врач
-
-				this.assigner = {
-					id: Core.Cookies.get("userId"),
-					name: {
-						first: Core.Cookies.get("doctorFirstName"),
-						last: Core.Cookies.get("doctorLastName"),
-						middle: ''
-					},
-					id: Core.Cookies.get("userId")
-				};
-			}
-
-			this.data = {
-				'assigner': this.assigner
-			};
 
 
 			//список доступных консультаций
@@ -90,17 +66,17 @@ define(function(require) {
 			this.consultationsGroups.fetch();
 
 			//направление на консультацию
-			this.consultation = new Consultation({});
+			this.consultation = new Consultation({
+				finance: {
+					id: financeId
+				},
+				eventId: eventId,
+				patientId: patientId,
+				assignerId: assignerId,
+				createDateTime: moment().valueOf()
+			});
 
-
-			this.consultation.set('finance', {});
-			this.consultation.get('finance').id = this.options.appeal.get('appealType').get('finance').get('id');
-			this.consultation.set('eventId', this.options.appealId);
-			this.consultation.eventId = this.options.appealId;
-			this.consultation.set('patientId', this.options.appeal.get('patient').get('id'));
-			this.consultation.set('createDateTime', moment().valueOf());
-			//this.consultation.set('createPerson', this.assigner.id);
-			this.consultation.set('assignerId', this.assigner.id);
+			this.consultation.eventId = eventId;
 
 			this.diagnosis = this.options.appeal.getDiagnosis();
 
@@ -133,24 +109,52 @@ define(function(require) {
 			this.consultation.on('change:plannedTime', this.updateSaveButton, this);
 
 			pubsub.on('assigner:changed', function(assigner) {
-				// console.log('assign-person: changed', assigner);
-				//this.consultation.set('createPerson', assigner.id)
 				this.consultation.set('assignerId', assigner.id)
-
 				this.ui.$assigner.val(assigner.name.raw);
-
 			}, this);
 
 		},
 
+		getAssigner: function() {
+			var assigner;
+			var appealDoctor = this.appeal.get('execPerson');
+
+			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
+				//юзер не врач
+				assigner = {
+					id: appealDoctor.id,
+					name: {
+						first: appealDoctor.name.first,
+						last: appealDoctor.name.last,
+						middle: appealDoctor.name.middle
+					},
+					id: appealDoctor.id
+				};
+
+			} else {
+				//юзер врач
+				assigner = {
+					id: Core.Cookies.get("userId"),
+					name: {
+						first: Core.Cookies.get("doctorFirstName"),
+						last: Core.Cookies.get("doctorLastName"),
+						middle: ''
+					},
+					id: Core.Cookies.get("userId")
+				};
+			}
+
+			return assigner;
+		},
+
+		data: function() {
+			return {
+				'assigner': this.getAssigner()
+			}
+		},
+
 		//при выборе консультации
 		onConsultationSelect: function(code) {
-			// var consultation = this.consultationsGroups.find(function(model) {
-			// 	return model.get('code') === code;
-			// });
-
-
-
 			var consultation;
 
 			function findR(list) {
@@ -177,16 +181,16 @@ define(function(require) {
 
 			var consultation = findR(this.consultationsGroups.toJSON());
 
-			//console.log('consultationId',consultation.id)
-
-			this.consultation.set('actionTypeId', consultation.id);
 			this.ui.$datepicker.datepicker('enable');
 			var date = this.ui.$datepicker.datepicker("getDate");
-			//console.log('date', date)
 			var timestamp = moment(date).valueOf();
-			this.consultation.set('plannedEndDate', timestamp);
 
-			this.consultation.set('plannedTime', '');
+			this.consultation.set({
+				'actionTypeId': consultation.id,
+				'plannedEndDate': timestamp,
+				'plannedTime': ''
+			});
+
 			this.renderShedule();
 		},
 
@@ -300,7 +304,7 @@ define(function(require) {
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					pubsub.trigger('noty', {
-						text: (JSON.parse(textStatus.responseText)).exception,
+						text: 'Ошибка при создании направления',//(JSON.parse(textStatus.responseText)).exception,
 						type: 'error'
 					});
 					self.close();
@@ -327,9 +331,10 @@ define(function(require) {
 
 			this.ui.$saveButton.button("disable");
 			this.ui.$finance = this.$el.find('#finance');
-			//this.ui.$assignPerson = this.$el.find('#assign-person');
+
 			this.ui.$assignDatepicker = this.$el.find('#assign-date');
 			this.ui.$assignTimepicker = this.$el.find('#assign-time');
+
 			this.ui.$assigner = this.$el.find('#assigner');
 			this.$el.find('.change-assigner').button();
 
@@ -345,9 +350,7 @@ define(function(require) {
 			this.ui.$datepicker.datepicker('setDate', new Date());
 			this.ui.$datepicker.next('.icon-calendar').on('click', function() {
 				self.ui.$datepicker.datepicker('show');
-			})
-			//this.ui.$datepicker.datepicker('disable');
-
+			});
 
 			var createDate = moment(this.consultation.get('createDateTime')).toDate();
 			this.ui.$assignDatepicker.datepicker({
@@ -367,7 +370,6 @@ define(function(require) {
 
 			self.appealDiagnosis.fetch().done(function() {
 				//установка диагноза
-				// console.log('self.appealDiagnosis',self.appealDiagnosis.first())
 				if ((self.appealDiagnosis.length > 0) && self.appealDiagnosis.first()) {
 					var diagnosis = self.appealDiagnosis.first().get('mkb');
 					self.consultation.set('diagnosis', {
