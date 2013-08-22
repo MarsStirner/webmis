@@ -44,9 +44,9 @@ define(function(require) {
 			_.bindAll(this);
 
 
-            this.appealDiagnosis = new PatientDiagnoses(null,{
-                appealId : this.options.appeal.get('id')
-            });
+			this.appealDiagnosis = new PatientDiagnoses(null, {
+				appealId: this.options.appeal.get('id')
+			});
 
 			var appealDoctor = this.options.appeal.get('execPerson');
 			// console.log('appealDoctor',appealDoctor)
@@ -343,6 +343,9 @@ define(function(require) {
 				}
 			});
 			this.ui.$datepicker.datepicker('setDate', new Date());
+			this.ui.$datepicker.next('.icon-calendar').on('click', function() {
+				self.ui.$datepicker.datepicker('show');
+			})
 			//this.ui.$datepicker.datepicker('disable');
 
 
@@ -352,6 +355,9 @@ define(function(require) {
 			});
 
 			this.ui.$assignDatepicker.datepicker('setDate', createDate)
+			this.ui.$assignDatepicker.next('.icon-calendar').on('click', function() {
+				self.ui.$assignDatepicker.datepicker('show');
+			});
 
 			this.ui.$assignTimepicker.timepicker();
 			this.ui.$assignTimepicker.timepicker('setTime', createDate);

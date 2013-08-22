@@ -13,7 +13,7 @@ define(function(require) {
 		template: tmpl,
 		events: {
 			'click #assigner-outer': 'openAssignerSelectPopup',
-            'click #executor-outer': 'openExecutorSelectPopup'
+			'click #executor-outer': 'openExecutorSelectPopup'
 		},
 
 		initialize: function(options) {
@@ -37,26 +37,26 @@ define(function(require) {
 			pubsub.on('assigner:changed', function(assigner) {
 				console.log('assign-person: changed', assigner);
 
-				this.viewModel.set('assignerId',assigner.id);
-				this.viewModel.set('assignerFirstName',assigner.name.first);
-				this.viewModel.set('assignerMiddleName',assigner.name.middle);
-				this.viewModel.set('assignerLastName',assigner.name.last);
+				this.viewModel.set('assignerId', assigner.id);
+				this.viewModel.set('assignerFirstName', assigner.name.first);
+				this.viewModel.set('assignerMiddleName', assigner.name.middle);
+				this.viewModel.set('assignerLastName', assigner.name.last);
 
 				this.$assigner.val(assigner.name.raw);
 
-			},this);
+			}, this);
 
-            pubsub.on('executor:changed', function(executor) {
-                // this.executor = executor;
+			pubsub.on('executor:changed', function(executor) {
+				// this.executor = executor;
 
 				this.viewModel.set('executorId', executor.id);
-                this.viewModel.set('executorFirstName', executor.name.first);
-                this.viewModel.set('executorMiddleName', executor.name.middle);
-                this.viewModel.set('executorLastName', executor.name.last);
+				this.viewModel.set('executorFirstName', executor.name.first);
+				this.viewModel.set('executorMiddleName', executor.name.middle);
+				this.viewModel.set('executorLastName', executor.name.last);
 
-                this.$executor.val(executor.name.raw);
+				this.$executor.val(executor.name.raw);
 
-            },this);
+			}, this);
 
 		},
 
@@ -65,27 +65,27 @@ define(function(require) {
 			this.personDialogView = new PersonDialogView({
 				title: 'Направивший врач',
 				appeal: this.options.appeal,
-				callback: function(person){
-                    pubsub.trigger('assigner:changed', person);
-                }
+				callback: function(person) {
+					pubsub.trigger('assigner:changed', person);
+				}
 			});
 
 			this.personDialogView.render().open();
 
 		},
 
-        openExecutorSelectPopup: function() {
-            this.personDialogView = new PersonDialogView({
-                appeal: this.options.appeal,
-                title: 'Исполнитель',
-                callback: function(person){
-                    pubsub.trigger('executor:changed', person);
-                }
-            });
+		openExecutorSelectPopup: function() {
+			this.personDialogView = new PersonDialogView({
+				appeal: this.options.appeal,
+				title: 'Исполнитель',
+				callback: function(person) {
+					pubsub.trigger('executor:changed', person);
+				}
+			});
 
-            this.personDialogView.render().open();
+			this.personDialogView.render().open();
 
-        },
+		},
 
 		modelToTree: function() {
 			var view = this;
@@ -121,7 +121,7 @@ define(function(require) {
 			view.$plannedDatepicker = view.$("#dp");
 			view.$plannedTimepicker = view.$("#tp");
 			view.$urgent = view.$('input[name=urgent]');
-            view.$assigner = view.$('input[name=assigner]');
+			view.$assigner = view.$('input[name=assigner]');
 			view.$executor = view.$('input[name=executor]');
 			view.$finance = view.$('#finance');
 			view.$mkbDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
@@ -131,14 +131,14 @@ define(function(require) {
 			view.$saveButton = view.$el.closest(".ui-dialog").find('.save');
 
 			view.$assessmentDatepicker
-			.val(moment(view.viewModel.get('assessmentDay'), 'YYYY-MM-DD').format('DD.MM.YYYY'))
-			.addClass('Disabled')
-			.prop('disabled', true);
+				.val(moment(view.viewModel.get('assessmentDay'), 'YYYY-MM-DD').format('DD.MM.YYYY'))
+				.addClass('Disabled')
+				.prop('disabled', true);
 			//datepicker().datepicker("setDate", moment(view.viewModel.get('assessmentDay'), 'YYYY-MM-DD').toDate());
 			view.$assessmentTimepicker
-			.val(view.viewModel.get('assessmentTime'))
-			.addClass('Disabled')
-			.prop('disabled', true);
+				.val(view.viewModel.get('assessmentTime'))
+				.addClass('Disabled')
+				.prop('disabled', true);
 
 			// .mask("99:99").timepicker({
 			// 	showPeriodLabels: false
@@ -158,61 +158,61 @@ define(function(require) {
 
 
 			view.$plannedDatepicker.datepicker({
-                minDate: new Date(),
-                onSelect: function(dateText, inst) {
-                    // view.viewModel.set('plannedDate', moment(dateText, 'DD.MM.YYYY').toDate());
-                    view.viewModel.set('plannedEndDay', moment(dateText, 'DD.MM.YYYY').format('YYYY-MM-DD'));
-                    var day = moment(view.$(this).datepicker("getDate")).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    var hour = view.$plannedTimepicker.timepicker('getHour');
-                    //если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour <= currentHour) {
-                            view.$plannedTimepicker.val('').trigger('change');
-                        }
-                    }
-                }
-            });
+				minDate: new Date(),
+				onSelect: function(dateText, inst) {
+					// view.viewModel.set('plannedDate', moment(dateText, 'DD.MM.YYYY').toDate());
+					view.viewModel.set('plannedEndDay', moment(dateText, 'DD.MM.YYYY').format('YYYY-MM-DD'));
+					var day = moment(view.$(this).datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					var hour = view.$plannedTimepicker.timepicker('getHour');
+					//если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour <= currentHour) {
+							view.$plannedTimepicker.val('').trigger('change');
+						}
+					}
+				}
+			});
 
-            // view.$plannedDatepicker.datepicker("setDate", this.viewModel.get('plannedDate'));
-            view.$plannedDatepicker.datepicker("setDate", moment(view.viewModel.get('plannedEndDay'), 'YYYY-MM-DD').toDate());
+			// view.$plannedDatepicker.datepicker("setDate", this.viewModel.get('plannedDate'));
+			view.$plannedDatepicker.datepicker("setDate", moment(view.viewModel.get('plannedEndDay'), 'YYYY-MM-DD').toDate());
 
-            view.$plannedTimepicker.timepicker({
-                onSelect: function(time) {
-                    view.viewModel.set('plannedEndTime', time);
-                },
-                defaultTime: 'now',
-                onHourShow: function(hour) {
-                    var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    //если выбран текущий день, то часы меньше текущего нельзя выбрать
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour < currentHour) {
-                            return false;
-                        }
-                    }
+			view.$plannedTimepicker.timepicker({
+				onSelect: function(time) {
+					view.viewModel.set('plannedEndTime', time);
+				},
+				defaultTime: 'now',
+				onHourShow: function(hour) {
+					var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					//если выбран текущий день, то часы меньше текущего нельзя выбрать
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour < currentHour) {
+							return false;
+						}
+					}
 
-                    return true;
-                },
-                onMinuteShow: function(hour, minute) {
-                    var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    var currentMinute = moment().minute();
-                    //если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour === currentHour && minute <= currentMinute) {
-                            return false;
-                        }
-                    }
-                    return true;
-                },
-                showPeriodLabels: false,
-                showOn: 'both',
-                button: '.timepicker .icon-time'
-            });
+					return true;
+				},
+				onMinuteShow: function(hour, minute) {
+					var day = moment(view.$plannedDatepicker.datepicker("getDate")).startOf('day');
+					var currentDay = moment().startOf('day');
+					var currentHour = moment().hour();
+					var currentMinute = moment().minute();
+					//если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
+					if (day.diff(currentDay, 'days') === 0) {
+						if (hour === currentHour && minute <= currentMinute) {
+							return false;
+						}
+					}
+					return true;
+				},
+				showPeriodLabels: false,
+				showOn: 'both',
+				button: '.timepicker .icon-time'
+			});
 
 
 			view.$plannedTimepicker.val(this.viewModel.get('plannedEndTime'));
@@ -258,12 +258,12 @@ define(function(require) {
 			view.model.setProperty('doctorLastName', 'value', view.viewModel.get('doctorLastName'));
 
 			view.model.setProperty('assignerId', 'value', view.viewModel.get('assignerId'));
-            //assignerFirstName - имя врача назначившего исследование
-            view.model.setProperty('assignerFirstName', 'value', view.viewModel.get('assignerFirstName'));
-            //assignerMiddleName - отчество врача назначившего исследование
-            view.model.setProperty('assignerMiddleName', 'value', view.viewModel.get('assignerMiddleName'));
-            //assignerLastName - фамилия врача назначившего исследование
-            view.model.setProperty('assignerLastName', 'value', view.viewModel.get('assignerLastName'));
+			//assignerFirstName - имя врача назначившего исследование
+			view.model.setProperty('assignerFirstName', 'value', view.viewModel.get('assignerFirstName'));
+			//assignerMiddleName - отчество врача назначившего исследование
+			view.model.setProperty('assignerMiddleName', 'value', view.viewModel.get('assignerMiddleName'));
+			//assignerLastName - фамилия врача назначившего исследование
+			view.model.setProperty('assignerLastName', 'value', view.viewModel.get('assignerLastName'));
 
 			//assessmentDate - дата создания направления на исследование
 			var assessmentDay = view.viewModel.get('assessmentDay');
@@ -296,14 +296,14 @@ define(function(require) {
 			});
 
 
-		}
-		,close: function(){
+		},
+		close: function() {
 
-                this.$plannedDatepicker.datepicker('destroy');
-                this.$el.dialog("close");
-                this.bfView.close();
-                this.$el.remove();
-                this.remove();
+			this.$plannedDatepicker.datepicker('destroy');
+			this.$el.dialog("close");
+			this.bfView.close();
+			this.$el.remove();
+			this.remove();
 		}
 	}).mixin([popupMixin]);
 

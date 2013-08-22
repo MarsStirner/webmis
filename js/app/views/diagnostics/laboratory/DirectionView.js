@@ -397,6 +397,10 @@ define(function(require) {
 				}
 			}).datepicker("setDate", now);
 
+			view.ui.$assessmentDatepicker.next('.icon-calendar').on('click', function(){
+				view.ui.$assessmentDatepicker.datepicker('show');
+			})
+
 
 			view.ui.$assessmentTimepicker.mask("99:99").timepicker({
 				showPeriodLabels: false,
@@ -441,7 +445,7 @@ define(function(require) {
 		//закрытие попапа
 		close: function() {
 			var view = this;
-			view.ui.$assessmentDatepicker.datepicker('destroy');
+			//view.ui.$assessmentDatepicker.datepicker('destroy');
 			view.$el.dialog("close");
 			view.$el.remove();
 			view.remove();

@@ -217,6 +217,10 @@ define(function(require) {
 				}
 			});
 
+			view.ui.$plannedDatepicker.next('.icon-calendar').on('click', function(){
+				view.ui.$plannedDatepicker.datepicker('show');
+			})
+
 			view.ui.$plannedTimepicker.timepicker({
 				defaultTime: 'now',
 				onHourShow: function(hour) {
