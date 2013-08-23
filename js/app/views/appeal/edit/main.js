@@ -170,7 +170,7 @@ define(function(require) {
 					name: opt.resultText
 				});
 
-			}, this)
+			}, this);
 
 			this.appeal.on("change", this.onAppealLoaded, this);
 			this.appeal.fetch();
@@ -244,7 +244,7 @@ define(function(require) {
 			var self = this;
 
 			this.appeal.closed = this.appeal.get('closed') ? this.appeal.get('closed') : false;
-			console.log('appeal', this.appeal)
+			console.log('appeal', this.appeal);
 			var patient = this.appeal.get("patient");
 			patient.on("change", this.onPatientLoaded, this);
 			patient.fetch();
@@ -254,7 +254,16 @@ define(function(require) {
 			this.menu.options.structure.on("change-page", function(step) {
 				pubsub.trigger('noty_clear');
 
-				this.setContentView(step.name);
+				if (this.contentView.persistenceCheck) {
+					this.contentView.persistenceCheck(_.bind(function (checkResult) {
+						if (checkResult) {
+							this.setContentView(step.name);
+						}
+					}, this));
+				} else {
+					this.setContentView(step.name);
+				}
+
 			}, this);
 
 			this.appeal.off("change", this.onAppealLoaded, this);

@@ -1861,6 +1861,60 @@ define(function (require) {
 
 		//getEditPageTypeName: Documents.Views.List.Common.Layout.prototype.getEditPageTypeName,
 
+		persistenceCheck: function (callback) {
+			var checkPopUp = new PopUpBase();
+			checkPopUp.template = _.template("При переходе на другую страницу введённые данные будут утеряны.<br>Сохранить редактируемый документ?");
+			checkPopUp.dialogOptions = {
+				title: "Внимание",
+				modal: true,
+				width: 600,
+				height: 200,
+				resizable: false,
+				//close: _.bind(checkPopUp.tearDown, checkPopUp),
+				buttons: [
+					{text: "Сохранить", "class": "button-color-green", click: _.bind(function () {
+						this.persistDoc();
+						checkPopUp.tearDown();
+						callback(true);
+					}, this)},
+					{text: "Не сохранять", click:  function () {
+						checkPopUp.tearDown();
+						callback(true);
+					}},
+					{text: "Отмена", click:  function () {
+						checkPopUp.tearDown();
+						callback(false);
+						//App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, $(event.currentTarget).data('document-id'), "edit"].join("/"));
+					}}
+				]
+			};
+			checkPopUp.render();
+		},
+
+		persistDoc: function () {
+			pubsub.trigger('noty', {
+				text: 'Текущий документ будет сохранён.',
+				type: 'information'
+			});
+			this.model.save({}, {success: this.onSaveCurrentDocumentSuccess, error: this.onSaveCurrentDocumentError});
+		},
+
+		onSaveCurrentDocumentSuccess: function () {
+			console.info("SaveCurrentDocumentSuccess");
+			pubsub.trigger('noty', {
+				text: 'Документ успешно сохранён.',
+				type: 'success'
+			});
+		},
+
+		onSaveCurrentDocumentError: function () {
+			console.info("SaveCurrentDocumentError");
+			pubsub.trigger('noty', {
+				text: 'При сохранении документа произошла ошибка.',
+				type: 'error'
+			});
+		},
+
 		render: function (subViews) {
 			return ViewBase.prototype.render.call(this, _.extend({
 				/*".new-document-controls": new Documents.Views.Edit.Common.Controls({
