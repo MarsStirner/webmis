@@ -2414,7 +2414,35 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.Edit.UIElement.Text = UIElementBase.extend({
-		template: templates.uiElements._text//,
+		template: templates.uiElements._text,
+
+		events: _.extend({
+			"click .wysisyg a": "onWysisygAClick"
+		}, UIElementBase.prototype.events),
+
+		onWysisygAClick: function (e) {
+			e.preventDefault();
+
+			var command = $(e.currentTarget).data('role');
+
+			switch(command) {
+				case 'h1':
+				case 'h2':
+				case 'p':
+					document.execCommand('formatBlock', false, command);
+					break;
+				default:
+					document.execCommand(command, false, null);
+					break;
+			}
+		},
+
+		toggleField: function (visible) {
+			this.$(".editor-controls").toggle(visible);
+			UIElementBase.prototype.toggleField.call(this, visible);
+		}
+
+		//,
 		/*initialize: function () {
 			this.model.convertValueToHtml();
 			UIElementBase.prototype.initialize.call(this, this.options);
@@ -2439,7 +2467,7 @@ define(function (require) {
 		}, Documents.Views.Edit.UIElement.Text.prototype.events),
 
 		onFocus: function () {
-			wysisyg.showAt(this.$el);
+			//wysisyg.showAt(this.$el);
 		},
 
 		/*onBlur: function () {

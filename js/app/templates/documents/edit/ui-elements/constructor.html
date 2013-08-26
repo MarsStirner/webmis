@@ -1,17 +1,27 @@
-<div class="SetComment">
-	<label>
-		<input type="checkbox" class="field-toggle">
-		<%=model.get('name')%>
-	</label>
-	<div class="field">
-    <% if(!model.isReadOnly()){%>
-    	<a href="#" class="FormLink Actions thesaurus-open field" style="display: inline;">Тезаурус</a>
-    <%}%>
+<label style="float: left">
+	<input type="checkbox" class="field-toggle">
+	<%=model.get('name')%>
+</label>
+<% if(!model.isReadOnly()){%>
+<div style="float: right;" class="editor-controls">
+	<div class="wysisyg">
+		<a data-role='bold' href='#'><b>Bold</b></a>
+		<a data-role='italic' href='#'><i style="font-style: italic;">Italic</i></a>
+		<a data-role='underline' href='#'><em style="text-decoration: underline;">U</em></a>
+		<a data-role='strikeThrough' href='#'><strike>abc</strike></a>
+		|
+		<a data-role='superscript' href='#'>x<sup>2</sup></a>
+		<a data-role='subscript' href='#'>x<sub>2</sub></a>
+	</div>
+	<div style="float: right; margin-left: 2em;">
+		<a href="#" class="Actions thesaurus-open" style="display: inline; font-size: 1.2em; text-decoration: none;">Тезаурус</a>
+	</div>
+</div>
+<%}%>
+<div class="field">
 	<div class="RichTextWrapper">
 		<div class="RichText attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
 				 <%=!model.isReadOnly()?'contenteditable="true"':''%>
 				 style="min-height: 8em;"><%=model.getValue()%></div>
 	</div>
-	</div>
-
 </div>

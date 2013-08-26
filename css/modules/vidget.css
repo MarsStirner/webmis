@@ -722,3 +722,14 @@ input {
 .AnalisLine .AnalisQuant input[type="checkbox"] {
   top: 0;
 }
+
+/* line 268, ../../sass/modules/vidget.scss */
+.wysisyg {
+  float: left;
+}
+/* line 270, ../../sass/modules/vidget.scss */
+.wysisyg a {
+  font-size: 1.2em;
+  text-decoration: none;
+  padding: .2em;
+}
