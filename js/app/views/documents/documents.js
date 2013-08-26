@@ -100,7 +100,6 @@ define(function (require) {
 	var FlatDirectory = require("models/flat-directory");
 	var MKB = require("views/mkb-directory");
 	var PersonDialog = require("views/ui/PersonDialog");
-	var wysisyg = require("views/ui/wysisyg");
 
 	var FDLoader = {
 		fds: {},
