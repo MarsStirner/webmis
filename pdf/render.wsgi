@@ -218,7 +218,16 @@ def application(environ, start_response):
 
         return result
 
+    def getLocationType (path_string, data=dataJSON):
+        data = data if len(data) > 0 else dataJSON
+        locationType = getData(path_string, data)
 
+        if locationType == 1:
+            return "Город"
+        elif locationType == 2:
+            return "Село"
+        else:
+            return ""
 
     def simpleIf( path_string, result_if_true, result_if_false, data=dataJSON ):
         data = data if len(data) > 0 else dataJSON
@@ -446,6 +455,7 @@ def application(environ, start_response):
         getAddress = getAddress,
         getFinanceCode = getFinanceCode,
         getAttributeValue = getAttributeValue,
+        getLocationType = getLocationType,
         getDaysDelta=getDaysDelta), rendered_file_name)
 
     renderer.run()
