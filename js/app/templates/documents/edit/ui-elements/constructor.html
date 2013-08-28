@@ -5,14 +5,16 @@
 <% if(!model.isReadOnly()){%>
 <div style="float: right;" class="editor-controls">
 	<div class="wysisyg">
-		<a data-role='bold' href='#'><b>Bold</b></a>
-		<a data-role='italic' href='#'><i style="font-style: italic;">Italic</i></a>
+		<a data-role='bold' href='#' title="Жирный"><b>Bold</b></a>
+		<a data-role='italic' href='#' title="Курсив"><i style="font-style: italic;">Italic</i></a>
 		|
-		<a data-role='underline' href='#'><em style="text-decoration: underline;">U</em></a>
-		<a data-role='strikeThrough' href='#'><strike>abc</strike></a>
+		<a data-role='underline' href='#' title="Подчёркнутый"><em style="text-decoration: underline;">U</em></a>
+		<a data-role='strikeThrough' href='#' title="Зачёркнутый"><strike>abc</strike></a>
 		|
-		<a data-role='superscript' href='#'>x<sup>2</sup></a>
-		<a data-role='subscript' href='#'>x<sub>2</sub></a>
+		<a data-role='superscript' href='#' title="Верхний индекс">x<sup>2</sup></a>
+		<a data-role='subscript' href='#' title="Нижний индекс">x<sub>2</sub></a>
+		|
+		<a data-role='removeFormat' href='#' title="Очистить формат"><i class="icon-file-alt"></i></a>
 	</div>
 	<div style="float: right; margin-left: 2em;">
 		<a href="#" class="Actions thesaurus-open" style="display: inline; font-size: 1.2em; text-decoration: none;">Тезаурус</a>
