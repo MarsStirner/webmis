@@ -2093,7 +2093,11 @@ define(function (require) {
 			PopUpBase.prototype.initialize.apply(this);
 			//this.collection = new Documents.Collections.DocumentList([], {});
 			this.collection.typeId = this.options.typeId;
-			this.collection.fetch();
+			this.collection.fetch({data: {
+				limit: 999,
+				sortingField: "assesmentDate",
+				sortingMethod: "desc"
+			}});
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
 		},
 
