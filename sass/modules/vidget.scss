@@ -263,14 +263,33 @@
 
 .editor-controls {
 	margin-bottom: 0.4em;
-}
-
-.wysisyg {
-	float: left;
-	a {
+	margin-top: -.2em;
+	.wysisyg {
+		float: left;
+		ul {
+			list-style-type: none;
+			li {
+				display: inline;
+				a {
+					font-size: 1.2em;
+					text-decoration: none;
+					padding: .2em;
+					border-radius: 3px;
+					display: inline-block;
+					min-width: 1.2em;
+					text-align: center;
+					&:hover {
+						color: white;
+						background-color: #118ddc;
+					}
+				}
+			}
+		}
+	}
+	.thesaurus-open {
+		display: inline-block;
 		font-size: 1.2em;
 		text-decoration: none;
-		padding: .2em .4em .2em .4em;
+		padding: .2em;
 	}
 }
-

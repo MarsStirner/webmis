@@ -5,19 +5,21 @@
 <% if(!model.isReadOnly()){%>
 <div style="float: right;" class="editor-controls">
 	<div class="wysisyg">
-		<a data-role='bold' href='#' title="Жирный"><b>Ж</b></a>
-		<a data-role='italic' href='#' title="Курсив"><i style="font-style: italic;">К</i></a>
-		|
-		<a data-role='underline' href='#' title="Подчёркнутый"><em style="text-decoration: underline;">Ч</em></a>
-		<a data-role='strikeThrough' href='#' title="Зачёркнутый"><strike>abc</strike></a>
-		|
-		<a data-role='superscript' href='#' title="Верхний индекс">x<sup>2</sup></a>
-		<a data-role='subscript' href='#' title="Нижний индекс">x<sub>2</sub></a>
-		|
-		<a data-role='removeFormat' href='#' title="Очистить формат"><i class="icon-file-alt"></i></a>
+		<ul>
+			<li><a data-role='bold' href='#' title="Жирный"><b>Ж</b></a></li>
+			<li><a data-role='italic' href='#' title="Курсив"><i style="font-style: italic;">К</i></a></li>
+			<li>|</li>
+			<li><a data-role='underline' href='#' title="Подчёркнутый"><em style="text-decoration: underline;">Ч</em></a></li>
+			<li><a data-role='strikeThrough' href='#' title="Зачёркнутый"><strike>abc</strike></a></li>
+			<li>|</li>
+			<li><a data-role='superscript' href='#' title="Верхний индекс">x<sup>2</sup></a></li>
+			<li><a data-role='subscript' href='#' title="Нижний индекс">x<sub>2</sub></a></li>
+			<li>|</li>
+			<li><a data-role='removeFormat' href='#' title="Очистить формат"><i class="icon-file-alt"></i></a></li>
+		</ul>
 	</div>
 	<div style="float: right; margin-left: 2em;">
-		<a href="#" class="Actions thesaurus-open" style="display: inline; font-size: 1.2em; text-decoration: none;">Тезаурус</a>
+		<a href="#" class="Actions thesaurus-open">Тезаурус</a>
 	</div>
 </div>
 <%}%>
