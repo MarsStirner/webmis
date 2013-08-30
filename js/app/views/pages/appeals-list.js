@@ -310,7 +310,22 @@ define([
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
 
-
+				Collection.on("reset", function () {
+					if (Collection.length && Collection.requestData) {
+						if (!this.$(".recordCounters").length) {
+							this.$(".Container").append(
+								'<div style="margin-top: 2em;" class="recordCounters">' +
+									//'<label style="margin-right: 2em;">Записей на странице: <b class="recordsCountPage"></b></label>' +
+									'<label>Всего пациентов: <b class="recordsCountTotal"></b></label>' +
+									'</div>'
+							);
+						}
+						//this.$(".recordsCountPage").text(Collection.length);
+						this.$(".recordsCountTotal").text(Collection.requestData.recordsCount);
+					} else {
+						this.$(".recordCounters").remove();
+					}
+				}, this);
 			}, this);
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function() {
@@ -368,7 +383,7 @@ define([
 
 			this.collection.on('reset', function() {
 				console.log('collection reset', arguments);
-			})
+			});
 
 			this.depended(Filter);
 
@@ -389,7 +404,7 @@ define([
 			});
 			this.depended(Paginator);
 
-			this.$el.find(".Container").append(Paginator.render().el);
+			this.$(".Container").append(Paginator.render().el);
 
 			//UIInitialize(this.el);
 
