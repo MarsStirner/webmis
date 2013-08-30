@@ -722,3 +722,43 @@ input {
 .AnalisLine .AnalisQuant input[type="checkbox"] {
   top: 0;
 }
+
+/* line 264, ../../sass/modules/vidget.scss */
+.editor-controls {
+  margin-bottom: 0.4em;
+  margin-top: -0.2em;
+}
+/* line 267, ../../sass/modules/vidget.scss */
+.editor-controls .wysisyg {
+  float: left;
+}
+/* line 269, ../../sass/modules/vidget.scss */
+.editor-controls .wysisyg ul {
+  list-style-type: none;
+}
+/* line 271, ../../sass/modules/vidget.scss */
+.editor-controls .wysisyg ul li {
+  display: inline;
+}
+/* line 273, ../../sass/modules/vidget.scss */
+.editor-controls .wysisyg ul li a {
+  font-size: 1.2em;
+  text-decoration: none;
+  padding: .2em;
+  border-radius: 3px;
+  display: inline-block;
+  min-width: 1.2em;
+  text-align: center;
+}
+/* line 281, ../../sass/modules/vidget.scss */
+.editor-controls .wysisyg ul li a:hover {
+  color: white;
+  background-color: #118ddc;
+}
+/* line 289, ../../sass/modules/vidget.scss */
+.editor-controls .thesaurus-open {
+  display: inline-block;
+  font-size: 1.2em;
+  text-decoration: none;
+  padding: .2em;
+}
