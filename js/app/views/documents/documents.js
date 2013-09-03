@@ -1892,11 +1892,13 @@ define(function (require) {
 		},
 
 		persistDoc: function () {
-			pubsub.trigger('noty', {
-				text: 'Текущий документ будет сохранён.',
-				type: 'information'
-			});
-			this.model.save({}, {success: this.onSaveCurrentDocumentSuccess, error: this.onSaveCurrentDocumentError});
+			if (model.isValid()) {
+				pubsub.trigger('noty', {
+					text: 'Текущий документ будет сохранён.',
+					type: 'information'
+				});
+				this.model.save({}, {success: this.onSaveCurrentDocumentSuccess, error: this.onSaveCurrentDocumentError});
+			}			
 		},
 
 		onSaveCurrentDocumentSuccess: function () {
