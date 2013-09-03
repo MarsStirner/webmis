@@ -32,7 +32,7 @@ define(function(require) {
 
 				if (!model) { //ели нет моделей с ростом и весом
 					//модели у которых есть или рост или вес
-					var wah = this.collection.filter(function(model) {
+					wah = this.collection.filter(function(model) {
 						return (model.get('weight') || model.get('growth'))
 					});
 				}
