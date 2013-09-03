@@ -2902,6 +2902,32 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({});
 
 	/**
+	 * Поле типа Html и scope(valueDomain) = *1
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.HtmlTherapy = Documents.Views.Edit.UIElement.Html.extend({
+		render: function () {
+			//TODO: Move to template
+			Documents.Views.Edit.UIElement.Html.prototype.render.call(this);
+			this.$(".editor-controls").append('<div style="float: right; margin-left: 2em;"><a href="#" class="Actions">Лечение</a></div>');
+			return this;
+		}
+	});
+
+	/**
+	 * Поле типа Html и scope(valueDomain) = *2
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.HtmlDiagnostics = Documents.Views.Edit.UIElement.Html.extend({
+		render: function () {
+			//TODO: Move to template
+			Documents.Views.Edit.UIElement.Html.prototype.render.call(this);
+			this.$(".editor-controls").append('<div style="float: right; margin-left: 2em;"><a href="#" class="Actions">Обследования</a></div>');
+			return this;
+		}
+	});
+
+	/**
 	 * Поле типа Select
 	 * @type {*}
 	 */
@@ -3111,7 +3137,13 @@ define(function (require) {
 				this.UIElementClass = Documents.Views.Edit.UIElement.FlatDirectory;
 				break;
 			case "html":
-				this.UIElementClass = Documents.Views.Edit.UIElement.Html;
+				if (options.model.get("scope") === "*1") {
+					this.UIElementClass = Documents.Views.Edit.UIElement.HtmlTherapy;
+				} else if (options.model.get("scope") === "*2") {
+					this.UIElementClass = Documents.Views.Edit.UIElement.HtmlDiagnostics;
+				} else {
+					this.UIElementClass = Documents.Views.Edit.UIElement.Html;					
+				}
 				break;
 			case "orgstructure":
 				this.UIElementClass = Documents.Views.Edit.UIElement.OrgStructure;
