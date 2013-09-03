@@ -1873,9 +1873,9 @@ define(function (require) {
 				//close: _.bind(checkPopUp.tearDown, checkPopUp),
 				buttons: [
 					{text: "Сохранить", "class": "button-color-green", click: _.bind(function () {
-						this.persistDoc();
+						var persisted = this.persistDoc();
 						checkPopUp.tearDown();
-						callback(true);
+						callback(persisted);
 					}, this)},
 					{text: "Не сохранять", click:  function () {
 						checkPopUp.tearDown();
@@ -1892,13 +1892,15 @@ define(function (require) {
 		},
 
 		persistDoc: function () {
-			if (model.isValid()) {
+			var modelIsValid = this.model.isValid();
+			if (modelIsValid) {
 				pubsub.trigger('noty', {
 					text: 'Текущий документ будет сохранён.',
 					type: 'information'
 				});
 				this.model.save({}, {success: this.onSaveCurrentDocumentSuccess, error: this.onSaveCurrentDocumentError});
-			}			
+			}
+			return modelIsValid;
 		},
 
 		onSaveCurrentDocumentSuccess: function () {
