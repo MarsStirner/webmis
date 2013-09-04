@@ -84,6 +84,7 @@ define(function (require) {
 			_base: _.template(require("text!templates/documents/edit/ui-elements/base.html")),
 			_constructor: _.template(require("text!templates/documents/edit/ui-elements/constructor.html")),
 			_text: _.template(require("text!templates/documents/edit/ui-elements/text.html")),
+			_htmlHelper: _.template(require("text!templates/documents/edit/ui-elements/html-helper.html")),
 			_date: _.template(require("text!templates/documents/edit/ui-elements/date.html")),
 			_time: _.template(require("text!templates/documents/edit/ui-elements/time.html")),
 			_double: _.template(require("text!templates/documents/edit/ui-elements/double.html")),
@@ -2902,15 +2903,38 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({});
 
 	/**
-	 * Поле типа Html и scope(valueDomain) = *1
+	 * Поле типа Html и scope(valueDomain) подходящим под паттерн *[1234]
 	 * @type {*}
 	 */
-	Documents.Views.Edit.UIElement.HtmlTherapy = Documents.Views.Edit.UIElement.Html.extend({
-		render: function () {
-			//TODO: Move to template
-			Documents.Views.Edit.UIElement.Html.prototype.render.call(this);
-			this.$(".editor-controls").append('<div style="float: right; margin-left: 2em;"><a href="#" class="Actions">Лечение</a></div>');
-			return this;
+	Documents.Views.Edit.UIElement.HtmlHelper = Documents.Views.Edit.UIElement.Html.extend({
+		template: templates.uiElements._htmlHelper,
+
+		events: _.extend({
+			"click .helper-open": "onHelperOpenClick"
+		}, Documents.Views.Edit.UIElement.Html.prototype.events),
+
+		data: function () {
+			return {
+				helperLabel: "helper",
+				model: this.model
+			};
+		},
+
+		onHelperOpenClick: function () {
+			
+		},
+	});
+
+	/**
+	 * Поле типа Html и scope(valueDomain) = *1 ()
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.HtmlTherapy = Documents.Views.Edit.UIElement.HtmlHelper.extend({
+		data: function () {
+			return {
+				helperLabel: "Лечение",
+				model: this.model
+			};
 		}
 	});
 
@@ -2918,13 +2942,21 @@ define(function (require) {
 	 * Поле типа Html и scope(valueDomain) = *2
 	 * @type {*}
 	 */
-	Documents.Views.Edit.UIElement.HtmlDiagnostics = Documents.Views.Edit.UIElement.Html.extend({
-		render: function () {
+	Documents.Views.Edit.UIElement.HtmlDiagnostics = Documents.Views.Edit.UIElement.HtmlHelper.extend({
+		data: function () {
+			return {
+				helperLabel: "Обследования",
+				model: this.model
+			};
+		}
+		//,
+
+		/*render: function () {
 			//TODO: Move to template
 			Documents.Views.Edit.UIElement.Html.prototype.render.call(this);
-			this.$(".editor-controls").append('<div style="float: right; margin-left: 2em;"><a href="#" class="Actions">Обследования</a></div>');
+			this.$(".editor-controls").append('<div style="float: right; margin-left: 2em;"><a href="#" class="Actions show-diagnostics-list">Обследования</a></div>');
 			return this;
-		}
+		}*/
 	});
 
 	/**
