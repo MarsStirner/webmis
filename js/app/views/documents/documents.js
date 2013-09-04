@@ -2920,26 +2920,14 @@ define(function (require) {
 			};
 		},
 
-		onHelperOpenClick: function () {
-			
+		onHelperOpenClick: function (event) {
+			event.preventDefault();
+			console.log("show helper yo!");
 		},
 	});
 
 	/**
-	 * Поле типа Html и scope(valueDomain) = *1 ()
-	 * @type {*}
-	 */
-	Documents.Views.Edit.UIElement.HtmlTherapy = Documents.Views.Edit.UIElement.HtmlHelper.extend({
-		data: function () {
-			return {
-				helperLabel: "Лечение",
-				model: this.model
-			};
-		}
-	});
-
-	/**
-	 * Поле типа Html и scope(valueDomain) = *2
+	 * Поле типа Html и scope(valueDomain) = *1
 	 * @type {*}
 	 */
 	Documents.Views.Edit.UIElement.HtmlDiagnostics = Documents.Views.Edit.UIElement.HtmlHelper.extend({
@@ -2957,6 +2945,19 @@ define(function (require) {
 			this.$(".editor-controls").append('<div style="float: right; margin-left: 2em;"><a href="#" class="Actions show-diagnostics-list">Обследования</a></div>');
 			return this;
 		}*/
+	});
+
+	/**
+	 * Поле типа Html и scope(valueDomain) = *2 ()
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.HtmlTherapy = Documents.Views.Edit.UIElement.HtmlHelper.extend({
+		data: function () {
+			return {
+				helperLabel: "Лечение",
+				model: this.model
+			};
+		}
 	});
 
 	/**

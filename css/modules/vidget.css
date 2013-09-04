@@ -1,4 +1,4 @@
-@charset "IBM866";
+@charset "UTF-8";
 /*
 *	FONTS
 */
@@ -316,7 +316,7 @@ a.Button:active i {
   		height:14px;
   	}*/
 }
-/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../../../home/fkuril/.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .RemoveIcon:hover, .RemoveIcon.remove_tiny_hover, .RemoveIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -355,7 +355,7 @@ a.Button:active i {
   		margin-right:0.2em;
   	}*/
 }
-/* line 43, ../../../../../../Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../../../home/fkuril/.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .DeleteIcon:hover, .DeleteIcon.remove_tiny_hover, .DeleteIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -726,7 +726,7 @@ input {
 /* line 264, ../../sass/modules/vidget.scss */
 .editor-controls {
   margin-bottom: 0.4em;
-  margin-top: -0.2em;
+  margin-top: -.2em;
 }
 /* line 267, ../../sass/modules/vidget.scss */
 .editor-controls .wysisyg {
@@ -756,7 +756,7 @@ input {
   background-color: #118ddc;
 }
 /* line 289, ../../sass/modules/vidget.scss */
-.editor-controls .thesaurus-open {
+.editor-controls .thesaurus-open, .editor-controls .helper-open {
   display: inline-block;
   font-size: 1.2em;
   text-decoration: none;
