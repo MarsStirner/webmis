@@ -2928,27 +2928,41 @@ define(function (require) {
 
 		renderResults: function (coll) {
 			var results = $("<table/>");
-			coll.each(function (item) {
+			
+			if (coll.length) {
+				coll.each(function (item) {
+					results.append(
+						"<tr class='helper-item'>"+
+							"<td class='helper-item-checker-col'><input type='checkbox' class='helper-item-checker' checked></td>"+
+							"<td class='helper-item-info' data-id='"+item.get("id")+"'>"+
+								"<div class='helper-item-name'><span>"+item.get("diagnosticName").name+"</span></div>"+
+								"<div class='helper-item-attrs-toggler'><i class='icon-chevron-down'></i></div>"+
+							"</td>"+
+						"</tr>"+
+						"<tr class='helper-item-attrs'>"+
+							"<td class='helper-item-attr-spacer'>&nbsp;</td>"+
+							"<td>"+
+								"<table class='helper-item-attrs-grid'>"+
+									"<tr class='helper-item-attr'><td class='helper-item-attr-checker'><i class='icon-spinner'></i></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'>Загрузка...</div></td></tr>"+									
+								"</table>"+
+							"</td>"+
+						"</tr>"
+						);
+				});
+			} else {
 				results.append(
 					"<tr class='helper-item'>"+
-						"<td class='helper-item-checker-col'><input type='checkbox' class='helper-item-checker' checked></td>"+
-						"<td class='helper-item-info' data-id='"+item.get("id")+"'>"+
-							"<div class='helper-item-name'><span>"+item.get("diagnosticName").name+"</span></div>"+
-							"<div class='helper-item-attrs-toggler'><i class='icon-chevron-down'></i></div>"+
-						"</td>"+
-					"</tr>"+
-					"<tr class='helper-item-attrs'>"+
-						"<td class='helper-item-attr-spacer'>&nbsp;</td>"+
-						"<td>"+
-							"<table class='helper-item-attrs-grid'>"+
-								"<tr class='helper-item-attr'><td class='helper-item-attr-checker'><i class='icon-spinner'></i></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'>Загрузка...</div></td></tr>"+									
-							"</table>"+
+						"<td class='helper-item-checker-col'>&nbsp;</td>"+
+						"<td class='helper-item-info'>"+
+							"<div class='helper-item-name'><span>Нет записей</span></div>"+
+							"<div class='helper-item-attrs-toggler' style='height: 1em;'></div>"+
 						"</td>"+
 					"</tr>"
 					);
-			});
+			}
+			
 
-			var $helperResults = this.helper.$el.css({padding: 0}).find(".helper-results");
+			var $helperResults = this.$el.css({padding: 0}).find(".helper-results");
 			$helperResults.find(".init-loader").remove();
 
 			$helperResults.append(
@@ -2995,7 +3009,7 @@ define(function (require) {
 				}
 			});
 
-			this.helper.$(".helper-item-checker").on("change", function () {
+			this.$(".helper-item-checker").on("change", function () {
 				console.log("hey, I was changed! did I?");
 			});
 		},
@@ -3003,9 +3017,9 @@ define(function (require) {
 		onHelperOpenClick: function (event) {
 			event.preventDefault();
 
-			this.helper = new PopUpBase();
-			this.helper.template = _.template("<div class='helper-results'><span class='init-loader'>Загрузка...</span></div>");
-			this.helper.dialogOptions = {
+			var helper = new PopUpBase();
+			helper.template = _.template("<div class='helper-results'><span class='init-loader'>Загрузка...</span></div>");
+			helper.dialogOptions = {
 				title: "Выберите исследования для вставки",
 				modal: true,
 				width: 900,
@@ -3017,11 +3031,11 @@ define(function (require) {
 						//TODO: 
 					}, this)},
 					{text: "Отмена", click:  _.bind(function () {
-						this.helper.tearDown();
+						helper.tearDown();
 					}, this)}
 				]
 			};
-			this.helper.render();
+			helper.render();
 
 			this.labs.fetch({data: {
 				limit: 9999,
@@ -3044,9 +3058,9 @@ define(function (require) {
 				}
 			}});
 
-			this.listenTo(this.labs, "reset", this.renderResults);
-			this.listenTo(this.insts, "reset", this.renderResults);
-			this.listenTo(this.cons, "reset", this.renderResults);
+			helper.listenTo(this.labs, "reset", this.renderResults);
+			helper.listenTo(this.insts, "reset", this.renderResults);
+			helper.listenTo(this.cons, "reset", this.renderResults);
 		}
 	});
 
