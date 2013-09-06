@@ -764,15 +764,15 @@ input {
 }
 
 /* line 299, ../../sass/modules/vidget.scss */
-.helper-results table tr.helper-item td.helper-item-checker {
+.helper-results table tr.helper-item td.helper-item-checker-col {
   width: 4em;
-  border-right: 4px solid grey;
   background-color: whitesmoke;
   text-align: center;
 }
-/* line 305, ../../sass/modules/vidget.scss */
+/* line 304, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info {
   cursor: pointer;
+  border-left: 4px solid grey;
 }
 /* line 308, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info .helper-item-name {
@@ -784,31 +784,76 @@ input {
   color: whitesmoke;
   visibility: hidden;
 }
-/* line 316, ../../sass/modules/vidget.scss */
+/* line 315, ../../sass/modules/vidget.scss */
+.helper-results table tr.helper-item td.helper-item-info .helper-item-attrs-toggler.open {
+  /* Safari */
+  -webkit-transform: rotate(180deg);
+  /* Firefox */
+  -moz-transform: rotate(180deg);
+  /* IE */
+  -ms-transform: rotate(180deg);
+  /* Opera */
+  -o-transform: rotate(180deg);
+  /* Internet Explorer */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=6);
+}
+/* line 332, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info:hover {
   background-color: #DDD;
 }
-/* line 318, ../../sass/modules/vidget.scss */
+/* line 334, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info:hover .helper-item-attrs-toggler {
   visibility: visible;
 }
-/* line 325, ../../sass/modules/vidget.scss */
+/* line 340, ../../sass/modules/vidget.scss */
+.helper-results table tr.helper-item:hover td.helper-item-info {
+  border-left: 4px solid #118ddc;
+}
+/* line 346, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs {
   display: none;
 }
-/* line 328, ../../sass/modules/vidget.scss */
+/* line 348, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs td.helper-item-attr-spacer {
   width: 4em;
   background-color: whitesmoke;
 }
-/* line 332, ../../sass/modules/vidget.scss */
-.helper-results table tr.helper-item-attrs td.helper-item-attr-checker {
+/* line 354, ../../sass/modules/vidget.scss */
+.helper-results table tr.helper-item-attrs tr.helper-item-attr td.helper-item-attr-checker {
   width: 2em;
-  border-right: 2px solid grey;
   background-color: whitesmoke;
   text-align: center;
 }
-/* line 339, ../../sass/modules/vidget.scss */
-.helper-results table tr.helper-item-attrs td.helper-item-attr-info .helper-item-attr-name {
+/* line 359, ../../sass/modules/vidget.scss */
+.helper-results table tr.helper-item-attrs tr.helper-item-attr td.helper-item-attr-info {
+  border-left: 2px solid grey;
+}
+/* line 361, ../../sass/modules/vidget.scss */
+.helper-results table tr.helper-item-attrs tr.helper-item-attr td.helper-item-attr-info .helper-item-attr-name {
   padding: .5em 1em;
+}
+/* line 366, ../../sass/modules/vidget.scss */
+.helper-results table tr.helper-item-attrs tr.helper-item-attr:hover td.helper-item-attr-info {
+  border-left: 2px solid #118ddc;
+}
+
+@-webkit-keyframes icon-spinner-rotate {
+  /* line 376, ../../sass/modules/vidget.scss */
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+
+  /* line 379, ../../sass/modules/vidget.scss */
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+/* line 384, ../../sass/modules/vidget.scss */
+.icon-spinner {
+  display: block;
+  -webkit-animation-name: icon-spinner-rotate;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
 }

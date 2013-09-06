@@ -2932,7 +2932,7 @@ define(function (require) {
 				modal: true,
 				width: 900,
 				height: 650,
-				resizable: false,
+				resizable: true,
 				//close: _.bind(helper.tearDown, helper),
 				buttons: [
 					{text: "Вставить", "class": "button-color-green", click: _.bind(function () {
@@ -2945,13 +2945,19 @@ define(function (require) {
 			};
 			helper.render();
 
-			this.collection.fetch();
+			this.collection.fetch({data: {
+				limit: 9999,
+				filter: {
+					statusId: 0
+				}
+			}});
+
 			this.listenTo(this.collection, "reset", function () {
 				var results = $("<table/>");
 				this.collection.each(function (item) {
 					results.append(
 						"<tr class='helper-item'>"+
-							"<td class='helper-item-checker'><input type='checkbox' checked></td>"+
+							"<td class='helper-item-checker-col'><input type='checkbox' class='helper-item-checker' checked></td>"+
 							"<td class='helper-item-info' data-id='"+item.get("id")+"'>"+
 								"<div class='helper-item-name'><span>"+item.get("diagnosticName").name+"</span></div>"+
 								"<div class='helper-item-attrs-toggler'><i class='icon-chevron-down'></i></div>"+
@@ -2961,16 +2967,18 @@ define(function (require) {
 							"<td class='helper-item-attr-spacer'>&nbsp;</td>"+
 							"<td>"+
 								"<table class='helper-item-attrs-grid'>"+
-									"<tr><td class='helper-item-attr-checker'><i class='icon-spinner'></i></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'>Загрузка...</div></td></tr>"+									
+									"<tr class='helper-item-attr'><td class='helper-item-attr-checker'><i class='icon-spinner'></i></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'>Загрузка...</div></td></tr>"+									
 								"</table>"+
 							"</td>"+
 						"</tr>"
 						);
 				});
 
-				helper.$el.css({padding: 0});
-				helper.$(".helper-results").html(results);
+				helper.$el.css({padding: 0}).find(".helper-results").html(results);
+
 				helper.$(".helper-item-info").on("click", function () {
+					$(this).find(".helper-item-attrs-toggler").toggleClass("open");
+
 					var $attrsTr = $(this).parent().next().toggle();
 
 					if (!$attrsTr.data("loaded")) {
@@ -2985,14 +2993,30 @@ define(function (require) {
 						lrv.getResult(function () {
 								var resultData = lrv.resultData();
 								console.log(resultData);
-								$attrsGrid.html(resultData.tests.map(function (test) {
-									return "<tr><td class='helper-item-attr-checker'><input type='checkbox' checked></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'><b>"+test.name+":&nbsp;</b>"+(test.value || "-")+"</div></td></tr>";
-
-								}));
+								if (resultData.tests.length) {
+									$attrsGrid.html(resultData.tests.map(function (test) {
+										return "<tr class='helper-item-attr'>"+
+															"<td class='helper-item-attr-checker'>"+
+																"<input type='checkbox' checked>"+
+															"</td>"+
+															"<td class='helper-item-attr-info'>"+
+																"<div class='helper-item-attr-name'>"+
+																	"<b>"+test.name+":&nbsp;</b>"+(test.value ? test.value + " " + test.unit + " (норма: " + test.norm + ")" : "-")+
+																"</div>"+
+															"</td>"+
+														"</tr>";
+									}));
+								} else {
+									$attrsGrid.html("<tr class='helper-item-attr'><td class='helper-item-attr-checker'>&nbsp;</td><td class='helper-item-attr-info'><div class='helper-item-attr-name'><b>Нет тестов для вставки</b></div></td></tr>");
+								}								
 							}, function () {
 								console.log(arguments);
 							});
 					}
+				});
+
+				helper.$(".helper-item-checker").on("change", function () {
+					console.log("hey, I was changed!");
 				});
 			});
 		},
@@ -3021,23 +3045,13 @@ define(function (require) {
 			});
 
 			this.collection.extra = {
-				// doctorId: (this.options.appeal.get('execPerson')).id,
-				// userId: Core.Cookies.get("userId"),
 				appealClosed: appeal.get('closed')
 			};
 		}
-		//,
-
-		/*render: function () {
-			//TODO: Move to template
-			Documents.Views.Edit.UIElement.Html.prototype.render.call(this);
-			this.$(".editor-controls").append('<div style="float: right; margin-left: 2em;"><a href="#" class="Actions show-diagnostics-list">Обследования</a></div>');
-			return this;
-		}*/
 	});
 
 	/**
-	 * Поле типа Html и scope(valueDomain) = *2 ()
+	 * Поле типа Html и scope(valueDomain) = *2
 	 * @type {*}
 	 */
 	Documents.Views.Edit.UIElement.HtmlTherapy = Documents.Views.Edit.UIElement.HtmlHelper.extend({
@@ -3260,9 +3274,9 @@ define(function (require) {
 				break;
 			case "html":
 				if (options.model.get("scope") === "*1") {
-					this.UIElementClass = Documents.Views.Edit.UIElement.HtmlTherapy;
-				} else if (options.model.get("scope") === "*2") {
 					this.UIElementClass = Documents.Views.Edit.UIElement.HtmlDiagnostics;
+				} else if (options.model.get("scope") === "*2") {
+					this.UIElementClass = Documents.Views.Edit.UIElement.HtmlTherapy;					
 				} else {
 					this.UIElementClass = Documents.Views.Edit.UIElement.Html;					
 				}
