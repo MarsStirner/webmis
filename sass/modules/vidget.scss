@@ -293,3 +293,53 @@
 		padding: .2em;
 	}
 }
+.helper-results {
+	table {
+		tr.helper-item {
+			td.helper-item-checker {
+				width: 4em; 
+				border-right: 4px solid grey;
+				background-color: whitesmoke;
+				text-align: center;
+			}
+			td.helper-item-info {
+				cursor: pointer;
+
+				.helper-item-name {
+					padding: 1em 1em 0 1em;
+				}
+				.helper-item-attrs-toggler {					
+					text-align: center;
+					color: whitesmoke;
+					visibility: hidden;
+				}
+				&:hover {
+					background-color: #DDD; 
+					.helper-item-attrs-toggler {
+						visibility: visible;
+					}
+				}
+			}
+		}
+
+		tr.helper-item-attrs {
+			display: none;
+
+			td.helper-item-attr-spacer {
+				width: 4em;
+				background-color: whitesmoke;
+			}
+			td.helper-item-attr-checker {
+				width: 2em; 
+				border-right: 2px solid grey;
+				background-color: whitesmoke;
+				text-align: center;
+			}
+			td.helper-item-attr-info {
+				.helper-item-attr-name {
+					padding: .5em 1em;
+				}
+			}
+		}
+	}
+}

@@ -101,6 +101,8 @@ define(function (require) {
 	var FlatDirectory = require("models/flat-directory");
 	var MKB = require("views/mkb-directory");
 	var PersonDialog = require("views/ui/PersonDialog");
+	var LabResult = require('models/diagnostics/laboratory/laboratory-diag-form');
+	var LaboratoryResultView = require("views/diagnostics/laboratory/AnalysisResultView");
 
 	var FDLoader = {
 		fds: {},
@@ -2922,7 +2924,77 @@ define(function (require) {
 
 		onHelperOpenClick: function (event) {
 			event.preventDefault();
-			console.log("show helper yo!");
+
+			var helper = new PopUpBase();
+			helper.template = _.template("<div class='helper-results'>Загрузка...</div>");
+			helper.dialogOptions = {
+				title: "Выберите исследования для вставки",
+				modal: true,
+				width: 900,
+				height: 650,
+				resizable: false,
+				//close: _.bind(helper.tearDown, helper),
+				buttons: [
+					{text: "Вставить", "class": "button-color-green", click: _.bind(function () {
+						//TODO: 
+					}, this)},
+					{text: "Отмена", click:  function () {
+						helper.tearDown();
+					}}
+				]
+			};
+			helper.render();
+
+			this.collection.fetch();
+			this.listenTo(this.collection, "reset", function () {
+				var results = $("<table/>");
+				this.collection.each(function (item) {
+					results.append(
+						"<tr class='helper-item'>"+
+							"<td class='helper-item-checker'><input type='checkbox' checked></td>"+
+							"<td class='helper-item-info' data-id='"+item.get("id")+"'>"+
+								"<div class='helper-item-name'><span>"+item.get("diagnosticName").name+"</span></div>"+
+								"<div class='helper-item-attrs-toggler'><i class='icon-chevron-down'></i></div>"+
+							"</td>"+
+						"</tr>"+
+						"<tr class='helper-item-attrs'>"+
+							"<td class='helper-item-attr-spacer'>&nbsp;</td>"+
+							"<td>"+
+								"<table class='helper-item-attrs-grid'>"+
+									"<tr><td class='helper-item-attr-checker'><i class='icon-spinner'></i></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'>Загрузка...</div></td></tr>"+									
+								"</table>"+
+							"</td>"+
+						"</tr>"
+						);
+				});
+
+				helper.$el.css({padding: 0});
+				helper.$(".helper-results").html(results);
+				helper.$(".helper-item-info").on("click", function () {
+					var $attrsTr = $(this).parent().next().toggle();
+
+					if (!$attrsTr.data("loaded")) {
+						var $attrsGrid = $attrsTr.data("loaded", true).find(".helper-item-attrs-grid");
+
+						var lrv = new LaboratoryResultView({
+							appeal: appeal,
+							appealId: appealId,
+							modelId: $(this).data("id")
+						});
+
+						lrv.getResult(function () {
+								var resultData = lrv.resultData();
+								console.log(resultData);
+								$attrsGrid.html(resultData.tests.map(function (test) {
+									return "<tr><td class='helper-item-attr-checker'><input type='checkbox' checked></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'><b>"+test.name+":&nbsp;</b>"+(test.value || "-")+"</div></td></tr>";
+
+								}));
+							}, function () {
+								console.log(arguments);
+							});
+					}
+				});
+			});
 		},
 	});
 
@@ -2935,6 +3007,23 @@ define(function (require) {
 			return {
 				helperLabel: "Обследования",
 				model: this.model
+			};
+		},
+
+		initialize: function () {
+			Documents.Views.Edit.UIElement.HtmlHelper.prototype.initialize.call(this, this.options)
+
+			this.collection = new App.Collections.LaboratoryDiags();
+			this.collection.appealId = appealId;
+			this.collection.setParams({
+				sortingField: "plannedEndDate",
+				sortingMethod: "desc"
+			});
+
+			this.collection.extra = {
+				// doctorId: (this.options.appeal.get('execPerson')).id,
+				// userId: Core.Cookies.get("userId"),
+				appealClosed: appeal.get('closed')
 			};
 		}
 		//,
