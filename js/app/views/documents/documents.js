@@ -103,6 +103,10 @@ define(function (require) {
 	var PersonDialog = require("views/ui/PersonDialog");
 	var LabResult = require('models/diagnostics/laboratory/laboratory-diag-form');
 	var LaboratoryResultView = require("views/diagnostics/laboratory/AnalysisResultView");
+	var InstrumentalResearchs = require('collections/diagnostics/instrumental/InstrumentalResearchs');
+	var InstrumentalResultView = require("views/diagnostics/instrumental/InstrumentalResultView");
+	var Consultations = require('collections/diagnostics/consultations/Consultations');
+	var ConsultationsResultView = require("views/diagnostics/consultations/ConsultationsResultView");
 
 	var FDLoader = {
 		fds: {},
@@ -2922,12 +2926,86 @@ define(function (require) {
 			};
 		},
 
+		renderResults: function (coll) {
+			var results = $("<table/>");
+			coll.each(function (item) {
+				results.append(
+					"<tr class='helper-item'>"+
+						"<td class='helper-item-checker-col'><input type='checkbox' class='helper-item-checker' checked></td>"+
+						"<td class='helper-item-info' data-id='"+item.get("id")+"'>"+
+							"<div class='helper-item-name'><span>"+item.get("diagnosticName").name+"</span></div>"+
+							"<div class='helper-item-attrs-toggler'><i class='icon-chevron-down'></i></div>"+
+						"</td>"+
+					"</tr>"+
+					"<tr class='helper-item-attrs'>"+
+						"<td class='helper-item-attr-spacer'>&nbsp;</td>"+
+						"<td>"+
+							"<table class='helper-item-attrs-grid'>"+
+								"<tr class='helper-item-attr'><td class='helper-item-attr-checker'><i class='icon-spinner'></i></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'>Загрузка...</div></td></tr>"+									
+							"</table>"+
+						"</td>"+
+					"</tr>"
+					);
+			});
+
+			var $helperResults = this.helper.$el.css({padding: 0}).find(".helper-results");
+			$helperResults.find(".init-loader").remove();
+
+			$helperResults.append(
+				"<h3 style='padding: .5em 1em;border-bottom: 1px solid gray;'>"+coll.extra.displayLabel+"</h3>", 
+				results);
+
+			$(".helper-item-info", results).on("click", function () {
+				$(this).find(".helper-item-attrs-toggler").toggleClass("open");
+
+				var $attrsTr = $(this).parent().next().toggle();
+
+				if (!$attrsTr.data("loaded")) {
+					var $attrsGrid = $attrsTr.data("loaded", true).find(".helper-item-attrs-grid");
+
+					var lrv = new coll.extra.ResultView({
+						appeal: appeal,
+						appealId: appealId,
+						modelId: $(this).data("id")
+					});
+
+					lrv.getResult(function () {
+							var resultData = lrv.resultData();
+							console.log(resultData);
+							if (resultData.tests.length) {
+								$attrsGrid.html(resultData.tests.map(function (test) {
+									return "<tr class='helper-item-attr'>"+
+														"<td class='helper-item-attr-checker'>"+
+															"<input type='checkbox' checked>"+
+														"</td>"+
+														"<td class='helper-item-attr-info'>"+
+															"<div class='helper-item-attr-name'>"+
+																"<b>"+test.name+":&nbsp;</b>"+
+																(test.value ? test.value + " " + (test.unit || "") +  (test.norm ? " (норма: " + test.norm + ")" : "") : "-")+
+															"</div>"+
+														"</td>"+
+													"</tr>";
+								}));
+							} else {
+								$attrsGrid.html("<tr class='helper-item-attr'><td class='helper-item-attr-checker'>&nbsp;</td><td class='helper-item-attr-info'><div class='helper-item-attr-name'><b>Нет тестов для вставки</b></div></td></tr>");
+							}								
+						}, function () {
+							console.log(arguments);
+						});
+				}
+			});
+
+			this.helper.$(".helper-item-checker").on("change", function () {
+				console.log("hey, I was changed! did I?");
+			});
+		},
+
 		onHelperOpenClick: function (event) {
 			event.preventDefault();
 
-			var helper = new PopUpBase();
-			helper.template = _.template("<div class='helper-results'>Загрузка...</div>");
-			helper.dialogOptions = {
+			this.helper = new PopUpBase();
+			this.helper.template = _.template("<div class='helper-results'><span class='init-loader'>Загрузка...</span></div>");
+			this.helper.dialogOptions = {
 				title: "Выберите исследования для вставки",
 				modal: true,
 				width: 900,
@@ -2938,88 +3016,38 @@ define(function (require) {
 					{text: "Вставить", "class": "button-color-green", click: _.bind(function () {
 						//TODO: 
 					}, this)},
-					{text: "Отмена", click:  function () {
-						helper.tearDown();
-					}}
+					{text: "Отмена", click:  _.bind(function () {
+						this.helper.tearDown();
+					}, this)}
 				]
 			};
-			helper.render();
+			this.helper.render();
 
-			this.collection.fetch({data: {
+			this.labs.fetch({data: {
 				limit: 9999,
 				filter: {
-					statusId: 0
+					statusId: 2
 				}
 			}});
 
-			this.listenTo(this.collection, "reset", function () {
-				var results = $("<table/>");
-				this.collection.each(function (item) {
-					results.append(
-						"<tr class='helper-item'>"+
-							"<td class='helper-item-checker-col'><input type='checkbox' class='helper-item-checker' checked></td>"+
-							"<td class='helper-item-info' data-id='"+item.get("id")+"'>"+
-								"<div class='helper-item-name'><span>"+item.get("diagnosticName").name+"</span></div>"+
-								"<div class='helper-item-attrs-toggler'><i class='icon-chevron-down'></i></div>"+
-							"</td>"+
-						"</tr>"+
-						"<tr class='helper-item-attrs'>"+
-							"<td class='helper-item-attr-spacer'>&nbsp;</td>"+
-							"<td>"+
-								"<table class='helper-item-attrs-grid'>"+
-									"<tr class='helper-item-attr'><td class='helper-item-attr-checker'><i class='icon-spinner'></i></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'>Загрузка...</div></td></tr>"+									
-								"</table>"+
-							"</td>"+
-						"</tr>"
-						);
-				});
+			this.insts.fetch({data: {
+				limit: 9999,
+				filter: {
+					statusId: 2
+				}
+			}});
 
-				helper.$el.css({padding: 0}).find(".helper-results").html(results);
+			this.cons.fetch({data: {
+				limit: 9999,
+				filter: {
+					statusId: 2
+				}
+			}});
 
-				helper.$(".helper-item-info").on("click", function () {
-					$(this).find(".helper-item-attrs-toggler").toggleClass("open");
-
-					var $attrsTr = $(this).parent().next().toggle();
-
-					if (!$attrsTr.data("loaded")) {
-						var $attrsGrid = $attrsTr.data("loaded", true).find(".helper-item-attrs-grid");
-
-						var lrv = new LaboratoryResultView({
-							appeal: appeal,
-							appealId: appealId,
-							modelId: $(this).data("id")
-						});
-
-						lrv.getResult(function () {
-								var resultData = lrv.resultData();
-								console.log(resultData);
-								if (resultData.tests.length) {
-									$attrsGrid.html(resultData.tests.map(function (test) {
-										return "<tr class='helper-item-attr'>"+
-															"<td class='helper-item-attr-checker'>"+
-																"<input type='checkbox' checked>"+
-															"</td>"+
-															"<td class='helper-item-attr-info'>"+
-																"<div class='helper-item-attr-name'>"+
-																	"<b>"+test.name+":&nbsp;</b>"+(test.value ? test.value + " " + test.unit + " (норма: " + test.norm + ")" : "-")+
-																"</div>"+
-															"</td>"+
-														"</tr>";
-									}));
-								} else {
-									$attrsGrid.html("<tr class='helper-item-attr'><td class='helper-item-attr-checker'>&nbsp;</td><td class='helper-item-attr-info'><div class='helper-item-attr-name'><b>Нет тестов для вставки</b></div></td></tr>");
-								}								
-							}, function () {
-								console.log(arguments);
-							});
-					}
-				});
-
-				helper.$(".helper-item-checker").on("change", function () {
-					console.log("hey, I was changed!");
-				});
-			});
-		},
+			this.listenTo(this.labs, "reset", this.renderResults);
+			this.listenTo(this.insts, "reset", this.renderResults);
+			this.listenTo(this.cons, "reset", this.renderResults);
+		}
 	});
 
 	/**
@@ -3034,18 +3062,53 @@ define(function (require) {
 			};
 		},
 
-		initialize: function () {
+		initialize: function () {			
 			Documents.Views.Edit.UIElement.HtmlHelper.prototype.initialize.call(this, this.options)
-
-			this.collection = new App.Collections.LaboratoryDiags();
-			this.collection.appealId = appealId;
-			this.collection.setParams({
+			//LABS
+			//-----------------------
+			this.labs = new App.Collections.LaboratoryDiags();
+			this.labs.appealId = appealId;
+			this.labs.setParams({
 				sortingField: "plannedEndDate",
 				sortingMethod: "desc"
 			});
 
-			this.collection.extra = {
-				appealClosed: appeal.get('closed')
+			this.labs.extra = {
+				appealClosed: appeal.get('closed'),
+				displayLabel: "Лабораторные исследования",
+				ResultView: LaboratoryResultView
+			};
+
+			//INSTS
+			//-----------------------
+			this.insts = new InstrumentalResearchs([], {
+				appealId: appealId
+			});
+			this.insts.setParams({
+				sortingField: "plannedEndDate",
+				sortingMethod: "desc"
+			});
+			this.insts.extra = {
+				appealClosed: appeal.get('closed'),
+				displayLabel: "Инструментальные исследования",
+				ResultView: InstrumentalResultView
+			};
+
+			//CONS
+			//-----------------------
+			this.cons = new Consultations();
+			this.cons.appealId = appealId;
+
+
+			this.cons.setParams({
+				sortingField: "plannedEndDate",
+				sortingMethod: "desc"
+			});
+
+			this.cons.extra = {
+				appealClosed: appeal.get('closed'),
+				displayLabel: "Консультации",
+				ResultView: ConsultationsResultView
 			};
 		}
 	});
