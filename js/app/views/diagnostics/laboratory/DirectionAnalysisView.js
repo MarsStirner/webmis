@@ -243,7 +243,7 @@ define(function(require) {
 					date = date ? date : new Date;
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
-					var day = moment().startOf('day');
+					var day = moment(date).startOf('day');
 					var currentMinute = moment().minute();
 					//если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
 					if (day.diff(currentDay, 'days') === 0) {
