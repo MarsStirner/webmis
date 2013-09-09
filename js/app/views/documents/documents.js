@@ -2928,7 +2928,7 @@ define(function (require) {
 
 		renderResults: function (coll) {
 			var results = $("<table/>");
-			
+
 			if (coll.length) {
 				coll.each(function (item) {
 					results.append(
@@ -2943,7 +2943,7 @@ define(function (require) {
 							"<td class='helper-item-attr-spacer'>&nbsp;</td>"+
 							"<td>"+
 								"<table class='helper-item-attrs-grid'>"+
-									"<tr class='helper-item-attr'><td class='helper-item-attr-checker'><i class='icon-spinner'></i></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'>Загрузка...</div></td></tr>"+									
+									"<tr class='helper-item-attr'><td class='helper-item-attr-checker'><i class='icon-spinner'></i></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'>Загрузка...</div></td></tr>"+
 								"</table>"+
 							"</td>"+
 						"</tr>"
@@ -2960,13 +2960,13 @@ define(function (require) {
 					"</tr>"
 					);
 			}
-			
+
 
 			var $helperResults = this.$el.css({padding: 0}).find(".helper-results");
 			$helperResults.find(".init-loader").remove();
 
 			$helperResults.append(
-				"<h3 style='padding: .5em 1em;border-bottom: 1px solid gray;'>"+coll.extra.displayLabel+"</h3>", 
+				"<h3 style='padding: .5em 1em;border-bottom: 1px solid gray;'>"+coll.extra.displayLabel+"</h3>",
 				results);
 
 			$(".helper-item-info", results).on("click", function () {
@@ -3002,14 +3002,14 @@ define(function (require) {
 								}));
 							} else {
 								$attrsGrid.html("<tr class='helper-item-attr'><td class='helper-item-attr-checker'>&nbsp;</td><td class='helper-item-attr-info'><div class='helper-item-attr-name'><b>Нет тестов для вставки</b></div></td></tr>");
-							}								
+							}
 						}, function () {
 							console.log(arguments);
 						});
 				}
 			});
 
-			this.$(".helper-item-checker").on("change", function () {
+			$(".helper-item-checker", results).on("change", function () {
 				console.log("hey, I was changed! did I?");
 			});
 		},
@@ -3028,7 +3028,7 @@ define(function (require) {
 				//close: _.bind(helper.tearDown, helper),
 				buttons: [
 					{text: "Вставить", "class": "button-color-green", click: _.bind(function () {
-						//TODO: 
+						//TODO:
 					}, this)},
 					{text: "Отмена", click:  _.bind(function () {
 						helper.tearDown();
@@ -3076,7 +3076,7 @@ define(function (require) {
 			};
 		},
 
-		initialize: function () {			
+		initialize: function () {
 			Documents.Views.Edit.UIElement.HtmlHelper.prototype.initialize.call(this, this.options)
 			//LABS
 			//-----------------------
@@ -3353,9 +3353,9 @@ define(function (require) {
 				if (options.model.get("scope") === "*1") {
 					this.UIElementClass = Documents.Views.Edit.UIElement.HtmlDiagnostics;
 				} else if (options.model.get("scope") === "*2") {
-					this.UIElementClass = Documents.Views.Edit.UIElement.HtmlTherapy;					
+					this.UIElementClass = Documents.Views.Edit.UIElement.HtmlTherapy;
 				} else {
-					this.UIElementClass = Documents.Views.Edit.UIElement.Html;					
+					this.UIElementClass = Documents.Views.Edit.UIElement.Html;
 				}
 				break;
 			case "orgstructure":
