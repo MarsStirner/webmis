@@ -819,7 +819,7 @@ input {
   background-color: whitesmoke;
 }
 /* line 354, ../../sass/modules/vidget.scss */
-.helper-results table tr.helper-item-attrs tr.helper-item-attr td.helper-item-attr-checker {
+.helper-results table tr.helper-item-attrs tr.helper-item-attr td.helper-item-attr-checker-col {
   width: 2em;
   background-color: whitesmoke;
   text-align: center;

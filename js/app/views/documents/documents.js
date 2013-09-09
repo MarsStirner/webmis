@@ -2926,8 +2926,20 @@ define(function (require) {
 			};
 		},
 
+		/**
+		 * Did I ever tell you definition of insanity?
+		 * @param  {[type]} coll
+		 * @return {[type]}
+		 */
 		renderResults: function (coll) {
 			var results = $("<table/>");
+			var $helperResults = this.$el.css({padding: 0}).find(".helper-results");
+
+			$helperResults.find(".init-loader").remove();
+
+			$helperResults.append(
+				"<h3 style='padding: .5em 1em;border-bottom: 1px solid gray;'>"+coll.extra.displayLabel+"</h3>",
+				results);
 
 			if (coll.length) {
 				coll.each(function (item) {
@@ -2943,11 +2955,91 @@ define(function (require) {
 							"<td class='helper-item-attr-spacer'>&nbsp;</td>"+
 							"<td>"+
 								"<table class='helper-item-attrs-grid'>"+
-									"<tr class='helper-item-attr'><td class='helper-item-attr-checker'><i class='icon-spinner'></i></td><td class='helper-item-attr-info'><div class='helper-item-attr-name'>Загрузка...</div></td></tr>"+
+									"<tr class='helper-item-attr'>"+
+										"<td class='helper-item-attr-checker-col'>"+
+											"<i class='icon-spinner'></i>"+
+										"</td>"+
+										"<td class='helper-item-attr-info'>"+
+											"<div class='helper-item-attr-name'>Загрузка...</div>"+
+										"</td>"+
+									"</tr>"+
 								"</table>"+
 							"</td>"+
 						"</tr>"
 						);
+				});
+
+				$(".helper-item-info", results).on("click", function () {
+					$(this).find(".helper-item-attrs-toggler").toggleClass("open");
+
+					var $attrsTr = $(this).parent().next().toggle();
+
+					if (!$attrsTr.data("loaded")) {
+						var $attrsGrid = $attrsTr.data("loaded", true).find(".helper-item-attrs-grid");
+
+						var lrv = new coll.extra.ResultView({
+							appeal: appeal,
+							appealId: appealId,
+							modelId: $(this).data("id")
+						});
+
+						lrv.getResult(function () {
+								var resultData = lrv.resultData();
+								console.log(resultData);
+								if (resultData.tests.length) {
+									$attrsGrid.html(resultData.tests.map(function (test) {
+										return "<tr class='helper-item-attr'>"+
+													"<td class='helper-item-attr-checker-col'>"+
+														"<input type='checkbox' class='helper-item-attr-checker' checked>"+
+													"</td>"+
+													"<td class='helper-item-attr-info'>"+
+														"<div class='helper-item-attr-name'>"+
+															"<b>"+test.name+":&nbsp;</b>"+
+															(test.value ? test.value + " " + (test.unit || "") +  (test.norm ? " (норма: " + test.norm + ")" : "") : "-")+
+														"</div>"+
+													"</td>"+
+												"</tr>";
+									}));
+
+									$(".helper-item-attr-checker", $attrsGrid).on("change", function () {
+										console.log(this);
+										var $attrCheckers = $(".helper-item-attr-checker:checked", $attrsGrid);
+
+										if ($attrCheckers.length === resultData.tests.length) {
+											$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
+												.prop("checked", true)
+												.prop("indeterminate", false);
+										} else {
+											if ($attrCheckers.length === 0) {
+												$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
+													.prop("checked", false)
+													.prop("indeterminate", false);
+											} else {
+												$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
+													.prop("checked", true)
+													.prop("indeterminate", true);
+											}
+										}
+									});
+								} else {
+									$attrsGrid.html("<tr class='helper-item-attr'>"+
+														"<td class='helper-item-attr-checker-col'>&nbsp;</td>"+
+														"<td class='helper-item-attr-info'>"+
+															"<div class='helper-item-attr-name'>"+
+																"<b>Нет тестов для вставки</b>"+
+															"</div>"+
+														"</td>"+
+													"</tr>");
+								}
+							}, function () {
+								console.log(arguments);
+							});
+					}
+				});
+
+				$(".helper-item-checker", results).on("change", function () {
+					console.log(this);
+					$(".helper-item-attr-checker", $(this).parent().parent().next()).prop("checked", $(this).prop("checked"));
 				});
 			} else {
 				results.append(
@@ -2960,58 +3052,6 @@ define(function (require) {
 					"</tr>"
 					);
 			}
-
-
-			var $helperResults = this.$el.css({padding: 0}).find(".helper-results");
-			$helperResults.find(".init-loader").remove();
-
-			$helperResults.append(
-				"<h3 style='padding: .5em 1em;border-bottom: 1px solid gray;'>"+coll.extra.displayLabel+"</h3>",
-				results);
-
-			$(".helper-item-info", results).on("click", function () {
-				$(this).find(".helper-item-attrs-toggler").toggleClass("open");
-
-				var $attrsTr = $(this).parent().next().toggle();
-
-				if (!$attrsTr.data("loaded")) {
-					var $attrsGrid = $attrsTr.data("loaded", true).find(".helper-item-attrs-grid");
-
-					var lrv = new coll.extra.ResultView({
-						appeal: appeal,
-						appealId: appealId,
-						modelId: $(this).data("id")
-					});
-
-					lrv.getResult(function () {
-							var resultData = lrv.resultData();
-							console.log(resultData);
-							if (resultData.tests.length) {
-								$attrsGrid.html(resultData.tests.map(function (test) {
-									return "<tr class='helper-item-attr'>"+
-														"<td class='helper-item-attr-checker'>"+
-															"<input type='checkbox' checked>"+
-														"</td>"+
-														"<td class='helper-item-attr-info'>"+
-															"<div class='helper-item-attr-name'>"+
-																"<b>"+test.name+":&nbsp;</b>"+
-																(test.value ? test.value + " " + (test.unit || "") +  (test.norm ? " (норма: " + test.norm + ")" : "") : "-")+
-															"</div>"+
-														"</td>"+
-													"</tr>";
-								}));
-							} else {
-								$attrsGrid.html("<tr class='helper-item-attr'><td class='helper-item-attr-checker'>&nbsp;</td><td class='helper-item-attr-info'><div class='helper-item-attr-name'><b>Нет тестов для вставки</b></div></td></tr>");
-							}
-						}, function () {
-							console.log(arguments);
-						});
-				}
-			});
-
-			$(".helper-item-checker", results).on("change", function () {
-				console.log("hey, I was changed! did I?");
-			});
 		},
 
 		onHelperOpenClick: function (event) {

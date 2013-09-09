@@ -297,7 +297,7 @@
 	table {
 		tr.helper-item {
 			td.helper-item-checker-col {
-				width: 4em;				
+				width: 4em;
 				background-color: whitesmoke;
 				text-align: center;
 			}
@@ -308,7 +308,7 @@
 				.helper-item-name {
 					padding: 1em 1em 0 1em;
 				}
-				.helper-item-attrs-toggler {					
+				.helper-item-attrs-toggler {
 					text-align: center;
 					color: whitesmoke;
 					visibility: hidden;
@@ -330,7 +330,7 @@
 					}
 				}
 				&:hover {
-					background-color: #DDD;					
+					background-color: #DDD;
 					.helper-item-attrs-toggler {
 						visibility: visible;
 					}
@@ -350,9 +350,9 @@
 				background-color: whitesmoke;
 			}
 			tr.helper-item-attr {
-				
-				td.helper-item-attr-checker {
-					width: 2em;				
+
+				td.helper-item-attr-checker-col {
+					width: 2em;
 					background-color: whitesmoke;
 					text-align: center;
 				}
@@ -376,15 +376,15 @@
   from {
     -webkit-transform: rotate(0deg);
   }
-  to { 
+  to {
     -webkit-transform: rotate(360deg);
   }
 }
 
 .icon-spinner {
 	display: block;
-	-webkit-animation-name: icon-spinner-rotate; 
-    -webkit-animation-duration: 1s; 
+	-webkit-animation-name: icon-spinner-rotate;
+    -webkit-animation-duration: 1s;
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-timing-function: linear;
 }
