@@ -2909,28 +2909,9 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({});
 
 	/**
-	 * Поле типа Html и scope(valueDomain) подходящим под паттерн *[1234]
-	 * @type {*}
+	 * Did I ever tell you definition of insanity?
 	 */
-	Documents.Views.Edit.UIElement.HtmlHelper = Documents.Views.Edit.UIElement.Html.extend({
-		template: templates.uiElements._htmlHelper,
-
-		events: _.extend({
-			"click .helper-open": "onHelperOpenClick"
-		}, Documents.Views.Edit.UIElement.Html.prototype.events),
-
-		data: function () {
-			return {
-				helperLabel: "helper",
-				model: this.model
-			};
-		},
-
-		/**
-		 * Did I ever tell you definition of insanity?
-		 * @param  {[type]} coll
-		 * @return {[type]}
-		 */
+	var HtmlHelperPopUp = PopUpBase.extend({
 		renderResults: function (coll) {
 			var results = $("<table/>");
 			var $helperResults = this.$el.css({padding: 0}).find(".helper-results");
@@ -2943,15 +2924,16 @@ define(function (require) {
 
 			if (coll.length) {
 				coll.each(function (item) {
+					item.checked = true;
 					results.append(
 						"<tr class='helper-item'>"+
-							"<td class='helper-item-checker-col'><input type='checkbox' class='helper-item-checker' checked></td>"+
+							"<td class='helper-item-checker-col'><input type='checkbox' class='helper-item-checker' data-id='"+item.get("id")+"' checked></td>"+
 							"<td class='helper-item-info' data-id='"+item.get("id")+"'>"+
 								"<div class='helper-item-name'><span>"+item.get("diagnosticName").name+"</span></div>"+
 								"<div class='helper-item-attrs-toggler'><i class='icon-chevron-down'></i></div>"+
 							"</td>"+
 						"</tr>"+
-						"<tr class='helper-item-attrs'>"+
+						"<tr class='helper-item-attrs' data-id='"+item.get("id")+"'>"+
 							"<td class='helper-item-attr-spacer'>&nbsp;</td>"+
 							"<td>"+
 								"<table class='helper-item-attrs-grid'>"+
@@ -2969,77 +2951,16 @@ define(function (require) {
 						);
 				});
 
-				$(".helper-item-info", results).on("click", function () {
-					$(this).find(".helper-item-attrs-toggler").toggleClass("open");
+				results.find(".helper-item-attrs").data("coll", coll);
 
-					var $attrsTr = $(this).parent().next().toggle();
-
-					if (!$attrsTr.data("loaded")) {
-						var $attrsGrid = $attrsTr.data("loaded", true).find(".helper-item-attrs-grid");
-
-						var lrv = new coll.extra.ResultView({
-							appeal: appeal,
-							appealId: appealId,
-							modelId: $(this).data("id")
-						});
-
-						lrv.getResult(function () {
-								var resultData = lrv.resultData();
-								console.log(resultData);
-								if (resultData.tests.length) {
-									$attrsGrid.html(resultData.tests.map(function (test) {
-										return "<tr class='helper-item-attr'>"+
-													"<td class='helper-item-attr-checker-col'>"+
-														"<input type='checkbox' class='helper-item-attr-checker' checked>"+
-													"</td>"+
-													"<td class='helper-item-attr-info'>"+
-														"<div class='helper-item-attr-name'>"+
-															"<b>"+test.name+":&nbsp;</b>"+
-															(test.value ? test.value + " " + (test.unit || "") +  (test.norm ? " (норма: " + test.norm + ")" : "") : "-")+
-														"</div>"+
-													"</td>"+
-												"</tr>";
-									}));
-
-									$(".helper-item-attr-checker", $attrsGrid).on("change", function () {
-										console.log(this);
-										var $attrCheckers = $(".helper-item-attr-checker:checked", $attrsGrid);
-
-										if ($attrCheckers.length === resultData.tests.length) {
-											$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
-												.prop("checked", true)
-												.prop("indeterminate", false);
-										} else {
-											if ($attrCheckers.length === 0) {
-												$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
-													.prop("checked", false)
-													.prop("indeterminate", false);
-											} else {
-												$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
-													.prop("checked", true)
-													.prop("indeterminate", true);
-											}
-										}
-									});
-								} else {
-									$attrsGrid.html("<tr class='helper-item-attr'>"+
-														"<td class='helper-item-attr-checker-col'>&nbsp;</td>"+
-														"<td class='helper-item-attr-info'>"+
-															"<div class='helper-item-attr-name'>"+
-																"<b>Нет тестов для вставки</b>"+
-															"</div>"+
-														"</td>"+
-													"</tr>");
-								}
-							}, function () {
-								console.log(arguments);
-							});
-					}
-				});
+				$(".helper-item-info", results).on("click", _.bind(function (event) {
+					this.renderHelperAttrs(event, coll);
+				}, this));
 
 				$(".helper-item-checker", results).on("change", function () {
 					console.log(this);
 					$(".helper-item-attr-checker", $(this).parent().parent().next()).prop("checked", $(this).prop("checked"));
+					coll.get($(this).data("id")).checked = $(this).prop("checked");
 				});
 			} else {
 				results.append(
@@ -3054,10 +2975,175 @@ define(function (require) {
 			}
 		},
 
+		renderHelperAttrs: function (event, coll) {
+			var $target = $(event.currentTarget);
+			$target.find(".helper-item-attrs-toggler").toggleClass("open");
+
+			var $attrsTr = $target.parent().next().toggle();
+
+			if (!$attrsTr.data("loaded")) {
+				var $attrsGrid = $attrsTr.data("loaded", true).find(".helper-item-attrs-grid");
+
+				/*var lrv = new coll.extra.ResultView({
+					appeal: appeal,
+					appealId: appealId,
+					modelId: $target.data("id")
+				});*/
+
+				//lrv.getResult(function (resultData) {
+				this.getHelperAttrs(coll, $target.data("id"), function (resultData) {
+					//var resultData = lrv.resultData();
+					console.log(resultData);
+					if (resultData.tests.length) {
+						$attrsGrid.empty().append(resultData.tests.map(function (test) {
+							var helperAttrRow = $("<tr class='helper-item-attr'>"+
+										"<td class='helper-item-attr-checker-col'>"+
+											"<input type='checkbox' class='helper-item-attr-checker' checked>"+
+										"</td>"+
+										"<td class='helper-item-attr-info'>"+
+											"<div class='helper-item-attr-name'>"+
+												"<b>"+test.name+":&nbsp;</b>"+
+												(test.value ? test.value + " " + (test.unit || "") +  (test.norm ? " (норма: " + test.norm + ")" : "") : "-")+
+											"</div>"+
+										"</td>"+
+									"</tr>");
+							helperAttrRow.find(".helper-item-attr-checker").data("test", test);
+							return helperAttrRow;
+						}));
+
+						$(".helper-item-attr-checker", $attrsGrid).on("change", function () {
+							console.log(this);
+							var $attrCheckers = $(".helper-item-attr-checker:checked", $attrsGrid);
+
+							if ($attrCheckers.length === resultData.tests.length) {
+								$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
+									.prop("checked", true)
+									.prop("indeterminate", false);
+
+							} else {
+								if ($attrCheckers.length === 0) {
+									$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
+										.prop("checked", false)
+										.prop("indeterminate", false);
+								} else {
+									$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
+										.prop("checked", true)
+										.prop("indeterminate", true);
+								}
+							}
+
+							$(this).data("test").checked = $(this).prop("checked");
+						});
+					} else {
+						$attrsGrid.html("<tr class='helper-item-attr'>"+
+											"<td class='helper-item-attr-checker-col'>&nbsp;</td>"+
+											"<td class='helper-item-attr-info'>"+
+												"<div class='helper-item-attr-name'>"+
+													"<b>Нет тестов для вставки</b>"+
+												"</div>"+
+											"</td>"+
+										"</tr>");
+					}
+				}, function () {
+					console.log(arguments);
+				});
+			}
+		},
+
+		getHelperAttrs: function (coll, itemId, cb) {
+			var lrv = new coll.extra.ResultView({
+				appeal: appeal,
+				appealId: appealId,
+				modelId: itemId
+			});
+
+			return lrv.getResult(function () {
+				var resultData = lrv.resultData();
+				_.each(resultData.tests, function (test) {
+					test.checked = true;
+				});
+				coll.get(itemId).parsedAttrs = resultData;
+				cb(resultData);
+			});
+		},
+
+		brutalLoader: function (cb) {
+			/*this.$(".helper-item-attrs").each(function () {
+				if (!$(this).data("loaded")) {
+					var notLoadedIds = $(this).prev().find(".helper-item-info").map(function () {
+						return $(this).data("id");
+					});
+					console.log(notLoadedIds.length);
+					console.log(notLoadedIds);
+				}
+			});*/
+
+			var self = this;
+			var notLoadedIds = [];
+			var promises = [];
+
+			this.$(".helper-item-attrs").each(function () {
+				if (!$(this).data("loaded")) {
+					$(this).data("loaded", true);
+					//notLoadedIds.push($(this).prev().find(".helper-item-info").data("id"));
+
+					promises.push(self.getHelperAttrs($(this).data("coll"), $(this).data("id"), function (resultData) {
+						console.log(resultData);
+					}));
+				}
+			});
+
+			$.when.apply($, promises).done(function () {
+				console.log("I'm so sorry...");
+				cb();
+			});
+			/*console.log(notLoadedIds.length);
+			console.log(notLoadedIds);*/
+		}
+	});
+
+	var HtmlHelperPopUpSections = RepeaterBase.extend({});
+
+	var HtmlHelperPopUpSection = UIElementBase.extend({
+		template: _.template("<section><h3><%=name%></h3><table class='helper-items-grid'></table></section>")
+	});
+
+	var HtmlHelperPopUpSectionRows = RepeaterBase.extend({});
+
+	var HtmlHelperPopUpSectionRow = UIElementBase.extend({
+		template: _.template()
+	});
+
+	var HtmlHelperPopUpSubSections = RepeaterBase.extend({});
+
+	var HtmlHelperPopUpSubSection = UIElementBase.extend({});
+
+	var HtmlHelperPopUpSubSectionRows = RepeaterBase.extend({});
+
+	var HtmlHelperPopUpSubSectionRow = UIElementBase.extend({});
+
+	/**
+	 * Поле типа Html и scope(valueDomain) подходящим под паттерн *[1234]
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.HtmlHelper = Documents.Views.Edit.UIElement.Html.extend({
+		template: templates.uiElements._htmlHelper,
+
+		events: _.extend({
+			"click .helper-open": "onHelperOpenClick"
+		}, Documents.Views.Edit.UIElement.Html.prototype.events),
+
+		data: function () {
+			return {
+				helperLabel: "helper",
+				model: this.model
+			};
+		},
+
 		onHelperOpenClick: function (event) {
 			event.preventDefault();
 
-			var helper = new PopUpBase();
+			var helper = new HtmlHelperPopUp();
 			helper.template = _.template("<div class='helper-results'><span class='init-loader'>Загрузка...</span></div>");
 			helper.dialogOptions = {
 				title: "Выберите исследования для вставки",
@@ -3069,6 +3155,37 @@ define(function (require) {
 				buttons: [
 					{text: "Вставить", "class": "button-color-green", click: _.bind(function () {
 						//TODO:
+						console.log(this.labs);
+						console.log(this.insts);
+						console.log(this.cons);
+						helper.brutalLoader(_.bind(function () {
+							console.log("labs");
+							console.log("--------------------");
+							this.labs.each(function (lab) {
+								console.log("lab checked: ", lab.checked);
+								_.each(lab.parsedAttrs.tests, function (test) {
+									console.log("test checked: ", test.checked);
+								});
+							});
+
+							console.log("insts");
+							console.log("--------------------");
+							this.insts.each(function (lab) {
+								console.log("insts checked: ", lab.checked);
+								_.each(lab.parsedAttrs.tests, function (test) {
+									console.log("test checked: ", test.checked);
+								});
+							});
+
+							console.log("cons");
+							console.log("--------------------");
+							this.cons.each(function (lab) {
+								console.log("cons checked: ", lab.checked);
+								_.each(lab.parsedAttrs.tests, function (test) {
+									console.log("test checked: ", test.checked);
+								});
+							});
+						}, this));
 					}, this)},
 					{text: "Отмена", click:  _.bind(function () {
 						helper.tearDown();
@@ -3098,9 +3215,9 @@ define(function (require) {
 				}
 			}});
 
-			helper.listenTo(this.labs, "reset", this.renderResults);
-			helper.listenTo(this.insts, "reset", this.renderResults);
-			helper.listenTo(this.cons, "reset", this.renderResults);
+			helper.listenTo(this.labs, "reset", helper.renderResults);
+			helper.listenTo(this.insts, "reset", helper.renderResults);
+			helper.listenTo(this.cons, "reset", helper.renderResults);
 		}
 	});
 
