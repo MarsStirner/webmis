@@ -250,7 +250,11 @@ define(function(require) {
 
             this.consultation.setProperty('Направительный диагноз', 'valueId', $target.data('mkb-id'));
 
-            //console.log('onMKBChange', $target, this.consultation.getProperty('Направительный диагноз', 'valueId'));
+            if(!$target.data('mkb-id')){
+                this.consultation.setProperty('Направительный диагноз', 'value', '');
+            }
+
+            //console.log('onMKBChange', this.consultation.getProperty('Направительный диагноз', 'valueId'));
 
         },
 
