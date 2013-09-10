@@ -84,7 +84,6 @@ define(function (require) {
 			_base: _.template(require("text!templates/documents/edit/ui-elements/base.html")),
 			_constructor: _.template(require("text!templates/documents/edit/ui-elements/constructor.html")),
 			_text: _.template(require("text!templates/documents/edit/ui-elements/text.html")),
-			_htmlHelper: _.template(require("text!templates/documents/edit/ui-elements/html-helper.html")),
 			_date: _.template(require("text!templates/documents/edit/ui-elements/date.html")),
 			_time: _.template(require("text!templates/documents/edit/ui-elements/time.html")),
 			_double: _.template(require("text!templates/documents/edit/ui-elements/double.html")),
@@ -93,7 +92,15 @@ define(function (require) {
 			_mkb: _.template(require("text!templates/documents/edit/ui-elements/mkb.html")),
 			_flatDirectory: _.template(require("text!templates/documents/edit/ui-elements/flat-directory.html")),
 			_select: _.template(require("text!templates/documents/edit/ui-elements/select.html")),
-			_person: _.template(require("text!templates/documents/edit/ui-elements/person.html"))
+			_person: _.template(require("text!templates/documents/edit/ui-elements/person.html")),
+			_htmlHelper: _.template(require("text!templates/documents/edit/ui-elements/html-helper.html")),
+			htmlHelperPopUp: {
+				dialog: _.template(require("text!templates/documents/edit/ui-elements/html-helper/dialog.html")),
+				section: _.template(require("text!templates/documents/edit/ui-elements/html-helper/section.html")),
+				itemRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-row.html")),
+				itemAttrsContainerRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attrs-container-row.html")),
+				itemAttrRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attr-row.html"))
+			}
 		}
 	};
 
@@ -3105,7 +3112,7 @@ define(function (require) {
 	var HtmlHelper = {};
 
 	HtmlHelper.Dialog = PopUpBase.extend({
-		template: templates.htmlHelper.dialog,
+		template: templates.uiElements.htmlHelperPopUp.dialog,
 
 		initialize: function () {
 			this.dialogOptions = {
@@ -3128,19 +3135,19 @@ define(function (require) {
 	});
 
 	HtmlHelper.Section = UIElementBase.extend({
-		template: templates.htmlHelper.section
+		template: templates.uiElements.htmlHelperPopUp.section
 	});
 
 	HtmlHelper.ItemRow = UIElementBase.extend({
-		template: templates.htmlHelper.itemRow
+		template: templates.uiElements.htmlHelperPopUp.itemRow
 	});
 
 	HtmlHelper.ItemAttrsContainerRow = UIElementBase.extend({
-		template: templates.htmlHelper.itemAttrsContainerRow
+		template: templates.uiElements.htmlHelperPopUp.itemAttrsContainerRow
 	});
 
 	HtmlHelper.ItemAttrRow = UIElementBase.extend({
-		template: templates.htmlHelper.itemRow
+		template: templates.uiElements.htmlHelperPopUp.itemAttrRow
 	});
 
 	/*HtmlHelper.ItemAttrsList = UIElementBase.extend({
