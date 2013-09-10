@@ -763,28 +763,38 @@ input {
   padding: .2em;
 }
 
-/* line 304, ../../sass/modules/vidget.scss */
+/* line 297, ../../sass/modules/vidget.scss */
+.html-helper-pop-up > .ui-dialog-content {
+  padding: 0;
+}
+
+/* line 303, ../../sass/modules/vidget.scss */
+.helper-results section > h3 {
+  padding: .5em 1em;
+  border-bottom: 1px solid gray;
+}
+/* line 310, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-checker-col {
   width: 4em;
   background-color: whitesmoke;
   text-align: center;
 }
-/* line 309, ../../sass/modules/vidget.scss */
+/* line 315, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info {
   cursor: pointer;
   border-left: 4px solid grey;
 }
-/* line 313, ../../sass/modules/vidget.scss */
+/* line 319, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info .helper-item-name {
   padding: 1em 1em 0 1em;
 }
-/* line 316, ../../sass/modules/vidget.scss */
+/* line 322, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info .helper-item-attrs-toggler {
   text-align: center;
   color: whitesmoke;
   visibility: hidden;
 }
-/* line 320, ../../sass/modules/vidget.scss */
+/* line 326, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info .helper-item-attrs-toggler.open {
   /* Safari */
   -webkit-transform: rotate(180deg);
@@ -797,59 +807,59 @@ input {
   /* Internet Explorer */
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=6);
 }
-/* line 337, ../../sass/modules/vidget.scss */
+/* line 343, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info:hover {
   background-color: #DDD;
 }
-/* line 339, ../../sass/modules/vidget.scss */
+/* line 345, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info:hover .helper-item-attrs-toggler {
   visibility: visible;
 }
-/* line 345, ../../sass/modules/vidget.scss */
+/* line 351, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item:hover td.helper-item-info {
   border-left: 4px solid #118ddc;
 }
-/* line 351, ../../sass/modules/vidget.scss */
+/* line 357, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs {
   display: none;
 }
-/* line 353, ../../sass/modules/vidget.scss */
+/* line 359, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs td.helper-item-attr-spacer {
   width: 4em;
   background-color: whitesmoke;
 }
-/* line 359, ../../sass/modules/vidget.scss */
+/* line 365, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs tr.helper-item-attr td.helper-item-attr-checker-col {
   width: 2em;
   background-color: whitesmoke;
   text-align: center;
 }
-/* line 364, ../../sass/modules/vidget.scss */
+/* line 370, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs tr.helper-item-attr td.helper-item-attr-info {
   border-left: 2px solid grey;
 }
-/* line 366, ../../sass/modules/vidget.scss */
+/* line 372, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs tr.helper-item-attr td.helper-item-attr-info .helper-item-attr-name {
   padding: .5em 1em;
 }
-/* line 371, ../../sass/modules/vidget.scss */
+/* line 377, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs tr.helper-item-attr:hover td.helper-item-attr-info {
   border-left: 2px solid #118ddc;
 }
 
 @-webkit-keyframes icon-spinner-rotate {
-  /* line 381, ../../sass/modules/vidget.scss */
+  /* line 387, ../../sass/modules/vidget.scss */
   from {
     -webkit-transform: rotate(0deg);
   }
 
-  /* line 384, ../../sass/modules/vidget.scss */
+  /* line 390, ../../sass/modules/vidget.scss */
   to {
     -webkit-transform: rotate(360deg);
   }
 }
 
-/* line 389, ../../sass/modules/vidget.scss */
+/* line 395, ../../sass/modules/vidget.scss */
 .icon-spinner {
   display: block;
   -webkit-animation-name: icon-spinner-rotate;

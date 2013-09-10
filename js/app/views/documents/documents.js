@@ -3121,6 +3121,7 @@ define(function (require) {
 				width: 900,
 				height: 650,
 				resizable: true,
+				dialogClass: "html-helper-pop-up",
 				//close: _.bind(helper.tearDown, helper),
 				buttons: [
 					{text: "Вставить", "class": "button-color-green", click: _.bind(function () {
@@ -3148,6 +3149,11 @@ define(function (require) {
 		data: function () {
 			return {title: this.model.get("title")};
 		},
+		/*initialize: function () {
+			this.listenTo(this.model.get("items"), "reset", function () {
+				this.$el.toggle(this.model.get("items").length > 0);
+			});
+		},*/
 		render: function () {
 			return ViewBase.prototype.render.call(this, {
 				".helper-items-grid": new HtmlHelper.ItemRows({collection: this.model.get("items")})
@@ -3156,24 +3162,43 @@ define(function (require) {
 	});
 
 	HtmlHelper.ItemRow = ViewBase.extend({
+		tagName: "tr",
+		className: "helper-item",
 		template: templates.uiElements.htmlHelperPopUp.itemRow,
+		events: {
+			"click .helper-item-info": "onHelperItemInfoClick"
+		},
 		data: function () {
 			return {model: this.model};
+		},
+		onHelperItemInfoClick: function () {
+			if (this.model) {
+				this.$(".helper-item-attrs-toggler").toggleClass("open");
+				this.model.trigger("attrs:toggle");
+			}
 		}
 	});
 
 	HtmlHelper.ItemAttrsContainerRow = ViewBase.extend({
+		tagName: "tr",
+		className: "helper-item-attrs",
 		template: templates.uiElements.htmlHelperPopUp.itemAttrsContainerRow,
 		data: function () {
 			return {model: this.model};
+		},
+		initialize: function () {
+			this.listenTo(this.model, "attrs:toggle", this.onModelAttrsToggle);
+		},
+		onModelAttrsToggle: function () {
+			this.$el.toggle();
 		}
 	});
 
 	HtmlHelper.ItemAttrRow = ViewBase.extend({
-		template: templates.uiElements.htmlHelperPopUp.itemAttrRow
+		tagName: "tr",
+		className: "helper-item-attr",
+		template: templates.uiElements.htmlHelperPopUp.itemAttrRow,
 	});
-
-
 
 	HtmlHelper.Sections = RepeaterBase.extend({
 		getRepeatView: function (repeatOptions) {
@@ -3182,6 +3207,8 @@ define(function (require) {
 	});
 
 	HtmlHelper.ItemRows = RepeaterBase.extend({
+		tagName: "tbody",
+
 		initialize: function () {
 			RepeaterBase.prototype.initialize.call(this, this.options);
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
@@ -3208,12 +3235,17 @@ define(function (require) {
 		render: function () {
 			this.$el.empty();
 
-			this.collection.each(function (item) {
-				var repeatOptions = this.getRepeatOptions(item);
-				var repeatView = this.getRepeatView(repeatOptions);
-				this.subViews.push(repeatView.itemRow, repeatView.itemAttrsContainerRow);
-				this.$el.append(repeatView.itemRow.render().el, repeatView.itemAttrsContainerRow.render().el);
-			}, this);
+			if (this.collection.length) {
+				this.collection.each(function (item) {
+					var repeatOptions = this.getRepeatOptions(item);
+					var repeatView = this.getRepeatView(repeatOptions);
+					this.subViews.push(repeatView.itemRow, repeatView.itemAttrsContainerRow);
+					this.$el.append(repeatView.itemRow.render().el, repeatView.itemAttrsContainerRow.render().el);
+				}, this);
+			} else {
+				this.$el.append((new HtmlHelper.ItemRow()).render().el);
+			}
+
 
 			return this;
 		}

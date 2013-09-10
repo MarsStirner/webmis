@@ -1,4 +1,5 @@
-<tr class="helper-item">
+<%console.log(model);%>
+<%if (model) {%>
 	<td class="helper-item-checker-col">
 		<input type="checkbox" class="helper-item-checker" data-id="<%=model.get('id')%>" checked>
 	</td>
@@ -10,4 +11,13 @@
 			<i class="icon-chevron-down"></i>
 		</div>
 	</td>
-</tr>
+<%}else{%>
+	<td class="helper-item-checker-col">
+		&nbsp;
+	</td>
+	<td class="helper-item-info" style="padding-bottom: 1em;">
+		<div class="helper-item-name">
+			<span>Нет записей</span>
+		</div>
+	</td>
+<%}%>

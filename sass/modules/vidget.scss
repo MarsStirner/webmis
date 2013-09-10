@@ -293,10 +293,16 @@
 		padding: .2em;
 	}
 }
+
+.html-helper-pop-up > .ui-dialog-content {
+	padding: 0;
+}
+
 .helper-results {
 	section {
 		> h3 {
-
+			padding: .5em 1em;
+			border-bottom: 1px solid gray;
 		}
 	}
 	table {
