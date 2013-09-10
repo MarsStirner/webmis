@@ -1,0 +1,9 @@
+<%selectedItems.each(function (si) {%>
+	<div><b><%=si.name%></b></div>
+	<%_(si.tests).each(function (model) {%>
+		<div>
+			<b><%=model.get("name")%>:</b>&nbsp;<%=model.get("value")||"-"%> <%=model.get("unit") || ""%>
+			<%=model.get("norm") ? " (норма: " + model.get("norm") + ")" : ""%>
+		</div>
+	<%});%>
+<%});%>

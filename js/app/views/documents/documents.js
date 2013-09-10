@@ -99,7 +99,8 @@ define(function (require) {
 				section: _.template(require("text!templates/documents/edit/ui-elements/html-helper/section.html")),
 				itemRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-row.html")),
 				itemAttrsContainerRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attrs-container-row.html")),
-				itemAttrRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attr-row.html"))
+				itemAttrRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attr-row.html")),
+				paste: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste.html")),
 			}
 		}
 	};
@@ -3149,20 +3150,35 @@ define(function (require) {
 						promises.push(item.fetchResultData());
 					}
 				}, this);
-
-				/*if (!$(this).data("loaded")) {
-					$(this).data("loaded", true);
-					//notLoadedIds.push($(this).prev().find(".helper-item-info").data("id"));
-
-					promises.push(self.getHelperAttrs($(this).data("coll"), $(this).data("id"), function (resultData) {
-						console.log(resultData);
-					}));
-				}*/
 			}, this);
 
-			$.when.apply($, promises).done(function () {
+			$.when.apply($, promises).done(_.bind(function () {
 				console.log("I'm so sorry...");
-			});
+
+				var paste = [];
+
+				_(this.options.sections).each(function (section) {
+					section.items.each(function (item) {
+						if (item.checked) {
+							paste.push({
+								name: item.get("diagnosticName").name,
+								tests: item.resultData.filter(function (rdi) {
+									return rdi.checked;
+								})/*.map(function (rdi) {
+									return rdi.toJSON();
+								})*/
+							});
+						}
+					}, this);
+				}, this);
+
+				console.log(paste);
+
+				this.options.itemsCallback(paste);
+
+				this.tearDown();
+
+			}, this));
 		},
 
 		render: function () {
@@ -3212,11 +3228,11 @@ define(function (require) {
 					} else if (event.checkedState === "unchecked") {
 						this.$(".helper-item-checker").prop("checked", false);
 						this.$(".helper-item-checker").prop("indeterminate", false);
-						this.model.checked = true;
+						this.model.checked = false;
 					} else {
 						this.$(".helper-item-checker").prop("checked", true);
 						this.$(".helper-item-checker").prop("indeterminate", true);
-						this.model.checked = false;
+						this.model.checked = true;
 					}
 				});
 			}
@@ -3287,7 +3303,7 @@ define(function (require) {
 			}
 		},
 		onItemAttrCheckerChange: function (event) {
-			this.model.checked = $(event.currentTarget).prop("checked");
+			this.model.checked = !!$(event.currentTarget).prop("checked");
 
 			var clength = this.model.collection.filter(function (m) {return !!m.checked}).length;
 			var checkedState = "indeterminate";
@@ -3374,23 +3390,6 @@ define(function (require) {
 		}
 	});
 
-
-	/*HtmlHelper.ItemAttrsList = UIElementBase.extend({
-		template: _.template("")
-	});*/
-
-	/*var HtmlHelper.Sections = RepeaterBase.extend({});
-
-	var HtmlHelper.SectionRows = RepeaterBase.extend({});
-
-	var HtmlHelper.SubSections = RepeaterBase.extend({});
-
-	var HtmlHelperPopUpSubSection = UIElementBase.extend({});
-
-	var HtmlHelperPopUpSubSectionRows = RepeaterBase.extend({});
-
-	var HtmlHelperPopUpSubSectionRow = UIElementBase.extend({});*/
-
 	/**
 	 * Поле типа Html и scope(valueDomain) подходящим под паттерн *[1234]
 	 * @type {*}
@@ -3420,85 +3419,19 @@ define(function (require) {
 		onHelperOpenClick: function (event) {
 			event.preventDefault();
 
-			var helperDialog = new HtmlHelper.Dialog({sections: this.getDialogSections()});
+			var helperDialog = new HtmlHelper.Dialog({
+				sections: this.getDialogSections(),
+				itemsCallback: _.bind(this.itemsCallback, this)
+			});
 
 			helperDialog.render();
+		},
 
-			/*var helper = new HtmlHelperPopUp();
-			helper.template = _.template("<div class='helper-results'><span class='init-loader'>Загрузка...</span></div>");
-			helper.dialogOptions = {
-				title: "Выберите исследования для вставки",
-				modal: true,
-				width: 900,
-				height: 650,
-				resizable: true,
-				//close: _.bind(helper.tearDown, helper),
-				buttons: [
-					{text: "Вставить", "class": "button-color-green", click: _.bind(function () {
-						//TODO:
-						console.log(this.labs);
-						console.log(this.insts);
-						console.log(this.cons);
-						helper.brutalLoader(_.bind(function () {
-							console.log("labs");
-							console.log("--------------------");
-							this.labs.each(function (lab) {
-								console.log("lab checked: ", lab.checked);
-								_.each(lab.parsedAttrs.tests, function (test) {
-									console.log("test checked: ", test.checked);
-								});
-							});
-
-							console.log("insts");
-							console.log("--------------------");
-							this.insts.each(function (lab) {
-								console.log("insts checked: ", lab.checked);
-								_.each(lab.parsedAttrs.tests, function (test) {
-									console.log("test checked: ", test.checked);
-								});
-							});
-
-							console.log("cons");
-							console.log("--------------------");
-							this.cons.each(function (lab) {
-								console.log("cons checked: ", lab.checked);
-								_.each(lab.parsedAttrs.tests, function (test) {
-									console.log("test checked: ", test.checked);
-								});
-							});
-						}, this));
-					}, this)},
-					{text: "Отмена", click:  _.bind(function () {
-						helper.tearDown();
-					}, this)}
-				]
-			};
-			helper.render();
-
-			this.labs.fetch({data: {
-				limit: 9999,
-				filter: {
-					statusId: 2
-				}
-			}});
-
-			this.insts.fetch({data: {
-				limit: 9999,
-				filter: {
-					statusId: 2
-				}
-			}});
-
-			this.cons.fetch({data: {
-				limit: 9999,
-				filter: {
-					statusId: 2
-				}
-			}});
-
-			helper.listenTo(this.labs, "reset", helper.renderResults);
-			helper.listenTo(this.insts, "reset", helper.renderResults);
-			helper.listenTo(this.cons, "reset", helper.renderResults);*/
+		itemsCallback: function (selectedItems) {
+			console.log("itemsCallback");
+			var sisRendered = templates.uiElements.htmlHelperPopUp.paste({selectedItems: _(selectedItems)});
+			this.model.setValue(sisRendered);
+			this.$(".attribute-value").html(sisRendered);
 		}
 	});
 
@@ -3632,23 +3565,6 @@ define(function (require) {
 		})
 	});
 
-	/*var Labs = App.Collections.LaboratoryDiags.extend({
-		model: App.Models.LaboratoryDiag.extend({
-			fetchResultData: function () {
-				var result = new InstrumentalResearch({}, {
-					appealId: this.collection.appealId
-				});
-				result.id = this.id;
-
-				result.fetch().then(_.bind(function () {
-					this.set({
-						resultData:
-					});
-				}, this));
-			}
-		})
-	});*/
-
 	/**
 	 * Поле типа Html и scope(valueDomain) = *1
 	 * @type {*}
@@ -3715,12 +3631,6 @@ define(function (require) {
 				{title: "Консультации", items: cons}
 			];
 		}
-		/*,
-
-		initialize: function () {
-			Documents.Views.Edit.UIElement.HtmlHelper.prototype.initialize.call(this, this.options)
-
-		}*/
 	});
 
 	/**
