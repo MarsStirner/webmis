@@ -149,9 +149,13 @@ define(function(require) {
 			});
 
 
-			this.$el.append(this.grid.el);
-			this.grid.delegateEvents();
+			this.$("#grid").html(this.grid.el);
+			this.$("#grid-pager").html(this.paginator.render().el);
+
+
 			this.delegateEvents();
+			this.grid.delegateEvents();
+			this.paginator.delegateEvents();
 
 			return this;
 		}
