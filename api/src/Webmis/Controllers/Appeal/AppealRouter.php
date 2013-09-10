@@ -232,31 +232,36 @@ class AppealRouter implements ControllerProviderInterface
             $lastMove = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
             $lastMoveId = $lastMove['id'];
 
-            $update_sql = "UPDATE Action "
-            ."SET Action.endDate= :endDate, Action.status = 2 "
-            ."WHERE Action.id = :lastMoveId";
+            if($lastMoveId){
+                $update_sql = "UPDATE Action "
+                ."SET Action.endDate= :endDate, Action.status = 2 "
+                ."WHERE Action.id = :lastMoveId";
 
-            $stmt = $app['db']->prepare($update_sql);
-            $stmt->bindValue('endDate', $date, "datetime");
-            $stmt->bindValue('lastMoveId', $lastMoveId, "integer");
-            $count = $stmt->execute();
+                $stmt = $app['db']->prepare($update_sql);
+                $stmt->bindValue('endDate', $date, "datetime");
+                $stmt->bindValue('lastMoveId', $lastMoveId, "integer");
+                $count = $stmt->execute();
 
-            $timeleavead = $date->format('H:i:s');
-            //timeleaved id
-            $select_sql = "select ap.id from Action as a "
-                ."join ActionProperty as ap on ap.action_id = a.id "
-                ."where a.id = ? and ap.type_id = 1617 ";
+                $timeleavead = $date->format('H:i:s');
+                //timeleaved id
+                $select_sql = "select ap.id from Action as a "
+                    ."join ActionProperty as ap on ap.action_id = a.id "
+                    ."where a.id = ? and ap.type_id = 1617 ";
 
-            $timeleaveadProperty = $app['db']->fetchAssoc($select_sql, array((int) $lastMoveId));
-            $timeleaveadPropertyId = $timeleaveadProperty['id'];
+                $timeleaveadProperty = $app['db']->fetchAssoc($select_sql, array((int) $lastMoveId));
+                $timeleaveadPropertyId = $timeleaveadProperty['id'];
 
-            $insert_sql = "INSERT INTO ActionProperty_Time (id, value) VALUES (:id,:time) "
-                    ."ON DUPLICATE KEY UPDATE value= :time;";
+                $insert_sql = "INSERT INTO ActionProperty_Time (id, value) VALUES (:id,:time) "
+                        ."ON DUPLICATE KEY UPDATE value= :time;";
 
-            $stmt = $app['db']->prepare($insert_sql);
-            $stmt->bindValue('id', $timeleaveadPropertyId, "integer");
-            $stmt->bindValue('time', $timeleavead);
-            $count = $stmt->execute();
+                $stmt = $app['db']->prepare($insert_sql);
+                $stmt->bindValue('id', $timeleaveadPropertyId, "integer");
+                $stmt->bindValue('time', $timeleavead);
+                $count = $stmt->execute();
+            }else{
+                $count = 0;
+            }
+
 
             return $app['jsonp']->jsonp($count);
 
