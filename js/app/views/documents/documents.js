@@ -3131,24 +3131,94 @@ define(function (require) {
 					}, this)}
 				]
 			};
+		},
+
+		render: function () {
+			return PopUpBase.prototype.render.call(this, {
+				".helper-results": new HtmlHelper.Sections({
+					collection: new Backbone.Collection(this.options.sections)
+				})
+			});
 		}
 	});
 
-	HtmlHelper.Section = UIElementBase.extend({
-		template: templates.uiElements.htmlHelperPopUp.section
+	HtmlHelper.Section = ViewBase.extend({
+		tagName: "section",
+		template: templates.uiElements.htmlHelperPopUp.section,
+		data: function () {
+			return {title: this.model.get("title")};
+		},
+		render: function () {
+			return ViewBase.prototype.render.call(this, {
+				".helper-items-grid": new HtmlHelper.ItemRows({collection: this.model.get("items")})
+			});
+		}
 	});
 
-	HtmlHelper.ItemRow = UIElementBase.extend({
-		template: templates.uiElements.htmlHelperPopUp.itemRow
+	HtmlHelper.ItemRow = ViewBase.extend({
+		template: templates.uiElements.htmlHelperPopUp.itemRow,
+		data: function () {
+			return {model: this.model};
+		}
 	});
 
-	HtmlHelper.ItemAttrsContainerRow = UIElementBase.extend({
-		template: templates.uiElements.htmlHelperPopUp.itemAttrsContainerRow
+	HtmlHelper.ItemAttrsContainerRow = ViewBase.extend({
+		template: templates.uiElements.htmlHelperPopUp.itemAttrsContainerRow,
+		data: function () {
+			return {model: this.model};
+		}
 	});
 
-	HtmlHelper.ItemAttrRow = UIElementBase.extend({
+	HtmlHelper.ItemAttrRow = ViewBase.extend({
 		template: templates.uiElements.htmlHelperPopUp.itemAttrRow
 	});
+
+
+
+	HtmlHelper.Sections = RepeaterBase.extend({
+		getRepeatView: function (repeatOptions) {
+			return new HtmlHelper.Section(repeatOptions);
+		}
+	});
+
+	HtmlHelper.ItemRows = RepeaterBase.extend({
+		initialize: function () {
+			RepeaterBase.prototype.initialize.call(this, this.options);
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+			this.collection.fetch({data: {
+				limit: 9999,
+				filter: {
+					statusId: 2
+				}
+			}});
+		},
+
+		onCollectionReset: function () {
+			this.tearDownSubviews();
+			this.render();
+		},
+
+		getRepeatView: function (repeatOptions) {
+			return {
+				itemRow: new HtmlHelper.ItemRow(repeatOptions),
+				itemAttrsContainerRow: new HtmlHelper.ItemAttrsContainerRow(repeatOptions)
+			};
+		},
+
+		render: function () {
+			this.$el.empty();
+
+			this.collection.each(function (item) {
+				var repeatOptions = this.getRepeatOptions(item);
+				var repeatView = this.getRepeatView(repeatOptions);
+				this.subViews.push(repeatView.itemRow, repeatView.itemAttrsContainerRow);
+				this.$el.append(repeatView.itemRow.render().el, repeatView.itemAttrsContainerRow.render().el);
+			}, this);
+
+			return this;
+		}
+	});
+
 
 	/*HtmlHelper.ItemAttrsList = UIElementBase.extend({
 		template: _.template("")
@@ -3184,10 +3254,22 @@ define(function (require) {
 			};
 		},
 
+		/**
+		 * Override it
+		 * @return Array of sections
+		 */
+		getDialogSections: function () {
+			return [];
+		},
+
 		onHelperOpenClick: function (event) {
 			event.preventDefault();
 
-			var helper = new HtmlHelperPopUp();
+			var helperDialog = new HtmlHelper.Dialog({sections: this.getDialogSections()});
+
+			helperDialog.render();
+
+			/*var helper = new HtmlHelperPopUp();
 			helper.template = _.template("<div class='helper-results'><span class='init-loader'>Загрузка...</span></div>");
 			helper.dialogOptions = {
 				title: "Выберите исследования для вставки",
@@ -3261,7 +3343,7 @@ define(function (require) {
 
 			helper.listenTo(this.labs, "reset", helper.renderResults);
 			helper.listenTo(this.insts, "reset", helper.renderResults);
-			helper.listenTo(this.cons, "reset", helper.renderResults);
+			helper.listenTo(this.cons, "reset", helper.renderResults);*/
 		}
 	});
 
@@ -3277,18 +3359,17 @@ define(function (require) {
 			};
 		},
 
-		initialize: function () {
-			Documents.Views.Edit.UIElement.HtmlHelper.prototype.initialize.call(this, this.options)
+		getDialogSections: function () {
 			//LABS
 			//-----------------------
-			this.labs = new App.Collections.LaboratoryDiags();
-			this.labs.appealId = appealId;
-			this.labs.setParams({
+			var labs = new App.Collections.LaboratoryDiags();
+			labs.appealId = appealId;
+			labs.setParams({
 				sortingField: "plannedEndDate",
 				sortingMethod: "desc"
 			});
 
-			this.labs.extra = {
+			labs.extra = {
 				appealClosed: appeal.get('closed'),
 				displayLabel: "Лабораторные исследования",
 				ResultView: LaboratoryResultView
@@ -3296,14 +3377,14 @@ define(function (require) {
 
 			//INSTS
 			//-----------------------
-			this.insts = new InstrumentalResearchs([], {
+			var insts = new InstrumentalResearchs([], {
 				appealId: appealId
 			});
-			this.insts.setParams({
+			insts.setParams({
 				sortingField: "plannedEndDate",
 				sortingMethod: "desc"
 			});
-			this.insts.extra = {
+			insts.extra = {
 				appealClosed: appeal.get('closed'),
 				displayLabel: "Инструментальные исследования",
 				ResultView: InstrumentalResultView
@@ -3311,21 +3392,33 @@ define(function (require) {
 
 			//CONS
 			//-----------------------
-			this.cons = new Consultations();
-			this.cons.appealId = appealId;
+			var cons = new Consultations();
+			cons.appealId = appealId;
 
 
-			this.cons.setParams({
+			cons.setParams({
 				sortingField: "plannedEndDate",
 				sortingMethod: "desc"
 			});
 
-			this.cons.extra = {
+			cons.extra = {
 				appealClosed: appeal.get('closed'),
 				displayLabel: "Консультации",
 				ResultView: ConsultationsResultView
 			};
+
+			return [
+				{title: "Лабораторные исследования", items: labs},
+				{title: "Инструментальные исследования", items: insts},
+				{title: "Консультации", items: cons}
+			];
 		}
+		/*,
+
+		initialize: function () {
+			Documents.Views.Edit.UIElement.HtmlHelper.prototype.initialize.call(this, this.options)
+
+		}*/
 	});
 
 	/**

@@ -1,10 +1,10 @@
 <tr class="helper-item">
 	<td class="helper-item-checker-col">
-		<input type="checkbox" class="helper-item-checker" data-id="<%=item.get('id')%>" checked>
+		<input type="checkbox" class="helper-item-checker" data-id="<%=model.get('id')%>" checked>
 	</td>
-	<td class="helper-item-info" data-id="item.get(\id\)">
+	<td class="helper-item-info">
 		<div class="helper-item-name">
-			<span><%=item.get('diagnosticName').name%></span>
+			<span><%=model.get("diagnosticName").name%></span>
 		</div>
 		<div class="helper-item-attrs-toggler">
 			<i class="icon-chevron-down"></i>

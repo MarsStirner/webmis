@@ -294,6 +294,11 @@
 	}
 }
 .helper-results {
+	section {
+		> h3 {
+
+		}
+	}
 	table {
 		tr.helper-item {
 			td.helper-item-checker-col {
