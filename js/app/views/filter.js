@@ -40,7 +40,8 @@ App.Views.Filter = View.extend({
 			console.log('filter',filter);
 
 			this.collection.setParams({
-				filter:filter
+				filter:filter,
+				page: 1
 			});
 
 			if (_.size(filter)) {
