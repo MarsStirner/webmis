@@ -39,7 +39,7 @@ define(function(require) {
 					break;
 			}
 
-			Backbone.sync(method, model, options);
+			return Backbone.sync(method, model, options);
 		},
 		parse: function(raw) {
 			return raw.data ? raw.data[0] : raw;

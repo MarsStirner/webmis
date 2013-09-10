@@ -1,10 +1,18 @@
-<tr class="helper-item-attr">
+<%if (model) {%>
 	<td class="helper-item-attr-checker-col">
 		<input type="checkbox" class="helper-item-attr-checker" checked>
 	</td>
 	<td class="helper-item-attr-info">
 		<div class="helper-item-attr-name">
-			<b><%=test.name%>:</b>&nbsp;<%=(test.value ? test.value + " " + (test.unit || "") +  (test.norm ? " (норма: " + test.norm + ")" : "") : "-")%>
+			<b><%=model.get("name")%>:</b>&nbsp;<%=model.get("value")||"-"%> <%=model.get("unit") || ""%>
+			<%=model.get("norm") ? " (норма: " + model.get("norm") + ")" : ""%>
 		</div>
 	</td>
-</tr>
+<%}else{%>
+	<td class="helper-item-attr-checker-col">
+		<i class="icon-spinner"></i>
+	</td>
+	<td class="helper-item-attr-info">
+		<div class="helper-item-attr-name">Загрузка...</div>
+	</td>
+<%}%>

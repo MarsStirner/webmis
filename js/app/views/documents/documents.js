@@ -108,11 +108,13 @@ define(function (require) {
 	var FlatDirectory = require("models/flat-directory");
 	var MKB = require("views/mkb-directory");
 	var PersonDialog = require("views/ui/PersonDialog");
-	var LabResult = require('models/diagnostics/laboratory/laboratory-diag-form');
+	var LabResult = require("models/diagnostics/laboratory/laboratory-diag-form");
 	var LaboratoryResultView = require("views/diagnostics/laboratory/AnalysisResultView");
-	var InstrumentalResearchs = require('collections/diagnostics/instrumental/InstrumentalResearchs');
+	var InstrumentalResearch = require("models/diagnostics/instrumental/InstrumentalResearch");
+	var InstrumentalResearchs = require("collections/diagnostics/instrumental/InstrumentalResearchs");
 	var InstrumentalResultView = require("views/diagnostics/instrumental/InstrumentalResultView");
-	var Consultations = require('collections/diagnostics/consultations/Consultations');
+	var Consultation = require("models/diagnostics/consultations/Consultation");
+	var Consultations = require("collections/diagnostics/consultations/Consultations");
 	var ConsultationsResultView = require("views/diagnostics/consultations/ConsultationsResultView");
 
 	var FDLoader = {
@@ -207,10 +209,10 @@ define(function (require) {
 				if (!this.dates) {
 					this.dates = {
 						begin: new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
-							return attr.name == 'assessmentBeginDate';
+							return attr.name == "assessmentBeginDate";
 						})),
 						end: new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
-							return attr.name == 'assessmentEndDate';
+							return attr.name == "assessmentEndDate";
 						}))
 					};
 				}
@@ -296,7 +298,7 @@ define(function (require) {
 			this.collectTextNodes(element, texts);
 			for (var i = texts.length; i-- > 0;)
 				texts[i] = texts[i].data;
-			return texts.join(' ');
+			return texts.join(" ");
 		},*/
 
 		getCleanHtmlFilledAttrs: function () {
@@ -327,7 +329,7 @@ define(function (require) {
 		save: function (attrs, options) {
 			options.dataType = "jsonp";
 			options.url = Documents.Models.Document.prototype.urlRoot.apply(this);
-			options.contentType = 'application/json';
+			options.contentType = "application/json";
 
 			var method = "create";
 
@@ -425,11 +427,11 @@ define(function (require) {
 		},
 
 		isReadOnly: function () {
-			return this.get("readOnly") === 'true';
+			return this.get("readOnly") === "true";
 		},
 
 		isMandatory: function () {
-			return this.get("mandatory") === 'true';
+			return this.get("mandatory") === "true";
 		},
 
 		isIdType: function () {
@@ -584,7 +586,7 @@ define(function (require) {
 
 		searchByMnem: function (mnems) {
 			this.mnems = mnems;
-			this.fetch().then(_.bind(function () {
+			this.fetch().done(_.bind(function () {
 				this.originalModels = null;
 				this.search(this.lastCriteria);
 			}, this));
@@ -3125,13 +3127,42 @@ define(function (require) {
 				//close: _.bind(helper.tearDown, helper),
 				buttons: [
 					{text: "Вставить", "class": "button-color-green", click: _.bind(function () {
+						this.fetchRemainingResults();
 						console.log("paste!!1");
+						//this.tearDown();
 					}, this)},
 					{text: "Отмена", click:  _.bind(function () {
-						helper.tearDown();
+						this.tearDown();
 					}, this)}
 				]
 			};
+		},
+
+		fetchRemainingResults: function () {
+			var self = this;
+			var notLoadedIds = [];
+			var promises = [];
+
+			_(this.options.sections).each(function (section) {
+				section.items.each(function (item) {
+					if (item.checked && !item.result) {
+						promises.push(item.fetchResultData());
+					}
+				}, this);
+
+				/*if (!$(this).data("loaded")) {
+					$(this).data("loaded", true);
+					//notLoadedIds.push($(this).prev().find(".helper-item-info").data("id"));
+
+					promises.push(self.getHelperAttrs($(this).data("coll"), $(this).data("id"), function (resultData) {
+						console.log(resultData);
+					}));
+				}*/
+			}, this);
+
+			$.when.apply($, promises).done(function () {
+				console.log("I'm so sorry...");
+			});
 		},
 
 		render: function () {
@@ -3166,7 +3197,30 @@ define(function (require) {
 		className: "helper-item",
 		template: templates.uiElements.htmlHelperPopUp.itemRow,
 		events: {
-			"click .helper-item-info": "onHelperItemInfoClick"
+			"click .helper-item-info": "onHelperItemInfoClick",
+			"click .helper-item-checker": "onHelperItemCheckerClick"
+		},
+		initialize: function () {
+			ViewBase.prototype.initialize.call(this, this.options);
+			if (this.model) {
+				this.model.checked = true;
+				this.listenTo(this.model.resultData, "attr:checked", function (event) {
+					if (event.checkedState === "checked") {
+						this.$(".helper-item-checker").prop("checked", true);
+						this.$(".helper-item-checker").prop("indeterminate", false);
+						this.model.checked = true;
+					} else if (event.checkedState === "unchecked") {
+						this.$(".helper-item-checker").prop("checked", false);
+						this.$(".helper-item-checker").prop("indeterminate", false);
+						this.model.checked = true;
+					} else {
+						this.$(".helper-item-checker").prop("checked", true);
+						this.$(".helper-item-checker").prop("indeterminate", true);
+						this.model.checked = false;
+					}
+				});
+			}
+
 		},
 		data: function () {
 			return {model: this.model};
@@ -3176,6 +3230,11 @@ define(function (require) {
 				this.$(".helper-item-attrs-toggler").toggleClass("open");
 				this.model.trigger("attrs:toggle");
 			}
+		},
+		onHelperItemCheckerClick: function (event) {
+			this.model.resultData.trigger("attrs:checked", {checked: $(event.currentTarget).prop("checked")});
+			//$(".helper-item-attr-checker", $(this).parent().parent().next()).prop("checked", $(this).prop("checked"));
+			this.model.checked = $(event.currentTarget).prop("checked");
 		}
 	});
 
@@ -3188,9 +3247,22 @@ define(function (require) {
 		},
 		initialize: function () {
 			this.listenTo(this.model, "attrs:toggle", this.onModelAttrsToggle);
+			this.listenTo(this.model.resultData, "reset", this.onResultDataReset);
 		},
 		onModelAttrsToggle: function () {
 			this.$el.toggle();
+			if (!this.model.result) {
+				console.log(this.model.collection);
+				this.model.fetchResultData();
+			}
+		},
+		onResultDataReset: function () {
+			console.log("onResultDataReset");
+		},
+		render: function () {
+			return ViewBase.prototype.render.call(this, {
+				".helper-item-attrs-grid": new HtmlHelper.ItemAttrRows({collection: this.model.resultData})
+			});
 		}
 	});
 
@@ -3198,6 +3270,36 @@ define(function (require) {
 		tagName: "tr",
 		className: "helper-item-attr",
 		template: templates.uiElements.htmlHelperPopUp.itemAttrRow,
+		data: function () {
+			return {model: this.model};
+		},
+		events: {
+			"change .helper-item-attr-checker": "onItemAttrCheckerChange"
+		},
+		initialize: function () {
+			ViewBase.prototype.initialize.call(this, this.options);
+			if (this.model) {
+				this.model.checked = true;
+				this.listenTo(this.model.collection, "attrs:checked", function (event) {
+					this.$(".helper-item-attr-checker").prop("checked", event.checked)
+					this.model.checked = event.checked;
+				});
+			}
+		},
+		onItemAttrCheckerChange: function (event) {
+			this.model.checked = $(event.currentTarget).prop("checked");
+
+			var clength = this.model.collection.filter(function (m) {return !!m.checked}).length;
+			var checkedState = "indeterminate";
+
+			if (clength === this.model.collection.length) {
+				checkedState = "checked";
+			} else if (clength === 0) {
+				checkedState = "unchecked";
+			}
+
+			this.model.collection.trigger("attr:checked", {checkedState: checkedState});
+		}
 	});
 
 	HtmlHelper.Sections = RepeaterBase.extend({
@@ -3246,8 +3348,29 @@ define(function (require) {
 				this.$el.append((new HtmlHelper.ItemRow()).render().el);
 			}
 
-
 			return this;
+		}
+	});
+
+	HtmlHelper.ItemAttrRows = RepeaterBase.extend({
+		initialize: function () {
+			RepeaterBase.prototype.initialize.call(this, this.options);
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+		},
+		getRepeatView: function (repeatOptions) {
+			return new HtmlHelper.ItemAttrRow(repeatOptions);
+		},
+		onCollectionReset: function () {
+			this.tearDownSubviews();
+			this.render();
+		},
+		render: function () {
+			if (this.collection.length) {
+				return RepeaterBase.prototype.render.call(this);
+			} else {
+				this.$el.html((new HtmlHelper.ItemAttrRow()).render().el);
+				return this;
+			}
 		}
 	});
 
@@ -3379,6 +3502,153 @@ define(function (require) {
 		}
 	});
 
+	var Labs = App.Collections.LaboratoryDiags.extend({
+		model: App.Models.LaboratoryDiag.extend({
+			initialize: function () {
+				App.Models.LaboratoryDiag.initialize.call(this, this.options);
+				this.resultData = new Backbone.Collection();
+			},
+
+			fetchResultData: function () {
+				this.result = new LaboratoryResearch();
+				result.eventId = this.collection.appealId;
+				result.id = this.id;
+
+				var promise = this.result.fetch();
+
+				promise.done(_.bind(function () {
+					var tests = [];
+
+					if (this.result.get("group")) {
+						var group_1 = (this.result.get("group"))[1].attribute;
+						_.each(group_1, function(item) {
+							if (item.type == "String") {
+								tests.push({
+									name: item.name,
+									value: this.result.getProperty(item.name, "value") || "",
+									unit: this.result.getProperty(item.name, "unit") || "",
+									norm: this.result.getProperty(item.name, "norm") || ""
+								});
+
+							}
+						});
+					}
+
+					this.resultData.reset(tests);
+
+					/*this.set({
+						resultData: tests
+					});*/
+
+					console.log(this);
+				}, this));
+
+				return promise;
+			}
+		})
+	});
+
+	var Insts = InstrumentalResearchs.extend({
+		model: InstrumentalResearch.extend({
+			initialize: function (attrs, options) {
+				InstrumentalResearch.prototype.initialize.call(this, attrs, options);
+				this.resultData = new Backbone.Collection();
+			},
+			fetchResultData: function () {
+				this.result = new InstrumentalResearch({}, {
+					appealId: this.collection.appealId
+				});
+				this.result.id = this.id;
+
+				var promise = this.result.fetch();
+
+				promise.done(_.bind(function () {
+					var tests = [];
+					if (this.result.get("group")) {
+						var group_1 = (this.result.get("group"))[1].attribute;
+						_.each(group_1, function (item) {
+							//if (item.type == "String") {
+							tests.push({
+								name: item.name,
+								value: this.result.getProperty(item.name, "value") || "",
+								unit: this.result.getProperty(item.name, "unit") || "",
+								norm: this.result.getProperty(item.name, "norm") || ""
+							});
+							//}
+						}, this);
+					}
+
+					this.resultData.reset(tests);
+
+					/*this.set({
+						resultData: tests
+					});*/
+
+					console.log(this);
+				}, this));
+
+				return promise;
+			}
+		})
+	});
+
+	var Cons = Consultations.extend({
+		model: Model.extend({
+			idAttribute: 'id',
+			initialize: function () {
+				Model.prototype.initialize.call(this, this.options);
+				this.resultData = new Backbone.Collection();
+			},
+			fetchResultData: function () {
+				this.result = new Consultation();
+				this.result.eventId = this.collection.appealId;
+				this.result.id = this.id;
+
+				var promise = this.result.fetch();
+
+				promise.done(_.bind(function () {
+					var tests = [];
+					if (this.result.get('group')) {
+						var group_1 = (this.result.get('group'))[1].attribute;
+						_.each(group_1, function (item) {
+							tests.push({
+								name: item.name,
+								value: this.result.getProperty(item.name, 'value') || ""
+							});
+						}, this);
+					}
+
+					this.resultData.reset(tests);
+
+					/*this.set({
+						resultData: tests
+					});*/
+
+					console.log(this);
+				}, this));
+
+				return promise;
+			}
+		})
+	});
+
+	/*var Labs = App.Collections.LaboratoryDiags.extend({
+		model: App.Models.LaboratoryDiag.extend({
+			fetchResultData: function () {
+				var result = new InstrumentalResearch({}, {
+					appealId: this.collection.appealId
+				});
+				result.id = this.id;
+
+				result.fetch().then(_.bind(function () {
+					this.set({
+						resultData:
+					});
+				}, this));
+			}
+		})
+	});*/
+
 	/**
 	 * Поле типа Html и scope(valueDomain) = *1
 	 * @type {*}
@@ -3394,7 +3664,7 @@ define(function (require) {
 		getDialogSections: function () {
 			//LABS
 			//-----------------------
-			var labs = new App.Collections.LaboratoryDiags();
+			var labs = new Labs();
 			labs.appealId = appealId;
 			labs.setParams({
 				sortingField: "plannedEndDate",
@@ -3403,13 +3673,13 @@ define(function (require) {
 
 			labs.extra = {
 				appealClosed: appeal.get('closed'),
-				displayLabel: "Лабораторные исследования",
-				ResultView: LaboratoryResultView
+				//displayLabel: "Лабораторные исследования",
+				//ResultView: LaboratoryResultView
 			};
 
 			//INSTS
 			//-----------------------
-			var insts = new InstrumentalResearchs([], {
+			var insts = new Insts([], {
 				appealId: appealId
 			});
 			insts.setParams({
@@ -3418,13 +3688,13 @@ define(function (require) {
 			});
 			insts.extra = {
 				appealClosed: appeal.get('closed'),
-				displayLabel: "Инструментальные исследования",
+				//displayLabel: "Инструментальные исследования",
 				ResultView: InstrumentalResultView
 			};
 
 			//CONS
 			//-----------------------
-			var cons = new Consultations();
+			var cons = new Cons();
 			cons.appealId = appealId;
 
 
@@ -3435,7 +3705,7 @@ define(function (require) {
 
 			cons.extra = {
 				appealClosed: appeal.get('closed'),
-				displayLabel: "Консультации",
+				//displayLabel: "Консультации",
 				ResultView: ConsultationsResultView
 			};
 
