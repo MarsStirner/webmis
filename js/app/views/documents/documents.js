@@ -3102,25 +3102,62 @@ define(function (require) {
 		}
 	});
 
-	var HtmlHelperPopUpSections = RepeaterBase.extend({});
+	var HtmlHelper = {};
 
-	var HtmlHelperPopUpSection = UIElementBase.extend({
-		template: _.template("<section><h3><%=name%></h3><table class='helper-items-grid'></table></section>")
+	HtmlHelper.Dialog = PopUpBase.extend({
+		template: templates.htmlHelper.dialog,
+
+		initialize: function () {
+			this.dialogOptions = {
+				title: "Выберите исследования для вставки",
+				modal: true,
+				width: 900,
+				height: 650,
+				resizable: true,
+				//close: _.bind(helper.tearDown, helper),
+				buttons: [
+					{text: "Вставить", "class": "button-color-green", click: _.bind(function () {
+						console.log("paste!!1");
+					}, this)},
+					{text: "Отмена", click:  _.bind(function () {
+						helper.tearDown();
+					}, this)}
+				]
+			};
+		}
 	});
 
-	var HtmlHelperPopUpSectionRows = RepeaterBase.extend({});
-
-	var HtmlHelperPopUpSectionRow = UIElementBase.extend({
-		template: _.template()
+	HtmlHelper.Section = UIElementBase.extend({
+		template: templates.htmlHelper.section
 	});
 
-	var HtmlHelperPopUpSubSections = RepeaterBase.extend({});
+	HtmlHelper.ItemRow = UIElementBase.extend({
+		template: templates.htmlHelper.itemRow
+	});
+
+	HtmlHelper.ItemAttrsContainerRow = UIElementBase.extend({
+		template: templates.htmlHelper.itemAttrsContainerRow
+	});
+
+	HtmlHelper.ItemAttrRow = UIElementBase.extend({
+		template: templates.htmlHelper.itemRow
+	});
+
+	/*HtmlHelper.ItemAttrsList = UIElementBase.extend({
+		template: _.template("")
+	});*/
+
+	/*var HtmlHelper.Sections = RepeaterBase.extend({});
+
+	var HtmlHelper.SectionRows = RepeaterBase.extend({});
+
+	var HtmlHelper.SubSections = RepeaterBase.extend({});
 
 	var HtmlHelperPopUpSubSection = UIElementBase.extend({});
 
 	var HtmlHelperPopUpSubSectionRows = RepeaterBase.extend({});
 
-	var HtmlHelperPopUpSubSectionRow = UIElementBase.extend({});
+	var HtmlHelperPopUpSubSectionRow = UIElementBase.extend({});*/
 
 	/**
 	 * Поле типа Html и scope(valueDomain) подходящим под паттерн *[1234]

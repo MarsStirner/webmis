@@ -1,0 +1,10 @@
+<tr class="helper-item-attr">
+	<td class="helper-item-attr-checker-col">
+		<input type="checkbox" class="helper-item-attr-checker" checked>
+	</td>
+	<td class="helper-item-attr-info">
+		<div class="helper-item-attr-name">
+			<b><%=test.name%>:</b>&nbsp;<%=(test.value ? test.value + " " + (test.unit || "") +  (test.norm ? " (норма: " + test.norm + ")" : "") : "-")%>
+		</div>
+	</td>
+</tr>
