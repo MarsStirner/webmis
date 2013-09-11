@@ -1,10 +1,15 @@
 <%if (model) {%>
+	<%console.log("ITEM ROW", model)%>
 	<td class="helper-item-checker-col">
 		<input type="checkbox" class="helper-item-checker" data-id="<%=model.get('id')%>" checked>
 	</td>
 	<td class="helper-item-info">
 		<div class="helper-item-name">
-			<span><%=model.get("diagnosticName").name%></span>
+			<%if (model.get("diagnosticName")) {%>
+				<span><%=model.get("diagnosticName").name%></span>
+			<%} else if (model.get("assessmentName")) {%>
+				<span><%=model.get("assessmentName").name%></span>
+			<%}%>
 		</div>
 		<div class="helper-item-attrs-toggler">
 			<i class="icon-chevron-down"></i>

@@ -5,8 +5,14 @@
 	<td class="helper-item-attr-info">
 		<div class="helper-item-attr-name">
 			<b><%=model.get("name")%>:</b>&nbsp;<%=model.get("value")||"-"%> <%=model.get("unit") || ""%>
-			<%=model.get("norm") ? " (норма: " + model.get("norm") + ")" : ""%>
 		</div>
+	</td>
+<%}else if (isReset) {%>
+	<td class="helper-item-attr-checker-col">
+		&nbsp;
+	</td>
+	<td class="helper-item-attr-info">
+		<div class="helper-item-attr-name">Нет записей</div>
 	</td>
 <%}else{%>
 	<td class="helper-item-attr-checker-col">

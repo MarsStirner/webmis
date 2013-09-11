@@ -2921,197 +2921,6 @@ define(function (require) {
 	/**
 	 * Did I ever tell you definition of insanity?
 	 */
-	var HtmlHelperPopUp = PopUpBase.extend({
-		renderResults: function (coll) {
-			var results = $("<table/>");
-			var $helperResults = this.$el.css({padding: 0}).find(".helper-results");
-
-			$helperResults.find(".init-loader").remove();
-
-			$helperResults.append(
-				"<h3 style='padding: .5em 1em;border-bottom: 1px solid gray;'>"+coll.extra.displayLabel+"</h3>",
-				results);
-
-			if (coll.length) {
-				coll.each(function (item) {
-					item.checked = true;
-					results.append(
-						"<tr class='helper-item'>"+
-							"<td class='helper-item-checker-col'><input type='checkbox' class='helper-item-checker' data-id='"+item.get("id")+"' checked></td>"+
-							"<td class='helper-item-info' data-id='"+item.get("id")+"'>"+
-								"<div class='helper-item-name'><span>"+item.get("diagnosticName").name+"</span></div>"+
-								"<div class='helper-item-attrs-toggler'><i class='icon-chevron-down'></i></div>"+
-							"</td>"+
-						"</tr>"+
-						"<tr class='helper-item-attrs' data-id='"+item.get("id")+"'>"+
-							"<td class='helper-item-attr-spacer'>&nbsp;</td>"+
-							"<td>"+
-								"<table class='helper-item-attrs-grid'>"+
-									"<tr class='helper-item-attr'>"+
-										"<td class='helper-item-attr-checker-col'>"+
-											"<i class='icon-spinner'></i>"+
-										"</td>"+
-										"<td class='helper-item-attr-info'>"+
-											"<div class='helper-item-attr-name'>Загрузка...</div>"+
-										"</td>"+
-									"</tr>"+
-								"</table>"+
-							"</td>"+
-						"</tr>"
-						);
-				});
-
-				results.find(".helper-item-attrs").data("coll", coll);
-
-				$(".helper-item-info", results).on("click", _.bind(function (event) {
-					this.renderHelperAttrs(event, coll);
-				}, this));
-
-				$(".helper-item-checker", results).on("change", function () {
-					console.log(this);
-					$(".helper-item-attr-checker", $(this).parent().parent().next()).prop("checked", $(this).prop("checked"));
-					coll.get($(this).data("id")).checked = $(this).prop("checked");
-				});
-			} else {
-				results.append(
-					"<tr class='helper-item'>"+
-						"<td class='helper-item-checker-col'>&nbsp;</td>"+
-						"<td class='helper-item-info'>"+
-							"<div class='helper-item-name'><span>Нет записей</span></div>"+
-							"<div class='helper-item-attrs-toggler' style='height: 1em;'></div>"+
-						"</td>"+
-					"</tr>"
-					);
-			}
-		},
-
-		renderHelperAttrs: function (event, coll) {
-			var $target = $(event.currentTarget);
-			$target.find(".helper-item-attrs-toggler").toggleClass("open");
-
-			var $attrsTr = $target.parent().next().toggle();
-
-			if (!$attrsTr.data("loaded")) {
-				var $attrsGrid = $attrsTr.data("loaded", true).find(".helper-item-attrs-grid");
-
-				/*var lrv = new coll.extra.ResultView({
-					appeal: appeal,
-					appealId: appealId,
-					modelId: $target.data("id")
-				});*/
-
-				//lrv.getResult(function (resultData) {
-				this.getHelperAttrs(coll, $target.data("id"), function (resultData) {
-					//var resultData = lrv.resultData();
-					console.log(resultData);
-					if (resultData.tests.length) {
-						$attrsGrid.empty().append(resultData.tests.map(function (test) {
-							var helperAttrRow = $("<tr class='helper-item-attr'>"+
-										"<td class='helper-item-attr-checker-col'>"+
-											"<input type='checkbox' class='helper-item-attr-checker' checked>"+
-										"</td>"+
-										"<td class='helper-item-attr-info'>"+
-											"<div class='helper-item-attr-name'>"+
-												"<b>"+test.name+":&nbsp;</b>"+
-												(test.value ? test.value + " " + (test.unit || "") +  (test.norm ? " (норма: " + test.norm + ")" : "") : "-")+
-											"</div>"+
-										"</td>"+
-									"</tr>");
-							helperAttrRow.find(".helper-item-attr-checker").data("test", test);
-							return helperAttrRow;
-						}));
-
-						$(".helper-item-attr-checker", $attrsGrid).on("change", function () {
-							console.log(this);
-							var $attrCheckers = $(".helper-item-attr-checker:checked", $attrsGrid);
-
-							if ($attrCheckers.length === resultData.tests.length) {
-								$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
-									.prop("checked", true)
-									.prop("indeterminate", false);
-
-							} else {
-								if ($attrCheckers.length === 0) {
-									$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
-										.prop("checked", false)
-										.prop("indeterminate", false);
-								} else {
-									$(".helper-item-checker", $(this).closest(".helper-item-attrs").prev())
-										.prop("checked", true)
-										.prop("indeterminate", true);
-								}
-							}
-
-							$(this).data("test").checked = $(this).prop("checked");
-						});
-					} else {
-						$attrsGrid.html("<tr class='helper-item-attr'>"+
-											"<td class='helper-item-attr-checker-col'>&nbsp;</td>"+
-											"<td class='helper-item-attr-info'>"+
-												"<div class='helper-item-attr-name'>"+
-													"<b>Нет тестов для вставки</b>"+
-												"</div>"+
-											"</td>"+
-										"</tr>");
-					}
-				}, function () {
-					console.log(arguments);
-				});
-			}
-		},
-
-		getHelperAttrs: function (coll, itemId, cb) {
-			var lrv = new coll.extra.ResultView({
-				appeal: appeal,
-				appealId: appealId,
-				modelId: itemId
-			});
-
-			return lrv.getResult(function () {
-				var resultData = lrv.resultData();
-				_.each(resultData.tests, function (test) {
-					test.checked = true;
-				});
-				coll.get(itemId).parsedAttrs = resultData;
-				cb(resultData);
-			});
-		},
-
-		brutalLoader: function (cb) {
-			/*this.$(".helper-item-attrs").each(function () {
-				if (!$(this).data("loaded")) {
-					var notLoadedIds = $(this).prev().find(".helper-item-info").map(function () {
-						return $(this).data("id");
-					});
-					console.log(notLoadedIds.length);
-					console.log(notLoadedIds);
-				}
-			});*/
-
-			var self = this;
-			var notLoadedIds = [];
-			var promises = [];
-
-			this.$(".helper-item-attrs").each(function () {
-				if (!$(this).data("loaded")) {
-					$(this).data("loaded", true);
-					//notLoadedIds.push($(this).prev().find(".helper-item-info").data("id"));
-
-					promises.push(self.getHelperAttrs($(this).data("coll"), $(this).data("id"), function (resultData) {
-						console.log(resultData);
-					}));
-				}
-			});
-
-			$.when.apply($, promises).done(function () {
-				console.log("I'm so sorry...");
-				cb();
-			});
-			/*console.log(notLoadedIds.length);
-			console.log(notLoadedIds);*/
-		}
-	});
-
 	var HtmlHelper = {};
 
 	HtmlHelper.Dialog = PopUpBase.extend({
@@ -3128,6 +2937,7 @@ define(function (require) {
 				//close: _.bind(helper.tearDown, helper),
 				buttons: [
 					{text: "Вставить", "class": "button-color-green", click: _.bind(function () {
+						$(".ui-dialog-buttonpane button").button("disable");
 						this.fetchRemainingResults();
 						console.log("paste!!1");
 						//this.tearDown();
@@ -3160,14 +2970,17 @@ define(function (require) {
 				_(this.options.sections).each(function (section) {
 					section.items.each(function (item) {
 						if (item.checked) {
-							paste.push({
-								name: item.get("diagnosticName").name,
-								tests: item.resultData.filter(function (rdi) {
-									return rdi.checked;
-								})/*.map(function (rdi) {
-									return rdi.toJSON();
-								})*/
-							});
+							var tests = item.resultData.filter(function (rdi) {
+								return rdi.checked;
+							})
+							if (tests.length) {
+								paste.push({
+									name: item.get("diagnosticName") ? item.get("diagnosticName").name : item.get("assessmentName").name,
+									tests: tests/*.map(function (rdi) {
+										return rdi.toJSON();
+									})*/
+								});
+							}
 						}
 					}, this);
 				}, this);
@@ -3196,11 +3009,6 @@ define(function (require) {
 		data: function () {
 			return {title: this.model.get("title")};
 		},
-		/*initialize: function () {
-			this.listenTo(this.model.get("items"), "reset", function () {
-				this.$el.toggle(this.model.get("items").length > 0);
-			});
-		},*/
 		render: function () {
 			return ViewBase.prototype.render.call(this, {
 				".helper-items-grid": new HtmlHelper.ItemRows({collection: this.model.get("items")})
@@ -3249,7 +3057,6 @@ define(function (require) {
 		},
 		onHelperItemCheckerClick: function (event) {
 			this.model.resultData.trigger("attrs:checked", {checked: $(event.currentTarget).prop("checked")});
-			//$(".helper-item-attr-checker", $(this).parent().parent().next()).prop("checked", $(this).prop("checked"));
 			this.model.checked = $(event.currentTarget).prop("checked");
 		}
 	});
@@ -3287,7 +3094,7 @@ define(function (require) {
 		className: "helper-item-attr",
 		template: templates.uiElements.htmlHelperPopUp.itemAttrRow,
 		data: function () {
-			return {model: this.model};
+			return {model: this.model, isReset: this.options.isReset};
 		},
 		events: {
 			"change .helper-item-attr-checker": "onItemAttrCheckerChange"
@@ -3331,10 +3138,7 @@ define(function (require) {
 			RepeaterBase.prototype.initialize.call(this, this.options);
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
 			this.collection.fetch({data: {
-				limit: 9999,
-				filter: {
-					statusId: 2
-				}
+				limit: 9999
 			}});
 		},
 
@@ -3378,13 +3182,13 @@ define(function (require) {
 		},
 		onCollectionReset: function () {
 			this.tearDownSubviews();
-			this.render();
+			this.render({isReset: true});
 		},
-		render: function () {
+		render: function (options) {
 			if (this.collection.length) {
 				return RepeaterBase.prototype.render.call(this);
 			} else {
-				this.$el.html((new HtmlHelper.ItemAttrRow()).render().el);
+				this.$el.html((new HtmlHelper.ItemAttrRow({isReset: options && options.isReset})).render().el);
 				return this;
 			}
 		}
@@ -3437,15 +3241,17 @@ define(function (require) {
 
 	var Labs = App.Collections.LaboratoryDiags.extend({
 		model: App.Models.LaboratoryDiag.extend({
+			idAttribute: "id",
+
 			initialize: function () {
-				App.Models.LaboratoryDiag.initialize.call(this, this.options);
+				App.Models.LaboratoryDiag.prototype.initialize.call(this, this.options);
 				this.resultData = new Backbone.Collection();
 			},
 
 			fetchResultData: function () {
-				this.result = new LaboratoryResearch();
-				result.eventId = this.collection.appealId;
-				result.id = this.id;
+				this.result = new LabResult();
+				this.result.eventId = this.collection.appealId;
+				this.result.id = this.id;
 
 				var promise = this.result.fetch();
 
@@ -3464,7 +3270,7 @@ define(function (require) {
 								});
 
 							}
-						});
+						}, this);
 					}
 
 					this.resultData.reset(tests);
@@ -3565,6 +3371,56 @@ define(function (require) {
 		})
 	});
 
+	var Thers = Documents.Collections.DocumentList.extend({
+		model: Documents.Models.DocumentListItem.extend({
+			initialize: function () {
+				Documents.Models.DocumentListItem.prototype.initialize.call(this, this.options);
+				this.resultData = new Backbone.Collection();
+			},
+			fetchResultData: function () {
+				this.result = new Documents.Models.Document({id: this.id});
+
+				var promise = this.result.fetch();
+
+				promise.done(_.bind(function () {
+					/*var tests = [];
+					if (this.result.get('group')) {
+						var group_1 = (this.result.get('group'))[1].attribute;
+						_.each(group_1, function (item) {
+							tests.push({
+								name: item.name,
+								value: this.result.getPropertyByName(item.name, 'value') || ""
+							});
+						}, this);
+					}*/
+
+					//console.log(this.result.getFilledAttrs());
+
+					var fas = this.result.getFilledAttrs();
+
+					_.each(fas, function (fa) {
+						if (fa.type === "Time") {
+							fa.value = moment(fa.value, CD_DATE_FORMAT).format("HH:mm");
+						} else if (fa.type === "Date") {
+							fa.value = moment(fa.value, CD_DATE_FORMAT).format("DD.MM.YYYY");
+						}
+					});
+
+
+					this.resultData.reset(fas);
+
+					/*this.set({
+						resultData: tests
+					});*/
+
+					console.log(this);
+				}, this));
+
+				return promise;
+			}
+		})
+	});
+
 	/**
 	 * Поле типа Html и scope(valueDomain) = *1
 	 * @type {*}
@@ -3589,8 +3445,6 @@ define(function (require) {
 
 			labs.extra = {
 				appealClosed: appeal.get('closed'),
-				//displayLabel: "Лабораторные исследования",
-				//ResultView: LaboratoryResultView
 			};
 
 			//INSTS
@@ -3603,9 +3457,7 @@ define(function (require) {
 				sortingMethod: "desc"
 			});
 			insts.extra = {
-				appealClosed: appeal.get('closed'),
-				//displayLabel: "Инструментальные исследования",
-				ResultView: InstrumentalResultView
+				appealClosed: appeal.get('closed')
 			};
 
 			//CONS
@@ -3620,9 +3472,7 @@ define(function (require) {
 			});
 
 			cons.extra = {
-				appealClosed: appeal.get('closed'),
-				//displayLabel: "Консультации",
-				ResultView: ConsultationsResultView
+				appealClosed: appeal.get('closed')
 			};
 
 			return [
@@ -3643,6 +3493,20 @@ define(function (require) {
 				helperLabel: "Лечение",
 				model: this.model
 			};
+		},
+
+		getDialogSections: function () {
+			//THERS
+			//-----------------------
+			var thers = new Thers([], {defaultMnems: ["THER"]});
+			/*thers.setParams({
+				sortingField: "plannedEndDate",
+				sortingMethod: "desc"
+			});*/
+
+			return [
+				{title: "Лечение", items: thers}
+			];
 		}
 	});
 
