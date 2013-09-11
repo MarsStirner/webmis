@@ -19,7 +19,7 @@ define(function(require) {
 
             this.result.id = this.options.modelId ? this.options.modelId : this.options.subId[0];
 
-            this.result.fetch({
+            return this.result.fetch({
                 success: function(model, response, options) {
                     success(model, response, options);
                 },

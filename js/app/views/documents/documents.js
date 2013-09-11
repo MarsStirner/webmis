@@ -92,7 +92,16 @@ define(function (require) {
 			_mkb: _.template(require("text!templates/documents/edit/ui-elements/mkb.html")),
 			_flatDirectory: _.template(require("text!templates/documents/edit/ui-elements/flat-directory.html")),
 			_select: _.template(require("text!templates/documents/edit/ui-elements/select.html")),
-			_person: _.template(require("text!templates/documents/edit/ui-elements/person.html"))
+			_person: _.template(require("text!templates/documents/edit/ui-elements/person.html")),
+			_htmlHelper: _.template(require("text!templates/documents/edit/ui-elements/html-helper.html")),
+			htmlHelperPopUp: {
+				dialog: _.template(require("text!templates/documents/edit/ui-elements/html-helper/dialog.html")),
+				section: _.template(require("text!templates/documents/edit/ui-elements/html-helper/section.html")),
+				itemRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-row.html")),
+				itemAttrsContainerRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attrs-container-row.html")),
+				itemAttrRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attr-row.html")),
+				paste: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste.html")),
+			}
 		}
 	};
 
@@ -100,6 +109,14 @@ define(function (require) {
 	var FlatDirectory = require("models/flat-directory");
 	var MKB = require("views/mkb-directory");
 	var PersonDialog = require("views/ui/PersonDialog");
+	var LabResult = require("models/diagnostics/laboratory/laboratory-diag-form");
+	var LaboratoryResultView = require("views/diagnostics/laboratory/AnalysisResultView");
+	var InstrumentalResearch = require("models/diagnostics/instrumental/InstrumentalResearch");
+	var InstrumentalResearchs = require("collections/diagnostics/instrumental/InstrumentalResearchs");
+	var InstrumentalResultView = require("views/diagnostics/instrumental/InstrumentalResultView");
+	var Consultation = require("models/diagnostics/consultations/Consultation");
+	var Consultations = require("collections/diagnostics/consultations/Consultations");
+	var ConsultationsResultView = require("views/diagnostics/consultations/ConsultationsResultView");
 
 	var FDLoader = {
 		fds: {},
@@ -193,10 +210,10 @@ define(function (require) {
 				if (!this.dates) {
 					this.dates = {
 						begin: new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
-							return attr.name == 'assessmentBeginDate';
+							return attr.name == "assessmentBeginDate";
 						})),
 						end: new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
-							return attr.name == 'assessmentEndDate';
+							return attr.name == "assessmentEndDate";
 						}))
 					};
 				}
@@ -282,7 +299,7 @@ define(function (require) {
 			this.collectTextNodes(element, texts);
 			for (var i = texts.length; i-- > 0;)
 				texts[i] = texts[i].data;
-			return texts.join(' ');
+			return texts.join(" ");
 		},*/
 
 		getCleanHtmlFilledAttrs: function () {
@@ -313,7 +330,7 @@ define(function (require) {
 		save: function (attrs, options) {
 			options.dataType = "jsonp";
 			options.url = Documents.Models.Document.prototype.urlRoot.apply(this);
-			options.contentType = 'application/json';
+			options.contentType = "application/json";
 
 			var method = "create";
 
@@ -411,11 +428,11 @@ define(function (require) {
 		},
 
 		isReadOnly: function () {
-			return this.get("readOnly") === 'true';
+			return this.get("readOnly") === "true";
 		},
 
 		isMandatory: function () {
-			return this.get("mandatory") === 'true';
+			return this.get("mandatory") === "true";
 		},
 
 		isIdType: function () {
@@ -570,7 +587,7 @@ define(function (require) {
 
 		searchByMnem: function (mnems) {
 			this.mnems = mnems;
-			this.fetch().then(_.bind(function () {
+			this.fetch().done(_.bind(function () {
 				this.originalModels = null;
 				this.search(this.lastCriteria);
 			}, this));
@@ -2906,6 +2923,598 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({});
 
 	/**
+	 * Did I ever tell you definition of insanity?
+	 */
+	var HtmlHelper = {};
+
+	HtmlHelper.Dialog = PopUpBase.extend({
+		template: templates.uiElements.htmlHelperPopUp.dialog,
+
+		initialize: function () {
+			this.dialogOptions = {
+				title: "Выберите исследования для вставки",
+				modal: true,
+				width: 900,
+				height: 650,
+				resizable: true,
+				dialogClass: "html-helper-pop-up",
+				//close: _.bind(helper.tearDown, helper),
+				buttons: [
+					{text: "Вставить", "class": "button-color-green", click: _.bind(function () {
+						$(".ui-dialog-buttonpane button").button("disable");
+						this.fetchRemainingResults();
+						console.log("paste!!1");
+						//this.tearDown();
+					}, this)},
+					{text: "Отмена", click:  _.bind(function () {
+						this.tearDown();
+					}, this)}
+				]
+			};
+		},
+
+		fetchRemainingResults: function () {
+			var self = this;
+			var notLoadedIds = [];
+			var promises = [];
+
+			_(this.options.sections).each(function (section) {
+				section.items.each(function (item) {
+					if (item.checked && !item.result) {
+						promises.push(item.fetchResultData());
+					}
+				}, this);
+			}, this);
+
+			$.when.apply($, promises).done(_.bind(function () {
+				console.log("I'm so sorry...");
+
+				var paste = [];
+
+				_(this.options.sections).each(function (section) {
+					section.items.each(function (item) {
+						if (item.checked) {
+							var tests = item.resultData.filter(function (rdi) {
+								return rdi.checked;
+							})
+							if (tests.length) {
+								paste.push({
+									name: item.get("diagnosticName") ? item.get("diagnosticName").name : item.get("assessmentName").name,
+									tests: tests/*.map(function (rdi) {
+										return rdi.toJSON();
+									})*/
+								});
+							}
+						}
+					}, this);
+				}, this);
+
+				console.log(paste);
+
+				this.options.itemsCallback(paste);
+
+				this.tearDown();
+
+			}, this));
+		},
+
+		render: function () {
+			return PopUpBase.prototype.render.call(this, {
+				".helper-results": new HtmlHelper.Sections({
+					collection: new Backbone.Collection(this.options.sections)
+				})
+			});
+		}
+	});
+
+	HtmlHelper.Section = ViewBase.extend({
+		tagName: "section",
+		template: templates.uiElements.htmlHelperPopUp.section,
+		data: function () {
+			return {title: this.model.get("title")};
+		},
+		render: function () {
+			return ViewBase.prototype.render.call(this, {
+				".helper-items-grid": new HtmlHelper.ItemRows({collection: this.model.get("items")})
+			});
+		}
+	});
+
+	HtmlHelper.ItemRow = ViewBase.extend({
+		tagName: "tr",
+		className: "helper-item",
+		template: templates.uiElements.htmlHelperPopUp.itemRow,
+		events: {
+			"click .helper-item-info": "onHelperItemInfoClick",
+			"click .helper-item-checker": "onHelperItemCheckerClick"
+		},
+		initialize: function () {
+			ViewBase.prototype.initialize.call(this, this.options);
+			if (this.model) {
+				this.model.checked = true;
+				this.listenTo(this.model.resultData, "attr:checked", function (event) {
+					if (event.checkedState === "checked") {
+						this.$(".helper-item-checker").prop("checked", true);
+						this.$(".helper-item-checker").prop("indeterminate", false);
+						this.model.checked = true;
+					} else if (event.checkedState === "unchecked") {
+						this.$(".helper-item-checker").prop("checked", false);
+						this.$(".helper-item-checker").prop("indeterminate", false);
+						this.model.checked = false;
+					} else {
+						this.$(".helper-item-checker").prop("checked", true);
+						this.$(".helper-item-checker").prop("indeterminate", true);
+						this.model.checked = true;
+					}
+				});
+			}
+
+		},
+		data: function () {
+			return {model: this.model};
+		},
+		onHelperItemInfoClick: function () {
+			if (this.model) {
+				this.$(".helper-item-attrs-toggler").toggleClass("open");
+				this.model.trigger("attrs:toggle");
+			}
+		},
+		onHelperItemCheckerClick: function (event) {
+			this.model.resultData.trigger("attrs:checked", {checked: $(event.currentTarget).prop("checked")});
+			this.model.checked = $(event.currentTarget).prop("checked");
+		}
+	});
+
+	HtmlHelper.ItemAttrsContainerRow = ViewBase.extend({
+		tagName: "tr",
+		className: "helper-item-attrs",
+		template: templates.uiElements.htmlHelperPopUp.itemAttrsContainerRow,
+		data: function () {
+			return {model: this.model};
+		},
+		initialize: function () {
+			this.listenTo(this.model, "attrs:toggle", this.onModelAttrsToggle);
+			this.listenTo(this.model.resultData, "reset", this.onResultDataReset);
+		},
+		onModelAttrsToggle: function () {
+			this.$el.toggle();
+			if (!this.model.result) {
+				console.log(this.model.collection);
+				this.model.fetchResultData();
+			}
+		},
+		onResultDataReset: function () {
+			console.log("onResultDataReset");
+		},
+		render: function () {
+			return ViewBase.prototype.render.call(this, {
+				".helper-item-attrs-grid": new HtmlHelper.ItemAttrRows({collection: this.model.resultData})
+			});
+		}
+	});
+
+	HtmlHelper.ItemAttrRow = ViewBase.extend({
+		tagName: "tr",
+		className: "helper-item-attr",
+		template: templates.uiElements.htmlHelperPopUp.itemAttrRow,
+		data: function () {
+			return {model: this.model, isReset: this.options.isReset};
+		},
+		events: {
+			"change .helper-item-attr-checker": "onItemAttrCheckerChange"
+		},
+		initialize: function () {
+			ViewBase.prototype.initialize.call(this, this.options);
+			if (this.model) {
+				this.model.checked = true;
+				this.listenTo(this.model.collection, "attrs:checked", function (event) {
+					this.$(".helper-item-attr-checker").prop("checked", event.checked)
+					this.model.checked = event.checked;
+				});
+			}
+		},
+		onItemAttrCheckerChange: function (event) {
+			this.model.checked = !!$(event.currentTarget).prop("checked");
+
+			var clength = this.model.collection.filter(function (m) {return !!m.checked}).length;
+			var checkedState = "indeterminate";
+
+			if (clength === this.model.collection.length) {
+				checkedState = "checked";
+			} else if (clength === 0) {
+				checkedState = "unchecked";
+			}
+
+			this.model.collection.trigger("attr:checked", {checkedState: checkedState});
+		}
+	});
+
+	HtmlHelper.Sections = RepeaterBase.extend({
+		getRepeatView: function (repeatOptions) {
+			return new HtmlHelper.Section(repeatOptions);
+		}
+	});
+
+	HtmlHelper.ItemRows = RepeaterBase.extend({
+		tagName: "tbody",
+
+		initialize: function () {
+			RepeaterBase.prototype.initialize.call(this, this.options);
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+			this.collection.fetch({data: {
+				limit: 9999
+			}});
+		},
+
+		onCollectionReset: function () {
+			this.tearDownSubviews();
+			this.render();
+		},
+
+		getRepeatView: function (repeatOptions) {
+			return {
+				itemRow: new HtmlHelper.ItemRow(repeatOptions),
+				itemAttrsContainerRow: new HtmlHelper.ItemAttrsContainerRow(repeatOptions)
+			};
+		},
+
+		render: function () {
+			this.$el.empty();
+
+			if (this.collection.length) {
+				this.collection.each(function (item) {
+					var repeatOptions = this.getRepeatOptions(item);
+					var repeatView = this.getRepeatView(repeatOptions);
+					this.subViews.push(repeatView.itemRow, repeatView.itemAttrsContainerRow);
+					this.$el.append(repeatView.itemRow.render().el, repeatView.itemAttrsContainerRow.render().el);
+				}, this);
+			} else {
+				this.$el.append((new HtmlHelper.ItemRow()).render().el);
+			}
+
+			return this;
+		}
+	});
+
+	HtmlHelper.ItemAttrRows = RepeaterBase.extend({
+		initialize: function () {
+			RepeaterBase.prototype.initialize.call(this, this.options);
+			this.listenTo(this.collection, "reset", this.onCollectionReset);
+		},
+		getRepeatView: function (repeatOptions) {
+			return new HtmlHelper.ItemAttrRow(repeatOptions);
+		},
+		onCollectionReset: function () {
+			this.tearDownSubviews();
+			this.render({isReset: true});
+		},
+		render: function (options) {
+			if (this.collection.length) {
+				return RepeaterBase.prototype.render.call(this);
+			} else {
+				this.$el.html((new HtmlHelper.ItemAttrRow({isReset: options && options.isReset})).render().el);
+				return this;
+			}
+		}
+	});
+
+	/**
+	 * Поле типа Html и scope(valueDomain) подходящим под паттерн *[1234]
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.HtmlHelper = Documents.Views.Edit.UIElement.Html.extend({
+		template: templates.uiElements._htmlHelper,
+
+		events: _.extend({
+			"click .helper-open": "onHelperOpenClick"
+		}, Documents.Views.Edit.UIElement.Html.prototype.events),
+
+		data: function () {
+			return {
+				helperLabel: "helper",
+				model: this.model
+			};
+		},
+
+		/**
+		 * Override it
+		 * @return Array of sections
+		 */
+		getDialogSections: function () {
+			return [];
+		},
+
+		onHelperOpenClick: function (event) {
+			event.preventDefault();
+
+			var helperDialog = new HtmlHelper.Dialog({
+				sections: this.getDialogSections(),
+				itemsCallback: _.bind(this.itemsCallback, this)
+			});
+
+			helperDialog.render();
+		},
+
+		itemsCallback: function (selectedItems) {
+			console.log("itemsCallback");
+			var sisRendered = templates.uiElements.htmlHelperPopUp.paste({selectedItems: _(selectedItems)});
+			this.model.setValue(sisRendered);
+			this.$(".attribute-value").html(sisRendered);
+		}
+	});
+
+	var Labs = App.Collections.LaboratoryDiags.extend({
+		model: App.Models.LaboratoryDiag.extend({
+			idAttribute: "id",
+
+			initialize: function () {
+				App.Models.LaboratoryDiag.prototype.initialize.call(this, this.options);
+				this.resultData = new Backbone.Collection();
+			},
+
+			fetchResultData: function () {
+				this.result = new LabResult();
+				this.result.eventId = this.collection.appealId;
+				this.result.id = this.id;
+
+				var promise = this.result.fetch();
+
+				promise.done(_.bind(function () {
+					var tests = [];
+
+					if (this.result.get("group")) {
+						var group_1 = (this.result.get("group"))[1].attribute;
+						_.each(group_1, function(item) {
+							if (item.type == "String") {
+								tests.push({
+									name: item.name,
+									value: this.result.getProperty(item.name, "value") || "",
+									unit: this.result.getProperty(item.name, "unit") || "",
+									norm: this.result.getProperty(item.name, "norm") || ""
+								});
+
+							}
+						}, this);
+					}
+
+					this.resultData.reset(tests);
+
+					/*this.set({
+						resultData: tests
+					});*/
+
+					console.log(this);
+				}, this));
+
+				return promise;
+			}
+		})
+	});
+
+	var Insts = InstrumentalResearchs.extend({
+		model: InstrumentalResearch.extend({
+			initialize: function (attrs, options) {
+				InstrumentalResearch.prototype.initialize.call(this, attrs, options);
+				this.resultData = new Backbone.Collection();
+			},
+			fetchResultData: function () {
+				this.result = new InstrumentalResearch({}, {
+					appealId: this.collection.appealId
+				});
+				this.result.id = this.id;
+
+				var promise = this.result.fetch();
+
+				promise.done(_.bind(function () {
+					var tests = [];
+					if (this.result.get("group")) {
+						var group_1 = (this.result.get("group"))[1].attribute;
+						_.each(group_1, function (item) {
+							//if (item.type == "String") {
+							tests.push({
+								name: item.name,
+								value: this.result.getProperty(item.name, "value") || "",
+								unit: this.result.getProperty(item.name, "unit") || "",
+								norm: this.result.getProperty(item.name, "norm") || ""
+							});
+							//}
+						}, this);
+					}
+
+					this.resultData.reset(tests);
+
+					/*this.set({
+						resultData: tests
+					});*/
+
+					console.log(this);
+				}, this));
+
+				return promise;
+			}
+		})
+	});
+
+	var Cons = Consultations.extend({
+		model: Model.extend({
+			idAttribute: 'id',
+			initialize: function () {
+				Model.prototype.initialize.call(this, this.options);
+				this.resultData = new Backbone.Collection();
+			},
+			fetchResultData: function () {
+				this.result = new Consultation();
+				this.result.eventId = this.collection.appealId;
+				this.result.id = this.id;
+
+				var promise = this.result.fetch();
+
+				promise.done(_.bind(function () {
+					var tests = [];
+					if (this.result.get('group')) {
+						var group_1 = (this.result.get('group'))[1].attribute;
+						_.each(group_1, function (item) {
+							tests.push({
+								name: item.name,
+								value: this.result.getProperty(item.name, 'value') || ""
+							});
+						}, this);
+					}
+
+					this.resultData.reset(tests);
+
+					/*this.set({
+						resultData: tests
+					});*/
+
+					console.log(this);
+				}, this));
+
+				return promise;
+			}
+		})
+	});
+
+	var Thers = Documents.Collections.DocumentList.extend({
+		model: Documents.Models.DocumentListItem.extend({
+			initialize: function () {
+				Documents.Models.DocumentListItem.prototype.initialize.call(this, this.options);
+				this.resultData = new Backbone.Collection();
+			},
+			fetchResultData: function () {
+				this.result = new Documents.Models.Document({id: this.id});
+
+				var promise = this.result.fetch();
+
+				promise.done(_.bind(function () {
+					/*var tests = [];
+					if (this.result.get('group')) {
+						var group_1 = (this.result.get('group'))[1].attribute;
+						_.each(group_1, function (item) {
+							tests.push({
+								name: item.name,
+								value: this.result.getPropertyByName(item.name, 'value') || ""
+							});
+						}, this);
+					}*/
+
+					//console.log(this.result.getFilledAttrs());
+
+					var fas = this.result.getFilledAttrs();
+
+					_.each(fas, function (fa) {
+						if (fa.type === "Time") {
+							fa.value = moment(fa.value, CD_DATE_FORMAT).format("HH:mm");
+						} else if (fa.type === "Date") {
+							fa.value = moment(fa.value, CD_DATE_FORMAT).format("DD.MM.YYYY");
+						}
+					});
+
+
+					this.resultData.reset(fas);
+
+					/*this.set({
+						resultData: tests
+					});*/
+
+					console.log(this);
+				}, this));
+
+				return promise;
+			}
+		})
+	});
+
+	/**
+	 * Поле типа Html и scope(valueDomain) = *1
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.HtmlDiagnostics = Documents.Views.Edit.UIElement.HtmlHelper.extend({
+		data: function () {
+			return {
+				helperLabel: "Обследования",
+				model: this.model
+			};
+		},
+
+		getDialogSections: function () {
+			//LABS
+			//-----------------------
+			var labs = new Labs();
+			labs.appealId = appealId;
+			labs.setParams({
+				sortingField: "plannedEndDate",
+				sortingMethod: "desc"
+			});
+
+			labs.extra = {
+				appealClosed: appeal.get('closed'),
+			};
+
+			//INSTS
+			//-----------------------
+			var insts = new Insts([], {
+				appealId: appealId
+			});
+			insts.setParams({
+				sortingField: "plannedEndDate",
+				sortingMethod: "desc"
+			});
+			insts.extra = {
+				appealClosed: appeal.get('closed')
+			};
+
+			//CONS
+			//-----------------------
+			var cons = new Cons();
+			cons.appealId = appealId;
+
+
+			cons.setParams({
+				sortingField: "plannedEndDate",
+				sortingMethod: "desc"
+			});
+
+			cons.extra = {
+				appealClosed: appeal.get('closed')
+			};
+
+			return [
+				{title: "Лабораторные исследования", items: labs},
+				{title: "Инструментальные исследования", items: insts},
+				{title: "Консультации", items: cons}
+			];
+		}
+	});
+
+	/**
+	 * Поле типа Html и scope(valueDomain) = *2
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.HtmlTherapy = Documents.Views.Edit.UIElement.HtmlHelper.extend({
+		data: function () {
+			return {
+				helperLabel: "Лечение",
+				model: this.model
+			};
+		},
+
+		getDialogSections: function () {
+			//THERS
+			//-----------------------
+			var thers = new Thers([], {defaultMnems: ["THER"]});
+			/*thers.setParams({
+				sortingField: "plannedEndDate",
+				sortingMethod: "desc"
+			});*/
+
+			return [
+				{title: "Лечение", items: thers}
+			];
+		}
+	});
+
+	/**
 	 * Поле типа Select
 	 * @type {*}
 	 */
@@ -3115,7 +3724,13 @@ define(function (require) {
 				this.UIElementClass = Documents.Views.Edit.UIElement.FlatDirectory;
 				break;
 			case "html":
-				this.UIElementClass = Documents.Views.Edit.UIElement.Html;
+				if (options.model.get("scope") === "*1") {
+					this.UIElementClass = Documents.Views.Edit.UIElement.HtmlDiagnostics;
+				} else if (options.model.get("scope") === "*2") {
+					this.UIElementClass = Documents.Views.Edit.UIElement.HtmlTherapy;
+				} else {
+					this.UIElementClass = Documents.Views.Edit.UIElement.Html;
+				}
 				break;
 			case "orgstructure":
 				this.UIElementClass = Documents.Views.Edit.UIElement.OrgStructure;

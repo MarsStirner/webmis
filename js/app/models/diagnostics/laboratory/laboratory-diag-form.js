@@ -81,7 +81,7 @@ define(function (require) {
 					break;
 			}
 			//console.log('options2', options.success)
-			Backbone.sync.call(Backbone, method, model, options);
+			return Backbone.sync.call(Backbone, method, model, options);
 		}
 
 	}).mixin([commonData]);

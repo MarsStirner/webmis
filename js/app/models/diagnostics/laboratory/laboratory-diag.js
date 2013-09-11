@@ -68,7 +68,7 @@ define([//"models/doctor"
 				// 	break;
 			}
 
-			Backbone.sync(method, model, options);
+			return Backbone.sync(method, model, options);
 		},
 
 		destroy: function(options) {
