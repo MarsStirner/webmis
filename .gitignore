@@ -186,3 +186,5 @@ node_modules
 build
 
 .allow-devtools-edit
+sftp-config.json
+tasks.todo

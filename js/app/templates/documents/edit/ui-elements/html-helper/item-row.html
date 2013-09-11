@@ -1,0 +1,27 @@
+<%if (model) {%>
+	<%console.log("ITEM ROW", model)%>
+	<td class="helper-item-checker-col">
+		<input type="checkbox" class="helper-item-checker" data-id="<%=model.get('id')%>" checked>
+	</td>
+	<td class="helper-item-info">
+		<div class="helper-item-name">
+			<%if (model.get("diagnosticName")) {%>
+				<span><%=model.get("diagnosticName").name%></span>
+			<%} else if (model.get("assessmentName")) {%>
+				<span><%=model.get("assessmentName").name%></span>
+			<%}%>
+		</div>
+		<div class="helper-item-attrs-toggler">
+			<i class="icon-chevron-down"></i>
+		</div>
+	</td>
+<%}else{%>
+	<td class="helper-item-checker-col">
+		&nbsp;
+	</td>
+	<td class="helper-item-info" style="padding-bottom: 1em;">
+		<div class="helper-item-name">
+			<span>Нет записей</span>
+		</div>
+	</td>
+<%}%>

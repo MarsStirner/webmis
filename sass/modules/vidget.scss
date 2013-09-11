@@ -286,10 +286,116 @@
 			}
 		}
 	}
-	.thesaurus-open {
+	.thesaurus-open, .helper-open {
 		display: inline-block;
 		font-size: 1.2em;
 		text-decoration: none;
 		padding: .2em;
 	}
+}
+
+.html-helper-pop-up > .ui-dialog-content {
+	padding: 0;
+}
+
+.helper-results {
+	section {
+		> h3 {
+			padding: .5em 1em;
+			border-bottom: 1px solid gray;
+		}
+	}
+	table {
+		tr.helper-item {
+			td.helper-item-checker-col {
+				width: 4em;
+				background-color: whitesmoke;
+				text-align: center;
+			}
+			td.helper-item-info {
+				cursor: pointer;
+				border-left: 4px solid grey;
+
+				.helper-item-name {
+					padding: 1em 1em 0 1em;
+				}
+				.helper-item-attrs-toggler {
+					text-align: center;
+					color: whitesmoke;
+					visibility: hidden;
+					&.open {
+						/* Safari */
+						-webkit-transform: rotate(180deg);
+
+						/* Firefox */
+						-moz-transform: rotate(180deg);
+
+						/* IE */
+						-ms-transform: rotate(180deg);
+
+						/* Opera */
+						-o-transform: rotate(180deg);
+
+						/* Internet Explorer */
+						filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=6);
+					}
+				}
+				&:hover {
+					background-color: #DDD;
+					.helper-item-attrs-toggler {
+						visibility: visible;
+					}
+				}
+			}
+			&:hover {
+				td.helper-item-info {
+					border-left: 4px solid #118ddc;
+				}
+			}
+		}
+
+		tr.helper-item-attrs {
+			display: none;
+			td.helper-item-attr-spacer {
+				width: 4em;
+				background-color: whitesmoke;
+			}
+			tr.helper-item-attr {
+
+				td.helper-item-attr-checker-col {
+					width: 2em;
+					background-color: whitesmoke;
+					text-align: center;
+				}
+				td.helper-item-attr-info {
+					border-left: 2px solid grey;
+					.helper-item-attr-name {
+						padding: .5em 1em;
+					}
+				}
+				&:hover {
+					td.helper-item-attr-info {
+						border-left: 2px solid #118ddc;
+					}
+				}
+			}
+		}
+	}
+}
+
+@-webkit-keyframes icon-spinner-rotate {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+.icon-spinner {
+	display: block;
+	-webkit-animation-name: icon-spinner-rotate;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
 }
