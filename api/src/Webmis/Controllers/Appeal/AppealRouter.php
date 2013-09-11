@@ -194,14 +194,22 @@ class AppealRouter implements ControllerProviderInterface
                 $date = new \DateTime('NOW');
             }
 
+            //текущая дата
+            $modifyDatetime = new \DateTime('NOW');
+
+            //идентификатор текущего пользователя
+            $modifyPersonId = $request->cookies->get('userId');
+
             $update_sql = "UPDATE Action "
                 ." JOIN ActionType ON Action.actionType_id = ActionType.id "
-                ." SET Action.endDate = :endDate, Action.status = 2 "
+                ." SET Action.endDate = :endDate, Action.status = 2, Action.modifyDatetime = :modifyDatetime, Action.modifyPerson_id = :modifyPersonId "
                 ." WHERE Action.event_id = :appealId "
                 ." AND Action.endDate IS NULL";
 
             $statment = $app['db']->prepare($update_sql);
             $statment->bindValue('endDate', $date, "datetime");
+            $statment->bindValue('modifyDatetime', $modifyDatetime, "datetime");
+            $statment->bindValue('modifyPersonId',$modifyPersonId, "integer");
             $statment->bindValue('appealId', $appealId, "integer");
             $count = $statment->execute();
 
@@ -225,6 +233,12 @@ class AppealRouter implements ControllerProviderInterface
                 $date = new \DateTime('NOW');
             }
 
+            //текущая дата
+            $modifyDatetime = new \DateTime('NOW');
+
+            //идентификатор текущего пользователя
+            $modifyPersonId = $request->cookies->get('userId');
+
             $select_sql = "SELECT Action.id, Action.begDate, Action.endDate FROM Action "
             ."JOIN ActionType ON Action.actionType_id = ActionType.id "
             ."WHERE Action.event_id = ? AND ActionType.flatCode = 'moving' "
@@ -232,35 +246,36 @@ class AppealRouter implements ControllerProviderInterface
             $lastMove = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
             $lastMoveId = $lastMove['id'];
 
-            if($lastMoveId){
-                $update_sql = "UPDATE Action "
-                ."SET Action.endDate= :endDate, Action.status = 2 "
-                ."WHERE Action.id = :lastMoveId";
-
-                $stmt = $app['db']->prepare($update_sql);
-                $stmt->bindValue('endDate', $date, "datetime");
-                $stmt->bindValue('lastMoveId', $lastMoveId, "integer");
-                $count = $stmt->execute();
-
-                $timeleavead = $date->format('H:i:s');
-                //timeleaved id
-                $select_sql = "select ap.id from Action as a "
-                    ."join ActionProperty as ap on ap.action_id = a.id "
-                    ."where a.id = ? and ap.type_id = 1617 ";
-
-                $timeleaveadProperty = $app['db']->fetchAssoc($select_sql, array((int) $lastMoveId));
-                $timeleaveadPropertyId = $timeleaveadProperty['id'];
-
-                $insert_sql = "INSERT INTO ActionProperty_Time (id, value) VALUES (:id,:time) "
-                        ."ON DUPLICATE KEY UPDATE value= :time;";
-
-                $stmt = $app['db']->prepare($insert_sql);
-                $stmt->bindValue('id', $timeleaveadPropertyId, "integer");
-                $stmt->bindValue('time', $timeleavead);
-                $count = $stmt->execute();
-            }else{
-                $count = 0;
+            if(!$lastMoveId){
+                return $app['jsonp']->jsonp(0);
             }
+            $update_sql = "UPDATE Action "
+            ."SET Action.endDate= :endDate, Action.modifyDatetime = :modifyDatetime, Action.modifyPerson_id = :modifyPersonId, Action.status = 2 "
+            ."WHERE Action.id = :lastMoveId";
+
+            $stmt = $app['db']->prepare($update_sql);
+            $stmt->bindValue('endDate', $date, "datetime");
+            $stmt->bindValue('modifyDatetime', $modifyDatetime, "datetime");
+            $stmt->bindValue('modifyPersonId',$modifyPersonId, "integer");
+            $stmt->bindValue('lastMoveId', $lastMoveId, "integer");
+            $count = $stmt->execute();
+
+            $timeleavead = $date->format('H:i:s');
+            //timeleaved id
+            $select_sql = "SELECT ap.id from Action AS a "
+                         ."JOIN ActionProperty AS ap ON ap.action_id = a.id "
+                         ."WHERE a.id = ? AND ap.type_id = 1617 ";
+
+            $timeleaveadProperty = $app['db']->fetchAssoc($select_sql, array((int) $lastMoveId));
+            $timeleaveadPropertyId = $timeleaveadProperty['id'];
+
+            $insert_sql = "INSERT INTO ActionProperty_Time (id, value) VALUES (:id,:time) "
+                        ." ON DUPLICATE KEY UPDATE value= :time;";
+
+            $stmt = $app['db']->prepare($insert_sql);
+            $stmt->bindValue('id', $timeleaveadPropertyId, "integer");
+            $stmt->bindValue('time', $timeleavead);
+            $count = $stmt->execute();
 
 
             return $app['jsonp']->jsonp($count);
@@ -283,20 +298,59 @@ class AppealRouter implements ControllerProviderInterface
                 $date = new \DateTime('NOW');
             }
 
+            //текущая дата
+            $modifyDatetime = new \DateTime('NOW');
+
+            //идентификатор текущего пользователя
+            $modifyPersonId = $request->cookies->get('userId');
+
+            //результат госпитализации
             $resultId = $request->query->get('resultId');
 
-            $update_sql = "UPDATE Event SET Event.execDate = :execDate, Event.result_id = :resultId WHERE Event.id = :id";
+            //выбираем историю болезни
+            $appeal_sql = "SELECT * FROM Event WHERE id = ?";
+            $appeal = $app['db']->fetchAssoc($appeal_sql, array((int) $appealId));
 
+            $execPersonId = $appeal['execPerson_id'];
+
+            if (!$execPersonId) {//должен быть назначен ответственный "лечащий врач"
+                $error = array('message' => 'Ошибка: в истории болезни не назначен лечащий врач!');
+                return $app['jsonp']->jsonp($error);
+            }
+
+            //выбираем последнего лечащего врача
+            $select_exec_person_sql = "SELECT * FROM Event_Persons"
+                                     ." WHERE event_id = :appealId AND person_id = :execPersonId"
+                                     ." ORDER BY begDate DESC LIMIT 1";
+
+            $stmt = $app['db']->prepare($select_exec_person_sql);
+            $stmt->bindValue('appealId', $appealId, "integer");
+            $stmt->bindValue('execPersonId', $execPersonId, "integer");
+            $stmt->execute();
+            $appealExecPerson = $stmt->fetch();
+
+            if (!$appealExecPerson) {
+                $error = array('message' => 'Ошибка: не нашли лечащего врача!');
+                return $app['jsonp']->jsonp($error);
+            }
+
+            $appealExecPersonId = $appealExecPerson['id'];
+
+            //обновляем историю болезни и последнего лечащего врача
+            $update_sql = "UPDATE Event, Event_Persons SET Event.modifyDatetime = :modifyDatetime, Event.modifyPerson_id = :modifyPersonId ,Event.execDate = :execDate, Event.result_id = :resultId, Event_Persons.endDate = :execDate WHERE Event.id = :appealId AND Event_Persons.id = :appealExecPersonId";
             $stmt = $app['db']->prepare($update_sql);
+            $stmt->bindValue('modifyDatetime', $modifyDatetime, "datetime");
+            $stmt->bindValue('modifyPersonId',$modifyPersonId, "integer");
             $stmt->bindValue('execDate', $date, "datetime");
             $stmt->bindValue('resultId',$resultId, "integer");
-            $stmt->bindValue('id', $appealId, "integer");
+            $stmt->bindValue('appealId', $appealId, "integer");
+            $stmt->bindValue('appealExecPersonId', $appealExecPersonId, "integer");
             $stmt->execute();
 
-            $select_sql = "SELECT * FROM Event WHERE id = ?";
-            $event = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
 
-            return $app['jsonp']->jsonp($event);
+            $appeal = $app['db']->fetchAssoc($appeal_sql, array((int) $appealId));
+
+            return $app['jsonp']->jsonp($appeal);
 
         })->assert('appealId', '\d+');
 
