@@ -84,11 +84,14 @@ define(function(require) {
                     url: '/api/v1/appeals/' + appealId + '/bed/vacate?execDate=' + closeDate,
                     dataType: 'jsonp',
                     type: 'GET',
-                    success: function() {
-                        pubsub.trigger('noty', {
-                            text: 'Выписали с койки',
-                            type: 'success'
-                        });
+                    success: function(data) {
+                        if(data){
+                            pubsub.trigger('noty', {
+                                text: 'Выписали с койки',
+                                type: 'success'
+                            });
+                        }
+
                         //console.log('success close bed', arguments);
                     }
                 });
@@ -117,6 +120,8 @@ define(function(require) {
 
         data: function(){
             var data = {};
+
+            data.doctorId = this.options.appeal.get('execPerson').id;
 
             data.docs = this.docs4closing.toJSON();
             data.appealId = this.options.appeal.get('id');

@@ -23,13 +23,19 @@ $console->register( 'close-appeals-docs' )
   ->setCode(
     function(InputInterface $input, OutputInterface $output) use ($app)
     {
-      $output->write( "Закрываем ...\n");
+        $output->write( "Закрываем ...\n");
 
-      $closeDate = new \DateTime('NOW');//дата закрытия
-      $checkDate = new \DateTime('NOW');
-      $days = 3;
+        //дата закрытия
+        $closeDate = new \DateTime('NOW');
+        $checkDate = new \DateTime('NOW');
 
-      $t = $checkDate->getTimestamp();
+        //текущая дата - дата изменения документов
+        $modifyDatetime = new \DateTime('NOW');
+
+        $days = 3;//три рабочих дня...
+
+        //+++++++++++учёт выходных++++++++++++++++++++++
+        $t = $checkDate->getTimestamp();
 
         for($i=0; $i < $days; $i++){
 
@@ -49,6 +55,7 @@ $console->register( 'close-appeals-docs' )
         }
 
         $checkDate->setTimestamp($t);
+        //++++++++++++++++++++++++++++++++++++++++++++++++
 
         $date = $checkDate->format('Y-m-d');
         $output->write("проверяем документы для иб закрытых раньше ".$date."\n");
@@ -71,27 +78,17 @@ $console->register( 'close-appeals-docs' )
         $update_sql = "UPDATE Action as a"
                 ." JOIN ActionType as at ON a.actionType_id = at.id "
                 ." JOIN Event as e ON a.event_id = e.id "
-                ." SET a.endDate = :closeDate, a.status = 2 "
+                ." SET a.endDate = :closeDate, a.status = 2, a.modifyDatetime = :modifyDatetime "
                 ." WHERE e.execDate < :checkDate "
                 ." AND a.endDate IS NULL";
 
         $statment = $app['db']->prepare($update_sql);
+        $statment->bindValue('modifyDatetime', $modifyDatetime, "datetime");
         $statment->bindValue('closeDate', $closeDate, "datetime");
         $statment->bindValue('checkDate', $checkDate, "datetime");
         $count = $statment->execute();
 
         $output->write( "закрыли \n");
-
-
-
-        // $sql = "SELECT a.endDate, at.* FROM Event as e join Action as a on a.event_id = e.id join ActionType as at on at.id = a.actionType_id where e.execDate < :checkDate and a.endDate is null and at.mnem in ('EXAM','EPI','JOUR','ORD','NOT','OTH')";
-        // $stmt = $app['db']->prepare($sql);
-        // $stmt->bindValue('checkDate', $checkDate, "datetime");
-        // $stmt->execute();
-        // $actions = $stmt->fetchAll();
-        // $count = count($actions);
-
-        // $output->write( "незакрытых документов: ".$count."  \n");
 
 
     }
