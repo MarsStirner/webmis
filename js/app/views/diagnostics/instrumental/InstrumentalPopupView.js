@@ -43,8 +43,8 @@ define(function(require) {
             //диагнозы из госпитализации
             //this.appealDiagnosis = this.options.appeal.getDiagnosis();
 
-            this.appealDiagnosis = new PatientDiagnoses(null,{
-                appealId : this.options.appeal.get('id')
+            this.appealDiagnosis = new PatientDiagnoses(null, {
+                appealId: this.options.appeal.get('id')
             })
 
             //список групп исследований
@@ -227,8 +227,12 @@ define(function(require) {
             view.testTemplate.setProperty('urgent', 'value', view.viewModel.get('urgent'));
 
             //идентификатор направительного диагноза
-            if (view.viewModel.get('mkbId')) {
-                view.testTemplate.setProperty('Направительный диагноз', 'valueId', view.viewModel.get('mkbId'));
+            var mkbId = view.viewModel.get('mkbId');
+
+            view.testTemplate.setProperty('Направительный диагноз', 'valueId', mkbId);
+
+            if (!mkbId) {
+                view.testTemplate.setProperty('Направительный диагноз', 'value', '');
             }
 
 
@@ -351,7 +355,7 @@ define(function(require) {
             //     view.$mbkCode.data('mkb-id', view.appealDiagnosis.get('mkb').get('id'));
             // }
 
-            view.appealDiagnosis.fetch().done(function(){
+            view.appealDiagnosis.fetch().done(function() {
                 //установка диагноза
                 // console.log('view.appealDiagnosis',view.appealDiagnosis.first())
                 if ((view.appealDiagnosis.length > 0) && view.appealDiagnosis.first()) {

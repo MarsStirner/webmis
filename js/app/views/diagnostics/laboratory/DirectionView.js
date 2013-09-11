@@ -149,7 +149,7 @@ define(function(require) {
 
 			//изменение исполнителя исследования
 			pubsub.on('executor:changed', function(executor) {
-				//console.log('executor:changed', executor)
+				console.log('executor:changed', executor, view.analyzesSelected)
 				if (view.analyzesSelected.length === 1) {
 					view.executor = executor;
 					view.ui.$executor.val(executor.name.last + ' ' + executor.name.first + ' ' + executor.name.middle);
@@ -312,9 +312,12 @@ define(function(require) {
 				model.setProperty('finance', 'value', view.ui.$finance.val());
 
 				var mkbId = view.$("input[name='diagnosis[mkb][code]']").data('mkb-id');
-				//if (mkbId) {
-					model.setProperty('Направительный диагноз', 'valueId', mkbId);
-				//}
+
+				model.setProperty('Направительный диагноз', 'valueId', mkbId);
+
+				if(!mkbId){
+					model.setProperty('Направительный диагноз', 'value', '');
+				}
 
 
 			});

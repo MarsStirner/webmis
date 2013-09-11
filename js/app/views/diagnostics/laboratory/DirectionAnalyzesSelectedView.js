@@ -40,9 +40,9 @@ define(function(require) {
 
 					//analysis.setProperty('plannedEndDate', 'value', '');
 
-					view.setExecutorFromAnalysis(analysis);
 
 					view.analyzes.add([analysis]);
+					view.setExecutorFromAnalysis(analysis);
 
 				});
 

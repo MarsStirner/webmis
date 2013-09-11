@@ -449,9 +449,14 @@ define(function(require) {
 			// view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 			view.model.setProperty('assessmentBeginDate', 'value', startDate + ' ' + startTime);
 			view.model.setProperty('finance', 'value', view.ui.$finance.val());
-			if (view.ui.$mkbCode.data('mkb-id')) {
-				view.model.setProperty('Направительный диагноз', 'valueId', view.ui.$mkbCode.data('mkb-id'));
+			var mkbId = view.ui.$mkbCode.data('mkb-id');
+
+			view.model.setProperty('Направительный диагноз', 'valueId', mkbId);
+
+			if(!mkbId){
+				view.model.setProperty('Направительный диагноз', 'value', '');
 			}
+
 
 
 

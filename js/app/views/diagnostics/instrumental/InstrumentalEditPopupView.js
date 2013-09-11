@@ -283,6 +283,9 @@ define(function(require) {
 
 			//идентификатор направительного диагноза
 			view.model.setProperty('Направительный диагноз', 'valueId', view.viewModel.get('mkbId'));
+			if(!view.viewModel.get('mkbId')){
+				view.model.setProperty('Направительный диагноз', 'value', '');
+			}
 
 
 			view.model.save({}, {
