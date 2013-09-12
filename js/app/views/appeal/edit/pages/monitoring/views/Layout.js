@@ -44,12 +44,12 @@ define(function(require) {
             shared.appealJSON = shared.models.appeal.toJSON();
             this.canPrint = false;
 
-            pubsub.on('appeal:closed', function() { //когда закрыли историю болезни
-                shared.models.appeal.fetch();
-            });
+            //pubsub.on('appeal:closed', function() { //когда закрыли историю болезни
+                //shared.models.appeal.fetch();
+            //});
 
             shared.models.appeal.on('change reset', function() {
-                console.log('appeal change', shared.models.appeal);
+                //console.log('appeal change', shared.models.appeal);
                 this.render();
             }, this);
 
