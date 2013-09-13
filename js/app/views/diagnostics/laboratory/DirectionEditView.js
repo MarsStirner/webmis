@@ -6,18 +6,20 @@
 //попап редактирования направления на лабисследование
 
 define(function(require) {
+	'use strict';
+
 	var tmpl = require('text!templates/diagnostics/laboratory/direction-edit.tmpl');
 	var popupMixin = require('mixins/PopupMixin');
-	var SelectView = require("views/ui/SelectView");
+	var SelectView = require('views/ui/SelectView');
 	var test4EditTmpl = require('text!templates/diagnostics/laboratory/node-test4edit.html');
-	var MkbInputView = require("views/ui/MkbInputView");
+	var MkbInputView = require('views/ui/MkbInputView');
 	var PersonDialogView = require('views/ui/PersonDialog');
 
 	return View.extend({
 		template: tmpl,
 		events: {
 			'click #assigner-outer': 'openAssignerSelectPopup',
-			"click #executor-outer": "openExecutorSelectPopup",
+			'click #executor-outer': 'openExecutorSelectPopup',
 			'change .select_date': 'onChangePlannedEndDate',
 			'change .select_time': 'onChangePlannedEndDate',
 			'change .cito': 'onChangeCito',
@@ -37,7 +39,7 @@ define(function(require) {
 
 			view.model = this.options.model;
 			view.model.eventId = view.options.appeal.get('id');
-			//console.log('popup init', view.model);
+			view.model.on('change:plannedEndDate', this.validateForm, this);
 
 			view.assigner = view.getAssigner();
 			view.executor = view.getExecutor();
@@ -47,14 +49,14 @@ define(function(require) {
 			view.depended(view.mkbInputView);
 
 			pubsub.on('assigner:changed', function(assigner) {
-				console.log('assigner:changed', arguments, view)
+				//console.log('assigner:changed', arguments, view)
 				view.assigner = assigner;
 				view.ui.$assigner.val(assigner.name.raw);
 
 			});
 
 			pubsub.on('executor:changed', function(executor) {
-				console.log('executor:changed', arguments, view)
+				//console.log('executor:changed', arguments, view)
 				view.executor = executor;
 				view.ui.$executor.val(executor.name.raw);
 
@@ -93,14 +95,14 @@ define(function(require) {
 			var name = $target.val();
 			var value = $target.prop('checked');
 
-			this.model.setProperty(name, 'isAssigned', "" + value);
+			this.model.setProperty(name, 'isAssigned', '' + value);
 		},
 
 		onChangeCito: function() {
 			var view = this;
 			var value = this.ui.$cito.prop('checked');
 
-			view.model.setProperty('urgent', 'value', "" + value);
+			view.model.setProperty('urgent', 'value', '' + value);
 
 		},
 
@@ -114,7 +116,7 @@ define(function(require) {
 
 			view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 
-			console.log('onChangePlannedEndDate', date + ' ' + time, view.model);
+			//console.log('onChangePlannedEndDate', date + ' ' + time, view.model);
 
 		},
 
@@ -199,10 +201,10 @@ define(function(require) {
 			var assignerId = view.model.getProperty('assignerId');
 
 			return {
-				id: assignerId ? assignerId : Core.Cookies.get("userId"),
+				id: assignerId ? assignerId : Core.Cookies.get('userId'),
 				name: {
-					first: assignerFirstName ? assignerFirstName : Core.Cookies.get("doctorFirstName"),
-					last: assignerLastName ? assignerLastName : Core.Cookies.get("doctorLastName"),
+					first: assignerFirstName ? assignerFirstName : Core.Cookies.get('doctorFirstName'),
+					last: assignerLastName ? assignerLastName : Core.Cookies.get('doctorLastName'),
 					middle: assignerMiddleName ? assignerMiddleName : ''
 				}
 			};
@@ -236,17 +238,17 @@ define(function(require) {
 			data.id = view.model.get('id');
 			data.title = view.model.get('name');
 
-			var plannedEndDate = moment(view.model.getProperty('plannedEndDate'), "YYYY-MM-DD HH:mm:ss"); //2013-03-30 07:00:00
+			var plannedEndDate = moment(view.model.getProperty('plannedEndDate'), 'YYYY-MM-DD HH:mm:ss'); //2013-03-30 07:00:00
 			data.plannedDate = moment(plannedEndDate).format('DD.MM.YYYY');
 			data.plannedTime = moment(plannedEndDate).format('HH:mm');
 
-			data.cito = (view.model.getProperty('urgent') === "true") ? true : false;
+			data.cito = (view.model.getProperty('urgent') === 'true') ? true : false;
 
 			data.tests = [];
 
 			var attributes = view.model.get('group')[1].attribute;
 			var stringAttributes = _.filter(attributes, function(attr) {
-				return attr.type == "String";
+				return attr.type == 'String';
 			});
 
 			data.tests = _.map(stringAttributes, function(attr) {
@@ -273,30 +275,30 @@ define(function(require) {
 				analysis: view.data()
 			}));
 
-			view.renderNested(view.mkbInputView, ".mkb");
+			view.renderNested(view.mkbInputView, '.mkb');
 
 			view.ui = {};
-			view.ui.$mkbDiagnosis = view.$("input[name='diagnosis[mkb][diagnosis]']");
-			view.ui.$mkbCode = view.$("input[name='diagnosis[mkb][code]']");
-			view.ui.$startDate = view.$("#start-date");
-			view.ui.$startTime = view.$("#start-time");
+			view.ui.$mkbDiagnosis = view.$('input[name="diagnosis[mkb][diagnosis]"]');
+			view.ui.$mkbCode = view.$('input[name="diagnosis[mkb][code]"]');
+			view.ui.$startDate = view.$('#start-date');
+			view.ui.$startTime = view.$('#start-time');
 			view.ui.$finance = view.$('#finance');
 			view.ui.$assigner = view.$('#assigner');
 			view.ui.$executor = view.$('#executor');
 
-			view.ui.$plannedDatepicker = view.$el.find(".select_date");
-			view.ui.$plannedTimepicker = view.$el.find(".select_time");
-			view.ui.$cito = view.$el.find(".cito");
-			view.ui.$tests = view.$el.find(".tests");
-			view.ui.$icons = view.$el.find(".icons");
+			view.ui.$plannedDatepicker = view.$el.find('.select_date');
+			view.ui.$plannedTimepicker = view.$el.find('.select_time');
+			view.ui.$cito = view.$el.find('.cito');
+			view.ui.$tests = view.$el.find('.tests');
+			view.ui.$icons = view.$el.find('.icons');
 
 			this.$('.change-assigner,.change-executor').button();
 
 
 			view.ui.$plannedDatepicker.datepicker({
 				minDate: new Date(),
-				onSelect: function(dateText, inst) {
-					var day = moment(view.$(this).datepicker("getDate")).startOf('day');
+				onSelect: function() {
+					var day = moment(view.$(this).datepicker('getDate')).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
 					var hour = view.ui.$plannedTimepicker.timepicker('getHour');
@@ -311,14 +313,14 @@ define(function(require) {
 				}
 			});
 
-			view.ui.$plannedDatepicker.next('.icon-calendar').on('click', function(){
+			view.ui.$plannedDatepicker.next('.icon-calendar').on('click', function() {
 				view.ui.$plannedDatepicker.datepicker('show');
 			});
 
 			view.ui.$plannedTimepicker.timepicker({
 				defaultTime: 'now',
 				onHourShow: function(hour) {
-					var day = moment(view.ui.$plannedDatepicker.datepicker("getDate")).startOf('day');
+					var day = moment(view.ui.$plannedDatepicker.datepicker('getDate')).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
 					//если выбран текущий день, то часы меньше текущего нельзя выбрать
@@ -331,7 +333,7 @@ define(function(require) {
 					return true;
 				},
 				onMinuteShow: function(hour, minute) {
-					var day = moment(view.ui.$plannedDatepicker.datepicker("getDate")).startOf('day');
+					var day = moment(view.ui.$plannedDatepicker.datepicker('getDate')).startOf('day');
 					var currentDay = moment().startOf('day');
 					var currentHour = moment().hour();
 					var currentMinute = moment().minute();
@@ -370,9 +372,7 @@ define(function(require) {
 			var date = new Date(assessmentBeginDate);
 
 			view.ui.$startDate.addClass('Disabled')
-				.val(moment(date).format('DD.MM.YYYY'))
-
-			.prop('disabled', true);
+				.val(moment(date).format('DD.MM.YYYY')).prop('disabled', true);
 
 			view.ui.$startTime.addClass('Disabled').prop('disabled', true).val(moment(date).format('HH:mm'));
 
@@ -381,58 +381,43 @@ define(function(require) {
 			return view;
 		},
 
+		saveButton: function(enabled, msg) {
+			var $saveButton = this.$el.closest('.ui-dialog').find('.save');
+
+			if (enabled) {
+				$saveButton.button('enable');
+			} else {
+				$saveButton.button('disable');
+			}
+			if (msg) {
+				$saveButton.button('option', 'label', msg);
+			} else {
+				$saveButton.button('option', 'label', 'Сохранить');
+			}
+
+		},
+
+		validateForm: function(){
+			console.log('validateForm');
+			this.saveButton(this.isValid());
+		},
+
+		isValid: function() {
+			var valid = true;
+			var plannedEndDate = this.model.getProperty('plannedEndDate', 'value');
+
+			if (!plannedEndDate || !moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid() || !(moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").diff(moment()) > -(60*1000))) {
+				valid = false;
+			}
+
+			return valid;
+		},
+
 		onSave: function() {
 			var view = this;
 
-
-			// var tree = view.$('.edit-tree').dynatree("getTree");
-
-
 			var startDate = moment(view.ui.$startDate.val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
 			var startTime = view.ui.$startTime.val() + ':00';
-
-
-			// var modelTree = tree.toDict().children[0];
-			// //console.log('modelTree', modelTree)
-			// var $dateInput = view.$('#date' + modelTree.key);
-			// var date = moment($dateInput.datepicker("getDate")).format('YYYY-MM-DD');
-
-			// var $timeInput = view.$('#time' + modelTree.key);
-			// var time = $timeInput.val() + ':00';
-
-			// var $citoInput = view.$('#cito' + modelTree.key);
-			// var cito = $citoInput.prop('checked');
-
-			// //console.log('node inputs', date, time, cito)
-
-			// var selected_params = _.filter(modelTree.children, function(node) {
-			// 	return node.select === true;
-			// });
-
-			// var unselected_params = _.filter(modelTree.children, function(node) {
-			// 	return node.select === false;
-			// });
-
-			// var group = view.model.get('group');
-
-			// //выбранные тесты
-			// _.each(selected_params, function(param) {
-			// 	//view.model.setProperty(param.title, 'isAssigned', "true");
-			// 	_.each(group[1].attribute, function(attribute, index) {
-			// 		if (attribute.name == param.title) {
-			// 			group[1].attribute[index].properties[0].value = 'true';
-			// 		}
-			// 	});
-			// });
-
-			// _.each(unselected_params, function(param) {
-			// 	//view.model.setProperty(param.title, 'isAssigned', "false");
-			// 	_.each(group[1].attribute, function(attribute, index) {
-			// 		if (attribute.name == param.title) {
-			// 			group[1].attribute[index].properties[0].value = 'false';
-			// 		}
-			// 	});
-			// });
 
 			view.model.setProperty('doctorFirstName', 'value', view.executor.name.first);
 			view.model.setProperty('doctorLastName', 'value', view.executor.name.last);
@@ -444,24 +429,16 @@ define(function(require) {
 			view.model.setProperty('assignerMiddleName', 'value', view.assigner.name.middle);
 			view.model.setProperty('assignerId', 'value', view.assigner.id);
 
-
-			// view.model.setProperty('urgent', 'value', cito);
-			// view.model.setProperty('plannedEndDate', 'value', date + ' ' + time);
 			view.model.setProperty('assessmentBeginDate', 'value', startDate + ' ' + startTime);
 			view.model.setProperty('finance', 'value', view.ui.$finance.val());
 			var mkbId = view.ui.$mkbCode.data('mkb-id');
 
 			view.model.setProperty('Направительный диагноз', 'valueId', mkbId);
 
-			if(!mkbId){
+			if (!mkbId) {
 				view.model.setProperty('Направительный диагноз', 'value', '');
 			}
 
-
-
-
-			// console.log('attr', view.model.get('group'))
-			// view.model.set('group', group);
 
 			view.model.save({}, {
 				success: function() {
@@ -486,8 +463,7 @@ define(function(require) {
 		},
 
 		close: function() {
-			this.$el.dialog("close");
-			//this.ui.$startDate.datepicker('destroy');
+			this.$el.dialog('close');
 			this.$el.remove();
 			this.remove();
 			pubsub.off('assigner:changed');
