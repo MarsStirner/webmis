@@ -3,31 +3,28 @@
         <span class="Label" style="white-space: nowrap">Дата и время создания</span>
 
         <div class="date">
-            <input type="text" data-mindate="0" name="start-date" id="start-date" placeholder="дд.мм.гггг"
-                   class="SelectDate"
-                   data-relation="#start-time"/>
+            <input
+            type="text"
+            data-mindate="0"
+            name="createDate"
+            id="createDate"
+            placeholder="дд.мм.гггг"
+            class="SelectDate"/>
             <i class="icon-calendar date-icon"></i>
         </div>
     </div>
 
     <div class="span1 WithoutName">
         <div class="time">
-            <input type="text" class="Styled HourPicker" id="start-time" data-relation="#start-date"
-                   placeholder="чч:мм"/>
+            <input
+            type="text"
+            class="Styled HourPicker"
+            id="createTime"
+            placeholder="чч:мм"/>
             <i class="icon-time time-icon"></i>
         </div>
     </div>
 
-
-    <!--<div class="span6">-->
-        <!--<span class="Label">Направивший врач</span>-->
-
-        <!--<div id="doctor-outer">-->
-            <!--<input name="doctor" id="doctor" type="text" style="" disabled-->
-                   <!--value="${doctorFirstName} ${doctorMiddleName} ${doctorLastName}">-->
-            <!--<button class="change-doctor" style=""><i class="icon-user-md"></i></button>-->
-        <!--</div>-->
-    <!--</div>-->
 
     <div class="span3">
         <span class="Label">Вид оплаты</span><br/>
