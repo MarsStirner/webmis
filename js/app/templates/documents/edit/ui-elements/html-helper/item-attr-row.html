@@ -1,6 +1,10 @@
 <%if (model) {%>
 	<td class="helper-item-attr-checker-col">
-		<input type="checkbox" class="helper-item-attr-checker" checked>
+		<%if (model.collection.initChecked) { %>
+			<input type="checkbox" class="helper-item-attr-checker" checked>
+		<%}else{%>
+			<input type="checkbox" class="helper-item-attr-checker">
+		<%}%>
 	</td>
 	<td class="helper-item-attr-info">
 		<div class="helper-item-attr-name">

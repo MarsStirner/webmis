@@ -3010,8 +3010,46 @@ define(function (require) {
 	HtmlHelper.Section = ViewBase.extend({
 		tagName: "section",
 		template: templates.uiElements.htmlHelperPopUp.section,
+		events: {
+			"click .helper-section-header-wrap": "onHelperSectionClick",
+			"click .helper-section-checker": "onHelperSectionCheckerClick"
+		},
 		data: function () {
 			return {title: this.model.get("title")};
+		},
+		initialize: function () {
+			this.listenTo(this.model.get("items"), "invalidateSectionChecker", function () {
+				var il = this.model.get("items").length;
+				var cil = this.model.get("items").filter(function (item) {
+					return item.checked;
+				}).length;
+
+				if (il === cil) {
+					this.$(".helper-section-checker").prop("checked", true).prop("indeterminate", false);
+					//this.model.checked = true;
+				} else if (cil === 0) {
+					this.$(".helper-section-checker").prop("checked", false).prop("indeterminate", false);
+					//this.model.checked = false;
+				} else {
+					this.$(".helper-section-checker").prop("checked", true).prop("indeterminate", true);
+					//this.model.checked = true;
+				}
+			});
+		},
+		onHelperSectionClick: function (event) {
+			this.$(".helper-section-toggler").toggleClass("open");
+			this.$(".helper-items-grid").toggle();
+		},
+		onHelperSectionCheckerClick: function (event) {
+			event.stopPropagation();
+			this.model.get("items").each(function (itemModel) {
+				itemModel.trigger("section:checked", {checked: $(event.currentTarget).prop("checked")});
+			}, this);
+			/*this.$(".helper-items-grid .helper-item-checker").each(function () {
+				$(this)
+					.prop("checked", $(event.currentTarget).prop("checked"));
+					//.click();
+			});*/
 		},
 		render: function () {
 			return ViewBase.prototype.render.call(this, {
@@ -3031,7 +3069,7 @@ define(function (require) {
 		initialize: function () {
 			ViewBase.prototype.initialize.call(this, this.options);
 			if (this.model) {
-				this.model.checked = true;
+				this.model.checked = false;
 				this.listenTo(this.model.resultData, "attr:checked", function (event) {
 					if (event.checkedState === "checked") {
 						this.$(".helper-item-checker").prop("checked", true);
@@ -3046,6 +3084,13 @@ define(function (require) {
 						this.$(".helper-item-checker").prop("indeterminate", true);
 						this.model.checked = true;
 					}
+
+					this.model.collection.trigger("invalidateSectionChecker");
+				});
+				this.listenTo(this.model, "section:checked", function (event) {
+					this.$(".helper-item-checker").prop("checked", event.checked);
+					this.$(".helper-item-checker").prop("indeterminate", false);
+					this.setItemChecked(event.checked);
 				});
 			}
 
@@ -3060,8 +3105,13 @@ define(function (require) {
 			}
 		},
 		onHelperItemCheckerClick: function (event) {
-			this.model.resultData.trigger("attrs:checked", {checked: $(event.currentTarget).prop("checked")});
-			this.model.checked = $(event.currentTarget).prop("checked");
+			this.setItemChecked($(event.currentTarget).prop("checked"));
+			this.model.collection.trigger("invalidateSectionChecker");
+		},
+		setItemChecked: function (checked) {
+			this.model.resultData.initChecked = checked;
+			this.model.resultData.trigger("attrs:checked", {checked: checked});
+			this.model.checked = checked;
 		}
 	});
 
@@ -3106,7 +3156,7 @@ define(function (require) {
 		initialize: function () {
 			ViewBase.prototype.initialize.call(this, this.options);
 			if (this.model) {
-				this.model.checked = true;
+				this.model.checked = this.model.collection.initChecked;
 				this.listenTo(this.model.collection, "attrs:checked", function (event) {
 					this.$(".helper-item-attr-checker").prop("checked", event.checked)
 					this.model.checked = event.checked;
@@ -3243,6 +3293,8 @@ define(function (require) {
 		}
 	});
 
+	// HELPER COLLECTIONS
+
 	var Labs = App.Collections.LaboratoryDiags.extend({
 		model: App.Models.LaboratoryDiag.extend({
 			idAttribute: "id",
@@ -3272,7 +3324,6 @@ define(function (require) {
 									unit: this.result.getProperty(item.name, "unit") || "",
 									norm: this.result.getProperty(item.name, "norm") || ""
 								});
-
 							}
 						}, this);
 					}
