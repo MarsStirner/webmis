@@ -3296,7 +3296,7 @@ define(function (require) {
 	// HELPER COLLECTIONS
 
 	var Labs = App.Collections.LaboratoryDiags.extend({
-		model: App.Models.LaboratoryDiag.extend({
+		model: Documents.Models.FetchableModelBase.extend({
 			idAttribute: "id",
 
 			initialize: function () {
@@ -3338,12 +3338,15 @@ define(function (require) {
 				}, this));
 
 				return promise;
-			}
+			},
+
+			sync: App.Models.LaboratoryDiag.prototype.sync,
+			parse: App.Models.LaboratoryDiag.prototype.parse
 		})
 	});
 
 	var Insts = InstrumentalResearchs.extend({
-		model: InstrumentalResearch.extend({
+		model: Documents.Models.FetchableModelBase.extend({
 			initialize: function (attrs, options) {
 				InstrumentalResearch.prototype.initialize.call(this, attrs, options);
 				this.resultData = new Backbone.Collection();
@@ -3382,12 +3385,15 @@ define(function (require) {
 				}, this));
 
 				return promise;
-			}
+			},
+			urlRoot: InstrumentalResearch.prototype.urlRoot,
+			sync: InstrumentalResearch.prototype.sync,
+			parse: InstrumentalResearch.prototype.parse
 		})
 	});
 
 	var Cons = Consultations.extend({
-		model: Model.extend({
+		model: Documents.Models.FetchableModelBase.extend({
 			idAttribute: 'id',
 			initialize: function () {
 				Model.prototype.initialize.call(this, this.options);
