@@ -300,10 +300,44 @@
 
 .helper-results {
 	section {
-		> h3 {
-			padding: .5em 1em;
-			border-bottom: 1px solid gray;
+		.helper-section-header {
+			display: inline-block;
 		}
+		.helper-section-header-wrap {
+			border-bottom: 1px solid gray;
+			padding: .5em 1em 0 1em;
+			cursor: pointer;
+			&:hover {
+				background-color: #DDD;
+				.helper-section-toggler {
+					visibility: visible;
+				}
+			}
+		}
+		.helper-section-toggler {
+			text-align: center;
+			color: whitesmoke;
+			visibility: hidden;
+			cursor: pointer;
+			&.open {
+				//visibility: visible;
+				/* Safari */
+				-webkit-transform: rotate(180deg);
+
+				/* Firefox */
+				-moz-transform: rotate(180deg);
+
+				/* IE */
+				-ms-transform: rotate(180deg);
+
+				/* Opera */
+				-o-transform: rotate(180deg);
+
+				/* Internet Explorer */
+				filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=6);
+			}
+		}
+
 	}
 	table {
 		tr.helper-item {

@@ -769,32 +769,65 @@ input {
 }
 
 /* line 303, ../../sass/modules/vidget.scss */
-.helper-results section > h3 {
-  padding: .5em 1em;
+.helper-results section .helper-section-header {
+  display: inline-block;
+}
+/* line 306, ../../sass/modules/vidget.scss */
+.helper-results section .helper-section-header-wrap {
   border-bottom: 1px solid gray;
+  padding: .5em 1em 0 1em;
+  cursor: pointer;
 }
 /* line 310, ../../sass/modules/vidget.scss */
+.helper-results section .helper-section-header-wrap:hover {
+  background-color: #DDD;
+}
+/* line 312, ../../sass/modules/vidget.scss */
+.helper-results section .helper-section-header-wrap:hover .helper-section-toggler {
+  visibility: visible;
+}
+/* line 317, ../../sass/modules/vidget.scss */
+.helper-results section .helper-section-toggler {
+  text-align: center;
+  color: whitesmoke;
+  visibility: hidden;
+  cursor: pointer;
+}
+/* line 322, ../../sass/modules/vidget.scss */
+.helper-results section .helper-section-toggler.open {
+  /* Safari */
+  -webkit-transform: rotate(180deg);
+  /* Firefox */
+  -moz-transform: rotate(180deg);
+  /* IE */
+  -ms-transform: rotate(180deg);
+  /* Opera */
+  -o-transform: rotate(180deg);
+  /* Internet Explorer */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=6);
+}
+/* line 344, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-checker-col {
   width: 4em;
   background-color: whitesmoke;
   text-align: center;
 }
-/* line 315, ../../sass/modules/vidget.scss */
+/* line 349, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info {
   cursor: pointer;
   border-left: 4px solid grey;
 }
-/* line 319, ../../sass/modules/vidget.scss */
+/* line 353, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info .helper-item-name {
   padding: 1em 1em 0 1em;
 }
-/* line 322, ../../sass/modules/vidget.scss */
+/* line 356, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info .helper-item-attrs-toggler {
   text-align: center;
   color: whitesmoke;
   visibility: hidden;
 }
-/* line 326, ../../sass/modules/vidget.scss */
+/* line 360, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info .helper-item-attrs-toggler.open {
   /* Safari */
   -webkit-transform: rotate(180deg);
@@ -807,59 +840,59 @@ input {
   /* Internet Explorer */
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=6);
 }
-/* line 343, ../../sass/modules/vidget.scss */
+/* line 377, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info:hover {
   background-color: #DDD;
 }
-/* line 345, ../../sass/modules/vidget.scss */
+/* line 379, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item td.helper-item-info:hover .helper-item-attrs-toggler {
   visibility: visible;
 }
-/* line 351, ../../sass/modules/vidget.scss */
+/* line 385, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item:hover td.helper-item-info {
   border-left: 4px solid #118ddc;
 }
-/* line 357, ../../sass/modules/vidget.scss */
+/* line 391, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs {
   display: none;
 }
-/* line 359, ../../sass/modules/vidget.scss */
+/* line 393, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs td.helper-item-attr-spacer {
   width: 4em;
   background-color: whitesmoke;
 }
-/* line 365, ../../sass/modules/vidget.scss */
+/* line 399, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs tr.helper-item-attr td.helper-item-attr-checker-col {
   width: 2em;
   background-color: whitesmoke;
   text-align: center;
 }
-/* line 370, ../../sass/modules/vidget.scss */
+/* line 404, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs tr.helper-item-attr td.helper-item-attr-info {
   border-left: 2px solid grey;
 }
-/* line 372, ../../sass/modules/vidget.scss */
+/* line 406, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs tr.helper-item-attr td.helper-item-attr-info .helper-item-attr-name {
   padding: .5em 1em;
 }
-/* line 377, ../../sass/modules/vidget.scss */
+/* line 411, ../../sass/modules/vidget.scss */
 .helper-results table tr.helper-item-attrs tr.helper-item-attr:hover td.helper-item-attr-info {
   border-left: 2px solid #118ddc;
 }
 
 @-webkit-keyframes icon-spinner-rotate {
-  /* line 387, ../../sass/modules/vidget.scss */
+  /* line 421, ../../sass/modules/vidget.scss */
   from {
     -webkit-transform: rotate(0deg);
   }
 
-  /* line 390, ../../sass/modules/vidget.scss */
+  /* line 424, ../../sass/modules/vidget.scss */
   to {
     -webkit-transform: rotate(360deg);
   }
 }
 
-/* line 395, ../../sass/modules/vidget.scss */
+/* line 429, ../../sass/modules/vidget.scss */
 .icon-spinner {
   display: block;
   -webkit-animation-name: icon-spinner-rotate;
