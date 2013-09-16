@@ -23,6 +23,10 @@ define(function(require) {
 			this.model.on('change:plannedEndDate', function(model, value) {
 				this.render();
 			}, this);
+			this.model.on('change', function(model, value) {
+				console.log('coll', this.model.collection.toJSON())
+				console.log('change', model, value);
+			}, this);
 
 		},
 		onBlurPlannedEndDate: function(){
@@ -55,6 +59,7 @@ define(function(require) {
 				date: date,
 				time: time,
 				urgent: urgent,
+				model: this.model,
 				tests: this.model.getTests()
 			});
 
@@ -70,18 +75,16 @@ define(function(require) {
 		},
 
 		onChangeCito: function() {
-			var view = this;
 			var value = this.ui.$cito.prop('checked');
 
-			view.model.setProperty('urgent', 'value', "" + value);
+			this.model.setProperty('urgent', 'value', "" + value);
 
 		},
 
 		onChangePicked: function() {
-			var view = this;
 			var value = this.ui.$picked.prop('checked');
 
-			view.model.set('picked', value);
+			this.model.set('picked', value);
 		},
 
 		onChangePlannedEndDate: function() {
@@ -90,7 +93,7 @@ define(function(require) {
 			if(!rawDate) return;
 
 			var rawTime = this.ui.$plannedTimepicker.val();
-			console.log(rawDate, rawTime)
+			//console.log(rawDate, rawTime)
 
 
 			var date = moment(rawDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
@@ -114,10 +117,6 @@ define(function(require) {
 					pickedModel.setProperty('plannedEndDate', 'value', datetime);
 				});
 			}
-
-
-
-			//console.log('onChangePlannedEndDate', date + ' ' + time, view.model, picked);
 
 		},
 
@@ -175,6 +174,7 @@ define(function(require) {
 		render: function() {
 			var view = this;
 
+			console.log(' this.analysisData()', this.analysisData());
 
 			this.$el.html(_.template(analysisTemplate, this.analysisData(), {
 				variable: 'data'
@@ -302,9 +302,8 @@ define(function(require) {
 		},
 
 		close: function() {
-			var view = this;
-			view.$el.remove();
-			view.remove();
+			this.$el.remove();
+			this.remove();
 		}
 	});
 
