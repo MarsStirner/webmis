@@ -12,6 +12,7 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 		},
 
 		initialize: function () {
+			console.log('roles',this.options.structure.roles)
 			if (!Core.Data.currentRole()) {
 				Core.Data.currentRole(this.options.structure.roles[0].role);
 			}
@@ -101,6 +102,12 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 						{title: "Биоматериалы", name: "biomaterials", uri: "/biomaterials/"},
 						{title: "Отчёты", name: "reports", uri: "/reports/"}
 						//,{title: "Амбулаторные талоны"}
+					);
+					break;
+				case ROLES.CHIEF:
+					sections.push(
+						{title: "Госпитализации", name: "appeals", uri: "/appeals/"},
+						{title: "Отчёты", name: "reports", uri: "/reports/"}
 					);
 					break;
 			}

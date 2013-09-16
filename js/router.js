@@ -134,8 +134,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			"test/": "test"
 		},
 
-		test: function () {
-			require(["views/documents/documents"], function (Documents) {
+		test: function() {
+			require(["views/documents/documents"], function(Documents) {
 				//var docsLayout = new Documents.Views.List.Layout();
 				$("#wrapper").html(new Documents.Views.List.Layout().render().el);
 				$("#dinputest").dPassword({});
@@ -173,9 +173,35 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		index: function() {
 			if (Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) {
 				this.patients();
+			} else if (Core.Data.currentRole() === ROLES.CHIEF) {
+				this.chiefIndex();
 			} else {
 				this.appeals();
 			}
+		},
+
+		chiefIndex: function() {
+			if (!this.checkAuthToken()) {
+				return false
+			}
+
+
+			require(["views/app", "views/chief/IndexView"], function(AppView, IndexView) {
+
+				var view = new IndexView();
+
+				if (!this.appView) {
+					this.appView = new AppView({
+						renderView: view
+					});
+					this.appView.render();
+				} else {
+					var newMain = $('<div id="main"></div>').append(view.render().el);
+					this.appView.$("#main").remove();
+					this.appView.$el.append(newMain);
+				}
+			});
+
 		},
 
 		biomaterials: function() {
@@ -501,7 +527,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			});
 		},
 
-		appealReview: function (appealId) {
+		appealReview: function(appealId) {
 			var page;
 			if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT) {
 				page = "monitoring";
@@ -511,19 +537,19 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			this.appeal("REVIEW", appealId, page);
 		},
 
-		appealReviewPage: function (appealId, page) {
+		appealReviewPage: function(appealId, page) {
 			this.appeal("REVIEW", appealId, page);
 		},
 
-		appealSubItemReview: function (appealId, page, subId) {
+		appealSubItemReview: function(appealId, page, subId) {
 			this.appeal("SUB_REVIEW", appealId, page, subId.split(","));
 		},
 
-		appealSubItemEdit: function (appealId, page, subId) {
+		appealSubItemEdit: function(appealId, page, subId) {
 			this.appeal("SUB_EDIT", appealId, page, subId);
 		},
 
-		appealSubItemNew: function (appealId, page, subId) {
+		appealSubItemNew: function(appealId, page, subId) {
 			this.appeal("SUB_NEW", appealId, page, subId);
 		},
 
