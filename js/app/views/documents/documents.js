@@ -33,7 +33,7 @@ define(function (require) {
 
 	//константы
 	var HIDDEN_TYPES = ['JobTicket', 'RLS']; //типы полей, которые не выводятся в ui.
-	var ID_TYPES = ["MKB", "FLATDIRECTORY", "PERSON"];
+	var ID_TYPES = ["MKB", "FLATDIRECTORY", "PERSON", "ORGSTRUCTURE"];
 	var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
 	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss'; //Формат даты в коммон дата
 	var FLAT_CODES = {

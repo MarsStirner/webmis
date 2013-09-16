@@ -12,8 +12,9 @@ define(["collections/appeals"], function ()
 		},
 
 		render: function () {
+			console.log('appeals',this.options.appeals)
 			this.$el.html($.tmpl(this.template, {
-				quantity: this.options.appeals.length,
+				quantity: this.options.appeals.requestData.recordsCount,
 				patient: this.options.appeals.patient
 			}));
 
@@ -24,7 +25,7 @@ define(["collections/appeals"], function ()
 			return this;
 		}
 	});
-	
+
 	var AppealsHistoryList = View.extend({
 		render: function () {
 			_(this.collection.first(5)).each(function (a) {

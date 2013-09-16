@@ -80,9 +80,10 @@ define(function(require) {
 			return this;
 		},
 		close: function() {
-			pubsub.off('analysis:click');
 			pubsub.off('lab:click');
 			this.collection.off();
+			this.$el.remove();
+			this.remove();
 		}
 
 	});

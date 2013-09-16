@@ -15,65 +15,88 @@ define(function(require) {
 		initialize: function(attr, options) {
 
 			this.model = options.model;
-			this.set('finance', this.model.getProperty('finance'));
-			this.set('urgent', this.model.getProperty('urgent'));
 
-			this.set('executorId', this.model.getProperty('executorId'));
-			this.set('doctorFirstName', this.model.getProperty('doctorFirstName'));
-			this.set('doctorMiddleName', this.model.getProperty('doctorMiddleName'));
-			this.set('doctorLastName', this.model.getProperty('doctorLastName'));
+			var createDate = moment(this.model.getProperty('assessmentBeginDate'), 'YYYY-MM-DD HH:mm:ss');
+			var createDay = createDate.toDate();
+			var createTime = createDate.format('HH:mm');
 
-			this.set('assignerId', this.model.getProperty('assignerId'));
-			this.set('assignerFirstName', this.model.getProperty('assignerFirstName'));
-			this.set('assignerMiddleName', this.model.getProperty('assignerMiddleName'));
-			this.set('assignerLastName', this.model.getProperty('assignerLastName'));
-
-			var assessmentBeginDate = this.model.getProperty('assessmentBeginDate');
-			var assessmentDay = moment((assessmentBeginDate.split(' '))[0], 'YYYY-MM-DD').format('YYYY-MM-DD');
-			var assessmentTime = (assessmentBeginDate.split(' '))[1].slice(0, -3);
-
-			this.set('assessmentDay', assessmentDay);
-			this.set('assessmentTime', assessmentTime);
-
-			var plannedEndDate = this.model.getProperty('plannedEndDate');
-			var plannedEndDay = moment((plannedEndDate.split(' '))[0], 'YYYY-MM-DD').format('YYYY-MM-DD');
-			var plannedEndTime = (plannedEndDate.split(' '))[1].slice(0, -3);
-
-			this.set('plannedEndDay', plannedEndDay);
-			this.set('plannedEndTime', plannedEndTime);
+			var plannedDate =  moment(this.model.getProperty('plannedEndDate'), 'YYYY-MM-DD HH:mm:ss');
+			var plannedDay = plannedDate.toDate();
+			var plannedTime = plannedDate.format('HH:mm');
 
 			//Диагноз
-			var diagnosis = this.model.getProperty('Направительный диагноз', 'value')
+			var diagnosis = this.model.getProperty('Направительный диагноз', 'value');
+			var mkbCode, mkbText;
 			if (diagnosis) {
 				diagnosis = diagnosis.split(/\s+/);
 				var mkbCode = diagnosis[0];
 				var mkbText = (diagnosis.splice(1)).join(' ');
-				this.set('mkbText', mkbText);
-				this.set('mkbCode', mkbCode);
 			}
 
-			this.set('mkbId', this.model.getProperty('Направительный диагноз', 'valueId'));
+			this.set({
+				'createDay': createDay,
+				'createTime': createTime,
+
+				'plannedDay': plannedDay,
+				'plannedTime': plannedTime,
+				'plannedDatetime': this.model.getProperty('plannedEndDate'),
+
+				'assignerId': this.model.getProperty('assignerId'),
+				'assignerFirstName': this.model.getProperty('assignerFirstName'),
+				'assignerLastName': this.model.getProperty('assignerLastName'),
+				'assignerMiddleName': this.model.getProperty('assignerMiddleName'),
+
+				'executorId': this.model.getProperty('executorId'),
+				'executorFirstName': this.model.getProperty('doctorFirstName'),
+				'executorLastName': this.model.getProperty('doctorLastName'),
+				'executorMiddleName': this.model.getProperty('doctorMiddleName'),
+
+				'mkbId': this.model.getProperty('Направительный диагноз', 'valueId'),
+				'mkbText': mkbText,
+				'mkbCode': mkbCode,
+
+				'finance': this.model.getProperty('finance'),
+				'urgent': this.model.getProperty('urgent')
+			}, {
+				validate: false
+			});
 
 
-			this.on('change:plannedEndTime', this.updateSaveButtonState, this);
+			this.on('change:plannedDay change:plannedTime', this.calculatePlannedDatetime, this);
 
-			// this.on('change', function(){
-			// 	console.log('change',this.toJSON())
-			// }, this);
-
-
-
-
-
+			//this.on('change', this.updateSaveButtonState, this);
 		},
 
-		updateSaveButtonState: function() {
+		calculatePlannedDatetime: function() {
+			var plannedDay = moment(this.get('plannedDay')).format('YYYY-MM-DD');
+			var plannedTime = this.get('plannedTime') + ':00';
+			this.set('plannedDatetime', plannedDay + ' ' + plannedTime);
+		},
 
-			if (this.get('plannedTime')) {
-				this.set('saveButtonState', 'enable');
-			} else {
-				this.set('saveButtonState', 'disable');
+		validateModel: function(attrs) {
+			var errors = [];
+			console.log('attrs', attrs);
+
+			if (!attrs.plannedTime) {
+				errors.push({
+					name: 'plannedTime',
+					message: 'Не задано планируемое время исследования. '
+				});
 			}
+
+			if (!attrs.plannedDatetime || !moment(attrs.plannedDatetime, 'YYYY-MM-DD HH:mm:ss').isValid()) {
+				//
+			} else {
+				if (!(moment(attrs.plannedDatetime, 'YYYY-MM-DD HH:mm:ss').diff(moment()) > -(60 * 1000))) {
+					errors.push({
+						name: 'plannedDatetime',
+						message: 'Планируемая дата выполнения не может быть меньше текущей. '
+					});
+				}
+			}
+
+
+			return errors.length > 0 ? errors : false;
 		}
 
 	});

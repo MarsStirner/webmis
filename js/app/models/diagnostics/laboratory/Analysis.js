@@ -3,13 +3,24 @@ define(function(require) {
 
 	var Analysis = Model.extend({
 		initialize: function(attr, options) {
-			console.log('init a', arguments)
 			this.code = options.code;
 			this.patientId = options.patientId;
 			//this.deferred = this.fetch();
 
 		},
-		idAttribute: "blablabla",
+		idAttribute: 'blablabla',
+		checkTests: function() {
+			// var self = this;
+			var tests = this.get('group')[1].attribute;
+
+			_.each(tests, function(test) {
+
+				if (test.type == 'String') {
+						this.setProperty(test.name, 'isAssigned', 'true');
+				}
+
+			}, this);
+		},
 
 		getTests: function() {
 			var self = this;
@@ -20,12 +31,9 @@ define(function(require) {
 
 			_.each(tests, function(test) {
 
-				if (test.type == "String") {
+				if (test.type == 'String') {
 					var select = false;
 					var unselectable = false;
-
-					self.setProperty(test.name, 'isAssigned', 'true');
-					//console.log(test.name, self.getProperty(test.name, 'isAssigned'))
 
 					if (self.getProperty(test.name, 'isAssignable') == 'false') {
 						unselectable = true;
@@ -50,7 +58,7 @@ define(function(require) {
 		},
 
 		url: function() {
-			return DATA_PATH + "dir/actionTypes?filter[mnem]=LAB&filter[code]=" + this.code + "&patientId=" + this.patientId;
+			return DATA_PATH + 'dir/actionTypes?filter[mnem]=LAB&filter[code]=' + this.code + '&patientId=' + this.patientId;
 		},
 
 		parse: function(raw) {

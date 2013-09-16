@@ -9,20 +9,14 @@ define(function(require) {
             'change input': 'toggleSelect'
         },
         toggleSelect: function(e) {
-            $target = this.$(e.target);
+            var $target = this.$(e.target);
+
             if ($target.prop('checked')) {
-
-                pubsub.trigger('research:selected', this.model.get('code'))
+                pubsub.trigger('research:selected', this.model.get('code'));
             } else {
-
-                pubsub.trigger('research:deselected', this.model.get('code'))
+                pubsub.trigger('research:deselected', this.model.get('code'));
             }
-
-
-            console.log('toggleSelect');
-
-
-
+            //console.log('toggleSelect');
         },
         initialize: function() {
             this.$el.attr('data-code', this.model.get('code'));
@@ -44,6 +38,10 @@ define(function(require) {
             this.ui = {};
             this.ui.$checkbox = this.$el.find('input');
             return this;
+        },
+        close: function(){
+            this.$el.remove();
+            this.remove();
         }
 
     });

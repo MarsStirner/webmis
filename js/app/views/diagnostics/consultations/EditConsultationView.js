@@ -247,10 +247,12 @@ define(function(require) {
         //при изменении диагноза
         onChangeMKB: function(e) {
             var $target = this.$(e.target);
+            var mkbId = $target.data('mkb-id');
+            console.log('mkb', mkbId);
 
-            this.consultation.setProperty('Направительный диагноз', 'valueId', $target.data('mkb-id'));
+            this.consultation.setProperty('Направительный диагноз', 'valueId', mkbId);
 
-            if(!$target.data('mkb-id')){
+            if(!mkbId){
                 this.consultation.setProperty('Направительный диагноз', 'value', '');
             }
 

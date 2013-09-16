@@ -147,7 +147,7 @@ define(function(require) {
 			this.appealId = this.options.appealId;
 			this.page = this.options.page;
 
-			console.log('this', this);
+			//console.log('this', this);
 
 			if (!(this.appealId && this.pageViews[this.page])) {
 				throw new Error("Invalid diagnostic type or empty appeal id");

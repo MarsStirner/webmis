@@ -20,7 +20,7 @@ define(function(require) {
 			pubsub.on('analysis:click', function(code) {
 				console.log('analysis:click', code);
 				//debugger;
-				var analysis = new Analysis([],{
+				var analysis = new Analysis([], {
 					code: code,
 					patientId: view.options.patientId
 				});
@@ -40,9 +40,9 @@ define(function(require) {
 
 					//analysis.setProperty('plannedEndDate', 'value', '');
 
-					view.setExecutorFromAnalysis(analysis);
-
+					analysis.checkTests();
 					view.analyzes.add([analysis]);
+					view.setExecutorFromAnalysis(analysis);
 
 				});
 
@@ -89,17 +89,15 @@ define(function(require) {
 			view.$el.html(_.template(analyzesListTemplate, {}));
 			view.$analyzesList = view.$el.find('tbody.item-container');
 
-			_.each(view.childViews, function(childView){
-				childView.close();
-			});
-			view.childViews.length = 0;
+			this.closeChildViews();
+
 
 
 			this.analyzes.each(function(model) {
 				//console.log('analyzes item', model);
 				var analysisView = new AnalysisView({
 					model: model,
-					collection: view.analyzes,
+					collection: model.collection,
 					patientId: view.options.patientId
 				});
 
@@ -132,19 +130,23 @@ define(function(require) {
 
 			return view;
 		},
-		close: function() {
-			var view = this;
-
-			view.analyzes.off();
-
-			_.each(view.childViews, function(childView) {
+		closeChildViews: function() {
+			_.each(this.childViews, function(childView) {
 				childView.close();
-			}, view);
+			}, this);
+
+			this.childViews.length = 0;
+		},
+		close: function() {
+			this.analyzes.off();
+			pubsub.off('analysis:click');
+			this.closeChildViews();
+			this.$el.remove();
+			this.remove();
 
 		}
 
 	});
-
 
 	return AnalyzesSelectedView;
 

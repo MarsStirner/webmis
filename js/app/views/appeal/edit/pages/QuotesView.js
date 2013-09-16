@@ -321,6 +321,11 @@ define(function(require) {
 
 			this.vmpTalon.save({}, {
 				success: function() {
+					console.log('this.vmpTalon',self.vmpTalon)
+					if(self.vmpTalon.isNew()){
+						self.vmpTalon.fetch();
+					}
+
 
 					self.ui.$save.button("option", "label", 'Сохранить').button("enable");
 					pubsub.trigger('noty', {

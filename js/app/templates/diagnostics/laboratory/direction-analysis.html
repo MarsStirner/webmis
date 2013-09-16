@@ -11,9 +11,15 @@
           <span class="title2" <% if(data.tests.length > 0){%>style="cursor:pointer;"<%}%>><%= data.name %></span>
           <ul class="tests" style="display:none;">
             <%_.each(data.tests, function(test){%>
-              <li <% if(test.select){%>class="selected"<%}%> >
+              <li>
                 <label>
-                  <input class="test-select" type="checkbox" <% if(test.select){%>checked="checked"<%}%> value="<%= test.title%>"/><%= test.title%>
+                <% console.log('isAssigned',data.model.getProperty(test.title,'isAssigned'))%>
+                  <input
+                  class="test-select"
+                  type="checkbox"
+                  <% if(data.model.getProperty(test.title,'isAssigned') === 'true'){%> checked="checked"<%}%>
+                  value="<%= test.title%>"/>
+                  <%= test.title%>
                 </label>
               </li>
             <%});%>
