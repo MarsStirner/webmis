@@ -13,33 +13,58 @@ define(function(require) {
         //template:'',
         events: {
             'click .save': 'onSave',
-            'change #results':'validate'
+            'change #results': 'validate' //,
+            //'change .appeal-close-date': 'validate',
+            //'change .appeal-close-time': 'validate'
         },
-        validate: function(){
-            //console.log(this.ui.$results.val())
-            if(this.ui.$results.val() != '...'){
+        validate: function() {
+            var result = this.getResult();
+            var closeDate = this.getCloseDate();
+            var errors = [];
+
+            if (result.text === '...') {
+                errors.push({
+                    message: 'Не выбран результат госпитализации. '
+                });
+            }
+
+            //console.log(moment(closeDate).diff(moment()))
+
+            if (errors.length === 0) {
                 this.ui.$saveButton.button('enable');
-            }else{
+            } else {
                 this.ui.$saveButton.button('disable');
             }
         },
-        onSave: function() {
-            var self = this;
-           // console.log('onSave');
-            this.ui.$saveButton.button('disable');
-
+        getCloseDate: function() {
             var hour = this.ui.$appealCloseTime.timepicker('getHour');
             var minute = this.ui.$appealCloseTime.timepicker('getMinute');
             var date = this.ui.$appealCloseDate.datepicker('getDate');
             var closeDate = moment(date).minutes(minute).hours(hour).valueOf();
+            return closeDate;
+        },
+        getResult: function() {
+            var resultId = this.ui.$results.val();
+            var resultText = this.$('option:selected', this.ui.$results).text();
+
+            return {
+                id: resultId,
+                text: resultText
+            };
+        },
+        onSave: function() {
+            var self = this;
+            // console.log('onSave');
+            this.ui.$saveButton.button('disable');
+
+            var closeDate = this.getCloseDate();
 
             this.appeal = this.options.appeal;
             var appealId = this.options.appeal.get('id');
 
             var closeDocs = this.ui.$closeDocs.prop('checked');
 
-            var resultId = this.ui.$results.val();
-            var resultText = this.$('option:selected', this.ui.$results).text()
+            var result = this.getResult();
 
             var when;
             if (closeDocs) {
@@ -51,10 +76,10 @@ define(function(require) {
 
 
             when.then(function() {
-                pubsub.trigger('appeal:closed',{
+                pubsub.trigger('appeal:closed', {
                     closed: true,
                     closeDate: closeDate,
-                    resultText: resultText
+                    resultText: result.text
                 });
                 self.close();
 
@@ -79,14 +104,14 @@ define(function(require) {
             };
 
             function vacateBed() {
-                var closeBedDate = closeDate - (60*60*1000);//какой-то хак от Марины Владимировны, для поддержки НТК
+                var closeBedDate = closeDate - (60 * 60 * 1000); //какой-то хак от Марины Владимировны, для поддержки НТК
                 //выписка с койки
                 return $.ajax({
                     url: '/api/v1/appeals/' + appealId + '/bed/vacate?execDate=' + closeBedDate,
                     dataType: 'jsonp',
                     type: 'GET',
                     success: function(data) {
-                        if(data){
+                        if (data) {
                             pubsub.trigger('noty', {
                                 text: 'Выписали с койки',
                                 type: 'success'
@@ -103,7 +128,10 @@ define(function(require) {
                 //выписка с истории болезни
                 return $.ajax({
                     url: '/api/v1/appeals/' + appealId + '/close',
-                    data: {execDate:closeDate,resultId: resultId},
+                    data: {
+                        execDate: closeDate,
+                        resultId: result.id
+                    },
                     dataType: 'jsonp',
                     type: 'GET',
                     success: function() {
@@ -119,7 +147,7 @@ define(function(require) {
 
         },
 
-        data: function(){
+        data: function() {
             var data = {};
 
             data.doctorId = this.options.appeal.get('execPerson').id;
@@ -144,42 +172,86 @@ define(function(require) {
 
             this.docs4closing.on('change', function() {
 
-                console.log('docs4closing', this.docs4closing.toJSON());
-                this.$el.html(_.template(template, this.data(),{variable:'data'}));
+                //console.log('docs4closing', this.docs4closing.toJSON());
+                this.$el.html(_.template(template, this.data(), {
+                    variable: 'data'
+                }));
 
                 this.ui.$appealCloseDate = this.$('.appeal-close-date');
                 this.ui.$appealCloseTime = this.$('.appeal-close-time');
                 this.ui.$closeDocs = this.$('.close-docs');
 
                 var datetime = new Date();
-                this.ui.$appealCloseDate.datepicker();
-                this.ui.$appealCloseDate.datepicker("setDate", datetime);
-                this.ui.$appealCloseTime.timepicker();
-                this.ui.$appealCloseTime.timepicker("setTime", datetime);
 
-                //if (this.docs4closing.get('allDocs')) {
-                    //this.ui.$saveButton.button('enable');
+                this.ui.$appealCloseDate.datepicker({
+                    minDate: 0,
+                    onSelect: function(dateText, inst) {
 
-                    this.results = new Results();
-                    this.results.fetch({
-                        data: {
-                            appealId: self.options.appeal.get('id')
+                        var day = moment(self.$(this).datepicker('getDate')).startOf('day');
+                        var currentDay = moment().startOf('day');
+                        var currentHour = moment().hour();
+                        var hour = self.ui.$appealCloseTime.timepicker('getHour');
+                        //если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
+                        if (day.diff(currentDay, 'days') === 0) {
+                            if (hour <= currentHour) {
+                                self.ui.$appealCloseTime.timepicker('setTime', (new Date())).trigger('change');
+                            }
                         }
-                    }).done(function() {
-                        self.ui.$results = self.$('#results');
+                    }
+                }).datepicker('setDate', datetime);
 
-                        self.results.each(function(item) {
-                            console.log('item', item);
-                            self.ui.$results.append($("<option/>", {
-                                "text": item.get('name'),
-                                "value": item.get('id')
-                            }));
+                this.ui.$appealCloseTime.timepicker({
+                    showPeriodLabels: false,
+                    onHourShow: function(hour) {
+                        var day = moment(self.ui.$appealCloseDate.datepicker('getDate')).startOf('day');
+                        var currentDay = moment().startOf('day');
+                        var currentHour = moment().hour();
+                        //если выбран текущий день, то часы меньше текущего нельзя выбрать
+                        if (day.diff(currentDay, 'days') === 0) {
+                            if (hour < currentHour) {
+                                return false;
+                            }
+                        }
 
-                        }, self);
+                        return true;
+                    },
+                    onMinuteShow: function(hour, minute) {
+                        var day = moment(self.ui.$appealCloseDate.datepicker('getDate')).startOf('day');
+                        var currentDay = moment().startOf('day');
+                        var currentHour = moment().hour();
+                        var currentMinute = moment().minute();
+                        //если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
+                        if (day.diff(currentDay, 'days') === 0) {
+                            if (hour === currentHour && minute <= currentMinute) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                }).timepicker('setTime', datetime);
 
-                        self.ui.$results.select2();
 
-                    });
+
+                this.results = new Results();
+                this.results.fetch({
+                    data: {
+                        appealId: self.options.appeal.get('id')
+                    }
+                }).done(function() {
+                    self.ui.$results = self.$('#results');
+
+                    self.results.each(function(item) {
+                        console.log('item', item);
+                        self.ui.$results.append($('<option/>', {
+                            'text': item.get('name'),
+                            'value': item.get('id')
+                        }));
+
+                    }, self);
+
+                    self.ui.$results.select2();
+
+                });
 
                 //}
 

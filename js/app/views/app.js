@@ -2,17 +2,17 @@
  * User: FKurilov
  * Date: 22.06.12
  */
-define(["text!templates/app.tmpl", "views/header-new"], function (tmpl, Header) {
+define(["text!templates/app.tmpl", "views/header-new"], function(tmpl, Header) {
 	App.Views.App = Backbone.View.extend({
 		el: $("#wrapper"),
 		events: {
 			"keydown input:not(.NewLineAllowed), select, textarea:not(.NewLineAllowed)": "keyHandler"
 		},
 
-		initialize: function () {
+		initialize: function() {
 			this.renderView = this.options.renderView;
 
-			this.header = new Header ({
+			this.header = new Header({
 				structure: {
 					doctor: {
 						name: {
@@ -20,37 +20,36 @@ define(["text!templates/app.tmpl", "views/header-new"], function (tmpl, Header) 
 							last: Core.Cookies.get("doctorLastName")
 						}
 					},
-					roles: [
-						{
-							id: 29,
-							role: ROLES.NURSE_RECEPTIONIST,
-							title: "Сестра приёмного отделения"
-						},
-						{
-							id: 30,
-							role: ROLES.DOCTOR_RECEPTIONIST,
-							title: "Врач приёмного отделения"
-						},
-						{
-							id: 24,
-							role: ROLES.DOCTOR_DEPARTMENT,
-							title: "Врач отделения"
-						},
-						{
-							id: 25,
-							role: ROLES.NURSE_DEPARTMENT,
-							title: "Сестра отделения"
-						}
-					]
+					roles: [{
+						id: 29,
+						role: ROLES.NURSE_RECEPTIONIST,
+						title: "Сестра приёмного отделения"
+					}, {
+						id: 30,
+						role: ROLES.DOCTOR_RECEPTIONIST,
+						title: "Врач приёмного отделения"
+					}, {
+						id: 24,
+						role: ROLES.DOCTOR_DEPARTMENT,
+						title: "Врач отделения"
+					}, {
+						id: 25,
+						role: ROLES.NURSE_DEPARTMENT,
+						title: "Сестра отделения"
+					}, {
+						id: 26,
+						role: ROLES.CHIEF,
+						title: "Главный врач"
+					}]
 				}
 			});
 		},
 
-		keyHandler: function (event) {
+		keyHandler: function(event) {
 
 			event.keyCode = event.keyCode || event.charCode;
 
-			if ( event.keyCode == 13 ) { // Enter
+			if (event.keyCode == 13) { // Enter
 				event.stopPropagation();
 				event.preventDefault();
 
@@ -64,29 +63,29 @@ define(["text!templates/app.tmpl", "views/header-new"], function (tmpl, Header) 
 
 					var $nextInput;
 					var next = false;
-					$.each(form, function () {
+					$.each(form, function() {
 						var $input = $(this);
 
-						if ( $input.not(":disabled" ).length ) {
-							if ( currentTabIndex &&  ( parseFloat($input.attr("tabindex")) > currentTabIndex ) ) {
+						if ($input.not(":disabled").length) {
+							if (currentTabIndex && (parseFloat($input.attr("tabindex")) > currentTabIndex)) {
 								$nextInput = $input;
 
 								return false
 							}
 
-							if ( next && !$nextInput ) {
+							if (next && !$nextInput) {
 								$nextInput = $input;
 							}
 						}
 
 						// Нам нужны только следующие за этим инпутом.
-						if ( $input.get(0) == $current.get(0) ) {
+						if ($input.get(0) == $current.get(0)) {
 							next = true;
 						}
 
 					});
 
-					if ( $nextInput ) {
+					if ($nextInput) {
 						$nextInput.focus();
 					}
 				}
@@ -94,7 +93,7 @@ define(["text!templates/app.tmpl", "views/header-new"], function (tmpl, Header) 
 
 		},
 
-		render: function () {
+		render: function() {
 			this.$el.html($.tmpl(tmpl));
 			this.$("header").html(this.header.render().el);
 			this.$("#main").html(this.renderView.render().el);
@@ -102,7 +101,7 @@ define(["text!templates/app.tmpl", "views/header-new"], function (tmpl, Header) 
 			return this;
 		},
 
-		renderMainOnly: function () {
+		renderMainOnly: function() {
 			this.$("#main").html(this.renderView.render().el);
 		}
 	});

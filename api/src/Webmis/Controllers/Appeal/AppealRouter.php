@@ -28,9 +28,6 @@ class AppealRouter implements ControllerProviderInterface
 
             $financeType = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
 
-            //$financeType->getSqlQuery();
-            //$app['monolog']->addInfo('ddddddddddddddddddddddddddddd');
-
             if($financeType['name'] == 'ВМП'){
                 $vmp = true;
             }else{
@@ -239,29 +236,71 @@ class AppealRouter implements ControllerProviderInterface
             //идентификатор текущего пользователя
             $modifyPersonId = $request->cookies->get('userId');
 
-            $select_sql = "SELECT Action.id, Action.begDate, Action.endDate FROM Action "
+            //есть ли выписка
+            $discharge_select_sql = "SELECT Action.* FROM Action "
+            ."JOIN ActionType ON Action.actionType_id = ActionType.id "
+            ."WHERE Action.event_id = ? "
+            ."AND ActionType.flatCode = 'leaved' "
+            ."AND Action.deleted = 0 "
+            ."AND ActionType.mnem = 'ORD' "
+            ."ORDER BY Action.createDatetime DESC LIMIT 1";
+
+            $discharge = $app['db']->fetchAssoc($discharge_select_sql, array((int) $appealId));
+
+            if(!$discharge){
+                $error = array('message' => 'Нет документа "Выписка". ');
+                return $app['jsonp']->jsonp($error);
+            }
+
+            if(!$discharge['endDate']){//Документа "Выписка" не закрыт
+
+                $update_discharge_sql = "UPDATE Action "
+                ." JOIN ActionType ON Action.actionType_id = ActionType.id "
+                ." SET Action.endDate = :endDate, Action.status = 2, Action.modifyDatetime = :modifyDatetime, Action.modifyPerson_id = :modifyPersonId "
+                ." WHERE Action.id = :actionId "
+                ." AND Action.endDate IS NULL";
+
+                $statment = $app['db']->prepare($update_discharge_sql);
+                $statment->bindValue('endDate', $date, "datetime");
+                $statment->bindValue('modifyDatetime', $modifyDatetime, "datetime");
+                $statment->bindValue('modifyPersonId',$modifyPersonId, "integer");
+                $statment->bindValue('actionId', $discharge["id"], "integer");
+                $statment->execute();
+
+                $dischargeEndDate = $date;
+            }else{
+                $dischargeEndDate = $discharge['endDate'];
+            }
+
+
+            $select_last_move_sql = "SELECT Action.id, Action.begDate, Action.endDate FROM Action "
             ."JOIN ActionType ON Action.actionType_id = ActionType.id "
             ."WHERE Action.event_id = ? AND ActionType.flatCode = 'moving' "
             ."ORDER BY Action.directionDate DESC LIMIT 1";
-            $lastMove = $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+            $lastMove = $app['db']->fetchAssoc($select_last_move_sql, array((int) $appealId));
             $lastMoveId = $lastMove['id'];
 
-            if(!$lastMoveId){
-                return $app['jsonp']->jsonp(0);
+            if(!$lastMoveId){//если нет движений
+                $error = array('message' => 'Нет движений для закрытия. ');
+                return $app['jsonp']->jsonp($error);
             }
-            $update_sql = "UPDATE Action "
+
+            $update_last_move_sql = "UPDATE Action "
             ."SET Action.endDate= :endDate, Action.modifyDatetime = :modifyDatetime, Action.modifyPerson_id = :modifyPersonId, Action.status = 2 "
             ."WHERE Action.id = :lastMoveId";
 
-            $stmt = $app['db']->prepare($update_sql);
-            $stmt->bindValue('endDate', $date, "datetime");
+            $lastMoveEndDate = new \DateTime($dischargeEndDate);
+            $lastMoveEndDate->modify('-1 hour');
+
+            $stmt = $app['db']->prepare($update_last_move_sql);
+            $stmt->bindValue('endDate', $lastMoveEndDate, "datetime");
             $stmt->bindValue('modifyDatetime', $modifyDatetime, "datetime");
             $stmt->bindValue('modifyPersonId',$modifyPersonId, "integer");
             $stmt->bindValue('lastMoveId', $lastMoveId, "integer");
             $count = $stmt->execute();
 
-            $timeleavead = $date->format('H:i:s');
-            //timeleaved id
+            $timeleavead = $lastMoveEndDate->format('H:i:s');
+
             $select_sql = "SELECT ap.id from Action AS a "
                          ."JOIN ActionProperty AS ap ON ap.action_id = a.id "
                          ."WHERE a.id = ? AND ap.type_id = 1617 ";

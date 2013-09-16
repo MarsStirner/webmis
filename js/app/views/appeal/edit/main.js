@@ -255,7 +255,7 @@ define(function(require) {
 				pubsub.trigger('noty_clear');
 
 				if (this.contentView.persistenceCheck) {
-					this.contentView.persistenceCheck(_.bind(function (checkResult) {
+					this.contentView.persistenceCheck(_.bind(function(checkResult) {
 						if (checkResult) {
 							this.setContentView(step.name);
 						}
@@ -330,6 +330,79 @@ define(function(require) {
 			var self = this;
 
 			this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function() {
+				var appealJSON = this.appeal.toJSON();
+				menuStructure = {
+					structure: [
+						App.Router.compile({
+							name: "monitoring",
+							title: "Основные&nbsp;сведения",
+							uri: "/appeals/:id/monitoring"
+						}, appealJSON),
+						App.Router.compile({
+							name: "patient-monitoring",
+							title: "Мониторинг&nbsp;состояния",
+							uri: "/appeals/:id/patient-monitoring"
+						}, appealJSON),
+						// App.Router.compile({
+						// 	name: "examinations",
+						// 	title: "Осмотры",
+						// 	uri: "/appeals/:id/examinations/"
+						// }, appealJSON),
+						App.Router.compile({
+							name: "documents",
+							title: "Документы",
+							uri: "/appeals/:id/documents/"
+						}, appealJSON),
+						App.Router.compile({
+							name: "diagnostics-laboratory",
+							title: "Лабораторные исследования",
+							uri: "/appeals/:id/diagnostics-laboratory/"
+						}, appealJSON),
+						App.Router.compile({
+							name: "diagnostics-instrumental",
+							title: "Инструментальные исследования",
+							uri: "/appeals/:id/diagnostics-instrumental/"
+						}, appealJSON),
+
+						App.Router.compile({
+							name: "diagnostics-consultations",
+							title: "Консультации",
+							uri: "/appeals/:id/diagnostics-consultations/"
+						}, appealJSON),
+
+						App.Router.compile({
+							name: "therapy",
+							title: "Лечение",
+							uri: "/appeals/:id/therapy"
+						}, appealJSON),
+
+						(function() {
+							var appeal = self.appeal;
+							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (appeal.get('appealType').get('finance').get('name') === 'ВМП')) {
+								return {
+									name: "quotes",
+									title: "Квоты ВМП",
+									uri: "/appeals/" + appeal.get('id') + "/quotes"
+								};
+							} else {
+								return false;
+							}
+						}()),
+						App.Router.compile({
+							name: "moves",
+							title: "Движение пациента",
+							uri: "/appeals/:id/moves"
+						}, appealJSON),
+						App.Router.compile({
+							name: "card",
+							title: "Титульный лист ИБ",
+							uri: "/appeals/:id/"
+						}, appealJSON)
+					]
+				}
+			}, this);
+
+			this.separateRoles(ROLES.CHIEF, function() {
 				var appealJSON = this.appeal.toJSON();
 				menuStructure = {
 					structure: [

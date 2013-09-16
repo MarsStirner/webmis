@@ -9,7 +9,8 @@ ROLES = {
 	NURSE_RECEPTIONIST: "nurse-receptionist",
 	DOCTOR_RECEPTIONIST: "doctor-receptionist",
 	NURSE_DEPARTMENT: "nurse-department",
-	DOCTOR_DEPARTMENT: "doctor-department"
+	DOCTOR_DEPARTMENT: "doctor-department",
+	CHIEF: "chief"
 };
 
 DEFAULT_ANIMATION_TIME = 300;
@@ -336,7 +337,7 @@ Collection = Backbone.Collection.extend({
 				try {
 					json = JSON.parse(xhr.responseText);
 				} catch (e) {
-					
+
 				}
 				if (json && json.errorCode == 3) {
 					Core.Cookies.clear();
