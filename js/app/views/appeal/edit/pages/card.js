@@ -32,7 +32,7 @@ define(function(require){
 						label: "Титульный лист формы 003\\у",
 						handler: this.printAppeal
 					}, {
-						label: "Статкарта",
+						label: "Статкарта (приемное отделение)",
 						handler: this.printStatisticCard
 					}, {
 						label: "Статкарта (Полная версия)",
