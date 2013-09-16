@@ -107,7 +107,7 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 				case ROLES.CHIEF:
 					sections.push(
 						{title: "Госпитализации", name: "appeals", uri: "/appeals/"},
-						{title: "Отчёты", name: "reports", uri: "/reports/"}
+						{title: "Отчёты", name: "statements", uri: "/statements/"}
 					);
 					break;
 			}

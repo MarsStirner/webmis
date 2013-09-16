@@ -255,7 +255,7 @@ define(function(require) {
 				pubsub.trigger('noty_clear');
 
 				if (this.contentView.persistenceCheck) {
-					this.contentView.persistenceCheck(_.bind(function (checkResult) {
+					this.contentView.persistenceCheck(_.bind(function(checkResult) {
 						if (checkResult) {
 							this.setContentView(step.name);
 						}
@@ -402,7 +402,7 @@ define(function(require) {
 				}
 			}, this);
 
-this.separateRoles(ROLES.CHIEF, function() {
+			this.separateRoles(ROLES.CHIEF, function() {
 				var appealJSON = this.appeal.toJSON();
 				menuStructure = {
 					structure: [

@@ -125,6 +125,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 			"biomaterials/": "biomaterials",
 			"reports/*path": "reports",
+			"statements/*path":"statements",
 
 
 			"prints/": "prints",
@@ -227,7 +228,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 		reports: function(path) {
 			this.currentPage = "reports";
-			console.log('router reports', arguments);
+			//console.log('router reports', arguments);
 
 			require(["views/app", "views/reports/ReportsMainView"], function(AppView, ReportsMainView) {
 				var view = new ReportsMainView({
@@ -249,6 +250,32 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 				}
 			});
+		},
+
+		statements: function(path) {
+			this.currentPage = "statements";
+
+			require(["views/app", "views/statements/IndexView"], function(AppView, IndexView) {
+				var view = new IndexView({
+					path: path
+				});
+
+				if (!this.appView) {
+
+					this.appView = new AppView({
+						renderView: view
+					});
+					this.appView.render();
+
+				} else {
+
+					var newMain = $('<div id="main"></div>').append(view.render().el);
+					this.appView.$("#main").remove();
+					this.appView.$el.append(newMain);
+
+				}
+			});
+
 		},
 
 		patients: function() {
