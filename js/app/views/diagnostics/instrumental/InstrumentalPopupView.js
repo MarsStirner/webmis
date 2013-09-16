@@ -476,6 +476,8 @@ define(function(require) {
             this.bfView.close();
             this.researchGroupsListView.close();
             this.researchListView.close();
+            this.viewModel.off('change');
+            pubsub.off('research:selected research:deselected assigner:changed executor:changed');
             this.$el.remove();
             this.remove();
         }
