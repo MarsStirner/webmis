@@ -151,7 +151,7 @@ define(function(require) {
 		},
 
 		addAllPersons: function() {
-			var allPersons = this.getCollection('departmentPersons');
+			var allPersons = this.getCollection('allPersons');
 			this.$(".all-persons").append(allPersons.map(function(person) {
 				return "<option value='" + person.get('id') + "'>" + person.get("name").raw + "</option>";
 			})).select2("enable");

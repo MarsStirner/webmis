@@ -12,7 +12,7 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 		},
 
 		initialize: function () {
-			console.log('roles',this.options.structure.roles)
+			//console.log('roles',this.options.structure.roles)
 			if (!Core.Data.currentRole()) {
 				Core.Data.currentRole(this.options.structure.roles[0].role);
 			}
