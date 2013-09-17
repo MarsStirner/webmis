@@ -20,7 +20,7 @@ define(function(require) {
 			this.ui.$statmentsButton = this.$el.find('#statements');
 			this.ui.$appealsButton = this.$el.find('#appeals');
 
-			this.ui.$statmentsButton.button();
+			this.ui.$statmentsButton.button({ label: 'Общая информация о Центре на '+moment().format('DD.MM.YYYY') });
 			this.ui.$appealsButton.button();
 			return this;
 		}

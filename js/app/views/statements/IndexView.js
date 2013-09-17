@@ -5,7 +5,7 @@ define(function(require) {
 		className: 'ContentHolder',
 		initialize: function() {
 			this.period = 'd';
-			this.statement = 1;
+			this.statement = 2;
 
 		},
 		template: template,
