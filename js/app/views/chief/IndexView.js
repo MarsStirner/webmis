@@ -12,7 +12,7 @@ define(function(require) {
 			App.Router.navigate("appeals/", {trigger: true});
 		},
 		openStatements: function(){
-			App.Router.navigate("statements/", {trigger: true});
+			window.location = "http://10.128.225.86:8888/reports/";
 		},
 		render: function() {
 			this.$el.html(_.template(this.template));
