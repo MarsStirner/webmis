@@ -132,7 +132,7 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 				case 26:
 					{
 						// Глав врач
-						Core.Cookies.set("currentRole", ROLES.HEAD_DOCTOR);
+						Core.Cookies.set("currentRole", ROLES.CHIEF);
 						break;
 					}
 				case 27:
