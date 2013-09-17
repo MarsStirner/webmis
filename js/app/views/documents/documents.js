@@ -2979,6 +2979,7 @@ define(function (require) {
 							})
 							if (tests.length) {
 								paste.push({
+									inline: item.inline,
 									name: item.get("diagnosticName") ? item.get("diagnosticName").name : item.get("assessmentName").name,
 									tests: tests/*.map(function (rdi) {
 										return rdi.toJSON();
@@ -3298,6 +3299,8 @@ define(function (require) {
 	var Labs = App.Collections.LaboratoryDiags.extend({
 		model: Documents.Models.FetchableModelBase.extend({
 			idAttribute: "id",
+
+			inline: true,
 
 			initialize: function () {
 				App.Models.LaboratoryDiag.prototype.initialize.call(this, this.options);
