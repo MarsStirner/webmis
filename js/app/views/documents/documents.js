@@ -306,7 +306,7 @@ define(function (require) {
 		getCleanHtmlFilledAttrs: function () {
 			var filledAttrs = this.getFilledAttrs();
 			_.each(filledAttrs, function (attr) {
-				attr.value = Core.Strings.cleanTextMarkup(attr.value);
+				attr.value = attr.value.replace(/<br>/gi, "<br/>"); //Core.Strings.cleanTextMarkup(attr.value);
 			}, this);
 			return filledAttrs;
 		},
