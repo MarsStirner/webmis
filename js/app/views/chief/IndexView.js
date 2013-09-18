@@ -12,7 +12,11 @@ define(function(require) {
 			App.Router.navigate("appeals/", {trigger: true});
 		},
 		openStatements: function(){
-			window.location = "http://10.128.225.86:8888/reports/";
+			$("#main")
+        .height("100%")
+        .html("<iframe src='http://10.128.225.86:8888/reports/' style='height: 84%; width: 100%;margin-top: 1em;border-radius: 5px;'></iframe>");
+      App.Router.navigate("reports/", {trigger: false});
+      //window.location = "http://10.128.225.86:8888/reports/";
 		},
 		render: function() {
 			this.$el.html(_.template(this.template));

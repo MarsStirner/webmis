@@ -38,7 +38,14 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 			pubsub.trigger('noty_clear');
 
 			if (href) {
-				App.Router.navigate(href, {trigger: true});
+				if (href == "/statements/") {
+          $("#main")
+            .height("100%")
+            .html("<iframe src='http://10.128.225.86:8888/reports/' style='height: 84%; width: 100%;margin-top: 1em;border-radius: 5px;'></iframe>");
+          App.Router.navigate("reports/", {trigger: false});
+        } else {
+          App.Router.navigate(href, {trigger: true});
+        }
 			}
 		},
 
