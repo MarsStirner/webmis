@@ -24,7 +24,8 @@ define(function (require) {
 				Base: {},
 				Common: {},
 				Examination: {},
-				Therapy: {}
+				Therapy: {},
+				Consultation: {}
 			}
 		},
 		Collections: {},
@@ -4388,48 +4389,35 @@ define(function (require) {
 
 
 
-	// //Редактирование консультаций
+	//Редактирование консультаций
 
-	// Documents.Views.Edit.Consultation.Layout = Documents.Views.Edit.Base.Layout.extend({
-	// 	getListLayoutHistory: function () {
-	// 		return new Documents.Views.List.Therapy.LayoutHistory({included: true});
-	// 	},
-	// 	render: function () {
-	// 		return Documents.Views.Edit.Base.Layout.prototype.render.call(this, {
-	// 		});
-	// 	}
-	// });
+	Documents.Views.Edit.Consultation.DocControls = Documents.Views.Edit.DocControls.extend({
+		onSaveDocumentSuccess: function (result) {
+			var resultId = result.id || result.data[0].id;
+			this.goToConsultationsList(resultId);
+		},
+		goToConsultationsList: function(resultId){
+			App.Router.updateUrl(["appeals", appealId, "diagnostics-consultations", resultId].join("/"));
+			dispatcher.trigger("change:viewState", {mode: "REVIEW", type: "diagnostics-consultations", options: {
+			}});
+		}
+	});
 
-	// 	Documents.Views.List.Consultation.Layout = Documents.Views.List.Therapy.LayoutHistory.extend({
-	// 	attributes: {style: "display: table; width: 100%;"},
+	Documents.Views.Edit.Consultation.Layout = Documents.Views.Edit.Base.Layout.extend({
+		getListLayoutHistory: function () {
+			return new Documents.Views.List.Therapy.LayoutHistory({included: true});
+		},
+		render: function (subViews) {
+			return ViewBase.prototype.render.call(this, _.extend({
+				".heading": new Documents.Views.Edit.Heading({model: this.model}),
+				".dates": new Documents.Views.Edit.Dates({model: this.model}),
+				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
+				".document-controls": new Documents.Views.Edit.Consultation.DocControls({model: this.model})
+			}, subViews));
+		}
+	});
 
-	// 	initialize: function () {
-	// 		Documents.Views.List.Therapy.LayoutHistory.prototype.initialize.call(this, this.options);
 
-	// 		if (this.options.documentTypes) {
-	// 			this.documentTypes = this.options.documentTypes;
-	// 		} else {
-	// 			this.documentTypes = new Documents.Collections.DocumentTypes();
-	// 			this.documentTypes.mnems = ["THER"];
-	// 			this.documentTypes.fetch();
-	// 			console.log("documentTypes.fetch");
-	// 		}
-
-	// 		//this.reviewStateToggles.push(".controls-block");
-	// 	},
-
-	// 	toggleReviewState: Documents.Views.List.Common.Layout.prototype.toggleReviewState,
-
-	// 	render: function () {
-	// 		return Documents.Views.List.Therapy.LayoutHistory.prototype.render.call(this, {
-	// 			".documents-controls": new Documents.Views.List.Therapy.Controls({
-	// 				collection: this.documents,
-	// 				documentTypes: this.documentTypes,
-	// 				editPageTypeName: this.getEditPageTypeName()
-	// 			})
-	// 		});
-	// 	}
-	// });
 
 
 	return Documents;

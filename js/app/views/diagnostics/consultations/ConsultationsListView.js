@@ -113,14 +113,14 @@ define(function(require) {
 		editConsultation: function(model) {
 			var self = this;
 			this.trigger("change:viewState", {
-				type: "documents",
+				type: "consultations",
 				mode: "SUB_EDIT",
 				options: {
 					subId: model.get('id'),
 					appealId: self.options.appealId
 				}
 			});
-			App.Router.updateUrl("/appeals/" + this.options.appealId + "/documents/" + model.get('id') + '/edit');
+			App.Router.updateUrl("/appeals/" + this.options.appealId + "/consultations/" + model.get('id') + '/edit');
 		},
 
 		cancelDirection: function(model) {
