@@ -4387,5 +4387,50 @@ define(function (require) {
 	//endregion
 
 
+
+	// //Редактирование консультаций
+
+	// Documents.Views.Edit.Consultation.Layout = Documents.Views.Edit.Base.Layout.extend({
+	// 	getListLayoutHistory: function () {
+	// 		return new Documents.Views.List.Therapy.LayoutHistory({included: true});
+	// 	},
+	// 	render: function () {
+	// 		return Documents.Views.Edit.Base.Layout.prototype.render.call(this, {
+	// 		});
+	// 	}
+	// });
+
+	// 	Documents.Views.List.Consultation.Layout = Documents.Views.List.Therapy.LayoutHistory.extend({
+	// 	attributes: {style: "display: table; width: 100%;"},
+
+	// 	initialize: function () {
+	// 		Documents.Views.List.Therapy.LayoutHistory.prototype.initialize.call(this, this.options);
+
+	// 		if (this.options.documentTypes) {
+	// 			this.documentTypes = this.options.documentTypes;
+	// 		} else {
+	// 			this.documentTypes = new Documents.Collections.DocumentTypes();
+	// 			this.documentTypes.mnems = ["THER"];
+	// 			this.documentTypes.fetch();
+	// 			console.log("documentTypes.fetch");
+	// 		}
+
+	// 		//this.reviewStateToggles.push(".controls-block");
+	// 	},
+
+	// 	toggleReviewState: Documents.Views.List.Common.Layout.prototype.toggleReviewState,
+
+	// 	render: function () {
+	// 		return Documents.Views.List.Therapy.LayoutHistory.prototype.render.call(this, {
+	// 			".documents-controls": new Documents.Views.List.Therapy.Controls({
+	// 				collection: this.documents,
+	// 				documentTypes: this.documentTypes,
+	// 				editPageTypeName: this.getEditPageTypeName()
+	// 			})
+	// 		});
+	// 	}
+	// });
+
+
 	return Documents;
 });

@@ -77,9 +77,11 @@ define(function(require) {
 
 			if (_.indexOf(event.target.classList, 'cancel-direction') >= 0) {
 				this.cancelDirection(model);
-			}else if (_.indexOf(event.target.classList, 'edit-direction') >= 0) {
+			} else if (_.indexOf(event.target.classList, 'edit-direction') >= 0) {
 				this.editDirection(model);
-			}else{
+			} else if (_.indexOf(event.target.classList, 'edit-consultation') >= 0) {
+				this.editConsultation(model);
+			} else {
 				this.openResult(model);
 			}
 
@@ -106,6 +108,19 @@ define(function(require) {
 				id: model.get('id')
 			}));
 			//this.editConsultationView.render().open();
+		},
+
+		editConsultation: function(model) {
+			var self = this;
+			this.trigger("change:viewState", {
+				type: "documents",
+				mode: "SUB_EDIT",
+				options: {
+					subId: model.get('id'),
+					appealId: self.options.appealId
+				}
+			});
+			App.Router.updateUrl("/appeals/" + this.options.appealId + "/documents/" + model.get('id') + '/edit');
 		},
 
 		cancelDirection: function(model) {

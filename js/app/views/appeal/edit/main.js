@@ -115,6 +115,13 @@ define(function(require) {
 				"SUB_NEW": Documents.Views.Edit.Therapy.Layout
 			},
 
+			// "consultation": {
+			// 	"REVIEW": Documents.Views.List.Consultation.Layout,
+			// 	"SUB_REVIEW": Documents.Views.Review.Consultation.Layout,
+			// 	"SUB_EDIT": Documents.Views.Edit.Consultation.Layout,
+			// 	"SUB_NEW": Documents.Views.Edit.Consultation.Layout
+			// },
+
 			"examinations": {
 				"REVIEW": Documents.Views.List.Examination.Layout,
 				"SUB_REVIEW": Documents.Views.Review.Examination.Layout,
