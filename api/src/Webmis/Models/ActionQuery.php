@@ -46,4 +46,16 @@ class ActionQuery extends BaseActionQuery
 						->filterByFlatCode('therapy')
 					->endUse();
 	}
+
+
+	public function onlyWithTherapyProperties()
+	{
+		return $this->useActionPropertyQuery()
+						->useActionPropertyTypeQuery()
+							->filterByCode(array('statusTherapy','dayTherapy','titleTherapy','begDateTherapy'))
+						->endUse()
+					->endUse();
+	}
+
+
 }

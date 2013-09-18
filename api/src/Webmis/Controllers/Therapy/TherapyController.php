@@ -15,8 +15,8 @@ class TherapyController
             ->_if($eventId)
                 ->filterByEventId($eventId)
             ->_endif()
-            ->onlyTherapy()
             ->getProperties()
+            ->onlyWithTherapyProperties()
             ->orderByCreateDatetime()
             ->groupBy('id')
             ->limit(5)
@@ -34,8 +34,8 @@ class TherapyController
             $eventId = $route_params['eventId'];
 
             $actions = ActionQuery::create()
-            ->onlyTherapy()
             ->getProperties()
+            ->onlyWithTherapyProperties()
             //->_if($eventId)
             ->filterByEventId($eventId)
             //->_endif()
