@@ -14,8 +14,7 @@ define(function(require) {
 
 		data: function() {
 			return {
-				diagnoses: this.collection,
-				clinicalDiagnosisExist: this.clinicalDiagnosisExist()
+				diagnoses: this.collection
 			};
 		},
 
@@ -26,6 +25,13 @@ define(function(require) {
 			this.collection.on("reset", this.checkClinicalDiagnosis, this);
 		},
 
+		clinicalDiagnosisDocsCount: function() {
+			return $.ajax({
+				url: '/api/v1/appeals/' + this.options.appealId + '/countActionsByType?actyonTypeId=426',
+				dataType: 'jsonp'
+			});
+		},
+
 		clinicalDiagnosisExist: function() {
 			var diagnoses = this.collection.some(function(model) {
 				return _.some(["mainDiagMkb", "assocDiagMkb", "diagComplMkb"], function(diagnosisKind) {
@@ -33,19 +39,31 @@ define(function(require) {
 				}, this);
 			}, this);
 
-			var diff = moment().diff(moment(this.options.appeal.get("rangeAppealDateTime").get("start")), "days");
-
-			return !(!diagnoses && (diff >= 4));
+			return diagnoses;
 		},
 
 		checkClinicalDiagnosis: function() {
-			console.log('this.clinicalDiagnosisExist()',this.clinicalDiagnosisExist())
-			if (!this.clinicalDiagnosisExist()) {
-				pubsub.trigger("noty", {
-					text: "Требуется обоснование клинического диагноза.",
-					type: "warning"
+			var self = this;
+
+			var diff = moment().diff(moment(this.options.appeal.get("rangeAppealDateTime").get("start")), "days");
+
+			this.clinicalDiagnosisDocsCount()
+				.done(function(response) {
+
+					if ((!self.clinicalDiagnosisExist() || (response.data.actionsCount == 0)) && (diff >= 4)) {
+						self.showWarning();
+					}
+
 				});
-			}
+		},
+
+		showWarning: function() {
+			pubsub.trigger("noty", {
+				text: "Нет документа \"Обоснование клинического диагноза!\"",
+				type: "warning"
+			});
+
+			this.$('.Diagnosis').prepend('<h3 id="warnings" style="color: red;">Нет документа "Обоснование клинического диагноза!"</h3>')
 		},
 
 		render: function() {

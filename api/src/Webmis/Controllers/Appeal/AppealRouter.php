@@ -460,6 +460,7 @@ class AppealRouter implements ControllerProviderInterface
 
         })->assert('appealId', '\d+')->assert('quotingId', '\d+');
 
+        $controllers->get('/{appealId}/countActionsByType', 'Webmis\Controllers\Actions\ActionsController::countActionsByTypeAction')->assert('appealId', '\d+');
 
 
         return $controllers;

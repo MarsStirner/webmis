@@ -97,6 +97,7 @@ define(function(require) {
 
             this.patientDiagnosesList = new PatientDiagnosesList({
                 appeal: options.appeal,
+                appealId: eventId,
                 collection: this.patientDiagnoses
             });
 

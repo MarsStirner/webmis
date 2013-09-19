@@ -1,8 +1,5 @@
 <h4>Диагнозы</h4>
 <div class="Diagnosis">
-<% if(!clinicalDiagnosisExist){%>
-<h3 style="color: red;"> Нет клинических диагнозов!</h3>
-<%}%>
 <% if (diagnoses.length && _(diagnoses.toJSON()).chain().pluck("mkb").pluck("code").any().value()) { %>
 
 		<% diagnoses.each(function (diagnosis) { %>
