@@ -131,9 +131,6 @@ define([
 			});
 
 			form007.fetch();
-
-			//console.log('007 from to', beginDate, endDate);
-
 		},
 
 		ready: function() {
@@ -169,46 +166,13 @@ define([
 			this.separateRoles(ROLES.NURSE_RECEPTIONIST, function() {
 				Collection = new App.Collections.Appeals();
 
-				/*	Filter = new App.Views.Filter(
-				{
-				collection: Collection,
-				templateId: "#appeals-list-filters-reception",
-				path: this.options.path
-				});*/
-
 				var DepCollection = new App.Collections.Departments();
-				// DepCollection.setParams({
-				// 	filter: {
-				// 		hasBeds: true
-				// 	},
-				// 	limit: 0,
-				// 	sortingField: 'name',
-				// 	sortingMethod: 'asc'
-				// });
 
-
-				// Collection.on("reset", function resetHandler() {
-				// 	Collection.off("reset", resetHandler);
-
-				// 	DepCollection.fetch();
-				// });
 
 				Filter = new App.Views.Filter({
 					collection: Collection,
 					templateId: "#appeals-list-filters-reception",
-					path: this.options.path//,
-					// dictionaries: {
-					// 	departments: {
-					// 		collection: DepCollection,
-					// 		elementId: "deps-dictionary",
-					// 		getText: function(model) {
-					// 			return model.get("name");
-					// 		},
-					// 		getValue: function(model) {
-					// 			return model.get("id");
-					// 		}
-					// 	}
-					// }
+					path: this.options.path
 				});
 
 				AppealsGrid = new App.Views.Grid({
@@ -222,9 +186,8 @@ define([
 
 				AppealsGrid.on('grid:rowClick', function(model, event) {
 					if (event.target.localName != 'a') {
-						App.Router.navigate('/appeals/' + model.get('id') + '/', {
-							trigger: true
-						});
+						var url = '/appeals/' + model.get('id') + '/';
+						window.open(url);
 					} else {
 						view.newSendToDepartment(model);
 					}
@@ -237,13 +200,7 @@ define([
 				Collection = new App.Collections.DepartmentPatients({
 					role: "doctor"
 				});
-				//Collection.reset();
 
-				// Collection.setParams({
-				// 	filter: {
-				// 		roleId: 25
-				// 	}
-				// });
 
 				var doctors = new App.Collections.Doctors();
 				doctors.setParams({
@@ -303,11 +260,19 @@ define([
 				});
 
 				AppealsGrid = new App.Views.Grid({
+					popUpMode: true,
 					collection: Collection,
 					template: "grids/appeals",
 					gridTemplateId: "#appeals-grid-doctor-department",
 					rowTemplateId: "#appeals-grid-doctor-department-row",
 					defaultTemplateId: "#appeals-grid-row-default"
+				});
+
+				AppealsGrid.on('grid:rowClick', function(model, event) {
+					if (event.target.localName != 'a') {
+						var url = '/appeals/' + model.get('id') + '/';
+						window.open(url);
+					}
 				});
 
 				Collection.on("reset", function () {
@@ -326,6 +291,9 @@ define([
 						this.$(".recordCounters").remove();
 					}
 				}, this);
+
+
+
 			}, this);
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function() {
