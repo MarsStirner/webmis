@@ -56,15 +56,27 @@
 		${assignPerson.name.raw}
 	</td>
 
-	{{if !appealClosed && isEditable}}
-		<td><i class="icon-pencil edit-direction" title="Редактировать направление"></i></td>
-		<td><span class="icon-edit edit-consultation" title="Редактировать"></span></td>
-		<td><span class="icon-remove cancel-direction" title="Удалить"></span></td>
-	{{else}}
-		<td></td>
-		<td></td>
-		<td></td>
-	{{/if}}
+
+
+{{if !appealClosed && isEditable}}
+	<td><span class="icon-pencil edit-direction" title="Редактировать направление"></span></td>
+{{else}}
+	<td></td>
+{{/if}}
+
+{{if !appealClosed && ((assignPerson.id == userId)||(execPerson.id == userId)) && (status.id == 0 )}}
+	<td><span class="icon-edit edit-consultation" title="Редактировать"></span></td>
+{{else}}
+	<td></td>
+{{/if}}
+
+{{if !appealClosed && isEditable}}
+	<td><span class="icon-remove cancel-direction" title="Удалить"></span></td>
+{{else}}
+	<td></td>
+{{/if}}
+
+
 </script>
 
 <script id="consult-diagnostic-grid-default" type="text/x-jquery-tmpl">

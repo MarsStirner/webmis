@@ -4397,7 +4397,7 @@ define(function (require) {
 			this.goToConsultationsList(resultId);
 		},
 		goToConsultationsList: function(resultId){
-			App.Router.updateUrl(["appeals", appealId, "diagnostics-consultations", resultId].join("/"));
+			App.Router.updateUrl(["appeals", appealId, "diagnostics-consultations"].join("/"));
 			dispatcher.trigger("change:viewState", {mode: "REVIEW", type: "diagnostics-consultations", options: {
 			}});
 		}

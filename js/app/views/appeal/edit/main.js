@@ -78,7 +78,7 @@ define(function(require) {
 			"diagnostics-consultations": {
 				"REVIEW": ConsultationView,
 				"SUB_REVIEW": ConsultationResultView,
-				"SUB_EDIT": ConsultationResultView //TODO: impl edit mode
+				"SUB_EDIT": Documents.Views.Edit.Consultation.Layout
 			},
 
 			"quotes": {
@@ -113,13 +113,6 @@ define(function(require) {
 				"SUB_REVIEW": Documents.Views.Review.Therapy.Layout,
 				"SUB_EDIT": Documents.Views.Edit.Therapy.Layout,
 				"SUB_NEW": Documents.Views.Edit.Therapy.Layout
-			},
-
-			"consultations": {
-				//"REVIEW": Documents.Views.List.Consultation.Layout,
-				//"SUB_REVIEW": Documents.Views.Review.Consultation.Layout,
-				"SUB_EDIT": Documents.Views.Edit.Consultation.Layout,
-				//"SUB_NEW": Documents.Views.Edit.Consultation.Layout
 			},
 
 			"examinations": {

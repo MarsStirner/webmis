@@ -36,7 +36,7 @@ define(function(require) {
 
 			this.collection.extra = {
 				// doctorId: (this.options.appeal.get('execPerson')).id,
-				// userId: Core.Cookies.get("userId"),
+				userId: Core.Cookies.get("userId"),
 				appealClosed: this.options.appeal.get('closed')
 			};
 
@@ -113,14 +113,14 @@ define(function(require) {
 		editConsultation: function(model) {
 			var self = this;
 			this.trigger("change:viewState", {
-				type: "consultations",
+				type: "diagnostics-consultations",
 				mode: "SUB_EDIT",
 				options: {
 					subId: model.get('id'),
 					appealId: self.options.appealId
 				}
 			});
-			App.Router.updateUrl("/appeals/" + this.options.appealId + "/consultations/" + model.get('id') + '/edit');
+			App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-consultations/" + model.get('id') + '/edit');
 		},
 
 		cancelDirection: function(model) {
