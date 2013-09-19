@@ -1,6 +1,10 @@
 <h4>Диагнозы</h4>
+<div class="Diagnosis">
+<% if(!clinicalDiagnosisExist){%>
+<h3 style="color: red;"> Нет клинических диагнозов!</h3>
+<%}%>
 <% if (diagnoses.length && _(diagnoses.toJSON()).chain().pluck("mkb").pluck("code").any().value()) { %>
-	<div class="Diagnosis">
+
 		<% diagnoses.each(function (diagnosis) { %>
 			<% if (diagnosis.get("mkb").code) { %>
 				<h3><%= diagnosis.get("diagnosisKindLabel") %></h3>
@@ -27,7 +31,7 @@
 
 			<% } %>
 		<% }); %>
-	</div>
+
 <% } else {%>
-	<div class="Diagnosis"><h3>Диагноз не установлен</h3></div>
+	<h3>Диагноз не установлен</h3>
 <% } %>

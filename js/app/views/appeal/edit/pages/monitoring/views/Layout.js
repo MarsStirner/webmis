@@ -96,6 +96,7 @@ define(function(require) {
             });
 
             this.patientDiagnosesList = new PatientDiagnosesList({
+                appeal: options.appeal,
                 collection: this.patientDiagnoses
             });
 
