@@ -1,15 +1,15 @@
 define([
-		"views/moves/send-to-department",
-		"collections/appeals",
-		"collections/doctors",
-		"collections/departments",
-		"views/grid",
-		"views/filter",
-		"views/filter-dictionaries",
-		"views/paginator",
-		"collections/department-patients",
-		"models/print/form007",
-		"views/print"
+	"views/moves/send-to-department",
+	"collections/appeals",
+	"collections/doctors",
+	"collections/departments",
+	"views/grid",
+	"views/filter",
+	"views/filter-dictionaries",
+	"views/paginator",
+	"collections/department-patients",
+	"models/print/form007",
+	"views/print"
 ], function(SendToDepartment) {
 	/*var AppealsList = {
 		Views: {}
@@ -131,9 +131,6 @@ define([
 			});
 
 			form007.fetch();
-
-			//console.log('007 from to', beginDate, endDate);
-
 		},
 
 		ready: function() {
@@ -158,10 +155,18 @@ define([
 
 				AppealsGrid = new App.Views.Grid({
 					collection: Collection,
+					popUpMode: true,
 					template: "grids/appeals",
 					gridTemplateId: "#appeals-grid-doctor",
 					rowTemplateId: "#appeals-grid-doctor-row",
 					defaultTemplateId: "#appeals-grid-row-default"
+				});
+
+				AppealsGrid.on('grid:rowClick', function(model, event) {
+					if (event.target.localName != 'a') {
+						var url = '/appeals/' + model.get('id') + '/';
+						window.open(url);
+					}
 				});
 
 			}, this);
@@ -169,46 +174,13 @@ define([
 			this.separateRoles(ROLES.NURSE_RECEPTIONIST, function() {
 				Collection = new App.Collections.Appeals();
 
-				/*	Filter = new App.Views.Filter(
-				{
-				collection: Collection,
-				templateId: "#appeals-list-filters-reception",
-				path: this.options.path
-				});*/
-
 				var DepCollection = new App.Collections.Departments();
-				// DepCollection.setParams({
-				// 	filter: {
-				// 		hasBeds: true
-				// 	},
-				// 	limit: 0,
-				// 	sortingField: 'name',
-				// 	sortingMethod: 'asc'
-				// });
 
-
-				// Collection.on("reset", function resetHandler() {
-				// 	Collection.off("reset", resetHandler);
-
-				// 	DepCollection.fetch();
-				// });
 
 				Filter = new App.Views.Filter({
 					collection: Collection,
 					templateId: "#appeals-list-filters-reception",
-					path: this.options.path//,
-					// dictionaries: {
-					// 	departments: {
-					// 		collection: DepCollection,
-					// 		elementId: "deps-dictionary",
-					// 		getText: function(model) {
-					// 			return model.get("name");
-					// 		},
-					// 		getValue: function(model) {
-					// 			return model.get("id");
-					// 		}
-					// 	}
-					// }
+					path: this.options.path
 				});
 
 				AppealsGrid = new App.Views.Grid({
@@ -222,9 +194,8 @@ define([
 
 				AppealsGrid.on('grid:rowClick', function(model, event) {
 					if (event.target.localName != 'a') {
-						App.Router.navigate('/appeals/' + model.get('id') + '/', {
-							trigger: true
-						});
+						var url = '/appeals/' + model.get('id') + '/';
+						window.open(url);
 					} else {
 						view.newSendToDepartment(model);
 					}
@@ -237,18 +208,12 @@ define([
 				Collection = new App.Collections.DepartmentPatients({
 					role: "doctor"
 				});
-				//Collection.reset();
 
-				// Collection.setParams({
-				// 	filter: {
-				// 		roleId: 25
-				// 	}
-				// });
 
 				var doctors = new App.Collections.Doctors();
 				doctors.setParams({
 					limit: 9999,
-					sortingField:'lastname'
+					sortingField: 'lastname'
 				});
 
 
@@ -262,11 +227,11 @@ define([
 					sortingMethod: 'asc'
 				});
 
-				doctors.on('reset',function(){
-					setTimeout(function(){
+				doctors.on('reset', function() {
+					setTimeout(function() {
 						view.$("#appeal-start-date").change();
-					},500);
-				});//код распечатать и сжечь
+					}, 500);
+				}); //код распечатать и сжечь
 
 				Filter = new App.Views.FilterDictionaries({
 					collection: Collection,
@@ -293,7 +258,7 @@ define([
 							getValue: function(model) {
 								return model.get("id");
 							},
-							matcher: function(term, text, opt){
+							matcher: function(term, text, opt) {
 								return text.split(' ')[0].toUpperCase().indexOf(term.toUpperCase()) >= 0
 							},
 							preselectedValue: Core.Cookies.get("userId")
@@ -303,6 +268,7 @@ define([
 				});
 
 				AppealsGrid = new App.Views.Grid({
+					popUpMode: true,
 					collection: Collection,
 					template: "grids/appeals",
 					gridTemplateId: "#appeals-grid-doctor-department",
@@ -310,14 +276,21 @@ define([
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
 
-				Collection.on("reset", function () {
+				AppealsGrid.on('grid:rowClick', function(model, event) {
+					if (event.target.localName != 'a') {
+						var url = '/appeals/' + model.get('id') + '/';
+						window.open(url);
+					}
+				});
+
+				Collection.on("reset", function() {
 					if (Collection.length && Collection.requestData) {
 						if (!this.$(".recordCounters").length) {
 							this.$(".Container").append(
 								'<div style="margin-top: 2em;" class="recordCounters">' +
-									//'<label style="margin-right: 2em;">Записей на странице: <b class="recordsCountPage"></b></label>' +
-									'<label>Всего пациентов: <b class="recordsCountTotal"></b></label>' +
-									'</div>'
+								//'<label style="margin-right: 2em;">Записей на странице: <b class="recordsCountPage"></b></label>' +
+								'<label>Всего пациентов: <b class="recordsCountTotal"></b></label>' +
+								'</div>'
 							);
 						}
 						//this.$(".recordsCountPage").text(Collection.length);
@@ -326,6 +299,9 @@ define([
 						this.$(".recordCounters").remove();
 					}
 				}, this);
+
+
+
 			}, this);
 
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function() {
@@ -371,15 +347,15 @@ define([
 				});
 
 
-				setTimeout(function(){
+				setTimeout(function() {
 					view.$("#appeal-start-date").change();
-				},0);
+				}, 0);
 
 
 			}, this);
 
 
-//главный врач
+			//главный врач
 			this.separateRoles(ROLES.CHIEF, function() {
 
 				Collection = new App.Collections.DepartmentPatients({
@@ -396,7 +372,7 @@ define([
 				var doctors = new App.Collections.Doctors();
 				doctors.setParams({
 					limit: 9999,
-					sortingField:'lastname'
+					sortingField: 'lastname'
 				});
 
 
@@ -410,11 +386,11 @@ define([
 					sortingMethod: 'asc'
 				});
 
-				doctors.on('reset',function(){
-					setTimeout(function(){
+				doctors.on('reset', function() {
+					setTimeout(function() {
 						view.$("#appeal-start-date").change();
-					},500);
-				});//код распечатать и сжечь
+					}, 500);
+				}); //код распечатать и сжечь
 
 				Filter = new App.Views.FilterDictionaries({
 					collection: Collection,
@@ -441,7 +417,7 @@ define([
 							getValue: function(model) {
 								return model.get("id");
 							},
-							matcher: function(term, text, opt){
+							matcher: function(term, text, opt) {
 								return text.split(' ')[0].toUpperCase().indexOf(term.toUpperCase()) >= 0
 							},
 							preselectedValue: Core.Cookies.get("userId")
@@ -458,14 +434,14 @@ define([
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
 
-				Collection.on("reset", function () {
+				Collection.on("reset", function() {
 					if (Collection.length && Collection.requestData) {
 						if (!this.$(".recordCounters").length) {
 							this.$(".Container").append(
 								'<div style="margin-top: 2em;" class="recordCounters">' +
-									//'<label style="margin-right: 2em;">Записей на странице: <b class="recordsCountPage"></b></label>' +
-									'<label>Всего пациентов: <b class="recordsCountTotal"></b></label>' +
-									'</div>'
+								//'<label style="margin-right: 2em;">Записей на странице: <b class="recordsCountPage"></b></label>' +
+								'<label>Всего пациентов: <b class="recordsCountTotal"></b></label>' +
+								'</div>'
 							);
 						}
 						//this.$(".recordsCountPage").text(Collection.length);

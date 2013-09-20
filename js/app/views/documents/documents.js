@@ -24,7 +24,8 @@ define(function (require) {
 				Base: {},
 				Common: {},
 				Examination: {},
-				Therapy: {}
+				Therapy: {},
+				Consultation: {}
 			}
 		},
 		Collections: {},
@@ -305,7 +306,7 @@ define(function (require) {
 		getCleanHtmlFilledAttrs: function () {
 			var filledAttrs = this.getFilledAttrs();
 			_.each(filledAttrs, function (attr) {
-				attr.value = Core.Strings.cleanTextMarkup(attr.value);
+				attr.value = attr.value.replace(/<br>/gi, "<br/>"); //Core.Strings.cleanTextMarkup(attr.value);
 			}, this);
 			return filledAttrs;
 		},
@@ -4385,6 +4386,38 @@ define(function (require) {
 	});
 	//endregion
 	//endregion
+
+
+
+	//Редактирование консультаций
+
+	Documents.Views.Edit.Consultation.DocControls = Documents.Views.Edit.DocControls.extend({
+		onSaveDocumentSuccess: function (result) {
+			var resultId = result.id || result.data[0].id;
+			this.goToConsultationsList(resultId);
+		},
+		goToConsultationsList: function(resultId){
+			App.Router.updateUrl(["appeals", appealId, "diagnostics-consultations"].join("/"));
+			dispatcher.trigger("change:viewState", {mode: "REVIEW", type: "diagnostics-consultations", options: {
+			}});
+		}
+	});
+
+	Documents.Views.Edit.Consultation.Layout = Documents.Views.Edit.Base.Layout.extend({
+		getListLayoutHistory: function () {
+			return new Documents.Views.List.Therapy.LayoutHistory({included: true});
+		},
+		render: function (subViews) {
+			return ViewBase.prototype.render.call(this, _.extend({
+				".heading": new Documents.Views.Edit.Heading({model: this.model}),
+				".dates": new Documents.Views.Edit.Dates({model: this.model}),
+				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
+				".document-controls": new Documents.Views.Edit.Consultation.DocControls({model: this.model})
+			}, subViews));
+		}
+	});
+
+
 
 
 	return Documents;

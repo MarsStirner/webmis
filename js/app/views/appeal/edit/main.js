@@ -78,7 +78,7 @@ define(function(require) {
 			"diagnostics-consultations": {
 				"REVIEW": ConsultationView,
 				"SUB_REVIEW": ConsultationResultView,
-				"SUB_EDIT": ConsultationResultView //TODO: impl edit mode
+				"SUB_EDIT": Documents.Views.Edit.Consultation.Layout
 			},
 
 			"quotes": {

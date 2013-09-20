@@ -121,6 +121,11 @@ define(function(require) {
 
 			_.each(data, function(diag) {
 				diag.diagnosisKindLabel = this.diagKinds[diag.diagnosisKind].title;
+
+				if (_.contains(["attendantMkb", "aftereffectMkb", "diagReceivedMkb"], diag.diagnosisKind)) {
+					diag.doctor = {};
+				}
+
 			}, this);
 
 			return data;
