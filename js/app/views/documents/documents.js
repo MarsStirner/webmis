@@ -101,7 +101,7 @@ define(function (require) {
 				itemRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-row.html")),
 				itemAttrsContainerRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attrs-container-row.html")),
 				itemAttrRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attr-row.html")),
-				paste: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste.html")),
+				paste: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste.html"))
 			}
 		}
 	};
@@ -3509,7 +3509,7 @@ define(function (require) {
 			});
 
 			labs.extra = {
-				appealClosed: appeal.get('closed'),
+				appealClosed: appeal.get('closed')
 			};
 
 			//INSTS
@@ -4089,7 +4089,22 @@ define(function (require) {
 						summaryAttrs[6]["properties"][0]["value"]
 					].join(" "),
 					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
-					attributes: document.getCleanHtmlFilledAttrs()
+					attributes: document.getCleanHtmlFilledAttrs(),
+          mnem: "dutyDoctor",
+          doctorPost: {
+            id: 224,
+            code: 123,
+            name: "Ординатор"
+          },
+          execPerson: {
+            id: 205,
+            name: {
+              first: "Дмитрий",
+              last: "Балашов",
+              middle: "Николаевич",
+              raw: "Балашов Дмитрий Николаевич"
+            }
+          }
 				};
 
 
