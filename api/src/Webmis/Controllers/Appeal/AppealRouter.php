@@ -267,7 +267,7 @@ class AppealRouter implements ControllerProviderInterface
                 $statment->bindValue('actionId', $discharge["id"], "integer");
                 $statment->execute();
 
-                $dischargeEndDate = $date;
+                $dischargeEndDate = $date->format('Y-m-d H:i:s');
             }else{
                 $dischargeEndDate = $discharge['endDate'];
             }

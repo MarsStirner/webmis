@@ -62,6 +62,7 @@ define(function(require) {
             });
 
             this.restTherapyCollection = new RestTherapyCollection(null, {
+                eventId: eventId,
                 patientId: patientId
             });
 

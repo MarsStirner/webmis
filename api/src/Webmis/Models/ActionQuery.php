@@ -22,13 +22,16 @@ class ActionQuery extends BaseActionQuery
 	{
 		return $this->useActionPropertyQuery('ActionProperty', 'left join')
 						->useActionPropertyTypeQuery('apt', 'join')
+							->orderByIdx()
 						->endUse()
 						->useActionPropertyStringQuery('string', 'left join')
 						->endUse()
+						->useActionPropertyDoubleQuery('double', 'left join')
+						->endUse()
 						->useActionPropertyDateQuery('date', 'left join')
 						->endUse()
-					->endUse()
-					->groupBy('id');
+					->endUse();
+					// ->groupBy('id');
 	}
 
 	public function filterByPatientId($patientId)

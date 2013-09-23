@@ -29,6 +29,10 @@
       <reference local="id" foreign="id"/>
     </foreign-key>
 
+    <foreign-key foreignTable="ActionProperty_Double" name="ActionProperty_ActionPropertyDouble">
+      <reference local="id" foreign="id"/>
+    </foreign-key>
+
     <index name="createPerson_id">
       <index-column name="createPerson_id"/>
     </index>

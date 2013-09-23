@@ -1,4 +1,4 @@
-<h4>Терапия</h4>
+<h4>Терапия<% _.each(lastTherapy, function(therapy){ %>: <%=therapy.title%><%});%></h4>
 
 <div class="Diagnosis">
 	<h3>Текущий этап</h3>
@@ -6,11 +6,10 @@
 		<p>Данные о терапии отсутствуют</p>
 	<%}else{%>
 		<% _.each(lastTherapy, function(therapy){ %>
-			<p>Наименование терапии: <%=therapy.title%></p>
+			<!--<p>Наименование терапии: <%=therapy.title%></p>-->
 			<p>День терапии: <%=therapy.day%></p>
-			<hr style="display: block; height: 1px;
-    border: 0; border-top: 1px solid #ffcc99;
-    margin: 1em 0; padding: 0;"/>
+			<p>Статус: <%=therapy.status %></p>
+			<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #ffcc99; margin: 1em 0; padding: 0;"/>
 		<%});%>
 
 	<%}%>
@@ -20,20 +19,15 @@
 		<p>Данные о терапии отсутствуют</p>
 	<%}else{%>
 		<% _.each(restTherapy, function(therapy){ %>
-			<%if (therapy.status != 'Закончена'){ %>
+			<p>Наименование терапии: <%=therapy.title%></p>
+			<%if (therapy.begDate){ %>
 				<p>Дата начала: <%=Core.Date.format(therapy.begDate)%></p>
 			<% } %>
-
-			<%if (therapy.status === 'Закончена'){ %>
+			<%if (therapy.endDate){ %>
 				<p>Дата окончания: <%=Core.Date.format(therapy.endDate)%></p>
 			<% } %>
 
-
-			<p>Наименование терапии: <%=therapy.title%></p>
-
-			<hr style="display: block; height: 1px;
-    border: 0; border-top: 1px solid #ffcc99;
-    margin: 1em 0; padding: 0;"/>
+			<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #ffcc99; margin: 1em 0; padding: 0;"/>
 		<%});%>
 	<%}%>
 </div>

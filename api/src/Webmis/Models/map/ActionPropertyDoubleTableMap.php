@@ -42,7 +42,7 @@ class ActionPropertyDoubleTableMap extends TableMap
         $this->setPackage('Models');
         $this->setUseIdGenerator(false);
         // columns
-        $this->addForeignPrimaryKey('id', 'id', 'INTEGER' , 'ActionProperty', 'id', true, null, null);
+        $this->addPrimaryKey('id', 'id', 'INTEGER', true, null, null);
         $this->addPrimaryKey('index', 'index', 'INTEGER', true, null, 0);
         $this->addColumn('value', 'value', 'DOUBLE', true, null, null);
         // validators
@@ -53,7 +53,7 @@ class ActionPropertyDoubleTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('ActionProperty', 'Webmis\\Models\\ActionProperty', RelationMap::MANY_TO_ONE, array('id' => 'id', ), 'CASCADE', 'CASCADE');
+        $this->addRelation('ActionProperty', 'Webmis\\Models\\ActionProperty', RelationMap::ONE_TO_ONE, array('id' => 'id', ), null, null);
     } // buildRelations()
 
 } // ActionPropertyDoubleTableMap

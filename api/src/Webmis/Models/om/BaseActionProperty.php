@@ -169,16 +169,15 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
     protected $aActionPropertyDate;
 
     /**
+     * @var        ActionPropertyDouble
+     */
+    protected $aActionPropertyDouble;
+
+    /**
      * @var        PropelObjectCollection|ActionPropertyAction[] Collection to store aggregation of ActionPropertyAction objects.
      */
     protected $collActionPropertyActions;
     protected $collActionPropertyActionsPartial;
-
-    /**
-     * @var        PropelObjectCollection|ActionPropertyDouble[] Collection to store aggregation of ActionPropertyDouble objects.
-     */
-    protected $collActionPropertyDoubles;
-    protected $collActionPropertyDoublesPartial;
 
     /**
      * @var        PropelObjectCollection|ActionPropertyHospitalBed[] Collection to store aggregation of ActionPropertyHospitalBed objects.
@@ -229,12 +228,6 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $actionPropertyActionsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $actionPropertyDoublesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -496,6 +489,10 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
 
         if ($this->aActionPropertyDate !== null && $this->aActionPropertyDate->getid() !== $v) {
             $this->aActionPropertyDate = null;
+        }
+
+        if ($this->aActionPropertyDouble !== null && $this->aActionPropertyDouble->getid() !== $v) {
+            $this->aActionPropertyDouble = null;
         }
 
 
@@ -884,6 +881,9 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
         if ($this->aActionPropertyDate !== null && $this->id !== $this->aActionPropertyDate->getid()) {
             $this->aActionPropertyDate = null;
         }
+        if ($this->aActionPropertyDouble !== null && $this->id !== $this->aActionPropertyDouble->getid()) {
+            $this->aActionPropertyDouble = null;
+        }
         if ($this->aAction !== null && $this->action_id !== $this->aAction->getid()) {
             $this->aAction = null;
         }
@@ -933,9 +933,8 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             $this->aActionPropertyType = null;
             $this->aActionPropertyString = null;
             $this->aActionPropertyDate = null;
+            $this->aActionPropertyDouble = null;
             $this->collActionPropertyActions = null;
-
-            $this->collActionPropertyDoubles = null;
 
             $this->collActionPropertyHospitalBeds = null;
 
@@ -1091,6 +1090,13 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                 $this->setActionPropertyDate($this->aActionPropertyDate);
             }
 
+            if ($this->aActionPropertyDouble !== null) {
+                if ($this->aActionPropertyDouble->isModified() || $this->aActionPropertyDouble->isNew()) {
+                    $affectedRows += $this->aActionPropertyDouble->save($con);
+                }
+                $this->setActionPropertyDouble($this->aActionPropertyDouble);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -1113,23 +1119,6 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
 
             if ($this->collActionPropertyActions !== null) {
                 foreach ($this->collActionPropertyActions as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->actionPropertyDoublesScheduledForDeletion !== null) {
-                if (!$this->actionPropertyDoublesScheduledForDeletion->isEmpty()) {
-                    ActionPropertyDoubleQuery::create()
-                        ->filterByPrimaryKeys($this->actionPropertyDoublesScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->actionPropertyDoublesScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collActionPropertyDoubles !== null) {
-                foreach ($this->collActionPropertyDoubles as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1442,6 +1431,12 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->aActionPropertyDouble !== null) {
+                if (!$this->aActionPropertyDouble->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aActionPropertyDouble->getValidationFailures());
+                }
+            }
+
 
             if (($retval = ActionPropertyPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
@@ -1450,14 +1445,6 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
 
                 if ($this->collActionPropertyActions !== null) {
                     foreach ($this->collActionPropertyActions as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
-                if ($this->collActionPropertyDoubles !== null) {
-                    foreach ($this->collActionPropertyDoubles as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
@@ -1626,11 +1613,11 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             if (null !== $this->aActionPropertyDate) {
                 $result['ActionPropertyDate'] = $this->aActionPropertyDate->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
+            if (null !== $this->aActionPropertyDouble) {
+                $result['ActionPropertyDouble'] = $this->aActionPropertyDouble->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
             if (null !== $this->collActionPropertyActions) {
                 $result['ActionPropertyActions'] = $this->collActionPropertyActions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collActionPropertyDoubles) {
-                $result['ActionPropertyDoubles'] = $this->collActionPropertyDoubles->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collActionPropertyHospitalBeds) {
                 $result['ActionPropertyHospitalBeds'] = $this->collActionPropertyHospitalBeds->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1867,12 +1854,6 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                 }
             }
 
-            foreach ($this->getActionPropertyDoubles() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addActionPropertyDouble($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getActionPropertyHospitalBeds() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addActionPropertyHospitalBed($relObj->copy($deepCopy));
@@ -1905,6 +1886,11 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             $relObj = $this->getActionPropertyDate();
             if ($relObj) {
                 $copyObj->setActionPropertyDate($relObj->copy($deepCopy));
+            }
+
+            $relObj = $this->getActionPropertyDouble();
+            if ($relObj) {
+                $copyObj->setActionPropertyDouble($relObj->copy($deepCopy));
             }
 
             //unflag object copy
@@ -2157,6 +2143,54 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
         return $this->aActionPropertyDate;
     }
 
+    /**
+     * Declares an association between this object and a ActionPropertyDouble object.
+     *
+     * @param             ActionPropertyDouble $v
+     * @return ActionProperty The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setActionPropertyDouble(ActionPropertyDouble $v = null)
+    {
+        if ($v === null) {
+            $this->setid(NULL);
+        } else {
+            $this->setid($v->getid());
+        }
+
+        $this->aActionPropertyDouble = $v;
+
+        // Add binding for other direction of this 1:1 relationship.
+        if ($v !== null) {
+            $v->setActionProperty($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ActionPropertyDouble object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return ActionPropertyDouble The associated ActionPropertyDouble object.
+     * @throws PropelException
+     */
+    public function getActionPropertyDouble(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aActionPropertyDouble === null && ($this->id !== null) && $doQuery) {
+            $this->aActionPropertyDouble = ActionPropertyDoubleQuery::create()
+                ->filterByActionProperty($this) // here
+                ->findOne($con);
+            // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
+            $this->aActionPropertyDouble->setActionProperty($this);
+        }
+
+        return $this->aActionPropertyDouble;
+    }
+
 
     /**
      * Initializes a collection based on the name of a relation.
@@ -2170,9 +2204,6 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
     {
         if ('ActionPropertyAction' == $relationName) {
             $this->initActionPropertyActions();
-        }
-        if ('ActionPropertyDouble' == $relationName) {
-            $this->initActionPropertyDoubles();
         }
         if ('ActionPropertyHospitalBed' == $relationName) {
             $this->initActionPropertyHospitalBeds();
@@ -2401,224 +2432,6 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             }
             $this->actionPropertyActionsScheduledForDeletion[]= clone $actionPropertyAction;
             $actionPropertyAction->setActionProperty(null);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Clears out the collActionPropertyDoubles collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return ActionProperty The current object (for fluent API support)
-     * @see        addActionPropertyDoubles()
-     */
-    public function clearActionPropertyDoubles()
-    {
-        $this->collActionPropertyDoubles = null; // important to set this to null since that means it is uninitialized
-        $this->collActionPropertyDoublesPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collActionPropertyDoubles collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialActionPropertyDoubles($v = true)
-    {
-        $this->collActionPropertyDoublesPartial = $v;
-    }
-
-    /**
-     * Initializes the collActionPropertyDoubles collection.
-     *
-     * By default this just sets the collActionPropertyDoubles collection to an empty array (like clearcollActionPropertyDoubles());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initActionPropertyDoubles($overrideExisting = true)
-    {
-        if (null !== $this->collActionPropertyDoubles && !$overrideExisting) {
-            return;
-        }
-        $this->collActionPropertyDoubles = new PropelObjectCollection();
-        $this->collActionPropertyDoubles->setModel('ActionPropertyDouble');
-    }
-
-    /**
-     * Gets an array of ActionPropertyDouble objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ActionProperty is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|ActionPropertyDouble[] List of ActionPropertyDouble objects
-     * @throws PropelException
-     */
-    public function getActionPropertyDoubles($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collActionPropertyDoublesPartial && !$this->isNew();
-        if (null === $this->collActionPropertyDoubles || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collActionPropertyDoubles) {
-                // return empty collection
-                $this->initActionPropertyDoubles();
-            } else {
-                $collActionPropertyDoubles = ActionPropertyDoubleQuery::create(null, $criteria)
-                    ->filterByActionProperty($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collActionPropertyDoublesPartial && count($collActionPropertyDoubles)) {
-                      $this->initActionPropertyDoubles(false);
-
-                      foreach($collActionPropertyDoubles as $obj) {
-                        if (false == $this->collActionPropertyDoubles->contains($obj)) {
-                          $this->collActionPropertyDoubles->append($obj);
-                        }
-                      }
-
-                      $this->collActionPropertyDoublesPartial = true;
-                    }
-
-                    $collActionPropertyDoubles->getInternalIterator()->rewind();
-                    return $collActionPropertyDoubles;
-                }
-
-                if($partial && $this->collActionPropertyDoubles) {
-                    foreach($this->collActionPropertyDoubles as $obj) {
-                        if($obj->isNew()) {
-                            $collActionPropertyDoubles[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collActionPropertyDoubles = $collActionPropertyDoubles;
-                $this->collActionPropertyDoublesPartial = false;
-            }
-        }
-
-        return $this->collActionPropertyDoubles;
-    }
-
-    /**
-     * Sets a collection of ActionPropertyDouble objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $actionPropertyDoubles A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return ActionProperty The current object (for fluent API support)
-     */
-    public function setActionPropertyDoubles(PropelCollection $actionPropertyDoubles, PropelPDO $con = null)
-    {
-        $actionPropertyDoublesToDelete = $this->getActionPropertyDoubles(new Criteria(), $con)->diff($actionPropertyDoubles);
-
-        $this->actionPropertyDoublesScheduledForDeletion = unserialize(serialize($actionPropertyDoublesToDelete));
-
-        foreach ($actionPropertyDoublesToDelete as $actionPropertyDoubleRemoved) {
-            $actionPropertyDoubleRemoved->setActionProperty(null);
-        }
-
-        $this->collActionPropertyDoubles = null;
-        foreach ($actionPropertyDoubles as $actionPropertyDouble) {
-            $this->addActionPropertyDouble($actionPropertyDouble);
-        }
-
-        $this->collActionPropertyDoubles = $actionPropertyDoubles;
-        $this->collActionPropertyDoublesPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related ActionPropertyDouble objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related ActionPropertyDouble objects.
-     * @throws PropelException
-     */
-    public function countActionPropertyDoubles(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collActionPropertyDoublesPartial && !$this->isNew();
-        if (null === $this->collActionPropertyDoubles || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collActionPropertyDoubles) {
-                return 0;
-            }
-
-            if($partial && !$criteria) {
-                return count($this->getActionPropertyDoubles());
-            }
-            $query = ActionPropertyDoubleQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByActionProperty($this)
-                ->count($con);
-        }
-
-        return count($this->collActionPropertyDoubles);
-    }
-
-    /**
-     * Method called to associate a ActionPropertyDouble object to this object
-     * through the ActionPropertyDouble foreign key attribute.
-     *
-     * @param    ActionPropertyDouble $l ActionPropertyDouble
-     * @return ActionProperty The current object (for fluent API support)
-     */
-    public function addActionPropertyDouble(ActionPropertyDouble $l)
-    {
-        if ($this->collActionPropertyDoubles === null) {
-            $this->initActionPropertyDoubles();
-            $this->collActionPropertyDoublesPartial = true;
-        }
-        if (!in_array($l, $this->collActionPropertyDoubles->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddActionPropertyDouble($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	ActionPropertyDouble $actionPropertyDouble The actionPropertyDouble object to add.
-     */
-    protected function doAddActionPropertyDouble($actionPropertyDouble)
-    {
-        $this->collActionPropertyDoubles[]= $actionPropertyDouble;
-        $actionPropertyDouble->setActionProperty($this);
-    }
-
-    /**
-     * @param	ActionPropertyDouble $actionPropertyDouble The actionPropertyDouble object to remove.
-     * @return ActionProperty The current object (for fluent API support)
-     */
-    public function removeActionPropertyDouble($actionPropertyDouble)
-    {
-        if ($this->getActionPropertyDoubles()->contains($actionPropertyDouble)) {
-            $this->collActionPropertyDoubles->remove($this->collActionPropertyDoubles->search($actionPropertyDouble));
-            if (null === $this->actionPropertyDoublesScheduledForDeletion) {
-                $this->actionPropertyDoublesScheduledForDeletion = clone $this->collActionPropertyDoubles;
-                $this->actionPropertyDoublesScheduledForDeletion->clear();
-            }
-            $this->actionPropertyDoublesScheduledForDeletion[]= clone $actionPropertyDouble;
-            $actionPropertyDouble->setActionProperty(null);
         }
 
         return $this;
@@ -3542,11 +3355,6 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collActionPropertyDoubles) {
-                foreach ($this->collActionPropertyDoubles as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collActionPropertyHospitalBeds) {
                 foreach ($this->collActionPropertyHospitalBeds as $o) {
                     $o->clearAllReferences($deep);
@@ -3579,6 +3387,9 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             if ($this->aActionPropertyDate instanceof Persistent) {
               $this->aActionPropertyDate->clearAllReferences($deep);
             }
+            if ($this->aActionPropertyDouble instanceof Persistent) {
+              $this->aActionPropertyDouble->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
@@ -3587,10 +3398,6 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             $this->collActionPropertyActions->clearIterator();
         }
         $this->collActionPropertyActions = null;
-        if ($this->collActionPropertyDoubles instanceof PropelCollection) {
-            $this->collActionPropertyDoubles->clearIterator();
-        }
-        $this->collActionPropertyDoubles = null;
         if ($this->collActionPropertyHospitalBeds instanceof PropelCollection) {
             $this->collActionPropertyHospitalBeds->clearIterator();
         }
@@ -3611,6 +3418,7 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
         $this->aActionPropertyType = null;
         $this->aActionPropertyString = null;
         $this->aActionPropertyDate = null;
+        $this->aActionPropertyDouble = null;
     }
 
     /**
