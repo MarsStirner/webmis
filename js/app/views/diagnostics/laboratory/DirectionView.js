@@ -80,8 +80,8 @@ define(function(require) {
 
 			view.appeal = view.options.appeal;
 
-			view.appealDiagnosis = new PatientDiagnoses(null,{
-				appealId : view.appeal.get('id')
+			view.appealDiagnosis = new PatientDiagnoses(null, {
+				appealId: view.appeal.get('id')
 			});
 
 			//диагнозы из госпитализации
@@ -165,11 +165,25 @@ define(function(require) {
 			this.analyzes.search($target.val());
 		},
 		validateForm: function() {
-			this.saveButton(this.isValid());
+			var errors = this.isValid();
+			this.saveButton(!errors.length);
+			this.showErrors(errors);
+		},
+
+		showErrors: function(errors) {
+			var self = this;
+			self.ui.$errors.html('').hide();
+			if (errors) {
+				_.each(errors, function(error) {
+					self.ui.$errors.append(error.message);
+				});
+				self.ui.$errors.show();
+			}
 		},
 
 		isValid: function() {
 			var view = this;
+			var errors = [];
 			var valid = true;
 
 			var assessmentDate = view.ui.$assessmentDatepicker.datepicker('getDate');
@@ -179,25 +193,51 @@ define(function(require) {
 			var assessmentTime = view.ui.$assessmentTimepicker.val();
 			var assessmentDatetime = assessmentDate + ' ' + assessmentTime + ':00';
 
-			if (!assessmentTime || !moment(assessmentDatetime, 'YYYY-MM-DD HH:mm:ss').isValid() || !(moment(assessmentDatetime, 'YYYY-MM-DD HH:mm:ss').diff(moment()) > -(60*1000) )) {
-				valid = false;
+			if (!assessmentTime) {
+				errors.push({
+					message: 'Не задано время создания направления. '
+				});
+			}
+
+			if (!moment(assessmentDatetime, 'YYYY-MM-DD HH:mm:ss').isValid()) {
+				errors.push({
+					message: 'Неверный формат даты создания направления. '
+				});
+			}
+
+			if (assessmentTime && moment(assessmentDatetime, 'YYYY-MM-DD HH:mm:ss').isValid() && !(moment(assessmentDatetime, 'YYYY-MM-DD HH:mm:ss').diff(moment()) > -(60 * 1000))) {
+				errors.push({
+					message: 'Дата и время создания не может быть меньше текущей даты и времени. '
+				});
 			}
 
 			if (view.analyzesSelected.length === 0) {
-				valid = false;
+				errors.push({
+					message: 'Не выбрано исследование. '
+				});
 			}
 
 			view.analyzesSelected.each(function(analysis) {
 				var plannedEndDate = analysis.getProperty('plannedEndDate', 'value');
 				//console.log('diff',moment(plannedEndDate, 'YYYY-MM-DD HH:mm:ss').diff(moment()), moment(assessmentDatetime, 'YYYY-MM-DD HH:mm:ss').diff(moment()))
 
-				if (!plannedEndDate || !moment(plannedEndDate, 'YYYY-MM-DD HH:mm:ss').isValid() || !(moment(plannedEndDate, 'YYYY-MM-DD HH:mm:ss').diff(moment()) > -(60*1000))) {
-
-					valid = false;
+				if (!plannedEndDate || !moment(plannedEndDate, 'YYYY-MM-DD HH:mm:ss').isValid()) {
+					errors.push({
+						message: 'Неверный формат планируемой даты выполнения направления. '
+					});
 				}
+
+				if (plannedEndDate && moment(plannedEndDate, 'YYYY-MM-DD HH:mm:ss').isValid() && !(moment(plannedEndDate, 'YYYY-MM-DD HH:mm:ss').diff(moment()) > -(60 * 1000))) {
+					errors.push({
+						message: 'Планируемая дата и время выполнения не могут быть меньше текущей даты и времени. '
+					});
+				}
+
+
+
 			});
 
-			return valid;
+			return errors;
 		},
 
 
@@ -316,7 +356,7 @@ define(function(require) {
 
 				model.setProperty('Направительный диагноз', 'valueId', mkbId);
 
-				if(!mkbId){
+				if (!mkbId) {
 					model.setProperty('Направительный диагноз', 'value', '');
 				}
 
@@ -352,6 +392,7 @@ define(function(require) {
 			view.ui.$finance = view.$('#finance');
 			view.ui.$assigner = view.$('#assigner');
 			view.ui.$executor = view.$('#executor');
+			view.ui.$errors = view.$('#errors');
 
 			this.$('.change-assigner,.change-executor').button();
 
@@ -367,7 +408,7 @@ define(function(require) {
 			pubsub.trigger('lab:click');
 
 
-			view.appealDiagnosis.fetch().done(function(){
+			view.appealDiagnosis.fetch().done(function() {
 				//установка диагноза
 				// console.log('view.appealDiagnosis',view.appealDiagnosis.first())
 				if ((view.appealDiagnosis.length > 0) && view.appealDiagnosis.first()) {
@@ -401,7 +442,7 @@ define(function(require) {
 				}
 			}).datepicker('setDate', now);
 
-			view.ui.$assessmentDatepicker.next('.icon-calendar').on('click', function(){
+			view.ui.$assessmentDatepicker.next('.icon-calendar').on('click', function() {
 				view.ui.$assessmentDatepicker.datepicker('show');
 			})
 

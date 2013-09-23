@@ -291,6 +291,7 @@ define(function(require) {
 			view.ui.$cito = view.$el.find('.cito');
 			view.ui.$tests = view.$el.find('.tests');
 			view.ui.$icons = view.$el.find('.icons');
+			view.ui.$errors = view.$('#errors');
 
 			this.$('.change-assigner,.change-executor').button();
 
@@ -397,20 +398,40 @@ define(function(require) {
 
 		},
 
-		validateForm: function(){
-			console.log('validateForm');
-			this.saveButton(this.isValid());
+		validateForm: function() {
+			var errors = this.isValid();
+			this.saveButton(!errors.length);
+			this.showErrors(errors);
+		},
+
+		showErrors: function(errors) {
+			var self = this;
+			self.ui.$errors.html('').hide();
+			if (errors) {
+				_.each(errors, function(error) {
+					self.ui.$errors.append(error.message);
+				});
+				self.ui.$errors.show();
+			}
 		},
 
 		isValid: function() {
-			var valid = true;
+			var errors = [];
 			var plannedEndDate = this.model.getProperty('plannedEndDate', 'value');
 
-			if (!plannedEndDate || !moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").isValid() || !(moment(plannedEndDate, "YYYY-MM-DD HH:mm:ss").diff(moment()) > -(60*1000))) {
-				valid = false;
+			if (!plannedEndDate || !moment(plannedEndDate, 'YYYY-MM-DD HH:mm:ss').isValid()) {
+				errors.push({
+					message: 'Неверный формат планируемой даты выполнения направления. '
+				});
 			}
 
-			return valid;
+			if (plannedEndDate && moment(plannedEndDate, 'YYYY-MM-DD HH:mm:ss').isValid() && !(moment(plannedEndDate, 'YYYY-MM-DD HH:mm:ss').diff(moment()) > -(60 * 1000))) {
+				errors.push({
+					message: 'Планируемая дата и время выполнения не могут быть меньше текущей даты и времени. '
+				});
+			}
+
+			return errors;
 		},
 
 		onSave: function() {
