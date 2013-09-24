@@ -19,14 +19,7 @@
 		<p>Данные о терапии отсутствуют</p>
 	<%}else{%>
 		<% _.each(restTherapy, function(therapy){ %>
-			<p>Наименование терапии: <%=therapy.title%></p>
-			<%if (therapy.begDate){ %>
-				<p>Дата начала: <%=Core.Date.format(therapy.begDate)%></p>
-			<% } %>
-			<%if (therapy.endDate){ %>
-				<p>Дата окончания: <%=Core.Date.format(therapy.endDate)%></p>
-			<% } %>
-
+			<p><%if (therapy.begDate){ %><%=Core.Date.format(therapy.begDate)%><% } %> - <%if (therapy.endDate){ %><%=Core.Date.format(therapy.endDate)%><% } %>: <%=therapy.title%></p>
 			<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #ffcc99; margin: 1em 0; padding: 0;"/>
 		<%});%>
 	<%}%>

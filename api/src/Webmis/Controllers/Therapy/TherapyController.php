@@ -77,6 +77,7 @@ class TherapyController
             ->useEventQuery()
                 ->filterByClientId($clientId)
                 ->where('Event.id != ?', $eventId)
+                ->where('Event.deleted != 1')
             ->endUse()
             ->getProperties()
             ->onlyWithTherapyProperties()

@@ -8,7 +8,7 @@ define(function(require) {
 
 
 	var ChemotherapyInfo = BaseView.extend({
-		initialize: function(options){
+		initialize: function(options) {
 			var self = this;
 			BaseView.prototype.initialize.apply(this);
 
@@ -16,17 +16,17 @@ define(function(require) {
 			this.restTherapyCollection = options.restTherapyCollection;
 
 			$.when(this.lastTherapyCollection.fetch(), this.restTherapyCollection.fetch())
-			.done(function(){
-				self.render();
-			});
+				.done(function() {
+					self.render();
+				});
 
 		},
 		data: function() {
-            return {
-                lastTherapy: this.lastTherapyCollection.toJSON(),
-                restTherapy: this.restTherapyCollection.toJSON()
-            };
-        },
+			return {
+				lastTherapy: this.lastTherapyCollection.toJSON(),
+				restTherapy: this.restTherapyCollection.toJSON()
+			};
+		},
 		template: chemotherapyInfoTmpl
 	});
 
