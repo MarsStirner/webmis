@@ -2191,12 +2191,17 @@ define(function (require) {
 
 		onSaveOptionsToggleClick: function () {
 			//var menu = this.$(".doc-save-options");
+			var self = this;
 			var menu = $("<div class='doc-save-options'><span>Сохранить и завершить</span></div>");
-			menu.appendTo("body")
+			menu.one("click", function () {
+					self.model.shouldBeClosed = true;
+					self.saveDocument();
+				})
+				.appendTo("body");
 
 			menu.position({
-				my: "left top",
-				at: "left bottom",
+				my: "right top",
+				at: "right bottom",
 				of: this.$(".save-options-toggle")
 			});
 
