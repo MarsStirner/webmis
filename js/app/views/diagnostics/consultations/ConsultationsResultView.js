@@ -197,7 +197,7 @@ define(function(require) {
 
 
             function emptyFalse(val) {
-                if (!val) {
+                if (!val || (val == '<br>') || (val == ' ')) {
                     val = '';
                 }
                 return val;
