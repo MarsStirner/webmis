@@ -4393,10 +4393,13 @@ define(function (require) {
 
 	Documents.Views.Edit.Consultation.DocControls = Documents.Views.Edit.DocControls.extend({
 		onSaveDocumentSuccess: function (result) {
-			var resultId = result.id || result.data[0].id;
-			this.goToConsultationsList(resultId);
+			// var resultId = result.id || result.data[0].id;
+			this.goToConsultationsList();
 		},
-		goToConsultationsList: function(resultId){
+		onCancelClick: function (event) {
+			this.goToConsultationsList();
+		},
+		goToConsultationsList: function(){
 			App.Router.updateUrl(["appeals", appealId, "diagnostics-consultations"].join("/"));
 			dispatcher.trigger("change:viewState", {mode: "REVIEW", type: "diagnostics-consultations", options: {
 			}});
