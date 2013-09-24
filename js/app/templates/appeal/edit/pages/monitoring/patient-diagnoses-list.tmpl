@@ -1,4 +1,4 @@
-<h4>Диагнозы</h4>
+<h4 class="diagnosis-title">Диагнозы</h4>
 <div class="Diagnosis">
 <% if (diagnoses.length && _(diagnoses.toJSON()).chain().pluck("mkb").pluck("code").any().value()) { %>
 

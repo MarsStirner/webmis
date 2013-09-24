@@ -34,7 +34,7 @@ define(function(require) {
 
 		clinicalDiagnosisExist: function() {
 			var diagnoses = this.collection.some(function(model) {
-				return _.some(["mainDiagMkb", "assocDiagMkb", "diagComplMkb"], function(diagnosisKind) {
+				return _.some(["mainDiagMkb"], function(diagnosisKind) {
 					return diagnosisKind === model.get("diagnosisKind");
 				}, this);
 			}, this);
@@ -47,23 +47,26 @@ define(function(require) {
 
 			var diff = moment().diff(moment(this.options.appeal.get("rangeAppealDateTime").get("start")), "days");
 
-			this.clinicalDiagnosisDocsCount()
-				.done(function(response) {
+			if (!self.clinicalDiagnosisExist() && (diff >= 4)) {
+				self.showWarning();
+			}
+			// this.clinicalDiagnosisDocsCount()
+			// 	.done(function(response) {
 
-					if ((!self.clinicalDiagnosisExist() || (response.data.actionsCount == 0)) && (diff >= 4)) {
-						self.showWarning();
-					}
+			// 		if ((!self.clinicalDiagnosisExist() || (response.data.actionsCount == 0)) && (diff >= 4)) {
+			// 			self.showWarning();
+			// 		}
 
-				});
+			// 	});
 		},
 
 		showWarning: function() {
 			pubsub.trigger("noty", {
-				text: "Нет документа \"Обоснование клинического диагноза!\"",
+				text: "Не установлен  клинический диагноз! ",
 				type: "warning"
 			});
 
-			this.$('.Diagnosis').prepend('<h3 id="warnings" style="color: red;">Нет документа "Обоснование клинического диагноза!"</h3>')
+			this.$('.diagnosis-title').append(' <span id="warnings" style="color: red;"><i class="icon-warning-sign"></i> <span class="msg">Не установлен  клинический диагноз!</span> </span>')
 		},
 
 		render: function() {

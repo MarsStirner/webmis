@@ -750,6 +750,24 @@ td.status-code-2, td.status-code-2 .Warning {
   margin-bottom: 1em;
 }
 
+/* line 1, ../sass/modules/_monitoring.scss */
+#warnings {
+  color: red;
+}
+/* line 3, ../sass/modules/_monitoring.scss */
+#warnings .msg {
+  display: none;
+  color: #000;
+}
+/* line 7, ../sass/modules/_monitoring.scss */
+#warnings .icon-warning-sign {
+  cursor: pointer;
+}
+/* line 10, ../sass/modules/_monitoring.scss */
+#warnings:hover .msg {
+  display: inline;
+}
+
 /* line 1, ../sass/modules/_ui_print_button.scss */
 .split-button-dropdown .ui-menu-item a {
   border-width: 0px!important;

@@ -1,0 +1,14 @@
+#warnings{
+	color: red;
+	.msg{
+		display: none;
+		color: #000;
+	}
+	.icon-warning-sign{
+		cursor: pointer;
+	}
+	&:hover .msg{
+		display: inline;
+	}
+}
+
