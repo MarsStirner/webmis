@@ -449,20 +449,61 @@ define(function(require) {
                 json.tests = [];
                 _.each(group_1, function(item) {
                     if (item.type == 'String') {
-
+											
                         json.tests.push({
                             name: item.name,
                             value: emptyFalse(self.result.getProperty(item.name, 'value')),
                             unit: emptyFalse(self.result.getProperty(item.name, 'unit')),
-                            norm: emptyFalse(self.result.getProperty(item.name, 'norm'))
+                            norm: emptyFalse(self.result.getProperty(item.name, 'norm')),
+														normState: self.checkNorm(self.result.getProperty(item.name, 'value'),self.result.getProperty(item.name, 'norm') )
                         });
 
                     }
                 });
             }
-            console.log('resultData options', json, this.options.appeal)
+
             return json;
         },
+
+				checkNorm: function(value, norm){
+						var  normState;
+					//	console.log('checkNorm', value, norm);
+						value = this.parseValue(value);
+						norm =  this.parseNorm(norm);
+		
+						if(!value || !norm[0] || !norm[1]) normState = false;
+
+						if(value >= norm[0] && value <= norm[1])  normState = 'ok';//в норме
+
+						if(value < norm[0])  normState = 'above';//выше нормы
+
+						if(value > norm[1])  normState = 'below';//ниже нормы
+
+						return normState;
+				},
+				
+				parseValue: function(value){
+					var num = parseFloat(value.replace(/,/g, '.'));
+					
+					if(isNaN(num)) num = false;
+					
+					return num;
+				},
+
+				parseNorm: function(norm){
+					var min, max;
+					var minmax = norm.split('-');
+					
+					if(minmax.length < 2){
+						min = max = false;
+					}else{
+						min = this.parseValue(minmax[0]);
+						max = this.parseValue(minmax[1]);
+					}
+
+					return [min,max];
+				},
+
         navigate: function(id) {
 
             this.trigger("change:viewState", {
@@ -502,7 +543,7 @@ define(function(require) {
         render: function() {
             var self = this;
             self.getResult(function() {
-                // console.log('render LaboratoryResultView', self, self.resultData());
+                 console.log('render LaboratoryResultView', self, self.resultData());
                 self.$el.html(_.template(self.template, self.resultData(), {
                     variable: 'data'
                 }));

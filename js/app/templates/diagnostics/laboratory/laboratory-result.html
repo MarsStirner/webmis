@@ -22,10 +22,6 @@
   <!--   <div class="s1pan9">Комментарий: </div> -->
 </div>
 
-
-
-
-
 <table class="Grid">
     <tr>
         <th>Тесты</th>
@@ -35,7 +31,7 @@
         <th>Замечание</th>
     </tr>
 <% _.each(data.tests, function(test){%>
-<tr>
+<tr <%if (test.normState){%>class="norm-<%= test.normState %>"<%}%>>
     <td><%= test.name %></td>
     <td><%= test.value %></td>
     <td><%= test.unit %></td>

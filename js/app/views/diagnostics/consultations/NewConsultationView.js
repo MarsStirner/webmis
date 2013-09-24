@@ -106,7 +106,7 @@ define(function(require) {
 
 			this.consultation.on('change:actionTypeId', this.loadConsultants, this);
 			this.consultation.on('change:plannedEndDate', this.loadConsultants, this);
-			this.consultation.on('change:plannedTime', this.updateSaveButton, this);
+			this.consultation.on('change:plannedTime', this.validateForm, this);
 
 			pubsub.on('assigner:changed', function(assigner) {
 				this.consultation.set('assignerId', assigner.id)
@@ -313,7 +313,7 @@ define(function(require) {
 			});
 		},
 		//измение статуса кнопки "Сохранить"
-		updateSaveButton: function() {
+		validateForm: function() {
 			if (this.consultation.get('plannedTime').time) {
 				this.ui.$saveButton.button("enable");
 			} else {
