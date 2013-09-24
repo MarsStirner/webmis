@@ -172,6 +172,10 @@ a.Button:active i {
   font-size: 1.2em;
   cursor: pointer;
 }
+/* line 138, ../../sass/_buttons.scss */
+.doc-save-options:hover {
+  background-color: #d2f0fd;
+}
 
 /*
 *	FONTS

@@ -135,4 +135,7 @@ a.Button {
 	color: #3F3F40;
 	font-size: 1.2em;
 	cursor: pointer;
+	&:hover {
+		background-color: #d2f0fd;
+	}
 }
