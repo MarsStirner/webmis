@@ -1946,7 +1946,8 @@ define(function (require) {
 				".heading": new Documents.Views.Edit.Heading({model: this.model}),
 				".dates": new Documents.Views.Edit.Dates({model: this.model}),
 				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
-				".document-controls": new Documents.Views.Edit.DocControls({model: this.model})
+				".document-controls-top": new Documents.Views.Edit.DocControls({model: this.model}),
+				".document-controls-bottom": new Documents.Views.Edit.DocControls({model: this.model})
 			}, subViews));
 		}
 	});
@@ -2274,7 +2275,8 @@ define(function (require) {
 				/*".new-document-controls": new Documents.Views.Edit.Examination.Controls({
 					editPageTypeName: this.getEditPageTypeName()
 				}),*/
-				".document-controls": new Documents.Views.Edit.Examination.DocControls({model: this.model})
+				".document-controls-top": new Documents.Views.Edit.Examination.DocControls({model: this.model}),
+				".document-controls-bottom": new Documents.Views.Edit.Examination.DocControls({model: this.model})
 			});
 		}
 	});
@@ -2317,7 +2319,8 @@ define(function (require) {
 					documentTypes: this.documentTypes,
 					editPageTypeName: this.getEditPageTypeName()
 				}),*/
-				".document-controls": new Documents.Views.Edit.Therapy.DocControls({model: this.model})
+				".document-controls-top": new Documents.Views.Edit.Therapy.DocControls({model: this.model}),
+				".document-controls-bottom": new Documents.Views.Edit.Therapy.DocControls({model: this.model})
 			});
 		}
 	});
@@ -4453,7 +4456,8 @@ define(function (require) {
 				".heading": new Documents.Views.Edit.Heading({model: this.model}),
 				".dates": new Documents.Views.Edit.Dates({model: this.model}),
 				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
-				".document-controls": new Documents.Views.Edit.Consultation.DocControls({model: this.model})
+				".document-controls-top": new Documents.Views.Edit.Consultation.DocControls({model: this.model}),
+				".document-controls-bottom": new Documents.Views.Edit.Consultation.DocControls({model: this.model})
 			}, subViews));
 		}
 	});
