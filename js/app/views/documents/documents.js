@@ -2158,7 +2158,8 @@ define(function (require) {
 
 		events: {
 			"click .save": "onSaveClick",
-			"click .cancel": "onCancelClick"
+			"click .cancel": "onCancelClick",
+			"click .save-options-toggle": "onSaveOptionsToggleClick"
 		},
 
 		initialize: function () {
@@ -2187,6 +2188,24 @@ define(function (require) {
 			console.log(arguments);
 		},
 
+		onSaveOptionsToggleClick: function () {
+			//var menu = this.$(".doc-save-options");
+			var menu = $("<div class='doc-save-options'><span>Сохранить и завершить</span></div>");
+			menu.appendTo("body")
+
+			menu.position({
+				my: "left top",
+				at: "left bottom",
+				of: this.$(".save-options-toggle")
+			});
+
+			$(document).one("click", function() {
+				menu.remove();
+			});
+
+			return false;
+		},
+
 		saveDocument: function () {
 			//this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			if (this.model.isValid()) {
@@ -2208,6 +2227,13 @@ define(function (require) {
 			this.model.trigger("toggle:dividedState", false);
 			App.Router.updateUrl(["appeals", appealId, "documents"].join("/"));
 			dispatcher.trigger("change:viewState", {mode: "REVIEW", type: "documents"});
+		},
+
+		render: function (subViews) {
+			ViewBase.prototype.render.call(this, subViews);
+			this.$(".save-btns-container").buttonset();
+			//this.$(".doc-save-options").menu();
+			return this;
 		}
 	});
 	//endregion
@@ -4090,21 +4116,21 @@ define(function (require) {
 					].join(" "),
 					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
 					attributes: document.getCleanHtmlFilledAttrs(),
-          mnem: "dutyDoctor",
-          doctorPost: {
-            id: 224,
-            code: 123,
-            name: "Ординатор"
-          },
-          execPerson: {
-            id: 205,
-            name: {
-              first: "Дмитрий",
-              last: "Балашов",
-              middle: "Николаевич",
-              raw: "Балашов Дмитрий Николаевич"
-            }
-          }
+					flatCode: "dutyDoctor",
+					doctorPost: {
+						id: 224,
+						code: 123,
+						name: "Ординатор"
+					},
+					execPerson: {
+						id: 205,
+						name: {
+							first: "Дмитрий",
+							last: "Балашов",
+							middle: "Николаевич",
+							raw: "Балашов Дмитрий Николаевич"
+						}
+					}
 				};
 
 

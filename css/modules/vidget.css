@@ -161,6 +161,18 @@ a.Button:active i {
   opacity: 0.5;
 }
 
+/* line 128, ../../sass/_buttons.scss */
+.doc-save-options {
+  position: absolute;
+  padding: .5em;
+  border: 1px solid #B6B6B6;
+  border-radius: 3px;
+  background-color: white;
+  color: #3F3F40;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
 /*
 *	FONTS
 */
