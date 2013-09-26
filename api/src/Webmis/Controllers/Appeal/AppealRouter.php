@@ -115,32 +115,33 @@ class AppealRouter implements ControllerProviderInterface
 
             if($oncology && ($onkoData['characterCode'] == 2)){
                 //проверка наличия извещения 090/у
-                $select_sql = "SELECT Action.id FROM Action "
-                ." JOIN ActionType ON Action.actionType_id = ActionType.id "
-                ." WHERE Action.event_id = ? "
-                ." AND ActionType.code= '1_7_2'"
-                ."AND Action.deleted = 0 "
-                ." AND ActionType.mnem = 'NOT' ";
+                /* $select_sql = "SELECT Action.id FROM Action " */
+                /* ." JOIN ActionType ON Action.actionType_id = ActionType.id " */
+                /* ." WHERE Action.event_id = ? " */
+                /* ." AND ActionType.code= '1_7_2'" */
+                /* ."AND Action.deleted = 0 " */
+                /* ." AND ActionType.mnem = 'NOT' "; */
 
-                $notice_090y = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+                /* $notice_090y = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId)); */
 
-                $json['notice_090y'] = $notice_090y;
-                $json['allDocs'] = $json['allDocs'] && $json['notice_090y'];
+                /* $json['notice_090y'] = $notice_090y; */
+                /* $json['allDocs'] = $json['allDocs'] && $json['notice_090y']; */
             }
 
+
             if($oncology && ($onkoData['characterCode'] == 2) && ($onkoData['stageCode'] == 4) ){
-                //проверка наличия извещения 027/у-2
-                $select_sql = "SELECT Action.id FROM Action "
-                ." JOIN ActionType ON Action.actionType_id = ActionType.id "
-                ." WHERE Action.event_id = ? "
-                ." AND ActionType.code= '1_7_1'"
-                ." AND Action.deleted = 0 "
-                ." AND ActionType.mnem = 'NOT' ";
+                /* проверка наличия извещения 027/у-2 */
+                /* $select_sql = "SELECT Action.id FROM Action " */
+                /* ." JOIN ActionType ON Action.actionType_id = ActionType.id " */
+                /* ." WHERE Action.event_id = ? " */
+                /* ." AND ActionType.code= '1_7_1'" */
+                /* ." AND Action.deleted = 0 " */
+                /* ." AND ActionType.mnem = 'NOT' "; */
 
-                $notice_027y_2 = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId));
+                /* $notice_027y_2 = (bool) $app['db']->fetchAssoc($select_sql, array((int) $appealId)); */
 
-                $json['notice_027y_2'] = $notice_027y_2;
-                $json['allDocs'] = $json['allDocs'] && $json['notice_027y_2'];
+                /* $json['notice_027y_2'] = $notice_027y_2; */
+                /* $json['allDocs'] = $json['allDocs'] && $json['notice_027y_2']; */
             }
 
             if($oncology){
