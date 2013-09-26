@@ -3509,7 +3509,7 @@ define(function (require) {
 			});
 
 			labs.extra = {
-				appealClosed: appeal.get('closed'),
+				appealClosed: appeal.get('closed')
 			};
 
 			//INSTS
