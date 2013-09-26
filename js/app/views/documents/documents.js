@@ -101,7 +101,7 @@ define(function (require) {
 				itemRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-row.html")),
 				itemAttrsContainerRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attrs-container-row.html")),
 				itemAttrRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attr-row.html")),
-				paste: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste.html")),
+				paste: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste.html"))
 			}
 		}
 	};
