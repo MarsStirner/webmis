@@ -25,6 +25,7 @@ define(function(require) {
 
 	return View.extend({
 		template: tmpl,
+
 		className: "popup",
 
 		events: {
@@ -34,7 +35,9 @@ define(function(require) {
 			'click #assigner-outer': 'openAssignerSelectPopup',
 			'change #assign-date': 'onChangeAssignDate',
 			'change #assign-time': 'onChangeAssignDate',
-			'change #urgent': 'onChangeUrgent'
+			'change #urgent': 'onChangeUrgent',
+            'change #over':'onChangeOver',
+            'change #datepicker': 'onCangePlannedDate'
 
 		},
 
@@ -50,7 +53,6 @@ define(function(require) {
 			var eventId = this.appealId;
 			var patientId = this.appeal.get('patient').get('id');
 			var assignerId = this.getAssigner().id;
-
 
 			this.appealDiagnosis = new PatientDiagnoses(null, {
 				appealId: eventId
@@ -92,6 +94,7 @@ define(function(require) {
 			pubsub.on('consultant:selected', this.onConsultantSelect, this);
 			pubsub.on('date:selected', this.onDateSelect, this);
 			pubsub.on('time:selected', this.onTimeSelect, this);
+			pubsub.on('time:unselected', this.onTimeUnselect, this);
 
 			//классификатор диагнозов
 			this.mkbInputView = new MkbInputView();
@@ -106,10 +109,10 @@ define(function(require) {
 
 			this.consultation.on('change:actionTypeId', this.loadConsultants, this);
 			this.consultation.on('change:plannedEndDate', this.loadConsultants, this);
-			this.consultation.on('change:plannedTime', this.validateForm, this);
+			this.consultation.on('change', this.validateForm, this);
 
 			pubsub.on('assigner:changed', function(assigner) {
-				this.consultation.set('assignerId', assigner.id)
+				this.consultation.set('assignerId', assigner.id);
 				this.ui.$assigner.val(assigner.name.raw);
 			}, this);
 
@@ -127,8 +130,7 @@ define(function(require) {
 						first: appealDoctor.name.first,
 						last: appealDoctor.name.last,
 						middle: appealDoctor.name.middle
-					},
-					id: appealDoctor.id
+					}
 				};
 
 			} else {
@@ -139,8 +141,7 @@ define(function(require) {
 						first: Core.Cookies.get("doctorFirstName"),
 						last: Core.Cookies.get("doctorLastName"),
 						middle: ''
-					},
-					id: Core.Cookies.get("userId")
+					}
 				};
 			}
 
@@ -150,36 +151,12 @@ define(function(require) {
 		data: function() {
 			return {
 				'assigner': this.getAssigner()
-			}
+			};
 		},
 
 		//при выборе консультации
 		onConsultationSelect: function(code) {
-			var consultation;
-
-			function findR(list) {
-
-
-				_.each(list, function(model) {
-					// console.log('list, model', code, model.code, list, model)
-					if (model.code == code) {
-						consultation = model;
-					}
-
-					if (model.groups && (model.groups.length > 0)) {
-						findR(model.groups);
-					}
-				});
-
-				if (consultation) {
-					return consultation;
-				} else {
-
-				}
-
-			}
-
-			var consultation = findR(this.consultationsGroups.toJSON());
+			var consultation =this.findConsultation(this.consultationsGroups.toJSON(), code);
 
 			this.ui.$datepicker.datepicker('enable');
 			var date = this.ui.$datepicker.datepicker("getDate");
@@ -194,9 +171,25 @@ define(function(require) {
 			this.renderShedule();
 		},
 
+        findConsultation: function(list, code) {
+                var consultation;
+
+				_.each(list, function(model) {
+
+					if (model.code == code) {
+						consultation = model;
+					}
+
+					if (model.groups && (model.groups.length > 0)) {
+						this.findConsultation(model.groups, code);
+					}
+				});
+
+				return consultation;
+		},
+
 		//при выборе консультанта
 		onConsultantSelect: function(consultantId) {
-			console.log('onConsultantSelect', consultantId);
 			var consultant = this.consultantsFree.find(function(consultant) {
 				return consultant.get('doctor').id === consultantId;
 			});
@@ -212,13 +205,19 @@ define(function(require) {
 
 		//при выборе времени
 		onTimeSelect: function(plannedTime) {
-			//console.log('onTimeSelect', plannedTime);
+			console.log('onTimeSelect', plannedTime);
 			this.consultation.set('plannedTime', plannedTime);
 		},
+
+        onTimeUnselect: function(){
+          console.log('onTimeUnselect');
+			this.consultation.set('plannedTime', '');
+        },
+
 		onChangeAssignDate: function() {
 			var date = this.ui.$assignDatepicker.val();
 			var time = this.ui.$assignTimepicker.val();
-			var datetime = moment(date + ' ' + time, 'DD.MM.YYYY HH:mm').valueOf()
+			var datetime = moment(date + ' ' + time, 'DD.MM.YYYY HH:mm').valueOf();
 
 			this.consultation.set('createDateTime', datetime);
 
@@ -236,10 +235,27 @@ define(function(require) {
 			this.consultation.set('urgent', $target.prop('checked'));
 		},
 
+        //при изменении "Сверх сетки приёма"
+        onChangeOver: function(e) {
+			var $target = this.$(e.target);
+            var over =  $target.prop('checked');
+			this.consultation.set('over', over);
+            if(over){
+              this.scheduleView.disable();
+            }else{
+              this.scheduleView.enable();
+            }
+		},
+        onCangePlannedDate: function(e){
+          var $target = this.$(e.target);
+          var timestamp = moment($target.val(), 'DD.MM.YYYY').valueOf();
+          pubsub.trigger('date:selected', timestamp);
+        },
+
 		//при изменении диагноза
 		onMKBChange: function(e) {
 			var $target = this.$(e.target);
-			this.consultation.set('diagnosis', {})
+			this.consultation.set('diagnosis', {});
 
 			this.consultation.get('diagnosis').code = $target.val();
 		},
@@ -304,7 +320,7 @@ define(function(require) {
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					pubsub.trigger('noty', {
-						text: 'Ошибка при создании направления',//(JSON.parse(textStatus.responseText)).exception,
+						text: 'Ошибка при создании направления',
 						type: 'error'
 					});
 					self.close();
@@ -314,11 +330,90 @@ define(function(require) {
 		},
 		//измение статуса кнопки "Сохранить"
 		validateForm: function() {
-			if (this.consultation.get('plannedTime').time) {
-				this.ui.$saveButton.button("enable");
-			} else {
-				this.ui.$saveButton.button("disable");
+			var errors = this.isValid();
+			this.saveButton(!errors.length);
+			this.showErrors(errors);
+        },
+
+        isValid: function(){
+          var errors = [];
+          console.log('con', this.consultation.toJSON());
+
+          if(!this.consultation.get('actionTypeId')){
+            errors.push({
+                message: 'Не выбрана консультация. '
+                });
+          }
+
+          if(!this.consultation.get('executorId')){
+            errors.push({
+                message: 'Не выбран консультант. '
+                });
+          }
+
+          if(!this.consultation.get('plannedEndDate')){
+            errors.push({
+                message: 'Не выбрана планируемая дата консультации. '
+                });
+          }else{
+            var diff = moment(this.consultation.get('plannedEndDate')).diff(moment(),'day');
+            if(diff < 0){
+              errors.push({
+                  message: 'Планируемая дата не может быть меньше текущей'
+                  });
+            }
+          }
+
+          if(moment(this.consultation.get('createDateTime')).diff(moment())< -60*1000){
+              errors.push({
+                  message: 'Дата создания направления не могут быть меньше текущей'
+                  });
+            // console.log('create', moment(this.consultation.get('createDateTime')).diff(moment()));
+          }
+
+          if(!this.consultation.get('plannedTime')
+             && !(this.consultation.get('over') || this.consultation.get('urgent'))){
+            errors.push({
+                message: 'Не выбрано планируемое время консультации. '
+                });
+          }
+
+          if(this.consultation.get('urgent') && this.consultation.get('over')){
+            errors.push({
+                message: 'Поля "Срочно" и "Сверх сетки приёма" не могут быть выбраны вместе. '
+                });
+          }
+
+
+          return errors;
+
+		},
+		showErrors: function(errors) {
+			var self = this;
+			self.ui.$errors.html('').hide();
+			if (errors.length > 0) {
+				// _.each(errors, function(error) {
+					// self.ui.$errors.append(error.message);
+				// });
+            self.ui.$errors.append(errors[0].message);
+            self.ui.$errors.show();
 			}
+		},
+
+        saveButton: function(enabled, msg) {
+			var $saveButton = this.$el.closest('.ui-dialog').find('.save');
+
+			if (enabled) {
+				$saveButton.button('enable');
+			} else {
+				$saveButton.button('disable');
+			}
+			if (msg) {
+				$saveButton.button('option', 'label', msg);
+			} else {
+				$saveButton.button('option', 'label', 'Сохранить');
+			}
+
 		},
 
 		render: function() {
@@ -336,20 +431,20 @@ define(function(require) {
 			this.ui.$assignTimepicker = this.$el.find('#assign-time');
 
 			this.ui.$assigner = this.$el.find('#assigner');
+            this.ui.$errors = this.$el.find('#errors');
+
 			this.$el.find('.change-assigner').button();
 
 			//календарь
 			this.ui.$datepicker.datepicker({
 				minDate: 0,
 				onSelect: function(dateText, inst) {
-					var timestamp = moment(dateText, 'DD.MM.YYYY').valueOf();
-					pubsub.trigger('date:selected', timestamp)
-
+                 self.ui.$datepicker.trigger('change');
 				}
 			});
 			this.ui.$datepicker.datepicker('setDate', new Date());
 			this.ui.$datepicker.next('.icon-calendar').on('click', function() {
-				self.ui.$datepicker.datepicker('show');
+                self.ui.$datepicker.datepicker('show');
 			});
 
 			var createDate = moment(this.consultation.get('createDateTime')).toDate();
@@ -357,12 +452,12 @@ define(function(require) {
 				minDate: 0
 			});
 
-			this.ui.$assignDatepicker.datepicker('setDate', createDate)
+			this.ui.$assignDatepicker.datepicker('setDate', createDate);
 			this.ui.$assignDatepicker.next('.icon-calendar').on('click', function() {
 				self.ui.$assignDatepicker.datepicker('show');
 			});
 
-			this.ui.$assignTimepicker.timepicker();
+			this.ui.$assignTimepicker.timepicker({showPeriodLabels: false});
 			this.ui.$assignTimepicker.timepicker('setTime', createDate);
 
 			//диагнозы
@@ -409,6 +504,7 @@ define(function(require) {
 
 			return this;
 		},
+
 		close: function() {
 			console.log('popup view close');
 			this.mkbInputView.close();

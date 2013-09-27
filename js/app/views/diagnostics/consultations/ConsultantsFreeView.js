@@ -1,5 +1,6 @@
 define(function(require) {
     var template = require('text!templates/diagnostics/consultations/consultants-list-item.html');
+
     return View.extend({
         initialize: function() {
             this.collection.on('reset', function() {
@@ -10,9 +11,10 @@ define(function(require) {
                 this.renderOnFetch();
             }, this);
         },
+
         renderAll: function(data) {
             var view = this;
-            view.$el.unbind('click')
+            view.$el.unbind('click');
 
             view.$el.html(_.template(template, {
                 items: data,
@@ -26,6 +28,7 @@ define(function(require) {
                 pubsub.trigger('consultant:selected', id);
             });
         },
+
         renderNoResults: function() {
             this.$el.html('<div class="msg">Нет результатов</div>');
         },
@@ -33,9 +36,9 @@ define(function(require) {
         renderOnFetch: function() {
             this.$el.html('<div class="msg">Загрузка...</div>');
         },
+
         render: function() {
             var data = this.collection.toJSON();
-            //console.log('consultants view render', data);
 
             if (_.isArray(data) && data.length > 0) {
                 this.renderAll(data);
@@ -45,6 +48,7 @@ define(function(require) {
             return this;
 
         },
+
         close: function(){
 
             this.collection.off(null,null,this);
