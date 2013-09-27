@@ -224,6 +224,19 @@ define(function (require) {
 			}
 		},
 
+    getExecutorPost: function () {
+      if (this.get("group")) {
+        if (!this.executorPost) {
+          this.executorPost = new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
+            return attr.name == "executorPost";
+          }));
+        }
+        return this.executorPost;
+      } else {
+        return {};
+      }
+    },
+
 		parse: function (raw) {
 			return raw.data[0];
 		},
@@ -1946,7 +1959,8 @@ define(function (require) {
 				".heading": new Documents.Views.Edit.Heading({model: this.model}),
 				".dates": new Documents.Views.Edit.Dates({model: this.model}),
 				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
-				".document-controls": new Documents.Views.Edit.DocControls({model: this.model})
+				".document-controls-top": new Documents.Views.Edit.DocControls({model: this.model}),
+				".document-controls-bottom": new Documents.Views.Edit.DocControls({model: this.model})
 			}, subViews));
 		}
 	});
@@ -2158,7 +2172,8 @@ define(function (require) {
 
 		events: {
 			"click .save": "onSaveClick",
-			"click .cancel": "onCancelClick"
+			"click .cancel": "onCancelClick",
+			"click .save-options-toggle": "onSaveOptionsToggleClick"
 		},
 
 		initialize: function () {
@@ -2187,6 +2202,29 @@ define(function (require) {
 			console.log(arguments);
 		},
 
+		onSaveOptionsToggleClick: function () {
+			//var menu = this.$(".doc-save-options");
+			var self = this;
+			var menu = $("<div class='doc-save-options'><span>Сохранить и завершить</span></div>");
+			menu.one("click", function () {
+					self.model.shouldBeClosed = true;
+					self.saveDocument();
+				})
+				.appendTo("body");
+
+			menu.position({
+				my: "right top",
+				at: "right bottom",
+				of: this.$(".save-options-toggle")
+			});
+
+			$(document).one("click", function() {
+				menu.remove();
+			});
+
+			return false;
+		},
+
 		saveDocument: function () {
 			//this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
 			if (this.model.isValid()) {
@@ -2208,6 +2246,13 @@ define(function (require) {
 			this.model.trigger("toggle:dividedState", false);
 			App.Router.updateUrl(["appeals", appealId, "documents"].join("/"));
 			dispatcher.trigger("change:viewState", {mode: "REVIEW", type: "documents"});
+		},
+
+		render: function (subViews) {
+			ViewBase.prototype.render.call(this, subViews);
+			this.$(".save-btns-container").buttonset();
+			//this.$(".doc-save-options").menu();
+			return this;
 		}
 	});
 	//endregion
@@ -2248,7 +2293,8 @@ define(function (require) {
 				/*".new-document-controls": new Documents.Views.Edit.Examination.Controls({
 					editPageTypeName: this.getEditPageTypeName()
 				}),*/
-				".document-controls": new Documents.Views.Edit.Examination.DocControls({model: this.model})
+				".document-controls-top": new Documents.Views.Edit.Examination.DocControls({model: this.model}),
+				".document-controls-bottom": new Documents.Views.Edit.Examination.DocControls({model: this.model})
 			});
 		}
 	});
@@ -2291,7 +2337,8 @@ define(function (require) {
 					documentTypes: this.documentTypes,
 					editPageTypeName: this.getEditPageTypeName()
 				}),*/
-				".document-controls": new Documents.Views.Edit.Therapy.DocControls({model: this.model})
+				".document-controls-top": new Documents.Views.Edit.Therapy.DocControls({model: this.model}),
+				".document-controls-bottom": new Documents.Views.Edit.Therapy.DocControls({model: this.model})
 			});
 		}
 	});
@@ -4089,7 +4136,14 @@ define(function (require) {
 						summaryAttrs[6]["properties"][0]["value"]
 					].join(" "),
 					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
-					attributes: document.getCleanHtmlFilledAttrs()
+					attributes: document.getCleanHtmlFilledAttrs(),
+					flatCode: document.get("flatCode"),
+          doctorPost: {
+            id: document.getExecutorPost().getPropertyByName("valueId").value,
+            code: document.getExecutorPost().getPropertyByName("code").value,
+            name: document.getExecutorPost().getPropertyByName("value").value
+          },
+					execPerson: appeal.get("execPerson")
 				};
 
 
@@ -4415,7 +4469,8 @@ define(function (require) {
 				".heading": new Documents.Views.Edit.Heading({model: this.model}),
 				".dates": new Documents.Views.Edit.Dates({model: this.model}),
 				".document-grid": new Documents.Views.Edit.Grid({model: this.model}),
-				".document-controls": new Documents.Views.Edit.Consultation.DocControls({model: this.model})
+				".document-controls-top": new Documents.Views.Edit.Consultation.DocControls({model: this.model}),
+				".document-controls-bottom": new Documents.Views.Edit.Consultation.DocControls({model: this.model})
 			}, subViews));
 		}
 	});
