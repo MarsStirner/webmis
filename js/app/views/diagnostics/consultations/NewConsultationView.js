@@ -378,6 +378,12 @@ define(function(require) {
                 });
           }
 
+          if(this.consultation.get('urgent') && this.consultation.get('over')){
+            errors.push({
+                message: 'Поля "Срочно" и "Сверх сетки приёма" не могут быть выбраны вместе. '
+                });
+          }
+
 
           return errors;
 
