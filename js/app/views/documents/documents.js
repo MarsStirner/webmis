@@ -111,15 +111,15 @@ define(function (require) {
 	var MKB = require("views/mkb-directory");
 	var PersonDialog = require("views/ui/PersonDialog");
 	var LabResult = require("models/diagnostics/laboratory/laboratory-diag-form");
-	var LaboratoryResultView = require("views/diagnostics/laboratory/AnalysisResultView");
+	//var LaboratoryResultView = require("views/diagnostics/laboratory/AnalysisResultView");
 	var InstrumentalResearch = require("models/diagnostics/instrumental/InstrumentalResearch");
 	var InstrumentalResearchs = require("collections/diagnostics/instrumental/InstrumentalResearchs");
-	var InstrumentalResultView = require("views/diagnostics/instrumental/InstrumentalResultView");
+	//var InstrumentalResultView = require("views/diagnostics/instrumental/InstrumentalResultView");
 	var Consultation = require("models/diagnostics/consultations/Consultation");
 	var Consultations = require("collections/diagnostics/consultations/Consultations");
-	var ConsultationsResultView = require("views/diagnostics/consultations/ConsultationsResultView");
+	//var ConsultationsResultView = require("views/diagnostics/consultations/ConsultationsResultView");
 
-	var FDLoader = {
+	/*var FDLoader = {
 		fds: {},
 		get: function (id, cb, context) {
 			if (!this.fds[id]) {
@@ -130,7 +130,7 @@ define(function (require) {
 
 			return this.fds[id] ;
 		}
-	};
+	};*/
 	//endregion
 
 
