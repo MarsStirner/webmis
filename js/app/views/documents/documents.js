@@ -2500,7 +2500,7 @@ define(function (require) {
 		},
 
 		onAttributeValueChange: function (event) {
-			//console.log('onAttributeValueChange',this.getAttributeValue())
+			console.log('onAttributeValueChange',this.getAttributeValue());
 			this.model.setValue(this.getAttributeValue());
 			this.$(".Mandatory").removeClass("WrongField");
 		},
@@ -2543,11 +2543,13 @@ define(function (require) {
 		template: templates.uiElements._text,
 
 		events: _.extend({
-			"click .wysisyg a": "onWysisygAClick"
+			"click .wysisyg a": "onWysisygAClick",
+      "paste .RichText": "onRichTextPaste"
 		}, UIElementBase.prototype.events),
 
 		onWysisygAClick: function (e) {
 			e.preventDefault();
+      e.stopPropagation();
 
 			var command = $(e.currentTarget).data('role');
 
@@ -2562,6 +2564,26 @@ define(function (require) {
 					break;
 			}
 		},
+
+    onRichTextPaste: function (event) {
+      setTimeout(_.bind(function () {
+        console.log("paste! ", event);
+        this.$(".attribute-value").html($.htmlClean(this.$(".attribute-value").html(), {
+          format: true,
+          removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
+            "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button"
+            //, "table","tbody", "thead", "tr", "th", "td"
+          ],
+          removeAttrs: ["style", "class"],
+          replace: [
+            [["h1", "h2", "h3", "h4"], "b"],
+            [["table", "tr", "thead", "tbody"], "div"],
+            [["td", "th"], "span"]
+          ]
+        }));
+        this.model.setValue(this.$(".attribute-value").html());
+      }, this), 0);
+    },
 
 		toggleField: function (visible) {
 			this.$(".editor-controls").toggle(visible);
