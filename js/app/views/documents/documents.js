@@ -224,6 +224,19 @@ define(function (require) {
 			}
 		},
 
+    getExecutorPost: function () {
+      if (this.get("group")) {
+        if (!this.executorPost) {
+          this.executorPost = new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
+            return attr.name == "executorPost";
+          }));
+        }
+        return this.executorPost;
+      } else {
+        return {};
+      }
+    },
+
 		parse: function (raw) {
 			return raw.data[0];
 		},
@@ -4124,21 +4137,13 @@ define(function (require) {
 					].join(" "),
 					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
 					attributes: document.getCleanHtmlFilledAttrs(),
-					flatCode: "dutyDoctor",
-					doctorPost: {
-						id: 224,
-						code: 123,
-						name: "Ординатор"
-					},
-					execPerson: {
-						id: 205,
-						name: {
-							first: "Дмитрий",
-							last: "Балашов",
-							middle: "Николаевич",
-							raw: "Балашов Дмитрий Николаевич"
-						}
-					}
+					flatCode: document.get("flatCode"),
+          doctorPost: {
+            id: document.getExecutorPost().getPropertyByName("valueId").value,
+            code: document.getExecutorPost().getPropertyByName("code").value,
+            name: document.getExecutorPost().getPropertyByName("value").value
+          },
+					execPerson: appeal.get("execPerson")
 				};
 
 
