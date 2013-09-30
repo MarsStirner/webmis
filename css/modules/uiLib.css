@@ -147,7 +147,7 @@
 .Styled.Button .Icon {
   margin-left: -0.8em;
 }
-/* line 69, C:/WebServers/home/webmis/www/sass/_base.scss */
+/* line 69, ../../sass/_base.scss */
 .Styled.Button:not([ie]) {
   filter: progid:DXImageTransform.Microsoft.gradient(enabled='false');
 }
@@ -159,6 +159,22 @@ a.Button {
 /* line 122, ../../sass/_buttons.scss */
 a.Button:active i {
   opacity: 0.5;
+}
+
+/* line 128, ../../sass/_buttons.scss */
+.doc-save-options {
+  position: absolute;
+  padding: .5em;
+  border: 1px solid #B6B6B6;
+  border-radius: 3px;
+  background-color: white;
+  color: #3F3F40;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+/* line 138, ../../sass/_buttons.scss */
+.doc-save-options:hover {
+  background-color: #d2f0fd;
 }
 
 /*
@@ -193,7 +209,7 @@ a.Button:active i {
   	}*/
 }
 
-/*╨Ш╨║╨╛╨╜╨║╨╕*/
+/*Иконки*/
 /* line 21, ../../sass/_icons.scss */
 .AddIcon {
   background: url("../../images/sprites/icons-sprite.png") no-repeat;
@@ -316,7 +332,7 @@ a.Button:active i {
   		height:14px;
   	}*/
 }
-/* line 43, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../../../home/fkuril/.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .RemoveIcon:hover, .RemoveIcon.remove_tiny_hover, .RemoveIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -355,7 +371,7 @@ a.Button:active i {
   		margin-right:0.2em;
   	}*/
 }
-/* line 43, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 43, ../../../../../../home/fkuril/.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .DeleteIcon:hover, .DeleteIcon.remove_tiny_hover, .DeleteIcon.remove_tiny-hover {
   background-position: 0 -345px;
 }
@@ -528,7 +544,7 @@ a.Button:active i {
   margin-bottom: 1.4em;
   zoom: 1;
 }
-/* line 59, C:/WebServers/home/webmis/www/sass/_base.scss */
+/* line 59, ../../sass/_base.scss */
 .FormList > li:after {
   clear: both;
   content: "";
@@ -542,7 +558,7 @@ a.Button:active i {
   width: 100%;
   display: block;
 }
-/* line 59, C:/WebServers/home/webmis/www/sass/_base.scss */
+/* line 59, ../../sass/_base.scss */
 .FormList > li h4:after {
   clear: both;
   content: "";
@@ -1203,7 +1219,7 @@ a.ScrollDay:hover {
   border-top: 3px solid #4f9802;
 }
 /* line 654, ../../sass/modules/uiLib.scss */
-.VarColor .Styled.Button:hover, .VarColor .Styled.Button.Green:hover, .VarColor .Styled.Button.BlueBorder, .VarColor .Styled.Button.BlueBorder {
+.VarColor .Styled.Button:hover, .VarColor .Styled.Button.BlueBorder {
   border: 2px solid #4f9802;
 }
 /* line 657, ../../sass/modules/uiLib.scss */
