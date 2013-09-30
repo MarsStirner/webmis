@@ -37,11 +37,11 @@ define(["text!templates/app.tmpl", "views/header-new"], function(tmpl, Header) {
 						role: ROLES.NURSE_DEPARTMENT,
 						title: "Сестра отделения"
 					}
-					// , {
-					// 	id: 26,
-					// 	role: ROLES.CHIEF,
-					// 	title: "Главный врач"
-					// }
+					, {
+						id: 26,
+						role: ROLES.CHIEF,
+						title: "Главный врач"
+					}
 					]
 				}
 			});

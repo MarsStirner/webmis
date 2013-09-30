@@ -129,12 +129,12 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 						Core.Cookies.set("currentRole", ROLES.NURSE_DEPARTMENT);
 						break;
 					}
-				// case 26:
-				// 	{
-				// 		// Глав врач
-				// 		//Core.Cookies.set("currentRole", ROLES.CHIEF);
-				// 		break;
-				// 	}
+				case 26:
+					{
+						// Глав врач
+						Core.Cookies.set("currentRole", ROLES.CHIEF);
+						break;
+					}
 				case 27:
 					{
 						// Зав отделением
