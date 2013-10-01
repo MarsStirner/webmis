@@ -31,7 +31,8 @@ define(function(require) {
             'click #assigner-outer': 'openAssignerSelectPopup',
             'change #assign-date': 'onChangeAssignDate',
             'change #assign-time': 'onChangeAssignDate',
-            'change #urgent': 'onChangeUrgent'
+            'change #urgent': 'onChangeUrgent',
+            'change #over': 'onChangeOver',
         },
 
         initialize: function(options) {
@@ -245,6 +246,18 @@ define(function(require) {
         onChangeUrgent: function(e) {
             var $target = this.$(e.target);
             this.consultation.setProperty('urgent', 'value', $target.prop('checked') + '');
+        },
+
+        //при изменении "Сверх сетки приёма"
+        onChangeOver: function(e) {
+            var $target = this.$(e.target);
+            var over = $target.prop('checked');
+            this.consultation.set('overQueue', over);
+            if (over) {
+                this.scheduleView.disable();
+            } else {
+                this.scheduleView.enable();
+            }
         },
 
         //при изменении диагноза
