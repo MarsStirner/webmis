@@ -378,14 +378,18 @@ define(function(require) {
             var assignDate = moment(this.consultation.getProperty('assessmentBeginDate'), 'YYYY-MM-DD HH:mm:ss').toDate();
             this.ui.$assignDate.datepicker({
                 minDate: 0
-            });
-            this.ui.$assignDate.datepicker('setDate', assignDate);
-            this.ui.$assignDate.next('.icon-calendar').on('click', function() {
-                this.ui.$assignDate.datepicker('show');
-            });
+            }).datepicker('setDate', assignDate)
+            .addClass('Disabled')
+            .prop('disabled', true);
+
+            // this.ui.$assignDate.next('.icon-calendar').on('click', function() {
+            //     this.ui.$assignDate.datepicker('show');
+            // });
 
             this.ui.$assignTime.timepicker();
-            this.ui.$assignTime.timepicker('setTime', assignDate);
+            this.ui.$assignTime.timepicker('setTime', assignDate)
+            .addClass('Disabled')
+            .prop('disabled', true);
 
             //направительный диагноз
             this.renderNested(this.mkbInputView, "#mkb");
@@ -415,16 +419,6 @@ define(function(require) {
             //список консультантов
             this.renderNested(this.consultantsFreeView, "#consultants");
             //расписание на день
-            this.scheduleView.setElement(this.$el.find("#schedule"));
-
-            // //назначивший врач
-            // this.assignPersonSelect = new SelectView({
-            //  collection: this.assignPersons,
-            //  el: this.ui.$assignPerson,
-            //  selectText: 'name.raw',
-            //  initSelection: Core.Cookies.get('userId')
-            // });
-            // this.depended(this.assignPersonSelect);
 
             //вид оплаты
             this.financeSelect = new SelectView({
