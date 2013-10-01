@@ -13,12 +13,12 @@ define(function(require) {
         },
 
         events: {
-            'click input': 'timeSelected'
+            'click input': 'onClickTime'
         },
 
         template: template,
 
-        timeSelected: function(e) {
+        onClickTime: function(e) {
             var $target = this.$(e.target);
             var checked = $target.prop('checked');
             var time = $target.val();
@@ -63,6 +63,7 @@ define(function(require) {
         },
 
         render: function() {
+            console.log('shedule render');
             this.$el.html(_.template(this.template, {
                 items: this.collection.toJSON()
             }));

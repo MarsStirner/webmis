@@ -36,8 +36,8 @@ define(function(require) {
 			'change #assign-date': 'onChangeAssignDate',
 			'change #assign-time': 'onChangeAssignDate',
 			'change #urgent': 'onChangeUrgent',
-            'change #over':'onChangeOver',
-            'change #datepicker': 'onCangePlannedDate'
+			'change #over': 'onChangeOver',
+			'change #datepicker': 'onCangePlannedDate'
 
 		},
 
@@ -156,7 +156,7 @@ define(function(require) {
 
 		//при выборе консультации
 		onConsultationSelect: function(code) {
-			var consultation =this.findConsultation(this.consultationsGroups.toJSON(), code);
+			var consultation = this.findConsultation(this.consultationsGroups.toJSON(), code);
 
 			this.ui.$datepicker.datepicker('enable');
 			var date = this.ui.$datepicker.datepicker("getDate");
@@ -171,21 +171,21 @@ define(function(require) {
 			this.renderShedule();
 		},
 
-        findConsultation: function(list, code) {
-                var consultation;
+		findConsultation: function(list, code) {
+			var consultation;
 
-				_.each(list, function(model) {
+			_.each(list, function(model) {
 
-					if (model.code == code) {
-						consultation = model;
-					}
+				if (model.code == code) {
+					consultation = model;
+				}
 
-					if (model.groups && (model.groups.length > 0)) {
-						this.findConsultation(model.groups, code);
-					}
-				});
+				if (model.groups && (model.groups.length > 0)) {
+					this.findConsultation(model.groups, code);
+				}
+			});
 
-				return consultation;
+			return consultation;
 		},
 
 		//при выборе консультанта
@@ -209,10 +209,10 @@ define(function(require) {
 			this.consultation.set('plannedTime', plannedTime);
 		},
 
-        onTimeUnselect: function(){
-          console.log('onTimeUnselect');
-			this.consultation.set('plannedTime', '');
-        },
+		onTimeUnselect: function() {
+			console.log('onTimeUnselect');
+			this.consultation.set('plannedTime', {"time":"47520000","id":9591626,"index":3});
+		},
 
 		onChangeAssignDate: function() {
 			var date = this.ui.$assignDatepicker.val();
@@ -235,22 +235,22 @@ define(function(require) {
 			this.consultation.set('urgent', $target.prop('checked'));
 		},
 
-        //при изменении "Сверх сетки приёма"
-        onChangeOver: function(e) {
+		//при изменении "Сверх сетки приёма"
+		onChangeOver: function(e) {
 			var $target = this.$(e.target);
-            var over =  $target.prop('checked');
-			this.consultation.set('over', over);
-            if(over){
-              this.scheduleView.disable();
-            }else{
-              this.scheduleView.enable();
-            }
+			var over = $target.prop('checked');
+			this.consultation.set('overQueue', over);
+			if (over) {
+				this.scheduleView.disable();
+			} else {
+				this.scheduleView.enable();
+			}
 		},
-        onCangePlannedDate: function(e){
-          var $target = this.$(e.target);
-          var timestamp = moment($target.val(), 'DD.MM.YYYY').valueOf();
-          pubsub.trigger('date:selected', timestamp);
-        },
+		onCangePlannedDate: function(e) {
+			var $target = this.$(e.target);
+			var timestamp = moment($target.val(), 'DD.MM.YYYY').valueOf();
+			pubsub.trigger('date:selected', timestamp);
+		},
 
 		//при изменении диагноза
 		onMKBChange: function(e) {
@@ -333,59 +333,58 @@ define(function(require) {
 			var errors = this.isValid();
 			this.saveButton(!errors.length);
 			this.showErrors(errors);
-        },
+		},
 
-        isValid: function(){
-          var errors = [];
-          console.log('con', this.consultation.toJSON());
+		isValid: function() {
+			var errors = [];
+			console.log('con', this.consultation.toJSON());
 
-          if(!this.consultation.get('actionTypeId')){
-            errors.push({
-                message: 'Не выбрана консультация. '
-                });
-          }
+			if (!this.consultation.get('actionTypeId')) {
+				errors.push({
+					message: 'Не выбрана консультация. '
+				});
+			}
 
-          if(!this.consultation.get('executorId')){
-            errors.push({
-                message: 'Не выбран консультант. '
-                });
-          }
+			if (!this.consultation.get('executorId')) {
+				errors.push({
+					message: 'Не выбран консультант. '
+				});
+			}
 
-          if(!this.consultation.get('plannedEndDate')){
-            errors.push({
-                message: 'Не выбрана планируемая дата консультации. '
-                });
-          }else{
-            var diff = moment(this.consultation.get('plannedEndDate')).diff(moment(),'day');
-            if(diff < 0){
-              errors.push({
-                  message: 'Планируемая дата не может быть меньше текущей'
-                  });
-            }
-          }
+			if (!this.consultation.get('plannedEndDate')) {
+				errors.push({
+					message: 'Не выбрана планируемая дата консультации. '
+				});
+			} else {
+				var diff = moment(this.consultation.get('plannedEndDate')).diff(moment(), 'day');
+				if (diff < 0) {
+					errors.push({
+						message: 'Планируемая дата не может быть меньше текущей'
+					});
+				}
+			}
 
-          if(moment(this.consultation.get('createDateTime')).diff(moment())< -60*1000){
-              errors.push({
-                  message: 'Дата создания направления не могут быть меньше текущей'
-                  });
-            // console.log('create', moment(this.consultation.get('createDateTime')).diff(moment()));
-          }
+			if (moment(this.consultation.get('createDateTime')).diff(moment()) < -60 * 1000) {
+				errors.push({
+					message: 'Дата создания направления не могут быть меньше текущей'
+				});
+				// console.log('create', moment(this.consultation.get('createDateTime')).diff(moment()));
+			}
 
-          if(!this.consultation.get('plannedTime')
-             && !(this.consultation.get('over') || this.consultation.get('urgent'))){
-            errors.push({
-                message: 'Не выбрано планируемое время консультации. '
-                });
-          }
+			if (!this.consultation.get('plannedTime') && !(this.consultation.get('overQueue') || this.consultation.get('urgent'))) {
+				errors.push({
+					message: 'Не выбрано планируемое время консультации. '
+				});
+			}
 
-          if(this.consultation.get('urgent') && this.consultation.get('over')){
-            errors.push({
-                message: 'Поля "Срочно" и "Сверх сетки приёма" не могут быть выбраны вместе. '
-                });
-          }
+			if (this.consultation.get('urgent') && this.consultation.get('overQueue')) {
+				errors.push({
+					message: 'Поля "Срочно" и "Сверх сетки приёма" не могут быть выбраны вместе. '
+				});
+			}
 
 
-          return errors;
+			return errors;
 
 		},
 		showErrors: function(errors) {
@@ -393,14 +392,14 @@ define(function(require) {
 			self.ui.$errors.html('').hide();
 			if (errors.length > 0) {
 				// _.each(errors, function(error) {
-					// self.ui.$errors.append(error.message);
+				// self.ui.$errors.append(error.message);
 				// });
-            self.ui.$errors.append(errors[0].message);
-            self.ui.$errors.show();
+				self.ui.$errors.append(errors[0].message);
+				self.ui.$errors.show();
 			}
 		},
 
-        saveButton: function(enabled, msg) {
+		saveButton: function(enabled, msg) {
 			var $saveButton = this.$el.closest('.ui-dialog').find('.save');
 
 			if (enabled) {
@@ -431,7 +430,7 @@ define(function(require) {
 			this.ui.$assignTimepicker = this.$el.find('#assign-time');
 
 			this.ui.$assigner = this.$el.find('#assigner');
-            this.ui.$errors = this.$el.find('#errors');
+			this.ui.$errors = this.$el.find('#errors');
 
 			this.$el.find('.change-assigner').button();
 
@@ -439,12 +438,12 @@ define(function(require) {
 			this.ui.$datepicker.datepicker({
 				minDate: 0,
 				onSelect: function(dateText, inst) {
-                 self.ui.$datepicker.trigger('change');
+					self.ui.$datepicker.trigger('change');
 				}
 			});
 			this.ui.$datepicker.datepicker('setDate', new Date());
 			this.ui.$datepicker.next('.icon-calendar').on('click', function() {
-                self.ui.$datepicker.datepicker('show');
+				self.ui.$datepicker.datepicker('show');
 			});
 
 			var createDate = moment(this.consultation.get('createDateTime')).toDate();
@@ -457,7 +456,9 @@ define(function(require) {
 				self.ui.$assignDatepicker.datepicker('show');
 			});
 
-			this.ui.$assignTimepicker.timepicker({showPeriodLabels: false});
+			this.ui.$assignTimepicker.timepicker({
+				showPeriodLabels: false
+			});
 			this.ui.$assignTimepicker.timepicker('setTime', createDate);
 
 			//диагнозы

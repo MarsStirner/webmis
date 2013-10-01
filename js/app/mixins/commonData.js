@@ -37,13 +37,13 @@ define([], function() {
 				return this.flatten(this.getDetailsAttributes());
 			},
 
-      getMarkupFreeFlattenedDetails: function () {
-        var flattenedDetails = this.getFlattenedDetails();
-        _.each(flattenedDetails, function (attr) {
-          attr.value = Core.Strings.cleanTextMarkup(attr.value);
-        }, this);
-        return flattenedDetails;
-      },
+			getMarkupFreeFlattenedDetails: function() {
+				var flattenedDetails = this.getFlattenedDetails();
+				_.each(flattenedDetails, function(attr) {
+					attr.value = Core.Strings.cleanTextMarkup(attr.value);
+				}, this);
+				return flattenedDetails;
+			},
 
 			flatten: function(attributes) {
 				var flattened = [];
@@ -108,7 +108,7 @@ define([], function() {
 
 				return value;
 			},
-			setProperty: function(attributeName, propertyName, value) {
+			setProperty: function(attributeName, propertyName, value, silent) {
 				var model = this;
 
 
@@ -138,7 +138,9 @@ define([], function() {
 				});
 
 				model.set('group', group);
-				model.trigger('change:'+attributeName, model, value);
+				if(!silent){
+					model.trigger('change:' + attributeName, model, value);
+				}
 
 			}
 

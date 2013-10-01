@@ -3,6 +3,8 @@ define(function(require) {
 
     return View.extend({
         initialize: function() {
+            _.bindAll(this, 'isSelected');
+
             this.collection.on('reset', function() {
                 this.render();
             }, this);
@@ -10,6 +12,11 @@ define(function(require) {
             this.collection.on('fetch', function() {
                 this.renderOnFetch();
             }, this);
+
+        },
+
+        isSelected: function(code){
+            return ((this.selectedItemCode && code) && (this.selectedItemCode == code));
         },
 
         renderAll: function(data) {
@@ -18,7 +25,8 @@ define(function(require) {
 
             view.$el.html(_.template(template, {
                 items: data,
-                template: template
+                template: template,
+                selected: this.isSelected
             })).on('click', 'li', function() {
                 var $this = $(this);
                 view.$el.find('.clicked').removeClass('clicked');
@@ -42,9 +50,12 @@ define(function(require) {
 
             if (_.isArray(data) && data.length > 0) {
                 this.renderAll(data);
+                this.selectedItemCode = false;
             } else {
                 this.renderNoResults();
             }
+
+
             return this;
 
         },

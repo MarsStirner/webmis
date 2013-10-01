@@ -12,6 +12,12 @@ define(function(require) {
                 this.renderOnFetch();
             }, this);
 
+            _.bindAll(this, 'isSelected');
+
+        },
+
+        isSelected: function(code){
+            return ((this.selectedItemCode && code) && (this.selectedItemCode === code));
         },
 
         renderAll: function(treeData) {
@@ -23,7 +29,8 @@ define(function(require) {
             view.$consultations_list
                 .append(_.template(template, {
                 items: treeData,
-                template: template
+                template: template,
+                selected: this.isSelected
             })).on('click', 'li', function(e) {
                     e.stopPropagation();
 
@@ -49,10 +56,12 @@ define(function(require) {
 
             if (_.isArray(treeData) && treeData.length > 0) {
                 this.renderAll(treeData);
+               //this.selectedItemCode = false;
             } else {
                 this.renderNoResults();
             }
             pubsub.trigger('consultations:render');
+
             return this;
         },
 
