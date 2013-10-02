@@ -109,16 +109,21 @@ class TherapyController
 
                     $p = array();
                     $p['name'] = $actionPropertyType -> getName();
+                    $p['code'] = $actionPropertyType -> getCode();
 
 
                     switch ($typeName) {
                         case 'String':
                         case 'Html':
                         case 'Text':
+                        case 'Constructor':
                             $p['value'] = $actionProperty->getActionPropertyString()->getValue();
                         break;
                         case 'Double':
                             $p['value'] = $actionProperty->getActionPropertyDouble()->getValue();
+                        break;
+                        case 'FlatDirectory':
+                            $p['value'] = $actionProperty->getActionPropertyFDRecord()->getMValue();
                         break;
                         case 'Date':
                             $date = $actionProperty->getActionPropertyDate()->getValue();
@@ -129,19 +134,30 @@ class TherapyController
                         break;
                     }
 
-                    if($p['name'] == 'Наименование терапии'){
-                        $a['title'] = $p['value'];
+                    if($p['code'] == 'therapyTitle'){
+                        $a['therapyTitle'] = $p['value'];
                     }
-                    if($p['name'] == 'Статус терапии'){
-                        $a['status'] = $p['value'];
-                    }
-
-                    if($p['name'] == 'Дата начала'){
-                        $a['begDate'] = $p['value'];
+                    if($p['code'] == 'therapyBegDate'){
+                        $a['therapyBegDate'] = $p['value'];
                     }
 
-                    if($p['name'] == 'День терапии'){
-                        $a['day'] = $p['value'];
+                    if($p['code'] == 'therapyEndDate'){
+                        $a['therapyEndDate'] = $p['value'];
+                    }
+
+                    if($p['code'] == 'therapyPhaseTitle'){
+                        $a['therapyPhaseTitle'] = $p['value'];
+                    }
+
+                    if($p['code'] == 'therapyPhaseBegDate'){
+                        $a['therapyPhaseBegDate'] = $p['value'];
+                    }
+
+                    if($p['code'] == 'therapyPhaseEndDate'){
+                        $a['therapyPhaseEndDate'] = $p['value'];
+                    }
+                    if($p['code'] == 'therapyPhaseDay'){
+                        $a['therapyPhaseDay'] = $p['value'];
                     }
 
                 }
@@ -170,17 +186,9 @@ class TherapyController
 
                 foreach($actions as $action){
                     //$therapy['event'] = $action['event'];
-                    $therapy['day'] = $action['day'];
-                    $therapy['status'] = $action['status'];
+                    $therapy = $action;
 
-                    if($action['status']=='Начата'){
-                        $therapy['title'] = $action['title'];
-                        //$therapy['begDate'] = $action['begDate'];
-                    }
 
-                    // if($action['status']=='Закончена'){
-                    //     $therapy['endDate'] = $action['endDate'];
-                    // }
 
                 }
 
@@ -188,7 +196,7 @@ class TherapyController
             }
 
 
-            return $therapies;
+            return $actions;//$therapies;
         }
 
 
@@ -201,8 +209,8 @@ class TherapyController
                 $a = array();
                 $a['id'] = $action->getId();
                 $a['event'] = $action->getEventId();
-                $endDateTherapy = new \DateTime($action->getCreateDatetime());
-                $a['endDate'] = ($endDateTherapy->format('U'))*1000;
+                // $endDateTherapy = new \DateTime($action->getCreateDatetime());
+                // $a['endDate'] = ($endDateTherapy->format('U'))*1000;
 
 
                 $actionProperties = $action->getActionPropertys();
@@ -232,19 +240,19 @@ class TherapyController
                         break;
                     }
 
-                    if($p['name'] == 'Наименование терапии'){
-                        $a['title'] = $p['value'];
+                    if($p['code'] == 'therapyTitle'){
+                        $a['therapyTitle'] = $p['value'];
                     }
-                    if($p['name'] == 'Статус терапии'){
-                        $a['status'] = $p['value'];
-                    }
-
-                    if($p['name'] == 'Дата начала'){
-                        $a['begDate'] = $p['value'];
+                    if($p['code'] == 'therapyBegDate'){
+                        $a['therapyBegDate'] = $p['value'];
                     }
 
-                    if($p['name'] == 'День терапии'){
-                        $a['day'] = $p['value'];
+                    if($p['code'] == 'therapyEndDate'){
+                        $a['therapyEndDate'] = $p['value'];
+                    }
+
+                    if($p['code'] == 'therapyPhaseTitle'){
+                        $a['therapyPhaseTitle'] = $p['value'];
                     }
 
                 }
@@ -270,15 +278,16 @@ class TherapyController
                 $therapy = array();
 
                 foreach($actions as $action){
-                    $therapy['event'] = $action['event'];
-                    if($action['status']=='Начата'){
-                        $therapy['title'] = $action['title'];
-                        $therapy['begDate'] = $action['begDate'];
-                    }
+                    array_push($therapy, $action);
+                    //$therapy['event'] = $action['event'];
+                    // if($action['status']=='Начата'){
+                    //     $therapy['title'] = $action['title'];
+                    //     $therapy['begDate'] = $action['begDate'];
+                    // }
 
-                    if($action['status']=='Закончена'){
-                        $therapy['endDate'] = $action['endDate'];
-                    }
+                    // if($action['status']=='Закончена'){
+                    //     $therapy['endDate'] = $action['endDate'];
+                    // }
 
                 }
 
@@ -286,7 +295,7 @@ class TherapyController
             }
 
 
-            return $therapies;
+            return $data;
     }
 
 

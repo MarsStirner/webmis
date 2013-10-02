@@ -2764,7 +2764,7 @@ define(function (require) {
 			if(value){
 				return moment(value, this.inputFormat).format(CD_DATE_FORMAT);
 			}else{
-				return '';
+				return null;
 			}
 		},
 

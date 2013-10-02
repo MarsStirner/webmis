@@ -23,6 +23,8 @@ use Webmis\Models\ActionPropertyDate;
 use Webmis\Models\ActionPropertyDateQuery;
 use Webmis\Models\ActionPropertyDouble;
 use Webmis\Models\ActionPropertyDoubleQuery;
+use Webmis\Models\ActionPropertyFDRecord;
+use Webmis\Models\ActionPropertyFDRecordQuery;
 use Webmis\Models\ActionPropertyHospitalBed;
 use Webmis\Models\ActionPropertyHospitalBedQuery;
 use Webmis\Models\ActionPropertyInteger;
@@ -172,6 +174,11 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
      * @var        ActionPropertyDouble
      */
     protected $aActionPropertyDouble;
+
+    /**
+     * @var        ActionPropertyFDRecord
+     */
+    protected $aActionPropertyFDRecord;
 
     /**
      * @var        PropelObjectCollection|ActionPropertyAction[] Collection to store aggregation of ActionPropertyAction objects.
@@ -493,6 +500,10 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
 
         if ($this->aActionPropertyDouble !== null && $this->aActionPropertyDouble->getid() !== $v) {
             $this->aActionPropertyDouble = null;
+        }
+
+        if ($this->aActionPropertyFDRecord !== null && $this->aActionPropertyFDRecord->getId() !== $v) {
+            $this->aActionPropertyFDRecord = null;
         }
 
 
@@ -884,6 +895,9 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
         if ($this->aActionPropertyDouble !== null && $this->id !== $this->aActionPropertyDouble->getid()) {
             $this->aActionPropertyDouble = null;
         }
+        if ($this->aActionPropertyFDRecord !== null && $this->id !== $this->aActionPropertyFDRecord->getId()) {
+            $this->aActionPropertyFDRecord = null;
+        }
         if ($this->aAction !== null && $this->action_id !== $this->aAction->getid()) {
             $this->aAction = null;
         }
@@ -934,6 +948,7 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             $this->aActionPropertyString = null;
             $this->aActionPropertyDate = null;
             $this->aActionPropertyDouble = null;
+            $this->aActionPropertyFDRecord = null;
             $this->collActionPropertyActions = null;
 
             $this->collActionPropertyHospitalBeds = null;
@@ -1095,6 +1110,13 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                     $affectedRows += $this->aActionPropertyDouble->save($con);
                 }
                 $this->setActionPropertyDouble($this->aActionPropertyDouble);
+            }
+
+            if ($this->aActionPropertyFDRecord !== null) {
+                if ($this->aActionPropertyFDRecord->isModified() || $this->aActionPropertyFDRecord->isNew()) {
+                    $affectedRows += $this->aActionPropertyFDRecord->save($con);
+                }
+                $this->setActionPropertyFDRecord($this->aActionPropertyFDRecord);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -1437,6 +1459,12 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->aActionPropertyFDRecord !== null) {
+                if (!$this->aActionPropertyFDRecord->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aActionPropertyFDRecord->getValidationFailures());
+                }
+            }
+
 
             if (($retval = ActionPropertyPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
@@ -1615,6 +1643,9 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             }
             if (null !== $this->aActionPropertyDouble) {
                 $result['ActionPropertyDouble'] = $this->aActionPropertyDouble->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aActionPropertyFDRecord) {
+                $result['ActionPropertyFDRecord'] = $this->aActionPropertyFDRecord->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collActionPropertyActions) {
                 $result['ActionPropertyActions'] = $this->collActionPropertyActions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1891,6 +1922,11 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             $relObj = $this->getActionPropertyDouble();
             if ($relObj) {
                 $copyObj->setActionPropertyDouble($relObj->copy($deepCopy));
+            }
+
+            $relObj = $this->getActionPropertyFDRecord();
+            if ($relObj) {
+                $copyObj->setActionPropertyFDRecord($relObj->copy($deepCopy));
             }
 
             //unflag object copy
@@ -2189,6 +2225,52 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
         }
 
         return $this->aActionPropertyDouble;
+    }
+
+    /**
+     * Declares an association between this object and a ActionPropertyFDRecord object.
+     *
+     * @param             ActionPropertyFDRecord $v
+     * @return ActionProperty The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setActionPropertyFDRecord(ActionPropertyFDRecord $v = null)
+    {
+        if ($v === null) {
+            $this->setid(NULL);
+        } else {
+            $this->setid($v->getId());
+        }
+
+        $this->aActionPropertyFDRecord = $v;
+
+        // Add binding for other direction of this 1:1 relationship.
+        if ($v !== null) {
+            $v->setActionProperty($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ActionPropertyFDRecord object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return ActionPropertyFDRecord The associated ActionPropertyFDRecord object.
+     * @throws PropelException
+     */
+    public function getActionPropertyFDRecord(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aActionPropertyFDRecord === null && ($this->id !== null) && $doQuery) {
+            $this->aActionPropertyFDRecord = ActionPropertyFDRecordQuery::create()->findPk($this->id, $con);
+            // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
+            $this->aActionPropertyFDRecord->setActionProperty($this);
+        }
+
+        return $this->aActionPropertyFDRecord;
     }
 
 
@@ -3390,6 +3472,9 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             if ($this->aActionPropertyDouble instanceof Persistent) {
               $this->aActionPropertyDouble->clearAllReferences($deep);
             }
+            if ($this->aActionPropertyFDRecord instanceof Persistent) {
+              $this->aActionPropertyFDRecord->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
@@ -3419,6 +3504,7 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
         $this->aActionPropertyString = null;
         $this->aActionPropertyDate = null;
         $this->aActionPropertyDouble = null;
+        $this->aActionPropertyFDRecord = null;
     }
 
     /**
