@@ -2760,7 +2760,12 @@ define(function (require) {
 		},
 
 		getAttributeValue: function () {
-			return moment(this.ui.$input.val(), this.inputFormat).format(CD_DATE_FORMAT);
+			var value = this.ui.$input.val();
+			if(value){
+				return moment(value, this.inputFormat).format(CD_DATE_FORMAT);
+			}else{
+				return '';
+			}
 		},
 
 		render: function () {
