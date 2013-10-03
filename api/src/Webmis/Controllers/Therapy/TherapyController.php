@@ -8,36 +8,37 @@ use Webmis\Models\EventQuery;
 
 class TherapyController
 {
-    public function listAction(Request $request, Application $app)
-    {
-            $eventId = (int) $request->query->get('eventId');
 
-            $actions = ActionQuery::create()
-            ->_if($eventId)
-                ->filterByEventId($eventId)
-            ->_endif()
-            ->getProperties()
-            ->onlyWithTherapyProperties()
-            ->orderByCreateDatetime()
-            ->groupBy('id')
-            ->limit(5)
-            ->find();
-            //->toArray();
 
-            $data = $this->serializeActions($actions);
-
-            return $app['jsonp']->jsonp(array('data'=>$data));
-    }
-
-    public function lastAction(Request $request, Application $app)
+    public function forPatientAction(Request $request, Application $app)
     {
             $route_params = $request->get('_route_params') ;
-            $eventId = $route_params['eventId'];
+            // $eventId = $route_params['eventId'];
+
+            // $event = EventQuery::create()->findOneById($eventId);
+
+            // if(!$event){
+            //     $error = array('message' => 'Не найдена история болезни с идентификатором '.$eventId);
+            //     return $app['jsonp']->jsonp($error);
+            // }
+
+            //$clientId = $event->getClientId();
+            $patientId = $route_params['patientId'];
+
+            if(!$patientId){
+                $error = array('message' => 'Нет кода пациента.');
+                return $app['jsonp']->jsonp($error);
+            }
 
             $actions = ActionQuery::create()
+            ->useEventQuery()
+                ->filterByClientId($patientId)
+                //->where('Event.id != ?', $eventId)
+                ->where('Event.deleted != 1')
+            ->endUse()
             ->getProperties()
             ->onlyWithTherapyProperties()
-            ->filterByEventId($eventId)
+
             ->groupBy('id')
             ->orderByCreateDatetime('desc')
             //->limit(1)
@@ -45,50 +46,9 @@ class TherapyController
 
             $data = $this->serializeEventTherapy($actions);//serializeTherapyActions($actions);
 
-            return $app['jsonp']->jsonp(array('data'=>$data));
+            return $app['jsonp']->jsonp(array('data'=>array('therapies' => $data)));
     }
 
-
-
-
-
-    public function restAction(Request $request, Application $app)
-    {
-
-            $route_params = $request->get('_route_params') ;
-            //eventId
-            $eventId = $route_params['eventId'];
-
-            $event = EventQuery::create()->findOneById($eventId);
-
-            if(!$event){
-                $error = array('message' => 'Не найдена история болезни с идентификатором '.$eventId);
-                return $app['jsonp']->jsonp($error);
-            }
-
-            $clientId = $event->getClientId();
-
-            if(!$clientId){
-                $error = array('message' => 'В история болезни с идентификатором '.$eventId.' нет кода пациента.');
-                return $app['jsonp']->jsonp($error);
-            }
-
-            $actions = ActionQuery::create()
-            ->useEventQuery()
-                ->filterByClientId($clientId)
-                ->where('Event.id != ?', $eventId)
-                ->where('Event.deleted != 1')
-            ->endUse()
-            ->getProperties()
-            ->onlyWithTherapyProperties()
-            ->groupBy('id')
-            ->orderByCreateDatetime('desc')
-            ->find();
-
-            $data = $this->serializeEventsTherapies($actions);
-
-            return $app['jsonp']->jsonp(array('data'=>$data));
-    }
 
         private function serializeEventTherapy($actions){
             $data = array();
@@ -96,11 +56,9 @@ class TherapyController
 
             foreach ($actions as $action){
                 $a = array();
-                $a['id'] = $action->getId();
-                $a['event'] = $action->getEventId();
-                $endDateTherapy = new \DateTime($action->getCreateDatetime());
-                $a['endDate'] = ($endDateTherapy->format('U'))*1000;
-
+                $a['docId'] = $action->getId();
+                $a['eventId'] = $action->getEventId();
+                $a['createDate'] = strtotime($action->getCreateDatetime())*1000;//$action->getCreateDatetime();
 
                 $actionProperties = $action->getActionPropertys();
                 foreach ($actionProperties as $actionProperty){
@@ -109,39 +67,62 @@ class TherapyController
 
                     $p = array();
                     $p['name'] = $actionPropertyType -> getName();
+                    $p['code'] = $actionPropertyType -> getCode();
 
 
                     switch ($typeName) {
                         case 'String':
                         case 'Html':
                         case 'Text':
+                        case 'Constructor':
                             $p['value'] = $actionProperty->getActionPropertyString()->getValue();
                         break;
                         case 'Double':
                             $p['value'] = $actionProperty->getActionPropertyDouble()->getValue();
                         break;
+                        case 'FlatDirectory':
+                            $p['value'] = $actionProperty->getActionPropertyFDRecord()->getValue();
+                        break;
                         case 'Date':
                             $date = $actionProperty->getActionPropertyDate()->getValue();
-                            $p['value'] = strtotime($date)*1000;
+                            $dateArray = split('-', $date);
+                            $year = $dateArray[0];
+                            if($year < 1000){
+                                $p['value'] = null;
+                            }else{
+                                $p['value'] = strtotime($date)*1000;
+                            }
+
                         break;
                         default:
                             $p['value'] = 'этот тип экшен проперти пока не поддерживается';
                         break;
                     }
 
-                    if($p['name'] == 'Наименование терапии'){
-                        $a['title'] = $p['value'];
+                    if($p['code'] == 'therapyTitle'){
+                        $a['therapyTitleId'] = $p['value'];
                     }
-                    if($p['name'] == 'Статус терапии'){
-                        $a['status'] = $p['value'];
-                    }
-
-                    if($p['name'] == 'Дата начала'){
-                        $a['begDate'] = $p['value'];
+                    if($p['code'] == 'therapyBegDate'){
+                        $a['therapyBegDate'] = $p['value'];
                     }
 
-                    if($p['name'] == 'День терапии'){
-                        $a['day'] = $p['value'];
+                    if($p['code'] == 'therapyEndDate'){
+                        $a['therapyEndDate'] = $p['value'];
+                    }
+
+                    if($p['code'] == 'therapyPhaseTitle'){
+                        $a['therapyPhaseTitle'] = $p['value'];
+                    }
+
+                    if($p['code'] == 'therapyPhaseBegDate'){
+                        $a['therapyPhaseBegDate'] = $p['value'];
+                    }
+
+                    if($p['code'] == 'therapyPhaseEndDate'){
+                        $a['therapyPhaseEndDate'] = $p['value'];
+                    }
+                    if($p['code'] == 'therapyPhaseDay'){
+                        $a['therapyPhaseDay'] = $p['value'];
                     }
 
                 }
@@ -150,257 +131,74 @@ class TherapyController
 
             }
 
-            $events = array();
-
-            foreach ($data as $action){
-                $events[$action['event']] = array();
-            }
-            foreach ($data as $action){
-                array_push($events[$action['event']],$action);
-            }
-
-            ksort($events, SORT_NUMERIC);
-
             $therapies = array();
 
-            foreach ($events as $actions) {
-                $therapy = array();
+            //терапии
+            foreach ($data as $action){
+                $therapy = array(
 
-                sort($actions);
+                    'titleId' => $action['therapyTitleId'],
+                    'title' => $action['therapyTitleId'],
+                    'beginDate' => $action['therapyBegDate'],
+                    'endDate' => $action['therapyEndDate'],
+                    'phases' => array());
 
-                foreach($actions as $action){
-                    //$therapy['event'] = $action['event'];
-                    $therapy['day'] = $action['day'];
-                    $therapy['status'] = $action['status'];
 
-                    if($action['status']=='Начата'){
-                        $therapy['title'] = $action['title'];
-                        //$therapy['begDate'] = $action['begDate'];
+                if(@$therapies[$action['therapyBegDate']]){
+                    if(!@$therapies[$action['therapyBegDate']]['endDate']){//если нет даты окончания
+                        $therapies[$action['therapyBegDate']]['endDate'] = $action['therapyEndDate'];
                     }
-
-                    // if($action['status']=='Закончена'){
-                    //     $therapy['endDate'] = $action['endDate'];
-                    // }
-
+                }else{
+                    $therapies[$action['therapyBegDate']] = $therapy;
                 }
-
-                array_push($therapies, $therapy);
             }
+            //фазы терапий
+            foreach($therapies as $key => $therapy){
+                foreach ($data as $action){
+                    if($therapy['beginDate'] == $action['therapyBegDate']){
+
+                        $phase = array(
+                            'title' => $action['therapyPhaseTitle'],
+                            'beginDate' => $action['therapyPhaseBegDate'],
+                            'endDate' => $action['therapyPhaseEndDate'],
+                            'days' => array()
+                        );
+
+                        if(@$therapies[$key]['phases'][$action['therapyPhaseBegDate']]){
+                            if(!@$therapies[$key]['phases'][$action['therapyPhaseBegDate']]['endDate']){
+                                $therapies[$key]['phases'][$action['therapyPhaseBegDate']]['endDate'] = $action['therapyPhaseEndDate'];
+                            }
+
+                        }else{
+                            $therapies[$key]['phases'][$action['therapyPhaseBegDate']] = $phase;
+                        }
+
+                    }
+                }
+            }
+
+            //дни
+            foreach ($data as $action){
+                $therapies[$action['therapyBegDate']]['phases'][$action['therapyPhaseBegDate']]['days'][] = array(
+                    'day'=> $action['therapyPhaseDay'],
+                    'createDate' => $action['createDate'],
+                    'eventId' => $action['eventId'],
+                    'docId' => $action['docId']);
+
+            }
+
+            //убирание ключей
+            foreach ($therapies as $key => $therapy){
+                $therapies[$key]['phases'] = array_values($therapies[$key]['phases']);
+            }
+
+            $therapies = array_values($therapies);
+
 
 
             return $therapies;
         }
 
 
-       private function serializeEventsTherapies($actions)
-    {
-            $data = array();
 
-
-            foreach ($actions as $action){
-                $a = array();
-                $a['id'] = $action->getId();
-                $a['event'] = $action->getEventId();
-                $endDateTherapy = new \DateTime($action->getCreateDatetime());
-                $a['endDate'] = ($endDateTherapy->format('U'))*1000;
-
-
-                $actionProperties = $action->getActionPropertys();
-                foreach ($actionProperties as $actionProperty){
-                    $actionPropertyType = $actionProperty->getActionPropertyType();
-                    $typeName = $actionPropertyType -> getTypeName();
-
-                    $p = array();
-                    $p['name'] = $actionPropertyType -> getName();
-
-
-                    switch ($typeName) {
-                        case 'String':
-                        case 'Html':
-                        case 'Text':
-                            $p['value'] = $actionProperty->getActionPropertyString()->getValue();
-                        break;
-                        case 'Double':
-                            $p['value'] = $actionProperty->getActionPropertyDouble()->getValue();
-                        break;
-                        case 'Date':
-                            $date = $actionProperty->getActionPropertyDate()->getValue();
-                            $p['value'] = strtotime($date)*1000;
-                        break;
-                        default:
-                            $p['value'] = 'этот тип экшен проперти пока не поддерживается';
-                        break;
-                    }
-
-                    if($p['name'] == 'Наименование терапии'){
-                        $a['title'] = $p['value'];
-                    }
-                    if($p['name'] == 'Статус терапии'){
-                        $a['status'] = $p['value'];
-                    }
-
-                    if($p['name'] == 'Дата начала'){
-                        $a['begDate'] = $p['value'];
-                    }
-
-                    if($p['name'] == 'День терапии'){
-                        $a['day'] = $p['value'];
-                    }
-
-                }
-
-                array_push($data, $a);
-
-            }
-
-            $events = array();
-
-            foreach ($data as $action){
-                $events[$action['event']] = array();
-            }
-            foreach ($data as $action){
-                array_push($events[$action['event']],$action);
-            }
-
-            ksort($events, SORT_NUMERIC);
-
-            $therapies = array();
-
-            foreach ($events as $actions) {
-                $therapy = array();
-
-                foreach($actions as $action){
-                    $therapy['event'] = $action['event'];
-                    if($action['status']=='Начата'){
-                        $therapy['title'] = $action['title'];
-                        $therapy['begDate'] = $action['begDate'];
-                    }
-
-                    if($action['status']=='Закончена'){
-                        $therapy['endDate'] = $action['endDate'];
-                    }
-
-                }
-
-                array_push($therapies, $therapy);
-            }
-
-
-            return $therapies;
-    }
-
-
-    private function serializeActions($actions)
-    {
-
-            $data = array();
-
-            foreach ($actions as $action){
-                $a = array();
-                $a['id'] = $action->getId();
-                $a['name'] = $action->getActionType()->getName();
-                $a['status'] = $action->getStatus();
-                $createDatetime = $action->getCreateDatetime();
-                $a['createDatetime'] = strtotime($createDatetime)*1000;
-                //$a['code'] = $action->getActionType()->getCode();
-                $a['fields'] = array();
-                $actionProperties = $action->getActionPropertys();
-
-
-                foreach ($actionProperties as $actionProperty){
-                    $actionPropertyType = $actionProperty->getActionPropertyType();
-                    $p = array();
-                    //$p['actionProperty.id'] = $actionProperty->getId();
-                    $p['name'] = $actionPropertyType -> getName();
-                    $p['mandatory'] = $actionPropertyType -> getMandatory();
-                    $p['readonly'] = $actionPropertyType -> getReadOnly();
-                    $typeName = $actionPropertyType -> getTypeName();
-
-                    switch ($typeName) {
-                        case 'String':
-                        case 'Text':
-                            $p['value'] = $actionProperty->getActionPropertyString()->getValue();
-                        break;
-                        case 'Date':
-                            $date = $actionProperty->getActionPropertyDate()->getValue();
-                            $p['value'] = strtotime($date)*1000;
-                        break;
-                        default:
-                            $p['value'] = 'этот тип пока не поддерживается';
-                        break;
-                    }
-
-                    $p['type'] = $typeName;
-
-                    $a['fields'][] = $p;
-                }
-                //$a['fields'] = $action->getActionProperty();
-
-                $data[] = $a;
-            }
-
-            return $data;
-
-    }
-
-    private function serializeTherapyActions($actions)
-    {
-            $data = array();
-
-            foreach ($actions as $action){
-                $a = array();
-                $a['id'] = $action->getId();
-                $a['name'] = $action->getActionType()->getName();
-                $createDatetime = $action->getCreateDatetime();
-                $a['endDate'] = strtotime($createDatetime)*1000;
-                $actionProperties = $action->getActionPropertys();
-
-
-                foreach ($actionProperties as $actionProperty){
-                    $actionPropertyType = $actionProperty->getActionPropertyType();
-                    $p = array();
-                    $p['name'] = $actionPropertyType -> getName();
-                    $name = $actionPropertyType -> getName();
-                    $typeName = $actionPropertyType -> getTypeName();
-
-                    switch ($typeName) {
-                        case 'String':
-                        case 'Text':
-                        case 'Html':
-                            $string = $actionProperty->getActionPropertyString()->getValue();
-
-                            if($name == 'День терапии'){
-                                $a['day'] = $string;
-                            }
-
-                            if($name == 'Наименование терапии'){
-                                $a['title'] = $string;
-                            }
-
-                            if($name == 'Статус терапии'){
-                                $a['status'] = $string;
-                            }
-
-                        break;
-                        case 'Date':
-                            $date = $actionProperty->getActionPropertyDate()->getValue();
-                            if($name == 'Дата начала'){
-                                $a['begDate'] = strtotime($date)*1000;
-                            }
-
-                        break;
-                        default:
-                            $p['value'] = '';//'этот тип пока не поддерживается';
-                        break;
-                    }
-
-                    $p['type'] = $typeName;
-
-                }
-
-                $data[] = $a;
-            }
-
-            return $data;
-    }
 }

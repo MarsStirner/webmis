@@ -30,6 +30,10 @@ class ActionQuery extends BaseActionQuery
 						->endUse()
 						->useActionPropertyDateQuery('date', 'left join')
 						->endUse()
+						->useActionPropertyFDRecordQuery('fdir', 'left join')
+							// ->useFDFieldValueQuery()
+							// ->endUse()
+						->endUse()
 					->endUse();
 					// ->groupBy('id');
 	}
@@ -55,7 +59,7 @@ class ActionQuery extends BaseActionQuery
 	{
 		return $this->useActionPropertyQuery()
 						->useActionPropertyTypeQuery()
-							->filterByCode(array('statusTherapy','dayTherapy','titleTherapy','begDateTherapy'))
+							->filterByCode(array('therapyTitle'))
 						->endUse()
 					->endUse();
 	}

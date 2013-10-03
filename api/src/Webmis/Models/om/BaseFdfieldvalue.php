@@ -5,41 +5,35 @@ namespace Webmis\Models\om;
 use \BaseObject;
 use \BasePeer;
 use \Criteria;
-use \DateTime;
 use \Exception;
 use \PDO;
 use \Persistent;
 use \Propel;
-use \PropelCollection;
-use \PropelDateTime;
 use \PropelException;
-use \PropelObjectCollection;
 use \PropelPDO;
-use Webmis\Models\ActionProperty;
-use Webmis\Models\ActionPropertyDate;
-use Webmis\Models\ActionPropertyDatePeer;
-use Webmis\Models\ActionPropertyDateQuery;
-use Webmis\Models\ActionPropertyQuery;
+use Webmis\Models\Fdfieldvalue;
+use Webmis\Models\FdfieldvaluePeer;
+use Webmis\Models\FdfieldvalueQuery;
 
 /**
- * Base class that represents a row from the 'ActionProperty_Date' table.
+ * Base class that represents a row from the 'FDFieldValue' table.
  *
  *
  *
  * @package    propel.generator.Models.om
  */
-abstract class BaseActionPropertyDate extends BaseObject implements Persistent
+abstract class BaseFdfieldvalue extends BaseObject implements Persistent
 {
     /**
      * Peer class name
      */
-    const PEER = 'Webmis\\Models\\ActionPropertyDatePeer';
+    const PEER = 'Webmis\\Models\\FdfieldvaluePeer';
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        ActionPropertyDatePeer
+     * @var        FdfieldvaluePeer
      */
     protected static $peer;
 
@@ -56,22 +50,22 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
     protected $id;
 
     /**
-     * The value for the index field.
-     * Note: this column has a database default value of: 0
+     * The value for the fdrecord_id field.
      * @var        int
      */
-    protected $index;
+    protected $fdrecord_id;
+
+    /**
+     * The value for the fdfield_id field.
+     * @var        int
+     */
+    protected $fdfield_id;
 
     /**
      * The value for the value field.
      * @var        string
      */
     protected $value;
-
-    /**
-     * @var        ActionProperty one-to-one related ActionProperty object
-     */
-    protected $singleActionProperty;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -94,99 +88,52 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
     protected $alreadyInClearAllReferencesDeep = false;
 
     /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $actionPropertysScheduledForDeletion = null;
-
-    /**
-     * Applies default values to this object.
-     * This method should be called from the object's constructor (or
-     * equivalent initialization method).
-     * @see        __construct()
-     */
-    public function applyDefaultValues()
-    {
-        $this->index = 0;
-    }
-
-    /**
-     * Initializes internal state of BaseActionPropertyDate object.
-     * @see        applyDefaults()
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->applyDefaultValues();
-    }
-
-    /**
      * Get the [id] column value.
      *
      * @return int
      */
-    public function getid()
+    public function getId()
     {
         return $this->id;
     }
 
     /**
-     * Get the [index] column value.
+     * Get the [fdrecord_id] column value.
      *
      * @return int
      */
-    public function getindex()
+    public function getFdrecordId()
     {
-        return $this->index;
+        return $this->fdrecord_id;
     }
 
     /**
-     * Get the [optionally formatted] temporal [value] column value.
+     * Get the [fdfield_id] column value.
      *
-     *
-     * @param string $format The date/time format string (either date()-style or strftime()-style).
-     *				 If format is null, then the raw DateTime object will be returned.
-     * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00
-     * @throws PropelException - if unable to parse/validate the date/time value.
+     * @return int
      */
-    public function getvalue($format = '%Y-%m-%d')
+    public function getFdfieldId()
     {
-        if ($this->value === null) {
-            return null;
-        }
+        return $this->fdfield_id;
+    }
 
-        if ($this->value === '0000-00-00') {
-            // while technically this is not a default value of null,
-            // this seems to be closest in meaning.
-            return null;
-        }
-
-        try {
-            $dt = new DateTime($this->value);
-        } catch (Exception $x) {
-            throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->value, true), $x);
-        }
-
-        if ($format === null) {
-            // Because propel.useDateTimeClass is true, we return a DateTime object.
-            return $dt;
-        }
-
-        if (strpos($format, '%') !== false) {
-            return strftime($format, $dt->format('U'));
-        }
-
-        return $dt->format($format);
-
+    /**
+     * Get the [value] column value.
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 
     /**
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return ActionPropertyDate The current object (for fluent API support)
+     * @return Fdfieldvalue The current object (for fluent API support)
      */
-    public function setid($v)
+    public function setId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -194,56 +141,75 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[] = ActionPropertyDatePeer::ID;
+            $this->modifiedColumns[] = FdfieldvaluePeer::ID;
         }
 
 
         return $this;
-    } // setid()
+    } // setId()
 
     /**
-     * Set the value of [index] column.
+     * Set the value of [fdrecord_id] column.
      *
      * @param int $v new value
-     * @return ActionPropertyDate The current object (for fluent API support)
+     * @return Fdfieldvalue The current object (for fluent API support)
      */
-    public function setindex($v)
+    public function setFdrecordId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->index !== $v) {
-            $this->index = $v;
-            $this->modifiedColumns[] = ActionPropertyDatePeer::INDEX;
+        if ($this->fdrecord_id !== $v) {
+            $this->fdrecord_id = $v;
+            $this->modifiedColumns[] = FdfieldvaluePeer::FDRECORD_ID;
         }
 
 
         return $this;
-    } // setindex()
+    } // setFdrecordId()
 
     /**
-     * Sets the value of [value] column to a normalized version of the date/time value specified.
+     * Set the value of [fdfield_id] column.
      *
-     * @param mixed $v string, integer (timestamp), or DateTime value.
-     *               Empty strings are treated as null.
-     * @return ActionPropertyDate The current object (for fluent API support)
+     * @param int $v new value
+     * @return Fdfieldvalue The current object (for fluent API support)
      */
-    public function setvalue($v)
+    public function setFdfieldId($v)
     {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->value !== null || $dt !== null) {
-            $currentDateAsString = ($this->value !== null && $tmpDt = new DateTime($this->value)) ? $tmpDt->format('Y-m-d') : null;
-            $newDateAsString = $dt ? $dt->format('Y-m-d') : null;
-            if ($currentDateAsString !== $newDateAsString) {
-                $this->value = $newDateAsString;
-                $this->modifiedColumns[] = ActionPropertyDatePeer::VALUE;
-            }
-        } // if either are not null
+        if ($v !== null && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->fdfield_id !== $v) {
+            $this->fdfield_id = $v;
+            $this->modifiedColumns[] = FdfieldvaluePeer::FDFIELD_ID;
+        }
 
 
         return $this;
-    } // setvalue()
+    } // setFdfieldId()
+
+    /**
+     * Set the value of [value] column.
+     *
+     * @param string $v new value
+     * @return Fdfieldvalue The current object (for fluent API support)
+     */
+    public function setValue($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->value !== $v) {
+            $this->value = $v;
+            $this->modifiedColumns[] = FdfieldvaluePeer::VALUE;
+        }
+
+
+        return $this;
+    } // setValue()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -255,10 +221,6 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->index !== 0) {
-                return false;
-            }
-
         // otherwise, everything was equal, so return true
         return true;
     } // hasOnlyDefaultValues()
@@ -282,8 +244,9 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
         try {
 
             $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-            $this->index = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->value = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            $this->fdrecord_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+            $this->fdfield_id = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+            $this->value = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -292,10 +255,10 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 3; // 3 = ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = FdfieldvaluePeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating ActionPropertyDate object", $e);
+            throw new PropelException("Error populating Fdfieldvalue object", $e);
         }
     }
 
@@ -338,13 +301,13 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyDatePeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(FdfieldvaluePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $stmt = ActionPropertyDatePeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+        $stmt = FdfieldvaluePeer::doSelectStmt($this->buildPkeyCriteria(), $con);
         $row = $stmt->fetch(PDO::FETCH_NUM);
         $stmt->closeCursor();
         if (!$row) {
@@ -353,8 +316,6 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
         $this->hydrate($row, 0, true); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
-
-            $this->singleActionProperty = null;
 
         } // if (deep)
     }
@@ -376,12 +337,12 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyDatePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(FdfieldvaluePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = ActionPropertyDateQuery::create()
+            $deleteQuery = FdfieldvalueQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -419,7 +380,7 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyDatePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(FdfieldvaluePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
@@ -439,7 +400,7 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ActionPropertyDatePeer::addInstanceToPool($this);
+                FdfieldvaluePeer::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -480,21 +441,6 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
                 $this->resetModified();
             }
 
-            if ($this->actionPropertysScheduledForDeletion !== null) {
-                if (!$this->actionPropertysScheduledForDeletion->isEmpty()) {
-                    ActionPropertyQuery::create()
-                        ->filterByPrimaryKeys($this->actionPropertysScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->actionPropertysScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->singleActionProperty !== null) {
-                if (!$this->singleActionProperty->isDeleted() && ($this->singleActionProperty->isNew() || $this->singleActionProperty->isModified())) {
-                        $affectedRows += $this->singleActionProperty->save($con);
-                }
-            }
-
             $this->alreadyInSave = false;
 
         }
@@ -515,20 +461,27 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
         $modifiedColumns = array();
         $index = 0;
 
+        $this->modifiedColumns[] = FdfieldvaluePeer::ID;
+        if (null !== $this->id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . FdfieldvaluePeer::ID . ')');
+        }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ActionPropertyDatePeer::ID)) {
+        if ($this->isColumnModified(FdfieldvaluePeer::ID)) {
             $modifiedColumns[':p' . $index++]  = '`id`';
         }
-        if ($this->isColumnModified(ActionPropertyDatePeer::INDEX)) {
-            $modifiedColumns[':p' . $index++]  = '`index`';
+        if ($this->isColumnModified(FdfieldvaluePeer::FDRECORD_ID)) {
+            $modifiedColumns[':p' . $index++]  = '`fdRecord_id`';
         }
-        if ($this->isColumnModified(ActionPropertyDatePeer::VALUE)) {
+        if ($this->isColumnModified(FdfieldvaluePeer::FDFIELD_ID)) {
+            $modifiedColumns[':p' . $index++]  = '`fdField_id`';
+        }
+        if ($this->isColumnModified(FdfieldvaluePeer::VALUE)) {
             $modifiedColumns[':p' . $index++]  = '`value`';
         }
 
         $sql = sprintf(
-            'INSERT INTO `ActionProperty_Date` (%s) VALUES (%s)',
+            'INSERT INTO `FDFieldValue` (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -540,8 +493,11 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
                     case '`id`':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case '`index`':
-                        $stmt->bindValue($identifier, $this->index, PDO::PARAM_INT);
+                    case '`fdRecord_id`':
+                        $stmt->bindValue($identifier, $this->fdrecord_id, PDO::PARAM_INT);
+                        break;
+                    case '`fdField_id`':
+                        $stmt->bindValue($identifier, $this->fdfield_id, PDO::PARAM_INT);
                         break;
                     case '`value`':
                         $stmt->bindValue($identifier, $this->value, PDO::PARAM_STR);
@@ -553,6 +509,13 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
         }
+
+        try {
+            $pk = $con->lastInsertId();
+        } catch (Exception $e) {
+            throw new PropelException('Unable to get autoincrement id.', $e);
+        }
+        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -633,16 +596,10 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = ActionPropertyDatePeer::doValidate($this, $columns)) !== true) {
+            if (($retval = FdfieldvaluePeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
-
-                if ($this->singleActionProperty !== null) {
-                    if (!$this->singleActionProperty->validate($columns)) {
-                        $failureMap = array_merge($failureMap, $this->singleActionProperty->getValidationFailures());
-                    }
-                }
 
 
             $this->alreadyInValidation = false;
@@ -663,7 +620,7 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = ActionPropertyDatePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = FdfieldvaluePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -680,13 +637,16 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                return $this->getid();
+                return $this->getId();
                 break;
             case 1:
-                return $this->getindex();
+                return $this->getFdrecordId();
                 break;
             case 2:
-                return $this->getvalue();
+                return $this->getFdfieldId();
+                break;
+            case 3:
+                return $this->getValue();
                 break;
             default:
                 return null;
@@ -705,27 +665,22 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
      *                    Defaults to BasePeer::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to true.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
-        if (isset($alreadyDumpedObjects['ActionPropertyDate'][serialize($this->getPrimaryKey())])) {
+        if (isset($alreadyDumpedObjects['Fdfieldvalue'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['ActionPropertyDate'][serialize($this->getPrimaryKey())] = true;
-        $keys = ActionPropertyDatePeer::getFieldNames($keyType);
+        $alreadyDumpedObjects['Fdfieldvalue'][$this->getPrimaryKey()] = true;
+        $keys = FdfieldvaluePeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getid(),
-            $keys[1] => $this->getindex(),
-            $keys[2] => $this->getvalue(),
+            $keys[0] => $this->getId(),
+            $keys[1] => $this->getFdrecordId(),
+            $keys[2] => $this->getFdfieldId(),
+            $keys[3] => $this->getValue(),
         );
-        if ($includeForeignObjects) {
-            if (null !== $this->singleActionProperty) {
-                $result['ActionProperty'] = $this->singleActionProperty->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
-            }
-        }
 
         return $result;
     }
@@ -743,7 +698,7 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = ActionPropertyDatePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = FdfieldvaluePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 
         $this->setByPosition($pos, $value);
     }
@@ -760,13 +715,16 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                $this->setid($value);
+                $this->setId($value);
                 break;
             case 1:
-                $this->setindex($value);
+                $this->setFdrecordId($value);
                 break;
             case 2:
-                $this->setvalue($value);
+                $this->setFdfieldId($value);
+                break;
+            case 3:
+                $this->setValue($value);
                 break;
         } // switch()
     }
@@ -790,11 +748,12 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = ActionPropertyDatePeer::getFieldNames($keyType);
+        $keys = FdfieldvaluePeer::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setid($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setindex($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setvalue($arr[$keys[2]]);
+        if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
+        if (array_key_exists($keys[1], $arr)) $this->setFdrecordId($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setFdfieldId($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setValue($arr[$keys[3]]);
     }
 
     /**
@@ -804,11 +763,12 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ActionPropertyDatePeer::DATABASE_NAME);
+        $criteria = new Criteria(FdfieldvaluePeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(ActionPropertyDatePeer::ID)) $criteria->add(ActionPropertyDatePeer::ID, $this->id);
-        if ($this->isColumnModified(ActionPropertyDatePeer::INDEX)) $criteria->add(ActionPropertyDatePeer::INDEX, $this->index);
-        if ($this->isColumnModified(ActionPropertyDatePeer::VALUE)) $criteria->add(ActionPropertyDatePeer::VALUE, $this->value);
+        if ($this->isColumnModified(FdfieldvaluePeer::ID)) $criteria->add(FdfieldvaluePeer::ID, $this->id);
+        if ($this->isColumnModified(FdfieldvaluePeer::FDRECORD_ID)) $criteria->add(FdfieldvaluePeer::FDRECORD_ID, $this->fdrecord_id);
+        if ($this->isColumnModified(FdfieldvaluePeer::FDFIELD_ID)) $criteria->add(FdfieldvaluePeer::FDFIELD_ID, $this->fdfield_id);
+        if ($this->isColumnModified(FdfieldvaluePeer::VALUE)) $criteria->add(FdfieldvaluePeer::VALUE, $this->value);
 
         return $criteria;
     }
@@ -823,37 +783,30 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(ActionPropertyDatePeer::DATABASE_NAME);
-        $criteria->add(ActionPropertyDatePeer::ID, $this->id);
-        $criteria->add(ActionPropertyDatePeer::INDEX, $this->index);
+        $criteria = new Criteria(FdfieldvaluePeer::DATABASE_NAME);
+        $criteria->add(FdfieldvaluePeer::ID, $this->id);
 
         return $criteria;
     }
 
     /**
-     * Returns the composite primary key for this object.
-     * The array elements will be in same order as specified in XML.
-     * @return array
+     * Returns the primary key for this object (row).
+     * @return int
      */
     public function getPrimaryKey()
     {
-        $pks = array();
-        $pks[0] = $this->getid();
-        $pks[1] = $this->getindex();
-
-        return $pks;
+        return $this->getId();
     }
 
     /**
-     * Set the [composite] primary key.
+     * Generic method to set the primary key (id column).
      *
-     * @param array $keys The elements of the composite key (order must match the order in XML file).
+     * @param  int $key Primary key.
      * @return void
      */
-    public function setPrimaryKey($keys)
+    public function setPrimaryKey($key)
     {
-        $this->setid($keys[0]);
-        $this->setindex($keys[1]);
+        $this->setId($key);
     }
 
     /**
@@ -863,7 +816,7 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return (null === $this->getid()) && (null === $this->getindex());
+        return null === $this->getId();
     }
 
     /**
@@ -872,35 +825,19 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param object $copyObj An object of ActionPropertyDate (or compatible) type.
+     * @param object $copyObj An object of Fdfieldvalue (or compatible) type.
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setid($this->getid());
-        $copyObj->setindex($this->getindex());
-        $copyObj->setvalue($this->getvalue());
-
-        if ($deepCopy && !$this->startCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-            // store object hash to prevent cycle
-            $this->startCopy = true;
-
-            $relObj = $this->getActionProperty();
-            if ($relObj) {
-                $copyObj->setActionProperty($relObj->copy($deepCopy));
-            }
-
-            //unflag object copy
-            $this->startCopy = false;
-        } // if ($deepCopy)
-
+        $copyObj->setFdrecordId($this->getFdrecordId());
+        $copyObj->setFdfieldId($this->getFdfieldId());
+        $copyObj->setValue($this->getValue());
         if ($makeNew) {
             $copyObj->setNew(true);
+            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -913,7 +850,7 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
      * objects.
      *
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return ActionPropertyDate Clone of current object.
+     * @return Fdfieldvalue Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -933,64 +870,15 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return ActionPropertyDatePeer
+     * @return FdfieldvaluePeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new ActionPropertyDatePeer();
+            self::$peer = new FdfieldvaluePeer();
         }
 
         return self::$peer;
-    }
-
-
-    /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
-     *
-     * @param string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-    }
-
-    /**
-     * Gets a single ActionProperty object, which is related to this object by a one-to-one relationship.
-     *
-     * @param PropelPDO $con optional connection object
-     * @return ActionProperty
-     * @throws PropelException
-     */
-    public function getActionProperty(PropelPDO $con = null)
-    {
-
-        if ($this->singleActionProperty === null && !$this->isNew()) {
-            $this->singleActionProperty = ActionPropertyQuery::create()->findPk($this->getPrimaryKey(), $con);
-        }
-
-        return $this->singleActionProperty;
-    }
-
-    /**
-     * Sets a single ActionProperty object as related to this object by a one-to-one relationship.
-     *
-     * @param             ActionProperty $v ActionProperty
-     * @return ActionPropertyDate The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setActionProperty(ActionProperty $v = null)
-    {
-        $this->singleActionProperty = $v;
-
-        // Make sure that that the passed-in ActionProperty isn't already associated with this object
-        if ($v !== null && $v->getActionPropertyDate(null, false) === null) {
-            $v->setActionPropertyDate($this);
-        }
-
-        return $this;
     }
 
     /**
@@ -999,13 +887,13 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
     public function clear()
     {
         $this->id = null;
-        $this->index = null;
+        $this->fdrecord_id = null;
+        $this->fdfield_id = null;
         $this->value = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
         $this->clearAllReferences();
-        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -1024,17 +912,10 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->singleActionProperty) {
-                $this->singleActionProperty->clearAllReferences($deep);
-            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        if ($this->singleActionProperty instanceof PropelCollection) {
-            $this->singleActionProperty->clearIterator();
-        }
-        $this->singleActionProperty = null;
     }
 
     /**
@@ -1044,7 +925,7 @@ abstract class BaseActionPropertyDate extends BaseObject implements Persistent
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ActionPropertyDatePeer::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(FdfieldvaluePeer::DEFAULT_STRING_FORMAT);
     }
 
     /**

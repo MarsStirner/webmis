@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Webmis\Controllers\Dir\DirRouter;
 use Webmis\Controllers\Appeal\AppealRouter;
 use Webmis\Controllers\Therapy\TherapyRouter;
-
+use Webmis\Controllers\Patients\PatientsRouter;
 
 
 
@@ -22,3 +22,4 @@ $app->before(function (Request $request) {
 $app->mount('/api/v1/appeals', new AppealRouter());
 $app->mount('/api/v1/dir', new DirRouter());
 $app->mount('/api/v1/therapy', new TherapyRouter());
+$app->mount('/api/v1/patients', new PatientsRouter());

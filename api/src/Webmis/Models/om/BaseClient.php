@@ -392,7 +392,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getbirthDate($format = '%x')
+    public function getbirthDate($format = '%Y-%m-%d')
     {
         if ($this->birthdate === null) {
             return null;
@@ -462,7 +462,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getbloodDate($format = '%x')
+    public function getbloodDate($format = '%Y-%m-%d')
     {
         if ($this->blooddate === null) {
             return null;

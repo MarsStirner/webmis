@@ -1,13 +1,13 @@
 <?php
 
-namespace Webmis\Controllers\Therapy;
+namespace Webmis\Controllers\Patients;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
 
 
-class TherapyRouter implements ControllerProviderInterface
+class PatientsRouter implements ControllerProviderInterface
 {
 	public function connect(Application $app)
 	{
@@ -19,10 +19,7 @@ class TherapyRouter implements ControllerProviderInterface
 
 		$dirRouter = $app['controllers_factory'];
 
-		//$dirRouter->get('/', getController('Therapy/list'));
-		$dirRouter->get('/last4event/{eventId}', getController('Therapy/last'));
-		//$dirRouter->get('/rest4event/{eventId}', getController('Therapy/rest'));
-		//rest4patient
+		$dirRouter->get('/{patientId}/therapies', getController('Therapy/forPatient'));
 
 		return $dirRouter;
 	}
