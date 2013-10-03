@@ -56,6 +56,7 @@ define([
 
 			Patient.fetch({
 				success: function () {
+					window.document.title = view.model.get("name").get("raw");
 					var data = Patient.toJSON();
 
 					data.allowCreateAppeal = Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST;
