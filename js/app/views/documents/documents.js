@@ -121,6 +121,8 @@ define(function (require) {
 	var Consultations = require("collections/diagnostics/consultations/Consultations");
 	//var ConsultationsResultView = require("views/diagnostics/consultations/ConsultationsResultView");
 
+	var TherapiesCollection = require('collections/therapy/Therapies');
+
 	/*var FDLoader = {
 		fds: {},
 		get: function (id, cb, context) {
@@ -160,6 +162,10 @@ define(function (require) {
 			});
 		},
 
+		setTherapyAttrs: function (therapiesCollection) {
+
+		},
+
 		groupByRow: function () {
 			console.log("hasTherapyAttrs", this.hasTherapyAttrs());
 
@@ -181,12 +187,43 @@ define(function (require) {
 						"therapyPhaseEndDate"
 					];
 
+				var lastTherapy = therapiesCollection.first();
+				var shouldSetTherapyFields = false;
+				var shouldSetTherapyPhaseFields = false;
+
+				if (lastTherapy) {
+					if (!lastTherapy.get("endDate") || lastTherapy.get("endDate") < 0) {
+						shouldSetTherapyFields = true;
+						if (!lastTherapy.get("phases")[0].endDate || lastTherapy.get("phases")[0].endDate < 0) {
+							shouldSetTherapyPhaseFields = true;
+						}
+					}
+				}
+
 				var therapyAttrs = _(attributes).filter(function (attr) {
 					return _.contains(THERAPY_CODES, attr.name);
 				});
 
 				_(therapyAttrs).each(function (ta, i) {
 					ta.therapyFieldCode = therCodes[i];
+					if (shouldSetTherapyFields) {
+						if (ta.therapyFieldCode == "therapyTitle") {
+							//ta.properties[0].value = lastTherapy.get("titleId");
+							ta.properties[1].value = lastTherapy.get("titleId").toString();
+						}
+						if (ta.therapyFieldCode == "therapyBegDate") {
+							ta.properties[0].value = moment(lastTherapy.get("beginDate")).format(CD_DATE_FORMAT);
+						}
+
+						if (shouldSetTherapyPhaseFields) {
+							if (ta.therapyFieldCode == "therapyPhaseTitle") {
+								ta.properties[0].value = lastTherapy.get("phases")[0].title;
+							}
+							if (ta.therapyFieldCode == "therapyPhaseBegDate") {
+								ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate).format(CD_DATE_FORMAT);
+							}
+						}
+					}
 				});
 
 				console.log(therapyAttrs);
@@ -291,7 +328,21 @@ define(function (require) {
       }
     },
 
+		spoofDates: function () {
+			_.each(this.get("group")[1].attribute, function (attr) {
+				if (attr.type == "Date" && attr.properties[0] && attr.properties[0].value == "") {
+					attr.properties[0].value = "0000-00-00 00:00:00";
+				}
+			});
+		},
+
 		parse: function (raw) {
+			var parsed = raw.data[0];
+			_(parsed.group[1].attribute).each(function (attr) {
+				if (attr.type == "Date" && attr.properties[0] && (parseInt(attr.properties[0].value.split("-")[0]) < 1000)) {
+					attr.properties[0].value = "";
+				}
+			});
 			return raw.data[0];
 		},
 
@@ -403,6 +454,7 @@ define(function (require) {
 			var method = "create";
 
 			this.setCloseDate();
+			this.spoofDates();
 
 			options.data = JSON.stringify({
 				requestData: {},
@@ -1871,7 +1923,7 @@ define(function (require) {
 	});
 	//endregion
 
-
+	var therapiesCollection;
 	//region VIEWS EDIT BASE
 	//---------------------
 	Documents.Views.Edit.Base.Layout = LayoutBase.extend({
@@ -1898,7 +1950,13 @@ define(function (require) {
 				}
 			}
 
-			$.when(layoutAttributesDir.fetch()).then(_.bind(function () {
+			therapiesCollection = new TherapiesCollection(null, {
+				eventId: appealId,
+				patientId: appeal.get("patient").get("id")
+			});
+
+			$.when(layoutAttributesDir.fetch(), therapiesCollection.fetch()).then(_.bind(function () {
+				console.log(therapiesCollection);
 				this.model.fetch();
 			}, this));
 
@@ -2463,6 +2521,9 @@ define(function (require) {
 
 		onModelReset: function () {
 			this.stopListening(this.model, "change", this.onModelReset);
+			if (this.model.hasTherapyAttrs()) {
+				this.model.setTherapyAttrs(therapiesCollection);
+			}
 			this.collection.reset(this.model.getGroupedByRow());
 			this.collection.hasAnyValue = this.model.hasAnyValue;
 		},
@@ -2862,11 +2923,11 @@ define(function (require) {
 		},
 
 		getAttributeValue: function () {
-			var inputValue = this.ui.$input.val()
+			var inputValue = this.ui.$input.val();
 			var value = inputValue ? inputValue : '00.00.0000';
 			if(inputValue){
 				return moment(value, this.inputFormat).format(CD_DATE_FORMAT);
-			}else{
+			} else {
 				return '0000-00-00 00:00:00';
 			}
 

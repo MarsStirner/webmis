@@ -157,7 +157,7 @@ class TherapyController
             //фазы терапий
             foreach($therapies as $key => $therapy){
                 $fieldValue = FDFieldValueQuery::create()
-                        ->filterByFDFieldId(49)
+                        ->filterByFDFieldId(81)
                         ->filterByFDRecordId($therapy['titleId'])
                 ->findOne();
 

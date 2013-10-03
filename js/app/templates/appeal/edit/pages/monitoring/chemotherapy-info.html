@@ -14,7 +14,7 @@
 						(Дата начала: <%= Core.Date.format(therapy.get('beginDate')) %>)
 					<%}%>
 				</span>
-				<i class="therapy-body-toggle icon-plus pull-right" title="Показать этапы"></i>
+				<i class="therapy-body-toggle <%if(therapy.get('endDate')){%>icon-plus<%}else{%>icon-minus<%}%> pull-right" title="Показать этапы"></i>
 			</div>
 		</div>
 		<div class="therapy-body" <%if(therapy.get('endDate')){%>style="display: none;"<%}%> >

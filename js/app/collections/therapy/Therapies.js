@@ -12,8 +12,7 @@ define(function(require) {
 			return _.filter(this.get('phases'), function(phase){
 				return phase.endDate
 			});
-		},
-
+		}
 	});
 
 	var Therapies = Collection.extend({
@@ -26,6 +25,21 @@ define(function(require) {
 		url: function() {
 			return '/api/v1/patients/' + this.patientId + '/therapies';
 		},
+
+		parse: function (raw) {
+			var temp = Collection.prototype.parse.call(this, raw);
+			_.each(temp, function (ther) {
+				if (ther.endDate < 0) {
+					ther.endDate = null;
+				}
+				_.each(ther.phases, function (phase) {
+					if (phase.endDate < 0) {
+						phase.endDate = null;
+					}
+				});
+			});
+			return temp;
+		}
 	});
 
 	return Therapies;
