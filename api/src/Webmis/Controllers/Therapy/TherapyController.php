@@ -98,8 +98,8 @@ class TherapyController
                 $a = array();
                 $a['id'] = $action->getId();
                 $a['event'] = $action->getEventId();
-                $endDateTherapy = new \DateTime($action->getCreateDatetime());
-                $a['endDate'] = ($endDateTherapy->format('U'))*1000;
+                //$endDateTherapy = new \DateTime($action->getCreateDatetime());
+                //$a['endDate'] = ($endDateTherapy->format('U'))*1000;
 
 
                 $actionProperties = $action->getActionPropertys();
@@ -123,11 +123,18 @@ class TherapyController
                             $p['value'] = $actionProperty->getActionPropertyDouble()->getValue();
                         break;
                         case 'FlatDirectory':
-                            $p['value'] = $actionProperty->getActionPropertyFDRecord()->getMValue();
+                            $p['value'] = $actionProperty->getActionPropertyFDRecord()->getValue();
                         break;
                         case 'Date':
                             $date = $actionProperty->getActionPropertyDate()->getValue();
-                            $p['value'] = strtotime($date)*1000;
+                            $dateArray = split('-', $date);
+                            $year = $dateArray[0];
+                            if($year < 1000){
+                                $p['value'] = null;
+                            }else{
+                                $p['value'] = strtotime($date)*1000;
+                            }
+
                         break;
                         default:
                             $p['value'] = 'этот тип экшен проперти пока не поддерживается';

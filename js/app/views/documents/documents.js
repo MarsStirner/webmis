@@ -2752,6 +2752,15 @@ define(function (require) {
 
 		getDate: function () {
 			var date = this.model.getValue();
+
+			if(date){
+				var year = parseInt((date.split('-'))[0]);
+				if(year < 1000){
+					date = false;
+				}
+				console.log(year, date)
+			}
+
 			return date ? moment(date, CD_DATE_FORMAT).format(this.inputFormat) : '';
 		},
 
@@ -2760,12 +2769,11 @@ define(function (require) {
 		},
 
 		getAttributeValue: function () {
-			var value = this.ui.$input.val();
-			if(value){
-				return moment(value, this.inputFormat).format(CD_DATE_FORMAT);
-			}else{
-				return null;
-			}
+			//var inputValue = this.ui.$input.val()
+			//console.log('inputValue',inputValue, moment(value, this.inputFormat).format(CD_DATE_FORMAT));
+			//var value = inputValue ? inputValue : '00.00.0000';
+
+			return '0000-00-00 00:00:00';//moment(value, this.inputFormat).format(CD_DATE_FORMAT);
 		},
 
 		render: function () {
