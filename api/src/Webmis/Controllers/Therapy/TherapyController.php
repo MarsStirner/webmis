@@ -5,6 +5,8 @@ use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Webmis\Models\ActionQuery;
 use Webmis\Models\EventQuery;
+use Webmis\Models\FDFieldQuery;
+use Webmis\Models\FDFieldValueQuery;
 
 class TherapyController
 {
@@ -154,10 +156,20 @@ class TherapyController
             }
             //фазы терапий
             foreach($therapies as $key => $therapy){
+                $fieldValue = FDFieldValueQuery::create()
+                        ->filterByFDFieldId(49)
+                        ->filterByFDRecordId($therapy['titleId'])
+                ->findOne();
+
+                $fieldValueValue = $fieldValue->getValue();
+
+                $therapies[$key]['title'] = $fieldValueValue;
+
                 foreach ($data as $action){
                     if($therapy['beginDate'] == $action['therapyBegDate']){
 
                         $phase = array(
+                            //'value' => $fieldValueValue,
                             'eventId' => $action['eventId'],
                             'title' => $action['therapyPhaseTitle'],
                             'beginDate' => $action['therapyPhaseBegDate'],
