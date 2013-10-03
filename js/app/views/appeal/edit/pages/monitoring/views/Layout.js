@@ -6,8 +6,8 @@ define(function(require) {
     var Card = require('views/appeal/edit/pages/card');
 
     var ChemotherapyInfo = require('views/appeal/edit/pages/monitoring/views/ChemotherapyInfo');
-    var LastTherapyCollection = require('collections/therapy/LastTherapy');
-    var RestTherapyCollection = require('collections/therapy/RestTherapy');
+    var TherapiesCollection = require('collections/therapy/Therapies');
+
 
     var ExpressAnalyses = require('views/appeal/edit/pages/monitoring/views/ExpressAnalysesView');
     var Header = require('views/appeal/edit/pages/monitoring/views/Header');
@@ -57,11 +57,8 @@ define(function(require) {
             var patientId = shared.models.appeal.get('patient').get('id');
 
             //collections
-            this.lastTherapyCollection = new LastTherapyCollection(null, {
-                eventId: eventId
-            });
 
-            this.restTherapyCollection = new RestTherapyCollection(null, {
+            this.therapiesCollection = new TherapiesCollection(null, {
                 eventId: eventId,
                 patientId: patientId
             });
@@ -92,8 +89,7 @@ define(function(require) {
             //views
 
             this.chemotherapyInfo = new ChemotherapyInfo({
-                lastTherapyCollection: this.lastTherapyCollection,
-                restTherapyCollection: this.restTherapyCollection
+                collection: this.therapiesCollection
             });
 
             this.patientDiagnosesList = new PatientDiagnosesList({

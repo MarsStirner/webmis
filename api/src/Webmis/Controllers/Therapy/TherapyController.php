@@ -46,7 +46,7 @@ class TherapyController
 
             $data = $this->serializeEventTherapy($actions);//serializeTherapyActions($actions);
 
-            return $app['jsonp']->jsonp(array('data'=>array('therapies' => $data)));
+            return $app['jsonp']->jsonp(array('data'=>$data));
     }
 
 
@@ -158,6 +158,7 @@ class TherapyController
                     if($therapy['beginDate'] == $action['therapyBegDate']){
 
                         $phase = array(
+                            'eventId' => $action['eventId'],
                             'title' => $action['therapyPhaseTitle'],
                             'beginDate' => $action['therapyPhaseBegDate'],
                             'endDate' => $action['therapyPhaseEndDate'],
