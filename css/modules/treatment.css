@@ -98,46 +98,86 @@
 
 /* line 80, ../../sass/modules/treatment.scss */
 .Diagnosis {
-  border: 1px solid #ffcc99;
+  border: 1px solid #FFCC99;
   border-radius: 6px;
   padding: 1em 1.1em;
   background: #FFFFCC;
   /*margin-left:-1em;*/
   margin-bottom: 2em;
+  color: #1e1e1f;
 }
 /* line 87, ../../sass/modules/treatment.scss */
 .Diagnosis dd:last-child {
   margin-bottom: 0;
 }
 
-/* line 92, ../../sass/modules/treatment.scss */
+/* line 93, ../../sass/modules/treatment.scss */
+.therapy-info {
+  background-color: #FFFFED;
+  border-radius: 6px;
+  padding: 0 1em 1em 1em;
+  border: 1px solid #FFCC99;
+  color: #1e1e1f;
+}
+/* line 100, ../../sass/modules/treatment.scss */
+.therapy-info .therapy {
+  margin-top: 1em;
+  background-color: #FFFFCC;
+  border: 1px solid #ffcc99;
+  border-radius: 6px;
+}
+/* line 107, ../../sass/modules/treatment.scss */
+.therapy-info .therapy .therapy-header {
+  background-color: #ffffb3;
+  padding: 1em;
+  border-radius: 6px;
+}
+/* line 111, ../../sass/modules/treatment.scss */
+.therapy-info .therapy .therapy-header .therapy-header-content {
+  font-size: 1.3em;
+}
+/* line 114, ../../sass/modules/treatment.scss */
+.therapy-info .therapy .therapy-header .therapy-header-content .therapy-header-title {
+  font-weight: bold;
+}
+/* line 117, ../../sass/modules/treatment.scss */
+.therapy-info .therapy .therapy-header .therapy-header-content .therapy-body-toggle {
+  cursor: pointer;
+}
+/* line 123, ../../sass/modules/treatment.scss */
+.therapy-info .therapy .therapy-body {
+  border-top: 1px solid #ffcc99;
+  padding: 1em;
+}
+
+/* line 135, ../../sass/modules/treatment.scss */
 .TreatmentPeriod {
   font-size: 1.3em;
   color: #6C6C71;
   margin-bottom: 1.2em;
 }
-/* line 96, ../../sass/modules/treatment.scss */
+/* line 139, ../../sass/modules/treatment.scss */
 .TreatmentPeriod li > .Date {
   color: #000;
   line-height: 1.2em;
 }
 
-/* line 101, ../../sass/modules/treatment.scss */
+/* line 144, ../../sass/modules/treatment.scss */
 .Retrying {
   font-size: 1.3em;
   margin-bottom: 1.2em;
 }
-/* line 104, ../../sass/modules/treatment.scss */
+/* line 147, ../../sass/modules/treatment.scss */
 .Retrying .Actions {
   color: #000;
   border-bottom: none;
   color: #000;
 }
-/* line 108, ../../sass/modules/treatment.scss */
+/* line 151, ../../sass/modules/treatment.scss */
 .Retrying .Actions > span {
   text-decoration: underline;
 }
-/* line 111, ../../sass/modules/treatment.scss */
+/* line 154, ../../sass/modules/treatment.scss */
 .Retrying .Actions::after {
   content: "▼";
   font-size: 0.5em;
@@ -148,7 +188,7 @@
   vertical-align: baseline;
 }
 
-/* line 123, ../../sass/modules/treatment.scss */
+/* line 166, ../../sass/modules/treatment.scss */
 .NoContent {
   font-size: 1.3em;
   padding-left: 1.5em;
@@ -156,13 +196,13 @@
   color: #D4D4D4;
 }
 
-/* line 130, ../../sass/modules/treatment.scss */
+/* line 173, ../../sass/modules/treatment.scss */
 .FinanceList {
   font-size: 1.3em;
   padding-left: 1.5em;
   margin-bottom: 1.2em;
 }
-/* line 134, ../../sass/modules/treatment.scss */
+/* line 177, ../../sass/modules/treatment.scss */
 .FinanceList > li {
   margin-bottom: 0.2em;
 }

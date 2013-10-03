@@ -1,26 +1,115 @@
+<h4>Терапия</h4>
+<div class="therapy-info">
+	<div class="therapy">
+		<div class="therapy-header">
+			<div class="therapy-header-content">
+				<span class="therapy-header-title">МБ 2008</span>
+				<span class="therapy-header-dates">(Дата начала: 02.10.2013)</span>
+				<i class="therapy-body-toggle icon-minus pull-right" title="Показать этапы"></i>
+			</div>
+		</div>
+		<div class="therapy-body">
+			<h3>Текущий этап</h3>
+			<p>Консолидация 2 (Дата начала: 01.09.2013)</p>
+			<p>День терапии: +1</p>
+			<h3>Завершенные этапы</h3>
+			<p>Консолидация 1 (01.09.2013 - 30.09.2013)</p>
+		</div>
+	</div>
+
+	<div class="therapy">
+		<div class="therapy-header">
+			<div class="therapy-header-content">
+				<span class="therapy-header-title">МБ 2008</span>
+				<span class="therapy-header-dates">(01.09.2013 - 30.09.2013)</span>
+				<i class="therapy-body-toggle icon-plus pull-right" title="Показать этапы"></i>
+			</div>
+		</div>
+		<div class="therapy-body" style="display: none;">
+			<h3>Завершенные этапы</h3>
+			<p>Консолидация 1 (01.09.2013 - 30.09.2013)</p>
+			<p>Консолидация 2 (01.09.2013 - 30.09.2013)</p>
+		</div>
+	</div>
+
+	<div class="therapy">
+		<div class="therapy-header">
+			<div class="therapy-header-content">
+				<span class="therapy-header-title">МБ 2008</span>
+				<span class="therapy-header-dates">(01.09.2013 - 30.09.2013)</span>
+				<i class="therapy-body-toggle icon-plus pull-right" title="Показать этапы"></i>
+			</div>
+		</div>
+		<div class="therapy-body" style="display: none;">
+			<h3>Завершенные этапы</h3>
+			<p>Консолидация 1 (01.09.2013 - 30.09.2013)</p>
+			<p>Консолидация 2 (01.09.2013 - 30.09.2013)</p>
+		</div>
+	</div>
+</div>
+
+
 <h4>Терапия<% _.each(lastTherapy, function(therapy){ %>: <%=therapy.title%><%});%></h4>
 
-<div class="Diagnosis">
-	<h3>Текущий этап</h3>
-	<%if(lastTherapy && (lastTherapy.length === 0)){%>
-		<p>Данные о терапии отсутствуют</p>
-	<%}else{%>
-		<% _.each(lastTherapy, function(therapy){ %>
+<div class="Diagnosis" style="background-color: #FFFFED;">
+	<div style="background-color: #FFFFCC;
+border: 1px solid #ffcc99;
+padding: .5em;
+border-radius: 6px;">
+		<h3 style="font-size: 1.6em;">МБ 2008 (Дата начала: 02.10.2013)</h3>
+		<div style="border-top: 1px solid #ffcc99;
+padding-top: .3em;">
+			<h3>Текущий этап: Консолидация 2 (Дата начала: 02.10.2013)</h3>
+			<%if(lastTherapy && (lastTherapy.length === 0)){%>
+			<p>День терапии: +1</p>
+			<%}else{%>
+			<% _.each(lastTherapy, function(therapy){ %>
 			<!--<p>Наименование терапии: <%=therapy.title%></p>-->
 			<p>День терапии: <%=therapy.day%></p>
 			<p>Статус: <%=therapy.status %></p>
 			<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #ffcc99; margin: 1em 0; padding: 0;"/>
-		<%});%>
+			<%});%>
 
-	<%}%>
+			<%}%>
 
-	<h3>Завершенные этапы</h3>
-	<%if(restTherapy && (restTherapy.length === 0)){%>
-		<p>Данные о терапии отсутствуют</p>
-	<%}else{%>
-		<% _.each(restTherapy, function(therapy){ %>
+			<h3>Завершенные этапы</h3>
+			<%if(restTherapy && (restTherapy.length === 0)){%>
+			<p>Данные о терапии отсутствуют</p>
+			<%}else{%>
+			<% _.each(restTherapy, function(therapy){ %>
 			<p><%if (therapy.begDate){ %><%=Core.Date.format(therapy.begDate)%><% } %> - <%if (therapy.endDate){ %><%=Core.Date.format(therapy.endDate)%><% } %>: <%=therapy.title%></p>
-			<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #ffcc99; margin: 1em 0; padding: 0;"/>
-		<%});%>
-	<%}%>
+			<!--<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #ffcc99; margin: 1em 0; padding: 0;"/>-->
+			<%});%>
+			<%}%>
+		</div>
+	</div>
+
+	<div style="background-color: #FFFFCC;
+border: 1px solid #ffcc99;
+padding: .5em;
+border-radius: 6px; margin-top: 1em;">
+		<h3 style="font-size: 1.6em;">МБ 2008 (10.09.2011 - 10.10.2011)</h3>
+		<div style="border-top: 1px solid #ffcc99;
+padding-top: .3em;">
+
+			<h3>Завершенные этапы</h3>
+			<%if(restTherapy && (restTherapy.length === 0)){%>
+			<p>Консолидация 1 (10.09.2011 - 10.10.2011)</p>
+			<p>Консолидация 2 (10.09.2011 - 10.10.2011)</p>
+			<p>Консолидация 3 (10.09.2011 - 10.10.2011)</p>
+			<%}else{%>
+			<% _.each(restTherapy, function(therapy){ %>
+			<p><%if (therapy.begDate){ %><%=Core.Date.format(therapy.begDate)%><% } %> - <%if (therapy.endDate){ %><%=Core.Date.format(therapy.endDate)%><% } %>: <%=therapy.title%></p>
+			<!--<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #ffcc99; margin: 1em 0; padding: 0;"/>-->
+			<%});%>
+			<%}%>
+		</div>
+	</div>
+
+	<div style="background-color: #FFFFCC;
+border: 1px solid #ffcc99;
+padding: .5em;
+border-radius: 6px; margin-top: 1em;">
+		<h3 style="font-size: 1.6em;">МБ 2008 (10.09.2011 - 10.10.2011)</h3>
+	</div>
 </div>

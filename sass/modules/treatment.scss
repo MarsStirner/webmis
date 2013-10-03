@@ -87,6 +87,49 @@
 	& dd:last-child {
 		margin-bottom:0;
 	}
+	color: rgb(30, 30, 31);
+}
+
+.therapy-info {
+	background-color: #FFFFED;
+	border-radius: 6px;
+	padding: 0 1em 1em 1em;
+	border: 1px solid #FFCC99;
+	color: rgb(30, 30, 31);
+
+	.therapy {
+		margin-top: 1em;
+		background-color: #FFFFCC;
+		border: 1px solid #ffcc99;
+		//padding: 1em;
+		border-radius: 6px;
+
+		.therapy-header {
+			background-color: darken(#FFFFCC, 5%);
+			padding: 1em;
+			border-radius: 6px;
+			.therapy-header-content {
+				//margin: 1em;
+				font-size: 1.3em;
+				.therapy-header-title {
+					font-weight: bold;
+				}
+				.therapy-body-toggle {
+					cursor: pointer;
+				}
+			}
+		}
+
+		.therapy-body {
+			//display: none;
+			//margin: 1em;
+			border-top: 1px solid #ffcc99;
+			padding: 1em;
+			p {
+
+			}
+		}
+	}
 }
 
 .TreatmentPeriod {
