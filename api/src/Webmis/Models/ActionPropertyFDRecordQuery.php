@@ -19,10 +19,10 @@ use Webmis\Models\om\BaseActionPropertyFDRecordQuery;
 class ActionPropertyFDRecordQuery extends BaseActionPropertyFDRecordQuery
 {
 
-	public function getValue()
-	{
-		return $this->useFDFieldValueQuery('string', 'left join')
-		// 				->filterByFlatCode('therapy')
-					->endUse();
-	}
+	// public function getValue()
+	// {
+	// 	return $this->useFDFieldValueQuery('string', 'left join')
+	// 	// 				->filterByFlatCode('therapy')
+	// 				->endUse();
+	// }
 }
