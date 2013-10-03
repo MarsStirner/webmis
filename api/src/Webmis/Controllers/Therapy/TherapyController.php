@@ -10,28 +10,29 @@ class TherapyController
 {
 
 
-    public function lastAction(Request $request, Application $app)
+    public function forPatientAction(Request $request, Application $app)
     {
             $route_params = $request->get('_route_params') ;
-            $eventId = $route_params['eventId'];
+            // $eventId = $route_params['eventId'];
 
-            $event = EventQuery::create()->findOneById($eventId);
+            // $event = EventQuery::create()->findOneById($eventId);
 
-            if(!$event){
-                $error = array('message' => 'Не найдена история болезни с идентификатором '.$eventId);
-                return $app['jsonp']->jsonp($error);
-            }
+            // if(!$event){
+            //     $error = array('message' => 'Не найдена история болезни с идентификатором '.$eventId);
+            //     return $app['jsonp']->jsonp($error);
+            // }
 
-            $clientId = $event->getClientId();
+            //$clientId = $event->getClientId();
+            $patientId = $route_params['patientId'];
 
-            if(!$clientId){
-                $error = array('message' => 'В история болезни с идентификатором '.$eventId.' нет кода пациента.');
+            if(!$patientId){
+                $error = array('message' => 'Нет кода пациента.');
                 return $app['jsonp']->jsonp($error);
             }
 
             $actions = ActionQuery::create()
             ->useEventQuery()
-                ->filterByClientId($clientId)
+                ->filterByClientId($patientId)
                 //->where('Event.id != ?', $eventId)
                 ->where('Event.deleted != 1')
             ->endUse()
