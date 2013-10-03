@@ -277,6 +277,8 @@ define(function(require) {
 			this.setBreadcrumbsStructure();
 
 			patient.off("change", this.onPatientLoaded, this);
+
+			window.document.title = this.patient.get("name").get("raw");
 		},
 
 		setBreadcrumbsStructure: function() {

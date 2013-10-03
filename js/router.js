@@ -208,6 +208,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		biomaterials: function() {
 			this.currentPage = "biomaterials";
 			console.log('biomaterials');
+			window.document.title = "Биоматериалы";
 
 			require(["views/app", "views/biomaterials/BiomaterialsView"], function(AppView, BiomaterialsView) {
 				var view = new BiomaterialsView();
@@ -229,6 +230,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		reports: function(path) {
 			this.currentPage = "reports";
 			//console.log('router reports', arguments);
+			window.document.title = "Отчёты";
 
 			require(["views/app", "views/reports/ReportsMainView"], function(AppView, ReportsMainView) {
 				var view = new ReportsMainView({
@@ -283,6 +285,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				return false
 			}
 
+			window.document.title = "Список пациентов";
+
 			// Используется для навигации в хедере
 			this.currentPage = "patients";
 
@@ -310,6 +314,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			if (!this.checkAuthToken()) {
 				return false
 			}
+
+			window.document.title = "WebMIS";
 
 			this.currentPage = "patients";
 
@@ -340,6 +346,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				return false
 			}
 
+			window.document.title = "Новый пациент";
+
 			this.currentPage = "patients";
 			var referrer = Core.Url.getReferrer();
 
@@ -369,6 +377,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			if (!this.checkAuthToken()) {
 				return false
 			}
+
+			window.document.title = "WebMIS";
 
 			this.currentPage = "patients";
 			var referrer = Core.Url.getReferrer();
@@ -407,6 +417,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			if (!this.checkAuthToken()) {
 				return false
 			}
+
+			window.document.title = "WebMIS";
 
 			this.currentPage = "appeals";
 			var referrer = Core.Url.getReferrer();
@@ -478,6 +490,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				return false
 			}
 
+			window.document.title = "WebMIS";
+
 			this.currentPage = "patients";
 
 			require(["views/app", "views/pages/patient-appeals"], function(AppView) {
@@ -505,6 +519,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				return false
 			}
 
+			window.document.title = "Список госпитализаций";
+
 			this.currentPage = "appeals";
 
 			require(["views/app", "views/pages/appeals-list"], function(AppView) {
@@ -530,6 +546,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			if (!this.checkAuthToken()) return false;
 			console.log(arguments);
 			this.currentPage = "appeals";
+
+			window.document.title = "WebMIS";
 
 			require(["views/app", "views/appeal/edit/main"], function(AppView, AppealMainView) {
 				var view = new AppealMainView({
@@ -635,6 +653,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		}*/
 
 		prints: function() {
+			window.document.title = "WebMIS";
 			require(["views/app", "views/pages/prints"], function(AppView) {
 				var view = new App.Views.Prints();
 
@@ -657,6 +676,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			}
 
 			this.currentPage = "appeals";
+			window.document.title = "WebMIS";
 
 			require(["views/app", "views/appeal/edit/main"], function() {
 				var view = new App.Views.Main({

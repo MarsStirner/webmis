@@ -210,17 +210,21 @@ define(function (require) {
 						if (ta.therapyFieldCode == "therapyTitle") {
 							//ta.properties[0].value = lastTherapy.get("titleId");
 							ta.properties[1].value = lastTherapy.get("titleId").toString();
+							ta.readOnly = "true";
 						}
 						if (ta.therapyFieldCode == "therapyBegDate") {
 							ta.properties[0].value = moment(lastTherapy.get("beginDate")).format(CD_DATE_FORMAT);
+							ta.readOnly = "true";
 						}
 
 						if (shouldSetTherapyPhaseFields) {
 							if (ta.therapyFieldCode == "therapyPhaseTitle") {
 								ta.properties[0].value = lastTherapy.get("phases")[0].title;
+								ta.readOnly = "true";
 							}
 							if (ta.therapyFieldCode == "therapyPhaseBegDate") {
 								ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate).format(CD_DATE_FORMAT);
+								ta.readOnly = "true";
 							}
 						}
 					}

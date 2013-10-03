@@ -206,6 +206,7 @@ define(["models/patient",
 
 			view.model.fetch({
 				success: function () {
+					window.document.title = view.model.get("name").get("raw");
 					var Appeals = new App.Collections.PatientAppeals;
 					Appeals.patient = view.model;
 					Appeals.setParams({
