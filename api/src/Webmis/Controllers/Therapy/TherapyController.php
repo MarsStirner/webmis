@@ -85,7 +85,7 @@ class TherapyController
                         break;
                         case 'Date':
                             $date = $actionProperty->getActionPropertyDate()->getValue();
-                            $dateArray = split('-', $date);
+                            $dateArray = explode('-', $date);
                             $year = $dateArray[0];
                             if($year < 1000){
                                 $p['value'] = null;
