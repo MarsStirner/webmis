@@ -34,6 +34,8 @@ define(function (require) {
 
 	//константы
 	var HIDDEN_TYPES = ['JobTicket', 'RLS']; //типы полей, которые не выводятся в ui.
+	//TODO: TEMP
+	var THERAPY_CODES = ['Общее название специфической терапии', 'Дата начала', 'Дата окончания', 'Текущий этап терапии', 'Название этапа', 'День терапии'];
 	var ID_TYPES = ["MKB", "FLATDIRECTORY", "PERSON", "ORGSTRUCTURE"];
 	var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
 	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss'; //Формат даты в коммон дата
@@ -150,17 +152,50 @@ define(function (require) {
 
 		anyCopiedAttrHasValue: false,
 
+		hasTherapyAttrs: function () {
+			//TODO: TEMP!!!
+			return !!_(this.get("group")[1].attribute).find(function (attr) {
+				//console.log(attr);
+				return attr.name === "Общее название специфической терапии";
+			});
+		},
+
 		groupByRow: function () {
+			console.log("hasTherapyAttrs", this.hasTherapyAttrs());
+
 			var attributes = this.get("group")[1].attribute;
 
 			attributes = _.reject(attributes, function (attribute) {
 				return _.contains(HIDDEN_TYPES, attribute.type)
 			}, this);
 
+			if (this.hasTherapyAttrs()) {
+				var therCodes = [
+						"therapyTitle",
+						"therapyBegDate",
+						"therapyEndDate",
+						"therapyPhaseSubHeader",
+						"therapyPhaseTitle",
+						"therapyPhaseBegDate",
+						"therapyPhaseDay",
+						"therapyPhaseEndDate"
+					];
+
+				var therapyAttrs = _(attributes).filter(function (attr) {
+					return _.contains(THERAPY_CODES, attr.name);
+				});
+
+				_(therapyAttrs).each(function (ta, i) {
+					ta.therapyFieldCode = therCodes[i];
+				});
+
+				console.log(therapyAttrs);
+			}
+
 			var groupedByRow = _(attributes).groupBy(function (item) {
 				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
 				//var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
-				return "UNDEFINED";
+				return item.therapyFieldCode ? "THERAPY" : "UNDEFINED";
 			}, this);
 
 			if (!groupedByRow.UNDEFINED) {
@@ -168,6 +203,25 @@ define(function (require) {
 			}
 
 			var rows = [];
+
+			if (groupedByRow.THERAPY) {
+				rows.push(
+					{spans: new Backbone.Collection([
+						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[0]),
+						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[1]),
+						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[2])
+					])},
+					{spans: new Backbone.Collection([
+						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[3])
+					])},
+					{spans: new Backbone.Collection([
+						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[4]),
+						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[5]),
+						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[6]),
+						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[7])
+					])}
+				);
+			}
 
 			for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
 				if (i == 0 || i % 2 == 0) {
@@ -2427,7 +2481,9 @@ define(function (require) {
 			});
 
 			this.$(".doc-sub-header").each(function () {
-				$(this).parent().before($(this).detach());
+				if ($(this).siblings(".span6").length > 0) {
+					$(this).parent().before($(this).detach());
+				}
 			});
 
 			return this;
@@ -2469,7 +2525,26 @@ define(function (require) {
 			this.listenTo(this.model, "copy", this.onModelCopy);
 			this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
 			//common attrs to fit into grid
-			this.$el.addClass("span" + this.layoutAttributes.width);
+			//TODO: TEMP HELL
+			if (this.model.get("therapyFieldCode")) {
+				var therapyFieldCode = this.model.get("therapyFieldCode");
+				switch (therapyFieldCode) {
+					case "therapyTitle":
+					case "therapyBegDate":
+					case "therapyEndDate":
+						this.$el.addClass("span4");
+						break;
+					case "therapyPhaseTitle":
+					case "therapyPhaseBegDate":
+					case "therapyPhaseDay":
+					case "therapyPhaseEndDate":
+						this.$el.addClass("span3");
+						break;
+				}
+				//console.log(this.model.get("therapyFieldCode"));
+			} else {
+				this.$el.addClass("span" + this.layoutAttributes.width);
+			}
 		},
 
 		mapLayoutAttributes: function () {
@@ -2531,6 +2606,24 @@ define(function (require) {
 		render: function (subViews) {
 			ViewBase.prototype.render.call(this, subViews);
 			this.updateFieldCollapse();
+			var therapyFieldCode = this.model.get("therapyFieldCode");
+			switch (therapyFieldCode) {
+				/*case "therapyTitle":
+				case "therapyBegDate":
+				case "therapyEndDate":
+					this.$el.addClass("span4");
+					break;*/
+				case "therapyPhaseTitle":
+					this.$(".wysisyg").remove();
+					this.$(".RichText").css({"min-height": "2.25em"});
+					break;
+				//case "therapyPhaseBegDate":
+				case "therapyPhaseDay":
+				//case "therapyPhaseEndDate":
+					this.$(".editor-controls").remove();
+					this.$(".RichText").css({"min-height": "2.25em"});
+					break;
+			}
 			return this;
 		}
 	});
