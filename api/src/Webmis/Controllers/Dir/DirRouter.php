@@ -30,6 +30,11 @@ class DirRouter implements ControllerProviderInterface
 		//справочник rbPacientModel
 		$dirRouter->get('/pacient_model', getController('rbPacientModel/list'));
 
+		//справочник флат директори
+		$dirRouter->get('/fd', getController('fd/index'));
+
+		$dirRouter->get('/fd/{code}', getController('fd/listByCode'));
+
 		return $dirRouter;
 	}
 }

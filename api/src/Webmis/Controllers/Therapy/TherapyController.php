@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Webmis\Models\ActionQuery;
 use Webmis\Models\EventQuery;
 use Webmis\Models\FDFieldQuery;
+use Webmis\Models\FDRecordQuery;
 use Webmis\Models\FDFieldValueQuery;
 
 class TherapyController
@@ -157,19 +158,18 @@ class TherapyController
             //фазы терапий
             foreach($therapies as $key => $therapy){
                 $fieldValue = FDFieldValueQuery::create()
-                        ->filterByFDFieldId(81)
-                        ->filterByFDRecordId($therapy['titleId'])
-                ->findOne();
+                    ->useFDFieldRelatedByIdQuery()
+                        ->filterByName('Наименование')
+                    ->endUse()
+                    ->filterByFDRecordId($therapy['titleId'])
+                    ->findOne();
 
-                $fieldValueValue = $fieldValue->getValue();
-
-                $therapies[$key]['title'] = $fieldValueValue;
+                $therapies[$key]['title'] = $fieldValue->getValue();
 
                 foreach ($data as $action){
                     if($therapy['beginDate'] == $action['therapyBegDate']){
 
                         $phase = array(
-                            //'value' => $fieldValueValue,
                             'eventId' => $action['eventId'],
                             'title' => $action['therapyPhaseTitle'],
                             'beginDate' => $action['therapyPhaseBegDate'],

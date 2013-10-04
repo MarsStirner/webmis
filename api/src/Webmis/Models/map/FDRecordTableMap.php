@@ -42,7 +42,7 @@ class FDRecordTableMap extends TableMap
         $this->setPackage('Models');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addPrimaryKey('id', 'Id', 'INTEGER', true, 10, null);
+        $this->addForeignPrimaryKey('id', 'Id', 'INTEGER' , 'FDFieldValue', 'fdRecord_id', true, 10, null);
         $this->addColumn('flatDirectory_id', 'FlatDirectoryId', 'INTEGER', true, 10, null);
         $this->addColumn('flatDirectory_code', 'FlatDirectoryCode', 'CHAR', false, 128, null);
         $this->addColumn('order', 'Order', 'INTEGER', false, null, null);
@@ -58,7 +58,9 @@ class FDRecordTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('recordValues', 'Webmis\\Models\\FDFieldValue', RelationMap::MANY_TO_ONE, array('id' => 'fdRecord_id', ), null, null);
         $this->addRelation('ActionPropertyFDRecord', 'Webmis\\Models\\ActionPropertyFDRecord', RelationMap::ONE_TO_MANY, array('id' => 'value', ), null, null, 'ActionPropertyFDRecords');
+        $this->addRelation('FDFieldValueRelatedByFDRecordId', 'Webmis\\Models\\FDFieldValue', RelationMap::ONE_TO_MANY, array('id' => 'fdRecord_id', ), null, null, 'FDFieldValuesRelatedByFDRecordId');
     } // buildRelations()
 
 } // FDRecordTableMap
