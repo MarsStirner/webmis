@@ -22,7 +22,7 @@ class ActionQuery extends BaseActionQuery
 	{
 		return $this->useActionPropertyQuery('ActionProperty', 'left join')
 						->useActionPropertyTypeQuery('apt', 'join')
-							->orderByIdx()
+							//->orderByIdx()
 						->endUse()
 						->useActionPropertyStringQuery('string', 'left join')
 						->endUse()

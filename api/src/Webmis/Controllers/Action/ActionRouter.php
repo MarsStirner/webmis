@@ -20,11 +20,11 @@ class ActionRouter implements ControllerProviderInterface
 
 
         $dirRouter->get('/', getController('Action/no'));
+        $dirRouter->get('/{actionId}', getController('Action/read'));
 
 
         $dirRouter->get('/types', getController('ActionType/list'));
         $dirRouter->get('/types/tree/{rootCode}', getController('ActionType/tree'));
-
         $dirRouter->get('/types/{actionTypeId}', getController('ActionType/read'));
 
 

@@ -142,6 +142,7 @@ class ActionTypeController
         foreach($properties as $property){
             $data['properties'][] = array(
                 'name'=>$property->getName()
+                ,'idx'=> $property->getIdx()
                 ,'mandatory' => $property->getMandatory()
                 ,'readOnly' => $property->getReadOnly()
                 ,'typeName' => $property->getTypeName()
