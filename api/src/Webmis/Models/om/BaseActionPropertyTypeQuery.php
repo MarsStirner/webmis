@@ -16,6 +16,7 @@ use Webmis\Models\ActionProperty;
 use Webmis\Models\ActionPropertyType;
 use Webmis\Models\ActionPropertyTypePeer;
 use Webmis\Models\ActionPropertyTypeQuery;
+use Webmis\Models\ActionType;
 
 /**
  * Base class that represents a query for the 'ActionPropertyType' table.
@@ -84,9 +85,17 @@ use Webmis\Models\ActionPropertyTypeQuery;
  * @method ActionPropertyTypeQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method ActionPropertyTypeQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method ActionPropertyTypeQuery leftJoinActionTypeRelatedByactionTypeId($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionTypeRelatedByactionTypeId relation
+ * @method ActionPropertyTypeQuery rightJoinActionTypeRelatedByactionTypeId($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionTypeRelatedByactionTypeId relation
+ * @method ActionPropertyTypeQuery innerJoinActionTypeRelatedByactionTypeId($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionTypeRelatedByactionTypeId relation
+ *
  * @method ActionPropertyTypeQuery leftJoinActionProperty($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionProperty relation
  * @method ActionPropertyTypeQuery rightJoinActionProperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionProperty relation
  * @method ActionPropertyTypeQuery innerJoinActionProperty($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionProperty relation
+ *
+ * @method ActionPropertyTypeQuery leftJoinActionTypeRelatedByid($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionTypeRelatedByid relation
+ * @method ActionPropertyTypeQuery rightJoinActionTypeRelatedByid($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionTypeRelatedByid relation
+ * @method ActionPropertyTypeQuery innerJoinActionTypeRelatedByid($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionTypeRelatedByid relation
  *
  * @method ActionPropertyType findOne(PropelPDO $con = null) Return the first ActionPropertyType matching the query
  * @method ActionPropertyType findOneOrCreate(PropelPDO $con = null) Return the first ActionPropertyType matching the query, or a new ActionPropertyType object populated from the query conditions when no match is found
@@ -418,6 +427,8 @@ abstract class BaseActionPropertyTypeQuery extends ModelCriteria
      * $query->filterByactionTypeId(array('min' => 12)); // WHERE actionType_id >= 12
      * $query->filterByactionTypeId(array('max' => 12)); // WHERE actionType_id <= 12
      * </code>
+     *
+     * @see       filterByActionTypeRelatedByactionTypeId()
      *
      * @param     mixed $actionTypeId The value to use as filter.
      *              Use scalar values for equality.
@@ -1292,6 +1303,82 @@ abstract class BaseActionPropertyTypeQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related ActionType object
+     *
+     * @param   ActionType|PropelObjectCollection $actionType The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ActionPropertyTypeQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByActionTypeRelatedByactionTypeId($actionType, $comparison = null)
+    {
+        if ($actionType instanceof ActionType) {
+            return $this
+                ->addUsingAlias(ActionPropertyTypePeer::ACTIONTYPE_ID, $actionType->getid(), $comparison);
+        } elseif ($actionType instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ActionPropertyTypePeer::ACTIONTYPE_ID, $actionType->toKeyValue('PrimaryKey', 'id'), $comparison);
+        } else {
+            throw new PropelException('filterByActionTypeRelatedByactionTypeId() only accepts arguments of type ActionType or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ActionTypeRelatedByactionTypeId relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ActionPropertyTypeQuery The current query, for fluid interface
+     */
+    public function joinActionTypeRelatedByactionTypeId($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ActionTypeRelatedByactionTypeId');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ActionTypeRelatedByactionTypeId');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ActionTypeRelatedByactionTypeId relation ActionType object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\ActionTypeQuery A secondary query class using the current class as primary query
+     */
+    public function useActionTypeRelatedByactionTypeIdQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinActionTypeRelatedByactionTypeId($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ActionTypeRelatedByactionTypeId', '\Webmis\Models\ActionTypeQuery');
+    }
+
+    /**
      * Filter the query by a related ActionProperty object
      *
      * @param   ActionProperty|PropelObjectCollection $actionProperty  the related object to use as filter
@@ -1363,6 +1450,80 @@ abstract class BaseActionPropertyTypeQuery extends ModelCriteria
         return $this
             ->joinActionProperty($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'ActionProperty', '\Webmis\Models\ActionPropertyQuery');
+    }
+
+    /**
+     * Filter the query by a related ActionType object
+     *
+     * @param   ActionType|PropelObjectCollection $actionType  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ActionPropertyTypeQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByActionTypeRelatedByid($actionType, $comparison = null)
+    {
+        if ($actionType instanceof ActionType) {
+            return $this
+                ->addUsingAlias(ActionPropertyTypePeer::ACTIONTYPE_ID, $actionType->getid(), $comparison);
+        } elseif ($actionType instanceof PropelObjectCollection) {
+            return $this
+                ->useActionTypeRelatedByidQuery()
+                ->filterByPrimaryKeys($actionType->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByActionTypeRelatedByid() only accepts arguments of type ActionType or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ActionTypeRelatedByid relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ActionPropertyTypeQuery The current query, for fluid interface
+     */
+    public function joinActionTypeRelatedByid($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ActionTypeRelatedByid');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ActionTypeRelatedByid');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ActionTypeRelatedByid relation ActionType object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\ActionTypeQuery A secondary query class using the current class as primary query
+     */
+    public function useActionTypeRelatedByidQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinActionTypeRelatedByid($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ActionTypeRelatedByid', '\Webmis\Models\ActionTypeQuery');
     }
 
     /**

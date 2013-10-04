@@ -29,6 +29,11 @@
     <column name="toEpicrisis" phpName="toEpicrisis" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
     <column name="mandatory" phpName="mandatory" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
     <column name="readOnly" phpName="readonly" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
+
+    <foreign-key foreignTable="ActionType" name="FK_ActionPropertyType_ActionType">
+      <reference local="actionType_id" foreign="id"/>
+    </foreign-key>
+
     <index name="actionType_id">
       <index-column name="actionType_id"/>
     </index>

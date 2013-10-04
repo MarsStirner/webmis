@@ -18,4 +18,5 @@ use Webmis\Models\om\BaseActionType;
  */
 class ActionType extends BaseActionType
 {
+
 }

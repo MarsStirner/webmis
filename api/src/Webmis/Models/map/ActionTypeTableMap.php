@@ -42,7 +42,7 @@ class ActionTypeTableMap extends TableMap
         $this->setPackage('Models');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addPrimaryKey('id', 'id', 'INTEGER', true, null, null);
+        $this->addForeignPrimaryKey('id', 'id', 'INTEGER' , 'ActionPropertyType', 'actionType_id', true, null, null);
         $this->addColumn('createDatetime', 'createDatetime', 'TIMESTAMP', true, null, null);
         $this->addColumn('createPerson_id', 'createPersonId', 'INTEGER', false, null, null);
         $this->addColumn('modifyDatetime', 'modifyDatetime', 'TIMESTAMP', true, null, null);
@@ -95,7 +95,9 @@ class ActionTypeTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('ActionPropertyTypeRelatedByid', 'Webmis\\Models\\ActionPropertyType', RelationMap::MANY_TO_ONE, array('id' => 'actionType_id', ), null, null);
         $this->addRelation('Action', 'Webmis\\Models\\Action', RelationMap::ONE_TO_MANY, array('id' => 'actionType_id', ), null, null, 'Actions');
+        $this->addRelation('ActionPropertyTypeRelatedByactionTypeId', 'Webmis\\Models\\ActionPropertyType', RelationMap::ONE_TO_MANY, array('id' => 'actionType_id', ), null, null, 'ActionPropertyTypesRelatedByactionTypeId');
     } // buildRelations()
 
 } // ActionTypeTableMap
