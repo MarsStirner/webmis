@@ -10,7 +10,7 @@
     <column name="mask" phpName="Mask" type="VARCHAR" size="4096" required="false"/>
     <column name="mandatory" phpName="Mandatory" type="BOOLEAN" size="1" required="false"/>
     <column name="order" phpName="Order" type="INTEGER" size="10" sqlType="int(10) unsigned" required="false"/>
-    <foreign-key foreignTable="FDFieldValue" name="FK_FDField_FDFieldValue">
+    <foreign-key foreignTable="FDFieldValue" >
       <reference local="id" foreign="fdField_id"/>
     </foreign-key>
 <!--     <foreign-key foreignTable="FDFieldType" name="FK_FDField_FDFieldType">

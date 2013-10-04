@@ -9,74 +9,61 @@ use \PDOStatement;
 use \Propel;
 use \PropelException;
 use \PropelPDO;
-use Webmis\Models\FDFieldValuePeer;
-use Webmis\Models\FDRecord;
-use Webmis\Models\FDRecordPeer;
-use Webmis\Models\map\FDRecordTableMap;
+use Webmis\Models\FlatDirectory;
+use Webmis\Models\FlatDirectoryPeer;
+use Webmis\Models\map\FlatDirectoryTableMap;
 
 /**
- * Base static class for performing query and update operations on the 'FDRecord' table.
+ * Base static class for performing query and update operations on the 'FlatDirectory' table.
  *
  *
  *
  * @package propel.generator.Models.om
  */
-abstract class BaseFDRecordPeer
+abstract class BaseFlatDirectoryPeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'Webmis-API';
 
     /** the table name for this class */
-    const TABLE_NAME = 'FDRecord';
+    const TABLE_NAME = 'FlatDirectory';
 
     /** the related Propel class for this table */
-    const OM_CLASS = 'Webmis\\Models\\FDRecord';
+    const OM_CLASS = 'Webmis\\Models\\FlatDirectory';
 
     /** the related TableMap class for this table */
-    const TM_CLASS = 'FDRecordTableMap';
+    const TM_CLASS = 'FlatDirectoryTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 4;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /** the column name for the id field */
-    const ID = 'FDRecord.id';
-
-    /** the column name for the flatDirectory_id field */
-    const FLATDIRECTORY_ID = 'FDRecord.flatDirectory_id';
-
-    /** the column name for the flatDirectory_code field */
-    const FLATDIRECTORY_CODE = 'FDRecord.flatDirectory_code';
-
-    /** the column name for the order field */
-    const ORDER = 'FDRecord.order';
+    const ID = 'FlatDirectory.id';
 
     /** the column name for the name field */
-    const NAME = 'FDRecord.name';
+    const NAME = 'FlatDirectory.name';
+
+    /** the column name for the code field */
+    const CODE = 'FlatDirectory.code';
 
     /** the column name for the description field */
-    const DESCRIPTION = 'FDRecord.description';
-
-    /** the column name for the dateStart field */
-    const DATESTART = 'FDRecord.dateStart';
-
-    /** the column name for the dateEnd field */
-    const DATEEND = 'FDRecord.dateEnd';
+    const DESCRIPTION = 'FlatDirectory.description';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
     /**
-     * An identiy map to hold any loaded instances of FDRecord objects.
+     * An identiy map to hold any loaded instances of FlatDirectory objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
-     * @var        array FDRecord[]
+     * @var        array FlatDirectory[]
      */
     public static $instances = array();
 
@@ -85,30 +72,30 @@ abstract class BaseFDRecordPeer
      * holds an array of fieldnames
      *
      * first dimension keys are the type constants
-     * e.g. FDRecordPeer::$fieldNames[FDRecordPeer::TYPE_PHPNAME][0] = 'Id'
+     * e.g. FlatDirectoryPeer::$fieldNames[FlatDirectoryPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'FlatDirectoryId', 'FlatDirectoryCode', 'Order', 'Name', 'Description', 'DateStart', 'DateEnd', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'flatDirectoryId', 'flatDirectoryCode', 'order', 'name', 'description', 'dateStart', 'dateEnd', ),
-        BasePeer::TYPE_COLNAME => array (FDRecordPeer::ID, FDRecordPeer::FLATDIRECTORY_ID, FDRecordPeer::FLATDIRECTORY_CODE, FDRecordPeer::ORDER, FDRecordPeer::NAME, FDRecordPeer::DESCRIPTION, FDRecordPeer::DATESTART, FDRecordPeer::DATEEND, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'FLATDIRECTORY_ID', 'FLATDIRECTORY_CODE', 'ORDER', 'NAME', 'DESCRIPTION', 'DATESTART', 'DATEEND', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'flatDirectory_id', 'flatDirectory_code', 'order', 'name', 'description', 'dateStart', 'dateEnd', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'Name', 'Code', 'Description', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'name', 'code', 'description', ),
+        BasePeer::TYPE_COLNAME => array (FlatDirectoryPeer::ID, FlatDirectoryPeer::NAME, FlatDirectoryPeer::CODE, FlatDirectoryPeer::DESCRIPTION, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'NAME', 'CODE', 'DESCRIPTION', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'name', 'code', 'description', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
      * holds an array of keys for quick access to the fieldnames array
      *
      * first dimension keys are the type constants
-     * e.g. FDRecordPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
+     * e.g. FlatDirectoryPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'FlatDirectoryId' => 1, 'FlatDirectoryCode' => 2, 'Order' => 3, 'Name' => 4, 'Description' => 5, 'DateStart' => 6, 'DateEnd' => 7, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'flatDirectoryId' => 1, 'flatDirectoryCode' => 2, 'order' => 3, 'name' => 4, 'description' => 5, 'dateStart' => 6, 'dateEnd' => 7, ),
-        BasePeer::TYPE_COLNAME => array (FDRecordPeer::ID => 0, FDRecordPeer::FLATDIRECTORY_ID => 1, FDRecordPeer::FLATDIRECTORY_CODE => 2, FDRecordPeer::ORDER => 3, FDRecordPeer::NAME => 4, FDRecordPeer::DESCRIPTION => 5, FDRecordPeer::DATESTART => 6, FDRecordPeer::DATEEND => 7, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'FLATDIRECTORY_ID' => 1, 'FLATDIRECTORY_CODE' => 2, 'ORDER' => 3, 'NAME' => 4, 'DESCRIPTION' => 5, 'DATESTART' => 6, 'DATEEND' => 7, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'flatDirectory_id' => 1, 'flatDirectory_code' => 2, 'order' => 3, 'name' => 4, 'description' => 5, 'dateStart' => 6, 'dateEnd' => 7, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Name' => 1, 'Code' => 2, 'Description' => 3, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'name' => 1, 'code' => 2, 'description' => 3, ),
+        BasePeer::TYPE_COLNAME => array (FlatDirectoryPeer::ID => 0, FlatDirectoryPeer::NAME => 1, FlatDirectoryPeer::CODE => 2, FlatDirectoryPeer::DESCRIPTION => 3, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'NAME' => 1, 'CODE' => 2, 'DESCRIPTION' => 3, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'name' => 1, 'code' => 2, 'description' => 3, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
@@ -123,10 +110,10 @@ abstract class BaseFDRecordPeer
      */
     public static function translateFieldName($name, $fromType, $toType)
     {
-        $toNames = FDRecordPeer::getFieldNames($toType);
-        $key = isset(FDRecordPeer::$fieldKeys[$fromType][$name]) ? FDRecordPeer::$fieldKeys[$fromType][$name] : null;
+        $toNames = FlatDirectoryPeer::getFieldNames($toType);
+        $key = isset(FlatDirectoryPeer::$fieldKeys[$fromType][$name]) ? FlatDirectoryPeer::$fieldKeys[$fromType][$name] : null;
         if ($key === null) {
-            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(FDRecordPeer::$fieldKeys[$fromType], true));
+            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(FlatDirectoryPeer::$fieldKeys[$fromType], true));
         }
 
         return $toNames[$key];
@@ -143,11 +130,11 @@ abstract class BaseFDRecordPeer
      */
     public static function getFieldNames($type = BasePeer::TYPE_PHPNAME)
     {
-        if (!array_key_exists($type, FDRecordPeer::$fieldNames)) {
+        if (!array_key_exists($type, FlatDirectoryPeer::$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
         }
 
-        return FDRecordPeer::$fieldNames[$type];
+        return FlatDirectoryPeer::$fieldNames[$type];
     }
 
     /**
@@ -159,12 +146,12 @@ abstract class BaseFDRecordPeer
      *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. FDRecordPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. FlatDirectoryPeer::COLUMN_NAME).
      * @return string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(FDRecordPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(FlatDirectoryPeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -182,23 +169,15 @@ abstract class BaseFDRecordPeer
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(FDRecordPeer::ID);
-            $criteria->addSelectColumn(FDRecordPeer::FLATDIRECTORY_ID);
-            $criteria->addSelectColumn(FDRecordPeer::FLATDIRECTORY_CODE);
-            $criteria->addSelectColumn(FDRecordPeer::ORDER);
-            $criteria->addSelectColumn(FDRecordPeer::NAME);
-            $criteria->addSelectColumn(FDRecordPeer::DESCRIPTION);
-            $criteria->addSelectColumn(FDRecordPeer::DATESTART);
-            $criteria->addSelectColumn(FDRecordPeer::DATEEND);
+            $criteria->addSelectColumn(FlatDirectoryPeer::ID);
+            $criteria->addSelectColumn(FlatDirectoryPeer::NAME);
+            $criteria->addSelectColumn(FlatDirectoryPeer::CODE);
+            $criteria->addSelectColumn(FlatDirectoryPeer::DESCRIPTION);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.flatDirectory_id');
-            $criteria->addSelectColumn($alias . '.flatDirectory_code');
-            $criteria->addSelectColumn($alias . '.order');
             $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.code');
             $criteria->addSelectColumn($alias . '.description');
-            $criteria->addSelectColumn($alias . '.dateStart');
-            $criteria->addSelectColumn($alias . '.dateEnd');
         }
     }
 
@@ -218,21 +197,21 @@ abstract class BaseFDRecordPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(FDRecordPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(FlatDirectoryPeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            FDRecordPeer::addSelectColumns($criteria);
+            FlatDirectoryPeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-        $criteria->setDbName(FDRecordPeer::DATABASE_NAME); // Set the correct dbName
+        $criteria->setDbName(FlatDirectoryPeer::DATABASE_NAME); // Set the correct dbName
 
         if ($con === null) {
-            $con = Propel::getConnection(FDRecordPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(FlatDirectoryPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
         // BasePeer returns a PDOStatement
         $stmt = BasePeer::doCount($criteria, $con);
@@ -251,7 +230,7 @@ abstract class BaseFDRecordPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      PropelPDO $con
-     * @return                 FDRecord
+     * @return                 FlatDirectory
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -259,7 +238,7 @@ abstract class BaseFDRecordPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = FDRecordPeer::doSelect($critcopy, $con);
+        $objects = FlatDirectoryPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -277,7 +256,7 @@ abstract class BaseFDRecordPeer
      */
     public static function doSelect(Criteria $criteria, PropelPDO $con = null)
     {
-        return FDRecordPeer::populateObjects(FDRecordPeer::doSelectStmt($criteria, $con));
+        return FlatDirectoryPeer::populateObjects(FlatDirectoryPeer::doSelectStmt($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
@@ -295,16 +274,16 @@ abstract class BaseFDRecordPeer
     public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(FDRecordPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(FlatDirectoryPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         if (!$criteria->hasSelectClause()) {
             $criteria = clone $criteria;
-            FDRecordPeer::addSelectColumns($criteria);
+            FlatDirectoryPeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
-        $criteria->setDbName(FDRecordPeer::DATABASE_NAME);
+        $criteria->setDbName(FlatDirectoryPeer::DATABASE_NAME);
 
         // BasePeer returns a PDOStatement
         return BasePeer::doSelect($criteria, $con);
@@ -318,7 +297,7 @@ abstract class BaseFDRecordPeer
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
      * and retrieveByPK*() calls.
      *
-     * @param      FDRecord $obj A FDRecord object.
+     * @param      FlatDirectory $obj A FlatDirectory object.
      * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
@@ -327,7 +306,7 @@ abstract class BaseFDRecordPeer
             if ($key === null) {
                 $key = (string) $obj->getId();
             } // if key === null
-            FDRecordPeer::$instances[$key] = $obj;
+            FlatDirectoryPeer::$instances[$key] = $obj;
         }
     }
 
@@ -339,7 +318,7 @@ abstract class BaseFDRecordPeer
      * methods in your stub classes -- you may need to explicitly remove objects
      * from the cache in order to prevent returning objects that no longer exist.
      *
-     * @param      mixed $value A FDRecord object or a primary key value.
+     * @param      mixed $value A FlatDirectory object or a primary key value.
      *
      * @return void
      * @throws PropelException - if the value is invalid.
@@ -347,17 +326,17 @@ abstract class BaseFDRecordPeer
     public static function removeInstanceFromPool($value)
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
-            if (is_object($value) && $value instanceof FDRecord) {
+            if (is_object($value) && $value instanceof FlatDirectory) {
                 $key = (string) $value->getId();
             } elseif (is_scalar($value)) {
                 // assume we've been passed a primary key
                 $key = (string) $value;
             } else {
-                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or FDRecord object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or FlatDirectory object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
                 throw $e;
             }
 
-            unset(FDRecordPeer::$instances[$key]);
+            unset(FlatDirectoryPeer::$instances[$key]);
         }
     } // removeInstanceFromPool()
 
@@ -368,14 +347,14 @@ abstract class BaseFDRecordPeer
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
      * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-     * @return   FDRecord Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+     * @return   FlatDirectory Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see        getPrimaryKeyHash()
      */
     public static function getInstanceFromPool($key)
     {
         if (Propel::isInstancePoolingEnabled()) {
-            if (isset(FDRecordPeer::$instances[$key])) {
-                return FDRecordPeer::$instances[$key];
+            if (isset(FlatDirectoryPeer::$instances[$key])) {
+                return FlatDirectoryPeer::$instances[$key];
             }
         }
 
@@ -391,16 +370,16 @@ abstract class BaseFDRecordPeer
     {
       if ($and_clear_all_references)
       {
-        foreach (FDRecordPeer::$instances as $instance)
+        foreach (FlatDirectoryPeer::$instances as $instance)
         {
           $instance->clearAllReferences(true);
         }
       }
-        FDRecordPeer::$instances = array();
+        FlatDirectoryPeer::$instances = array();
     }
 
     /**
-     * Method to invalidate the instance pool of all tables related to FDRecord
+     * Method to invalidate the instance pool of all tables related to FlatDirectory
      * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
@@ -454,11 +433,11 @@ abstract class BaseFDRecordPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = FDRecordPeer::getOMClass();
+        $cls = FlatDirectoryPeer::getOMClass();
         // populate the object(s)
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key = FDRecordPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj = FDRecordPeer::getInstanceFromPool($key))) {
+            $key = FlatDirectoryPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj = FlatDirectoryPeer::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
@@ -467,7 +446,7 @@ abstract class BaseFDRecordPeer
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                FDRecordPeer::addInstanceToPool($obj, $key);
+                FlatDirectoryPeer::addInstanceToPool($obj, $key);
             } // if key exists
         }
         $stmt->closeCursor();
@@ -481,263 +460,24 @@ abstract class BaseFDRecordPeer
      * @param      int $startcol The 0-based offset for reading from the resultset row.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
-     * @return array (FDRecord object, last column rank)
+     * @return array (FlatDirectory object, last column rank)
      */
     public static function populateObject($row, $startcol = 0)
     {
-        $key = FDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol);
-        if (null !== ($obj = FDRecordPeer::getInstanceFromPool($key))) {
+        $key = FlatDirectoryPeer::getPrimaryKeyHashFromRow($row, $startcol);
+        if (null !== ($obj = FlatDirectoryPeer::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $startcol, true); // rehydrate
-            $col = $startcol + FDRecordPeer::NUM_HYDRATE_COLUMNS;
+            $col = $startcol + FlatDirectoryPeer::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = FDRecordPeer::OM_CLASS;
+            $cls = FlatDirectoryPeer::OM_CLASS;
             $obj = new $cls();
             $col = $obj->hydrate($row, $startcol);
-            FDRecordPeer::addInstanceToPool($obj, $key);
+            FlatDirectoryPeer::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related recordValues table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinrecordValues(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(FDRecordPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            FDRecordPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-        // Set the correct dbName
-        $criteria->setDbName(FDRecordPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(FDRecordPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(FDRecordPeer::ID, FDFieldValuePeer::FDRECORD_ID, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-
-    /**
-     * Selects a collection of FDRecord objects pre-filled with their FDFieldValue objects.
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of FDRecord objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinrecordValues(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(FDRecordPeer::DATABASE_NAME);
-        }
-
-        FDRecordPeer::addSelectColumns($criteria);
-        $startcol = FDRecordPeer::NUM_HYDRATE_COLUMNS;
-        FDFieldValuePeer::addSelectColumns($criteria);
-
-        $criteria->addJoin(FDRecordPeer::ID, FDFieldValuePeer::FDRECORD_ID, $join_behavior);
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = FDRecordPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = FDRecordPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-
-                $cls = FDRecordPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                FDRecordPeer::addInstanceToPool($obj1, $key1);
-            } // if $obj1 already loaded
-
-            $key2 = FDFieldValuePeer::getPrimaryKeyHashFromRow($row, $startcol);
-            if ($key2 !== null) {
-                $obj2 = FDFieldValuePeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = FDFieldValuePeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol);
-                    FDFieldValuePeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 already loaded
-
-                // Add the $obj1 (FDRecord) to $obj2 (FDFieldValue)
-                // one to one relationship
-                $obj1->setFDFieldValue($obj2);
-
-            } // if joined row was not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining all related tables
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(FDRecordPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            FDRecordPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-        // Set the correct dbName
-        $criteria->setDbName(FDRecordPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(FDRecordPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(FDRecordPeer::ID, FDFieldValuePeer::FDRECORD_ID, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-    /**
-     * Selects a collection of FDRecord objects pre-filled with all related objects.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of FDRecord objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(FDRecordPeer::DATABASE_NAME);
-        }
-
-        FDRecordPeer::addSelectColumns($criteria);
-        $startcol2 = FDRecordPeer::NUM_HYDRATE_COLUMNS;
-
-        FDFieldValuePeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + FDFieldValuePeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(FDRecordPeer::ID, FDFieldValuePeer::FDRECORD_ID, $join_behavior);
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = FDRecordPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = FDRecordPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = FDRecordPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                FDRecordPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-            // Add objects for joined FDFieldValue rows
-
-            $key2 = FDFieldValuePeer::getPrimaryKeyHashFromRow($row, $startcol2);
-            if ($key2 !== null) {
-                $obj2 = FDFieldValuePeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = FDFieldValuePeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    FDFieldValuePeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 loaded
-
-                // Add the $obj1 (FDRecord) to the collection in $obj2 (FDFieldValue)
-                $obj1->setFDFieldValue($obj2);
-            } // if joined row not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
     }
 
     /**
@@ -749,7 +489,7 @@ abstract class BaseFDRecordPeer
      */
     public static function getTableMap()
     {
-        return Propel::getDatabaseMap(FDRecordPeer::DATABASE_NAME)->getTable(FDRecordPeer::TABLE_NAME);
+        return Propel::getDatabaseMap(FlatDirectoryPeer::DATABASE_NAME)->getTable(FlatDirectoryPeer::TABLE_NAME);
     }
 
     /**
@@ -757,9 +497,9 @@ abstract class BaseFDRecordPeer
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getDatabaseMap(BaseFDRecordPeer::DATABASE_NAME);
-      if (!$dbMap->hasTable(BaseFDRecordPeer::TABLE_NAME)) {
-        $dbMap->addTableObject(new FDRecordTableMap());
+      $dbMap = Propel::getDatabaseMap(BaseFlatDirectoryPeer::DATABASE_NAME);
+      if (!$dbMap->hasTable(BaseFlatDirectoryPeer::TABLE_NAME)) {
+        $dbMap->addTableObject(new FlatDirectoryTableMap());
       }
     }
 
@@ -771,13 +511,13 @@ abstract class BaseFDRecordPeer
      */
     public static function getOMClass($row = 0, $colnum = 0)
     {
-        return FDRecordPeer::OM_CLASS;
+        return FlatDirectoryPeer::OM_CLASS;
     }
 
     /**
-     * Performs an INSERT on the database, given a FDRecord or Criteria object.
+     * Performs an INSERT on the database, given a FlatDirectory or Criteria object.
      *
-     * @param      mixed $values Criteria or FDRecord object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or FlatDirectory object containing data that is used to create the INSERT statement.
      * @param      PropelPDO $con the PropelPDO connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -786,22 +526,22 @@ abstract class BaseFDRecordPeer
     public static function doInsert($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(FDRecordPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(FlatDirectoryPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from FDRecord object
+            $criteria = $values->buildCriteria(); // build Criteria from FlatDirectory object
         }
 
-        if ($criteria->containsKey(FDRecordPeer::ID) && $criteria->keyContainsValue(FDRecordPeer::ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.FDRecordPeer::ID.')');
+        if ($criteria->containsKey(FlatDirectoryPeer::ID) && $criteria->keyContainsValue(FlatDirectoryPeer::ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.FlatDirectoryPeer::ID.')');
         }
 
 
         // Set the correct dbName
-        $criteria->setDbName(FDRecordPeer::DATABASE_NAME);
+        $criteria->setDbName(FlatDirectoryPeer::DATABASE_NAME);
 
         try {
             // use transaction because $criteria could contain info
@@ -818,9 +558,9 @@ abstract class BaseFDRecordPeer
     }
 
     /**
-     * Performs an UPDATE on the database, given a FDRecord or Criteria object.
+     * Performs an UPDATE on the database, given a FlatDirectory or Criteria object.
      *
-     * @param      mixed $values Criteria or FDRecord object containing data that is used to create the UPDATE statement.
+     * @param      mixed $values Criteria or FlatDirectory object containing data that is used to create the UPDATE statement.
      * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
      * @return int             The number of affected rows (if supported by underlying database driver).
      * @throws PropelException Any exceptions caught during processing will be
@@ -829,35 +569,35 @@ abstract class BaseFDRecordPeer
     public static function doUpdate($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(FDRecordPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(FlatDirectoryPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
-        $selectCriteria = new Criteria(FDRecordPeer::DATABASE_NAME);
+        $selectCriteria = new Criteria(FlatDirectoryPeer::DATABASE_NAME);
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(FDRecordPeer::ID);
-            $value = $criteria->remove(FDRecordPeer::ID);
+            $comparison = $criteria->getComparison(FlatDirectoryPeer::ID);
+            $value = $criteria->remove(FlatDirectoryPeer::ID);
             if ($value) {
-                $selectCriteria->add(FDRecordPeer::ID, $value, $comparison);
+                $selectCriteria->add(FlatDirectoryPeer::ID, $value, $comparison);
             } else {
-                $selectCriteria->setPrimaryTableName(FDRecordPeer::TABLE_NAME);
+                $selectCriteria->setPrimaryTableName(FlatDirectoryPeer::TABLE_NAME);
             }
 
-        } else { // $values is FDRecord object
+        } else { // $values is FlatDirectory object
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
         }
 
         // set the correct dbName
-        $criteria->setDbName(FDRecordPeer::DATABASE_NAME);
+        $criteria->setDbName(FlatDirectoryPeer::DATABASE_NAME);
 
         return BasePeer::doUpdate($selectCriteria, $criteria, $con);
     }
 
     /**
-     * Deletes all rows from the FDRecord table.
+     * Deletes all rows from the FlatDirectory table.
      *
      * @param      PropelPDO $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).
@@ -866,19 +606,19 @@ abstract class BaseFDRecordPeer
     public static function doDeleteAll(PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(FDRecordPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(FlatDirectoryPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
         $affectedRows = 0; // initialize var to track total num of affected rows
         try {
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
-            $affectedRows += BasePeer::doDeleteAll(FDRecordPeer::TABLE_NAME, $con, FDRecordPeer::DATABASE_NAME);
+            $affectedRows += BasePeer::doDeleteAll(FlatDirectoryPeer::TABLE_NAME, $con, FlatDirectoryPeer::DATABASE_NAME);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            FDRecordPeer::clearInstancePool();
-            FDRecordPeer::clearRelatedInstancePool();
+            FlatDirectoryPeer::clearInstancePool();
+            FlatDirectoryPeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -889,9 +629,9 @@ abstract class BaseFDRecordPeer
     }
 
     /**
-     * Performs a DELETE on the database, given a FDRecord or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a FlatDirectory or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or FDRecord object or primary key or array of primary keys
+     * @param      mixed $values Criteria or FlatDirectory object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      PropelPDO $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -902,32 +642,32 @@ abstract class BaseFDRecordPeer
      public static function doDelete($values, PropelPDO $con = null)
      {
         if ($con === null) {
-            $con = Propel::getConnection(FDRecordPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(FlatDirectoryPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             // invalidate the cache for all objects of this type, since we have no
             // way of knowing (without running a query) what objects should be invalidated
             // from the cache based on this Criteria.
-            FDRecordPeer::clearInstancePool();
+            FlatDirectoryPeer::clearInstancePool();
             // rename for clarity
             $criteria = clone $values;
-        } elseif ($values instanceof FDRecord) { // it's a model object
+        } elseif ($values instanceof FlatDirectory) { // it's a model object
             // invalidate the cache for this single object
-            FDRecordPeer::removeInstanceFromPool($values);
+            FlatDirectoryPeer::removeInstanceFromPool($values);
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(FDRecordPeer::DATABASE_NAME);
-            $criteria->add(FDRecordPeer::ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(FlatDirectoryPeer::DATABASE_NAME);
+            $criteria->add(FlatDirectoryPeer::ID, (array) $values, Criteria::IN);
             // invalidate the cache for this object(s)
             foreach ((array) $values as $singleval) {
-                FDRecordPeer::removeInstanceFromPool($singleval);
+                FlatDirectoryPeer::removeInstanceFromPool($singleval);
             }
         }
 
         // Set the correct dbName
-        $criteria->setDbName(FDRecordPeer::DATABASE_NAME);
+        $criteria->setDbName(FlatDirectoryPeer::DATABASE_NAME);
 
         $affectedRows = 0; // initialize var to track total num of affected rows
 
@@ -937,7 +677,7 @@ abstract class BaseFDRecordPeer
             $con->beginTransaction();
 
             $affectedRows += BasePeer::doDelete($criteria, $con);
-            FDRecordPeer::clearRelatedInstancePool();
+            FlatDirectoryPeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -948,13 +688,13 @@ abstract class BaseFDRecordPeer
     }
 
     /**
-     * Validates all modified columns of given FDRecord object.
+     * Validates all modified columns of given FlatDirectory object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      FDRecord $obj The object to validate.
+     * @param      FlatDirectory $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
@@ -964,8 +704,8 @@ abstract class BaseFDRecordPeer
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(FDRecordPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(FDRecordPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(FlatDirectoryPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(FlatDirectoryPeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -981,7 +721,7 @@ abstract class BaseFDRecordPeer
 
         }
 
-        return BasePeer::doValidate(FDRecordPeer::DATABASE_NAME, FDRecordPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(FlatDirectoryPeer::DATABASE_NAME, FlatDirectoryPeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -989,23 +729,23 @@ abstract class BaseFDRecordPeer
      *
      * @param      int $pk the primary key.
      * @param      PropelPDO $con the connection to use
-     * @return FDRecord
+     * @return FlatDirectory
      */
     public static function retrieveByPK($pk, PropelPDO $con = null)
     {
 
-        if (null !== ($obj = FDRecordPeer::getInstanceFromPool((string) $pk))) {
+        if (null !== ($obj = FlatDirectoryPeer::getInstanceFromPool((string) $pk))) {
             return $obj;
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(FDRecordPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(FlatDirectoryPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria = new Criteria(FDRecordPeer::DATABASE_NAME);
-        $criteria->add(FDRecordPeer::ID, $pk);
+        $criteria = new Criteria(FlatDirectoryPeer::DATABASE_NAME);
+        $criteria->add(FlatDirectoryPeer::ID, $pk);
 
-        $v = FDRecordPeer::doSelect($criteria, $con);
+        $v = FlatDirectoryPeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -1015,31 +755,31 @@ abstract class BaseFDRecordPeer
      *
      * @param      array $pks List of primary keys
      * @param      PropelPDO $con the connection to use
-     * @return FDRecord[]
+     * @return FlatDirectory[]
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
     public static function retrieveByPKs($pks, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(FDRecordPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(FlatDirectoryPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         $objs = null;
         if (empty($pks)) {
             $objs = array();
         } else {
-            $criteria = new Criteria(FDRecordPeer::DATABASE_NAME);
-            $criteria->add(FDRecordPeer::ID, $pks, Criteria::IN);
-            $objs = FDRecordPeer::doSelect($criteria, $con);
+            $criteria = new Criteria(FlatDirectoryPeer::DATABASE_NAME);
+            $criteria->add(FlatDirectoryPeer::ID, $pks, Criteria::IN);
+            $objs = FlatDirectoryPeer::doSelect($criteria, $con);
         }
 
         return $objs;
     }
 
-} // BaseFDRecordPeer
+} // BaseFlatDirectoryPeer
 
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-BaseFDRecordPeer::buildTableMap();
+BaseFlatDirectoryPeer::buildTableMap();
 

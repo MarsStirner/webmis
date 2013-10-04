@@ -9,6 +9,11 @@
     <column name="description" phpName="Description" type="VARCHAR" size="4096" required="false"/>
     <column name="dateStart" phpName="DateStart" type="TIMESTAMP" required="false"/>
     <column name="dateEnd" phpName="DateEnd" type="TIMESTAMP" required="false"/>
+    <foreign-key foreignTable="FDFieldValue" phpName="recordValues">
+      <reference local="id" foreign="fdRecord_id"/>
+    </foreign-key>
+
+
 <!--     <foreign-key foreignTable="FlatDirectory" name="FK_FDRecord_FlatDirectory">
       <reference local="flatDirectory_id" foreign="id"/>
     </foreign-key>

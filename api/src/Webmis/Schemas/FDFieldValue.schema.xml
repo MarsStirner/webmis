@@ -8,9 +8,9 @@
     <foreign-key foreignTable="FDField" name="FK_FDFieldValue_FDField">
       <reference local="fdField_id" foreign="id"/>
     </foreign-key>
-<!--     <foreign-key foreignTable="FDRecord" name="FK_FDFieldValue_FDRecord">
+    <foreign-key foreignTable="FDRecord">
       <reference local="fdRecord_id" foreign="id"/>
-    </foreign-key> -->
+    </foreign-key>
 <!--     <index name="FK_FDFieldValue_FDRecord">
       <index-column name="fdRecord_id"/>
     </index>
