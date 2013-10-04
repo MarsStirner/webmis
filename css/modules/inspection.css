@@ -12,6 +12,7 @@
   background: -webkit-linear-gradient(#eaf7fe, #d8f1fd);
   background: -moz-linear-gradient(#eaf7fe, #d8f1fd);
   background: -o-linear-gradient(#eaf7fe, #d8f1fd);
+  background: -ms-linear-gradient(#eaf7fe, #d8f1fd);
   background: linear-gradient(#eaf7fe, #d8f1fd);
   border-bottom: 1px solid #fff;
 }
