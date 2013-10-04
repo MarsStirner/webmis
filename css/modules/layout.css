@@ -141,7 +141,7 @@ header {
 }
 /* line 123, ../../sass/modules/layout.scss */
 .SelectRole .Actions span {
-  border-bottom: 1px dashed black;
+  border-bottom: 1px dashed #000;
 }
 /* line 126, ../../sass/modules/layout.scss */
 .SelectRole .Actions::after {
@@ -156,7 +156,7 @@ header {
 /* line 136, ../../sass/modules/layout.scss */
 .SelectRole .Actions:hover span {
   color: #DD1111;
-  border-bottom: 1px dashed #dd1111;
+  border-bottom: 1px dashed #DD1111;
 }
 /* line 140, ../../sass/modules/layout.scss */
 .SelectRole .Actions:hover::after {
@@ -178,7 +178,7 @@ header {
 /* line 157, ../../sass/modules/layout.scss */
 .profile-options li, .copy-options li {
   color: #3F3F40;
-  border-top: 1px solid #d4d4d4;
+  border-top: 1px solid #D4D4D4;
   padding: 0.6em 8px;
   cursor: pointer;
 }
@@ -318,7 +318,7 @@ header {
 }
 /* line 270, ../../sass/modules/layout.scss */
 .NotFilled .Actions span {
-  border-bottom: 1px dashed #118ddc;
+  border-bottom: 1px dashed #118DDC;
 }
 /* line 273, ../../sass/modules/layout.scss */
 .NotFilled .Actions::after {
@@ -333,7 +333,7 @@ header {
 }
 /* line 284, ../../sass/modules/layout.scss */
 .NotFilled .Actions:hover span {
-  border-bottom: 1px dashed #dd1111;
+  border-bottom: 1px dashed #DD1111;
 }
 /* line 287, ../../sass/modules/layout.scss */
 .NotFilled .Actions:hover::after {
@@ -342,7 +342,7 @@ header {
 
 /* line 293, ../../sass/modules/layout.scss */
 .CardHeader {
-  border-bottom: 1px solid #b6b6b6;
+  border-bottom: 1px solid #B6B6B6;
   padding-bottom: 1em;
   margin-bottom: 2em;
 }
@@ -476,8 +476,8 @@ header {
 .SinglePaginator {
   background: #F5F4F4;
   color: #6C6C71;
-  border-top: 1px solid white;
-  border-bottom: 1px solid #e4e4e4;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #E4E4E4;
   margin: -2em -4em 2em -4em;
   padding: 1em 1.5em;
 }
@@ -523,7 +523,7 @@ header {
 /* line 442, ../../sass/modules/layout.scss */
 .SingleHeader {
   margin-bottom: 2.7em;
-  border-bottom: 1px solid #d4d4d4;
+  border-bottom: 1px solid #D4D4D4;
   padding-bottom: 0.5em;
 }
 /* line 446, ../../sass/modules/layout.scss */
@@ -565,7 +565,7 @@ header {
   padding-top: 2.7em;
   padding-right: 4em;
   margin-right: 19em;
-  border-right: 1px solid #d4d4d4;
+  border-right: 1px solid #D4D4D4;
 }
 
 /* line 481, ../../sass/modules/layout.scss */
@@ -696,7 +696,7 @@ footer a {
   top: -2em;
   color: #fff;
   padding: 0.5em 4em;
-  border-bottom: 1px solid #d4d4d4;
+  border-bottom: 1px solid #D4D4D4;
 }
 /* line 588, ../../sass/modules/layout.scss */
 .AlertBlock > .CloseIcon {
@@ -773,7 +773,7 @@ label.ui-button {
 /* line 655, ../../sass/modules/layout.scss */
 .date-icon, .time-icon {
   position: absolute;
-  right: -.6em;
+  right: -0.6em;
   top: .4em;
   color: #777;
   cursor: pointer;
@@ -837,7 +837,7 @@ label.ui-button {
   background: none !important;
   background-image: none !important;
   text-indent: 0 !important;
-  padding: 0.1em 0 0 0.1em !important;
+  padding: .1em 0 0 .1em !important;
 }
 
 /* line 720, ../../sass/modules/layout.scss */
@@ -929,7 +929,7 @@ label.ui-button {
 /* line 803, ../../sass/modules/layout.scss */
 .select2-drop .select2-results li {
   padding: 0.2em 0.4em 0.2em 0.2em;
-  border-top: 1px solid #d4d4d4;
+  border-top: 1px solid #D4D4D4;
   /*&:first-child {
   	border-top: none;
   }*/
@@ -962,63 +962,64 @@ label.ui-button {
 /* line 834, ../../sass/modules/layout.scss */
 .monitoring-layout h4 {
   padding-top: 2em;
-  text-decoration: underline;
+  padding-bottom: .5em;
+  font-size: 1.4em;
 }
-/* line 844, ../../sass/modules/layout.scss */
+/* line 845, ../../sass/modules/layout.scss */
 .monitoring-layout .monitoring-layout-header {
   margin-bottom: 2em;
 }
-/* line 846, ../../sass/modules/layout.scss */
+/* line 847, ../../sass/modules/layout.scss */
 .monitoring-layout .monitoring-layout-header .refresh-monitoring {
   cursor: pointer;
 }
-/* line 849, ../../sass/modules/layout.scss */
+/* line 850, ../../sass/modules/layout.scss */
 .monitoring-layout .monitoring-layout-header .label {
   margin-left: 1em;
   font-size: 100%;
 }
-/* line 854, ../../sass/modules/layout.scss */
+/* line 855, ../../sass/modules/layout.scss */
 .monitoring-layout .blood-type {
   font-size: 100%;
   padding: 4px;
-  margin: 0.2em 0 0 1em;
+  margin: .2em 0 0 1em;
   width: 100%;
 }
-/* line 861, ../../sass/modules/layout.scss */
+/* line 862, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type .row-fluid [class*="span"] {
   min-height: 0;
 }
-/* line 865, ../../sass/modules/layout.scss */
+/* line 866, ../../sass/modules/layout.scss */
 .monitoring-layout .ui-button-text {
   font-size: 0.8em !important;
 }
-/* line 869, ../../sass/modules/layout.scss */
+/* line 870, ../../sass/modules/layout.scss */
 .monitoring-layout .cancel-blood {
   margin-top: .2em;
 }
-/* line 873, ../../sass/modules/layout.scss */
+/* line 874, ../../sass/modules/layout.scss */
 .monitoring-layout .cancel-blood {
   padding-top: .4em;
   padding-left: .5em;
 }
-/* line 878, ../../sass/modules/layout.scss */
+/* line 879, ../../sass/modules/layout.scss */
 .monitoring-layout .blood-type-selector-controls {
   margin: 0;
 }
-/* line 883, ../../sass/modules/layout.scss */
+/* line 884, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history td:first-child {
   padding-left: 1em;
 }
-/* line 886, ../../sass/modules/layout.scss */
+/* line 887, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history ul {
   margin-top: 1em;
   padding-left: 1em;
 }
-/* line 889, ../../sass/modules/layout.scss */
+/* line 890, ../../sass/modules/layout.scss */
 .monitoring-layout .patient-blood-type-history ul li span.blood-date {
   color: #414142;
 }
-/* line 895, ../../sass/modules/layout.scss */
+/* line 896, ../../sass/modules/layout.scss */
 .monitoring-layout .blood-type-selector {
   margin-top: 0.7em;
 }

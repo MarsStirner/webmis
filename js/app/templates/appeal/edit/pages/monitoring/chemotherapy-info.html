@@ -1,7 +1,7 @@
 
 <h4>Терапия</h4>
-<div class="therapy-info">
 <% if(collection.length > 0){%>
+<div class="therapy-info">
 	<% collection.each(function(therapy){ %>
 	<div class="therapy">
 		<div class="therapy-header">
@@ -46,11 +46,14 @@
 		</div>
 	</div>
 	<%})%>
+</div>
 <%}else{%>
-	<h4>Нет данных</h4>
+<div class="therapy-info" style="background-color: #FFFFCC;">
+	<h3 style="padding: 1em 0 0 0; margin-bottom: .3em;">Нет данных</h3>
+</div>
 <%}%>
 
-</div>
+
 
 
 
