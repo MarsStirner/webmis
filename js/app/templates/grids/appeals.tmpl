@@ -125,7 +125,7 @@
 		</td>
 		<td {{if !havePrimary}} class="HavePrimary"{{/if}}>
 			{{each(i, diagnosis) diagnoses}}
-				{{if diagnosis.diagnosisKind == "diagReceivedMkb"}}
+				{{if diagnosis.diagnosisKind == "assignment"}}
 					${diagnosis.mkb.code} ${diagnosis.mkb.diagnosis}
 				{{/if}}
 			{{/each}}
