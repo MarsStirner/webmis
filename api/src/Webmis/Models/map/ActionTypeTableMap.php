@@ -100,4 +100,21 @@ class ActionTypeTableMap extends TableMap
         $this->addRelation('ActionPropertyTypeRelatedByactionTypeId', 'Webmis\\Models\\ActionPropertyType', RelationMap::ONE_TO_MANY, array('id' => 'actionType_id', ), null, null, 'ActionPropertyTypesRelatedByactionTypeId');
     } // buildRelations()
 
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' =>  array (
+  'create_column' => 'createDatetime',
+  'update_column' => 'modifyDatetime',
+  'disable_updated_at' => 'false',
+),
+        );
+    } // getBehaviors()
+
 } // ActionTypeTableMap

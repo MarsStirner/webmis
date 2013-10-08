@@ -55,6 +55,12 @@
     <foreign-key foreignTable="rbTestTubeType" name="rbTestTubeType_id_fk" onUpdate="CASCADE">
       <reference local="testTubeType_id" foreign="id"/>
     </foreign-key> -->
+
+    <behavior name="timestampable">
+        <parameter name="create_column" value="createDatetime" />
+        <parameter name="update_column" value="modifyDatetime" />
+    </behavior>
+
     <index name="createPerson_id">
       <index-column name="createPerson_id"/>
     </index>

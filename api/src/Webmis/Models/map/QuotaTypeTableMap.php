@@ -66,4 +66,21 @@ class QuotaTypeTableMap extends TableMap
         $this->addRelation('RbPacientModel', 'Webmis\\Models\\RbPacientModel', RelationMap::ONE_TO_MANY, array('id' => 'quotaType_id', ), null, null, 'RbPacientModels');
     } // buildRelations()
 
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' =>  array (
+  'create_column' => 'createDatetime',
+  'update_column' => 'modifyDatetime',
+  'disable_updated_at' => 'false',
+),
+        );
+    } // getBehaviors()
+
 } // QuotaTypeTableMap

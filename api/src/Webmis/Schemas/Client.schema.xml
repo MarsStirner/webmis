@@ -22,6 +22,12 @@
     <column name="version" phpName="version" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="birthPlace" phpName="birthPlace" type="VARCHAR" size="128" required="true" defaultValue=""/>
     <column name="uuid_id" phpName="uuidId" type="INTEGER" required="true" defaultValue="0"/>
+
+    <behavior name="timestampable">
+        <parameter name="create_column" value="createDatetime" />
+        <parameter name="update_column" value="modifyDatetime" />
+    </behavior>
+
     <index name="createPerson_id">
       <index-column name="createPerson_id"/>
     </index>

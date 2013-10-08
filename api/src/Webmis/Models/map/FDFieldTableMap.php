@@ -51,6 +51,8 @@ class FDFieldTableMap extends TableMap
         $this->addColumn('mask', 'Mask', 'VARCHAR', false, 4096, null);
         $this->addColumn('mandatory', 'Mandatory', 'BOOLEAN', false, 1, null);
         $this->addColumn('order', 'Order', 'INTEGER', false, 10, null);
+        $this->addColumn('createDatetime', 'Createdatetime', 'TIMESTAMP', false, null, null);
+        $this->addColumn('modifyDatetime', 'Modifydatetime', 'TIMESTAMP', false, null, null);
         // validators
     } // initialize()
 
@@ -62,5 +64,22 @@ class FDFieldTableMap extends TableMap
         $this->addRelation('FDFieldValueRelatedById', 'Webmis\\Models\\FDFieldValue', RelationMap::MANY_TO_ONE, array('id' => 'fdField_id', ), null, null);
         $this->addRelation('FDFieldValueRelatedByFDFieldId', 'Webmis\\Models\\FDFieldValue', RelationMap::ONE_TO_MANY, array('id' => 'fdField_id', ), null, null, 'FDFieldValuesRelatedByFDFieldId');
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' =>  array (
+  'create_column' => 'createDatetime',
+  'update_column' => 'modifyDatetime',
+  'disable_updated_at' => 'false',
+),
+        );
+    } // getBehaviors()
 
 } // FDFieldTableMap

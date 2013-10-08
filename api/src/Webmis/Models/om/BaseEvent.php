@@ -1905,8 +1905,19 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+                if (!$this->isColumnModified(EventPeer::CREATEDATETIME)) {
+                    $this->setcreateDatetime(time());
+                }
+                if (!$this->isColumnModified(EventPeer::MODIFYDATETIME)) {
+                    $this->setmodifyDatetime(time());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(EventPeer::MODIFYDATETIME)) {
+                    $this->setmodifyDatetime(time());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -3453,6 +3464,20 @@ abstract class BaseEvent extends BaseObject implements Persistent
     public function isAlreadyInSave()
     {
         return $this->alreadyInSave;
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     Event The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[] = EventPeer::MODIFYDATETIME;
+
+        return $this;
     }
 
 }

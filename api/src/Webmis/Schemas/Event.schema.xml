@@ -48,6 +48,11 @@
         <foreign-key foreignTable="rbMesSpecification" name="Event_mesSpecification" onDelete="SET NULL">
           <reference local="mesSpecification_id" foreign="id"/>
         </foreign-key> -->
+
+        <behavior name="timestampable">
+            <parameter name="create_column" value="createDatetime" />
+            <parameter name="update_column" value="modifyDatetime" />
+        </behavior>
         <index name="createPerson_id">
           <index-column name="createPerson_id"/>
         </index>

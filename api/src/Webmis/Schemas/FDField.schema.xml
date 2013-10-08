@@ -22,6 +22,10 @@
     <foreign-key foreignTable="FlatDirectory" name="FK_FDField_FlatDirectory_code">
       <reference local="flatDirectory_code" foreign="code"/>
     </foreign-key> -->
+    <behavior name="timestampable">
+        <parameter name="create_column" value="createDatetime" />
+        <parameter name="update_column" value="modifyDatetime" />
+    </behavior>
 <!--     <index name="FK_FDField_FlatDirectory">
       <index-column name="flatDirectory_id"/>
     </index>
