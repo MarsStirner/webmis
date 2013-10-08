@@ -356,7 +356,7 @@ define(function(require) {
 					message: 'Не выбрана планируемая дата консультации. '
 				});
 			} else {
-				var diff = moment(this.consultation.get('plannedEndDate')).diff(moment(), 'day');
+				var diff = moment(this.consultation.get('plannedEndDate')).diff(moment(), 'days');
 				if (diff < 0) {
 					errors.push({
 						message: 'Планируемая дата не может быть меньше текущей'
@@ -364,9 +364,9 @@ define(function(require) {
 				}
 			}
 
-			if (moment(this.consultation.get('createDateTime')).diff(moment()) < -60 * 1000) {
+			if (moment(this.consultation.get('createDateTime')).startOf('day').diff(moment().startOf('day'),'days') < 0) {
 				errors.push({
-					message: 'Дата создания направления не могут быть меньше текущей'
+					message: 'Дата создания направления не может быть меньше текущей'
 				});
 				// console.log('create', moment(this.consultation.get('createDateTime')).diff(moment()));
 			}
