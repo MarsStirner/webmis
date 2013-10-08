@@ -1,6 +1,8 @@
 <?php
 namespace Webmis\Controllers\Action;
 
+// use \Propel;
+// use \PDO;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Webmis\Models\ActionQuery;
@@ -10,6 +12,15 @@ class ActionController
 
     public function noAction(Request $request, Application $app)
     {
+
+
+        // $con = Propel::getConnection();
+        // $sql = "SELECT * FROM Action WHERE id = :id";
+        // $stmt = $con->prepare($sql);
+        // $stmt->execute(array(':id' => 1));
+        // $action = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // return $app['jsonp']->jsonp(array('data' => $action));
         return $app['jsonp']->jsonp(array('message' => 'тут ничего нет' ));
     }
 
