@@ -15,31 +15,31 @@ use \PropelDateTime;
 use \PropelException;
 use \PropelObjectCollection;
 use \PropelPDO;
-use Webmis\Models\Client;
-use Webmis\Models\ClientPeer;
-use Webmis\Models\ClientQuery;
 use Webmis\Models\Event;
 use Webmis\Models\EventQuery;
+use Webmis\Models\OrgStructure;
+use Webmis\Models\OrgStructurePeer;
+use Webmis\Models\OrgStructureQuery;
 
 /**
- * Base class that represents a row from the 'Client' table.
+ * Base class that represents a row from the 'OrgStructure' table.
  *
  *
  *
  * @package    propel.generator.Models.om
  */
-abstract class BaseClient extends BaseObject implements Persistent
+abstract class BaseOrgStructure extends BaseObject implements Persistent
 {
     /**
      * Peer class name
      */
-    const PEER = 'Webmis\\Models\\ClientPeer';
+    const PEER = 'Webmis\\Models\\OrgStructurePeer';
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        ClientPeer
+     * @var        OrgStructurePeer
      */
     protected static $peer;
 
@@ -87,89 +87,120 @@ abstract class BaseClient extends BaseObject implements Persistent
     protected $deleted;
 
     /**
-     * The value for the lastname field.
-     * @var        string
-     */
-    protected $lastname;
-
-    /**
-     * The value for the firstname field.
-     * @var        string
-     */
-    protected $firstname;
-
-    /**
-     * The value for the patrname field.
-     * @var        string
-     */
-    protected $patrname;
-
-    /**
-     * The value for the birthdate field.
-     * @var        string
-     */
-    protected $birthdate;
-
-    /**
-     * The value for the sex field.
+     * The value for the organisation_id field.
      * @var        int
      */
-    protected $sex;
+    protected $organisation_id;
 
     /**
-     * The value for the snils field.
+     * The value for the code field.
      * @var        string
      */
-    protected $snils;
+    protected $code;
 
     /**
-     * The value for the bloodtype_id field.
+     * The value for the name field.
+     * @var        string
+     */
+    protected $name;
+
+    /**
+     * The value for the parent_id field.
      * @var        int
      */
-    protected $bloodtype_id;
+    protected $parent_id;
 
     /**
-     * The value for the blooddate field.
-     * @var        string
-     */
-    protected $blooddate;
-
-    /**
-     * The value for the bloodnotes field.
-     * @var        string
-     */
-    protected $bloodnotes;
-
-    /**
-     * The value for the growth field.
-     * @var        string
-     */
-    protected $growth;
-
-    /**
-     * The value for the weight field.
-     * @var        string
-     */
-    protected $weight;
-
-    /**
-     * The value for the notes field.
-     * @var        string
-     */
-    protected $notes;
-
-    /**
-     * The value for the version field.
+     * The value for the type field.
+     * Note: this column has a database default value of: 0
      * @var        int
      */
-    protected $version;
+    protected $type;
 
     /**
-     * The value for the birthplace field.
-     * Note: this column has a database default value of: ''
+     * The value for the net_id field.
+     * @var        int
+     */
+    protected $net_id;
+
+    /**
+     * The value for the isarea field.
+     * Note: this column has a database default value of: 0
+     * @var        int
+     */
+    protected $isarea;
+
+    /**
+     * The value for the hashospitalbeds field.
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $hashospitalbeds;
+
+    /**
+     * The value for the hasstocks field.
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $hasstocks;
+
+    /**
+     * The value for the infiscode field.
      * @var        string
      */
-    protected $birthplace;
+    protected $infiscode;
+
+    /**
+     * The value for the infisinternalcode field.
+     * @var        string
+     */
+    protected $infisinternalcode;
+
+    /**
+     * The value for the infisdeptypecode field.
+     * @var        string
+     */
+    protected $infisdeptypecode;
+
+    /**
+     * The value for the infistariffcode field.
+     * @var        string
+     */
+    protected $infistariffcode;
+
+    /**
+     * The value for the availableforexternal field.
+     * Note: this column has a database default value of: 1
+     * @var        int
+     */
+    protected $availableforexternal;
+
+    /**
+     * The value for the address field.
+     * @var        string
+     */
+    protected $address;
+
+    /**
+     * The value for the inheriteventtypes field.
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $inheriteventtypes;
+
+    /**
+     * The value for the inheritactiontypes field.
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $inheritactiontypes;
+
+    /**
+     * The value for the inheritgaps field.
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $inheritgaps;
 
     /**
      * The value for the uuid_id field.
@@ -177,6 +208,13 @@ abstract class BaseClient extends BaseObject implements Persistent
      * @var        int
      */
     protected $uuid_id;
+
+    /**
+     * The value for the show field.
+     * Note: this column has a database default value of: 1
+     * @var        int
+     */
+    protected $show;
 
     /**
      * @var        PropelObjectCollection|Event[] Collection to store aggregation of Event objects.
@@ -219,12 +257,20 @@ abstract class BaseClient extends BaseObject implements Persistent
     public function applyDefaultValues()
     {
         $this->deleted = false;
-        $this->birthplace = '';
+        $this->type = 0;
+        $this->isarea = 0;
+        $this->hashospitalbeds = false;
+        $this->hasstocks = false;
+        $this->availableforexternal = 1;
+        $this->inheriteventtypes = false;
+        $this->inheritactiontypes = false;
+        $this->inheritgaps = false;
         $this->uuid_id = 0;
+        $this->show = 1;
     }
 
     /**
-     * Initializes internal state of BaseClient object.
+     * Initializes internal state of BaseOrgStructure object.
      * @see        applyDefaults()
      */
     public function __construct()
@@ -238,7 +284,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      *
      * @return int
      */
-    public function getid()
+    public function getId()
     {
         return $this->id;
     }
@@ -354,203 +400,183 @@ abstract class BaseClient extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [lastname] column value.
-     *
-     * @return string
-     */
-    public function getlastName()
-    {
-        return $this->lastname;
-    }
-
-    /**
-     * Get the [firstname] column value.
-     *
-     * @return string
-     */
-    public function getfirstName()
-    {
-        return $this->firstname;
-    }
-
-    /**
-     * Get the [patrname] column value.
-     *
-     * @return string
-     */
-    public function getpatrName()
-    {
-        return $this->patrname;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [birthdate] column value.
-     *
-     *
-     * @param string $format The date/time format string (either date()-style or strftime()-style).
-     *				 If format is null, then the raw DateTime object will be returned.
-     * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getbirthDate($format = '%Y-%m-%d')
-    {
-        if ($this->birthdate === null) {
-            return null;
-        }
-
-        if ($this->birthdate === '0000-00-00') {
-            // while technically this is not a default value of null,
-            // this seems to be closest in meaning.
-            return null;
-        }
-
-        try {
-            $dt = new DateTime($this->birthdate);
-        } catch (Exception $x) {
-            throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->birthdate, true), $x);
-        }
-
-        if ($format === null) {
-            // Because propel.useDateTimeClass is true, we return a DateTime object.
-            return $dt;
-        }
-
-        if (strpos($format, '%') !== false) {
-            return strftime($format, $dt->format('U'));
-        }
-
-        return $dt->format($format);
-
-    }
-
-    /**
-     * Get the [sex] column value.
+     * Get the [organisation_id] column value.
      *
      * @return int
      */
-    public function getsex()
+    public function getorganisationId()
     {
-        return $this->sex;
+        return $this->organisation_id;
     }
 
     /**
-     * Get the [snils] column value.
+     * Get the [code] column value.
      *
      * @return string
      */
-    public function getsnils()
+    public function getcode()
     {
-        return $this->snils;
+        return $this->code;
     }
 
     /**
-     * Get the [bloodtype_id] column value.
+     * Get the [name] column value.
+     *
+     * @return string
+     */
+    public function getname()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get the [parent_id] column value.
      *
      * @return int
      */
-    public function getbloodTypeId()
+    public function getparentId()
     {
-        return $this->bloodtype_id;
+        return $this->parent_id;
     }
 
     /**
-     * Get the [optionally formatted] temporal [blooddate] column value.
-     *
-     *
-     * @param string $format The date/time format string (either date()-style or strftime()-style).
-     *				 If format is null, then the raw DateTime object will be returned.
-     * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getbloodDate($format = '%Y-%m-%d')
-    {
-        if ($this->blooddate === null) {
-            return null;
-        }
-
-        if ($this->blooddate === '0000-00-00') {
-            // while technically this is not a default value of null,
-            // this seems to be closest in meaning.
-            return null;
-        }
-
-        try {
-            $dt = new DateTime($this->blooddate);
-        } catch (Exception $x) {
-            throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->blooddate, true), $x);
-        }
-
-        if ($format === null) {
-            // Because propel.useDateTimeClass is true, we return a DateTime object.
-            return $dt;
-        }
-
-        if (strpos($format, '%') !== false) {
-            return strftime($format, $dt->format('U'));
-        }
-
-        return $dt->format($format);
-
-    }
-
-    /**
-     * Get the [bloodnotes] column value.
-     *
-     * @return string
-     */
-    public function getbloodNotes()
-    {
-        return $this->bloodnotes;
-    }
-
-    /**
-     * Get the [growth] column value.
-     *
-     * @return string
-     */
-    public function getgrowth()
-    {
-        return $this->growth;
-    }
-
-    /**
-     * Get the [weight] column value.
-     *
-     * @return string
-     */
-    public function getweight()
-    {
-        return $this->weight;
-    }
-
-    /**
-     * Get the [notes] column value.
-     *
-     * @return string
-     */
-    public function getnotes()
-    {
-        return $this->notes;
-    }
-
-    /**
-     * Get the [version] column value.
+     * Get the [type] column value.
      *
      * @return int
      */
-    public function getversion()
+    public function gettype()
     {
-        return $this->version;
+        return $this->type;
     }
 
     /**
-     * Get the [birthplace] column value.
+     * Get the [net_id] column value.
+     *
+     * @return int
+     */
+    public function getnetId()
+    {
+        return $this->net_id;
+    }
+
+    /**
+     * Get the [isarea] column value.
+     *
+     * @return int
+     */
+    public function getisArea()
+    {
+        return $this->isarea;
+    }
+
+    /**
+     * Get the [hashospitalbeds] column value.
+     *
+     * @return boolean
+     */
+    public function gethasHospitalBeds()
+    {
+        return $this->hashospitalbeds;
+    }
+
+    /**
+     * Get the [hasstocks] column value.
+     *
+     * @return boolean
+     */
+    public function gethasStocks()
+    {
+        return $this->hasstocks;
+    }
+
+    /**
+     * Get the [infiscode] column value.
      *
      * @return string
      */
-    public function getbirthPlace()
+    public function getinfisCode()
     {
-        return $this->birthplace;
+        return $this->infiscode;
+    }
+
+    /**
+     * Get the [infisinternalcode] column value.
+     *
+     * @return string
+     */
+    public function getinfisInternalCode()
+    {
+        return $this->infisinternalcode;
+    }
+
+    /**
+     * Get the [infisdeptypecode] column value.
+     *
+     * @return string
+     */
+    public function getinfisDepTypeCode()
+    {
+        return $this->infisdeptypecode;
+    }
+
+    /**
+     * Get the [infistariffcode] column value.
+     *
+     * @return string
+     */
+    public function getinfisTariffCode()
+    {
+        return $this->infistariffcode;
+    }
+
+    /**
+     * Get the [availableforexternal] column value.
+     *
+     * @return int
+     */
+    public function getavailableForExternal()
+    {
+        return $this->availableforexternal;
+    }
+
+    /**
+     * Get the [address] column value.
+     *
+     * @return string
+     */
+    public function getaddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * Get the [inheriteventtypes] column value.
+     *
+     * @return boolean
+     */
+    public function getinheritEventTypes()
+    {
+        return $this->inheriteventtypes;
+    }
+
+    /**
+     * Get the [inheritactiontypes] column value.
+     *
+     * @return boolean
+     */
+    public function getinheritActionTypes()
+    {
+        return $this->inheritactiontypes;
+    }
+
+    /**
+     * Get the [inheritgaps] column value.
+     *
+     * @return boolean
+     */
+    public function getinheritGaps()
+    {
+        return $this->inheritgaps;
     }
 
     /**
@@ -564,12 +590,22 @@ abstract class BaseClient extends BaseObject implements Persistent
     }
 
     /**
+     * Get the [show] column value.
+     *
+     * @return int
+     */
+    public function getshow()
+    {
+        return $this->show;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setid($v)
+    public function setId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
@@ -577,19 +613,19 @@ abstract class BaseClient extends BaseObject implements Persistent
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[] = ClientPeer::ID;
+            $this->modifiedColumns[] = OrgStructurePeer::ID;
         }
 
 
         return $this;
-    } // setid()
+    } // setId()
 
     /**
      * Sets the value of [createdatetime] column to a normalized version of the date/time value specified.
      *
      * @param mixed $v string, integer (timestamp), or DateTime value.
      *               Empty strings are treated as null.
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
     public function setcreateDatetime($v)
     {
@@ -599,7 +635,7 @@ abstract class BaseClient extends BaseObject implements Persistent
             $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
             if ($currentDateAsString !== $newDateAsString) {
                 $this->createdatetime = $newDateAsString;
-                $this->modifiedColumns[] = ClientPeer::CREATEDATETIME;
+                $this->modifiedColumns[] = OrgStructurePeer::CREATEDATETIME;
             }
         } // if either are not null
 
@@ -611,7 +647,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * Set the value of [createperson_id] column.
      *
      * @param int $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
     public function setcreatePersonId($v)
     {
@@ -621,7 +657,7 @@ abstract class BaseClient extends BaseObject implements Persistent
 
         if ($this->createperson_id !== $v) {
             $this->createperson_id = $v;
-            $this->modifiedColumns[] = ClientPeer::CREATEPERSON_ID;
+            $this->modifiedColumns[] = OrgStructurePeer::CREATEPERSON_ID;
         }
 
 
@@ -633,7 +669,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      *
      * @param mixed $v string, integer (timestamp), or DateTime value.
      *               Empty strings are treated as null.
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
     public function setmodifyDatetime($v)
     {
@@ -643,7 +679,7 @@ abstract class BaseClient extends BaseObject implements Persistent
             $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
             if ($currentDateAsString !== $newDateAsString) {
                 $this->modifydatetime = $newDateAsString;
-                $this->modifiedColumns[] = ClientPeer::MODIFYDATETIME;
+                $this->modifiedColumns[] = OrgStructurePeer::MODIFYDATETIME;
             }
         } // if either are not null
 
@@ -655,7 +691,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * Set the value of [modifyperson_id] column.
      *
      * @param int $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
     public function setmodifyPersonId($v)
     {
@@ -665,7 +701,7 @@ abstract class BaseClient extends BaseObject implements Persistent
 
         if ($this->modifyperson_id !== $v) {
             $this->modifyperson_id = $v;
-            $this->modifiedColumns[] = ClientPeer::MODIFYPERSON_ID;
+            $this->modifiedColumns[] = OrgStructurePeer::MODIFYPERSON_ID;
         }
 
 
@@ -680,7 +716,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      *
      * @param boolean|integer|string $v The new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
     public function setdeleted($v)
     {
@@ -694,7 +730,7 @@ abstract class BaseClient extends BaseObject implements Persistent
 
         if ($this->deleted !== $v) {
             $this->deleted = $v;
-            $this->modifiedColumns[] = ClientPeer::DELETED;
+            $this->modifiedColumns[] = OrgStructurePeer::DELETED;
         }
 
 
@@ -702,308 +738,428 @@ abstract class BaseClient extends BaseObject implements Persistent
     } // setdeleted()
 
     /**
-     * Set the value of [lastname] column.
+     * Set the value of [organisation_id] column.
+     *
+     * @param int $v new value
+     * @return OrgStructure The current object (for fluent API support)
+     */
+    public function setorganisationId($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->organisation_id !== $v) {
+            $this->organisation_id = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::ORGANISATION_ID;
+        }
+
+
+        return $this;
+    } // setorganisationId()
+
+    /**
+     * Set the value of [code] column.
      *
      * @param string $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setlastName($v)
+    public function setcode($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
         }
 
-        if ($this->lastname !== $v) {
-            $this->lastname = $v;
-            $this->modifiedColumns[] = ClientPeer::LASTNAME;
+        if ($this->code !== $v) {
+            $this->code = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::CODE;
         }
 
 
         return $this;
-    } // setlastName()
+    } // setcode()
 
     /**
-     * Set the value of [firstname] column.
+     * Set the value of [name] column.
      *
      * @param string $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setfirstName($v)
+    public function setname($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
         }
 
-        if ($this->firstname !== $v) {
-            $this->firstname = $v;
-            $this->modifiedColumns[] = ClientPeer::FIRSTNAME;
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::NAME;
         }
 
 
         return $this;
-    } // setfirstName()
+    } // setname()
 
     /**
-     * Set the value of [patrname] column.
+     * Set the value of [parent_id] column.
      *
-     * @param string $v new value
-     * @return Client The current object (for fluent API support)
+     * @param int $v new value
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setpatrName($v)
+    public function setparentId($v)
     {
         if ($v !== null && is_numeric($v)) {
-            $v = (string) $v;
+            $v = (int) $v;
         }
 
-        if ($this->patrname !== $v) {
-            $this->patrname = $v;
-            $this->modifiedColumns[] = ClientPeer::PATRNAME;
+        if ($this->parent_id !== $v) {
+            $this->parent_id = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::PARENT_ID;
         }
 
 
         return $this;
-    } // setpatrName()
+    } // setparentId()
 
     /**
-     * Sets the value of [birthdate] column to a normalized version of the date/time value specified.
+     * Set the value of [type] column.
      *
-     * @param mixed $v string, integer (timestamp), or DateTime value.
-     *               Empty strings are treated as null.
-     * @return Client The current object (for fluent API support)
+     * @param int $v new value
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setbirthDate($v)
+    public function settype($v)
     {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->birthdate !== null || $dt !== null) {
-            $currentDateAsString = ($this->birthdate !== null && $tmpDt = new DateTime($this->birthdate)) ? $tmpDt->format('Y-m-d') : null;
-            $newDateAsString = $dt ? $dt->format('Y-m-d') : null;
-            if ($currentDateAsString !== $newDateAsString) {
-                $this->birthdate = $newDateAsString;
-                $this->modifiedColumns[] = ClientPeer::BIRTHDATE;
+        if ($v !== null && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->type !== $v) {
+            $this->type = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::TYPE;
+        }
+
+
+        return $this;
+    } // settype()
+
+    /**
+     * Set the value of [net_id] column.
+     *
+     * @param int $v new value
+     * @return OrgStructure The current object (for fluent API support)
+     */
+    public function setnetId($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->net_id !== $v) {
+            $this->net_id = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::NET_ID;
+        }
+
+
+        return $this;
+    } // setnetId()
+
+    /**
+     * Set the value of [isarea] column.
+     *
+     * @param int $v new value
+     * @return OrgStructure The current object (for fluent API support)
+     */
+    public function setisArea($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->isarea !== $v) {
+            $this->isarea = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::ISAREA;
+        }
+
+
+        return $this;
+    } // setisArea()
+
+    /**
+     * Sets the value of the [hashospitalbeds] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param boolean|integer|string $v The new value
+     * @return OrgStructure The current object (for fluent API support)
+     */
+    public function sethasHospitalBeds($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
             }
-        } // if either are not null
-
-
-        return $this;
-    } // setbirthDate()
-
-    /**
-     * Set the value of [sex] column.
-     *
-     * @param int $v new value
-     * @return Client The current object (for fluent API support)
-     */
-    public function setsex($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
         }
 
-        if ($this->sex !== $v) {
-            $this->sex = $v;
-            $this->modifiedColumns[] = ClientPeer::SEX;
+        if ($this->hashospitalbeds !== $v) {
+            $this->hashospitalbeds = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::HASHOSPITALBEDS;
         }
 
 
         return $this;
-    } // setsex()
+    } // sethasHospitalBeds()
 
     /**
-     * Set the value of [snils] column.
+     * Sets the value of the [hasstocks] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      *
-     * @param string $v new value
-     * @return Client The current object (for fluent API support)
+     * @param boolean|integer|string $v The new value
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setsnils($v)
+    public function sethasStocks($v)
     {
-        if ($v !== null && is_numeric($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->snils !== $v) {
-            $this->snils = $v;
-            $this->modifiedColumns[] = ClientPeer::SNILS;
-        }
-
-
-        return $this;
-    } // setsnils()
-
-    /**
-     * Set the value of [bloodtype_id] column.
-     *
-     * @param int $v new value
-     * @return Client The current object (for fluent API support)
-     */
-    public function setbloodTypeId($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->bloodtype_id !== $v) {
-            $this->bloodtype_id = $v;
-            $this->modifiedColumns[] = ClientPeer::BLOODTYPE_ID;
-        }
-
-
-        return $this;
-    } // setbloodTypeId()
-
-    /**
-     * Sets the value of [blooddate] column to a normalized version of the date/time value specified.
-     *
-     * @param mixed $v string, integer (timestamp), or DateTime value.
-     *               Empty strings are treated as null.
-     * @return Client The current object (for fluent API support)
-     */
-    public function setbloodDate($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->blooddate !== null || $dt !== null) {
-            $currentDateAsString = ($this->blooddate !== null && $tmpDt = new DateTime($this->blooddate)) ? $tmpDt->format('Y-m-d') : null;
-            $newDateAsString = $dt ? $dt->format('Y-m-d') : null;
-            if ($currentDateAsString !== $newDateAsString) {
-                $this->blooddate = $newDateAsString;
-                $this->modifiedColumns[] = ClientPeer::BLOODDATE;
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
             }
-        } // if either are not null
+        }
+
+        if ($this->hasstocks !== $v) {
+            $this->hasstocks = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::HASSTOCKS;
+        }
 
 
         return $this;
-    } // setbloodDate()
+    } // sethasStocks()
 
     /**
-     * Set the value of [bloodnotes] column.
+     * Set the value of [infiscode] column.
      *
      * @param string $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setbloodNotes($v)
+    public function setinfisCode($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
         }
 
-        if ($this->bloodnotes !== $v) {
-            $this->bloodnotes = $v;
-            $this->modifiedColumns[] = ClientPeer::BLOODNOTES;
+        if ($this->infiscode !== $v) {
+            $this->infiscode = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::INFISCODE;
         }
 
 
         return $this;
-    } // setbloodNotes()
+    } // setinfisCode()
 
     /**
-     * Set the value of [growth] column.
+     * Set the value of [infisinternalcode] column.
      *
      * @param string $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setgrowth($v)
+    public function setinfisInternalCode($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
         }
 
-        if ($this->growth !== $v) {
-            $this->growth = $v;
-            $this->modifiedColumns[] = ClientPeer::GROWTH;
+        if ($this->infisinternalcode !== $v) {
+            $this->infisinternalcode = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::INFISINTERNALCODE;
         }
 
 
         return $this;
-    } // setgrowth()
+    } // setinfisInternalCode()
 
     /**
-     * Set the value of [weight] column.
+     * Set the value of [infisdeptypecode] column.
      *
      * @param string $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setweight($v)
+    public function setinfisDepTypeCode($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
         }
 
-        if ($this->weight !== $v) {
-            $this->weight = $v;
-            $this->modifiedColumns[] = ClientPeer::WEIGHT;
+        if ($this->infisdeptypecode !== $v) {
+            $this->infisdeptypecode = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::INFISDEPTYPECODE;
         }
 
 
         return $this;
-    } // setweight()
+    } // setinfisDepTypeCode()
 
     /**
-     * Set the value of [notes] column.
+     * Set the value of [infistariffcode] column.
      *
      * @param string $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setnotes($v)
+    public function setinfisTariffCode($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
         }
 
-        if ($this->notes !== $v) {
-            $this->notes = $v;
-            $this->modifiedColumns[] = ClientPeer::NOTES;
+        if ($this->infistariffcode !== $v) {
+            $this->infistariffcode = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::INFISTARIFFCODE;
         }
 
 
         return $this;
-    } // setnotes()
+    } // setinfisTariffCode()
 
     /**
-     * Set the value of [version] column.
+     * Set the value of [availableforexternal] column.
      *
      * @param int $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setversion($v)
+    public function setavailableForExternal($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->version !== $v) {
-            $this->version = $v;
-            $this->modifiedColumns[] = ClientPeer::VERSION;
+        if ($this->availableforexternal !== $v) {
+            $this->availableforexternal = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::AVAILABLEFOREXTERNAL;
         }
 
 
         return $this;
-    } // setversion()
+    } // setavailableForExternal()
 
     /**
-     * Set the value of [birthplace] column.
+     * Set the value of [address] column.
      *
      * @param string $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
-    public function setbirthPlace($v)
+    public function setaddress($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
         }
 
-        if ($this->birthplace !== $v) {
-            $this->birthplace = $v;
-            $this->modifiedColumns[] = ClientPeer::BIRTHPLACE;
+        if ($this->address !== $v) {
+            $this->address = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::ADDRESS;
         }
 
 
         return $this;
-    } // setbirthPlace()
+    } // setaddress()
+
+    /**
+     * Sets the value of the [inheriteventtypes] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param boolean|integer|string $v The new value
+     * @return OrgStructure The current object (for fluent API support)
+     */
+    public function setinheritEventTypes($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->inheriteventtypes !== $v) {
+            $this->inheriteventtypes = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::INHERITEVENTTYPES;
+        }
+
+
+        return $this;
+    } // setinheritEventTypes()
+
+    /**
+     * Sets the value of the [inheritactiontypes] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param boolean|integer|string $v The new value
+     * @return OrgStructure The current object (for fluent API support)
+     */
+    public function setinheritActionTypes($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->inheritactiontypes !== $v) {
+            $this->inheritactiontypes = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::INHERITACTIONTYPES;
+        }
+
+
+        return $this;
+    } // setinheritActionTypes()
+
+    /**
+     * Sets the value of the [inheritgaps] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param boolean|integer|string $v The new value
+     * @return OrgStructure The current object (for fluent API support)
+     */
+    public function setinheritGaps($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->inheritgaps !== $v) {
+            $this->inheritgaps = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::INHERITGAPS;
+        }
+
+
+        return $this;
+    } // setinheritGaps()
 
     /**
      * Set the value of [uuid_id] column.
      *
      * @param int $v new value
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
     public function setuuidId($v)
     {
@@ -1013,12 +1169,33 @@ abstract class BaseClient extends BaseObject implements Persistent
 
         if ($this->uuid_id !== $v) {
             $this->uuid_id = $v;
-            $this->modifiedColumns[] = ClientPeer::UUID_ID;
+            $this->modifiedColumns[] = OrgStructurePeer::UUID_ID;
         }
 
 
         return $this;
     } // setuuidId()
+
+    /**
+     * Set the value of [show] column.
+     *
+     * @param int $v new value
+     * @return OrgStructure The current object (for fluent API support)
+     */
+    public function setshow($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->show !== $v) {
+            $this->show = $v;
+            $this->modifiedColumns[] = OrgStructurePeer::SHOW;
+        }
+
+
+        return $this;
+    } // setshow()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -1034,11 +1211,43 @@ abstract class BaseClient extends BaseObject implements Persistent
                 return false;
             }
 
-            if ($this->birthplace !== '') {
+            if ($this->type !== 0) {
+                return false;
+            }
+
+            if ($this->isarea !== 0) {
+                return false;
+            }
+
+            if ($this->hashospitalbeds !== false) {
+                return false;
+            }
+
+            if ($this->hasstocks !== false) {
+                return false;
+            }
+
+            if ($this->availableforexternal !== 1) {
+                return false;
+            }
+
+            if ($this->inheriteventtypes !== false) {
+                return false;
+            }
+
+            if ($this->inheritactiontypes !== false) {
+                return false;
+            }
+
+            if ($this->inheritgaps !== false) {
                 return false;
             }
 
             if ($this->uuid_id !== 0) {
+                return false;
+            }
+
+            if ($this->show !== 1) {
                 return false;
             }
 
@@ -1070,21 +1279,26 @@ abstract class BaseClient extends BaseObject implements Persistent
             $this->modifydatetime = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->modifyperson_id = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
             $this->deleted = ($row[$startcol + 5] !== null) ? (boolean) $row[$startcol + 5] : null;
-            $this->lastname = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-            $this->firstname = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-            $this->patrname = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-            $this->birthdate = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-            $this->sex = ($row[$startcol + 10] !== null) ? (int) $row[$startcol + 10] : null;
-            $this->snils = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-            $this->bloodtype_id = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
-            $this->blooddate = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
-            $this->bloodnotes = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
-            $this->growth = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
-            $this->weight = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
-            $this->notes = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
-            $this->version = ($row[$startcol + 18] !== null) ? (int) $row[$startcol + 18] : null;
-            $this->birthplace = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
-            $this->uuid_id = ($row[$startcol + 20] !== null) ? (int) $row[$startcol + 20] : null;
+            $this->organisation_id = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
+            $this->code = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+            $this->name = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+            $this->parent_id = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
+            $this->type = ($row[$startcol + 10] !== null) ? (int) $row[$startcol + 10] : null;
+            $this->net_id = ($row[$startcol + 11] !== null) ? (int) $row[$startcol + 11] : null;
+            $this->isarea = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
+            $this->hashospitalbeds = ($row[$startcol + 13] !== null) ? (boolean) $row[$startcol + 13] : null;
+            $this->hasstocks = ($row[$startcol + 14] !== null) ? (boolean) $row[$startcol + 14] : null;
+            $this->infiscode = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+            $this->infisinternalcode = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+            $this->infisdeptypecode = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+            $this->infistariffcode = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+            $this->availableforexternal = ($row[$startcol + 19] !== null) ? (int) $row[$startcol + 19] : null;
+            $this->address = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+            $this->inheriteventtypes = ($row[$startcol + 21] !== null) ? (boolean) $row[$startcol + 21] : null;
+            $this->inheritactiontypes = ($row[$startcol + 22] !== null) ? (boolean) $row[$startcol + 22] : null;
+            $this->inheritgaps = ($row[$startcol + 23] !== null) ? (boolean) $row[$startcol + 23] : null;
+            $this->uuid_id = ($row[$startcol + 24] !== null) ? (int) $row[$startcol + 24] : null;
+            $this->show = ($row[$startcol + 25] !== null) ? (int) $row[$startcol + 25] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -1093,10 +1307,10 @@ abstract class BaseClient extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 21; // 21 = ClientPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 26; // 26 = OrgStructurePeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating Client object", $e);
+            throw new PropelException("Error populating OrgStructure object", $e);
         }
     }
 
@@ -1139,13 +1353,13 @@ abstract class BaseClient extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ClientPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(OrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $stmt = ClientPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+        $stmt = OrgStructurePeer::doSelectStmt($this->buildPkeyCriteria(), $con);
         $row = $stmt->fetch(PDO::FETCH_NUM);
         $stmt->closeCursor();
         if (!$row) {
@@ -1177,12 +1391,12 @@ abstract class BaseClient extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ClientPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(OrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = ClientQuery::create()
+            $deleteQuery = OrgStructureQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -1220,7 +1434,7 @@ abstract class BaseClient extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ClientPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(OrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
@@ -1230,16 +1444,16 @@ abstract class BaseClient extends BaseObject implements Persistent
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
                 // timestampable behavior
-                if (!$this->isColumnModified(ClientPeer::CREATEDATETIME)) {
+                if (!$this->isColumnModified(OrgStructurePeer::CREATEDATETIME)) {
                     $this->setcreateDatetime(time());
                 }
-                if (!$this->isColumnModified(ClientPeer::MODIFYDATETIME)) {
+                if (!$this->isColumnModified(OrgStructurePeer::MODIFYDATETIME)) {
                     $this->setmodifyDatetime(time());
                 }
             } else {
                 $ret = $ret && $this->preUpdate($con);
                 // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(ClientPeer::MODIFYDATETIME)) {
+                if ($this->isModified() && !$this->isColumnModified(OrgStructurePeer::MODIFYDATETIME)) {
                     $this->setmodifyDatetime(time());
                 }
             }
@@ -1251,7 +1465,7 @@ abstract class BaseClient extends BaseObject implements Persistent
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ClientPeer::addInstanceToPool($this);
+                OrgStructurePeer::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -1330,78 +1544,93 @@ abstract class BaseClient extends BaseObject implements Persistent
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[] = ClientPeer::ID;
+        $this->modifiedColumns[] = OrgStructurePeer::ID;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ClientPeer::ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . OrgStructurePeer::ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ClientPeer::ID)) {
+        if ($this->isColumnModified(OrgStructurePeer::ID)) {
             $modifiedColumns[':p' . $index++]  = '`id`';
         }
-        if ($this->isColumnModified(ClientPeer::CREATEDATETIME)) {
+        if ($this->isColumnModified(OrgStructurePeer::CREATEDATETIME)) {
             $modifiedColumns[':p' . $index++]  = '`createDatetime`';
         }
-        if ($this->isColumnModified(ClientPeer::CREATEPERSON_ID)) {
+        if ($this->isColumnModified(OrgStructurePeer::CREATEPERSON_ID)) {
             $modifiedColumns[':p' . $index++]  = '`createPerson_id`';
         }
-        if ($this->isColumnModified(ClientPeer::MODIFYDATETIME)) {
+        if ($this->isColumnModified(OrgStructurePeer::MODIFYDATETIME)) {
             $modifiedColumns[':p' . $index++]  = '`modifyDatetime`';
         }
-        if ($this->isColumnModified(ClientPeer::MODIFYPERSON_ID)) {
+        if ($this->isColumnModified(OrgStructurePeer::MODIFYPERSON_ID)) {
             $modifiedColumns[':p' . $index++]  = '`modifyPerson_id`';
         }
-        if ($this->isColumnModified(ClientPeer::DELETED)) {
+        if ($this->isColumnModified(OrgStructurePeer::DELETED)) {
             $modifiedColumns[':p' . $index++]  = '`deleted`';
         }
-        if ($this->isColumnModified(ClientPeer::LASTNAME)) {
-            $modifiedColumns[':p' . $index++]  = '`lastName`';
+        if ($this->isColumnModified(OrgStructurePeer::ORGANISATION_ID)) {
+            $modifiedColumns[':p' . $index++]  = '`organisation_id`';
         }
-        if ($this->isColumnModified(ClientPeer::FIRSTNAME)) {
-            $modifiedColumns[':p' . $index++]  = '`firstName`';
+        if ($this->isColumnModified(OrgStructurePeer::CODE)) {
+            $modifiedColumns[':p' . $index++]  = '`code`';
         }
-        if ($this->isColumnModified(ClientPeer::PATRNAME)) {
-            $modifiedColumns[':p' . $index++]  = '`patrName`';
+        if ($this->isColumnModified(OrgStructurePeer::NAME)) {
+            $modifiedColumns[':p' . $index++]  = '`name`';
         }
-        if ($this->isColumnModified(ClientPeer::BIRTHDATE)) {
-            $modifiedColumns[':p' . $index++]  = '`birthDate`';
+        if ($this->isColumnModified(OrgStructurePeer::PARENT_ID)) {
+            $modifiedColumns[':p' . $index++]  = '`parent_id`';
         }
-        if ($this->isColumnModified(ClientPeer::SEX)) {
-            $modifiedColumns[':p' . $index++]  = '`sex`';
+        if ($this->isColumnModified(OrgStructurePeer::TYPE)) {
+            $modifiedColumns[':p' . $index++]  = '`type`';
         }
-        if ($this->isColumnModified(ClientPeer::SNILS)) {
-            $modifiedColumns[':p' . $index++]  = '`SNILS`';
+        if ($this->isColumnModified(OrgStructurePeer::NET_ID)) {
+            $modifiedColumns[':p' . $index++]  = '`net_id`';
         }
-        if ($this->isColumnModified(ClientPeer::BLOODTYPE_ID)) {
-            $modifiedColumns[':p' . $index++]  = '`bloodType_id`';
+        if ($this->isColumnModified(OrgStructurePeer::ISAREA)) {
+            $modifiedColumns[':p' . $index++]  = '`isArea`';
         }
-        if ($this->isColumnModified(ClientPeer::BLOODDATE)) {
-            $modifiedColumns[':p' . $index++]  = '`bloodDate`';
+        if ($this->isColumnModified(OrgStructurePeer::HASHOSPITALBEDS)) {
+            $modifiedColumns[':p' . $index++]  = '`hasHospitalBeds`';
         }
-        if ($this->isColumnModified(ClientPeer::BLOODNOTES)) {
-            $modifiedColumns[':p' . $index++]  = '`bloodNotes`';
+        if ($this->isColumnModified(OrgStructurePeer::HASSTOCKS)) {
+            $modifiedColumns[':p' . $index++]  = '`hasStocks`';
         }
-        if ($this->isColumnModified(ClientPeer::GROWTH)) {
-            $modifiedColumns[':p' . $index++]  = '`growth`';
+        if ($this->isColumnModified(OrgStructurePeer::INFISCODE)) {
+            $modifiedColumns[':p' . $index++]  = '`infisCode`';
         }
-        if ($this->isColumnModified(ClientPeer::WEIGHT)) {
-            $modifiedColumns[':p' . $index++]  = '`weight`';
+        if ($this->isColumnModified(OrgStructurePeer::INFISINTERNALCODE)) {
+            $modifiedColumns[':p' . $index++]  = '`infisInternalCode`';
         }
-        if ($this->isColumnModified(ClientPeer::NOTES)) {
-            $modifiedColumns[':p' . $index++]  = '`notes`';
+        if ($this->isColumnModified(OrgStructurePeer::INFISDEPTYPECODE)) {
+            $modifiedColumns[':p' . $index++]  = '`infisDepTypeCode`';
         }
-        if ($this->isColumnModified(ClientPeer::VERSION)) {
-            $modifiedColumns[':p' . $index++]  = '`version`';
+        if ($this->isColumnModified(OrgStructurePeer::INFISTARIFFCODE)) {
+            $modifiedColumns[':p' . $index++]  = '`infisTariffCode`';
         }
-        if ($this->isColumnModified(ClientPeer::BIRTHPLACE)) {
-            $modifiedColumns[':p' . $index++]  = '`birthPlace`';
+        if ($this->isColumnModified(OrgStructurePeer::AVAILABLEFOREXTERNAL)) {
+            $modifiedColumns[':p' . $index++]  = '`availableForExternal`';
         }
-        if ($this->isColumnModified(ClientPeer::UUID_ID)) {
+        if ($this->isColumnModified(OrgStructurePeer::ADDRESS)) {
+            $modifiedColumns[':p' . $index++]  = '`Address`';
+        }
+        if ($this->isColumnModified(OrgStructurePeer::INHERITEVENTTYPES)) {
+            $modifiedColumns[':p' . $index++]  = '`inheritEventTypes`';
+        }
+        if ($this->isColumnModified(OrgStructurePeer::INHERITACTIONTYPES)) {
+            $modifiedColumns[':p' . $index++]  = '`inheritActionTypes`';
+        }
+        if ($this->isColumnModified(OrgStructurePeer::INHERITGAPS)) {
+            $modifiedColumns[':p' . $index++]  = '`inheritGaps`';
+        }
+        if ($this->isColumnModified(OrgStructurePeer::UUID_ID)) {
             $modifiedColumns[':p' . $index++]  = '`uuid_id`';
+        }
+        if ($this->isColumnModified(OrgStructurePeer::SHOW)) {
+            $modifiedColumns[':p' . $index++]  = '`show`';
         }
 
         $sql = sprintf(
-            'INSERT INTO `Client` (%s) VALUES (%s)',
+            'INSERT INTO `OrgStructure` (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -1428,50 +1657,65 @@ abstract class BaseClient extends BaseObject implements Persistent
                     case '`deleted`':
                         $stmt->bindValue($identifier, (int) $this->deleted, PDO::PARAM_INT);
                         break;
-                    case '`lastName`':
-                        $stmt->bindValue($identifier, $this->lastname, PDO::PARAM_STR);
+                    case '`organisation_id`':
+                        $stmt->bindValue($identifier, $this->organisation_id, PDO::PARAM_INT);
                         break;
-                    case '`firstName`':
-                        $stmt->bindValue($identifier, $this->firstname, PDO::PARAM_STR);
+                    case '`code`':
+                        $stmt->bindValue($identifier, $this->code, PDO::PARAM_STR);
                         break;
-                    case '`patrName`':
-                        $stmt->bindValue($identifier, $this->patrname, PDO::PARAM_STR);
+                    case '`name`':
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case '`birthDate`':
-                        $stmt->bindValue($identifier, $this->birthdate, PDO::PARAM_STR);
+                    case '`parent_id`':
+                        $stmt->bindValue($identifier, $this->parent_id, PDO::PARAM_INT);
                         break;
-                    case '`sex`':
-                        $stmt->bindValue($identifier, $this->sex, PDO::PARAM_INT);
+                    case '`type`':
+                        $stmt->bindValue($identifier, $this->type, PDO::PARAM_INT);
                         break;
-                    case '`SNILS`':
-                        $stmt->bindValue($identifier, $this->snils, PDO::PARAM_STR);
+                    case '`net_id`':
+                        $stmt->bindValue($identifier, $this->net_id, PDO::PARAM_INT);
                         break;
-                    case '`bloodType_id`':
-                        $stmt->bindValue($identifier, $this->bloodtype_id, PDO::PARAM_INT);
+                    case '`isArea`':
+                        $stmt->bindValue($identifier, $this->isarea, PDO::PARAM_INT);
                         break;
-                    case '`bloodDate`':
-                        $stmt->bindValue($identifier, $this->blooddate, PDO::PARAM_STR);
+                    case '`hasHospitalBeds`':
+                        $stmt->bindValue($identifier, (int) $this->hashospitalbeds, PDO::PARAM_INT);
                         break;
-                    case '`bloodNotes`':
-                        $stmt->bindValue($identifier, $this->bloodnotes, PDO::PARAM_STR);
+                    case '`hasStocks`':
+                        $stmt->bindValue($identifier, (int) $this->hasstocks, PDO::PARAM_INT);
                         break;
-                    case '`growth`':
-                        $stmt->bindValue($identifier, $this->growth, PDO::PARAM_STR);
+                    case '`infisCode`':
+                        $stmt->bindValue($identifier, $this->infiscode, PDO::PARAM_STR);
                         break;
-                    case '`weight`':
-                        $stmt->bindValue($identifier, $this->weight, PDO::PARAM_STR);
+                    case '`infisInternalCode`':
+                        $stmt->bindValue($identifier, $this->infisinternalcode, PDO::PARAM_STR);
                         break;
-                    case '`notes`':
-                        $stmt->bindValue($identifier, $this->notes, PDO::PARAM_STR);
+                    case '`infisDepTypeCode`':
+                        $stmt->bindValue($identifier, $this->infisdeptypecode, PDO::PARAM_STR);
                         break;
-                    case '`version`':
-                        $stmt->bindValue($identifier, $this->version, PDO::PARAM_INT);
+                    case '`infisTariffCode`':
+                        $stmt->bindValue($identifier, $this->infistariffcode, PDO::PARAM_STR);
                         break;
-                    case '`birthPlace`':
-                        $stmt->bindValue($identifier, $this->birthplace, PDO::PARAM_STR);
+                    case '`availableForExternal`':
+                        $stmt->bindValue($identifier, $this->availableforexternal, PDO::PARAM_INT);
+                        break;
+                    case '`Address`':
+                        $stmt->bindValue($identifier, $this->address, PDO::PARAM_STR);
+                        break;
+                    case '`inheritEventTypes`':
+                        $stmt->bindValue($identifier, (int) $this->inheriteventtypes, PDO::PARAM_INT);
+                        break;
+                    case '`inheritActionTypes`':
+                        $stmt->bindValue($identifier, (int) $this->inheritactiontypes, PDO::PARAM_INT);
+                        break;
+                    case '`inheritGaps`':
+                        $stmt->bindValue($identifier, (int) $this->inheritgaps, PDO::PARAM_INT);
                         break;
                     case '`uuid_id`':
                         $stmt->bindValue($identifier, $this->uuid_id, PDO::PARAM_INT);
+                        break;
+                    case '`show`':
+                        $stmt->bindValue($identifier, $this->show, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -1486,7 +1730,7 @@ abstract class BaseClient extends BaseObject implements Persistent
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', $e);
         }
-        $this->setid($pk);
+        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -1567,7 +1811,7 @@ abstract class BaseClient extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = ClientPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = OrgStructurePeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -1599,7 +1843,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = ClientPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = OrgStructurePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -1616,7 +1860,7 @@ abstract class BaseClient extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                return $this->getid();
+                return $this->getId();
                 break;
             case 1:
                 return $this->getcreateDatetime();
@@ -1634,49 +1878,64 @@ abstract class BaseClient extends BaseObject implements Persistent
                 return $this->getdeleted();
                 break;
             case 6:
-                return $this->getlastName();
+                return $this->getorganisationId();
                 break;
             case 7:
-                return $this->getfirstName();
+                return $this->getcode();
                 break;
             case 8:
-                return $this->getpatrName();
+                return $this->getname();
                 break;
             case 9:
-                return $this->getbirthDate();
+                return $this->getparentId();
                 break;
             case 10:
-                return $this->getsex();
+                return $this->gettype();
                 break;
             case 11:
-                return $this->getsnils();
+                return $this->getnetId();
                 break;
             case 12:
-                return $this->getbloodTypeId();
+                return $this->getisArea();
                 break;
             case 13:
-                return $this->getbloodDate();
+                return $this->gethasHospitalBeds();
                 break;
             case 14:
-                return $this->getbloodNotes();
+                return $this->gethasStocks();
                 break;
             case 15:
-                return $this->getgrowth();
+                return $this->getinfisCode();
                 break;
             case 16:
-                return $this->getweight();
+                return $this->getinfisInternalCode();
                 break;
             case 17:
-                return $this->getnotes();
+                return $this->getinfisDepTypeCode();
                 break;
             case 18:
-                return $this->getversion();
+                return $this->getinfisTariffCode();
                 break;
             case 19:
-                return $this->getbirthPlace();
+                return $this->getavailableForExternal();
                 break;
             case 20:
+                return $this->getaddress();
+                break;
+            case 21:
+                return $this->getinheritEventTypes();
+                break;
+            case 22:
+                return $this->getinheritActionTypes();
+                break;
+            case 23:
+                return $this->getinheritGaps();
+                break;
+            case 24:
                 return $this->getuuidId();
+                break;
+            case 25:
+                return $this->getshow();
                 break;
             default:
                 return null;
@@ -1701,33 +1960,38 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['Client'][$this->getPrimaryKey()])) {
+        if (isset($alreadyDumpedObjects['OrgStructure'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Client'][$this->getPrimaryKey()] = true;
-        $keys = ClientPeer::getFieldNames($keyType);
+        $alreadyDumpedObjects['OrgStructure'][$this->getPrimaryKey()] = true;
+        $keys = OrgStructurePeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getid(),
+            $keys[0] => $this->getId(),
             $keys[1] => $this->getcreateDatetime(),
             $keys[2] => $this->getcreatePersonId(),
             $keys[3] => $this->getmodifyDatetime(),
             $keys[4] => $this->getmodifyPersonId(),
             $keys[5] => $this->getdeleted(),
-            $keys[6] => $this->getlastName(),
-            $keys[7] => $this->getfirstName(),
-            $keys[8] => $this->getpatrName(),
-            $keys[9] => $this->getbirthDate(),
-            $keys[10] => $this->getsex(),
-            $keys[11] => $this->getsnils(),
-            $keys[12] => $this->getbloodTypeId(),
-            $keys[13] => $this->getbloodDate(),
-            $keys[14] => $this->getbloodNotes(),
-            $keys[15] => $this->getgrowth(),
-            $keys[16] => $this->getweight(),
-            $keys[17] => $this->getnotes(),
-            $keys[18] => $this->getversion(),
-            $keys[19] => $this->getbirthPlace(),
-            $keys[20] => $this->getuuidId(),
+            $keys[6] => $this->getorganisationId(),
+            $keys[7] => $this->getcode(),
+            $keys[8] => $this->getname(),
+            $keys[9] => $this->getparentId(),
+            $keys[10] => $this->gettype(),
+            $keys[11] => $this->getnetId(),
+            $keys[12] => $this->getisArea(),
+            $keys[13] => $this->gethasHospitalBeds(),
+            $keys[14] => $this->gethasStocks(),
+            $keys[15] => $this->getinfisCode(),
+            $keys[16] => $this->getinfisInternalCode(),
+            $keys[17] => $this->getinfisDepTypeCode(),
+            $keys[18] => $this->getinfisTariffCode(),
+            $keys[19] => $this->getavailableForExternal(),
+            $keys[20] => $this->getaddress(),
+            $keys[21] => $this->getinheritEventTypes(),
+            $keys[22] => $this->getinheritActionTypes(),
+            $keys[23] => $this->getinheritGaps(),
+            $keys[24] => $this->getuuidId(),
+            $keys[25] => $this->getshow(),
         );
         if ($includeForeignObjects) {
             if (null !== $this->collEvents) {
@@ -1751,7 +2015,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = ClientPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = OrgStructurePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 
         $this->setByPosition($pos, $value);
     }
@@ -1768,7 +2032,7 @@ abstract class BaseClient extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                $this->setid($value);
+                $this->setId($value);
                 break;
             case 1:
                 $this->setcreateDatetime($value);
@@ -1786,49 +2050,64 @@ abstract class BaseClient extends BaseObject implements Persistent
                 $this->setdeleted($value);
                 break;
             case 6:
-                $this->setlastName($value);
+                $this->setorganisationId($value);
                 break;
             case 7:
-                $this->setfirstName($value);
+                $this->setcode($value);
                 break;
             case 8:
-                $this->setpatrName($value);
+                $this->setname($value);
                 break;
             case 9:
-                $this->setbirthDate($value);
+                $this->setparentId($value);
                 break;
             case 10:
-                $this->setsex($value);
+                $this->settype($value);
                 break;
             case 11:
-                $this->setsnils($value);
+                $this->setnetId($value);
                 break;
             case 12:
-                $this->setbloodTypeId($value);
+                $this->setisArea($value);
                 break;
             case 13:
-                $this->setbloodDate($value);
+                $this->sethasHospitalBeds($value);
                 break;
             case 14:
-                $this->setbloodNotes($value);
+                $this->sethasStocks($value);
                 break;
             case 15:
-                $this->setgrowth($value);
+                $this->setinfisCode($value);
                 break;
             case 16:
-                $this->setweight($value);
+                $this->setinfisInternalCode($value);
                 break;
             case 17:
-                $this->setnotes($value);
+                $this->setinfisDepTypeCode($value);
                 break;
             case 18:
-                $this->setversion($value);
+                $this->setinfisTariffCode($value);
                 break;
             case 19:
-                $this->setbirthPlace($value);
+                $this->setavailableForExternal($value);
                 break;
             case 20:
+                $this->setaddress($value);
+                break;
+            case 21:
+                $this->setinheritEventTypes($value);
+                break;
+            case 22:
+                $this->setinheritActionTypes($value);
+                break;
+            case 23:
+                $this->setinheritGaps($value);
+                break;
+            case 24:
                 $this->setuuidId($value);
+                break;
+            case 25:
+                $this->setshow($value);
                 break;
         } // switch()
     }
@@ -1852,29 +2131,34 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = ClientPeer::getFieldNames($keyType);
+        $keys = OrgStructurePeer::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setid($arr[$keys[0]]);
+        if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setcreateDatetime($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setcreatePersonId($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setmodifyDatetime($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setmodifyPersonId($arr[$keys[4]]);
         if (array_key_exists($keys[5], $arr)) $this->setdeleted($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setlastName($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setfirstName($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setpatrName($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setbirthDate($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setsex($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setsnils($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setbloodTypeId($arr[$keys[12]]);
-        if (array_key_exists($keys[13], $arr)) $this->setbloodDate($arr[$keys[13]]);
-        if (array_key_exists($keys[14], $arr)) $this->setbloodNotes($arr[$keys[14]]);
-        if (array_key_exists($keys[15], $arr)) $this->setgrowth($arr[$keys[15]]);
-        if (array_key_exists($keys[16], $arr)) $this->setweight($arr[$keys[16]]);
-        if (array_key_exists($keys[17], $arr)) $this->setnotes($arr[$keys[17]]);
-        if (array_key_exists($keys[18], $arr)) $this->setversion($arr[$keys[18]]);
-        if (array_key_exists($keys[19], $arr)) $this->setbirthPlace($arr[$keys[19]]);
-        if (array_key_exists($keys[20], $arr)) $this->setuuidId($arr[$keys[20]]);
+        if (array_key_exists($keys[6], $arr)) $this->setorganisationId($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setcode($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setname($arr[$keys[8]]);
+        if (array_key_exists($keys[9], $arr)) $this->setparentId($arr[$keys[9]]);
+        if (array_key_exists($keys[10], $arr)) $this->settype($arr[$keys[10]]);
+        if (array_key_exists($keys[11], $arr)) $this->setnetId($arr[$keys[11]]);
+        if (array_key_exists($keys[12], $arr)) $this->setisArea($arr[$keys[12]]);
+        if (array_key_exists($keys[13], $arr)) $this->sethasHospitalBeds($arr[$keys[13]]);
+        if (array_key_exists($keys[14], $arr)) $this->sethasStocks($arr[$keys[14]]);
+        if (array_key_exists($keys[15], $arr)) $this->setinfisCode($arr[$keys[15]]);
+        if (array_key_exists($keys[16], $arr)) $this->setinfisInternalCode($arr[$keys[16]]);
+        if (array_key_exists($keys[17], $arr)) $this->setinfisDepTypeCode($arr[$keys[17]]);
+        if (array_key_exists($keys[18], $arr)) $this->setinfisTariffCode($arr[$keys[18]]);
+        if (array_key_exists($keys[19], $arr)) $this->setavailableForExternal($arr[$keys[19]]);
+        if (array_key_exists($keys[20], $arr)) $this->setaddress($arr[$keys[20]]);
+        if (array_key_exists($keys[21], $arr)) $this->setinheritEventTypes($arr[$keys[21]]);
+        if (array_key_exists($keys[22], $arr)) $this->setinheritActionTypes($arr[$keys[22]]);
+        if (array_key_exists($keys[23], $arr)) $this->setinheritGaps($arr[$keys[23]]);
+        if (array_key_exists($keys[24], $arr)) $this->setuuidId($arr[$keys[24]]);
+        if (array_key_exists($keys[25], $arr)) $this->setshow($arr[$keys[25]]);
     }
 
     /**
@@ -1884,29 +2168,34 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ClientPeer::DATABASE_NAME);
+        $criteria = new Criteria(OrgStructurePeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(ClientPeer::ID)) $criteria->add(ClientPeer::ID, $this->id);
-        if ($this->isColumnModified(ClientPeer::CREATEDATETIME)) $criteria->add(ClientPeer::CREATEDATETIME, $this->createdatetime);
-        if ($this->isColumnModified(ClientPeer::CREATEPERSON_ID)) $criteria->add(ClientPeer::CREATEPERSON_ID, $this->createperson_id);
-        if ($this->isColumnModified(ClientPeer::MODIFYDATETIME)) $criteria->add(ClientPeer::MODIFYDATETIME, $this->modifydatetime);
-        if ($this->isColumnModified(ClientPeer::MODIFYPERSON_ID)) $criteria->add(ClientPeer::MODIFYPERSON_ID, $this->modifyperson_id);
-        if ($this->isColumnModified(ClientPeer::DELETED)) $criteria->add(ClientPeer::DELETED, $this->deleted);
-        if ($this->isColumnModified(ClientPeer::LASTNAME)) $criteria->add(ClientPeer::LASTNAME, $this->lastname);
-        if ($this->isColumnModified(ClientPeer::FIRSTNAME)) $criteria->add(ClientPeer::FIRSTNAME, $this->firstname);
-        if ($this->isColumnModified(ClientPeer::PATRNAME)) $criteria->add(ClientPeer::PATRNAME, $this->patrname);
-        if ($this->isColumnModified(ClientPeer::BIRTHDATE)) $criteria->add(ClientPeer::BIRTHDATE, $this->birthdate);
-        if ($this->isColumnModified(ClientPeer::SEX)) $criteria->add(ClientPeer::SEX, $this->sex);
-        if ($this->isColumnModified(ClientPeer::SNILS)) $criteria->add(ClientPeer::SNILS, $this->snils);
-        if ($this->isColumnModified(ClientPeer::BLOODTYPE_ID)) $criteria->add(ClientPeer::BLOODTYPE_ID, $this->bloodtype_id);
-        if ($this->isColumnModified(ClientPeer::BLOODDATE)) $criteria->add(ClientPeer::BLOODDATE, $this->blooddate);
-        if ($this->isColumnModified(ClientPeer::BLOODNOTES)) $criteria->add(ClientPeer::BLOODNOTES, $this->bloodnotes);
-        if ($this->isColumnModified(ClientPeer::GROWTH)) $criteria->add(ClientPeer::GROWTH, $this->growth);
-        if ($this->isColumnModified(ClientPeer::WEIGHT)) $criteria->add(ClientPeer::WEIGHT, $this->weight);
-        if ($this->isColumnModified(ClientPeer::NOTES)) $criteria->add(ClientPeer::NOTES, $this->notes);
-        if ($this->isColumnModified(ClientPeer::VERSION)) $criteria->add(ClientPeer::VERSION, $this->version);
-        if ($this->isColumnModified(ClientPeer::BIRTHPLACE)) $criteria->add(ClientPeer::BIRTHPLACE, $this->birthplace);
-        if ($this->isColumnModified(ClientPeer::UUID_ID)) $criteria->add(ClientPeer::UUID_ID, $this->uuid_id);
+        if ($this->isColumnModified(OrgStructurePeer::ID)) $criteria->add(OrgStructurePeer::ID, $this->id);
+        if ($this->isColumnModified(OrgStructurePeer::CREATEDATETIME)) $criteria->add(OrgStructurePeer::CREATEDATETIME, $this->createdatetime);
+        if ($this->isColumnModified(OrgStructurePeer::CREATEPERSON_ID)) $criteria->add(OrgStructurePeer::CREATEPERSON_ID, $this->createperson_id);
+        if ($this->isColumnModified(OrgStructurePeer::MODIFYDATETIME)) $criteria->add(OrgStructurePeer::MODIFYDATETIME, $this->modifydatetime);
+        if ($this->isColumnModified(OrgStructurePeer::MODIFYPERSON_ID)) $criteria->add(OrgStructurePeer::MODIFYPERSON_ID, $this->modifyperson_id);
+        if ($this->isColumnModified(OrgStructurePeer::DELETED)) $criteria->add(OrgStructurePeer::DELETED, $this->deleted);
+        if ($this->isColumnModified(OrgStructurePeer::ORGANISATION_ID)) $criteria->add(OrgStructurePeer::ORGANISATION_ID, $this->organisation_id);
+        if ($this->isColumnModified(OrgStructurePeer::CODE)) $criteria->add(OrgStructurePeer::CODE, $this->code);
+        if ($this->isColumnModified(OrgStructurePeer::NAME)) $criteria->add(OrgStructurePeer::NAME, $this->name);
+        if ($this->isColumnModified(OrgStructurePeer::PARENT_ID)) $criteria->add(OrgStructurePeer::PARENT_ID, $this->parent_id);
+        if ($this->isColumnModified(OrgStructurePeer::TYPE)) $criteria->add(OrgStructurePeer::TYPE, $this->type);
+        if ($this->isColumnModified(OrgStructurePeer::NET_ID)) $criteria->add(OrgStructurePeer::NET_ID, $this->net_id);
+        if ($this->isColumnModified(OrgStructurePeer::ISAREA)) $criteria->add(OrgStructurePeer::ISAREA, $this->isarea);
+        if ($this->isColumnModified(OrgStructurePeer::HASHOSPITALBEDS)) $criteria->add(OrgStructurePeer::HASHOSPITALBEDS, $this->hashospitalbeds);
+        if ($this->isColumnModified(OrgStructurePeer::HASSTOCKS)) $criteria->add(OrgStructurePeer::HASSTOCKS, $this->hasstocks);
+        if ($this->isColumnModified(OrgStructurePeer::INFISCODE)) $criteria->add(OrgStructurePeer::INFISCODE, $this->infiscode);
+        if ($this->isColumnModified(OrgStructurePeer::INFISINTERNALCODE)) $criteria->add(OrgStructurePeer::INFISINTERNALCODE, $this->infisinternalcode);
+        if ($this->isColumnModified(OrgStructurePeer::INFISDEPTYPECODE)) $criteria->add(OrgStructurePeer::INFISDEPTYPECODE, $this->infisdeptypecode);
+        if ($this->isColumnModified(OrgStructurePeer::INFISTARIFFCODE)) $criteria->add(OrgStructurePeer::INFISTARIFFCODE, $this->infistariffcode);
+        if ($this->isColumnModified(OrgStructurePeer::AVAILABLEFOREXTERNAL)) $criteria->add(OrgStructurePeer::AVAILABLEFOREXTERNAL, $this->availableforexternal);
+        if ($this->isColumnModified(OrgStructurePeer::ADDRESS)) $criteria->add(OrgStructurePeer::ADDRESS, $this->address);
+        if ($this->isColumnModified(OrgStructurePeer::INHERITEVENTTYPES)) $criteria->add(OrgStructurePeer::INHERITEVENTTYPES, $this->inheriteventtypes);
+        if ($this->isColumnModified(OrgStructurePeer::INHERITACTIONTYPES)) $criteria->add(OrgStructurePeer::INHERITACTIONTYPES, $this->inheritactiontypes);
+        if ($this->isColumnModified(OrgStructurePeer::INHERITGAPS)) $criteria->add(OrgStructurePeer::INHERITGAPS, $this->inheritgaps);
+        if ($this->isColumnModified(OrgStructurePeer::UUID_ID)) $criteria->add(OrgStructurePeer::UUID_ID, $this->uuid_id);
+        if ($this->isColumnModified(OrgStructurePeer::SHOW)) $criteria->add(OrgStructurePeer::SHOW, $this->show);
 
         return $criteria;
     }
@@ -1921,8 +2210,8 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(ClientPeer::DATABASE_NAME);
-        $criteria->add(ClientPeer::ID, $this->id);
+        $criteria = new Criteria(OrgStructurePeer::DATABASE_NAME);
+        $criteria->add(OrgStructurePeer::ID, $this->id);
 
         return $criteria;
     }
@@ -1933,7 +2222,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getid();
+        return $this->getId();
     }
 
     /**
@@ -1944,7 +2233,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function setPrimaryKey($key)
     {
-        $this->setid($key);
+        $this->setId($key);
     }
 
     /**
@@ -1954,7 +2243,7 @@ abstract class BaseClient extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return null === $this->getid();
+        return null === $this->getId();
     }
 
     /**
@@ -1963,7 +2252,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param object $copyObj An object of Client (or compatible) type.
+     * @param object $copyObj An object of OrgStructure (or compatible) type.
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -1975,21 +2264,26 @@ abstract class BaseClient extends BaseObject implements Persistent
         $copyObj->setmodifyDatetime($this->getmodifyDatetime());
         $copyObj->setmodifyPersonId($this->getmodifyPersonId());
         $copyObj->setdeleted($this->getdeleted());
-        $copyObj->setlastName($this->getlastName());
-        $copyObj->setfirstName($this->getfirstName());
-        $copyObj->setpatrName($this->getpatrName());
-        $copyObj->setbirthDate($this->getbirthDate());
-        $copyObj->setsex($this->getsex());
-        $copyObj->setsnils($this->getsnils());
-        $copyObj->setbloodTypeId($this->getbloodTypeId());
-        $copyObj->setbloodDate($this->getbloodDate());
-        $copyObj->setbloodNotes($this->getbloodNotes());
-        $copyObj->setgrowth($this->getgrowth());
-        $copyObj->setweight($this->getweight());
-        $copyObj->setnotes($this->getnotes());
-        $copyObj->setversion($this->getversion());
-        $copyObj->setbirthPlace($this->getbirthPlace());
+        $copyObj->setorganisationId($this->getorganisationId());
+        $copyObj->setcode($this->getcode());
+        $copyObj->setname($this->getname());
+        $copyObj->setparentId($this->getparentId());
+        $copyObj->settype($this->gettype());
+        $copyObj->setnetId($this->getnetId());
+        $copyObj->setisArea($this->getisArea());
+        $copyObj->sethasHospitalBeds($this->gethasHospitalBeds());
+        $copyObj->sethasStocks($this->gethasStocks());
+        $copyObj->setinfisCode($this->getinfisCode());
+        $copyObj->setinfisInternalCode($this->getinfisInternalCode());
+        $copyObj->setinfisDepTypeCode($this->getinfisDepTypeCode());
+        $copyObj->setinfisTariffCode($this->getinfisTariffCode());
+        $copyObj->setavailableForExternal($this->getavailableForExternal());
+        $copyObj->setaddress($this->getaddress());
+        $copyObj->setinheritEventTypes($this->getinheritEventTypes());
+        $copyObj->setinheritActionTypes($this->getinheritActionTypes());
+        $copyObj->setinheritGaps($this->getinheritGaps());
         $copyObj->setuuidId($this->getuuidId());
+        $copyObj->setshow($this->getshow());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -2010,7 +2304,7 @@ abstract class BaseClient extends BaseObject implements Persistent
 
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setid(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -2023,7 +2317,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * objects.
      *
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return Client Clone of current object.
+     * @return OrgStructure Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -2043,12 +2337,12 @@ abstract class BaseClient extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return ClientPeer
+     * @return OrgStructurePeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new ClientPeer();
+            self::$peer = new OrgStructurePeer();
         }
 
         return self::$peer;
@@ -2076,7 +2370,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      * @see        addEvents()
      */
     public function clearEvents()
@@ -2124,7 +2418,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this Client is new, it will return
+     * If this OrgStructure is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param Criteria $criteria optional Criteria object to narrow the query
@@ -2141,7 +2435,7 @@ abstract class BaseClient extends BaseObject implements Persistent
                 $this->initEvents();
             } else {
                 $collEvents = EventQuery::create(null, $criteria)
-                    ->filterByClient($this)
+                    ->filterByOrgStructure($this)
                     ->find($con);
                 if (null !== $criteria) {
                     if (false !== $this->collEventsPartial && count($collEvents)) {
@@ -2184,7 +2478,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      *
      * @param PropelCollection $events A Propel collection.
      * @param PropelPDO $con Optional connection object
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
     public function setEvents(PropelCollection $events, PropelPDO $con = null)
     {
@@ -2193,7 +2487,7 @@ abstract class BaseClient extends BaseObject implements Persistent
         $this->eventsScheduledForDeletion = unserialize(serialize($eventsToDelete));
 
         foreach ($eventsToDelete as $eventRemoved) {
-            $eventRemoved->setClient(null);
+            $eventRemoved->setOrgStructure(null);
         }
 
         $this->collEvents = null;
@@ -2233,7 +2527,7 @@ abstract class BaseClient extends BaseObject implements Persistent
             }
 
             return $query
-                ->filterByClient($this)
+                ->filterByOrgStructure($this)
                 ->count($con);
         }
 
@@ -2245,7 +2539,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * through the Event foreign key attribute.
      *
      * @param    Event $l Event
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
     public function addEvent(Event $l)
     {
@@ -2266,12 +2560,12 @@ abstract class BaseClient extends BaseObject implements Persistent
     protected function doAddEvent($event)
     {
         $this->collEvents[]= $event;
-        $event->setClient($this);
+        $event->setOrgStructure($this);
     }
 
     /**
      * @param	Event $event The event object to remove.
-     * @return Client The current object (for fluent API support)
+     * @return OrgStructure The current object (for fluent API support)
      */
     public function removeEvent($event)
     {
@@ -2282,7 +2576,7 @@ abstract class BaseClient extends BaseObject implements Persistent
                 $this->eventsScheduledForDeletion->clear();
             }
             $this->eventsScheduledForDeletion[]= $event;
-            $event->setClient(null);
+            $event->setOrgStructure(null);
         }
 
         return $this;
@@ -2292,13 +2586,13 @@ abstract class BaseClient extends BaseObject implements Persistent
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this Client is new, it will return
-     * an empty collection; or if this Client has previously
+     * Otherwise if this OrgStructure is new, it will return
+     * an empty collection; or if this OrgStructure has previously
      * been saved, it will retrieve related Events from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in Client.
+     * actually need in OrgStructure.
      *
      * @param Criteria $criteria optional Criteria object to narrow the query
      * @param PropelPDO $con optional connection object
@@ -2317,13 +2611,38 @@ abstract class BaseClient extends BaseObject implements Persistent
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this Client is new, it will return
-     * an empty collection; or if this Client has previously
+     * Otherwise if this OrgStructure is new, it will return
+     * an empty collection; or if this OrgStructure has previously
      * been saved, it will retrieve related Events from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in Client.
+     * actually need in OrgStructure.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Event[] List of Event objects
+     */
+    public function getEventsJoinClient($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = EventQuery::create(null, $criteria);
+        $query->joinWith('Client', $join_behavior);
+
+        return $this->getEvents($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this OrgStructure is new, it will return
+     * an empty collection; or if this OrgStructure has previously
+     * been saved, it will retrieve related Events from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in OrgStructure.
      *
      * @param Criteria $criteria optional Criteria object to narrow the query
      * @param PropelPDO $con optional connection object
@@ -2342,13 +2661,13 @@ abstract class BaseClient extends BaseObject implements Persistent
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this Client is new, it will return
-     * an empty collection; or if this Client has previously
+     * Otherwise if this OrgStructure is new, it will return
+     * an empty collection; or if this OrgStructure has previously
      * been saved, it will retrieve related Events from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in Client.
+     * actually need in OrgStructure.
      *
      * @param Criteria $criteria optional Criteria object to narrow the query
      * @param PropelPDO $con optional connection object
@@ -2367,13 +2686,13 @@ abstract class BaseClient extends BaseObject implements Persistent
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this Client is new, it will return
-     * an empty collection; or if this Client has previously
+     * Otherwise if this OrgStructure is new, it will return
+     * an empty collection; or if this OrgStructure has previously
      * been saved, it will retrieve related Events from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in Client.
+     * actually need in OrgStructure.
      *
      * @param Criteria $criteria optional Criteria object to narrow the query
      * @param PropelPDO $con optional connection object
@@ -2392,13 +2711,13 @@ abstract class BaseClient extends BaseObject implements Persistent
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this Client is new, it will return
-     * an empty collection; or if this Client has previously
+     * Otherwise if this OrgStructure is new, it will return
+     * an empty collection; or if this OrgStructure has previously
      * been saved, it will retrieve related Events from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in Client.
+     * actually need in OrgStructure.
      *
      * @param Criteria $criteria optional Criteria object to narrow the query
      * @param PropelPDO $con optional connection object
@@ -2409,31 +2728,6 @@ abstract class BaseClient extends BaseObject implements Persistent
     {
         $query = EventQuery::create(null, $criteria);
         $query->joinWith('Doctor', $join_behavior);
-
-        return $this->getEvents($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Client is new, it will return
-     * an empty collection; or if this Client has previously
-     * been saved, it will retrieve related Events from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Client.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Event[] List of Event objects
-     */
-    public function getEventsJoinOrgStructure($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = EventQuery::create(null, $criteria);
-        $query->joinWith('OrgStructure', $join_behavior);
 
         return $this->getEvents($query, $con);
     }
@@ -2449,21 +2743,26 @@ abstract class BaseClient extends BaseObject implements Persistent
         $this->modifydatetime = null;
         $this->modifyperson_id = null;
         $this->deleted = null;
-        $this->lastname = null;
-        $this->firstname = null;
-        $this->patrname = null;
-        $this->birthdate = null;
-        $this->sex = null;
-        $this->snils = null;
-        $this->bloodtype_id = null;
-        $this->blooddate = null;
-        $this->bloodnotes = null;
-        $this->growth = null;
-        $this->weight = null;
-        $this->notes = null;
-        $this->version = null;
-        $this->birthplace = null;
+        $this->organisation_id = null;
+        $this->code = null;
+        $this->name = null;
+        $this->parent_id = null;
+        $this->type = null;
+        $this->net_id = null;
+        $this->isarea = null;
+        $this->hashospitalbeds = null;
+        $this->hasstocks = null;
+        $this->infiscode = null;
+        $this->infisinternalcode = null;
+        $this->infisdeptypecode = null;
+        $this->infistariffcode = null;
+        $this->availableforexternal = null;
+        $this->address = null;
+        $this->inheriteventtypes = null;
+        $this->inheritactiontypes = null;
+        $this->inheritgaps = null;
         $this->uuid_id = null;
+        $this->show = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
@@ -2509,7 +2808,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ClientPeer::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(OrgStructurePeer::DEFAULT_STRING_FORMAT);
     }
 
     /**
@@ -2527,11 +2826,11 @@ abstract class BaseClient extends BaseObject implements Persistent
     /**
      * Mark the current object so that the update date doesn't get updated during next save
      *
-     * @return     Client The current object (for fluent API support)
+     * @return     OrgStructure The current object (for fluent API support)
      */
     public function keepUpdateDateUnchanged()
     {
-        $this->modifiedColumns[] = ClientPeer::MODIFYDATETIME;
+        $this->modifiedColumns[] = OrgStructurePeer::MODIFYDATETIME;
 
         return $this;
     }

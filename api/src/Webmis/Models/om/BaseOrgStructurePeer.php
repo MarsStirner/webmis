@@ -9,112 +9,127 @@ use \PDOStatement;
 use \Propel;
 use \PropelException;
 use \PropelPDO;
-use Webmis\Models\Client;
-use Webmis\Models\ClientPeer;
-use Webmis\Models\map\ClientTableMap;
+use Webmis\Models\OrgStructure;
+use Webmis\Models\OrgStructurePeer;
+use Webmis\Models\map\OrgStructureTableMap;
 
 /**
- * Base static class for performing query and update operations on the 'Client' table.
+ * Base static class for performing query and update operations on the 'OrgStructure' table.
  *
  *
  *
  * @package propel.generator.Models.om
  */
-abstract class BaseClientPeer
+abstract class BaseOrgStructurePeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'Webmis-API';
 
     /** the table name for this class */
-    const TABLE_NAME = 'Client';
+    const TABLE_NAME = 'OrgStructure';
 
     /** the related Propel class for this table */
-    const OM_CLASS = 'Webmis\\Models\\Client';
+    const OM_CLASS = 'Webmis\\Models\\OrgStructure';
 
     /** the related TableMap class for this table */
-    const TM_CLASS = 'ClientTableMap';
+    const TM_CLASS = 'OrgStructureTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 21;
+    const NUM_COLUMNS = 26;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 21;
+    const NUM_HYDRATE_COLUMNS = 26;
 
     /** the column name for the id field */
-    const ID = 'Client.id';
+    const ID = 'OrgStructure.id';
 
     /** the column name for the createDatetime field */
-    const CREATEDATETIME = 'Client.createDatetime';
+    const CREATEDATETIME = 'OrgStructure.createDatetime';
 
     /** the column name for the createPerson_id field */
-    const CREATEPERSON_ID = 'Client.createPerson_id';
+    const CREATEPERSON_ID = 'OrgStructure.createPerson_id';
 
     /** the column name for the modifyDatetime field */
-    const MODIFYDATETIME = 'Client.modifyDatetime';
+    const MODIFYDATETIME = 'OrgStructure.modifyDatetime';
 
     /** the column name for the modifyPerson_id field */
-    const MODIFYPERSON_ID = 'Client.modifyPerson_id';
+    const MODIFYPERSON_ID = 'OrgStructure.modifyPerson_id';
 
     /** the column name for the deleted field */
-    const DELETED = 'Client.deleted';
+    const DELETED = 'OrgStructure.deleted';
 
-    /** the column name for the lastName field */
-    const LASTNAME = 'Client.lastName';
+    /** the column name for the organisation_id field */
+    const ORGANISATION_ID = 'OrgStructure.organisation_id';
 
-    /** the column name for the firstName field */
-    const FIRSTNAME = 'Client.firstName';
+    /** the column name for the code field */
+    const CODE = 'OrgStructure.code';
 
-    /** the column name for the patrName field */
-    const PATRNAME = 'Client.patrName';
+    /** the column name for the name field */
+    const NAME = 'OrgStructure.name';
 
-    /** the column name for the birthDate field */
-    const BIRTHDATE = 'Client.birthDate';
+    /** the column name for the parent_id field */
+    const PARENT_ID = 'OrgStructure.parent_id';
 
-    /** the column name for the sex field */
-    const SEX = 'Client.sex';
+    /** the column name for the type field */
+    const TYPE = 'OrgStructure.type';
 
-    /** the column name for the SNILS field */
-    const SNILS = 'Client.SNILS';
+    /** the column name for the net_id field */
+    const NET_ID = 'OrgStructure.net_id';
 
-    /** the column name for the bloodType_id field */
-    const BLOODTYPE_ID = 'Client.bloodType_id';
+    /** the column name for the isArea field */
+    const ISAREA = 'OrgStructure.isArea';
 
-    /** the column name for the bloodDate field */
-    const BLOODDATE = 'Client.bloodDate';
+    /** the column name for the hasHospitalBeds field */
+    const HASHOSPITALBEDS = 'OrgStructure.hasHospitalBeds';
 
-    /** the column name for the bloodNotes field */
-    const BLOODNOTES = 'Client.bloodNotes';
+    /** the column name for the hasStocks field */
+    const HASSTOCKS = 'OrgStructure.hasStocks';
 
-    /** the column name for the growth field */
-    const GROWTH = 'Client.growth';
+    /** the column name for the infisCode field */
+    const INFISCODE = 'OrgStructure.infisCode';
 
-    /** the column name for the weight field */
-    const WEIGHT = 'Client.weight';
+    /** the column name for the infisInternalCode field */
+    const INFISINTERNALCODE = 'OrgStructure.infisInternalCode';
 
-    /** the column name for the notes field */
-    const NOTES = 'Client.notes';
+    /** the column name for the infisDepTypeCode field */
+    const INFISDEPTYPECODE = 'OrgStructure.infisDepTypeCode';
 
-    /** the column name for the version field */
-    const VERSION = 'Client.version';
+    /** the column name for the infisTariffCode field */
+    const INFISTARIFFCODE = 'OrgStructure.infisTariffCode';
 
-    /** the column name for the birthPlace field */
-    const BIRTHPLACE = 'Client.birthPlace';
+    /** the column name for the availableForExternal field */
+    const AVAILABLEFOREXTERNAL = 'OrgStructure.availableForExternal';
+
+    /** the column name for the Address field */
+    const ADDRESS = 'OrgStructure.Address';
+
+    /** the column name for the inheritEventTypes field */
+    const INHERITEVENTTYPES = 'OrgStructure.inheritEventTypes';
+
+    /** the column name for the inheritActionTypes field */
+    const INHERITACTIONTYPES = 'OrgStructure.inheritActionTypes';
+
+    /** the column name for the inheritGaps field */
+    const INHERITGAPS = 'OrgStructure.inheritGaps';
 
     /** the column name for the uuid_id field */
-    const UUID_ID = 'Client.uuid_id';
+    const UUID_ID = 'OrgStructure.uuid_id';
+
+    /** the column name for the show field */
+    const SHOW = 'OrgStructure.show';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
     /**
-     * An identiy map to hold any loaded instances of Client objects.
+     * An identiy map to hold any loaded instances of OrgStructure objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
-     * @var        array Client[]
+     * @var        array OrgStructure[]
      */
     public static $instances = array();
 
@@ -123,30 +138,30 @@ abstract class BaseClientPeer
      * holds an array of fieldnames
      *
      * first dimension keys are the type constants
-     * e.g. ClientPeer::$fieldNames[ClientPeer::TYPE_PHPNAME][0] = 'Id'
+     * e.g. OrgStructurePeer::$fieldNames[OrgStructurePeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('id', 'createDatetime', 'createPersonId', 'modifyDatetime', 'modifyPersonId', 'deleted', 'lastName', 'firstName', 'patrName', 'birthDate', 'sex', 'snils', 'bloodTypeId', 'bloodDate', 'bloodNotes', 'growth', 'weight', 'notes', 'version', 'birthPlace', 'uuidId', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'createDatetime', 'createPersonId', 'modifyDatetime', 'modifyPersonId', 'deleted', 'lastName', 'firstName', 'patrName', 'birthDate', 'sex', 'snils', 'bloodTypeId', 'bloodDate', 'bloodNotes', 'growth', 'weight', 'notes', 'version', 'birthPlace', 'uuidId', ),
-        BasePeer::TYPE_COLNAME => array (ClientPeer::ID, ClientPeer::CREATEDATETIME, ClientPeer::CREATEPERSON_ID, ClientPeer::MODIFYDATETIME, ClientPeer::MODIFYPERSON_ID, ClientPeer::DELETED, ClientPeer::LASTNAME, ClientPeer::FIRSTNAME, ClientPeer::PATRNAME, ClientPeer::BIRTHDATE, ClientPeer::SEX, ClientPeer::SNILS, ClientPeer::BLOODTYPE_ID, ClientPeer::BLOODDATE, ClientPeer::BLOODNOTES, ClientPeer::GROWTH, ClientPeer::WEIGHT, ClientPeer::NOTES, ClientPeer::VERSION, ClientPeer::BIRTHPLACE, ClientPeer::UUID_ID, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'CREATEDATETIME', 'CREATEPERSON_ID', 'MODIFYDATETIME', 'MODIFYPERSON_ID', 'DELETED', 'LASTNAME', 'FIRSTNAME', 'PATRNAME', 'BIRTHDATE', 'SEX', 'SNILS', 'BLOODTYPE_ID', 'BLOODDATE', 'BLOODNOTES', 'GROWTH', 'WEIGHT', 'NOTES', 'VERSION', 'BIRTHPLACE', 'UUID_ID', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'createDatetime', 'createPerson_id', 'modifyDatetime', 'modifyPerson_id', 'deleted', 'lastName', 'firstName', 'patrName', 'birthDate', 'sex', 'SNILS', 'bloodType_id', 'bloodDate', 'bloodNotes', 'growth', 'weight', 'notes', 'version', 'birthPlace', 'uuid_id', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'createDatetime', 'createPersonId', 'modifyDatetime', 'modifyPersonId', 'deleted', 'organisationId', 'code', 'name', 'parentId', 'type', 'netId', 'isArea', 'hasHospitalBeds', 'hasStocks', 'infisCode', 'infisInternalCode', 'infisDepTypeCode', 'infisTariffCode', 'availableForExternal', 'address', 'inheritEventTypes', 'inheritActionTypes', 'inheritGaps', 'uuidId', 'show', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'createDatetime', 'createPersonId', 'modifyDatetime', 'modifyPersonId', 'deleted', 'organisationId', 'code', 'name', 'parentId', 'type', 'netId', 'isArea', 'hasHospitalBeds', 'hasStocks', 'infisCode', 'infisInternalCode', 'infisDepTypeCode', 'infisTariffCode', 'availableForExternal', 'address', 'inheritEventTypes', 'inheritActionTypes', 'inheritGaps', 'uuidId', 'show', ),
+        BasePeer::TYPE_COLNAME => array (OrgStructurePeer::ID, OrgStructurePeer::CREATEDATETIME, OrgStructurePeer::CREATEPERSON_ID, OrgStructurePeer::MODIFYDATETIME, OrgStructurePeer::MODIFYPERSON_ID, OrgStructurePeer::DELETED, OrgStructurePeer::ORGANISATION_ID, OrgStructurePeer::CODE, OrgStructurePeer::NAME, OrgStructurePeer::PARENT_ID, OrgStructurePeer::TYPE, OrgStructurePeer::NET_ID, OrgStructurePeer::ISAREA, OrgStructurePeer::HASHOSPITALBEDS, OrgStructurePeer::HASSTOCKS, OrgStructurePeer::INFISCODE, OrgStructurePeer::INFISINTERNALCODE, OrgStructurePeer::INFISDEPTYPECODE, OrgStructurePeer::INFISTARIFFCODE, OrgStructurePeer::AVAILABLEFOREXTERNAL, OrgStructurePeer::ADDRESS, OrgStructurePeer::INHERITEVENTTYPES, OrgStructurePeer::INHERITACTIONTYPES, OrgStructurePeer::INHERITGAPS, OrgStructurePeer::UUID_ID, OrgStructurePeer::SHOW, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'CREATEDATETIME', 'CREATEPERSON_ID', 'MODIFYDATETIME', 'MODIFYPERSON_ID', 'DELETED', 'ORGANISATION_ID', 'CODE', 'NAME', 'PARENT_ID', 'TYPE', 'NET_ID', 'ISAREA', 'HASHOSPITALBEDS', 'HASSTOCKS', 'INFISCODE', 'INFISINTERNALCODE', 'INFISDEPTYPECODE', 'INFISTARIFFCODE', 'AVAILABLEFOREXTERNAL', 'ADDRESS', 'INHERITEVENTTYPES', 'INHERITACTIONTYPES', 'INHERITGAPS', 'UUID_ID', 'SHOW', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'createDatetime', 'createPerson_id', 'modifyDatetime', 'modifyPerson_id', 'deleted', 'organisation_id', 'code', 'name', 'parent_id', 'type', 'net_id', 'isArea', 'hasHospitalBeds', 'hasStocks', 'infisCode', 'infisInternalCode', 'infisDepTypeCode', 'infisTariffCode', 'availableForExternal', 'Address', 'inheritEventTypes', 'inheritActionTypes', 'inheritGaps', 'uuid_id', 'show', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, )
     );
 
     /**
      * holds an array of keys for quick access to the fieldnames array
      *
      * first dimension keys are the type constants
-     * e.g. ClientPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
+     * e.g. OrgStructurePeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('id' => 0, 'createDatetime' => 1, 'createPersonId' => 2, 'modifyDatetime' => 3, 'modifyPersonId' => 4, 'deleted' => 5, 'lastName' => 6, 'firstName' => 7, 'patrName' => 8, 'birthDate' => 9, 'sex' => 10, 'snils' => 11, 'bloodTypeId' => 12, 'bloodDate' => 13, 'bloodNotes' => 14, 'growth' => 15, 'weight' => 16, 'notes' => 17, 'version' => 18, 'birthPlace' => 19, 'uuidId' => 20, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'createDatetime' => 1, 'createPersonId' => 2, 'modifyDatetime' => 3, 'modifyPersonId' => 4, 'deleted' => 5, 'lastName' => 6, 'firstName' => 7, 'patrName' => 8, 'birthDate' => 9, 'sex' => 10, 'snils' => 11, 'bloodTypeId' => 12, 'bloodDate' => 13, 'bloodNotes' => 14, 'growth' => 15, 'weight' => 16, 'notes' => 17, 'version' => 18, 'birthPlace' => 19, 'uuidId' => 20, ),
-        BasePeer::TYPE_COLNAME => array (ClientPeer::ID => 0, ClientPeer::CREATEDATETIME => 1, ClientPeer::CREATEPERSON_ID => 2, ClientPeer::MODIFYDATETIME => 3, ClientPeer::MODIFYPERSON_ID => 4, ClientPeer::DELETED => 5, ClientPeer::LASTNAME => 6, ClientPeer::FIRSTNAME => 7, ClientPeer::PATRNAME => 8, ClientPeer::BIRTHDATE => 9, ClientPeer::SEX => 10, ClientPeer::SNILS => 11, ClientPeer::BLOODTYPE_ID => 12, ClientPeer::BLOODDATE => 13, ClientPeer::BLOODNOTES => 14, ClientPeer::GROWTH => 15, ClientPeer::WEIGHT => 16, ClientPeer::NOTES => 17, ClientPeer::VERSION => 18, ClientPeer::BIRTHPLACE => 19, ClientPeer::UUID_ID => 20, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'CREATEDATETIME' => 1, 'CREATEPERSON_ID' => 2, 'MODIFYDATETIME' => 3, 'MODIFYPERSON_ID' => 4, 'DELETED' => 5, 'LASTNAME' => 6, 'FIRSTNAME' => 7, 'PATRNAME' => 8, 'BIRTHDATE' => 9, 'SEX' => 10, 'SNILS' => 11, 'BLOODTYPE_ID' => 12, 'BLOODDATE' => 13, 'BLOODNOTES' => 14, 'GROWTH' => 15, 'WEIGHT' => 16, 'NOTES' => 17, 'VERSION' => 18, 'BIRTHPLACE' => 19, 'UUID_ID' => 20, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'createDatetime' => 1, 'createPerson_id' => 2, 'modifyDatetime' => 3, 'modifyPerson_id' => 4, 'deleted' => 5, 'lastName' => 6, 'firstName' => 7, 'patrName' => 8, 'birthDate' => 9, 'sex' => 10, 'SNILS' => 11, 'bloodType_id' => 12, 'bloodDate' => 13, 'bloodNotes' => 14, 'growth' => 15, 'weight' => 16, 'notes' => 17, 'version' => 18, 'birthPlace' => 19, 'uuid_id' => 20, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'createDatetime' => 1, 'createPersonId' => 2, 'modifyDatetime' => 3, 'modifyPersonId' => 4, 'deleted' => 5, 'organisationId' => 6, 'code' => 7, 'name' => 8, 'parentId' => 9, 'type' => 10, 'netId' => 11, 'isArea' => 12, 'hasHospitalBeds' => 13, 'hasStocks' => 14, 'infisCode' => 15, 'infisInternalCode' => 16, 'infisDepTypeCode' => 17, 'infisTariffCode' => 18, 'availableForExternal' => 19, 'address' => 20, 'inheritEventTypes' => 21, 'inheritActionTypes' => 22, 'inheritGaps' => 23, 'uuidId' => 24, 'show' => 25, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'createDatetime' => 1, 'createPersonId' => 2, 'modifyDatetime' => 3, 'modifyPersonId' => 4, 'deleted' => 5, 'organisationId' => 6, 'code' => 7, 'name' => 8, 'parentId' => 9, 'type' => 10, 'netId' => 11, 'isArea' => 12, 'hasHospitalBeds' => 13, 'hasStocks' => 14, 'infisCode' => 15, 'infisInternalCode' => 16, 'infisDepTypeCode' => 17, 'infisTariffCode' => 18, 'availableForExternal' => 19, 'address' => 20, 'inheritEventTypes' => 21, 'inheritActionTypes' => 22, 'inheritGaps' => 23, 'uuidId' => 24, 'show' => 25, ),
+        BasePeer::TYPE_COLNAME => array (OrgStructurePeer::ID => 0, OrgStructurePeer::CREATEDATETIME => 1, OrgStructurePeer::CREATEPERSON_ID => 2, OrgStructurePeer::MODIFYDATETIME => 3, OrgStructurePeer::MODIFYPERSON_ID => 4, OrgStructurePeer::DELETED => 5, OrgStructurePeer::ORGANISATION_ID => 6, OrgStructurePeer::CODE => 7, OrgStructurePeer::NAME => 8, OrgStructurePeer::PARENT_ID => 9, OrgStructurePeer::TYPE => 10, OrgStructurePeer::NET_ID => 11, OrgStructurePeer::ISAREA => 12, OrgStructurePeer::HASHOSPITALBEDS => 13, OrgStructurePeer::HASSTOCKS => 14, OrgStructurePeer::INFISCODE => 15, OrgStructurePeer::INFISINTERNALCODE => 16, OrgStructurePeer::INFISDEPTYPECODE => 17, OrgStructurePeer::INFISTARIFFCODE => 18, OrgStructurePeer::AVAILABLEFOREXTERNAL => 19, OrgStructurePeer::ADDRESS => 20, OrgStructurePeer::INHERITEVENTTYPES => 21, OrgStructurePeer::INHERITACTIONTYPES => 22, OrgStructurePeer::INHERITGAPS => 23, OrgStructurePeer::UUID_ID => 24, OrgStructurePeer::SHOW => 25, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'CREATEDATETIME' => 1, 'CREATEPERSON_ID' => 2, 'MODIFYDATETIME' => 3, 'MODIFYPERSON_ID' => 4, 'DELETED' => 5, 'ORGANISATION_ID' => 6, 'CODE' => 7, 'NAME' => 8, 'PARENT_ID' => 9, 'TYPE' => 10, 'NET_ID' => 11, 'ISAREA' => 12, 'HASHOSPITALBEDS' => 13, 'HASSTOCKS' => 14, 'INFISCODE' => 15, 'INFISINTERNALCODE' => 16, 'INFISDEPTYPECODE' => 17, 'INFISTARIFFCODE' => 18, 'AVAILABLEFOREXTERNAL' => 19, 'ADDRESS' => 20, 'INHERITEVENTTYPES' => 21, 'INHERITACTIONTYPES' => 22, 'INHERITGAPS' => 23, 'UUID_ID' => 24, 'SHOW' => 25, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'createDatetime' => 1, 'createPerson_id' => 2, 'modifyDatetime' => 3, 'modifyPerson_id' => 4, 'deleted' => 5, 'organisation_id' => 6, 'code' => 7, 'name' => 8, 'parent_id' => 9, 'type' => 10, 'net_id' => 11, 'isArea' => 12, 'hasHospitalBeds' => 13, 'hasStocks' => 14, 'infisCode' => 15, 'infisInternalCode' => 16, 'infisDepTypeCode' => 17, 'infisTariffCode' => 18, 'availableForExternal' => 19, 'Address' => 20, 'inheritEventTypes' => 21, 'inheritActionTypes' => 22, 'inheritGaps' => 23, 'uuid_id' => 24, 'show' => 25, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, )
     );
 
     /**
@@ -161,10 +176,10 @@ abstract class BaseClientPeer
      */
     public static function translateFieldName($name, $fromType, $toType)
     {
-        $toNames = ClientPeer::getFieldNames($toType);
-        $key = isset(ClientPeer::$fieldKeys[$fromType][$name]) ? ClientPeer::$fieldKeys[$fromType][$name] : null;
+        $toNames = OrgStructurePeer::getFieldNames($toType);
+        $key = isset(OrgStructurePeer::$fieldKeys[$fromType][$name]) ? OrgStructurePeer::$fieldKeys[$fromType][$name] : null;
         if ($key === null) {
-            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(ClientPeer::$fieldKeys[$fromType], true));
+            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(OrgStructurePeer::$fieldKeys[$fromType], true));
         }
 
         return $toNames[$key];
@@ -181,11 +196,11 @@ abstract class BaseClientPeer
      */
     public static function getFieldNames($type = BasePeer::TYPE_PHPNAME)
     {
-        if (!array_key_exists($type, ClientPeer::$fieldNames)) {
+        if (!array_key_exists($type, OrgStructurePeer::$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
         }
 
-        return ClientPeer::$fieldNames[$type];
+        return OrgStructurePeer::$fieldNames[$type];
     }
 
     /**
@@ -197,12 +212,12 @@ abstract class BaseClientPeer
      *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. ClientPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. OrgStructurePeer::COLUMN_NAME).
      * @return string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(ClientPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(OrgStructurePeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -220,27 +235,32 @@ abstract class BaseClientPeer
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ClientPeer::ID);
-            $criteria->addSelectColumn(ClientPeer::CREATEDATETIME);
-            $criteria->addSelectColumn(ClientPeer::CREATEPERSON_ID);
-            $criteria->addSelectColumn(ClientPeer::MODIFYDATETIME);
-            $criteria->addSelectColumn(ClientPeer::MODIFYPERSON_ID);
-            $criteria->addSelectColumn(ClientPeer::DELETED);
-            $criteria->addSelectColumn(ClientPeer::LASTNAME);
-            $criteria->addSelectColumn(ClientPeer::FIRSTNAME);
-            $criteria->addSelectColumn(ClientPeer::PATRNAME);
-            $criteria->addSelectColumn(ClientPeer::BIRTHDATE);
-            $criteria->addSelectColumn(ClientPeer::SEX);
-            $criteria->addSelectColumn(ClientPeer::SNILS);
-            $criteria->addSelectColumn(ClientPeer::BLOODTYPE_ID);
-            $criteria->addSelectColumn(ClientPeer::BLOODDATE);
-            $criteria->addSelectColumn(ClientPeer::BLOODNOTES);
-            $criteria->addSelectColumn(ClientPeer::GROWTH);
-            $criteria->addSelectColumn(ClientPeer::WEIGHT);
-            $criteria->addSelectColumn(ClientPeer::NOTES);
-            $criteria->addSelectColumn(ClientPeer::VERSION);
-            $criteria->addSelectColumn(ClientPeer::BIRTHPLACE);
-            $criteria->addSelectColumn(ClientPeer::UUID_ID);
+            $criteria->addSelectColumn(OrgStructurePeer::ID);
+            $criteria->addSelectColumn(OrgStructurePeer::CREATEDATETIME);
+            $criteria->addSelectColumn(OrgStructurePeer::CREATEPERSON_ID);
+            $criteria->addSelectColumn(OrgStructurePeer::MODIFYDATETIME);
+            $criteria->addSelectColumn(OrgStructurePeer::MODIFYPERSON_ID);
+            $criteria->addSelectColumn(OrgStructurePeer::DELETED);
+            $criteria->addSelectColumn(OrgStructurePeer::ORGANISATION_ID);
+            $criteria->addSelectColumn(OrgStructurePeer::CODE);
+            $criteria->addSelectColumn(OrgStructurePeer::NAME);
+            $criteria->addSelectColumn(OrgStructurePeer::PARENT_ID);
+            $criteria->addSelectColumn(OrgStructurePeer::TYPE);
+            $criteria->addSelectColumn(OrgStructurePeer::NET_ID);
+            $criteria->addSelectColumn(OrgStructurePeer::ISAREA);
+            $criteria->addSelectColumn(OrgStructurePeer::HASHOSPITALBEDS);
+            $criteria->addSelectColumn(OrgStructurePeer::HASSTOCKS);
+            $criteria->addSelectColumn(OrgStructurePeer::INFISCODE);
+            $criteria->addSelectColumn(OrgStructurePeer::INFISINTERNALCODE);
+            $criteria->addSelectColumn(OrgStructurePeer::INFISDEPTYPECODE);
+            $criteria->addSelectColumn(OrgStructurePeer::INFISTARIFFCODE);
+            $criteria->addSelectColumn(OrgStructurePeer::AVAILABLEFOREXTERNAL);
+            $criteria->addSelectColumn(OrgStructurePeer::ADDRESS);
+            $criteria->addSelectColumn(OrgStructurePeer::INHERITEVENTTYPES);
+            $criteria->addSelectColumn(OrgStructurePeer::INHERITACTIONTYPES);
+            $criteria->addSelectColumn(OrgStructurePeer::INHERITGAPS);
+            $criteria->addSelectColumn(OrgStructurePeer::UUID_ID);
+            $criteria->addSelectColumn(OrgStructurePeer::SHOW);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.createDatetime');
@@ -248,21 +268,26 @@ abstract class BaseClientPeer
             $criteria->addSelectColumn($alias . '.modifyDatetime');
             $criteria->addSelectColumn($alias . '.modifyPerson_id');
             $criteria->addSelectColumn($alias . '.deleted');
-            $criteria->addSelectColumn($alias . '.lastName');
-            $criteria->addSelectColumn($alias . '.firstName');
-            $criteria->addSelectColumn($alias . '.patrName');
-            $criteria->addSelectColumn($alias . '.birthDate');
-            $criteria->addSelectColumn($alias . '.sex');
-            $criteria->addSelectColumn($alias . '.SNILS');
-            $criteria->addSelectColumn($alias . '.bloodType_id');
-            $criteria->addSelectColumn($alias . '.bloodDate');
-            $criteria->addSelectColumn($alias . '.bloodNotes');
-            $criteria->addSelectColumn($alias . '.growth');
-            $criteria->addSelectColumn($alias . '.weight');
-            $criteria->addSelectColumn($alias . '.notes');
-            $criteria->addSelectColumn($alias . '.version');
-            $criteria->addSelectColumn($alias . '.birthPlace');
+            $criteria->addSelectColumn($alias . '.organisation_id');
+            $criteria->addSelectColumn($alias . '.code');
+            $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.parent_id');
+            $criteria->addSelectColumn($alias . '.type');
+            $criteria->addSelectColumn($alias . '.net_id');
+            $criteria->addSelectColumn($alias . '.isArea');
+            $criteria->addSelectColumn($alias . '.hasHospitalBeds');
+            $criteria->addSelectColumn($alias . '.hasStocks');
+            $criteria->addSelectColumn($alias . '.infisCode');
+            $criteria->addSelectColumn($alias . '.infisInternalCode');
+            $criteria->addSelectColumn($alias . '.infisDepTypeCode');
+            $criteria->addSelectColumn($alias . '.infisTariffCode');
+            $criteria->addSelectColumn($alias . '.availableForExternal');
+            $criteria->addSelectColumn($alias . '.Address');
+            $criteria->addSelectColumn($alias . '.inheritEventTypes');
+            $criteria->addSelectColumn($alias . '.inheritActionTypes');
+            $criteria->addSelectColumn($alias . '.inheritGaps');
             $criteria->addSelectColumn($alias . '.uuid_id');
+            $criteria->addSelectColumn($alias . '.show');
         }
     }
 
@@ -282,21 +307,21 @@ abstract class BaseClientPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ClientPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(OrgStructurePeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            ClientPeer::addSelectColumns($criteria);
+            OrgStructurePeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-        $criteria->setDbName(ClientPeer::DATABASE_NAME); // Set the correct dbName
+        $criteria->setDbName(OrgStructurePeer::DATABASE_NAME); // Set the correct dbName
 
         if ($con === null) {
-            $con = Propel::getConnection(ClientPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(OrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
         // BasePeer returns a PDOStatement
         $stmt = BasePeer::doCount($criteria, $con);
@@ -315,7 +340,7 @@ abstract class BaseClientPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      PropelPDO $con
-     * @return                 Client
+     * @return                 OrgStructure
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -323,7 +348,7 @@ abstract class BaseClientPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = ClientPeer::doSelect($critcopy, $con);
+        $objects = OrgStructurePeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -341,7 +366,7 @@ abstract class BaseClientPeer
      */
     public static function doSelect(Criteria $criteria, PropelPDO $con = null)
     {
-        return ClientPeer::populateObjects(ClientPeer::doSelectStmt($criteria, $con));
+        return OrgStructurePeer::populateObjects(OrgStructurePeer::doSelectStmt($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
@@ -359,16 +384,16 @@ abstract class BaseClientPeer
     public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ClientPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(OrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         if (!$criteria->hasSelectClause()) {
             $criteria = clone $criteria;
-            ClientPeer::addSelectColumns($criteria);
+            OrgStructurePeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
-        $criteria->setDbName(ClientPeer::DATABASE_NAME);
+        $criteria->setDbName(OrgStructurePeer::DATABASE_NAME);
 
         // BasePeer returns a PDOStatement
         return BasePeer::doSelect($criteria, $con);
@@ -382,16 +407,16 @@ abstract class BaseClientPeer
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
      * and retrieveByPK*() calls.
      *
-     * @param      Client $obj A Client object.
+     * @param      OrgStructure $obj A OrgStructure object.
      * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
             if ($key === null) {
-                $key = (string) $obj->getid();
+                $key = (string) $obj->getId();
             } // if key === null
-            ClientPeer::$instances[$key] = $obj;
+            OrgStructurePeer::$instances[$key] = $obj;
         }
     }
 
@@ -403,7 +428,7 @@ abstract class BaseClientPeer
      * methods in your stub classes -- you may need to explicitly remove objects
      * from the cache in order to prevent returning objects that no longer exist.
      *
-     * @param      mixed $value A Client object or a primary key value.
+     * @param      mixed $value A OrgStructure object or a primary key value.
      *
      * @return void
      * @throws PropelException - if the value is invalid.
@@ -411,17 +436,17 @@ abstract class BaseClientPeer
     public static function removeInstanceFromPool($value)
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
-            if (is_object($value) && $value instanceof Client) {
-                $key = (string) $value->getid();
+            if (is_object($value) && $value instanceof OrgStructure) {
+                $key = (string) $value->getId();
             } elseif (is_scalar($value)) {
                 // assume we've been passed a primary key
                 $key = (string) $value;
             } else {
-                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or Client object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or OrgStructure object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
                 throw $e;
             }
 
-            unset(ClientPeer::$instances[$key]);
+            unset(OrgStructurePeer::$instances[$key]);
         }
     } // removeInstanceFromPool()
 
@@ -432,14 +457,14 @@ abstract class BaseClientPeer
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
      * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-     * @return   Client Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+     * @return   OrgStructure Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see        getPrimaryKeyHash()
      */
     public static function getInstanceFromPool($key)
     {
         if (Propel::isInstancePoolingEnabled()) {
-            if (isset(ClientPeer::$instances[$key])) {
-                return ClientPeer::$instances[$key];
+            if (isset(OrgStructurePeer::$instances[$key])) {
+                return OrgStructurePeer::$instances[$key];
             }
         }
 
@@ -455,16 +480,16 @@ abstract class BaseClientPeer
     {
       if ($and_clear_all_references)
       {
-        foreach (ClientPeer::$instances as $instance)
+        foreach (OrgStructurePeer::$instances as $instance)
         {
           $instance->clearAllReferences(true);
         }
       }
-        ClientPeer::$instances = array();
+        OrgStructurePeer::$instances = array();
     }
 
     /**
-     * Method to invalidate the instance pool of all tables related to Client
+     * Method to invalidate the instance pool of all tables related to OrgStructure
      * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
@@ -518,11 +543,11 @@ abstract class BaseClientPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = ClientPeer::getOMClass();
+        $cls = OrgStructurePeer::getOMClass();
         // populate the object(s)
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key = ClientPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj = ClientPeer::getInstanceFromPool($key))) {
+            $key = OrgStructurePeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj = OrgStructurePeer::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
@@ -531,7 +556,7 @@ abstract class BaseClientPeer
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                ClientPeer::addInstanceToPool($obj, $key);
+                OrgStructurePeer::addInstanceToPool($obj, $key);
             } // if key exists
         }
         $stmt->closeCursor();
@@ -545,21 +570,21 @@ abstract class BaseClientPeer
      * @param      int $startcol The 0-based offset for reading from the resultset row.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
-     * @return array (Client object, last column rank)
+     * @return array (OrgStructure object, last column rank)
      */
     public static function populateObject($row, $startcol = 0)
     {
-        $key = ClientPeer::getPrimaryKeyHashFromRow($row, $startcol);
-        if (null !== ($obj = ClientPeer::getInstanceFromPool($key))) {
+        $key = OrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol);
+        if (null !== ($obj = OrgStructurePeer::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $startcol, true); // rehydrate
-            $col = $startcol + ClientPeer::NUM_HYDRATE_COLUMNS;
+            $col = $startcol + OrgStructurePeer::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = ClientPeer::OM_CLASS;
+            $cls = OrgStructurePeer::OM_CLASS;
             $obj = new $cls();
             $col = $obj->hydrate($row, $startcol);
-            ClientPeer::addInstanceToPool($obj, $key);
+            OrgStructurePeer::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -574,7 +599,7 @@ abstract class BaseClientPeer
      */
     public static function getTableMap()
     {
-        return Propel::getDatabaseMap(ClientPeer::DATABASE_NAME)->getTable(ClientPeer::TABLE_NAME);
+        return Propel::getDatabaseMap(OrgStructurePeer::DATABASE_NAME)->getTable(OrgStructurePeer::TABLE_NAME);
     }
 
     /**
@@ -582,9 +607,9 @@ abstract class BaseClientPeer
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getDatabaseMap(BaseClientPeer::DATABASE_NAME);
-      if (!$dbMap->hasTable(BaseClientPeer::TABLE_NAME)) {
-        $dbMap->addTableObject(new ClientTableMap());
+      $dbMap = Propel::getDatabaseMap(BaseOrgStructurePeer::DATABASE_NAME);
+      if (!$dbMap->hasTable(BaseOrgStructurePeer::TABLE_NAME)) {
+        $dbMap->addTableObject(new OrgStructureTableMap());
       }
     }
 
@@ -596,13 +621,13 @@ abstract class BaseClientPeer
      */
     public static function getOMClass($row = 0, $colnum = 0)
     {
-        return ClientPeer::OM_CLASS;
+        return OrgStructurePeer::OM_CLASS;
     }
 
     /**
-     * Performs an INSERT on the database, given a Client or Criteria object.
+     * Performs an INSERT on the database, given a OrgStructure or Criteria object.
      *
-     * @param      mixed $values Criteria or Client object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or OrgStructure object containing data that is used to create the INSERT statement.
      * @param      PropelPDO $con the PropelPDO connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -611,22 +636,22 @@ abstract class BaseClientPeer
     public static function doInsert($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ClientPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(OrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from Client object
+            $criteria = $values->buildCriteria(); // build Criteria from OrgStructure object
         }
 
-        if ($criteria->containsKey(ClientPeer::ID) && $criteria->keyContainsValue(ClientPeer::ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ClientPeer::ID.')');
+        if ($criteria->containsKey(OrgStructurePeer::ID) && $criteria->keyContainsValue(OrgStructurePeer::ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.OrgStructurePeer::ID.')');
         }
 
 
         // Set the correct dbName
-        $criteria->setDbName(ClientPeer::DATABASE_NAME);
+        $criteria->setDbName(OrgStructurePeer::DATABASE_NAME);
 
         try {
             // use transaction because $criteria could contain info
@@ -643,9 +668,9 @@ abstract class BaseClientPeer
     }
 
     /**
-     * Performs an UPDATE on the database, given a Client or Criteria object.
+     * Performs an UPDATE on the database, given a OrgStructure or Criteria object.
      *
-     * @param      mixed $values Criteria or Client object containing data that is used to create the UPDATE statement.
+     * @param      mixed $values Criteria or OrgStructure object containing data that is used to create the UPDATE statement.
      * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
      * @return int             The number of affected rows (if supported by underlying database driver).
      * @throws PropelException Any exceptions caught during processing will be
@@ -654,35 +679,35 @@ abstract class BaseClientPeer
     public static function doUpdate($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ClientPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(OrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
-        $selectCriteria = new Criteria(ClientPeer::DATABASE_NAME);
+        $selectCriteria = new Criteria(OrgStructurePeer::DATABASE_NAME);
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(ClientPeer::ID);
-            $value = $criteria->remove(ClientPeer::ID);
+            $comparison = $criteria->getComparison(OrgStructurePeer::ID);
+            $value = $criteria->remove(OrgStructurePeer::ID);
             if ($value) {
-                $selectCriteria->add(ClientPeer::ID, $value, $comparison);
+                $selectCriteria->add(OrgStructurePeer::ID, $value, $comparison);
             } else {
-                $selectCriteria->setPrimaryTableName(ClientPeer::TABLE_NAME);
+                $selectCriteria->setPrimaryTableName(OrgStructurePeer::TABLE_NAME);
             }
 
-        } else { // $values is Client object
+        } else { // $values is OrgStructure object
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
         }
 
         // set the correct dbName
-        $criteria->setDbName(ClientPeer::DATABASE_NAME);
+        $criteria->setDbName(OrgStructurePeer::DATABASE_NAME);
 
         return BasePeer::doUpdate($selectCriteria, $criteria, $con);
     }
 
     /**
-     * Deletes all rows from the Client table.
+     * Deletes all rows from the OrgStructure table.
      *
      * @param      PropelPDO $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).
@@ -691,19 +716,19 @@ abstract class BaseClientPeer
     public static function doDeleteAll(PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ClientPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(OrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
         $affectedRows = 0; // initialize var to track total num of affected rows
         try {
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
-            $affectedRows += BasePeer::doDeleteAll(ClientPeer::TABLE_NAME, $con, ClientPeer::DATABASE_NAME);
+            $affectedRows += BasePeer::doDeleteAll(OrgStructurePeer::TABLE_NAME, $con, OrgStructurePeer::DATABASE_NAME);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            ClientPeer::clearInstancePool();
-            ClientPeer::clearRelatedInstancePool();
+            OrgStructurePeer::clearInstancePool();
+            OrgStructurePeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -714,9 +739,9 @@ abstract class BaseClientPeer
     }
 
     /**
-     * Performs a DELETE on the database, given a Client or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a OrgStructure or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or Client object or primary key or array of primary keys
+     * @param      mixed $values Criteria or OrgStructure object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      PropelPDO $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -727,32 +752,32 @@ abstract class BaseClientPeer
      public static function doDelete($values, PropelPDO $con = null)
      {
         if ($con === null) {
-            $con = Propel::getConnection(ClientPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(OrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             // invalidate the cache for all objects of this type, since we have no
             // way of knowing (without running a query) what objects should be invalidated
             // from the cache based on this Criteria.
-            ClientPeer::clearInstancePool();
+            OrgStructurePeer::clearInstancePool();
             // rename for clarity
             $criteria = clone $values;
-        } elseif ($values instanceof Client) { // it's a model object
+        } elseif ($values instanceof OrgStructure) { // it's a model object
             // invalidate the cache for this single object
-            ClientPeer::removeInstanceFromPool($values);
+            OrgStructurePeer::removeInstanceFromPool($values);
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(ClientPeer::DATABASE_NAME);
-            $criteria->add(ClientPeer::ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(OrgStructurePeer::DATABASE_NAME);
+            $criteria->add(OrgStructurePeer::ID, (array) $values, Criteria::IN);
             // invalidate the cache for this object(s)
             foreach ((array) $values as $singleval) {
-                ClientPeer::removeInstanceFromPool($singleval);
+                OrgStructurePeer::removeInstanceFromPool($singleval);
             }
         }
 
         // Set the correct dbName
-        $criteria->setDbName(ClientPeer::DATABASE_NAME);
+        $criteria->setDbName(OrgStructurePeer::DATABASE_NAME);
 
         $affectedRows = 0; // initialize var to track total num of affected rows
 
@@ -762,7 +787,7 @@ abstract class BaseClientPeer
             $con->beginTransaction();
 
             $affectedRows += BasePeer::doDelete($criteria, $con);
-            ClientPeer::clearRelatedInstancePool();
+            OrgStructurePeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -773,13 +798,13 @@ abstract class BaseClientPeer
     }
 
     /**
-     * Validates all modified columns of given Client object.
+     * Validates all modified columns of given OrgStructure object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      Client $obj The object to validate.
+     * @param      OrgStructure $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
@@ -789,8 +814,8 @@ abstract class BaseClientPeer
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(ClientPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(ClientPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(OrgStructurePeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(OrgStructurePeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -806,7 +831,7 @@ abstract class BaseClientPeer
 
         }
 
-        return BasePeer::doValidate(ClientPeer::DATABASE_NAME, ClientPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(OrgStructurePeer::DATABASE_NAME, OrgStructurePeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -814,23 +839,23 @@ abstract class BaseClientPeer
      *
      * @param      int $pk the primary key.
      * @param      PropelPDO $con the connection to use
-     * @return Client
+     * @return OrgStructure
      */
     public static function retrieveByPK($pk, PropelPDO $con = null)
     {
 
-        if (null !== ($obj = ClientPeer::getInstanceFromPool((string) $pk))) {
+        if (null !== ($obj = OrgStructurePeer::getInstanceFromPool((string) $pk))) {
             return $obj;
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ClientPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(OrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria = new Criteria(ClientPeer::DATABASE_NAME);
-        $criteria->add(ClientPeer::ID, $pk);
+        $criteria = new Criteria(OrgStructurePeer::DATABASE_NAME);
+        $criteria->add(OrgStructurePeer::ID, $pk);
 
-        $v = ClientPeer::doSelect($criteria, $con);
+        $v = OrgStructurePeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -840,31 +865,31 @@ abstract class BaseClientPeer
      *
      * @param      array $pks List of primary keys
      * @param      PropelPDO $con the connection to use
-     * @return Client[]
+     * @return OrgStructure[]
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
     public static function retrieveByPKs($pks, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ClientPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(OrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         $objs = null;
         if (empty($pks)) {
             $objs = array();
         } else {
-            $criteria = new Criteria(ClientPeer::DATABASE_NAME);
-            $criteria->add(ClientPeer::ID, $pks, Criteria::IN);
-            $objs = ClientPeer::doSelect($criteria, $con);
+            $criteria = new Criteria(OrgStructurePeer::DATABASE_NAME);
+            $criteria->add(OrgStructurePeer::ID, $pks, Criteria::IN);
+            $objs = OrgStructurePeer::doSelect($criteria, $con);
         }
 
         return $objs;
     }
 
-} // BaseClientPeer
+} // BaseOrgStructurePeer
 
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-BaseClientPeer::buildTableMap();
+BaseOrgStructurePeer::buildTableMap();
 

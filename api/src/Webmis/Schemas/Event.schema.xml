@@ -7,7 +7,7 @@
         <column name="modifyDatetime" phpName="modifyDatetime" type="TIMESTAMP" required="true"/>
         <column name="modifyPerson_id" phpName="modifyPersonId" type="INTEGER" required="false"/>
         <column name="deleted" phpName="deleted" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
-        <column name="externalId" phpName="externalid" type="VARCHAR" size="30" required="true"/>
+        <column name="externalId" phpName="externalId" type="VARCHAR" size="30" required="true"/>
         <column name="eventType_id" phpName="eventTypeId" type="INTEGER" required="true"/>
         <column name="org_id" phpName="orgId" type="INTEGER" required="false"/>
         <column name="client_id" phpName="clientId" type="INTEGER" required="false"/>
@@ -41,6 +41,21 @@
         </foreign-key>
         <foreign-key foreignTable="Client" name="Event_Client">
             <reference local="client_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="Person" phpName="CreatePerson" name="Event_createPerson_id">
+          <reference local="createPerson_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="Person" phpName="ModifyPerson" name="Event_modifyPerson_id">
+          <reference local="modifyPerson_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="Person" phpName="SetPerson" name="Event_setPerson_id">
+          <reference local="setPerson_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="Person" phpName="Doctor" name="Event_execPerson_id">
+          <reference local="execPerson_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="OrgStructure" phpName="OrgStructure" name="Event_OrgStructure_id">
+          <reference local="orgStructure_id" foreign="id"/>
         </foreign-key>
 <!--         <foreign-key foreignTable="rbAcheResult" name="Event_ibfk_1">
           <reference local="rbAcheResult_id" foreign="id"/>

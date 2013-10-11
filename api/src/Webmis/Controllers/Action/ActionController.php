@@ -66,7 +66,7 @@ class ActionController
                         case 'String':
                         case 'Html':
                         case 'Text':
-                        case 'Constructor':
+                        //case 'Constructor':
                             // $p['value'] = $actionProperty->getActionPropertyString()->getValue();
                         break;
                         case 'Double':
