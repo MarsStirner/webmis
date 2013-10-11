@@ -22,6 +22,10 @@ use Webmis\Models\ActionPropertyQuery;
 use Webmis\Models\ActionQuery;
 use Webmis\Models\ActionType;
 use Webmis\Models\ActionTypeQuery;
+use Webmis\Models\DrugChart;
+use Webmis\Models\DrugChartQuery;
+use Webmis\Models\DrugComponent;
+use Webmis\Models\DrugComponentQuery;
 use Webmis\Models\Event;
 use Webmis\Models\EventQuery;
 
@@ -315,6 +319,18 @@ abstract class BaseAction extends BaseObject implements Persistent
     protected $collActionPropertysPartial;
 
     /**
+     * @var        PropelObjectCollection|DrugChart[] Collection to store aggregation of DrugChart objects.
+     */
+    protected $collDrugCharts;
+    protected $collDrugChartsPartial;
+
+    /**
+     * @var        PropelObjectCollection|DrugComponent[] Collection to store aggregation of DrugComponent objects.
+     */
+    protected $collDrugComponents;
+    protected $collDrugComponentsPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -339,6 +355,18 @@ abstract class BaseAction extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $actionPropertysScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $drugChartsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $drugComponentsScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -2023,6 +2051,10 @@ abstract class BaseAction extends BaseObject implements Persistent
             $this->aActionType = null;
             $this->collActionPropertys = null;
 
+            $this->collDrugCharts = null;
+
+            $this->collDrugComponents = null;
+
         } // if (deep)
     }
 
@@ -2188,6 +2220,40 @@ abstract class BaseAction extends BaseObject implements Persistent
 
             if ($this->collActionPropertys !== null) {
                 foreach ($this->collActionPropertys as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->drugChartsScheduledForDeletion !== null) {
+                if (!$this->drugChartsScheduledForDeletion->isEmpty()) {
+                    DrugChartQuery::create()
+                        ->filterByPrimaryKeys($this->drugChartsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->drugChartsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collDrugCharts !== null) {
+                foreach ($this->collDrugCharts as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->drugComponentsScheduledForDeletion !== null) {
+                if (!$this->drugComponentsScheduledForDeletion->isEmpty()) {
+                    DrugComponentQuery::create()
+                        ->filterByPrimaryKeys($this->drugComponentsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->drugComponentsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collDrugComponents !== null) {
+                foreach ($this->collDrugComponents as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -2590,6 +2656,22 @@ abstract class BaseAction extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collDrugCharts !== null) {
+                    foreach ($this->collDrugCharts as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
+                if ($this->collDrugComponents !== null) {
+                    foreach ($this->collDrugComponents as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
 
             $this->alreadyInValidation = false;
         }
@@ -2820,6 +2902,12 @@ abstract class BaseAction extends BaseObject implements Persistent
             }
             if (null !== $this->collActionPropertys) {
                 $result['ActionPropertys'] = $this->collActionPropertys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collDrugCharts) {
+                $result['DrugCharts'] = $this->collDrugCharts->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collDrugComponents) {
+                $result['DrugComponents'] = $this->collDrugComponents->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -3200,6 +3288,18 @@ abstract class BaseAction extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getDrugCharts() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDrugChart($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getDrugComponents() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDrugComponent($relObj->copy($deepCopy));
+                }
+            }
+
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -3367,6 +3467,12 @@ abstract class BaseAction extends BaseObject implements Persistent
     {
         if ('ActionProperty' == $relationName) {
             $this->initActionPropertys();
+        }
+        if ('DrugChart' == $relationName) {
+            $this->initDrugCharts();
+        }
+        if ('DrugComponent' == $relationName) {
+            $this->initDrugComponents();
         }
     }
 
@@ -3714,6 +3820,467 @@ abstract class BaseAction extends BaseObject implements Persistent
     }
 
     /**
+     * Clears out the collDrugCharts collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Action The current object (for fluent API support)
+     * @see        addDrugCharts()
+     */
+    public function clearDrugCharts()
+    {
+        $this->collDrugCharts = null; // important to set this to null since that means it is uninitialized
+        $this->collDrugChartsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collDrugCharts collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialDrugCharts($v = true)
+    {
+        $this->collDrugChartsPartial = $v;
+    }
+
+    /**
+     * Initializes the collDrugCharts collection.
+     *
+     * By default this just sets the collDrugCharts collection to an empty array (like clearcollDrugCharts());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDrugCharts($overrideExisting = true)
+    {
+        if (null !== $this->collDrugCharts && !$overrideExisting) {
+            return;
+        }
+        $this->collDrugCharts = new PropelObjectCollection();
+        $this->collDrugCharts->setModel('DrugChart');
+    }
+
+    /**
+     * Gets an array of DrugChart objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Action is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|DrugChart[] List of DrugChart objects
+     * @throws PropelException
+     */
+    public function getDrugCharts($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collDrugChartsPartial && !$this->isNew();
+        if (null === $this->collDrugCharts || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDrugCharts) {
+                // return empty collection
+                $this->initDrugCharts();
+            } else {
+                $collDrugCharts = DrugChartQuery::create(null, $criteria)
+                    ->filterByAction($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collDrugChartsPartial && count($collDrugCharts)) {
+                      $this->initDrugCharts(false);
+
+                      foreach($collDrugCharts as $obj) {
+                        if (false == $this->collDrugCharts->contains($obj)) {
+                          $this->collDrugCharts->append($obj);
+                        }
+                      }
+
+                      $this->collDrugChartsPartial = true;
+                    }
+
+                    $collDrugCharts->getInternalIterator()->rewind();
+                    return $collDrugCharts;
+                }
+
+                if($partial && $this->collDrugCharts) {
+                    foreach($this->collDrugCharts as $obj) {
+                        if($obj->isNew()) {
+                            $collDrugCharts[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDrugCharts = $collDrugCharts;
+                $this->collDrugChartsPartial = false;
+            }
+        }
+
+        return $this->collDrugCharts;
+    }
+
+    /**
+     * Sets a collection of DrugChart objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $drugCharts A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Action The current object (for fluent API support)
+     */
+    public function setDrugCharts(PropelCollection $drugCharts, PropelPDO $con = null)
+    {
+        $drugChartsToDelete = $this->getDrugCharts(new Criteria(), $con)->diff($drugCharts);
+
+        $this->drugChartsScheduledForDeletion = unserialize(serialize($drugChartsToDelete));
+
+        foreach ($drugChartsToDelete as $drugChartRemoved) {
+            $drugChartRemoved->setAction(null);
+        }
+
+        $this->collDrugCharts = null;
+        foreach ($drugCharts as $drugChart) {
+            $this->addDrugChart($drugChart);
+        }
+
+        $this->collDrugCharts = $drugCharts;
+        $this->collDrugChartsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related DrugChart objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related DrugChart objects.
+     * @throws PropelException
+     */
+    public function countDrugCharts(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collDrugChartsPartial && !$this->isNew();
+        if (null === $this->collDrugCharts || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDrugCharts) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getDrugCharts());
+            }
+            $query = DrugChartQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByAction($this)
+                ->count($con);
+        }
+
+        return count($this->collDrugCharts);
+    }
+
+    /**
+     * Method called to associate a DrugChart object to this object
+     * through the DrugChart foreign key attribute.
+     *
+     * @param    DrugChart $l DrugChart
+     * @return Action The current object (for fluent API support)
+     */
+    public function addDrugChart(DrugChart $l)
+    {
+        if ($this->collDrugCharts === null) {
+            $this->initDrugCharts();
+            $this->collDrugChartsPartial = true;
+        }
+        if (!in_array($l, $this->collDrugCharts->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddDrugChart($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	DrugChart $drugChart The drugChart object to add.
+     */
+    protected function doAddDrugChart($drugChart)
+    {
+        $this->collDrugCharts[]= $drugChart;
+        $drugChart->setAction($this);
+    }
+
+    /**
+     * @param	DrugChart $drugChart The drugChart object to remove.
+     * @return Action The current object (for fluent API support)
+     */
+    public function removeDrugChart($drugChart)
+    {
+        if ($this->getDrugCharts()->contains($drugChart)) {
+            $this->collDrugCharts->remove($this->collDrugCharts->search($drugChart));
+            if (null === $this->drugChartsScheduledForDeletion) {
+                $this->drugChartsScheduledForDeletion = clone $this->collDrugCharts;
+                $this->drugChartsScheduledForDeletion->clear();
+            }
+            $this->drugChartsScheduledForDeletion[]= clone $drugChart;
+            $drugChart->setAction(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Action is new, it will return
+     * an empty collection; or if this Action has previously
+     * been saved, it will retrieve related DrugCharts from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Action.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|DrugChart[] List of DrugChart objects
+     */
+    public function getDrugChartsJoinDrugChartRelatedBymasterId($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = DrugChartQuery::create(null, $criteria);
+        $query->joinWith('DrugChartRelatedBymasterId', $join_behavior);
+
+        return $this->getDrugCharts($query, $con);
+    }
+
+    /**
+     * Clears out the collDrugComponents collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Action The current object (for fluent API support)
+     * @see        addDrugComponents()
+     */
+    public function clearDrugComponents()
+    {
+        $this->collDrugComponents = null; // important to set this to null since that means it is uninitialized
+        $this->collDrugComponentsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collDrugComponents collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialDrugComponents($v = true)
+    {
+        $this->collDrugComponentsPartial = $v;
+    }
+
+    /**
+     * Initializes the collDrugComponents collection.
+     *
+     * By default this just sets the collDrugComponents collection to an empty array (like clearcollDrugComponents());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDrugComponents($overrideExisting = true)
+    {
+        if (null !== $this->collDrugComponents && !$overrideExisting) {
+            return;
+        }
+        $this->collDrugComponents = new PropelObjectCollection();
+        $this->collDrugComponents->setModel('DrugComponent');
+    }
+
+    /**
+     * Gets an array of DrugComponent objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Action is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|DrugComponent[] List of DrugComponent objects
+     * @throws PropelException
+     */
+    public function getDrugComponents($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collDrugComponentsPartial && !$this->isNew();
+        if (null === $this->collDrugComponents || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDrugComponents) {
+                // return empty collection
+                $this->initDrugComponents();
+            } else {
+                $collDrugComponents = DrugComponentQuery::create(null, $criteria)
+                    ->filterByAction($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collDrugComponentsPartial && count($collDrugComponents)) {
+                      $this->initDrugComponents(false);
+
+                      foreach($collDrugComponents as $obj) {
+                        if (false == $this->collDrugComponents->contains($obj)) {
+                          $this->collDrugComponents->append($obj);
+                        }
+                      }
+
+                      $this->collDrugComponentsPartial = true;
+                    }
+
+                    $collDrugComponents->getInternalIterator()->rewind();
+                    return $collDrugComponents;
+                }
+
+                if($partial && $this->collDrugComponents) {
+                    foreach($this->collDrugComponents as $obj) {
+                        if($obj->isNew()) {
+                            $collDrugComponents[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDrugComponents = $collDrugComponents;
+                $this->collDrugComponentsPartial = false;
+            }
+        }
+
+        return $this->collDrugComponents;
+    }
+
+    /**
+     * Sets a collection of DrugComponent objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $drugComponents A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Action The current object (for fluent API support)
+     */
+    public function setDrugComponents(PropelCollection $drugComponents, PropelPDO $con = null)
+    {
+        $drugComponentsToDelete = $this->getDrugComponents(new Criteria(), $con)->diff($drugComponents);
+
+        $this->drugComponentsScheduledForDeletion = unserialize(serialize($drugComponentsToDelete));
+
+        foreach ($drugComponentsToDelete as $drugComponentRemoved) {
+            $drugComponentRemoved->setAction(null);
+        }
+
+        $this->collDrugComponents = null;
+        foreach ($drugComponents as $drugComponent) {
+            $this->addDrugComponent($drugComponent);
+        }
+
+        $this->collDrugComponents = $drugComponents;
+        $this->collDrugComponentsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related DrugComponent objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related DrugComponent objects.
+     * @throws PropelException
+     */
+    public function countDrugComponents(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collDrugComponentsPartial && !$this->isNew();
+        if (null === $this->collDrugComponents || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDrugComponents) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getDrugComponents());
+            }
+            $query = DrugComponentQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByAction($this)
+                ->count($con);
+        }
+
+        return count($this->collDrugComponents);
+    }
+
+    /**
+     * Method called to associate a DrugComponent object to this object
+     * through the DrugComponent foreign key attribute.
+     *
+     * @param    DrugComponent $l DrugComponent
+     * @return Action The current object (for fluent API support)
+     */
+    public function addDrugComponent(DrugComponent $l)
+    {
+        if ($this->collDrugComponents === null) {
+            $this->initDrugComponents();
+            $this->collDrugComponentsPartial = true;
+        }
+        if (!in_array($l, $this->collDrugComponents->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddDrugComponent($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	DrugComponent $drugComponent The drugComponent object to add.
+     */
+    protected function doAddDrugComponent($drugComponent)
+    {
+        $this->collDrugComponents[]= $drugComponent;
+        $drugComponent->setAction($this);
+    }
+
+    /**
+     * @param	DrugComponent $drugComponent The drugComponent object to remove.
+     * @return Action The current object (for fluent API support)
+     */
+    public function removeDrugComponent($drugComponent)
+    {
+        if ($this->getDrugComponents()->contains($drugComponent)) {
+            $this->collDrugComponents->remove($this->collDrugComponents->search($drugComponent));
+            if (null === $this->drugComponentsScheduledForDeletion) {
+                $this->drugComponentsScheduledForDeletion = clone $this->collDrugComponents;
+                $this->drugComponentsScheduledForDeletion->clear();
+            }
+            $this->drugComponentsScheduledForDeletion[]= clone $drugComponent;
+            $drugComponent->setAction(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -3785,6 +4352,16 @@ abstract class BaseAction extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collDrugCharts) {
+                foreach ($this->collDrugCharts as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collDrugComponents) {
+                foreach ($this->collDrugComponents as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->aEvent instanceof Persistent) {
               $this->aEvent->clearAllReferences($deep);
             }
@@ -3799,6 +4376,14 @@ abstract class BaseAction extends BaseObject implements Persistent
             $this->collActionPropertys->clearIterator();
         }
         $this->collActionPropertys = null;
+        if ($this->collDrugCharts instanceof PropelCollection) {
+            $this->collDrugCharts->clearIterator();
+        }
+        $this->collDrugCharts = null;
+        if ($this->collDrugComponents instanceof PropelCollection) {
+            $this->collDrugComponents->clearIterator();
+        }
+        $this->collDrugComponents = null;
         $this->aEvent = null;
         $this->aActionType = null;
     }

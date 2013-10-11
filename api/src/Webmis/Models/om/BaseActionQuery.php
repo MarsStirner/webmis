@@ -17,6 +17,8 @@ use Webmis\Models\ActionPeer;
 use Webmis\Models\ActionProperty;
 use Webmis\Models\ActionQuery;
 use Webmis\Models\ActionType;
+use Webmis\Models\DrugChart;
+use Webmis\Models\DrugComponent;
 use Webmis\Models\Event;
 
 /**
@@ -119,6 +121,14 @@ use Webmis\Models\Event;
  * @method ActionQuery leftJoinActionProperty($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionProperty relation
  * @method ActionQuery rightJoinActionProperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionProperty relation
  * @method ActionQuery innerJoinActionProperty($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionProperty relation
+ *
+ * @method ActionQuery leftJoinDrugChart($relationAlias = null) Adds a LEFT JOIN clause to the query using the DrugChart relation
+ * @method ActionQuery rightJoinDrugChart($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DrugChart relation
+ * @method ActionQuery innerJoinDrugChart($relationAlias = null) Adds a INNER JOIN clause to the query using the DrugChart relation
+ *
+ * @method ActionQuery leftJoinDrugComponent($relationAlias = null) Adds a LEFT JOIN clause to the query using the DrugComponent relation
+ * @method ActionQuery rightJoinDrugComponent($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DrugComponent relation
+ * @method ActionQuery innerJoinDrugComponent($relationAlias = null) Adds a INNER JOIN clause to the query using the DrugComponent relation
  *
  * @method Action findOne(PropelPDO $con = null) Return the first Action matching the query
  * @method Action findOneOrCreate(PropelPDO $con = null) Return the first Action matching the query, or a new Action object populated from the query conditions when no match is found
@@ -2132,6 +2142,154 @@ abstract class BaseActionQuery extends ModelCriteria
         return $this
             ->joinActionProperty($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'ActionProperty', '\Webmis\Models\ActionPropertyQuery');
+    }
+
+    /**
+     * Filter the query by a related DrugChart object
+     *
+     * @param   DrugChart|PropelObjectCollection $drugChart  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ActionQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByDrugChart($drugChart, $comparison = null)
+    {
+        if ($drugChart instanceof DrugChart) {
+            return $this
+                ->addUsingAlias(ActionPeer::ID, $drugChart->getactionId(), $comparison);
+        } elseif ($drugChart instanceof PropelObjectCollection) {
+            return $this
+                ->useDrugChartQuery()
+                ->filterByPrimaryKeys($drugChart->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDrugChart() only accepts arguments of type DrugChart or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the DrugChart relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ActionQuery The current query, for fluid interface
+     */
+    public function joinDrugChart($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('DrugChart');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'DrugChart');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the DrugChart relation DrugChart object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\DrugChartQuery A secondary query class using the current class as primary query
+     */
+    public function useDrugChartQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDrugChart($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'DrugChart', '\Webmis\Models\DrugChartQuery');
+    }
+
+    /**
+     * Filter the query by a related DrugComponent object
+     *
+     * @param   DrugComponent|PropelObjectCollection $drugComponent  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ActionQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByDrugComponent($drugComponent, $comparison = null)
+    {
+        if ($drugComponent instanceof DrugComponent) {
+            return $this
+                ->addUsingAlias(ActionPeer::ID, $drugComponent->getactionId(), $comparison);
+        } elseif ($drugComponent instanceof PropelObjectCollection) {
+            return $this
+                ->useDrugComponentQuery()
+                ->filterByPrimaryKeys($drugComponent->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDrugComponent() only accepts arguments of type DrugComponent or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the DrugComponent relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ActionQuery The current query, for fluid interface
+     */
+    public function joinDrugComponent($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('DrugComponent');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'DrugComponent');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the DrugComponent relation DrugComponent object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\DrugComponentQuery A secondary query class using the current class as primary query
+     */
+    public function useDrugComponentQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDrugComponent($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'DrugComponent', '\Webmis\Models\DrugComponentQuery');
     }
 
     /**
