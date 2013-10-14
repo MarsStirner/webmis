@@ -5,10 +5,11 @@
 	</td>
 	<td class="helper-item-info">
 		<div class="helper-item-name">
+			<div><span class="helper-item-date"><%=moment(model.get("plannedEndDate")).format('DD.MM.YYYY')%></span></div>
 			<%if (model.get("diagnosticName")) {%>
-				<span><%=model.get("diagnosticName").name%></span>
+				<div><span><%=model.get("diagnosticName").name%></span></div>
 			<%} else if (model.get("assessmentName")) {%>
-				<span><%=model.get("assessmentName").name%></span>
+				<div><span><%=model.get("assessmentName").name%></span></div>
 			<%}%>
 		</div>
 		<div class="helper-item-attrs-toggler">
