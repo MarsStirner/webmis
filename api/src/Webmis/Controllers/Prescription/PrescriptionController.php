@@ -58,10 +58,10 @@ class PrescriptionController
             foreach ($prescriptions as $prescription) {
                 $p = array(
                     'assigmentIntervals' => array(),//интервалы назначения
-                    'executionIntervals' => array()//интервалы исполнения
                     );
 
                 $actionType = $prescription->getActionType();
+                $p['id'] = $prescription->getId();
                 $p['name'] = $actionType->getName();
                 $p['flatCode'] = $actionType->getFlatCode();
 
@@ -74,18 +74,36 @@ class PrescriptionController
 
                 $intervals = $prescription->getDrugCharts();
                 if($intervals){
+                    $executionIntervals = array();
+                    $assigmentIntervals = array();
+
                     foreach ($intervals as $interval) {
                         $i = array();
-                        $i['beginDateTime'] = $interval->getBegDateTime();
-                        $i['endDateTime'] = $interval->getEndDateTime();
+                        $i['drugChartId'] = $interval->getId();
+                        $i['drugChartMasterId'] = $interval->getMasterId();
+                        $i['beginDateTime'] = $interval->getBegDateTime('U')*1000;
+                        $i['bdt'] = $interval->getBegDateTime();
+                        $i['endDateTime'] = $interval->getEndDateTime('U')*1000;
+                        $i['edt'] = $interval->getEndDateTime();
                         $i['status'] = $interval->getStatus();
 
+
                         if(!$interval->getMasterId()){
-                            $p['assigmentIntervals'][] = $i;
+                            $i['executionIntervals'] = array();
+                            $assigmentIntervals[$i['drugChartId']] = $i;
                         }else{
-                            $p['executionIntervals'][] = $i;
+                            $executionIntervals[] = $i;
                         }
                     }
+
+                    foreach ($executionIntervals as $interval) {
+                         $assigmentIntervals[$interval['drugChartMasterId']]['executionIntervals'][] = $interval;
+                    }
+
+                    $p['assigmentIntervals'] = array_values($assigmentIntervals);
+
+
+
                 }
 
 
