@@ -10,7 +10,7 @@ use Webmis\Controllers\Patients\PatientsRouter;
 use Webmis\Controllers\Action\ActionRouter;
 use Webmis\Controllers\Event\EventRouter;
 use Webmis\Controllers\Prescription\PrescriptionRouter;
-
+use Webmis\Controllers\Rls\RlsRouter;
 
 $app->before(function (Request $request) {
     if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
@@ -27,3 +27,5 @@ $app->mount('/api/v1/patients', new PatientsRouter());
 $app->mount('/api/v1/actions', new ActionRouter());
 $app->mount('/api/v1/events', new EventRouter());
 $app->mount('/api/v1/prescriptions', new PrescriptionRouter());
+
+$app->mount('/api/v1/rls', new RlsRouter());
