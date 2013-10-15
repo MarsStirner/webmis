@@ -22,94 +22,28 @@ class PrescriptionController
 
 
 
-    public function prescriptionForEventAction(Request $request, Application $app)
+    public function listAction(Request $request, Application $app)
     {
-        $route_params = $request->get('_route_params') ;
-        $eventId = (int) $route_params['eventId'];
-        $data = array('prescriptions' => array());
 
-        $beginDateTime = $request->get('beginDateTime');
-        $endDateTime = $request->get('endDateTime');
+        $eventId = (int) $request->get('eventId');
+        $beginDateTime = (int) $request->get('beginDateTime');
+        $endDateTime = (int) $request->get('endDateTime');
+
+        $data = array('prescriptions' => array());
 
 
         if(!$eventId){
-            return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора иб.' ));
+            return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора истории болезни.' ));
         }
 
         $prescriptions = ActionQuery::create()
-            ->useActionTypeQuery()
-                ->filterByFlatCode(array('chemotherapy','prescription','infusion','analgesia'))
-                ->filterByDeleted(false)
-            ->endUse()
-            ->filterByDeleted(false)
-            ->filterByEventId($eventId)
-
-                ->useDrugChartQuery()
-                    ->_if($beginDateTime)
-                        ->filterByBegDateTime(array('min' => $beginDateTime))
-                    ->_endif()
-                ->endUse()
-            ->with('DrugChart')
-
-            ->joinWithDrugComponent()
-            ->find();//->toArray();
+            ->getPrescriptions(null, $eventId, $beginDateTime,  $endDateTime)
+            ->find();
 
         if($prescriptions){
             foreach ($prescriptions as $prescription) {
-                $p = array(
-                    'assigmentIntervals' => array(),//интервалы назначения
-                    );
-
-                $actionType = $prescription->getActionType();
-                $p['id'] = $prescription->getId();
-                $p['name'] = $actionType->getName();
-                $p['flatCode'] = $actionType->getFlatCode();
-
-                $drugComponents = $prescription->getDrugComponents();
-                if($drugComponents){
-                    $drugComponent = $drugComponents[0];
-                    $p['drugName'] = $drugComponent->getName();
-                    $p['drugDose'] = $drugComponent->getDose();
-                }
-
-                $intervals = $prescription->getDrugCharts();
-                if($intervals){
-                    $executionIntervals = array();
-                    $assigmentIntervals = array();
-
-                    foreach ($intervals as $interval) {
-                        $i = array();
-                        $i['drugChartId'] = $interval->getId();
-                        $i['drugChartMasterId'] = $interval->getMasterId();
-                        $i['beginDateTime'] = $interval->getBegDateTime('U')*1000;
-                        $i['bdt'] = $interval->getBegDateTime();
-                        $i['endDateTime'] = $interval->getEndDateTime('U')*1000;
-                        $i['edt'] = $interval->getEndDateTime();
-                        $i['status'] = $interval->getStatus();
-
-
-                        if(!$interval->getMasterId()){
-                            $i['executionIntervals'] = array();
-                            $assigmentIntervals[$i['drugChartId']] = $i;
-                        }else{
-                            $executionIntervals[] = $i;
-                        }
-                    }
-
-                    foreach ($executionIntervals as $interval) {
-                         $assigmentIntervals[$interval['drugChartMasterId']]['executionIntervals'][] = $interval;
-                    }
-
-                    $p['assigmentIntervals'] = array_values($assigmentIntervals);
-
-
-
-                }
-
-
-                $data['prescriptions'][] = $p;
+                $data['prescriptions'][] = $prescription->serializePrescription();
             }
-
         }
 
 
@@ -117,4 +51,34 @@ class PrescriptionController
     }
 
 
+
+
+    public function readAction(Request $request, Application $app){
+
+        $route_params = $request->get('_route_params') ;
+        $prescriptionId = (int) $route_params['prescriptionId'];
+        $data = array();
+
+        if(!$prescriptionId){
+            return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора назначения.' ));
+        }
+
+        $prescription = ActionQuery::create()
+            ->getPrescriptions($prescriptionId, null, null,  null)
+            ->findOne();
+
+        if($prescription){
+            $data = $prescription->serializePrescription();
+        }
+
+        return $app['jsonp']->jsonp(array('data' => $data ));
+    }
+
+    public function createAction(Request $request, Application $app){
+        return $app['jsonp']->jsonp(array('message' => 'create controller' ));
+    }
+
+    public function updateAction(Request $request, Application $app){
+        return $app['jsonp']->jsonp(array('message' => 'update controller' ));
+    }
 }

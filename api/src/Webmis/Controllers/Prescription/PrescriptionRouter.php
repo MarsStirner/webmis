@@ -19,8 +19,11 @@ class PrescriptionRouter implements ControllerProviderInterface
         $router = $app['controllers_factory'];
 
 
-        $router->get('/', getController('Prescription/no'));
-        $router->get('/{eventId}', getController('Prescription/prescriptionForEvent'));
+        // $router->get('/', getController('Prescription/no'));
+        $router->get('/', getController('Prescription/list'));
+        $router->get('/{prescriptionId}', getController('Prescription/read'));
+        $router->post('/', getController('Prescription/create'));
+        $router->put('/{prescriptionId}', getController('Prescription/update'));
 
 
         return $router;
