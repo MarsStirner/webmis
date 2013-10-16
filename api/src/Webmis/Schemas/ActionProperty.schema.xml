@@ -33,6 +33,10 @@
       <reference local="id" foreign="id"/>
     </foreign-key>
 
+    <foreign-key foreignTable="ActionProperty_OrgStructure" name="ActionProperty_ActionPropertyOrgStructure">
+      <reference local="id" foreign="id"/>
+    </foreign-key>
+
 
     <foreign-key foreignTable="ActionProperty_FDRecord" name="ActionProperty_ActionPropertyFDRecord">
       <reference local="id" foreign="id"/>

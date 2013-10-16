@@ -9,31 +9,31 @@ use \PDOStatement;
 use \Propel;
 use \PropelException;
 use \PropelPDO;
-use Webmis\Models\APString;
-use Webmis\Models\APStringPeer;
-use Webmis\Models\map\APStringTableMap;
+use Webmis\Models\ActionPropertyOrgStructure;
+use Webmis\Models\ActionPropertyOrgStructurePeer;
+use Webmis\Models\map\ActionPropertyOrgStructureTableMap;
 
 /**
- * Base static class for performing query and update operations on the 'ActionProperty_String' table.
+ * Base static class for performing query and update operations on the 'ActionProperty_OrgStructure' table.
  *
  *
  *
  * @package propel.generator.Models.om
  */
-abstract class BaseAPStringPeer
+abstract class BaseActionPropertyOrgStructurePeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'Webmis-API';
 
     /** the table name for this class */
-    const TABLE_NAME = 'ActionProperty_String';
+    const TABLE_NAME = 'ActionProperty_OrgStructure';
 
     /** the related Propel class for this table */
-    const OM_CLASS = 'Webmis\\Models\\APString';
+    const OM_CLASS = 'Webmis\\Models\\ActionPropertyOrgStructure';
 
     /** the related TableMap class for this table */
-    const TM_CLASS = 'APStringTableMap';
+    const TM_CLASS = 'ActionPropertyOrgStructureTableMap';
 
     /** The total number of columns. */
     const NUM_COLUMNS = 3;
@@ -45,22 +45,22 @@ abstract class BaseAPStringPeer
     const NUM_HYDRATE_COLUMNS = 3;
 
     /** the column name for the id field */
-    const ID = 'ActionProperty_String.id';
+    const ID = 'ActionProperty_OrgStructure.id';
 
     /** the column name for the index field */
-    const INDEX = 'ActionProperty_String.index';
+    const INDEX = 'ActionProperty_OrgStructure.index';
 
     /** the column name for the value field */
-    const VALUE = 'ActionProperty_String.value';
+    const VALUE = 'ActionProperty_OrgStructure.value';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
     /**
-     * An identiy map to hold any loaded instances of APString objects.
+     * An identiy map to hold any loaded instances of ActionPropertyOrgStructure objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
-     * @var        array APString[]
+     * @var        array ActionPropertyOrgStructure[]
      */
     public static $instances = array();
 
@@ -69,12 +69,12 @@ abstract class BaseAPStringPeer
      * holds an array of fieldnames
      *
      * first dimension keys are the type constants
-     * e.g. APStringPeer::$fieldNames[APStringPeer::TYPE_PHPNAME][0] = 'Id'
+     * e.g. ActionPropertyOrgStructurePeer::$fieldNames[ActionPropertyOrgStructurePeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
         BasePeer::TYPE_PHPNAME => array ('id', 'index', 'value', ),
         BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'index', 'value', ),
-        BasePeer::TYPE_COLNAME => array (APStringPeer::ID, APStringPeer::INDEX, APStringPeer::VALUE, ),
+        BasePeer::TYPE_COLNAME => array (ActionPropertyOrgStructurePeer::ID, ActionPropertyOrgStructurePeer::INDEX, ActionPropertyOrgStructurePeer::VALUE, ),
         BasePeer::TYPE_RAW_COLNAME => array ('ID', 'INDEX', 'VALUE', ),
         BasePeer::TYPE_FIELDNAME => array ('id', 'index', 'value', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
@@ -84,12 +84,12 @@ abstract class BaseAPStringPeer
      * holds an array of keys for quick access to the fieldnames array
      *
      * first dimension keys are the type constants
-     * e.g. APStringPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
+     * e.g. ActionPropertyOrgStructurePeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
         BasePeer::TYPE_PHPNAME => array ('id' => 0, 'index' => 1, 'value' => 2, ),
         BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'index' => 1, 'value' => 2, ),
-        BasePeer::TYPE_COLNAME => array (APStringPeer::ID => 0, APStringPeer::INDEX => 1, APStringPeer::VALUE => 2, ),
+        BasePeer::TYPE_COLNAME => array (ActionPropertyOrgStructurePeer::ID => 0, ActionPropertyOrgStructurePeer::INDEX => 1, ActionPropertyOrgStructurePeer::VALUE => 2, ),
         BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'INDEX' => 1, 'VALUE' => 2, ),
         BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'index' => 1, 'value' => 2, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
@@ -107,10 +107,10 @@ abstract class BaseAPStringPeer
      */
     public static function translateFieldName($name, $fromType, $toType)
     {
-        $toNames = APStringPeer::getFieldNames($toType);
-        $key = isset(APStringPeer::$fieldKeys[$fromType][$name]) ? APStringPeer::$fieldKeys[$fromType][$name] : null;
+        $toNames = ActionPropertyOrgStructurePeer::getFieldNames($toType);
+        $key = isset(ActionPropertyOrgStructurePeer::$fieldKeys[$fromType][$name]) ? ActionPropertyOrgStructurePeer::$fieldKeys[$fromType][$name] : null;
         if ($key === null) {
-            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(APStringPeer::$fieldKeys[$fromType], true));
+            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(ActionPropertyOrgStructurePeer::$fieldKeys[$fromType], true));
         }
 
         return $toNames[$key];
@@ -127,11 +127,11 @@ abstract class BaseAPStringPeer
      */
     public static function getFieldNames($type = BasePeer::TYPE_PHPNAME)
     {
-        if (!array_key_exists($type, APStringPeer::$fieldNames)) {
+        if (!array_key_exists($type, ActionPropertyOrgStructurePeer::$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
         }
 
-        return APStringPeer::$fieldNames[$type];
+        return ActionPropertyOrgStructurePeer::$fieldNames[$type];
     }
 
     /**
@@ -143,12 +143,12 @@ abstract class BaseAPStringPeer
      *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. APStringPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. ActionPropertyOrgStructurePeer::COLUMN_NAME).
      * @return string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(APStringPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(ActionPropertyOrgStructurePeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -166,9 +166,9 @@ abstract class BaseAPStringPeer
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(APStringPeer::ID);
-            $criteria->addSelectColumn(APStringPeer::INDEX);
-            $criteria->addSelectColumn(APStringPeer::VALUE);
+            $criteria->addSelectColumn(ActionPropertyOrgStructurePeer::ID);
+            $criteria->addSelectColumn(ActionPropertyOrgStructurePeer::INDEX);
+            $criteria->addSelectColumn(ActionPropertyOrgStructurePeer::VALUE);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.index');
@@ -192,21 +192,21 @@ abstract class BaseAPStringPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(APStringPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(ActionPropertyOrgStructurePeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            APStringPeer::addSelectColumns($criteria);
+            ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-        $criteria->setDbName(APStringPeer::DATABASE_NAME); // Set the correct dbName
+        $criteria->setDbName(ActionPropertyOrgStructurePeer::DATABASE_NAME); // Set the correct dbName
 
         if ($con === null) {
-            $con = Propel::getConnection(APStringPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(ActionPropertyOrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
         // BasePeer returns a PDOStatement
         $stmt = BasePeer::doCount($criteria, $con);
@@ -225,7 +225,7 @@ abstract class BaseAPStringPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      PropelPDO $con
-     * @return                 APString
+     * @return                 ActionPropertyOrgStructure
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -233,7 +233,7 @@ abstract class BaseAPStringPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = APStringPeer::doSelect($critcopy, $con);
+        $objects = ActionPropertyOrgStructurePeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -251,7 +251,7 @@ abstract class BaseAPStringPeer
      */
     public static function doSelect(Criteria $criteria, PropelPDO $con = null)
     {
-        return APStringPeer::populateObjects(APStringPeer::doSelectStmt($criteria, $con));
+        return ActionPropertyOrgStructurePeer::populateObjects(ActionPropertyOrgStructurePeer::doSelectStmt($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
@@ -269,16 +269,16 @@ abstract class BaseAPStringPeer
     public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(APStringPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(ActionPropertyOrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         if (!$criteria->hasSelectClause()) {
             $criteria = clone $criteria;
-            APStringPeer::addSelectColumns($criteria);
+            ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
-        $criteria->setDbName(APStringPeer::DATABASE_NAME);
+        $criteria->setDbName(ActionPropertyOrgStructurePeer::DATABASE_NAME);
 
         // BasePeer returns a PDOStatement
         return BasePeer::doSelect($criteria, $con);
@@ -292,7 +292,7 @@ abstract class BaseAPStringPeer
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
      * and retrieveByPK*() calls.
      *
-     * @param      APString $obj A APString object.
+     * @param      ActionPropertyOrgStructure $obj A ActionPropertyOrgStructure object.
      * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
@@ -301,7 +301,7 @@ abstract class BaseAPStringPeer
             if ($key === null) {
                 $key = serialize(array((string) $obj->getid(), (string) $obj->getindex()));
             } // if key === null
-            APStringPeer::$instances[$key] = $obj;
+            ActionPropertyOrgStructurePeer::$instances[$key] = $obj;
         }
     }
 
@@ -313,7 +313,7 @@ abstract class BaseAPStringPeer
      * methods in your stub classes -- you may need to explicitly remove objects
      * from the cache in order to prevent returning objects that no longer exist.
      *
-     * @param      mixed $value A APString object or a primary key value.
+     * @param      mixed $value A ActionPropertyOrgStructure object or a primary key value.
      *
      * @return void
      * @throws PropelException - if the value is invalid.
@@ -321,17 +321,17 @@ abstract class BaseAPStringPeer
     public static function removeInstanceFromPool($value)
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
-            if (is_object($value) && $value instanceof APString) {
+            if (is_object($value) && $value instanceof ActionPropertyOrgStructure) {
                 $key = serialize(array((string) $value->getid(), (string) $value->getindex()));
             } elseif (is_array($value) && count($value) === 2) {
                 // assume we've been passed a primary key
                 $key = serialize(array((string) $value[0], (string) $value[1]));
             } else {
-                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or APString object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or ActionPropertyOrgStructure object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
                 throw $e;
             }
 
-            unset(APStringPeer::$instances[$key]);
+            unset(ActionPropertyOrgStructurePeer::$instances[$key]);
         }
     } // removeInstanceFromPool()
 
@@ -342,14 +342,14 @@ abstract class BaseAPStringPeer
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
      * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-     * @return   APString Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+     * @return   ActionPropertyOrgStructure Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see        getPrimaryKeyHash()
      */
     public static function getInstanceFromPool($key)
     {
         if (Propel::isInstancePoolingEnabled()) {
-            if (isset(APStringPeer::$instances[$key])) {
-                return APStringPeer::$instances[$key];
+            if (isset(ActionPropertyOrgStructurePeer::$instances[$key])) {
+                return ActionPropertyOrgStructurePeer::$instances[$key];
             }
         }
 
@@ -365,16 +365,16 @@ abstract class BaseAPStringPeer
     {
       if ($and_clear_all_references)
       {
-        foreach (APStringPeer::$instances as $instance)
+        foreach (ActionPropertyOrgStructurePeer::$instances as $instance)
         {
           $instance->clearAllReferences(true);
         }
       }
-        APStringPeer::$instances = array();
+        ActionPropertyOrgStructurePeer::$instances = array();
     }
 
     /**
-     * Method to invalidate the instance pool of all tables related to ActionProperty_String
+     * Method to invalidate the instance pool of all tables related to ActionProperty_OrgStructure
      * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
@@ -428,11 +428,11 @@ abstract class BaseAPStringPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = APStringPeer::getOMClass();
+        $cls = ActionPropertyOrgStructurePeer::getOMClass();
         // populate the object(s)
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key = APStringPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj = APStringPeer::getInstanceFromPool($key))) {
+            $key = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj = ActionPropertyOrgStructurePeer::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
@@ -441,7 +441,7 @@ abstract class BaseAPStringPeer
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                APStringPeer::addInstanceToPool($obj, $key);
+                ActionPropertyOrgStructurePeer::addInstanceToPool($obj, $key);
             } // if key exists
         }
         $stmt->closeCursor();
@@ -455,21 +455,21 @@ abstract class BaseAPStringPeer
      * @param      int $startcol The 0-based offset for reading from the resultset row.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
-     * @return array (APString object, last column rank)
+     * @return array (ActionPropertyOrgStructure object, last column rank)
      */
     public static function populateObject($row, $startcol = 0)
     {
-        $key = APStringPeer::getPrimaryKeyHashFromRow($row, $startcol);
-        if (null !== ($obj = APStringPeer::getInstanceFromPool($key))) {
+        $key = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol);
+        if (null !== ($obj = ActionPropertyOrgStructurePeer::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $startcol, true); // rehydrate
-            $col = $startcol + APStringPeer::NUM_HYDRATE_COLUMNS;
+            $col = $startcol + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = APStringPeer::OM_CLASS;
+            $cls = ActionPropertyOrgStructurePeer::OM_CLASS;
             $obj = new $cls();
             $col = $obj->hydrate($row, $startcol);
-            APStringPeer::addInstanceToPool($obj, $key);
+            ActionPropertyOrgStructurePeer::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -484,7 +484,7 @@ abstract class BaseAPStringPeer
      */
     public static function getTableMap()
     {
-        return Propel::getDatabaseMap(APStringPeer::DATABASE_NAME)->getTable(APStringPeer::TABLE_NAME);
+        return Propel::getDatabaseMap(ActionPropertyOrgStructurePeer::DATABASE_NAME)->getTable(ActionPropertyOrgStructurePeer::TABLE_NAME);
     }
 
     /**
@@ -492,9 +492,9 @@ abstract class BaseAPStringPeer
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getDatabaseMap(BaseAPStringPeer::DATABASE_NAME);
-      if (!$dbMap->hasTable(BaseAPStringPeer::TABLE_NAME)) {
-        $dbMap->addTableObject(new APStringTableMap());
+      $dbMap = Propel::getDatabaseMap(BaseActionPropertyOrgStructurePeer::DATABASE_NAME);
+      if (!$dbMap->hasTable(BaseActionPropertyOrgStructurePeer::TABLE_NAME)) {
+        $dbMap->addTableObject(new ActionPropertyOrgStructureTableMap());
       }
     }
 
@@ -506,13 +506,13 @@ abstract class BaseAPStringPeer
      */
     public static function getOMClass($row = 0, $colnum = 0)
     {
-        return APStringPeer::OM_CLASS;
+        return ActionPropertyOrgStructurePeer::OM_CLASS;
     }
 
     /**
-     * Performs an INSERT on the database, given a APString or Criteria object.
+     * Performs an INSERT on the database, given a ActionPropertyOrgStructure or Criteria object.
      *
-     * @param      mixed $values Criteria or APString object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or ActionPropertyOrgStructure object containing data that is used to create the INSERT statement.
      * @param      PropelPDO $con the PropelPDO connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -521,18 +521,18 @@ abstract class BaseAPStringPeer
     public static function doInsert($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(APStringPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(ActionPropertyOrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from APString object
+            $criteria = $values->buildCriteria(); // build Criteria from ActionPropertyOrgStructure object
         }
 
 
         // Set the correct dbName
-        $criteria->setDbName(APStringPeer::DATABASE_NAME);
+        $criteria->setDbName(ActionPropertyOrgStructurePeer::DATABASE_NAME);
 
         try {
             // use transaction because $criteria could contain info
@@ -549,9 +549,9 @@ abstract class BaseAPStringPeer
     }
 
     /**
-     * Performs an UPDATE on the database, given a APString or Criteria object.
+     * Performs an UPDATE on the database, given a ActionPropertyOrgStructure or Criteria object.
      *
-     * @param      mixed $values Criteria or APString object containing data that is used to create the UPDATE statement.
+     * @param      mixed $values Criteria or ActionPropertyOrgStructure object containing data that is used to create the UPDATE statement.
      * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
      * @return int             The number of affected rows (if supported by underlying database driver).
      * @throws PropelException Any exceptions caught during processing will be
@@ -560,43 +560,43 @@ abstract class BaseAPStringPeer
     public static function doUpdate($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(APStringPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(ActionPropertyOrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
-        $selectCriteria = new Criteria(APStringPeer::DATABASE_NAME);
+        $selectCriteria = new Criteria(ActionPropertyOrgStructurePeer::DATABASE_NAME);
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(APStringPeer::ID);
-            $value = $criteria->remove(APStringPeer::ID);
+            $comparison = $criteria->getComparison(ActionPropertyOrgStructurePeer::ID);
+            $value = $criteria->remove(ActionPropertyOrgStructurePeer::ID);
             if ($value) {
-                $selectCriteria->add(APStringPeer::ID, $value, $comparison);
+                $selectCriteria->add(ActionPropertyOrgStructurePeer::ID, $value, $comparison);
             } else {
-                $selectCriteria->setPrimaryTableName(APStringPeer::TABLE_NAME);
+                $selectCriteria->setPrimaryTableName(ActionPropertyOrgStructurePeer::TABLE_NAME);
             }
 
-            $comparison = $criteria->getComparison(APStringPeer::INDEX);
-            $value = $criteria->remove(APStringPeer::INDEX);
+            $comparison = $criteria->getComparison(ActionPropertyOrgStructurePeer::INDEX);
+            $value = $criteria->remove(ActionPropertyOrgStructurePeer::INDEX);
             if ($value) {
-                $selectCriteria->add(APStringPeer::INDEX, $value, $comparison);
+                $selectCriteria->add(ActionPropertyOrgStructurePeer::INDEX, $value, $comparison);
             } else {
-                $selectCriteria->setPrimaryTableName(APStringPeer::TABLE_NAME);
+                $selectCriteria->setPrimaryTableName(ActionPropertyOrgStructurePeer::TABLE_NAME);
             }
 
-        } else { // $values is APString object
+        } else { // $values is ActionPropertyOrgStructure object
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
         }
 
         // set the correct dbName
-        $criteria->setDbName(APStringPeer::DATABASE_NAME);
+        $criteria->setDbName(ActionPropertyOrgStructurePeer::DATABASE_NAME);
 
         return BasePeer::doUpdate($selectCriteria, $criteria, $con);
     }
 
     /**
-     * Deletes all rows from the ActionProperty_String table.
+     * Deletes all rows from the ActionProperty_OrgStructure table.
      *
      * @param      PropelPDO $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).
@@ -605,19 +605,19 @@ abstract class BaseAPStringPeer
     public static function doDeleteAll(PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(APStringPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(ActionPropertyOrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
         $affectedRows = 0; // initialize var to track total num of affected rows
         try {
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
-            $affectedRows += BasePeer::doDeleteAll(APStringPeer::TABLE_NAME, $con, APStringPeer::DATABASE_NAME);
+            $affectedRows += BasePeer::doDeleteAll(ActionPropertyOrgStructurePeer::TABLE_NAME, $con, ActionPropertyOrgStructurePeer::DATABASE_NAME);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            APStringPeer::clearInstancePool();
-            APStringPeer::clearRelatedInstancePool();
+            ActionPropertyOrgStructurePeer::clearInstancePool();
+            ActionPropertyOrgStructurePeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -628,9 +628,9 @@ abstract class BaseAPStringPeer
     }
 
     /**
-     * Performs a DELETE on the database, given a APString or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a ActionPropertyOrgStructure or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or APString object or primary key or array of primary keys
+     * @param      mixed $values Criteria or ActionPropertyOrgStructure object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      PropelPDO $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -641,23 +641,23 @@ abstract class BaseAPStringPeer
      public static function doDelete($values, PropelPDO $con = null)
      {
         if ($con === null) {
-            $con = Propel::getConnection(APStringPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(ActionPropertyOrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             // invalidate the cache for all objects of this type, since we have no
             // way of knowing (without running a query) what objects should be invalidated
             // from the cache based on this Criteria.
-            APStringPeer::clearInstancePool();
+            ActionPropertyOrgStructurePeer::clearInstancePool();
             // rename for clarity
             $criteria = clone $values;
-        } elseif ($values instanceof APString) { // it's a model object
+        } elseif ($values instanceof ActionPropertyOrgStructure) { // it's a model object
             // invalidate the cache for this single object
-            APStringPeer::removeInstanceFromPool($values);
+            ActionPropertyOrgStructurePeer::removeInstanceFromPool($values);
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(APStringPeer::DATABASE_NAME);
+            $criteria = new Criteria(ActionPropertyOrgStructurePeer::DATABASE_NAME);
             // primary key is composite; we therefore, expect
             // the primary key passed to be an array of pkey values
             if (count($values) == count($values, COUNT_RECURSIVE)) {
@@ -665,16 +665,16 @@ abstract class BaseAPStringPeer
                 $values = array($values);
             }
             foreach ($values as $value) {
-                $criterion = $criteria->getNewCriterion(APStringPeer::ID, $value[0]);
-                $criterion->addAnd($criteria->getNewCriterion(APStringPeer::INDEX, $value[1]));
+                $criterion = $criteria->getNewCriterion(ActionPropertyOrgStructurePeer::ID, $value[0]);
+                $criterion->addAnd($criteria->getNewCriterion(ActionPropertyOrgStructurePeer::INDEX, $value[1]));
                 $criteria->addOr($criterion);
                 // we can invalidate the cache for this single PK
-                APStringPeer::removeInstanceFromPool($value);
+                ActionPropertyOrgStructurePeer::removeInstanceFromPool($value);
             }
         }
 
         // Set the correct dbName
-        $criteria->setDbName(APStringPeer::DATABASE_NAME);
+        $criteria->setDbName(ActionPropertyOrgStructurePeer::DATABASE_NAME);
 
         $affectedRows = 0; // initialize var to track total num of affected rows
 
@@ -684,7 +684,7 @@ abstract class BaseAPStringPeer
             $con->beginTransaction();
 
             $affectedRows += BasePeer::doDelete($criteria, $con);
-            APStringPeer::clearRelatedInstancePool();
+            ActionPropertyOrgStructurePeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -695,13 +695,13 @@ abstract class BaseAPStringPeer
     }
 
     /**
-     * Validates all modified columns of given APString object.
+     * Validates all modified columns of given ActionPropertyOrgStructure object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      APString $obj The object to validate.
+     * @param      ActionPropertyOrgStructure $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
@@ -711,8 +711,8 @@ abstract class BaseAPStringPeer
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(APStringPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(APStringPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(ActionPropertyOrgStructurePeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(ActionPropertyOrgStructurePeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -728,7 +728,7 @@ abstract class BaseAPStringPeer
 
         }
 
-        return BasePeer::doValidate(APStringPeer::DATABASE_NAME, APStringPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(ActionPropertyOrgStructurePeer::DATABASE_NAME, ActionPropertyOrgStructurePeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -736,27 +736,27 @@ abstract class BaseAPStringPeer
      * @param   int $id
      * @param   int $index
      * @param      PropelPDO $con
-     * @return   APString
+     * @return   ActionPropertyOrgStructure
      */
     public static function retrieveByPK($id, $index, PropelPDO $con = null) {
         $_instancePoolKey = serialize(array((string) $id, (string) $index));
-         if (null !== ($obj = APStringPeer::getInstanceFromPool($_instancePoolKey))) {
+         if (null !== ($obj = ActionPropertyOrgStructurePeer::getInstanceFromPool($_instancePoolKey))) {
              return $obj;
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(APStringPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(ActionPropertyOrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
-        $criteria = new Criteria(APStringPeer::DATABASE_NAME);
-        $criteria->add(APStringPeer::ID, $id);
-        $criteria->add(APStringPeer::INDEX, $index);
-        $v = APStringPeer::doSelect($criteria, $con);
+        $criteria = new Criteria(ActionPropertyOrgStructurePeer::DATABASE_NAME);
+        $criteria->add(ActionPropertyOrgStructurePeer::ID, $id);
+        $criteria->add(ActionPropertyOrgStructurePeer::INDEX, $index);
+        $v = ActionPropertyOrgStructurePeer::doSelect($criteria, $con);
 
         return !empty($v) ? $v[0] : null;
     }
-} // BaseAPStringPeer
+} // BaseActionPropertyOrgStructurePeer
 
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-BaseAPStringPeer::buildTableMap();
+BaseActionPropertyOrgStructurePeer::buildTableMap();
 

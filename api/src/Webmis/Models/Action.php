@@ -18,25 +18,101 @@ use Webmis\Models\om\BaseAction;
  */
 class Action extends BaseAction
 {
-	public function serializePrescription(){
+    public function serializeProperty($property){
 
-        $p = array(
+            $data = array();
+            $type = $property->getActionPropertyType();
+            $data['propertyName'] = $type->getName();
+            $data['typeName'] = $type->getTypeName();
+            $data['typeCode'] = $type->getCode();
+            $value = null;
+
+            switch ($data['typeName']) {
+                    case 'String':
+                    case 'Html':
+                    case 'Text':
+                    //case 'Constructor':
+                        if($property->getActionPropertyString()){
+                            $value =  $property->getActionPropertyString()->getValue();
+                        }
+                    break;
+                    case 'Double':
+                        if($property->getActionPropertyDouble()){
+                            $value = $property->getActionPropertyDouble()->getValue();
+                        }
+                    break;
+                    // case 'FlatDirectory':
+                    //     // $p['value'] = $actionProperty->getActionPropertyFDRecord()->getValue();
+                    // break;
+                    case 'Date':
+                        if($property->getActionPropertyDate()){
+                            $date = $property->getActionPropertyDate()->getValue();
+                            $dateArray = explode('-', $date);
+                            $year = $dateArray[0];
+                            if($year > 1000){
+                                $value = strtotime($date)*1000;
+                            }
+                        }
+
+                    break;
+                    default:
+                        $value = 'этот тип экшен проперти пока не поддерживается';
+                    break;
+            }
+
+            $data['value'] = $value;
+
+            return $data;
+    }
+
+    public function serializePrescription(){
+
+        $data = array(
             'assigmentIntervals' => array(),//интервалы назначения
         );
 
-        $actionType = $this->getActionType();
-        $p['id'] = $this->getId();
-        $p['name'] = $actionType->getName();
-        $p['flatCode'] = $actionType->getFlatCode();
+        $data['id'] = $this->getId();
+        $event = $this->getEvent();
+        $data['eventId'] = $this->getEventId();
+        $data['clientId'] = $event->getClientId();
 
-        $drugComponents = $this->getDrugComponents();
-        if($drugComponents){
-            $drugComponent = $drugComponents[0];
-            $p['drugName'] = $drugComponent->getName();
-            $p['drugDose'] = $drugComponent->getDose();
+        $actionType = $this->getActionType();
+        $data['name'] = $actionType->getName();
+        $data['flatCode'] = $actionType->getFlatCode();
+
+        $properties = $this->getActionPropertys();
+
+        foreach ($properties  as $property) {
+
+            $p = $this->serializeProperty($property);
+
+            if($p['typeCode']){
+                $data[$p['typeCode']] = $p['value'];
+            }
+
+            if($p['propertyName'] == 'Примечание'){
+                $data['note'] = $p['value'];
+            }
+        }
+
+
+        $data['drugs'] = array();
+
+        $drugs = $this->getDrugComponents();
+
+        if($drugs){
+            foreach ($drugs as $drug) {
+
+                $data['drugs'][] = array(
+                    'id' => $drug->getId(),
+                    'name' => $drug->getName(),
+                    'dose' => $drug->getDose()
+                    );
+            }
         }
 
         $intervals = $this->getDrugCharts();
+
         if($intervals){
             $executionIntervals = array();
             $assigmentIntervals = array();
@@ -64,12 +140,12 @@ class Action extends BaseAction
                  $assigmentIntervals[$interval['drugChartMasterId']]['executionIntervals'][] = $interval;
             }
 
-            $p['assigmentIntervals'] = array_values($assigmentIntervals);
-
-
+            $data['assigmentIntervals'] = array_values($assigmentIntervals);
 
         }
 
-		return $p;
-	}
+        ksort($data);
+
+        return $data;
+    }
 }

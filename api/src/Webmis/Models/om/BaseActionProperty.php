@@ -31,6 +31,8 @@ use Webmis\Models\ActionPropertyInteger;
 use Webmis\Models\ActionPropertyIntegerQuery;
 use Webmis\Models\ActionPropertyMkb;
 use Webmis\Models\ActionPropertyMkbQuery;
+use Webmis\Models\ActionPropertyOrgStructure;
+use Webmis\Models\ActionPropertyOrgStructureQuery;
 use Webmis\Models\ActionPropertyPeer;
 use Webmis\Models\ActionPropertyQuery;
 use Webmis\Models\ActionPropertyString;
@@ -174,6 +176,11 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
      * @var        ActionPropertyDouble
      */
     protected $aActionPropertyDouble;
+
+    /**
+     * @var        ActionPropertyOrgStructure
+     */
+    protected $aActionPropertyOrgStructure;
 
     /**
      * @var        ActionPropertyFDRecord
@@ -500,6 +507,10 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
 
         if ($this->aActionPropertyDouble !== null && $this->aActionPropertyDouble->getid() !== $v) {
             $this->aActionPropertyDouble = null;
+        }
+
+        if ($this->aActionPropertyOrgStructure !== null && $this->aActionPropertyOrgStructure->getid() !== $v) {
+            $this->aActionPropertyOrgStructure = null;
         }
 
         if ($this->aActionPropertyFDRecord !== null && $this->aActionPropertyFDRecord->getId() !== $v) {
@@ -895,6 +906,9 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
         if ($this->aActionPropertyDouble !== null && $this->id !== $this->aActionPropertyDouble->getid()) {
             $this->aActionPropertyDouble = null;
         }
+        if ($this->aActionPropertyOrgStructure !== null && $this->id !== $this->aActionPropertyOrgStructure->getid()) {
+            $this->aActionPropertyOrgStructure = null;
+        }
         if ($this->aActionPropertyFDRecord !== null && $this->id !== $this->aActionPropertyFDRecord->getId()) {
             $this->aActionPropertyFDRecord = null;
         }
@@ -948,6 +962,7 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             $this->aActionPropertyString = null;
             $this->aActionPropertyDate = null;
             $this->aActionPropertyDouble = null;
+            $this->aActionPropertyOrgStructure = null;
             $this->aActionPropertyFDRecord = null;
             $this->collActionPropertyActions = null;
 
@@ -1121,6 +1136,13 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                     $affectedRows += $this->aActionPropertyDouble->save($con);
                 }
                 $this->setActionPropertyDouble($this->aActionPropertyDouble);
+            }
+
+            if ($this->aActionPropertyOrgStructure !== null) {
+                if ($this->aActionPropertyOrgStructure->isModified() || $this->aActionPropertyOrgStructure->isNew()) {
+                    $affectedRows += $this->aActionPropertyOrgStructure->save($con);
+                }
+                $this->setActionPropertyOrgStructure($this->aActionPropertyOrgStructure);
             }
 
             if ($this->aActionPropertyFDRecord !== null) {
@@ -1470,6 +1492,12 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->aActionPropertyOrgStructure !== null) {
+                if (!$this->aActionPropertyOrgStructure->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aActionPropertyOrgStructure->getValidationFailures());
+                }
+            }
+
             if ($this->aActionPropertyFDRecord !== null) {
                 if (!$this->aActionPropertyFDRecord->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aActionPropertyFDRecord->getValidationFailures());
@@ -1654,6 +1682,9 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             }
             if (null !== $this->aActionPropertyDouble) {
                 $result['ActionPropertyDouble'] = $this->aActionPropertyDouble->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aActionPropertyOrgStructure) {
+                $result['ActionPropertyOrgStructure'] = $this->aActionPropertyOrgStructure->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->aActionPropertyFDRecord) {
                 $result['ActionPropertyFDRecord'] = $this->aActionPropertyFDRecord->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
@@ -1935,6 +1966,11 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                 $copyObj->setActionPropertyDouble($relObj->copy($deepCopy));
             }
 
+            $relObj = $this->getActionPropertyOrgStructure();
+            if ($relObj) {
+                $copyObj->setActionPropertyOrgStructure($relObj->copy($deepCopy));
+            }
+
             $relObj = $this->getActionPropertyFDRecord();
             if ($relObj) {
                 $copyObj->setActionPropertyFDRecord($relObj->copy($deepCopy));
@@ -2136,7 +2172,7 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                 ->filterByActionProperty($this) // here
                 ->findOne($con);
             // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
-            $this->aActionPropertyString->setActionProperty($this);
+            //$this->aActionPropertyString->setActionProperty($this);
         }
 
         return $this->aActionPropertyString;
@@ -2232,10 +2268,58 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                 ->filterByActionProperty($this) // here
                 ->findOne($con);
             // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
-            $this->aActionPropertyDouble->setActionProperty($this);
+            //$this->aActionPropertyDouble->setActionProperty($this);
         }
 
         return $this->aActionPropertyDouble;
+    }
+
+    /**
+     * Declares an association between this object and a ActionPropertyOrgStructure object.
+     *
+     * @param             ActionPropertyOrgStructure $v
+     * @return ActionProperty The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setActionPropertyOrgStructure(ActionPropertyOrgStructure $v = null)
+    {
+        if ($v === null) {
+            $this->setid(NULL);
+        } else {
+            $this->setid($v->getid());
+        }
+
+        $this->aActionPropertyOrgStructure = $v;
+
+        // Add binding for other direction of this 1:1 relationship.
+        if ($v !== null) {
+            $v->setActionProperty($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ActionPropertyOrgStructure object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return ActionPropertyOrgStructure The associated ActionPropertyOrgStructure object.
+     * @throws PropelException
+     */
+    public function getActionPropertyOrgStructure(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aActionPropertyOrgStructure === null && ($this->id !== null) && $doQuery) {
+            $this->aActionPropertyOrgStructure = ActionPropertyOrgStructureQuery::create()
+                ->filterByActionProperty($this) // here
+                ->findOne($con);
+            // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
+            $this->aActionPropertyOrgStructure->setActionProperty($this);
+        }
+
+        return $this->aActionPropertyOrgStructure;
     }
 
     /**
@@ -3483,6 +3567,9 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
             if ($this->aActionPropertyDouble instanceof Persistent) {
               $this->aActionPropertyDouble->clearAllReferences($deep);
             }
+            if ($this->aActionPropertyOrgStructure instanceof Persistent) {
+              $this->aActionPropertyOrgStructure->clearAllReferences($deep);
+            }
             if ($this->aActionPropertyFDRecord instanceof Persistent) {
               $this->aActionPropertyFDRecord->clearAllReferences($deep);
             }
@@ -3515,6 +3602,7 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
         $this->aActionPropertyString = null;
         $this->aActionPropertyDate = null;
         $this->aActionPropertyDouble = null;
+        $this->aActionPropertyOrgStructure = null;
         $this->aActionPropertyFDRecord = null;
     }
 
