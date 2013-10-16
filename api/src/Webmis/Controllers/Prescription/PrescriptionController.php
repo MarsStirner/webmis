@@ -196,6 +196,21 @@ class PrescriptionController
 
 
     public function updateAction(Request $request, Application $app){
-        return $app['jsonp']->jsonp(array('message' => 'update controller' ));
+        $route_params = $request->get('_route_params') ;
+        $prescriptionId = (int) $route_params['prescriptionId'];
+
+        if(!$prescriptionId){
+            return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора назначения.' ));
+        }
+
+        $prescription = ActionQuery::create()
+            ->getPrescriptions($prescriptionId, null, null,  null, null,  null)
+            ->find()->getFirst();
+
+        if($prescription){
+            $data = $prescription->serializePrescription();
+        }
+
+        return $app['jsonp']->jsonp(array('data' => $data ));
     }
 }
