@@ -49,8 +49,8 @@ class ClientTableMap extends TableMap
         $this->addColumn('modifyPerson_id', 'modifyPersonId', 'INTEGER', false, null, null);
         $this->addColumn('deleted', 'deleted', 'BOOLEAN', true, 1, false);
         $this->addColumn('lastName', 'lastName', 'VARCHAR', true, 30, null);
-        $this->addColumn('firstName', 'FirstName', 'VARCHAR', true, 30, null);
-        $this->addColumn('patrName', 'PatrName', 'VARCHAR', true, 30, null);
+        $this->addColumn('firstName', 'firstName', 'VARCHAR', true, 30, null);
+        $this->addColumn('patrName', 'patrName', 'VARCHAR', true, 30, null);
         $this->addColumn('birthDate', 'birthDate', 'DATE', true, null, null);
         $this->addColumn('sex', 'sex', 'TINYINT', true, null, null);
         $this->addColumn('SNILS', 'snils', 'CHAR', true, 11, null);

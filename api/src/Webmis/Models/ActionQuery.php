@@ -65,4 +65,30 @@ class ActionQuery extends BaseActionQuery
 	}
 
 
+		public function getPrescriptions($id = null, $eventId = null, $beginDateTime = null, $endDateTime = null)
+	{
+            return $this->useActionTypeQuery()
+                ->filterByFlatCode(array('chemotherapy','prescription','infusion','analgesia'))
+                ->filterByDeleted(false)
+            ->endUse()
+            ->filterByDeleted(false)
+            ->_if($eventId)
+	            ->filterByEventId($eventId)
+            ->_endif()
+            ->_if($id)
+	            ->filterById($id)
+	        ->_endif()
+
+                ->useDrugChartQuery()
+                    ->_if($beginDateTime)
+                        ->filterByBegDateTime(array('min' => $beginDateTime))
+                    ->_endif()
+                ->endUse()
+            ->with('DrugChart')
+
+            ->joinWithDrugComponent();
+
+	}
+
+
 }
