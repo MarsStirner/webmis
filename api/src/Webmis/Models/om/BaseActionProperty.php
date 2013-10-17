@@ -2172,7 +2172,7 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                 ->filterByActionProperty($this) // here
                 ->findOne($con);
             // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
-            //$this->aActionPropertyString->setActionProperty($this);
+            $this->aActionPropertyString->setActionProperty($this);
         }
 
         return $this->aActionPropertyString;
@@ -2268,7 +2268,7 @@ abstract class BaseActionProperty extends BaseObject implements Persistent
                 ->filterByActionProperty($this) // here
                 ->findOne($con);
             // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
-            //$this->aActionPropertyDouble->setActionProperty($this);
+            $this->aActionPropertyDouble->setActionProperty($this);
         }
 
         return $this->aActionPropertyDouble;

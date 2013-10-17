@@ -13,6 +13,8 @@ use Webmis\Models\DrugChartQuery;
 use Webmis\Models\ActionQuery;
 use Webmis\Models\Action;
 use Webmis\Models\ActionProperty;
+use Webmis\Models\ActionPropertyString;
+use Webmis\Models\ActionPropertyDouble;
 use Webmis\Models\DrugComponent;
 use Webmis\Models\DrugChart;
 
@@ -78,7 +80,7 @@ class PrescriptionController
         $page = (int) $request->get('page') ?: 1;
         $limit = (int) $request->get('limit') ?: 20;
 
-        $data = array('prescriptions' => array());
+        $data = array();
 
         $prescriptions = ActionQuery::create()
             ->getPrescriptions(null, $eventId, $clientId, $departmentId, $beginDateTime, $endDateTime)
@@ -87,7 +89,7 @@ class PrescriptionController
 
         if($prescriptions){
             foreach ($prescriptions as $prescription) {
-                $data['prescriptions'][] = $prescription->serializePrescription();
+                $data[] = $prescription->serializePrescription();
             }
         }
 
@@ -179,11 +181,6 @@ class PrescriptionController
         }
 
 
-        if(is_array($properties)){
-            //actionPropertyTypeId
-        }
-
-
         foreach ($drugs as $drug) {
             $drugComponent = new DrugComponent();
             $drugComponent->fromArray($drug);
@@ -207,6 +204,65 @@ class PrescriptionController
 
 
         $prescription->save();
+        $prescription->reload(true);
+
+
+
+        //заполнение значений для экшенпропертей
+        if(is_array($properties)){
+            $pi = array();
+            foreach ($properties as $property) {
+                $pi[$property['actionPropertyTypeId']] = $property;
+            }
+            $properties = $pi;
+        }
+            // return $app['jsonp']->jsonp(array('message' => $properties ));
+        $actionProperties = $prescription->getActionPropertys();
+
+        if($actionProperties){
+            foreach ($actionProperties as $actionProperty) {
+                $actionPropertyId = $actionProperty->getId();
+                $actionPropertyType = $actionProperty->getActionPropertyType();
+                $actionPropertyTypeId = $actionPropertyType->getId();
+                $typeName = $actionPropertyType->getTypeName();
+
+
+                if(array_key_exists($actionPropertyTypeId,$properties)){
+
+                    switch ($typeName) {
+                        case 'String':
+                        case 'Html':
+                        case 'Text':
+                            $actionPropertyString = new ActionPropertyString();
+                            $actionPropertyString->setId($actionPropertyId);
+                            $actionPropertyString->setIndex(0);
+                            $actionPropertyString->setValue($properties[$actionPropertyTypeId]['value']);
+
+                            $actionProperty->setActionPropertyString($actionPropertyString);
+
+                            break;
+                        case 'Double':
+                            $actionPropertyDouble = new ActionPropertyDouble();
+                            $actionPropertyDouble->setId($actionPropertyId);
+                            $actionPropertyDouble->setIndex(0);
+                            $actionPropertyDouble->setValue($properties[$actionPropertyTypeId]['value']);
+
+                            $actionProperty->setActionPropertyDouble($actionPropertyDouble);
+
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                }
+
+            }
+        }
+
+        $actionProperties->save();
+
+
+
 
         $drugCharts = $prescription->getDrugCharts();
 

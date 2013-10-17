@@ -18,4 +18,30 @@ use Webmis\Models\om\BaseActionProperty;
  */
 class ActionProperty extends BaseActionProperty
 {
+	    public function getActionPropertyString(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aActionPropertyString === null && ($this->id !== null) && $doQuery) {
+            $this->aActionPropertyString = ActionPropertyStringQuery::create()
+                ->filterByActionProperty($this) // here
+                ->findOne($con);
+            // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
+            //$this->aActionPropertyString->setActionProperty($this);
+        }
+
+        return $this->aActionPropertyString;
+    }
+
+
+        public function getActionPropertyDouble(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aActionPropertyDouble === null && ($this->id !== null) && $doQuery) {
+            $this->aActionPropertyDouble = ActionPropertyDoubleQuery::create()
+                ->filterByActionProperty($this) // here
+                ->findOne($con);
+            // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
+            //$this->aActionPropertyDouble->setActionProperty($this);
+        }
+
+        return $this->aActionPropertyDouble;
+    }
 }

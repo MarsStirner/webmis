@@ -22,12 +22,13 @@ class Action extends BaseAction
 
             $data = array();
             $type = $property->getActionPropertyType();
-            $data['propertyName'] = $type->getName();
-            $data['typeName'] = $type->getTypeName();
-            $data['typeCode'] = $type->getCode();
+            $data['id'] = $property->getId();
+            $data['name'] = $type->getName();
+            $data['type'] = $type->getTypeName();
+            $data['code'] = $type->getCode();
             $value = null;
 
-            switch ($data['typeName']) {
+            switch ($data['type']) {
                     case 'String':
                     case 'Html':
                     case 'Text':
@@ -71,29 +72,25 @@ class Action extends BaseAction
             'assigmentIntervals' => array(),//интервалы назначения
         );
 
-        $data['id'] = $this->getId();
+        $actionType = $this->getActionType();
         $event = $this->getEvent();
+
+        $data['id'] = $this->getId();
+        $data['name'] = $actionType->getName();
         $data['eventId'] = $this->getEventId();
         $data['clientId'] = $event->getClientId();
+        $data['properties'] = array();
 
-        $actionType = $this->getActionType();
-        $data['name'] = $actionType->getName();
-        $data['flatCode'] = $actionType->getFlatCode();
+        //$data['flatCode'] = $actionType->getFlatCode();
 
         $properties = $this->getActionPropertys();
 
-        foreach ($properties  as $property) {
-
-            $p = $this->serializeProperty($property);
-
-            if($p['typeCode']){
-                $data[$p['typeCode']] = $p['value'];
-            }
-
-            if($p['propertyName'] == 'Примечание'){
-                $data['note'] = $p['value'];
+        if($properties){
+            foreach ($properties  as $property) {
+                $data['properties'][] = $this->serializeProperty($property);
             }
         }
+
 
 
         $data['drugs'] = array();
@@ -119,8 +116,8 @@ class Action extends BaseAction
 
             foreach ($intervals as $interval) {
                 $i = array();
-                $i['drugChartId'] = $interval->getId();
-                $i['drugChartMasterId'] = $interval->getMasterId();
+                $i['id'] = $interval->getId();
+                $i['masterId'] = $interval->getMasterId();
                 $i['beginDateTime'] = $interval->getBegDateTime('U')*1000;
                 $i['bdt'] = $interval->getBegDateTime();
                 $i['endDateTime'] = $interval->getEndDateTime('U')*1000;
@@ -130,14 +127,14 @@ class Action extends BaseAction
 
                 if(!$interval->getMasterId()){
                     $i['executionIntervals'] = array();
-                    $assigmentIntervals[$i['drugChartId']] = $i;
+                    $assigmentIntervals[$i['id']] = $i;
                 }else{
                     $executionIntervals[] = $i;
                 }
             }
 
             foreach ($executionIntervals as $interval) {
-                 $assigmentIntervals[$interval['drugChartMasterId']]['executionIntervals'][] = $interval;
+                 $assigmentIntervals[$interval['masterId']]['executionIntervals'][] = $interval;
             }
 
             $data['assigmentIntervals'] = array_values($assigmentIntervals);
