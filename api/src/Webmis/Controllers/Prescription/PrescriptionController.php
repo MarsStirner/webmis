@@ -25,38 +25,46 @@ class PrescriptionController
     }
 
 
-    public function listForDepartmentAction(Request $request, Application $app)
+    public function templateAction(Request $request, Application $app)
     {
-        $route_params = $request->get('_route_params');
+        $route_params = $request->get('_route_params') ;
+        $actionTypeId = (int) $route_params['actionTypeId'];
+        $data = array(
+            'actionTypeId' => $actionTypeId,
+            'eventId' => null,
+            'properties' => array(),
+            'drugs' => array(),
+            'assigmentIntervals' => array()
+            );
 
-        $clientId = (int) $request->get('clientId');
-        $departmentId = (int) $route_params['departmentId'];
-        $doctorId = (int) $request->get('doctorId');
-        $eventId = (int) $request->get('eventId');
-
-        $data = array();
-
-        if(!$departmentId){
-            return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора департамента.' ));
+        if(!$actionTypeId){
+            return $app['jsonp']->jsonp(array('message' => 'id for ActionPropertyType?' ));
         }
 
 
-        $prescriptions = ActionQuery::create()
-            ->getPrescriptions(null, $eventId, $clientId, $departmentId, null,  null)
+        $actionPropertyTypes = ActionPropertyTypeQuery::create()
+            ->filterByActionTypeId($actionTypeId)
+            ->filterByDeleted(false)
             ->find();
 
-        if($prescriptions){
-            foreach ($prescriptions as $prescription) {
-                $data['prescriptions'][] = $prescription->serializePrescription();
-            }
+        foreach ($actionPropertyTypes as $actionPropertyType) {
+            $data['properties'][] = array(
+                'actionPropertyTypeId' => $actionPropertyType->getId(),
+                'mandatory' => $actionPropertyType->getMandatory(),
+                'name' => $actionPropertyType->getName(),
+                'value' => '',
+                'valueDomain' => $actionPropertyType->getValueDomain(),
+                'type' => $actionPropertyType->getTypeName(),
+                'code' => $actionPropertyType->getCode(),
+                );
+
         }
 
 
-        return $app['jsonp']->jsonp(array(
-            'data' => $data,
-            'message' => 'listForDepartmentAction' ));
-
+        return $app['jsonp']->jsonp(array('data' => $data,
+            'message' => 'templateAction' ));
     }
+
 
     public function listAction(Request $request, Application $app)
     {
@@ -71,11 +79,6 @@ class PrescriptionController
         $limit = (int) $request->get('limit') ?: 20;
 
         $data = array('prescriptions' => array());
-
-
-        // if(!$eventId){
-        //     return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора истории болезни.' ));
-        // }
 
         $prescriptions = ActionQuery::create()
             ->getPrescriptions(null, $eventId, $clientId, $departmentId, $beginDateTime, $endDateTime)
@@ -115,6 +118,7 @@ class PrescriptionController
 
         return $app['jsonp']->jsonp(array('data' => $data ));
     }
+
 
     public function createAction(Request $request, Application $app){
         $createPersonId = (int) $request->cookies->get('userId');//неправильно....
@@ -174,9 +178,9 @@ class PrescriptionController
 
         }
 
+
         if(is_array($properties)){
             //actionPropertyTypeId
-
         }
 
 
