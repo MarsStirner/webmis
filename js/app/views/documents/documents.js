@@ -3536,7 +3536,7 @@ define(function (require) {
 			console.log("itemsCallback");
 			var sisRendered = templates.uiElements.htmlHelperPopUp.paste({selectedItems: _(selectedItems)});
 			this.model.setValue(sisRendered);
-			this.$(".attribute-value").html(sisRendered);
+			this.$(".attribute-value").append(sisRendered);
 		}
 	});
 
