@@ -8,9 +8,11 @@ namespace Webmis\Controllers\Prescription;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Webmis\Models\DrugComponentQuery;
+use Webmis\Models\ActionPropertyTypeQuery;
 use Webmis\Models\DrugChartQuery;
 use Webmis\Models\ActionQuery;
 use Webmis\Models\Action;
+use Webmis\Models\ActionProperty;
 use Webmis\Models\DrugComponent;
 use Webmis\Models\DrugChart;
 
@@ -59,19 +61,25 @@ class PrescriptionController
     public function listAction(Request $request, Application $app)
     {
 
-        $eventId = (int) $request->get('eventId');
         $beginDateTime = (int) $request->get('beginDateTime');
+        $clientId = (int) $request->get('clientId');
+        $departmentId = (int) $request->get('departmentId');
+        $doctorId = (int) $request->get('doctorId');
         $endDateTime = (int) $request->get('endDateTime');
+        $eventId = (int) $request->get('eventId');
+        $page = (int) $request->get('page') ?: 1;
+        $limit = (int) $request->get('limit') ?: 20;
 
         $data = array('prescriptions' => array());
 
 
-        if(!$eventId){
-            return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора истории болезни.' ));
-        }
+        // if(!$eventId){
+        //     return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора истории болезни.' ));
+        // }
 
         $prescriptions = ActionQuery::create()
-            ->getPrescriptions(null, $eventId, null, null, null, null)
+            ->getPrescriptions(null, $eventId, $clientId, $departmentId, $beginDateTime, $endDateTime)
+            //->paginate($page, $limit);
             ->find();
 
         if($prescriptions){
@@ -109,13 +117,19 @@ class PrescriptionController
     }
 
     public function createAction(Request $request, Application $app){
+        $createPersonId = (int) $request->cookies->get('userId');//неправильно....
 
         $data = $request->get('data');
         $eventId = @$data['eventId'];
-        $actionTypeId = @$data['actionTypeId'];
+        $actionTypeId = (int) @$data['actionTypeId'];
         $drugs = @$data['drugs'];
+        $properties = $data['properties'];
         $assigmentIntervals = @$data['assigmentIntervals'];
 
+
+        if(!$createPersonId){
+            return $app['jsonp']->jsonp(array('message' => 'You are logged in?' ));
+        }
 
         if(!$eventId){
             return $app['jsonp']->jsonp(array('message' => 'Id for event?' ));
@@ -132,12 +146,38 @@ class PrescriptionController
             return $app['jsonp']->jsonp(array('message' => 'Intervals?' ));
         }
 
+
+
         $prescription = new Action();
 
         $prescription->setEventId($eventId);
         $prescription->setActionTypeId($actionTypeId);
         $prescription->setDeleted(false);
+        $prescription->setCreatePersonId($createPersonId);
+        $prescription->setModifyPersonId($createPersonId);
         $prescription->setStatus(0);
+
+
+        $actionPropertyTypes = ActionPropertyTypeQuery::create()
+            ->filterByActionTypeId($actionTypeId)
+            ->filterByDeleted(false)
+            ->find();
+
+        foreach ($actionPropertyTypes as $actionPropertyType) {
+
+            $actionProperty = new ActionProperty();
+            $actionProperty->setTypeId($actionPropertyType->getId());
+            $actionProperty->setCreatePersonId($createPersonId);
+            $actionProperty->setModifyPersonId($createPersonId);
+
+            $prescription->addActionProperty($actionProperty);
+
+        }
+
+        if(is_array($properties)){
+            //actionPropertyTypeId
+
+        }
 
 
         foreach ($drugs as $drug) {
@@ -184,12 +224,11 @@ class PrescriptionController
         $prescription->save();
 
 
-        $data = $prescription->toArray();
-
         return $app['jsonp']->jsonp(array(
             'message' => 'create controller',
-            'data' => $data,
-            'DrugComponents' => $prescription->getDrugComponents()->toArray() ));
+            'data' => $prescription->serializePrescription(),
+            // 'DrugComponents' => $prescription->getDrugComponents()->toArray()
+            ));
     }
 
 
