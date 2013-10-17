@@ -3222,11 +3222,12 @@ define(function (require) {
 						if (item.checked) {
 							var tests = item.resultData.filter(function (rdi) {
 								return rdi.checked;
-							})
+							});
 							if (tests.length) {
 								paste.push({
 									inline: item.inline,
 									name: item.get("diagnosticName") ? item.get("diagnosticName").name : item.get("assessmentName").name,
+									plannedEndDate: item.get("plannedEndDate"),
 									tests: tests/*.map(function (rdi) {
 										return rdi.toJSON();
 									})*/

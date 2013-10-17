@@ -1,5 +1,5 @@
 <%selectedItems.each(function (si) {%>
-	<div><b><%=si.name%></b></div>
+	<div><b><%=moment(si.plannedEndDate).format('DD.MM.YYYY')%></b></div>
 	<%if (si.tests.length) {%>
 		<%if (si.inline) {%>
 			<div>
