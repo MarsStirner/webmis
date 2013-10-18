@@ -61,4 +61,21 @@ class DrugComponentTableMap extends TableMap
         $this->addRelation('Action', 'Webmis\\Models\\Action', RelationMap::MANY_TO_ONE, array('action_id' => 'id', ), null, null);
     } // buildRelations()
 
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' =>  array (
+  'create_column' => 'createDateTime',
+  'update_column' => 'updated_at',
+  'disable_updated_at' => 'true',
+),
+        );
+    } // getBehaviors()
+
 } // DrugComponentTableMap

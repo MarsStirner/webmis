@@ -18,7 +18,7 @@ use Webmis\Models\om\BaseActionProperty;
  */
 class ActionProperty extends BaseActionProperty
 {
-	    public function getActionPropertyString(PropelPDO $con = null, $doQuery = true)
+    public function getActionPropertyString(PropelPDO $con = null, $doQuery = true)
     {
         if ($this->aActionPropertyString === null && ($this->id !== null) && $doQuery) {
             $this->aActionPropertyString = ActionPropertyStringQuery::create()
@@ -32,7 +32,7 @@ class ActionProperty extends BaseActionProperty
     }
 
 
-        public function getActionPropertyDouble(PropelPDO $con = null, $doQuery = true)
+    public function getActionPropertyDouble(PropelPDO $con = null, $doQuery = true)
     {
         if ($this->aActionPropertyDouble === null && ($this->id !== null) && $doQuery) {
             $this->aActionPropertyDouble = ActionPropertyDoubleQuery::create()
@@ -44,4 +44,52 @@ class ActionProperty extends BaseActionProperty
 
         return $this->aActionPropertyDouble;
     }
+
+
+    public function setValue($value)
+    {
+        if(!$value){
+            return $this;
+        }
+
+        $actionPropertyId = $this->getId();
+        $actionPropertyType = $this->getActionPropertyType();
+        $actionPropertyTypeId = $actionPropertyType->getId();
+        $typeName = $actionPropertyType->getTypeName();
+
+        switch ($typeName) {
+            case 'String':
+            case 'Html':
+            case 'Text':
+                $actionPropertyString = new ActionPropertyString();
+                $actionPropertyString->fromArray(array(
+                    'id' => $actionPropertyId,
+                    'index' => 0,
+                    'value' => $value
+                    ));
+
+                $this->setActionPropertyString($actionPropertyString);
+
+                break;
+            case 'Double':
+                $actionPropertyDouble = new ActionPropertyDouble();
+                $actionPropertyDouble->fromArray(array(
+                    'id' => $actionPropertyId,
+                    'index' => 0,
+                    'value' => $value
+                    ));
+
+                $this->setActionPropertyDouble($actionPropertyDouble);
+
+                break;
+            default:
+                # code...
+                break;
+        }
+
+
+        return $this;
+    }
+
+
 }

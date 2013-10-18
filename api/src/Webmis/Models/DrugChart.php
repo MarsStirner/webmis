@@ -18,4 +18,5 @@ use Webmis\Models\om\BaseDrugChart;
  */
 class DrugChart extends BaseDrugChart
 {
+
 }

@@ -66,6 +66,55 @@ class Action extends BaseAction
             return $data;
     }
 
+    public function serializeIntervals($intervals){
+
+        if($intervals){
+            $executionIntervals = array();
+            $assigmentIntervals = array();
+
+            foreach ($intervals as $interval) {
+                $i = array();
+                $i['id'] = $interval->getId();
+                $i['masterId'] = $interval->getMasterId();
+
+                $beginDateTimestamp = $interval->getBegDateTime('U');
+                if($beginDateTimestamp){
+                    $i['beginDateTime'] = $beginDateTimestamp*1000;
+                }else{
+                    $i['beginDateTime'] = null;
+                }
+                $i['bdt'] = $interval->getBegDateTime();
+
+                $endDateTimestamp = $interval->getEndDateTime('U');
+                if($endDateTimestamp){
+                    $i['endDateTime'] = $endDateTimestamp*1000;
+                }else{
+                    $i['endDateTime'] = null;
+                }
+                $i['edt'] = $interval->getEndDateTime();
+
+                $i['status'] = $interval->getStatus();
+                $i['note'] = $interval->getNote();
+
+
+                if(!$interval->getMasterId()){
+                    $i['executionIntervals'] = array();
+                    $assigmentIntervals[$i['id']] = $i;
+                }else{
+                    $executionIntervals[] = $i;
+                }
+            }
+
+            foreach ($executionIntervals as $interval) {
+                 $assigmentIntervals[$interval['masterId']]['executionIntervals'][] = $interval;
+            }
+
+            return array_values($assigmentIntervals);
+
+        }
+
+    }
+
     public function serializePrescription(){
 
         $data = array(
@@ -78,7 +127,33 @@ class Action extends BaseAction
         $data['id'] = $this->getId();
         $data['name'] = $actionType->getName();
         $data['eventId'] = $this->getEventId();
-        $data['clientId'] = $event->getClientId();
+
+        //пациен
+        $client = $event->getClient();
+        $data['client'] = null;
+        if($client){
+            $data['client'] = array(
+                'id' => $client->getId(),
+                'firstName' => $client->getFirstName(),
+                'middleName' => $client->getPatrName(),
+                'lastName' => $client->getLastName()
+            );
+        }
+
+        //лечащий врач
+        $doctor = $event->getDoctor();
+        $data['doctor'] = null;
+        if($doctor){
+            $data['doctor'] = array(
+                'id' => $doctor->getId(),
+                'firstName' => $doctor->getFirstName(),
+                'middleName' => $doctor->getPatrName(),
+                'lastName' => $doctor->getLastName()
+            );
+        }
+
+
+
         $data['properties'] = array();
 
         //$data['flatCode'] = $actionType->getFlatCode();
@@ -103,7 +178,8 @@ class Action extends BaseAction
                 $data['drugs'][] = array(
                     'id' => $drug->getId(),
                     'name' => $drug->getName(),
-                    'dose' => $drug->getDose()
+                    'dose' => $drug->getDose(),
+                    'unit' => $drug->getUnit()
                     );
             }
         }
@@ -111,34 +187,7 @@ class Action extends BaseAction
         $intervals = $this->getDrugCharts();
 
         if($intervals){
-            $executionIntervals = array();
-            $assigmentIntervals = array();
-
-            foreach ($intervals as $interval) {
-                $i = array();
-                $i['id'] = $interval->getId();
-                $i['masterId'] = $interval->getMasterId();
-                $i['beginDateTime'] = $interval->getBegDateTime('U')*1000;
-                $i['bdt'] = $interval->getBegDateTime();
-                $i['endDateTime'] = $interval->getEndDateTime('U')*1000;
-                $i['edt'] = $interval->getEndDateTime();
-                $i['status'] = $interval->getStatus();
-
-
-                if(!$interval->getMasterId()){
-                    $i['executionIntervals'] = array();
-                    $assigmentIntervals[$i['id']] = $i;
-                }else{
-                    $executionIntervals[] = $i;
-                }
-            }
-
-            foreach ($executionIntervals as $interval) {
-                 $assigmentIntervals[$interval['masterId']]['executionIntervals'][] = $interval;
-            }
-
-            $data['assigmentIntervals'] = array_values($assigmentIntervals);
-
+            $data['assigmentIntervals'] = $this->serializeIntervals($intervals);
         }
 
         ksort($data);

@@ -67,6 +67,16 @@ class ActionQuery extends BaseActionQuery
 
         public function getPrescriptions($id = null, $eventId = null, $clientId = null, $departmentId = null, $beginDateTime = null, $endDateTime = null)
     {
+        $doctorId = null;
+        $hidratedFields = array(
+            'properties',
+            'event',
+            'drugs',
+            'intervals',
+            'client'
+            );
+
+
             return $this->filterByDeleted(false)
                         ->_if($id)
                             ->filterById($id)
@@ -78,15 +88,19 @@ class ActionQuery extends BaseActionQuery
                         ->endUse()
 
                         ->useActionPropertyQuery('ActionProperty', Criteria::LEFT_JOIN)
-                            // ->useActionPropertyTypeQuery('ActionPropertyType', Criteria::LEFT_JOIN)
-                            // ->endUse()->with('ActionPropertyType')
-                                // ->useActionPropertyStringQuery('ActionPropertyString', Criteria::LEFT_JOIN)
-                                // ->endUse()
-                                // ->with('ActionPropertyString')
-                            //->leftJoinActionPropertyString()
-                            ->leftJoinActionPropertyDouble()
+                            ->joinActionPropertyType('apType', Criteria::LEFT_JOIN)
+                            ->joinActionPropertyString('apString', Criteria::LEFT_JOIN)
+                            ->joinActionPropertyDouble('apDouble', Criteria::LEFT_JOIN)
+                            ->joinActionPropertyDate('apDate', Criteria::LEFT_JOIN)
+                            ->joinActionPropertyInteger('apInteger', Criteria::LEFT_JOIN)
                         ->endUse()
                         ->with('ActionProperty')
+                        ->with('apType')
+                        ->with('apString')
+                        ->with('apDouble')
+                        ->with('apDate')
+                        ->with('apInteger')
+
 
 
                         ->useEventQuery()
@@ -98,6 +112,13 @@ class ActionQuery extends BaseActionQuery
                             ->_if($clientId)
                                 ->filterByClientId($clientId)
                             ->_endIf()
+                            ->leftJoinClient('client')
+
+                            //фильтр по доктору
+                            ->_if($doctorId)
+                                ->filterByExecPersonId($doctorId)
+                            ->_endIf()
+                            ->leftJoinDoctor('doctor')
                             //фильтр по отделению
                             ->_if($departmentId)
                                 ->useActionQuery('movements')
@@ -116,7 +137,10 @@ class ActionQuery extends BaseActionQuery
                                     ->endUse()
                                 ->endUse()
                             ->_endIf()
-                        ->endUse()->with('Event')
+                        ->endUse()
+                        ->with('Event')
+                        ->with('client')
+                        ->with('doctor')
 
                         ->useDrugChartQuery()
                             // ->_if($beginDateTime)

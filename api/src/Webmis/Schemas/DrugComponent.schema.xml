@@ -13,6 +13,11 @@
       <foreign-key foreignTable="Action" name="FK_DrugComponent_Action">
         <reference local="action_id" foreign="id"/>
       </foreign-key>
+      <behavior name="timestampable">
+        <parameter name="create_column" value="createDateTime" />
+        <!-- <parameter name="update_column" value="modifyDatetime" /> -->
+        <parameter name="disable_updated_at" value="true" />
+      </behavior>
 
       <vendor type="mysql">
         <parameter name="Engine" value="InnoDB"/>
