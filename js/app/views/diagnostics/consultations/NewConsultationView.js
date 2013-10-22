@@ -80,7 +80,7 @@ define(function(require) {
 
 			this.consultation.eventId = eventId;
 
-			this.diagnosis = this.options.appeal.getDiagnosis();
+			// this.diagnosis = this.options.appeal.getDiagnosis();
 
 
 
