@@ -2,11 +2,11 @@
 
 namespace Webmis\Models;
 
-use Webmis\Models\om\BaseAPStringQuery;
+use Webmis\Models\om\BaseRbStoragePeer;
 
 
 /**
- * Skeleton subclass for performing query and update operations on the 'ActionProperty_String' table.
+ * Skeleton subclass for performing query and update operations on the 'rbStorage' table.
  *
  *
  *
@@ -16,6 +16,6 @@ use Webmis\Models\om\BaseAPStringQuery;
  *
  * @package    propel.generator.Models
  */
-class APStringQuery extends BaseAPStringQuery
+class RbStoragePeer extends BaseRbStoragePeer
 {
 }

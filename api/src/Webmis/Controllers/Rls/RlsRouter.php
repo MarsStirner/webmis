@@ -20,7 +20,7 @@ class RlsRouter implements ControllerProviderInterface
 
         $router->get('/', getController('Rls/list'));
         $router->get('/{id}', getController('Rls/read'));
-
+        $router->get('/balance/{nomenId}', getController('Rls/balance'));
 
         return $router;
     }

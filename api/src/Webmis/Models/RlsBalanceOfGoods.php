@@ -2,11 +2,11 @@
 
 namespace Webmis\Models;
 
-use Webmis\Models\om\BaseAPString;
+use Webmis\Models\om\BaseRlsBalanceOfGoods;
 
 
 /**
- * Skeleton subclass for representing a row from the 'ActionProperty_String' table.
+ * Skeleton subclass for representing a row from the 'rlsBalanceOfGoods' table.
  *
  *
  *
@@ -16,6 +16,6 @@ use Webmis\Models\om\BaseAPString;
  *
  * @package    propel.generator.Models
  */
-class APString extends BaseAPString
+class RlsBalanceOfGoods extends BaseRlsBalanceOfGoods
 {
 }

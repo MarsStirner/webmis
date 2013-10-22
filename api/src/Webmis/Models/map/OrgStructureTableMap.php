@@ -77,6 +77,7 @@ class OrgStructureTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Event', 'Webmis\\Models\\Event', RelationMap::ONE_TO_MANY, array('id' => 'orgStructure_id', ), null, null, 'Events');
+        $this->addRelation('RbStorage', 'Webmis\\Models\\RbStorage', RelationMap::ONE_TO_MANY, array('id' => 'orgStructure_id', ), null, null, 'RbStorages');
     } // buildRelations()
 
     /**

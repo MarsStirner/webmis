@@ -12,6 +12,7 @@ use \PropelCollection;
 use \PropelException;
 use \PropelObjectCollection;
 use \PropelPDO;
+use Webmis\Models\RlsBalanceOfGoods;
 use Webmis\Models\rbUnit;
 use Webmis\Models\rlsActMatters;
 use Webmis\Models\rlsFilling;
@@ -84,6 +85,10 @@ use Webmis\Models\rlsTradeName;
  * @method rlsNomenQuery leftJoinrlsTradeName($relationAlias = null) Adds a LEFT JOIN clause to the query using the rlsTradeName relation
  * @method rlsNomenQuery rightJoinrlsTradeName($relationAlias = null) Adds a RIGHT JOIN clause to the query using the rlsTradeName relation
  * @method rlsNomenQuery innerJoinrlsTradeName($relationAlias = null) Adds a INNER JOIN clause to the query using the rlsTradeName relation
+ *
+ * @method rlsNomenQuery leftJoinRlsBalanceOfGoods($relationAlias = null) Adds a LEFT JOIN clause to the query using the RlsBalanceOfGoods relation
+ * @method rlsNomenQuery rightJoinRlsBalanceOfGoods($relationAlias = null) Adds a RIGHT JOIN clause to the query using the RlsBalanceOfGoods relation
+ * @method rlsNomenQuery innerJoinRlsBalanceOfGoods($relationAlias = null) Adds a INNER JOIN clause to the query using the RlsBalanceOfGoods relation
  *
  * @method rlsNomen findOne(PropelPDO $con = null) Return the first rlsNomen matching the query
  * @method rlsNomen findOneOrCreate(PropelPDO $con = null) Return the first rlsNomen matching the query, or a new rlsNomen object populated from the query conditions when no match is found
@@ -1341,6 +1346,80 @@ abstract class BaserlsNomenQuery extends ModelCriteria
         return $this
             ->joinrlsTradeName($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'rlsTradeName', '\Webmis\Models\rlsTradeNameQuery');
+    }
+
+    /**
+     * Filter the query by a related RlsBalanceOfGoods object
+     *
+     * @param   RlsBalanceOfGoods|PropelObjectCollection $rlsBalanceOfGoods  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 rlsNomenQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByRlsBalanceOfGoods($rlsBalanceOfGoods, $comparison = null)
+    {
+        if ($rlsBalanceOfGoods instanceof RlsBalanceOfGoods) {
+            return $this
+                ->addUsingAlias(rlsNomenPeer::ID, $rlsBalanceOfGoods->getrlsNomenId(), $comparison);
+        } elseif ($rlsBalanceOfGoods instanceof PropelObjectCollection) {
+            return $this
+                ->useRlsBalanceOfGoodsQuery()
+                ->filterByPrimaryKeys($rlsBalanceOfGoods->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByRlsBalanceOfGoods() only accepts arguments of type RlsBalanceOfGoods or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the RlsBalanceOfGoods relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return rlsNomenQuery The current query, for fluid interface
+     */
+    public function joinRlsBalanceOfGoods($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('RlsBalanceOfGoods');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'RlsBalanceOfGoods');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the RlsBalanceOfGoods relation RlsBalanceOfGoods object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\RlsBalanceOfGoodsQuery A secondary query class using the current class as primary query
+     */
+    public function useRlsBalanceOfGoodsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinRlsBalanceOfGoods($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'RlsBalanceOfGoods', '\Webmis\Models\RlsBalanceOfGoodsQuery');
     }
 
     /**
