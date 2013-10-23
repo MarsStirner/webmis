@@ -107,7 +107,7 @@ define(function(require) {
             this.consultation.fetch().done(function() {
 
                 var createDateTime = moment(self.consultation.getProperty('assessmentBeginDate'),'YYYY-MM-DD HH:mm:ss').valueOf();
-                var plannedEndDate = moment(self.consultation.getProperty('plannedEndDate'),'YYYY-MM-DD HH:mm:ss').valueOf();
+                var plannedEndDate = moment(self.consultation.getProperty('plannedEndDate'),'YYYY-MM-DD HH:mm:ss').startOf('day').valueOf();
 
                 var urgent = false;
                 if(self.consultation.getProperty('urgent') === 'true'){
@@ -271,26 +271,26 @@ define(function(require) {
         //при выборе времени
         onTimeSelect: function(plannedTime) {
 
-            var time = plannedTime.time;
-            var hours = Math.floor(time / (60 * 60 * 1000));
-            var minutes = Math.floor((time - hours * 60 * 60 * 1000) / (60 * 1000));
-            var seconds = Math.floor((time - hours * 60 * 60 * 1000 - minutes * 60 * 1000) / 1000);
-            var plannedEndDate = this.newConsultation.get('plannedEndDate');
+            // var time = plannedTime.time;
+            // var hours = Math.floor(time / (60 * 60 * 1000));
+            // var minutes = Math.floor((time - hours * 60 * 60 * 1000) / (60 * 1000));
+            // var seconds = Math.floor((time - hours * 60 * 60 * 1000 - minutes * 60 * 1000) / 1000);
+            // var plannedEndDate = this.newConsultation.get('plannedEndDate');
 
-            var plannedDate = moment(plannedEndDate)
-                .hours(hours).minutes(minutes).seconds(seconds).valueOf();
+            // var plannedDate = moment(plannedEndDate)
+            //     .hours(hours).minutes(minutes).seconds(seconds).valueOf();
 
-            this.newConsultation.set('plannedEndDate', plannedDate);
+            // this.newConsultation.set('plannedEndDate', plannedDate);
             this.newConsultation.set('plannedTime', plannedTime);
         },
 
         onTimeUnselect: function() {
-            var plannedEndDate = this.newConsultation.get('plannedEndDate');
+            // var plannedEndDate = this.newConsultation.get('plannedEndDate');
 
-            var plannedDate = moment(plannedEndDate)
-                .hours(0).minutes(0).seconds(0).valueOf();
+            // var plannedDate = moment(plannedEndDate)
+            //     .hours(0).minutes(0).seconds(0).valueOf();
 
-            this.newConsultation.set('plannedEndDate', plannedDate);
+            // this.newConsultation.set('plannedEndDate', plannedDate);
             this.newConsultation.set('plannedTime', null);
         },
 
