@@ -619,6 +619,7 @@ define(function(require) {
             pubsub.off('time:unselected');
 
             this.$el.dialog('close');
+            this.undelegateEvents();
             this.$el.remove();
         }
 

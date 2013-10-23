@@ -527,6 +527,7 @@ define(function(require) {
 
 
 			this.$el.dialog("close");
+			this.undelegateEvents();
 			this.$el.remove();
 		}
 
