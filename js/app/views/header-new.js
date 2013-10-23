@@ -1,4 +1,4 @@
-define(["text!templates/header-new.tmpl"], function (headerTmpl) {
+define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 	var Header = View.extend({
 		className: "Header Clearfix",
 
@@ -11,7 +11,7 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 			"click .user-role": "onUserRoleClick"
 		},
 
-		initialize: function () {
+		initialize: function() {
 			//console.log('roles',this.options.structure.roles)
 			if (!Core.Data.currentRole()) {
 				Core.Data.currentRole(this.options.structure.roles[0].role);
@@ -19,13 +19,13 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 			this._currentRole = Core.Data.currentRole();
 		},
 
-		onLogoutClick: function (event) {
+		onLogoutClick: function(event) {
 			event.preventDefault();
 
 			this.logoutUser();
 		},
 
-		onSectionNavClick: function (event) {
+		onSectionNavClick: function(event) {
 			event.preventDefault();
 
 			var $target = $(event.currentTarget);
@@ -39,20 +39,26 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 
 			if (href) {
 				if (href == "/statements/") {
-          $("#main")
-            .height("100%")
-            .html("<iframe src='http://10.128.225.86:8888/reports/' style='height: 84%; width: 100%;margin-top: 1em;border-radius: 5px;'></iframe>");
-          App.Router.navigate("reports/", {trigger: false});
-        } else {
-          App.Router.navigate(href, {trigger: true});
-        }
+					$("#main")
+						.height("100%")
+						.html("<iframe src='http://10.128.225.86:8888/reports/' style='height: 84%; width: 100%;margin-top: 1em;border-radius: 5px;'></iframe>");
+					App.Router.navigate("reports/", {
+						trigger: false
+					});
+				} else {
+					App.Router.navigate(href, {
+						trigger: true
+					});
+				}
 			}
 		},
 
-		onLinkToProfileClick: function (event) {
+		onLinkToProfileClick: function(event) {
 			var menu = this.$(".profile-options");
 
-			menu.css({"min-width": this.$(".LinkToProfile").width()}).show().position({
+			menu.css({
+				"min-width": this.$(".LinkToProfile").width()
+			}).show().position({
 				my: "right top",
 				at: "right bottom",
 				of: this.$(".LinkToProfile")
@@ -65,57 +71,109 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 			return false;
 		},
 
-		onUserRoleClick: function (event) {
-			this.changeRole($(event.currentTarget).data("role"));
+		onUserRoleClick: function(event) {
+			this.changeRole($(event.currentTarget).data("role"), $(event.currentTarget).data("id"));
 		},
 
-		changeRole: function (role) {
-			Core.Data.currentRole(role);
-			window.location.reload();
+		changeRole: function(roleCode, roleId) {
+			$.ajax({
+				url: '/data/changeRole/?roleId=' + roleId,
+				type: 'post',
+				dataType: 'jsonp',
+				contentType: 'application/json'
+
+			}).done(function(data) {
+				if(data.authToken && data.authToken.id){
+					Core.Cookies.set("authToken", data.authToken.id);
+					Core.Data.currentRole(roleCode);
+					window.location.reload();
+				}else{
+
+				}
+
+			}).fail(function() {
+
+			});
+
 		},
 
-		logoutUser: function () {
+		logoutUser: function() {
 			Core.Cookies.clear();
-			App.Router.navigate("/auth/?logout=true", {trigger: true});
+			App.Router.navigate("/auth/?logout=true", {
+				trigger: true
+			});
 		},
 
-		render: function () {
+		render: function() {
 			var sections = [];
 
 			switch (Core.Data.currentRole()) {
 				case ROLES.NURSE_RECEPTIONIST:
-					sections.push(
-						{title: "Пациенты", name: "patients", uri: "/patients/"},
-						{title: "Госпитализации", name: "appeals", uri: "/appeals/"},
-						{title: "Амбулаторные талоны"}
-					);
+					sections.push({
+						title: "Пациенты",
+						name: "patients",
+						uri: "/patients/"
+					}, {
+						title: "Госпитализации",
+						name: "appeals",
+						uri: "/appeals/"
+					}, {
+						title: "Амбулаторные талоны"
+					});
 					break;
 				case ROLES.DOCTOR_RECEPTIONIST:
-					sections.push(
-						{title: "Госпитализации", name: "appeals", uri: "/appeals/"},
-						{title: "Пациенты", name: "patients", uri: "/patients/"}
-					);
+					sections.push({
+						title: "Госпитализации",
+						name: "appeals",
+						uri: "/appeals/"
+					}, {
+						title: "Пациенты",
+						name: "patients",
+						uri: "/patients/"
+					});
 					break;
 				case ROLES.DOCTOR_DEPARTMENT:
-					sections.push(
-						{title: "Госпитализации", name: "appeals", uri: "/appeals/"},
-						{title: "Пациенты", name: "patients", uri: "/patients/"}
-					);
+					sections.push({
+						title: "Госпитализации",
+						name: "appeals",
+						uri: "/appeals/"
+					}, {
+						title: "Пациенты",
+						name: "patients",
+						uri: "/patients/"
+					});
 					break;
 				case ROLES.NURSE_DEPARTMENT:
-					sections.push(
-						{title: "Пациенты", name: "patients", uri: "/patients/"},
-						{title: "Госпитализации", name: "appeals", uri: "/appeals/"},
-						{title: "Биоматериалы", name: "biomaterials", uri: "/biomaterials/"},
-						{title: "Отчёты", name: "reports", uri: "/reports/"}
+					sections.push({
+							title: "Пациенты",
+							name: "patients",
+							uri: "/patients/"
+						}, {
+							title: "Госпитализации",
+							name: "appeals",
+							uri: "/appeals/"
+						}, {
+							title: "Биоматериалы",
+							name: "biomaterials",
+							uri: "/biomaterials/"
+						}, {
+							title: "Отчёты",
+							name: "reports",
+							uri: "/reports/"
+						}
 						//,{title: "Амбулаторные талоны"}
 					);
 					break;
 				case ROLES.CHIEF:
-					sections.push(
-						{title: "Госпитализации", name: "appeals", uri: "/appeals/"},
-						{title: "Отчёты", name: "statements", uri: "/statements/"}
-					);
+					sections.push({
+						title: "Госпитализации",
+						name: "appeals",
+						uri: "/appeals/"
+					}, {
+						title: "Отчёты",
+						name: "statements",
+						uri: "/statements/"
+					});
 					break;
 			}
 
@@ -129,7 +187,7 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 			var userAvailableRoles = [];
 
 
-			_(availableRoles).each(function (element) {
+			_(availableRoles).each(function(element) {
 				if (userRoles.indexOf(element.id) !== -1) {
 					/*if (this._currentRole == element.role) {
 						currentRoleTitle = element.title;
@@ -148,9 +206,18 @@ define(["text!templates/header-new.tmpl"], function (headerTmpl) {
 
 			this.$el.html(_.template(this.template, data));
 
-			this.$(".LinkToProfile").button({icons: {primary: "icon-user-md", secondary: "icon-caret-down"}});
+			this.$(".LinkToProfile").button({
+				icons: {
+					primary: "icon-user-md",
+					secondary: "icon-caret-down"
+				}
+			});
 			this.$(".profile-options").hide().menu();
-			this.$(".logout").button({icons: {primary: "icon-off"}});
+			this.$(".logout").button({
+				icons: {
+					primary: "icon-off"
+				}
+			});
 
 			return this;
 		}
