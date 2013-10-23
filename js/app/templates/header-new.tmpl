@@ -17,8 +17,8 @@
 		<li class="profile-full-name">
 			<span><%= doctor.name.last %> <%= doctor.name.first %> <%= doctor.name.middle %></span>
 		</li>
-		<% _.each(userAvailableRoles, function (role) { %>
-			<li class="user-role" data-role="<%= role.role %>">
+		<%  _.each(userAvailableRoles, function (role) { %>
+			<li class="user-role" data-id="<%= role.id %>" data-role="<%= role.role %>">
 				<i class="icon-check<% if (currentRole !== role.role) { %> transparent<% } %>"></i>
 				<span><%= role.title %></span>
 			</li>
