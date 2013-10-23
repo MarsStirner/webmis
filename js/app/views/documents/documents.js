@@ -728,6 +728,13 @@ define(function (require) {
 
 		comparator: function (model) {
 			return model.get("name");
+		},
+		//TODO: TEMP!!!
+		parse: function (raw) {
+			raw = Collection.prototype.parse.call(this, raw);
+			return _.filter(raw, function (item) {
+				return !(item.name && item.name.search(/дневник/i) !== -1 && item.name !== 'Дневниковый осмотр');
+			});
 		}
 	});
 	//endregion
