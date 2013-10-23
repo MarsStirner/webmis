@@ -52,7 +52,7 @@ define(function(require) {
 			var financeId = this.appeal.get('appealType').get('finance').get('id');
 			var eventId = this.appealId;
 			var patientId = this.appeal.get('patient').get('id');
-			var assignerId = this.getAssigner().id;
+			var assignerId = parseInt(this.getAssigner().id, 10);
 
 			this.appealDiagnosis = new PatientDiagnoses(null, {
 				appealId: eventId
@@ -108,7 +108,7 @@ define(function(require) {
 			this.scheduleView = new ScheduleView();
 
 			this.consultation.on('change:actionTypeId', this.loadConsultants, this);
-			this.consultation.on('change:plannedEndDate', this.loadConsultants, this);
+			this.consultation.on('changed:plannedEndDate', this.loadConsultants, this);
 			this.consultation.on('change', this.validateForm, this);
 
 			pubsub.on('assigner:changed', function(assigner) {
@@ -165,7 +165,9 @@ define(function(require) {
 			this.consultation.set({
 				'actionTypeId': consultation.id,
 				'plannedEndDate': timestamp,
-				'plannedTime': ''
+				'plannedTime': null,
+				'urgent': false,
+				'overQueue': false
 			});
 
 			this.renderShedule();
@@ -201,6 +203,7 @@ define(function(require) {
 		onDateSelect: function(date) {
 			//console.log('onDateSelect', date);
 			this.consultation.set('plannedEndDate', date);
+			this.consultation.trigger('changed:plannedEndDate');
 		},
 
 		//при выборе времени
@@ -211,7 +214,7 @@ define(function(require) {
 
 		onTimeUnselect: function() {
 			console.log('onTimeUnselect');
-			this.consultation.set('plannedTime', {"time":"47520000","id":9591626,"index":3});
+			this.consultation.set('plannedTime', null);
 		},
 
 		onChangeAssignDate: function() {

@@ -26,6 +26,9 @@ define(function(require) {
     var commonData = require('mixins/commonData');
 
     return Model.extend({
+        defaults: {
+            'plannedTime': null
+        },
         idAttribute: "id",
         sync: function(method, model, options) {
             options = options || {};
@@ -33,10 +36,9 @@ define(function(require) {
             options.contentType = 'application/json';
             switch (method.toLowerCase()) {
                 case 'update':
-                    options.data = JSON.stringify({
-                        requestData: {},
-                        data: [model.toJSON()]
-                    });
+                var json = model.toJSON();
+                delete json.id;
+                    options.data = JSON.stringify(json);
                     break;
             }
 
