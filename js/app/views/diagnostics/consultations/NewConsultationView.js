@@ -305,6 +305,10 @@ define(function(require) {
 			}
 
 			this.scheduleView.render();
+
+			if (this.consultation.get('overQueue')) {
+				this.scheduleView.disable();
+			}
 		},
 
 		//при клике на кнопку "Сохранить"
@@ -373,7 +377,7 @@ define(function(require) {
 				}
 			}
 
-			if (moment(this.consultation.get('createDateTime')).startOf('day').diff(moment().startOf('day'),'days') < 0) {
+			if (moment(this.consultation.get('createDateTime')).startOf('day').diff(moment().startOf('day'), 'days') < 0) {
 				errors.push({
 					message: 'Дата создания направления не может быть меньше текущей'
 				});

@@ -115,7 +115,8 @@ define(function(require) {
                 }
 
                 var overQueue = false;
-                if(self.consultation.getProperty('overQueue') === 'true'){
+                if(self.consultation.getProperty('pacientInQueueType') === '2'){
+                    console.log('pacientInQueueType 2');
                     overQueue = true;
                 }
 
@@ -381,6 +382,9 @@ define(function(require) {
         renderShedule: function(consultant) {
             this.scheduleView.collection.reset(consultant.get('schedule').toJSON());
             this.scheduleView.render();
+            if(this.newConsultation.get('overQueue')){
+                this.scheduleView.disable();
+            }
         },
         //при клике на кнопку 'Сохранить'
         onSave: function() {
@@ -515,6 +519,7 @@ define(function(require) {
             this.ui.$assignPerson = this.$el.find('#assigner');
 
             this.ui.$urgent = this.$el.find('#urgent');
+            this.ui.$over = this.$el.find('#over');
             this.ui.$errors = this.$el.find('#errors');
 
             this.$el.find('.change-assigner').button();
@@ -569,6 +574,11 @@ define(function(require) {
 
             if (this.newConsultation.get('urgent')) {
                 this.ui.$urgent.prop('checked', true);
+            }
+
+
+            if (this.newConsultation.get('overQueue')) {
+                this.ui.$over.prop('checked', true).trigger('change');
             }
 
 
