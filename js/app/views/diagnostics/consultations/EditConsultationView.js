@@ -21,7 +21,7 @@ var primer =  {
 define(function(require) {
 
     var popupMixin = require('mixins/PopupMixin');
-    var tmpl = require('text!templates/diagnostics/consultations/new-consultation-popup.html');
+    var tmpl = require('text!templates/diagnostics/consultations/edit-consultation-popup.html');
 
     require('collections/doctors');
     var ConsultantsFree = require('collections/doctors-free');
@@ -49,6 +49,7 @@ define(function(require) {
             'change #assign-time': 'onChangeAssignDate',
             'change #urgent': 'onChangeUrgent',
             'change #over': 'onChangeOver',
+            'change #datepicker': 'onCangePlannedDate'
         },
 
         initialize: function(options) {
@@ -114,7 +115,8 @@ define(function(require) {
                 }
 
                 var overQueue = false;
-                if(self.consultation.getProperty('overQueue') === 'true'){
+                if(self.consultation.getProperty('pacientInQueueType') === '2'){
+                    console.log('pacientInQueueType 2');
                     overQueue = true;
                 }
 
@@ -184,7 +186,7 @@ define(function(require) {
                     var consultant = self.consultantsFree.find(function(item) {
                         return item.get('doctor').id == executorId;
                     });
-                    //console.log('self.consultantsFree', self.consultantsFree, consultant);
+                    console.log('self.consultantsFree', self.consultantsFree, consultant);
 
                     self.renderShedule(consultant);
                     self.consultantsFree._params = null;
@@ -200,15 +202,17 @@ define(function(require) {
                     console.log('change:plannedEndDate');
                 }, self);
 
+                self.newConsultation.on('change', self.validateForm, self);
+
             });
 
 
             pubsub.on('consultation:selected', this.onConsultationSelect, this);
             pubsub.on('consultant:selected', this.onConsultantSelect, this);
 
-            pubsub.on('date:selected', this.onChangePlanedDate, this);
             pubsub.on('person:changed', this.onChangeAssignPerson, this);
-            // pubsub.on('time:selected', this.onChangePlanedTime, this);
+
+            pubsub.on('date:selected', this.onSelectDate, this);
             pubsub.on('time:selected', this.onTimeSelect, this);
             pubsub.on('time:unselected', this.onTimeUnselect, this);
 
@@ -240,8 +244,14 @@ define(function(require) {
             this.renderShedule(consultant);
         },
 
+        onCangePlannedDate: function(e) {
+            var $target = this.$(e.target);
+            var timestamp = moment($target.val(), 'DD.MM.YYYY').valueOf();
+            pubsub.trigger('date:selected', timestamp);
+        },
+
         //при выборе даты
-        onChangePlanedDate: function(date) {
+        onSelectDate: function(date) {
             // console.log('onChangePlanedDate', date);
             var newDate = moment(date);
             var year = newDate.year();
@@ -372,11 +382,14 @@ define(function(require) {
         renderShedule: function(consultant) {
             this.scheduleView.collection.reset(consultant.get('schedule').toJSON());
             this.scheduleView.render();
+            if(this.newConsultation.get('overQueue')){
+                this.scheduleView.disable();
+            }
         },
         //при клике на кнопку 'Сохранить'
         onSave: function() {
             var self = this;
-            console.log('onSave', this.newConsultation);
+            this.saveButton(false, 'Сохраняем...');
 
             this.newConsultation.save({}, {
                 success: function() {
@@ -389,8 +402,11 @@ define(function(require) {
                     pubsub.trigger('consultation:added', this.newConsultation);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
+                    var textStatus = JSON.parse(textStatus.responseText);
+                    var errorMessage = textStatus.errorMessage ? textStatus.errorMessage : 'Ошибка при создании направления';
+
                     pubsub.trigger('noty', {
-                        text: (JSON.parse(textStatus.responseText)).exception,
+                        text: errorMessage,
                         type: 'error'
                     });
                     self.close();
@@ -398,15 +414,94 @@ define(function(require) {
                 }
             });
         },
-        //измение статуса кнопки 'Сохранить'
-        updateSaveButton: function() {
-            //console.log('updateSaveButton', this.consultation);
-            /// if (this.consultation.get('plannedTime').time) {
-            this.ui.$saveButton.button('enable');
-            // } else {
-            //    this.ui.$saveButton.button('disable');
-            //}
+
+        saveButton: function(enabled, msg) {
+            var $saveButton = this.$el.closest('.ui-dialog').find('.save');
+
+            if (enabled) {
+                $saveButton.button('enable');
+            } else {
+                $saveButton.button('disable');
+            }
+            if (msg) {
+                $saveButton.button('option', 'label', msg);
+            } else {
+                $saveButton.button('option', 'label', 'Сохранить');
+            }
+
         },
+
+        showErrors: function(errors) {
+            var self = this;
+            self.ui.$errors.html('').hide();
+            if (errors.length > 0) {
+                // _.each(errors, function(error) {
+                // self.ui.$errors.append(error.message);
+                // });
+                self.ui.$errors.append(errors[0].message);
+                self.ui.$errors.show();
+            }
+        },
+
+        validateForm: function() {
+            var errors = this.isValid();
+            this.saveButton(!errors.length);
+            this.showErrors(errors);
+        },
+
+        isValid: function() {
+            var errors = [];
+            console.log('con', this.newConsultation.toJSON());
+
+            if (!this.newConsultation.get('actionTypeId')) {
+                errors.push({
+                    message: 'Не выбрана консультация. '
+                });
+            }
+
+            if (!this.newConsultation.get('executorId')) {
+                errors.push({
+                    message: 'Не выбран консультант. '
+                });
+            }
+
+            if (!this.newConsultation.get('plannedEndDate')) {
+                errors.push({
+                    message: 'Не выбрана планируемая дата консультации. '
+                });
+            } else {
+                var diff = moment(this.newConsultation.get('plannedEndDate')).diff(moment(), 'days');
+                if (diff < 0) {
+                    errors.push({
+                        message: 'Планируемая дата не может быть меньше текущей'
+                    });
+                }
+            }
+
+            // if (moment(this.newConsultation.get('createDateTime')).startOf('day').diff(moment().startOf('day'),'days') < 0) {
+            //     errors.push({
+            //         message: 'Дата создания направления не может быть меньше текущей'
+            //     });
+            //     // console.log('create', moment(this.newConsultation.get('createDateTime')).diff(moment()));
+            // }
+
+            if (!this.newConsultation.get('plannedTime') && !(this.newConsultation.get('overQueue') || this.newConsultation.get('urgent'))) {
+                errors.push({
+                    message: 'Не выбрано планируемое время консультации. '
+                });
+            }
+
+            if (this.newConsultation.get('urgent') && this.newConsultation.get('overQueue')) {
+                errors.push({
+                    message: 'Поля "Срочно" и "Сверх сетки приёма" не могут быть выбраны вместе. '
+                });
+            }
+
+
+            return errors;
+
+        },
+
 
         render: function() {
             var self = this;
@@ -424,6 +519,9 @@ define(function(require) {
             this.ui.$assignPerson = this.$el.find('#assigner');
 
             this.ui.$urgent = this.$el.find('#urgent');
+            this.ui.$over = this.$el.find('#over');
+            this.ui.$errors = this.$el.find('#errors');
+
             this.$el.find('.change-assigner').button();
 
             //календарь
@@ -431,7 +529,8 @@ define(function(require) {
                 minDate: 0,
                 onSelect: function(dateText, inst) {
                     var timestamp = moment(dateText, 'DD.MM.YYYY').valueOf();
-                    pubsub.trigger('date:selected', timestamp)
+                    pubsub.trigger('date:selected', timestamp);
+                    //self.ui.$datepicker.trigger('change');
 
                 }
             });
@@ -478,6 +577,11 @@ define(function(require) {
             }
 
 
+            if (this.newConsultation.get('overQueue')) {
+                this.ui.$over.prop('checked', true).trigger('change');
+            }
+
+
             //список консультаций
             this.renderNested(this.consultationsGroupsView, '#consultations');
             //список консультантов
@@ -504,6 +608,15 @@ define(function(require) {
             this.consultationsGroupsView.close();
             this.consultantsFreeView.close();
             this.scheduleView.close();
+
+            pubsub.off('consultation:selected');
+            pubsub.off('consultant:selected');
+
+            pubsub.off('date:selected');
+            pubsub.off('person:changed');
+
+            pubsub.off('time:selected');
+            pubsub.off('time:unselected');
 
             this.$el.dialog('close');
             this.$el.remove();
