@@ -35,7 +35,17 @@ define(function (require) {
 	//константы
 	var HIDDEN_TYPES = ['JobTicket', 'RLS']; //типы полей, которые не выводятся в ui.
 	//TODO: TEMP
-	var THERAPY_CODES = ['Общее название специфической терапии', 'Дата начала', 'Дата окончания', 'Текущий этап терапии', 'Название этапа', 'День терапии'];
+	//var THERAPY_CODES = ['Общее название специфической терапии', 'Дата начала', 'Дата окончания', 'Текущий этап терапии', 'Название этапа', 'День терапии'];
+	var THERAPY_CODES = [
+		"therapyTitle",
+		"therapyBegDate",
+		"therapyEndDate",
+		"therapyPhaseSubHeader",
+		"therapyPhaseTitle",
+		"therapyPhaseBegDate",
+		"therapyPhaseDay",
+		"therapyPhaseEndDate"
+	];
 	var ID_TYPES = ["MKB", "FLATDIRECTORY", "PERSON", "ORGSTRUCTURE"];
 	var INPUT_DATE_FORMAT = 'DD.MM.YYYY';
 	var CD_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss'; //Формат даты в коммон дата
@@ -158,7 +168,7 @@ define(function (require) {
 			//TODO: TEMP!!!
 			return !!_(this.get("group")[1].attribute).find(function (attr) {
 				//console.log(attr);
-				return attr.name === "Общее название специфической терапии";
+				return attr.code === "therapyTitle";
 			});
 		},
 
@@ -176,7 +186,7 @@ define(function (require) {
 			}, this);
 
 			if (this.hasTherapyAttrs()) {
-				var therCodes = [
+				/*var therCodes = [
 						"therapyTitle",
 						"therapyBegDate",
 						"therapyEndDate",
@@ -185,7 +195,7 @@ define(function (require) {
 						"therapyPhaseBegDate",
 						"therapyPhaseDay",
 						"therapyPhaseEndDate"
-					];
+					];*/
 
 				var lastTherapy = therapiesCollection.first();
 				var shouldSetTherapyFields = false;
@@ -201,11 +211,11 @@ define(function (require) {
 				}
 
 				var therapyAttrs = _(attributes).filter(function (attr) {
-					return _.contains(THERAPY_CODES, attr.name);
+					return _.contains(THERAPY_CODES, attr.code);
 				});
 
 				_(therapyAttrs).each(function (ta, i) {
-					ta.therapyFieldCode = therCodes[i];
+					ta.therapyFieldCode = THERAPY_CODES[i];
 					if (shouldSetTherapyFields) {
 						if (ta.therapyFieldCode == "therapyTitle") {
 							//ta.properties[0].value = lastTherapy.get("titleId");
@@ -1966,8 +1976,8 @@ define(function (require) {
 				patientId: appeal.get("patient").get("id")
 			});
 
-			$.when(layoutAttributesDir.fetch(), therapiesCollection.fetch()).then(_.bind(function () {
-				console.log(therapiesCollection);
+			//$.when(layoutAttributesDir.fetch(), therapiesCollection.fetch()).then(_.bind(function () {
+			$.when(layoutAttributesDir.fetch()).then(_.bind(function () {
 				this.model.fetch();
 			}, this));
 
@@ -2533,8 +2543,16 @@ define(function (require) {
 		onModelReset: function () {
 			this.stopListening(this.model, "change", this.onModelReset);
 			if (this.model.hasTherapyAttrs()) {
-				this.model.setTherapyAttrs(therapiesCollection);
+				$.when(therapiesCollection.fetch()).then(_.bind(function () {
+					this.model.setTherapyAttrs(therapiesCollection);
+					this.resetCollectionGroupedByRow();
+				}, this));
+			} else {
+				this.resetCollectionGroupedByRow();
 			}
+		},
+
+		resetCollectionGroupedByRow: function () {
 			this.collection.reset(this.model.getGroupedByRow());
 			this.collection.hasAnyValue = this.model.hasAnyValue;
 		},
