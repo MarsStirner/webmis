@@ -71,21 +71,35 @@ class PrescriptionController
     public function listAction(Request $request, Application $app)
     {
 
-        $beginDateTime = (int) $request->get('beginDateTime');
+        $dateRangeMin = (int) $request->get('dateRangeMin');
+        if($dateRangeMin){
+            $dateRangeMin = round($dateRangeMin/1000);
+        }
+
+        $dateRangeMax = (int) $request->get('dateRangeMax');
+        if($dateRangeMax){
+            $dateRangeMax = round($dateRangeMax/1000);
+        }
+
         $clientId = (int) $request->get('clientId');
         $departmentId = (int) $request->get('departmentId');
         $doctorId = (int) $request->get('doctorId');
-        $endDateTime = (int) $request->get('endDateTime');
         $eventId = (int) $request->get('eventId');
         $page = (int) $request->get('page') ?: 1;
         $limit = (int) $request->get('limit') ?: 20;
 
         $data = array();
 
-        $prescriptions = ActionQuery::create()
-            ->getPrescriptions(null, $eventId, $clientId, $departmentId, $beginDateTime, $endDateTime)
-            //->paginate($page, $limit);
-            ->find();
+        $filter = array('eventId' => $eventId,
+                        'clientId' => $clientId,
+                        'departmentId' => $departmentId,
+                        'dateRangeMax' => $dateRangeMax,
+                        'dateRangeMin' => $dateRangeMin);
+
+        $query = ActionQuery::create()->getPrescriptions($filter);
+
+        $prescriptions = $query->find();
+
 
         if($prescriptions){
             foreach ($prescriptions as $prescription) {
@@ -95,7 +109,8 @@ class PrescriptionController
 
 
         return $app['jsonp']->jsonp(array(
-            'request' =>
+            // 'time' => time(),
+            // 'sql' => $query->toString(),
             'data' => $data
             ));
     }
@@ -114,7 +129,7 @@ class PrescriptionController
         }
 
         $prescription = ActionQuery::create()
-            ->getPrescriptions($prescriptionId, null, null,  null, null,  null)
+            ->getPrescriptions(array('id' => $prescriptionId))
             ->find()->getFirst();
 
         if($prescription){
@@ -320,7 +335,7 @@ class PrescriptionController
         }
 
         $prescription = ActionQuery::create()
-            ->getPrescriptions($prescriptionId, null, null,  null, null,  null)
+            ->getPrescriptions(array('id' => $prescriptionId))
             ->find()->getFirst();
 
         if($prescription){

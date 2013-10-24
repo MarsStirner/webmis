@@ -65,21 +65,24 @@ class ActionQuery extends BaseActionQuery
     }
 
 
-        public function getPrescriptions($filter = array(
-            'id' => null,
-            'eventId' => null,
-            'clientId' => null,
-            'doctorId' => null,
-            'departmentId' => null,
-            'beginDateTime' => null,
-            'endDateTime' => null
-            ))
+        public function getPrescriptions($filter = array())
     {
-        $allowedFilterKeys = array('id', 'eventId', 'clientId', 'doctorId', 'departmentId', 'beginDateTime', 'endDateTime');
 
-        array_intersect_key($filter, array_flip($allowedFilterKeys))
-        extract($filter);
-        $doctorId = null;
+        $defaultFilterKeys = array( 'id' => null,
+                                    'eventId' => null,
+                                    'clientId' => null,
+                                    'doctorId' => null,
+                                    'departmentId' => null,
+                                    'dateRangeMin' => null,
+                                    'dateRangeMax' => null
+                                    );
+
+        $filter = array_merge($defaultFilterKeys, $filter);
+        $a = array_intersect_key($filter, array_flip(array_keys($defaultFilterKeys)));
+
+        extract($a);
+        //var_dump(array_keys($defaultFilterKeys));
+
         $hidratedFields = array(
             'properties',
             'event',
@@ -155,12 +158,15 @@ class ActionQuery extends BaseActionQuery
                         ->with('doctor')
 
                         ->useDrugChartQuery()
-                            // ->_if($beginDateTime)
-                            //     ->filterByBegDateTime(array('min' => $beginDateTime))
+                            // ->_if($dateRangeMin && $dateRangeMax)
+                            //     ->filterByBegDateTime(array('min' => $dateRangeMin, 'max' => $dateRangeMax))
                             // ->_endif()
-                            // ->_if($endDateTime)
-                            //     ->filterByEndDateTime(array('min' => $endDateTime))
-                            // ->_endif()
+                            ->_if($dateRangeMax)
+                                ->filterByBegDateTime(array('max' => $dateRangeMax))
+                            ->_endif()
+                            ->_if($dateRangeMin)
+                                ->filterByBegDateTime(array('min' => $dateRangeMin))
+                            ->_endif()
                         ->endUse()
                         ->with('DrugChart')
 
