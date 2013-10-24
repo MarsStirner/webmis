@@ -247,12 +247,24 @@ define(function (require) {
 			var groupedByRow = _(attributes).groupBy(function (item) {
 				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
 				//var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
-				return item.therapyFieldCode ? "THERAPY" : "UNDEFINED";
+
+				var rowAttr = _(layoutAttributesDir.get(item.type)).where({"code": "ROW"})[0];
+				var rowValue = "UNDEFINED";
+
+				if (rowAttr) {
+					var rowAttrId = rowAttr["id"];
+					var rowValueParams = _(item.layoutAttributeValues).where({layoutAttribute_id: rowAttrId})[0];
+					if (rowValueParams && rowValueParams["value"]) {
+						rowValue = rowValueParams["value"];
+					}
+				}
+
+				return rowValue;
 			}, this);
 
-			if (!groupedByRow.UNDEFINED) {
+			/*if (!groupedByRow.UNDEFINED) {
 				groupedByRow.UNDEFINED = [];
-			}
+			}*/
 
 			var rows = [];
 
@@ -275,13 +287,35 @@ define(function (require) {
 				);
 			}
 
-			for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
+			//////////////////
+			_.forEach(groupedByRow, function (row, rowNumber) {
+				if (rowNumber !== "UNDEFINED") {
+					rows.push({spans: new Backbone.Collection()});
+
+					_.forEach(row, function (span) {
+						_.last(rows).spans.add(new Documents.Models.TemplateAttribute(span));
+					}, this);
+				} else {
+					_.forEach(row, function (span, i) {
+						if (i == 0 || i % 2 == 0) {
+							rows.push({spans: new Backbone.Collection()});
+						}
+
+						_.last(rows).spans.add(new Documents.Models.TemplateAttribute(row[i]));
+					}, this);
+				}
+			}, this);
+
+			console.log(rows);
+			//////////////////
+
+			/*for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
 				if (i == 0 || i % 2 == 0) {
 					rows.push({spans: new Backbone.Collection()});
 				}
 
 				rows[rows.length - 1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
-			}
+			}*/
 
 			return rows;
 		},
