@@ -65,8 +65,20 @@ class ActionQuery extends BaseActionQuery
     }
 
 
-        public function getPrescriptions($id = null, $eventId = null, $clientId = null, $departmentId = null, $beginDateTime = null, $endDateTime = null)
+        public function getPrescriptions($filter = array(
+            'id' => null,
+            'eventId' => null,
+            'clientId' => null,
+            'doctorId' => null,
+            'departmentId' => null,
+            'beginDateTime' => null,
+            'endDateTime' => null
+            ))
     {
+        $allowedFilterKeys = array('id', 'eventId', 'clientId', 'doctorId', 'departmentId', 'beginDateTime', 'endDateTime');
+
+        array_intersect_key($filter, array_flip($allowedFilterKeys))
+        extract($filter);
         $doctorId = null;
         $hidratedFields = array(
             'properties',

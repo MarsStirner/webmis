@@ -94,7 +94,10 @@ class PrescriptionController
         }
 
 
-        return $app['jsonp']->jsonp(array('data' => $data ));
+        return $app['jsonp']->jsonp(array(
+            'request' =>
+            'data' => $data
+            ));
     }
 
 
