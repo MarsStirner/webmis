@@ -61,7 +61,8 @@ define(function (require) {
 	var appealId = 0;
 	var appeal = null;
 	var dispatcher = _.extend({}, Backbone.Events);
-	var fds = {};
+	var fds = _.extend({}, Backbone.Events);
+	var therapiesCollection;
 	//endregion
 
 
@@ -1944,7 +1945,7 @@ define(function (require) {
 	});
 	//endregion
 
-	var therapiesCollection;
+
 	//region VIEWS EDIT BASE
 	//---------------------
 	Documents.Views.Edit.Base.Layout = LayoutBase.extend({
@@ -2665,7 +2666,7 @@ define(function (require) {
 		},
 
 		onAttributeValueChange: function (event) {
-			console.log('onAttributeValueChange',this.getAttributeValue());
+			//console.log('onAttributeValueChange',this.getAttributeValue());
 			this.model.setValue(this.getAttributeValue());
 			this.$(".Mandatory").removeClass("WrongField");
 		},
@@ -3152,9 +3153,15 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({
 		template: templates.uiElements._flatDirectory,
 		data: function () {
+			var directoryEntries = (this.model.get("code") === "therapyPhaseTitle" ?
+				_(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
+					return frd["parentFdr_id"] == this.parentFdrId;
+				}, this) :
+				_(fds[this.model.get("scope")].toBeautyJSON()));
+
 			return {
 				model: this.model,
-				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())
+				directoryEntries: directoryEntries
 			};
 		},
 		initialize: function () {
@@ -3167,6 +3174,7 @@ define(function (require) {
 			} else {
 				this.onDirectoryReady();
 			}
+			this.parentFdrId = null;
 			/*this.directoryEntries = new FlatDirectory();
 			this.directoryEntries.set({id: this.model.get("scope")});
 			$.when(this.directoryEntries.fetch()).then(_.bind(function () {
@@ -3176,12 +3184,24 @@ define(function (require) {
 			UIElementBase.prototype.initialize.apply(this);
 		},
 		onDirectoryReady: function () {
+			if (this.model.get("code") === "therapyPhaseTitle") {
+				this.listenTo(fds, "change-therapyTitle", function (event) {
+					this.parentFdrId = event.id;
+					this.$(".attribute-value").val("").change();
+					this.render();
+				});
+			}
+
 			//this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
+			console.log(fds);
 			this.render();
 		},
 		onAttributeValueChange: function (event) {
 			if (_.isEmpty(this.getAttributeValue())) {
 				this.model.setPropertyValueFor("value", "");
+			}
+			if (this.model.get("code") === "therapyTitle") {
+				fds.trigger("change-therapyTitle", {id: this.getAttributeValue()});
 			}
 			UIElementBase.prototype.onAttributeValueChange.call(this, event);
 		}
