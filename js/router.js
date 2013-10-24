@@ -126,6 +126,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			"biomaterials/": "biomaterials",
 			"reports/*path": "reports",
 			"statements/*path":"statements",
+			"prescriptions/*path":"prescriptions",
 
 
 			"prints/": "prints",
@@ -259,6 +260,33 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 			require(["views/app", "views/statements/IndexView"], function(AppView, IndexView) {
 				var view = new IndexView({
+					path: path
+				});
+
+				if (!this.appView) {
+
+					this.appView = new AppView({
+						renderView: view
+					});
+					this.appView.render();
+
+				} else {
+
+					var newMain = $('<div id="main"></div>').append(view.render().el);
+					this.appView.$("#main").remove();
+					this.appView.$el.append(newMain);
+
+				}
+			});
+
+		},
+
+		prescriptions: function(path) {
+			this.currentPage = "prescriptions";
+			console.log('presc')
+
+			require(["views/app", "views/prescriptions/ListView"], function(AppView, ListView) {
+				var view = new ListView({
 					path: path
 				});
 

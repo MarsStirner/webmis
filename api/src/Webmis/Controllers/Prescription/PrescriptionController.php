@@ -100,7 +100,6 @@ class PrescriptionController
 
         $prescriptions = $query->find();
 
-
         if($prescriptions){
             foreach ($prescriptions as $prescription) {
                 $data[] = $prescription->serializePrescription();
