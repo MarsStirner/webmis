@@ -248,12 +248,12 @@ define(function (require) {
 				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
 				//var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
 
-				var rowAttr = _(layoutAttributesDir.get(item.type)).where({"code": "ROW"})[0];
+				var rowAttr = _(layoutAttributesDir.get(item.type)).find(function (a) {return a.code === "ROW";});
 				var rowValue = "UNDEFINED";
 
 				if (rowAttr) {
 					var rowAttrId = rowAttr["id"];
-					var rowValueParams = _(item.layoutAttributeValues).where({layoutAttribute_id: rowAttrId})[0];
+					var rowValueParams = _(item.layoutAttributeValues).find(function (la) {return la.layoutAttribute_id === rowAttrId;});
 					if (rowValueParams && rowValueParams["value"]) {
 						rowValue = rowValueParams["value"];
 					}
@@ -268,7 +268,7 @@ define(function (require) {
 
 			var rows = [];
 
-			if (groupedByRow.THERAPY) {
+			/*if (groupedByRow.THERAPY) {
 				rows.push(
 					{spans: new Backbone.Collection([
 						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[0]),
@@ -285,7 +285,7 @@ define(function (require) {
 						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[7])
 					])}
 				);
-			}
+			}*/
 
 			//////////////////
 			_.forEach(groupedByRow, function (row, rowNumber) {
@@ -602,6 +602,18 @@ define(function (require) {
 
 		isMandatory: function () {
 			return this.get("mandatory") === "true";
+		},
+
+		isSubHeader: function () {
+			var result = false;
+			var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "DISPLAY_AS_HEADER";});
+			if (la) {
+				var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
+				if (lav) {
+					result = lav.value === "true";
+				}
+			}
+			return result;
 		},
 
 		isIdType: function () {
@@ -2651,7 +2663,7 @@ define(function (require) {
 			this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
 			//common attrs to fit into grid
 			//TODO: TEMP HELL
-			if (this.model.get("therapyFieldCode")) {
+			/*if (this.model.get("therapyFieldCode")) {
 				var therapyFieldCode = this.model.get("therapyFieldCode");
 				switch (therapyFieldCode) {
 					case "therapyTitle":
@@ -2667,9 +2679,9 @@ define(function (require) {
 						break;
 				}
 				//console.log(this.model.get("therapyFieldCode"));
-			} else {
+			} else {*/
 				this.$el.addClass("span" + this.layoutAttributes.width);
-			}
+			//}
 		},
 
 		mapLayoutAttributes: function () {
@@ -2731,13 +2743,8 @@ define(function (require) {
 		render: function (subViews) {
 			ViewBase.prototype.render.call(this, subViews);
 			this.updateFieldCollapse();
-			var therapyFieldCode = this.model.get("therapyFieldCode");
+			/*var therapyFieldCode = this.model.get("therapyFieldCode");
 			switch (therapyFieldCode) {
-				/*case "therapyTitle":
-				case "therapyBegDate":
-				case "therapyEndDate":
-					this.$el.addClass("span4");
-					break;*/
 				case "therapyPhaseTitle":
 					this.$(".wysisyg").remove();
 					this.$(".RichText").css({"min-height": "2.25em"});
@@ -2748,7 +2755,7 @@ define(function (require) {
 					this.$(".editor-controls").remove();
 					this.$(".RichText").css({"min-height": "2.25em"});
 					break;
-			}
+			}*/
 			return this;
 		}
 	});
@@ -4082,7 +4089,8 @@ define(function (require) {
 				this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
 				break;
 			case "string":
-				if (options.model.get("scope") === "''") {
+				//if (options.model.get("scope") === "''") {
+				if (options.model.isSubHeader()) {
 					this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
 				} else {
 					this.UIElementClass = Documents.Views.Edit.UIElement.String;
