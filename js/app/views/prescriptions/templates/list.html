@@ -1,0 +1,40 @@
+<table>
+	<thead>
+		<tr>
+			<th>Тип назначения</th>
+			<th>Лечаший врач</th>
+			<th>Пациент</th>
+			<th>Препараты</th>
+			<th>Интервалы</th>
+		</tr>
+	</thead>
+	<% _.each(items, function(item){%>
+		<tr>
+			<td>
+				<%= item.name %>
+			</td>
+			<td>
+				<%= item.doctor.firstName%> <%= item.doctor.lastName %>
+			</td>
+			<td>
+				<%= item.client.firstName%> <%= item.client.lastName %>
+			</td>
+			<td>
+				<ul>
+					<% _.each(item.drugs, function(drug){%>
+					<li><%= drug.name %></li>
+					<%})%>
+				</ul>
+			</td>
+			<td>
+				<ul>
+					<% _.each(item.assigmentIntervals, function(assigmentInterval){%>
+					<li><%= Core.Date.formatDateTime(assigmentInterval.beginDateTime) %> -
+					<%= Core.Date.formatDateTime(assigmentInterval.endDateTime) %>
+					</li>
+					<%})%>
+				</ul>
+			</td>
+		</tr>
+	<% }) %>
+</table>

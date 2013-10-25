@@ -18,58 +18,180 @@ use Webmis\Models\om\BaseAction;
  */
 class Action extends BaseAction
 {
-	public function serializePrescription(){
+    public function serializeProperty($property){
 
-        $p = array(
-            'assigmentIntervals' => array(),//интервалы назначения
-        );
+            $data = array();
+            $type = $property->getActionPropertyType();
+            $data['id'] = $property->getId();
+            $data['name'] = $type->getName();
+            $data['type'] = $type->getTypeName();
+            $data['code'] = $type->getCode();
+            $value = null;
 
-        $actionType = $this->getActionType();
-        $p['id'] = $this->getId();
-        $p['name'] = $actionType->getName();
-        $p['flatCode'] = $actionType->getFlatCode();
+            switch ($data['type']) {
+                    case 'String':
+                    case 'Html':
+                    case 'Text':
+                    //case 'Constructor':
+                        if($property->getActionPropertyString()){
+                            $value =  $property->getActionPropertyString()->getValue();
+                        }
+                    break;
+                    case 'Double':
+                        if($property->getActionPropertyDouble()){
+                            $value = $property->getActionPropertyDouble()->getValue();
+                        }
+                    break;
+                    // case 'FlatDirectory':
+                    //     // $p['value'] = $actionProperty->getActionPropertyFDRecord()->getValue();
+                    // break;
+                    case 'Date':
+                        if($property->getActionPropertyDate()){
+                            $date = $property->getActionPropertyDate()->getValue();
+                            $dateArray = explode('-', $date);
+                            $year = $dateArray[0];
+                            if($year > 1000){
+                                $value = strtotime($date)*1000;
+                            }
+                        }
 
-        $drugComponents = $this->getDrugComponents();
-        if($drugComponents){
-            $drugComponent = $drugComponents[0];
-            $p['drugName'] = $drugComponent->getName();
-            $p['drugDose'] = $drugComponent->getDose();
-        }
+                    break;
+                    default:
+                        $value = 'этот тип экшен проперти пока не поддерживается';
+                    break;
+            }
 
-        $intervals = $this->getDrugCharts();
+            $data['value'] = $value;
+
+            return $data;
+    }
+
+    public function serializeIntervals($intervals){
+
         if($intervals){
             $executionIntervals = array();
             $assigmentIntervals = array();
 
             foreach ($intervals as $interval) {
                 $i = array();
-                $i['drugChartId'] = $interval->getId();
-                $i['drugChartMasterId'] = $interval->getMasterId();
-                $i['beginDateTime'] = $interval->getBegDateTime('U')*1000;
+                $i['id'] = $interval->getId();
+                $i['masterId'] = $interval->getMasterId();
+
+                $beginDateTimestamp = $interval->getBegDateTime('U');
+                if($beginDateTimestamp){
+                    $i['beginDateTime'] = $beginDateTimestamp*1000;
+                }else{
+                    $i['beginDateTime'] = null;
+                }
                 $i['bdt'] = $interval->getBegDateTime();
-                $i['endDateTime'] = $interval->getEndDateTime('U')*1000;
+
+                $endDateTimestamp = $interval->getEndDateTime('U');
+                if($endDateTimestamp){
+                    $i['endDateTime'] = $endDateTimestamp*1000;
+                }else{
+                    $i['endDateTime'] = null;
+                }
                 $i['edt'] = $interval->getEndDateTime();
+
                 $i['status'] = $interval->getStatus();
+                $i['note'] = $interval->getNote();
 
 
                 if(!$interval->getMasterId()){
                     $i['executionIntervals'] = array();
-                    $assigmentIntervals[$i['drugChartId']] = $i;
+                    $assigmentIntervals[$i['id']] = $i;
                 }else{
                     $executionIntervals[] = $i;
                 }
             }
 
             foreach ($executionIntervals as $interval) {
-                 $assigmentIntervals[$interval['drugChartMasterId']]['executionIntervals'][] = $interval;
+                 $assigmentIntervals[$interval['masterId']]['executionIntervals'][] = $interval;
             }
 
-            $p['assigmentIntervals'] = array_values($assigmentIntervals);
-
-
+            return array_values($assigmentIntervals);
 
         }
 
-		return $p;
-	}
+    }
+
+    public function serializePrescription(){
+
+        $data = array(
+            'assigmentIntervals' => array(),//интервалы назначения
+        );
+
+        $actionType = $this->getActionType();
+        $event = $this->getEvent();
+
+        $data['id'] = $this->getId();
+        $data['name'] = $actionType->getName();
+        $data['eventId'] = $this->getEventId();
+
+        //пациен
+        $client = $event->getClient();
+        $data['client'] = null;
+        if($client){
+            $data['client'] = array(
+                'id' => $client->getId(),
+                'firstName' => $client->getFirstName(),
+                'middleName' => $client->getPatrName(),
+                'lastName' => $client->getLastName()
+            );
+        }
+
+        //лечащий врач
+        $doctor = $event->getDoctor();
+        $data['doctor'] = null;
+        if($doctor){
+            $data['doctor'] = array(
+                'id' => $doctor->getId(),
+                'firstName' => $doctor->getFirstName(),
+                'middleName' => $doctor->getPatrName(),
+                'lastName' => $doctor->getLastName()
+            );
+        }
+
+
+
+        $data['properties'] = array();
+
+        //$data['flatCode'] = $actionType->getFlatCode();
+
+        $properties = $this->getActionPropertys();
+
+        if($properties){
+            foreach ($properties  as $property) {
+                $data['properties'][] = $this->serializeProperty($property);
+            }
+        }
+
+
+
+        $data['drugs'] = array();
+
+        $drugs = $this->getDrugComponents();
+
+        if($drugs){
+            foreach ($drugs as $drug) {
+
+                $data['drugs'][] = array(
+                    'id' => $drug->getId(),
+                    'name' => $drug->getName(),
+                    'dose' => $drug->getDose(),
+                    'unit' => $drug->getUnit()
+                    );
+            }
+        }
+
+        $intervals = $this->getDrugCharts();
+
+        if($intervals){
+            $data['assigmentIntervals'] = $this->serializeIntervals($intervals);
+        }
+
+        ksort($data);
+
+        return $data;
+    }
 }

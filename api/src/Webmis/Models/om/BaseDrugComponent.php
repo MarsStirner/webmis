@@ -622,6 +622,10 @@ abstract class BaseDrugComponent extends BaseObject implements Persistent
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+                if (!$this->isColumnModified(DrugComponentPeer::CREATEDATETIME)) {
+                    $this->setcreateDateTime(time());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
             }

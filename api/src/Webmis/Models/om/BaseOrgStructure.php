@@ -20,6 +20,8 @@ use Webmis\Models\EventQuery;
 use Webmis\Models\OrgStructure;
 use Webmis\Models\OrgStructurePeer;
 use Webmis\Models\OrgStructureQuery;
+use Webmis\Models\RbStorage;
+use Webmis\Models\RbStorageQuery;
 
 /**
  * Base class that represents a row from the 'OrgStructure' table.
@@ -223,6 +225,12 @@ abstract class BaseOrgStructure extends BaseObject implements Persistent
     protected $collEventsPartial;
 
     /**
+     * @var        PropelObjectCollection|RbStorage[] Collection to store aggregation of RbStorage objects.
+     */
+    protected $collRbStorages;
+    protected $collRbStoragesPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -247,6 +255,12 @@ abstract class BaseOrgStructure extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $eventsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $rbStoragesScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -1371,6 +1385,8 @@ abstract class BaseOrgStructure extends BaseObject implements Persistent
 
             $this->collEvents = null;
 
+            $this->collRbStorages = null;
+
         } // if (deep)
     }
 
@@ -1518,6 +1534,24 @@ abstract class BaseOrgStructure extends BaseObject implements Persistent
 
             if ($this->collEvents !== null) {
                 foreach ($this->collEvents as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->rbStoragesScheduledForDeletion !== null) {
+                if (!$this->rbStoragesScheduledForDeletion->isEmpty()) {
+                    foreach ($this->rbStoragesScheduledForDeletion as $rbStorage) {
+                        // need to save related object because we set the relation to null
+                        $rbStorage->save($con);
+                    }
+                    $this->rbStoragesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collRbStorages !== null) {
+                foreach ($this->collRbStorages as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1824,6 +1858,14 @@ abstract class BaseOrgStructure extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collRbStorages !== null) {
+                    foreach ($this->collRbStorages as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
 
             $this->alreadyInValidation = false;
         }
@@ -1996,6 +2038,9 @@ abstract class BaseOrgStructure extends BaseObject implements Persistent
         if ($includeForeignObjects) {
             if (null !== $this->collEvents) {
                 $result['Events'] = $this->collEvents->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collRbStorages) {
+                $result['RbStorages'] = $this->collRbStorages->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -2298,6 +2343,12 @@ abstract class BaseOrgStructure extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getRbStorages() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addRbStorage($relObj->copy($deepCopy));
+                }
+            }
+
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -2361,6 +2412,9 @@ abstract class BaseOrgStructure extends BaseObject implements Persistent
     {
         if ('Event' == $relationName) {
             $this->initEvents();
+        }
+        if ('RbStorage' == $relationName) {
+            $this->initRbStorages();
         }
     }
 
@@ -2733,6 +2787,224 @@ abstract class BaseOrgStructure extends BaseObject implements Persistent
     }
 
     /**
+     * Clears out the collRbStorages collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return OrgStructure The current object (for fluent API support)
+     * @see        addRbStorages()
+     */
+    public function clearRbStorages()
+    {
+        $this->collRbStorages = null; // important to set this to null since that means it is uninitialized
+        $this->collRbStoragesPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collRbStorages collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialRbStorages($v = true)
+    {
+        $this->collRbStoragesPartial = $v;
+    }
+
+    /**
+     * Initializes the collRbStorages collection.
+     *
+     * By default this just sets the collRbStorages collection to an empty array (like clearcollRbStorages());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initRbStorages($overrideExisting = true)
+    {
+        if (null !== $this->collRbStorages && !$overrideExisting) {
+            return;
+        }
+        $this->collRbStorages = new PropelObjectCollection();
+        $this->collRbStorages->setModel('RbStorage');
+    }
+
+    /**
+     * Gets an array of RbStorage objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this OrgStructure is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|RbStorage[] List of RbStorage objects
+     * @throws PropelException
+     */
+    public function getRbStorages($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collRbStoragesPartial && !$this->isNew();
+        if (null === $this->collRbStorages || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collRbStorages) {
+                // return empty collection
+                $this->initRbStorages();
+            } else {
+                $collRbStorages = RbStorageQuery::create(null, $criteria)
+                    ->filterByOrgStructure($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collRbStoragesPartial && count($collRbStorages)) {
+                      $this->initRbStorages(false);
+
+                      foreach($collRbStorages as $obj) {
+                        if (false == $this->collRbStorages->contains($obj)) {
+                          $this->collRbStorages->append($obj);
+                        }
+                      }
+
+                      $this->collRbStoragesPartial = true;
+                    }
+
+                    $collRbStorages->getInternalIterator()->rewind();
+                    return $collRbStorages;
+                }
+
+                if($partial && $this->collRbStorages) {
+                    foreach($this->collRbStorages as $obj) {
+                        if($obj->isNew()) {
+                            $collRbStorages[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collRbStorages = $collRbStorages;
+                $this->collRbStoragesPartial = false;
+            }
+        }
+
+        return $this->collRbStorages;
+    }
+
+    /**
+     * Sets a collection of RbStorage objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $rbStorages A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return OrgStructure The current object (for fluent API support)
+     */
+    public function setRbStorages(PropelCollection $rbStorages, PropelPDO $con = null)
+    {
+        $rbStoragesToDelete = $this->getRbStorages(new Criteria(), $con)->diff($rbStorages);
+
+        $this->rbStoragesScheduledForDeletion = unserialize(serialize($rbStoragesToDelete));
+
+        foreach ($rbStoragesToDelete as $rbStorageRemoved) {
+            $rbStorageRemoved->setOrgStructure(null);
+        }
+
+        $this->collRbStorages = null;
+        foreach ($rbStorages as $rbStorage) {
+            $this->addRbStorage($rbStorage);
+        }
+
+        $this->collRbStorages = $rbStorages;
+        $this->collRbStoragesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related RbStorage objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related RbStorage objects.
+     * @throws PropelException
+     */
+    public function countRbStorages(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collRbStoragesPartial && !$this->isNew();
+        if (null === $this->collRbStorages || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collRbStorages) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getRbStorages());
+            }
+            $query = RbStorageQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByOrgStructure($this)
+                ->count($con);
+        }
+
+        return count($this->collRbStorages);
+    }
+
+    /**
+     * Method called to associate a RbStorage object to this object
+     * through the RbStorage foreign key attribute.
+     *
+     * @param    RbStorage $l RbStorage
+     * @return OrgStructure The current object (for fluent API support)
+     */
+    public function addRbStorage(RbStorage $l)
+    {
+        if ($this->collRbStorages === null) {
+            $this->initRbStorages();
+            $this->collRbStoragesPartial = true;
+        }
+        if (!in_array($l, $this->collRbStorages->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddRbStorage($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	RbStorage $rbStorage The rbStorage object to add.
+     */
+    protected function doAddRbStorage($rbStorage)
+    {
+        $this->collRbStorages[]= $rbStorage;
+        $rbStorage->setOrgStructure($this);
+    }
+
+    /**
+     * @param	RbStorage $rbStorage The rbStorage object to remove.
+     * @return OrgStructure The current object (for fluent API support)
+     */
+    public function removeRbStorage($rbStorage)
+    {
+        if ($this->getRbStorages()->contains($rbStorage)) {
+            $this->collRbStorages->remove($this->collRbStorages->search($rbStorage));
+            if (null === $this->rbStoragesScheduledForDeletion) {
+                $this->rbStoragesScheduledForDeletion = clone $this->collRbStorages;
+                $this->rbStoragesScheduledForDeletion->clear();
+            }
+            $this->rbStoragesScheduledForDeletion[]= $rbStorage;
+            $rbStorage->setOrgStructure(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -2791,6 +3063,11 @@ abstract class BaseOrgStructure extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collRbStorages) {
+                foreach ($this->collRbStorages as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
@@ -2799,6 +3076,10 @@ abstract class BaseOrgStructure extends BaseObject implements Persistent
             $this->collEvents->clearIterator();
         }
         $this->collEvents = null;
+        if ($this->collRbStorages instanceof PropelCollection) {
+            $this->collRbStorages->clearIterator();
+        }
+        $this->collRbStorages = null;
     }
 
     /**
