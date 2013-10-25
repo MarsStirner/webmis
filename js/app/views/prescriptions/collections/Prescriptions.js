@@ -1,12 +1,12 @@
 define(function (require) {
-	var Prescription = require('models/prescriptions/Prescription');
+	var Prescription = require('../models/Prescription');
 
 	var Prescriptions = Collection.extend({
 		model: Prescription,
 		initialize: function (models, options) {
 		},
 		url: function () {
-				return "/api/v1/prescriptions/?eventId=205014";
+				return "/api/v1/prescriptions/";
 		}
 	});
 

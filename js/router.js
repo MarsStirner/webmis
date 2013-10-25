@@ -4,6 +4,8 @@ require.config({
 	paths: {
 		"jquery": "../lib/jquery/jquery-1.8.2.min",
 		"underscore": "../lib/underscore/underscore-1.4.2",
+		"text": "../lib/requirejs/text",
+		"tpl": "../lib/requirejs/underscore-tpl",
 		"backbone": "../lib/backbone/backbone-0.9.1",
 		"advice": "../lib/backbone.advice/advice",
 		"deep-model": "../lib/backbone.deep-model/deep-model-0.10.4",
@@ -125,8 +127,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 			"biomaterials/": "biomaterials",
 			"reports/*path": "reports",
-			"statements/*path":"statements",
-			"prescriptions/*path":"prescriptions",
+			"statements/*path": "statements",
+			"prescriptions/*path": "prescriptions",
 
 
 			"prints/": "prints",
@@ -285,7 +287,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			this.currentPage = "prescriptions";
 			console.log('presc')
 
-			require(["views/app", "views/prescriptions/ListView"], function(AppView, ListView) {
+			require(["views/app", "views/prescriptions/List"], function(AppView, ListView) {
 				var view = new ListView({
 					path: path
 				});

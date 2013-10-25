@@ -82,6 +82,7 @@ class PrescriptionController
         }
 
         $clientId = (int) $request->get('clientId');
+        $drugName = $request->get('drugName');
         $departmentId = (int) $request->get('departmentId');
         $doctorId = (int) $request->get('doctorId');
         $eventId = (int) $request->get('eventId');
@@ -92,6 +93,7 @@ class PrescriptionController
 
         $filter = array('eventId' => $eventId,
                         'clientId' => $clientId,
+                        'drugName' => $drugName,
                         'departmentId' => $departmentId,
                         'dateRangeMax' => $dateRangeMax,
                         'dateRangeMin' => $dateRangeMin);

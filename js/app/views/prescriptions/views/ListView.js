@@ -1,0 +1,17 @@
+define(function(require) {
+	var list = _.template(require('text!../templates/list.html'));
+	var BaseView = require('./BaseView');
+
+	return BaseView.extend({
+		template: list,
+		initialize: function(){
+			this.collection.on('reset', this.render, this);
+		},
+		data: function(){
+			var data = {};
+			data.items = [];//this.collection.toJSON();
+			return data;
+		}
+	});
+
+});

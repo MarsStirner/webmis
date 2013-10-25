@@ -71,6 +71,7 @@ class ActionQuery extends BaseActionQuery
         $defaultFilterKeys = array( 'id' => null,
                                     'eventId' => null,
                                     'clientId' => null,
+                                    'drugName' => null,
                                     'doctorId' => null,
                                     'departmentId' => null,
                                     'dateRangeMin' => null,
@@ -158,9 +159,6 @@ class ActionQuery extends BaseActionQuery
                         ->with('doctor')
 
                         ->useDrugChartQuery()
-                            // ->_if($dateRangeMin && $dateRangeMax)
-                            //     ->filterByBegDateTime(array('min' => $dateRangeMin, 'max' => $dateRangeMax))
-                            // ->_endif()
                             ->_if($dateRangeMax)
                                 ->filterByBegDateTime(array('max' => $dateRangeMax))
                             ->_endif()
@@ -170,7 +168,12 @@ class ActionQuery extends BaseActionQuery
                         ->endUse()
                         ->with('DrugChart')
 
-                        ->joinWithDrugComponent();
+                        ->useDrugComponentQuery()
+                            ->_if($drugName)
+                                ->filterByName($drugName)
+                            ->_endif()
+                        ->endUse()
+                        ->with('DrugComponent');
 
     }
 
