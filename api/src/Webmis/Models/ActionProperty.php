@@ -45,6 +45,17 @@ class ActionProperty extends BaseActionProperty
         return $this->aActionPropertyDouble;
     }
 
+        public function getActionPropertyFDRecord(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aActionPropertyFDRecord === null && ($this->id !== null) && $doQuery) {
+            $this->aActionPropertyFDRecord = ActionPropertyFDRecordQuery::create()->findPk($this->id, $con);
+            // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
+            //$this->aActionPropertyFDRecord->setActionProperty($this);
+        }
+
+        return $this->aActionPropertyFDRecord;
+    }
+
 
     public function setValue($value)
     {
