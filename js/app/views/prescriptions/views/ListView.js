@@ -9,7 +9,8 @@ define(function(require) {
 		},
 		data: function(){
 			var data = {};
-			data.items = [];//this.collection.toJSON();
+			data.items = this.collection.toJSON();
+			console.log('data', data)
 			return data;
 		}
 	});
