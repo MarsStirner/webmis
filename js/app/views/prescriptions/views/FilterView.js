@@ -41,12 +41,10 @@ define(function(require) {
 			rivets.formatters.date = {
 				read: function(value) {
 					var output = moment(value,'X').format('DD.MM.YYYY');
-					console.log('read',value, output)
 					return output;
 				},
 				publish: function(value) {
 					var output = moment(value, 'DD.MM.YYYY').format('X');
-					console.log('publish',value, output)
 					return output;
 				}
 			}

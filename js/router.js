@@ -273,8 +273,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 					this.appView.render();
 
 				} else {
-
-					var newMain = $('<div id="main"></div>').append(view.render().el);
+					view.render();
+					var newMain = $('<div id="main"></div>').append(view.el);
 					this.appView.$("#main").remove();
 					this.appView.$el.append(newMain);
 
@@ -300,8 +300,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 					this.appView.render();
 
 				} else {
-
-					var newMain = $('<div id="main"></div>').append(view.render().el);
+					view.render();
+					var newMain = $('<div id="main"></div>').append(view.el);
 					this.appView.$("#main").remove();
 					this.appView.$el.append(newMain);
 
