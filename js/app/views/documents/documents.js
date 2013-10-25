@@ -606,7 +606,7 @@ define(function (require) {
 
 		isSubHeader: function () {
 			var result = false;
-			var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "DISPLAY_AS_HEADER";});
+			var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {console.log(a); return a.code === "DISPLAY_AS_SUBHEADER";});
 			if (la) {
 				var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
 				if (lav) {
@@ -2617,11 +2617,11 @@ define(function (require) {
 				$(this).prop("tabindex", ++i);
 			});
 
-			this.$(".doc-sub-header").each(function () {
+			/*this.$(".doc-sub-header").each(function () {
 				if ($(this).siblings(".span6").length > 0) {
 					$(this).parent().before($(this).detach());
 				}
-			});
+			});*/
 
 			return this;
 		}
@@ -4061,13 +4061,14 @@ define(function (require) {
 	 * @type {Function}
 	 */
 	Documents.Views.Edit.UIElement.SubHeader = ViewBase.extend({
-		className: "row-fluid doc-sub-header",
+		className: "span6 doc-sub-header",
 		template: _.template("<h3><%=model.get('name')%></h3>"),
 		data: function () {
 			return {
 				model: this.model
 			}
-		}/*,
+		}
+		/*,
 		render: function () {
 			ViewBase.prototype.render.call(this);
 			//this.$el.parent().prepend(this.$el.detach());
