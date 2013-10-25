@@ -14,10 +14,14 @@
 				<%= item.name %>
 			</td>
 			<td>
-				<%= item.doctor.firstName%> <%= item.doctor.lastName %>
+				<% if(item.doctor){ %>
+					<%= item.doctor.firstName%> <%= item.doctor.lastName %>
+				<% } %>
 			</td>
 			<td>
-				<%= item.client.firstName%> <%= item.client.lastName %>
+				<% if(item.client){ %>
+					<%= item.client.firstName%> <%= item.client.lastName %>
+				<% } %>
 			</td>
 			<td>
 				<ul>
