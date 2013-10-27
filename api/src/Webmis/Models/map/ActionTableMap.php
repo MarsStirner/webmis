@@ -101,6 +101,25 @@ class ActionTableMap extends TableMap
         $this->addRelation('Event', 'Webmis\\Models\\Event', RelationMap::MANY_TO_ONE, array('event_id' => 'id', ), null, null);
         $this->addRelation('ActionType', 'Webmis\\Models\\ActionType', RelationMap::MANY_TO_ONE, array('actionType_id' => 'id', ), null, null);
         $this->addRelation('ActionProperty', 'Webmis\\Models\\ActionProperty', RelationMap::ONE_TO_MANY, array('id' => 'action_id', ), null, null, 'ActionPropertys');
+        $this->addRelation('DrugChart', 'Webmis\\Models\\DrugChart', RelationMap::ONE_TO_MANY, array('id' => 'action_id', ), null, null, 'DrugCharts');
+        $this->addRelation('DrugComponent', 'Webmis\\Models\\DrugComponent', RelationMap::ONE_TO_MANY, array('id' => 'action_id', ), null, null, 'DrugComponents');
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' =>  array (
+  'create_column' => 'createDatetime',
+  'update_column' => 'modifyDatetime',
+  'disable_updated_at' => 'false',
+),
+        );
+    } // getBehaviors()
 
 } // ActionTableMap

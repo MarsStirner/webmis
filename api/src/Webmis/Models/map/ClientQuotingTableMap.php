@@ -83,4 +83,21 @@ class ClientQuotingTableMap extends TableMap
         $this->addRelation('QuotaType', 'Webmis\\Models\\QuotaType', RelationMap::MANY_TO_ONE, array('quotaType_id' => 'id', ), null, null);
     } // buildRelations()
 
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' =>  array (
+  'create_column' => 'createDatetime',
+  'update_column' => 'modifyDatetime',
+  'disable_updated_at' => 'false',
+),
+        );
+    } // getBehaviors()
+
 } // ClientQuotingTableMap

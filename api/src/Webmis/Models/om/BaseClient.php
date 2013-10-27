@@ -368,7 +368,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getFirstName()
+    public function getfirstName()
     {
         return $this->firstname;
     }
@@ -378,7 +378,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getPatrName()
+    public function getpatrName()
     {
         return $this->patrname;
     }
@@ -728,7 +728,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * @param string $v new value
      * @return Client The current object (for fluent API support)
      */
-    public function setFirstName($v)
+    public function setfirstName($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -741,7 +741,7 @@ abstract class BaseClient extends BaseObject implements Persistent
 
 
         return $this;
-    } // setFirstName()
+    } // setfirstName()
 
     /**
      * Set the value of [patrname] column.
@@ -749,7 +749,7 @@ abstract class BaseClient extends BaseObject implements Persistent
      * @param string $v new value
      * @return Client The current object (for fluent API support)
      */
-    public function setPatrName($v)
+    public function setpatrName($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -762,7 +762,7 @@ abstract class BaseClient extends BaseObject implements Persistent
 
 
         return $this;
-    } // setPatrName()
+    } // setpatrName()
 
     /**
      * Sets the value of [birthdate] column to a normalized version of the date/time value specified.
@@ -1229,8 +1229,19 @@ abstract class BaseClient extends BaseObject implements Persistent
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+                if (!$this->isColumnModified(ClientPeer::CREATEDATETIME)) {
+                    $this->setcreateDatetime(time());
+                }
+                if (!$this->isColumnModified(ClientPeer::MODIFYDATETIME)) {
+                    $this->setmodifyDatetime(time());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(ClientPeer::MODIFYDATETIME)) {
+                    $this->setmodifyDatetime(time());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -1626,10 +1637,10 @@ abstract class BaseClient extends BaseObject implements Persistent
                 return $this->getlastName();
                 break;
             case 7:
-                return $this->getFirstName();
+                return $this->getfirstName();
                 break;
             case 8:
-                return $this->getPatrName();
+                return $this->getpatrName();
                 break;
             case 9:
                 return $this->getbirthDate();
@@ -1703,8 +1714,8 @@ abstract class BaseClient extends BaseObject implements Persistent
             $keys[4] => $this->getmodifyPersonId(),
             $keys[5] => $this->getdeleted(),
             $keys[6] => $this->getlastName(),
-            $keys[7] => $this->getFirstName(),
-            $keys[8] => $this->getPatrName(),
+            $keys[7] => $this->getfirstName(),
+            $keys[8] => $this->getpatrName(),
             $keys[9] => $this->getbirthDate(),
             $keys[10] => $this->getsex(),
             $keys[11] => $this->getsnils(),
@@ -1778,10 +1789,10 @@ abstract class BaseClient extends BaseObject implements Persistent
                 $this->setlastName($value);
                 break;
             case 7:
-                $this->setFirstName($value);
+                $this->setfirstName($value);
                 break;
             case 8:
-                $this->setPatrName($value);
+                $this->setpatrName($value);
                 break;
             case 9:
                 $this->setbirthDate($value);
@@ -1850,8 +1861,8 @@ abstract class BaseClient extends BaseObject implements Persistent
         if (array_key_exists($keys[4], $arr)) $this->setmodifyPersonId($arr[$keys[4]]);
         if (array_key_exists($keys[5], $arr)) $this->setdeleted($arr[$keys[5]]);
         if (array_key_exists($keys[6], $arr)) $this->setlastName($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setFirstName($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setPatrName($arr[$keys[8]]);
+        if (array_key_exists($keys[7], $arr)) $this->setfirstName($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setpatrName($arr[$keys[8]]);
         if (array_key_exists($keys[9], $arr)) $this->setbirthDate($arr[$keys[9]]);
         if (array_key_exists($keys[10], $arr)) $this->setsex($arr[$keys[10]]);
         if (array_key_exists($keys[11], $arr)) $this->setsnils($arr[$keys[11]]);
@@ -1965,8 +1976,8 @@ abstract class BaseClient extends BaseObject implements Persistent
         $copyObj->setmodifyPersonId($this->getmodifyPersonId());
         $copyObj->setdeleted($this->getdeleted());
         $copyObj->setlastName($this->getlastName());
-        $copyObj->setFirstName($this->getFirstName());
-        $copyObj->setPatrName($this->getPatrName());
+        $copyObj->setfirstName($this->getfirstName());
+        $copyObj->setpatrName($this->getpatrName());
         $copyObj->setbirthDate($this->getbirthDate());
         $copyObj->setsex($this->getsex());
         $copyObj->setsnils($this->getsnils());
@@ -2302,6 +2313,131 @@ abstract class BaseClient extends BaseObject implements Persistent
         return $this->getEvents($query, $con);
     }
 
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Client is new, it will return
+     * an empty collection; or if this Client has previously
+     * been saved, it will retrieve related Events from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Client.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Event[] List of Event objects
+     */
+    public function getEventsJoinCreatePerson($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = EventQuery::create(null, $criteria);
+        $query->joinWith('CreatePerson', $join_behavior);
+
+        return $this->getEvents($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Client is new, it will return
+     * an empty collection; or if this Client has previously
+     * been saved, it will retrieve related Events from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Client.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Event[] List of Event objects
+     */
+    public function getEventsJoinModifyPerson($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = EventQuery::create(null, $criteria);
+        $query->joinWith('ModifyPerson', $join_behavior);
+
+        return $this->getEvents($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Client is new, it will return
+     * an empty collection; or if this Client has previously
+     * been saved, it will retrieve related Events from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Client.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Event[] List of Event objects
+     */
+    public function getEventsJoinSetPerson($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = EventQuery::create(null, $criteria);
+        $query->joinWith('SetPerson', $join_behavior);
+
+        return $this->getEvents($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Client is new, it will return
+     * an empty collection; or if this Client has previously
+     * been saved, it will retrieve related Events from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Client.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Event[] List of Event objects
+     */
+    public function getEventsJoinDoctor($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = EventQuery::create(null, $criteria);
+        $query->joinWith('Doctor', $join_behavior);
+
+        return $this->getEvents($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Client is new, it will return
+     * an empty collection; or if this Client has previously
+     * been saved, it will retrieve related Events from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Client.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Event[] List of Event objects
+     */
+    public function getEventsJoinOrgStructure($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = EventQuery::create(null, $criteria);
+        $query->joinWith('OrgStructure', $join_behavior);
+
+        return $this->getEvents($query, $con);
+    }
+
     /**
      * Clears the current object and sets all attributes to their default values
      */
@@ -2384,6 +2520,20 @@ abstract class BaseClient extends BaseObject implements Persistent
     public function isAlreadyInSave()
     {
         return $this->alreadyInSave;
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     Client The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[] = ClientPeer::MODIFYDATETIME;
+
+        return $this;
     }
 
 }

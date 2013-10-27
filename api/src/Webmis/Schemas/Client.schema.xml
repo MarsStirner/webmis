@@ -8,8 +8,8 @@
     <column name="modifyPerson_id" phpName="modifyPersonId" type="INTEGER" required="false"/>
     <column name="deleted" phpName="deleted" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
     <column name="lastName" phpName="lastName" type="VARCHAR" size="30" required="true"/>
-    <column name="firstName" phpName="FirstName" type="VARCHAR" size="30" required="true"/>
-    <column name="patrName" phpName="PatrName" type="VARCHAR" size="30" required="true"/>
+    <column name="firstName" phpName="firstName" type="VARCHAR" size="30" required="true"/>
+    <column name="patrName" phpName="patrName" type="VARCHAR" size="30" required="true"/>
     <column name="birthDate" phpName="birthDate" type="DATE" required="true"/>
     <column name="sex" phpName="sex" type="TINYINT" required="true"/>
     <column name="SNILS" phpName="snils" type="CHAR" size="11" required="true"/>
@@ -22,6 +22,12 @@
     <column name="version" phpName="version" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="birthPlace" phpName="birthPlace" type="VARCHAR" size="128" required="true" defaultValue=""/>
     <column name="uuid_id" phpName="uuidId" type="INTEGER" required="true" defaultValue="0"/>
+
+    <behavior name="timestampable">
+        <parameter name="create_column" value="createDatetime" />
+        <parameter name="update_column" value="modifyDatetime" />
+    </behavior>
+
     <index name="createPerson_id">
       <index-column name="createPerson_id"/>
     </index>

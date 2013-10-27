@@ -12,6 +12,10 @@
     <column name="code" phpName="code" type="VARCHAR" size="16" required="true"/>
     <column name="name" phpName="name" type="VARCHAR" size="1000" required="true"/>
     <column name="teenOlder" phpName="teenOlder" type="BOOLEAN" size="1" required="true"/>
+    <behavior name="timestampable">
+        <parameter name="create_column" value="createDatetime" />
+        <parameter name="update_column" value="modifyDatetime" />
+    </behavior>
     <index name="createPerson_id">
       <index-column name="createPerson_id"/>
     </index>

@@ -188,3 +188,5 @@ build
 .allow-devtools-edit
 sftp-config.json
 tasks.todo
+
+.tern-project

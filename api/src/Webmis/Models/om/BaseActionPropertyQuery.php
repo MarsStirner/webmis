@@ -21,6 +21,7 @@ use Webmis\Models\ActionPropertyFDRecord;
 use Webmis\Models\ActionPropertyHospitalBed;
 use Webmis\Models\ActionPropertyInteger;
 use Webmis\Models\ActionPropertyMkb;
+use Webmis\Models\ActionPropertyOrgStructure;
 use Webmis\Models\ActionPropertyPeer;
 use Webmis\Models\ActionPropertyQuery;
 use Webmis\Models\ActionPropertyString;
@@ -83,6 +84,10 @@ use Webmis\Models\ActionPropertyType;
  * @method ActionPropertyQuery leftJoinActionPropertyDouble($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyDouble relation
  * @method ActionPropertyQuery rightJoinActionPropertyDouble($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyDouble relation
  * @method ActionPropertyQuery innerJoinActionPropertyDouble($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionPropertyDouble relation
+ *
+ * @method ActionPropertyQuery leftJoinActionPropertyOrgStructure($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyOrgStructure relation
+ * @method ActionPropertyQuery rightJoinActionPropertyOrgStructure($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyOrgStructure relation
+ * @method ActionPropertyQuery innerJoinActionPropertyOrgStructure($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionPropertyOrgStructure relation
  *
  * @method ActionPropertyQuery leftJoinActionPropertyFDRecord($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyFDRecord relation
  * @method ActionPropertyQuery rightJoinActionPropertyFDRecord($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyFDRecord relation
@@ -345,6 +350,8 @@ abstract class BaseActionPropertyQuery extends ModelCriteria
      * @see       filterByActionPropertyDate()
      *
      * @see       filterByActionPropertyDouble()
+     *
+     * @see       filterByActionPropertyOrgStructure()
      *
      * @see       filterByActionPropertyFDRecord()
      *
@@ -1212,6 +1219,82 @@ abstract class BaseActionPropertyQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related ActionPropertyOrgStructure object
+     *
+     * @param   ActionPropertyOrgStructure|PropelObjectCollection $actionPropertyOrgStructure The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ActionPropertyQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByActionPropertyOrgStructure($actionPropertyOrgStructure, $comparison = null)
+    {
+        if ($actionPropertyOrgStructure instanceof ActionPropertyOrgStructure) {
+            return $this
+                ->addUsingAlias(ActionPropertyPeer::ID, $actionPropertyOrgStructure->getid(), $comparison);
+        } elseif ($actionPropertyOrgStructure instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ActionPropertyPeer::ID, $actionPropertyOrgStructure->toKeyValue('id', 'id'), $comparison);
+        } else {
+            throw new PropelException('filterByActionPropertyOrgStructure() only accepts arguments of type ActionPropertyOrgStructure or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ActionPropertyOrgStructure relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ActionPropertyQuery The current query, for fluid interface
+     */
+    public function joinActionPropertyOrgStructure($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ActionPropertyOrgStructure');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ActionPropertyOrgStructure');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ActionPropertyOrgStructure relation ActionPropertyOrgStructure object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\ActionPropertyOrgStructureQuery A secondary query class using the current class as primary query
+     */
+    public function useActionPropertyOrgStructureQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinActionPropertyOrgStructure($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ActionPropertyOrgStructure', '\Webmis\Models\ActionPropertyOrgStructureQuery');
+    }
+
+    /**
      * Filter the query by a related ActionPropertyFDRecord object
      *
      * @param   ActionPropertyFDRecord|PropelObjectCollection $actionPropertyFDRecord The related object(s) to use as filter
@@ -1673,4 +1756,69 @@ abstract class BaseActionPropertyQuery extends ModelCriteria
         return $this;
     }
 
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     ActionPropertyQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(ActionPropertyPeer::MODIFYDATETIME, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     ActionPropertyQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(ActionPropertyPeer::MODIFYDATETIME);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     ActionPropertyQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(ActionPropertyPeer::MODIFYDATETIME);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     ActionPropertyQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(ActionPropertyPeer::CREATEDATETIME, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     ActionPropertyQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(ActionPropertyPeer::CREATEDATETIME);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     ActionPropertyQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(ActionPropertyPeer::CREATEDATETIME);
+    }
 }

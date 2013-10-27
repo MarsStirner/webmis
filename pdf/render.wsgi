@@ -245,6 +245,9 @@ def application(environ, start_response):
 
         return result_if_false
 
+    def getSpecsOrPost(document):
+        return document['doctorPost']['name'] if document['doctorPost']['code'] == '3115' else document['doctorSpecs']
+
 
     def formatDate( path_string, data=dataJSON ):
         data = data if len(data) > 0 else dataJSON
@@ -441,6 +444,7 @@ def application(environ, start_response):
         _getOccupationString = _getOccupationString,
         simpleIf = simpleIf,
         conditionIf = conditionIf,
+        getSpecsOrPost = getSpecsOrPost,
         getAge = getAge,
         formatDate = formatDate,
         formatTime = formatTime,

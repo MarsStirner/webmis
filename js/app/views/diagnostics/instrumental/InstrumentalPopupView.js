@@ -348,17 +348,17 @@ define(function(require) {
                 minDate: now,
                 onSelect: function() {
                     view.ui.$createDate.trigger('change');
-                    var date = view.$(this).datepicker('getDate');
-                    var day = moment(date).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    var hour = view.ui.$createTime.timepicker('getHour');
-                    //если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour <= currentHour) {
-                            view.ui.$createTime.val('').trigger('change');
-                        }
-                    }
+                    // var date = view.$(this).datepicker('getDate');
+                    // var day = moment(date).startOf('day');
+                    // var currentDay = moment().startOf('day');
+                    // var currentHour = moment().hour();
+                    // var hour = view.ui.$createTime.timepicker('getHour');
+                    // //если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
+                    // if (day.diff(currentDay, 'days') === 0) {
+                    //     if (hour <= currentHour) {
+                    //         view.ui.$createTime.val('').trigger('change');
+                    //     }
+                    // }
                 }
             }).datepicker('setDate', view.viewModel.get('createDay'));
 
@@ -370,35 +370,35 @@ define(function(require) {
                 showPeriodLabels: false,
                 defaultTime: 'now',
                 showOn: 'both',
-                button: '.bottom-form .icon-time',
-                onHourShow: function(hour) {
-                    var date = view.ui.$createDate.datepicker('getDate');
-                    var day = moment(date).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    //если выбран текущий день, то часы меньше текущего нельзя выбрать
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour < currentHour) {
-                            return false;
-                        }
-                    }
+                button: '.bottom-form .icon-time'//,
+                // onHourShow: function(hour) {
+                //     var date = view.ui.$createDate.datepicker('getDate');
+                //     var day = moment(date).startOf('day');
+                //     var currentDay = moment().startOf('day');
+                //     var currentHour = moment().hour();
+                //     //если выбран текущий день, то часы меньше текущего нельзя выбрать
+                //     if (day.diff(currentDay, 'days') === 0) {
+                //         if (hour < currentHour) {
+                //             return false;
+                //         }
+                //     }
 
-                    return true;
-                },
-                onMinuteShow: function(hour, minute) {
-                    var date = view.ui.$createDate.datepicker('getDate');
-                    var day = moment(date).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    var currentMinute = moment().minute();
-                    //если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour === currentHour && minute <= currentMinute) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
+                //     return true;
+                // },
+                // onMinuteShow: function(hour, minute) {
+                //     var date = view.ui.$createDate.datepicker('getDate');
+                //     var day = moment(date).startOf('day');
+                //     var currentDay = moment().startOf('day');
+                //     var currentHour = moment().hour();
+                //     var currentMinute = moment().minute();
+                //     //если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
+                //     if (day.diff(currentDay, 'days') === 0) {
+                //         if (hour === currentHour && minute <= currentMinute) {
+                //             return false;
+                //         }
+                //     }
+                //     return true;
+                // }
             }).mask('99:99').val(view.viewModel.get('createTime'));
 
 

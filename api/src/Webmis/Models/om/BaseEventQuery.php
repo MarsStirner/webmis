@@ -18,6 +18,8 @@ use Webmis\Models\Event;
 use Webmis\Models\EventPeer;
 use Webmis\Models\EventQuery;
 use Webmis\Models\EventType;
+use Webmis\Models\OrgStructure;
+use Webmis\Models\Person;
 
 /**
  * Base class that represents a query for the 'Event' table.
@@ -30,7 +32,7 @@ use Webmis\Models\EventType;
  * @method EventQuery orderBymodifyDatetime($order = Criteria::ASC) Order by the modifyDatetime column
  * @method EventQuery orderBymodifyPersonId($order = Criteria::ASC) Order by the modifyPerson_id column
  * @method EventQuery orderBydeleted($order = Criteria::ASC) Order by the deleted column
- * @method EventQuery orderByexternalid($order = Criteria::ASC) Order by the externalId column
+ * @method EventQuery orderByexternalId($order = Criteria::ASC) Order by the externalId column
  * @method EventQuery orderByeventTypeId($order = Criteria::ASC) Order by the eventType_id column
  * @method EventQuery orderByorgId($order = Criteria::ASC) Order by the org_id column
  * @method EventQuery orderByclientId($order = Criteria::ASC) Order by the client_id column
@@ -66,7 +68,7 @@ use Webmis\Models\EventType;
  * @method EventQuery groupBymodifyDatetime() Group by the modifyDatetime column
  * @method EventQuery groupBymodifyPersonId() Group by the modifyPerson_id column
  * @method EventQuery groupBydeleted() Group by the deleted column
- * @method EventQuery groupByexternalid() Group by the externalId column
+ * @method EventQuery groupByexternalId() Group by the externalId column
  * @method EventQuery groupByeventTypeId() Group by the eventType_id column
  * @method EventQuery groupByorgId() Group by the org_id column
  * @method EventQuery groupByclientId() Group by the client_id column
@@ -108,6 +110,26 @@ use Webmis\Models\EventType;
  * @method EventQuery rightJoinClient($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Client relation
  * @method EventQuery innerJoinClient($relationAlias = null) Adds a INNER JOIN clause to the query using the Client relation
  *
+ * @method EventQuery leftJoinCreatePerson($relationAlias = null) Adds a LEFT JOIN clause to the query using the CreatePerson relation
+ * @method EventQuery rightJoinCreatePerson($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CreatePerson relation
+ * @method EventQuery innerJoinCreatePerson($relationAlias = null) Adds a INNER JOIN clause to the query using the CreatePerson relation
+ *
+ * @method EventQuery leftJoinModifyPerson($relationAlias = null) Adds a LEFT JOIN clause to the query using the ModifyPerson relation
+ * @method EventQuery rightJoinModifyPerson($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ModifyPerson relation
+ * @method EventQuery innerJoinModifyPerson($relationAlias = null) Adds a INNER JOIN clause to the query using the ModifyPerson relation
+ *
+ * @method EventQuery leftJoinSetPerson($relationAlias = null) Adds a LEFT JOIN clause to the query using the SetPerson relation
+ * @method EventQuery rightJoinSetPerson($relationAlias = null) Adds a RIGHT JOIN clause to the query using the SetPerson relation
+ * @method EventQuery innerJoinSetPerson($relationAlias = null) Adds a INNER JOIN clause to the query using the SetPerson relation
+ *
+ * @method EventQuery leftJoinDoctor($relationAlias = null) Adds a LEFT JOIN clause to the query using the Doctor relation
+ * @method EventQuery rightJoinDoctor($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Doctor relation
+ * @method EventQuery innerJoinDoctor($relationAlias = null) Adds a INNER JOIN clause to the query using the Doctor relation
+ *
+ * @method EventQuery leftJoinOrgStructure($relationAlias = null) Adds a LEFT JOIN clause to the query using the OrgStructure relation
+ * @method EventQuery rightJoinOrgStructure($relationAlias = null) Adds a RIGHT JOIN clause to the query using the OrgStructure relation
+ * @method EventQuery innerJoinOrgStructure($relationAlias = null) Adds a INNER JOIN clause to the query using the OrgStructure relation
+ *
  * @method EventQuery leftJoinAction($relationAlias = null) Adds a LEFT JOIN clause to the query using the Action relation
  * @method EventQuery rightJoinAction($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Action relation
  * @method EventQuery innerJoinAction($relationAlias = null) Adds a INNER JOIN clause to the query using the Action relation
@@ -120,7 +142,7 @@ use Webmis\Models\EventType;
  * @method Event findOneBymodifyDatetime(string $modifyDatetime) Return the first Event filtered by the modifyDatetime column
  * @method Event findOneBymodifyPersonId(int $modifyPerson_id) Return the first Event filtered by the modifyPerson_id column
  * @method Event findOneBydeleted(boolean $deleted) Return the first Event filtered by the deleted column
- * @method Event findOneByexternalid(string $externalId) Return the first Event filtered by the externalId column
+ * @method Event findOneByexternalId(string $externalId) Return the first Event filtered by the externalId column
  * @method Event findOneByeventTypeId(int $eventType_id) Return the first Event filtered by the eventType_id column
  * @method Event findOneByorgId(int $org_id) Return the first Event filtered by the org_id column
  * @method Event findOneByclientId(int $client_id) Return the first Event filtered by the client_id column
@@ -156,7 +178,7 @@ use Webmis\Models\EventType;
  * @method array findBymodifyDatetime(string $modifyDatetime) Return Event objects filtered by the modifyDatetime column
  * @method array findBymodifyPersonId(int $modifyPerson_id) Return Event objects filtered by the modifyPerson_id column
  * @method array findBydeleted(boolean $deleted) Return Event objects filtered by the deleted column
- * @method array findByexternalid(string $externalId) Return Event objects filtered by the externalId column
+ * @method array findByexternalId(string $externalId) Return Event objects filtered by the externalId column
  * @method array findByeventTypeId(int $eventType_id) Return Event objects filtered by the eventType_id column
  * @method array findByorgId(int $org_id) Return Event objects filtered by the org_id column
  * @method array findByclientId(int $client_id) Return Event objects filtered by the client_id column
@@ -473,6 +495,8 @@ abstract class BaseEventQuery extends ModelCriteria
      * $query->filterBycreatePersonId(array('max' => 12)); // WHERE createPerson_id <= 12
      * </code>
      *
+     * @see       filterByCreatePerson()
+     *
      * @param     mixed $createPersonId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
@@ -558,6 +582,8 @@ abstract class BaseEventQuery extends ModelCriteria
      * $query->filterBymodifyPersonId(array('max' => 12)); // WHERE modifyPerson_id <= 12
      * </code>
      *
+     * @see       filterByModifyPerson()
+     *
      * @param     mixed $modifyPersonId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
@@ -621,28 +647,28 @@ abstract class BaseEventQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByexternalid('fooValue');   // WHERE externalId = 'fooValue'
-     * $query->filterByexternalid('%fooValue%'); // WHERE externalId LIKE '%fooValue%'
+     * $query->filterByexternalId('fooValue');   // WHERE externalId = 'fooValue'
+     * $query->filterByexternalId('%fooValue%'); // WHERE externalId LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $externalid The value to use as filter.
+     * @param     string $externalId The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return EventQuery The current query, for fluid interface
      */
-    public function filterByexternalid($externalid = null, $comparison = null)
+    public function filterByexternalId($externalId = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($externalid)) {
+            if (is_array($externalId)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $externalid)) {
-                $externalid = str_replace('*', '%', $externalid);
+            } elseif (preg_match('/[\%\*]/', $externalId)) {
+                $externalId = str_replace('*', '%', $externalId);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(EventPeer::EXTERNALID, $externalid, $comparison);
+        return $this->addUsingAlias(EventPeer::EXTERNALID, $externalId, $comparison);
     }
 
     /**
@@ -914,6 +940,8 @@ abstract class BaseEventQuery extends ModelCriteria
      * $query->filterBysetPersonId(array('max' => 12)); // WHERE setPerson_id <= 12
      * </code>
      *
+     * @see       filterBySetPerson()
+     *
      * @param     mixed $setPersonId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
@@ -998,6 +1026,8 @@ abstract class BaseEventQuery extends ModelCriteria
      * $query->filterByexecPersonId(array('min' => 12)); // WHERE execPerson_id >= 12
      * $query->filterByexecPersonId(array('max' => 12)); // WHERE execPerson_id <= 12
      * </code>
+     *
+     * @see       filterByDoctor()
      *
      * @param     mixed $execPersonId The value to use as filter.
      *              Use scalar values for equality.
@@ -1641,6 +1671,8 @@ abstract class BaseEventQuery extends ModelCriteria
      * $query->filterByorgStructureId(array('max' => 12)); // WHERE orgStructure_id <= 12
      * </code>
      *
+     * @see       filterByOrgStructure()
+     *
      * @param     mixed $orgStructureId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
@@ -1896,6 +1928,386 @@ abstract class BaseEventQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related Person object
+     *
+     * @param   Person|PropelObjectCollection $person The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 EventQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByCreatePerson($person, $comparison = null)
+    {
+        if ($person instanceof Person) {
+            return $this
+                ->addUsingAlias(EventPeer::CREATEPERSON_ID, $person->getid(), $comparison);
+        } elseif ($person instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(EventPeer::CREATEPERSON_ID, $person->toKeyValue('PrimaryKey', 'id'), $comparison);
+        } else {
+            throw new PropelException('filterByCreatePerson() only accepts arguments of type Person or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the CreatePerson relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return EventQuery The current query, for fluid interface
+     */
+    public function joinCreatePerson($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('CreatePerson');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'CreatePerson');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the CreatePerson relation Person object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\PersonQuery A secondary query class using the current class as primary query
+     */
+    public function useCreatePersonQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinCreatePerson($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'CreatePerson', '\Webmis\Models\PersonQuery');
+    }
+
+    /**
+     * Filter the query by a related Person object
+     *
+     * @param   Person|PropelObjectCollection $person The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 EventQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByModifyPerson($person, $comparison = null)
+    {
+        if ($person instanceof Person) {
+            return $this
+                ->addUsingAlias(EventPeer::MODIFYPERSON_ID, $person->getid(), $comparison);
+        } elseif ($person instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(EventPeer::MODIFYPERSON_ID, $person->toKeyValue('PrimaryKey', 'id'), $comparison);
+        } else {
+            throw new PropelException('filterByModifyPerson() only accepts arguments of type Person or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ModifyPerson relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return EventQuery The current query, for fluid interface
+     */
+    public function joinModifyPerson($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ModifyPerson');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ModifyPerson');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ModifyPerson relation Person object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\PersonQuery A secondary query class using the current class as primary query
+     */
+    public function useModifyPersonQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinModifyPerson($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ModifyPerson', '\Webmis\Models\PersonQuery');
+    }
+
+    /**
+     * Filter the query by a related Person object
+     *
+     * @param   Person|PropelObjectCollection $person The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 EventQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterBySetPerson($person, $comparison = null)
+    {
+        if ($person instanceof Person) {
+            return $this
+                ->addUsingAlias(EventPeer::SETPERSON_ID, $person->getid(), $comparison);
+        } elseif ($person instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(EventPeer::SETPERSON_ID, $person->toKeyValue('PrimaryKey', 'id'), $comparison);
+        } else {
+            throw new PropelException('filterBySetPerson() only accepts arguments of type Person or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the SetPerson relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return EventQuery The current query, for fluid interface
+     */
+    public function joinSetPerson($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('SetPerson');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'SetPerson');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the SetPerson relation Person object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\PersonQuery A secondary query class using the current class as primary query
+     */
+    public function useSetPersonQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinSetPerson($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'SetPerson', '\Webmis\Models\PersonQuery');
+    }
+
+    /**
+     * Filter the query by a related Person object
+     *
+     * @param   Person|PropelObjectCollection $person The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 EventQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByDoctor($person, $comparison = null)
+    {
+        if ($person instanceof Person) {
+            return $this
+                ->addUsingAlias(EventPeer::EXECPERSON_ID, $person->getid(), $comparison);
+        } elseif ($person instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(EventPeer::EXECPERSON_ID, $person->toKeyValue('PrimaryKey', 'id'), $comparison);
+        } else {
+            throw new PropelException('filterByDoctor() only accepts arguments of type Person or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Doctor relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return EventQuery The current query, for fluid interface
+     */
+    public function joinDoctor($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Doctor');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Doctor');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Doctor relation Person object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\PersonQuery A secondary query class using the current class as primary query
+     */
+    public function useDoctorQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinDoctor($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Doctor', '\Webmis\Models\PersonQuery');
+    }
+
+    /**
+     * Filter the query by a related OrgStructure object
+     *
+     * @param   OrgStructure|PropelObjectCollection $orgStructure The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 EventQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByOrgStructure($orgStructure, $comparison = null)
+    {
+        if ($orgStructure instanceof OrgStructure) {
+            return $this
+                ->addUsingAlias(EventPeer::ORGSTRUCTURE_ID, $orgStructure->getId(), $comparison);
+        } elseif ($orgStructure instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(EventPeer::ORGSTRUCTURE_ID, $orgStructure->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByOrgStructure() only accepts arguments of type OrgStructure or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the OrgStructure relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return EventQuery The current query, for fluid interface
+     */
+    public function joinOrgStructure($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('OrgStructure');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'OrgStructure');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the OrgStructure relation OrgStructure object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\OrgStructureQuery A secondary query class using the current class as primary query
+     */
+    public function useOrgStructureQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinOrgStructure($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'OrgStructure', '\Webmis\Models\OrgStructureQuery');
+    }
+
+    /**
      * Filter the query by a related Action object
      *
      * @param   Action|PropelObjectCollection $action  the related object to use as filter
@@ -1985,4 +2397,69 @@ abstract class BaseEventQuery extends ModelCriteria
         return $this;
     }
 
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     EventQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(EventPeer::MODIFYDATETIME, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     EventQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(EventPeer::MODIFYDATETIME);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     EventQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(EventPeer::MODIFYDATETIME);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     EventQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(EventPeer::CREATEDATETIME, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     EventQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(EventPeer::CREATEDATETIME);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     EventQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(EventPeer::CREATEDATETIME);
+    }
 }

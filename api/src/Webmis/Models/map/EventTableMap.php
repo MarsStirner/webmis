@@ -44,20 +44,20 @@ class EventTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'id', 'INTEGER', true, null, null);
         $this->addColumn('createDatetime', 'createDatetime', 'TIMESTAMP', true, null, null);
-        $this->addColumn('createPerson_id', 'createPersonId', 'INTEGER', false, null, null);
+        $this->addForeignKey('createPerson_id', 'createPersonId', 'INTEGER', 'Person', 'id', false, null, null);
         $this->addColumn('modifyDatetime', 'modifyDatetime', 'TIMESTAMP', true, null, null);
-        $this->addColumn('modifyPerson_id', 'modifyPersonId', 'INTEGER', false, null, null);
+        $this->addForeignKey('modifyPerson_id', 'modifyPersonId', 'INTEGER', 'Person', 'id', false, null, null);
         $this->addColumn('deleted', 'deleted', 'BOOLEAN', true, 1, false);
-        $this->addColumn('externalId', 'externalid', 'VARCHAR', true, 30, null);
+        $this->addColumn('externalId', 'externalId', 'VARCHAR', true, 30, null);
         $this->addForeignKey('eventType_id', 'eventTypeId', 'INTEGER', 'EventType', 'id', true, null, null);
         $this->addColumn('org_id', 'orgId', 'INTEGER', false, null, null);
         $this->addForeignKey('client_id', 'clientId', 'INTEGER', 'Client', 'id', false, null, null);
         $this->addColumn('contract_id', 'contractId', 'INTEGER', false, null, null);
         $this->addColumn('prevEventDate', 'prevEventDate', 'TIMESTAMP', false, null, null);
         $this->addColumn('setDate', 'setDate', 'TIMESTAMP', true, null, null);
-        $this->addColumn('setPerson_id', 'setPersonId', 'INTEGER', false, null, null);
+        $this->addForeignKey('setPerson_id', 'setPersonId', 'INTEGER', 'Person', 'id', false, null, null);
         $this->addColumn('execDate', 'execDate', 'TIMESTAMP', false, null, null);
-        $this->addColumn('execPerson_id', 'execPersonId', 'INTEGER', false, null, null);
+        $this->addForeignKey('execPerson_id', 'execPersonId', 'INTEGER', 'Person', 'id', false, null, null);
         $this->addColumn('isPrimary', 'isPrimary', 'BOOLEAN', true, 1, null);
         $this->addColumn('order', 'order', 'BOOLEAN', true, 1, null);
         $this->addColumn('result_id', 'resultId', 'INTEGER', false, null, null);
@@ -74,7 +74,7 @@ class EventTableMap extends TableMap
         $this->addColumn('version', 'version', 'INTEGER', true, null, 0);
         $this->addColumn('privilege', 'privilege', 'BOOLEAN', false, 1, false);
         $this->addColumn('urgent', 'urgent', 'BOOLEAN', false, 1, false);
-        $this->addColumn('orgStructure_id', 'orgStructureId', 'INTEGER', false, null, null);
+        $this->addForeignKey('orgStructure_id', 'orgStructureId', 'INTEGER', 'OrgStructure', 'id', false, null, null);
         $this->addColumn('uuid_id', 'uuidId', 'INTEGER', true, null, 0);
         $this->addColumn('lpu_transfer', 'lpuTransfer', 'VARCHAR', false, 100, null);
         // validators
@@ -87,7 +87,29 @@ class EventTableMap extends TableMap
     {
         $this->addRelation('EventType', 'Webmis\\Models\\EventType', RelationMap::MANY_TO_ONE, array('eventType_id' => 'id', ), null, null);
         $this->addRelation('Client', 'Webmis\\Models\\Client', RelationMap::MANY_TO_ONE, array('client_id' => 'id', ), null, null);
+        $this->addRelation('CreatePerson', 'Webmis\\Models\\Person', RelationMap::MANY_TO_ONE, array('createPerson_id' => 'id', ), null, null);
+        $this->addRelation('ModifyPerson', 'Webmis\\Models\\Person', RelationMap::MANY_TO_ONE, array('modifyPerson_id' => 'id', ), null, null);
+        $this->addRelation('SetPerson', 'Webmis\\Models\\Person', RelationMap::MANY_TO_ONE, array('setPerson_id' => 'id', ), null, null);
+        $this->addRelation('Doctor', 'Webmis\\Models\\Person', RelationMap::MANY_TO_ONE, array('execPerson_id' => 'id', ), null, null);
+        $this->addRelation('OrgStructure', 'Webmis\\Models\\OrgStructure', RelationMap::MANY_TO_ONE, array('orgStructure_id' => 'id', ), null, null);
         $this->addRelation('Action', 'Webmis\\Models\\Action', RelationMap::ONE_TO_MANY, array('id' => 'event_id', ), null, null, 'Actions');
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' =>  array (
+  'create_column' => 'createDatetime',
+  'update_column' => 'modifyDatetime',
+  'disable_updated_at' => 'false',
+),
+        );
+    } // getBehaviors()
 
 } // EventTableMap

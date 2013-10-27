@@ -29,8 +29,8 @@ use Webmis\Models\Event;
  * @method ClientQuery orderBymodifyPersonId($order = Criteria::ASC) Order by the modifyPerson_id column
  * @method ClientQuery orderBydeleted($order = Criteria::ASC) Order by the deleted column
  * @method ClientQuery orderBylastName($order = Criteria::ASC) Order by the lastName column
- * @method ClientQuery orderByFirstName($order = Criteria::ASC) Order by the firstName column
- * @method ClientQuery orderByPatrName($order = Criteria::ASC) Order by the patrName column
+ * @method ClientQuery orderByfirstName($order = Criteria::ASC) Order by the firstName column
+ * @method ClientQuery orderBypatrName($order = Criteria::ASC) Order by the patrName column
  * @method ClientQuery orderBybirthDate($order = Criteria::ASC) Order by the birthDate column
  * @method ClientQuery orderBysex($order = Criteria::ASC) Order by the sex column
  * @method ClientQuery orderBysnils($order = Criteria::ASC) Order by the SNILS column
@@ -51,8 +51,8 @@ use Webmis\Models\Event;
  * @method ClientQuery groupBymodifyPersonId() Group by the modifyPerson_id column
  * @method ClientQuery groupBydeleted() Group by the deleted column
  * @method ClientQuery groupBylastName() Group by the lastName column
- * @method ClientQuery groupByFirstName() Group by the firstName column
- * @method ClientQuery groupByPatrName() Group by the patrName column
+ * @method ClientQuery groupByfirstName() Group by the firstName column
+ * @method ClientQuery groupBypatrName() Group by the patrName column
  * @method ClientQuery groupBybirthDate() Group by the birthDate column
  * @method ClientQuery groupBysex() Group by the sex column
  * @method ClientQuery groupBysnils() Group by the SNILS column
@@ -83,8 +83,8 @@ use Webmis\Models\Event;
  * @method Client findOneBymodifyPersonId(int $modifyPerson_id) Return the first Client filtered by the modifyPerson_id column
  * @method Client findOneBydeleted(boolean $deleted) Return the first Client filtered by the deleted column
  * @method Client findOneBylastName(string $lastName) Return the first Client filtered by the lastName column
- * @method Client findOneByFirstName(string $firstName) Return the first Client filtered by the firstName column
- * @method Client findOneByPatrName(string $patrName) Return the first Client filtered by the patrName column
+ * @method Client findOneByfirstName(string $firstName) Return the first Client filtered by the firstName column
+ * @method Client findOneBypatrName(string $patrName) Return the first Client filtered by the patrName column
  * @method Client findOneBybirthDate(string $birthDate) Return the first Client filtered by the birthDate column
  * @method Client findOneBysex(int $sex) Return the first Client filtered by the sex column
  * @method Client findOneBysnils(string $SNILS) Return the first Client filtered by the SNILS column
@@ -105,8 +105,8 @@ use Webmis\Models\Event;
  * @method array findBymodifyPersonId(int $modifyPerson_id) Return Client objects filtered by the modifyPerson_id column
  * @method array findBydeleted(boolean $deleted) Return Client objects filtered by the deleted column
  * @method array findBylastName(string $lastName) Return Client objects filtered by the lastName column
- * @method array findByFirstName(string $firstName) Return Client objects filtered by the firstName column
- * @method array findByPatrName(string $patrName) Return Client objects filtered by the patrName column
+ * @method array findByfirstName(string $firstName) Return Client objects filtered by the firstName column
+ * @method array findBypatrName(string $patrName) Return Client objects filtered by the patrName column
  * @method array findBybirthDate(string $birthDate) Return Client objects filtered by the birthDate column
  * @method array findBysex(int $sex) Return Client objects filtered by the sex column
  * @method array findBysnils(string $SNILS) Return Client objects filtered by the SNILS column
@@ -584,8 +584,8 @@ abstract class BaseClientQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByFirstName('fooValue');   // WHERE firstName = 'fooValue'
-     * $query->filterByFirstName('%fooValue%'); // WHERE firstName LIKE '%fooValue%'
+     * $query->filterByfirstName('fooValue');   // WHERE firstName = 'fooValue'
+     * $query->filterByfirstName('%fooValue%'); // WHERE firstName LIKE '%fooValue%'
      * </code>
      *
      * @param     string $firstName The value to use as filter.
@@ -594,7 +594,7 @@ abstract class BaseClientQuery extends ModelCriteria
      *
      * @return ClientQuery The current query, for fluid interface
      */
-    public function filterByFirstName($firstName = null, $comparison = null)
+    public function filterByfirstName($firstName = null, $comparison = null)
     {
         if (null === $comparison) {
             if (is_array($firstName)) {
@@ -613,8 +613,8 @@ abstract class BaseClientQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByPatrName('fooValue');   // WHERE patrName = 'fooValue'
-     * $query->filterByPatrName('%fooValue%'); // WHERE patrName LIKE '%fooValue%'
+     * $query->filterBypatrName('fooValue');   // WHERE patrName = 'fooValue'
+     * $query->filterBypatrName('%fooValue%'); // WHERE patrName LIKE '%fooValue%'
      * </code>
      *
      * @param     string $patrName The value to use as filter.
@@ -623,7 +623,7 @@ abstract class BaseClientQuery extends ModelCriteria
      *
      * @return ClientQuery The current query, for fluid interface
      */
-    public function filterByPatrName($patrName = null, $comparison = null)
+    public function filterBypatrName($patrName = null, $comparison = null)
     {
         if (null === $comparison) {
             if (is_array($patrName)) {
@@ -1155,4 +1155,69 @@ abstract class BaseClientQuery extends ModelCriteria
         return $this;
     }
 
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     ClientQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(ClientPeer::MODIFYDATETIME, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     ClientQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(ClientPeer::MODIFYDATETIME);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     ClientQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(ClientPeer::MODIFYDATETIME);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     ClientQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(ClientPeer::CREATEDATETIME, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     ClientQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(ClientPeer::CREATEDATETIME);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     ClientQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(ClientPeer::CREATEDATETIME);
+    }
 }

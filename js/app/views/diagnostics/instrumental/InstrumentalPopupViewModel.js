@@ -119,7 +119,7 @@ define(function(require) {
 				// 	message: 'Некорректные дата или время создания направления'
 				// });
 			} else {
-				if (!(moment(attrs.createDatetime, 'YYYY-MM-DD HH:mm:ss').diff(moment()) > -(60 * 1000))) {
+				if ((moment(attrs.createDatetime, 'YYYY-MM-DD HH:mm:ss').startOf('day').diff(moment().startOf('day'), 'days') < 0)) {
 					errors.push({
 						name: 'createDatetime',
 						message: 'Дата создания не может быть меньше текущей. '

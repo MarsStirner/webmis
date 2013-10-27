@@ -44,7 +44,7 @@ class ActionPropertyTypeTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'id', 'INTEGER', true, null, null);
         $this->addColumn('deleted', 'deleted', 'BOOLEAN', true, 1, false);
-        $this->addColumn('actionType_id', 'actionTypeId', 'INTEGER', true, null, null);
+        $this->addForeignKey('actionType_id', 'actionTypeId', 'INTEGER', 'ActionType', 'id', true, null, null);
         $this->addColumn('idx', 'idx', 'INTEGER', true, null, 0);
         $this->addColumn('template_id', 'templateId', 'INTEGER', false, null, null);
         $this->addColumn('name', 'name', 'VARCHAR', true, 128, null);
@@ -78,7 +78,9 @@ class ActionPropertyTypeTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('ActionTypeRelatedByactionTypeId', 'Webmis\\Models\\ActionType', RelationMap::MANY_TO_ONE, array('actionType_id' => 'id', ), null, null);
         $this->addRelation('ActionProperty', 'Webmis\\Models\\ActionProperty', RelationMap::ONE_TO_MANY, array('id' => 'type_id', ), null, null, 'ActionPropertys');
+        $this->addRelation('ActionTypeRelatedByid', 'Webmis\\Models\\ActionType', RelationMap::ONE_TO_ONE, array('actionType_id' => 'id', ), null, null);
     } // buildRelations()
 
 } // ActionPropertyTypeTableMap

@@ -195,6 +195,7 @@ define(function(require) {
             var self = this;
             var json = this.result.toJSON();
 
+            var value;
 
             function emptyFalse(val) {
                 if (!val || (val == '<br>') || (val == ' ')) {
@@ -216,19 +217,22 @@ define(function(require) {
                 var group_1 = (this.result.get('group'))[1].attribute;
                 json.tests = [];
                 _.each(group_1, function(item) {
-                    var value;
+
 
                     switch (item.type) {
-                        // case 'Time':
-                        //     value = moment(self.result.getProperty(item.name, 'value'),'YYYY-MM-DD HH:mm:ss').format('HH:mm');
-                        //     break;
+                       // case 'Time':
+                         //   value = moment(self.result.getProperty(item.name, 'value'),'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+                         //  break;
                         // case 'Date':
                         //     value = moment(self.result.getProperty(item.name, 'value'),'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
                         //     break;
-                        default: value = emptyFalse(self.result.getProperty(item.name, 'value'));
-                        break;
+                        default: 
+                            value = emptyFalse(self.result.getProperty(item.name, 'value'));
+                        
                     }
 
+                   // console.log(item.type, item.name, emptyFalse(self.result.getProperty(item.name, 'value')),value);
+                    
                     json.tests.push({
                         name: item.name,
                         value: value //,
@@ -238,7 +242,7 @@ define(function(require) {
 
                 });
             }
-
+//console.log('json',json);
             return json;
 
         },

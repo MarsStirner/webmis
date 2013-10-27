@@ -18,6 +18,8 @@ use Webmis\Models\ActionPropertyQuery;
 use Webmis\Models\ActionPropertyType;
 use Webmis\Models\ActionPropertyTypePeer;
 use Webmis\Models\ActionPropertyTypeQuery;
+use Webmis\Models\ActionType;
+use Webmis\Models\ActionTypeQuery;
 
 /**
  * Base class that represents a row from the 'ActionPropertyType' table.
@@ -226,10 +228,20 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
     protected $readonly;
 
     /**
+     * @var        ActionType
+     */
+    protected $aActionTypeRelatedByactionTypeId;
+
+    /**
      * @var        PropelObjectCollection|ActionProperty[] Collection to store aggregation of ActionProperty objects.
      */
     protected $collActionPropertys;
     protected $collActionPropertysPartial;
+
+    /**
+     * @var        ActionType one-to-one related ActionType object
+     */
+    protected $singleActionTypeRelatedByid;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -256,6 +268,12 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $actionPropertysScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $actionTypesRelatedByidScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -632,6 +650,10 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
         if ($this->actiontype_id !== $v) {
             $this->actiontype_id = $v;
             $this->modifiedColumns[] = ActionPropertyTypePeer::ACTIONTYPE_ID;
+        }
+
+        if ($this->aActionTypeRelatedByactionTypeId !== null && $this->aActionTypeRelatedByactionTypeId->getid() !== $v) {
+            $this->aActionTypeRelatedByactionTypeId = null;
         }
 
 
@@ -1350,6 +1372,9 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
+        if ($this->aActionTypeRelatedByactionTypeId !== null && $this->actiontype_id !== $this->aActionTypeRelatedByactionTypeId->getid()) {
+            $this->aActionTypeRelatedByactionTypeId = null;
+        }
     } // ensureConsistency
 
     /**
@@ -1389,7 +1414,10 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aActionTypeRelatedByactionTypeId = null;
             $this->collActionPropertys = null;
+
+            $this->singleActionTypeRelatedByid = null;
 
         } // if (deep)
     }
@@ -1504,6 +1532,18 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their coresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aActionTypeRelatedByactionTypeId !== null) {
+                if ($this->aActionTypeRelatedByactionTypeId->isModified() || $this->aActionTypeRelatedByactionTypeId->isNew()) {
+                    $affectedRows += $this->aActionTypeRelatedByactionTypeId->save($con);
+                }
+                $this->setActionTypeRelatedByactionTypeId($this->aActionTypeRelatedByactionTypeId);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -1529,6 +1569,21 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
+                }
+            }
+
+            if ($this->actionTypesRelatedByidScheduledForDeletion !== null) {
+                if (!$this->actionTypesRelatedByidScheduledForDeletion->isEmpty()) {
+                    ActionTypeQuery::create()
+                        ->filterByPrimaryKeys($this->actionTypesRelatedByidScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->actionTypesRelatedByidScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->singleActionTypeRelatedByid !== null) {
+                if (!$this->singleActionTypeRelatedByid->isDeleted() && ($this->singleActionTypeRelatedByid->isNew() || $this->singleActionTypeRelatedByid->isModified())) {
+                        $affectedRows += $this->singleActionTypeRelatedByid->save($con);
                 }
             }
 
@@ -1831,6 +1886,18 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
             $failureMap = array();
 
 
+            // We call the validate method on the following object(s) if they
+            // were passed to this object by their coresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aActionTypeRelatedByactionTypeId !== null) {
+                if (!$this->aActionTypeRelatedByactionTypeId->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aActionTypeRelatedByactionTypeId->getValidationFailures());
+                }
+            }
+
+
             if (($retval = ActionPropertyTypePeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
@@ -1841,6 +1908,12 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
+                    }
+                }
+
+                if ($this->singleActionTypeRelatedByid !== null) {
+                    if (!$this->singleActionTypeRelatedByid->validate($columns)) {
+                        $failureMap = array_merge($failureMap, $this->singleActionTypeRelatedByid->getValidationFailures());
                     }
                 }
 
@@ -2022,8 +2095,14 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
             $keys[27] => $this->getreadonly(),
         );
         if ($includeForeignObjects) {
+            if (null !== $this->aActionTypeRelatedByactionTypeId) {
+                $result['ActionTypeRelatedByactionTypeId'] = $this->aActionTypeRelatedByactionTypeId->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
             if (null !== $this->collActionPropertys) {
                 $result['ActionPropertys'] = $this->collActionPropertys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->singleActionTypeRelatedByid) {
+                $result['ActionTypeRelatedByid'] = $this->singleActionTypeRelatedByid->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
             }
         }
 
@@ -2338,6 +2417,11 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
                 }
             }
 
+            $relObj = $this->getActionTypeRelatedByid();
+            if ($relObj) {
+                $copyObj->setActionTypeRelatedByid($relObj->copy($deepCopy));
+            }
+
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -2386,6 +2470,58 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
         }
 
         return self::$peer;
+    }
+
+    /**
+     * Declares an association between this object and a ActionType object.
+     *
+     * @param             ActionType $v
+     * @return ActionPropertyType The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setActionTypeRelatedByactionTypeId(ActionType $v = null)
+    {
+        if ($v === null) {
+            $this->setactionTypeId(NULL);
+        } else {
+            $this->setactionTypeId($v->getid());
+        }
+
+        $this->aActionTypeRelatedByactionTypeId = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ActionType object, it will not be re-added.
+        if ($v !== null) {
+            $v->addActionPropertyTypeRelatedByactionTypeId($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ActionType object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return ActionType The associated ActionType object.
+     * @throws PropelException
+     */
+    public function getActionTypeRelatedByactionTypeId(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aActionTypeRelatedByactionTypeId === null && ($this->actiontype_id !== null) && $doQuery) {
+            $this->aActionTypeRelatedByactionTypeId = ActionTypeQuery::create()->findPk($this->actiontype_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aActionTypeRelatedByactionTypeId->addActionPropertyTypesRelatedByactionTypeId($this);
+             */
+        }
+
+        return $this->aActionTypeRelatedByactionTypeId;
     }
 
 
@@ -2739,12 +2875,73 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
      * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return PropelObjectCollection|ActionProperty[] List of ActionProperty objects
      */
+    public function getActionPropertysJoinActionPropertyOrgStructure($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActionPropertyQuery::create(null, $criteria);
+        $query->joinWith('ActionPropertyOrgStructure', $join_behavior);
+
+        return $this->getActionPropertys($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this ActionPropertyType is new, it will return
+     * an empty collection; or if this ActionPropertyType has previously
+     * been saved, it will retrieve related ActionPropertys from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in ActionPropertyType.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|ActionProperty[] List of ActionProperty objects
+     */
     public function getActionPropertysJoinActionPropertyFDRecord($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $query = ActionPropertyQuery::create(null, $criteria);
         $query->joinWith('ActionPropertyFDRecord', $join_behavior);
 
         return $this->getActionPropertys($query, $con);
+    }
+
+    /**
+     * Gets a single ActionType object, which is related to this object by a one-to-one relationship.
+     *
+     * @param PropelPDO $con optional connection object
+     * @return ActionType
+     * @throws PropelException
+     */
+    public function getActionTypeRelatedByid(PropelPDO $con = null)
+    {
+
+        if ($this->singleActionTypeRelatedByid === null && !$this->isNew()) {
+            $this->singleActionTypeRelatedByid = ActionTypeQuery::create()->findPk($this->getPrimaryKey(), $con);
+        }
+
+        return $this->singleActionTypeRelatedByid;
+    }
+
+    /**
+     * Sets a single ActionType object as related to this object by a one-to-one relationship.
+     *
+     * @param             ActionType $v ActionType
+     * @return ActionPropertyType The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setActionTypeRelatedByid(ActionType $v = null)
+    {
+        $this->singleActionTypeRelatedByid = $v;
+
+        // Make sure that that the passed-in ActionType isn't already associated with this object
+        if ($v !== null && $v->getActionPropertyTypeRelatedByid(null, false) === null) {
+            $v->setActionPropertyTypeRelatedByid($this);
+        }
+
+        return $this;
     }
 
     /**
@@ -2808,6 +3005,12 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->singleActionTypeRelatedByid) {
+                $this->singleActionTypeRelatedByid->clearAllReferences($deep);
+            }
+            if ($this->aActionTypeRelatedByactionTypeId instanceof Persistent) {
+              $this->aActionTypeRelatedByactionTypeId->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
@@ -2816,6 +3019,11 @@ abstract class BaseActionPropertyType extends BaseObject implements Persistent
             $this->collActionPropertys->clearIterator();
         }
         $this->collActionPropertys = null;
+        if ($this->singleActionTypeRelatedByid instanceof PropelCollection) {
+            $this->singleActionTypeRelatedByid->clearIterator();
+        }
+        $this->singleActionTypeRelatedByid = null;
+        $this->aActionTypeRelatedByactionTypeId = null;
     }
 
     /**

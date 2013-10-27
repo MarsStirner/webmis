@@ -2753,8 +2753,19 @@ abstract class BaseEventType extends BaseObject implements Persistent
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+                if (!$this->isColumnModified(EventTypePeer::CREATEDATETIME)) {
+                    $this->setcreateDatetime(time());
+                }
+                if (!$this->isColumnModified(EventTypePeer::MODIFYDATETIME)) {
+                    $this->setmodifyDatetime(time());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(EventTypePeer::MODIFYDATETIME)) {
+                    $this->setmodifyDatetime(time());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -4502,6 +4513,131 @@ abstract class BaseEventType extends BaseObject implements Persistent
         return $this->getEvents($query, $con);
     }
 
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this EventType is new, it will return
+     * an empty collection; or if this EventType has previously
+     * been saved, it will retrieve related Events from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in EventType.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Event[] List of Event objects
+     */
+    public function getEventsJoinCreatePerson($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = EventQuery::create(null, $criteria);
+        $query->joinWith('CreatePerson', $join_behavior);
+
+        return $this->getEvents($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this EventType is new, it will return
+     * an empty collection; or if this EventType has previously
+     * been saved, it will retrieve related Events from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in EventType.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Event[] List of Event objects
+     */
+    public function getEventsJoinModifyPerson($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = EventQuery::create(null, $criteria);
+        $query->joinWith('ModifyPerson', $join_behavior);
+
+        return $this->getEvents($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this EventType is new, it will return
+     * an empty collection; or if this EventType has previously
+     * been saved, it will retrieve related Events from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in EventType.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Event[] List of Event objects
+     */
+    public function getEventsJoinSetPerson($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = EventQuery::create(null, $criteria);
+        $query->joinWith('SetPerson', $join_behavior);
+
+        return $this->getEvents($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this EventType is new, it will return
+     * an empty collection; or if this EventType has previously
+     * been saved, it will retrieve related Events from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in EventType.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Event[] List of Event objects
+     */
+    public function getEventsJoinDoctor($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = EventQuery::create(null, $criteria);
+        $query->joinWith('Doctor', $join_behavior);
+
+        return $this->getEvents($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this EventType is new, it will return
+     * an empty collection; or if this EventType has previously
+     * been saved, it will retrieve related Events from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in EventType.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Event[] List of Event objects
+     */
+    public function getEventsJoinOrgStructure($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = EventQuery::create(null, $criteria);
+        $query->joinWith('OrgStructure', $join_behavior);
+
+        return $this->getEvents($query, $con);
+    }
+
     /**
      * Clears the current object and sets all attributes to their default values
      */
@@ -4625,6 +4761,20 @@ abstract class BaseEventType extends BaseObject implements Persistent
     public function isAlreadyInSave()
     {
         return $this->alreadyInSave;
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     EventType The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[] = EventTypePeer::MODIFYDATETIME;
+
+        return $this;
     }
 
 }

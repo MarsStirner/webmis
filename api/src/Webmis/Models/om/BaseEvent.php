@@ -24,6 +24,10 @@ use Webmis\Models\EventPeer;
 use Webmis\Models\EventQuery;
 use Webmis\Models\EventType;
 use Webmis\Models\EventTypeQuery;
+use Webmis\Models\OrgStructure;
+use Webmis\Models\OrgStructureQuery;
+use Webmis\Models\Person;
+use Webmis\Models\PersonQuery;
 
 /**
  * Base class that represents a row from the 'Event' table.
@@ -280,6 +284,31 @@ abstract class BaseEvent extends BaseObject implements Persistent
     protected $aClient;
 
     /**
+     * @var        Person
+     */
+    protected $aCreatePerson;
+
+    /**
+     * @var        Person
+     */
+    protected $aModifyPerson;
+
+    /**
+     * @var        Person
+     */
+    protected $aSetPerson;
+
+    /**
+     * @var        Person
+     */
+    protected $aDoctor;
+
+    /**
+     * @var        OrgStructure
+     */
+    protected $aOrgStructure;
+
+    /**
      * @var        PropelObjectCollection|Action[] Collection to store aggregation of Action objects.
      */
     protected $collActions;
@@ -462,7 +491,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      *
      * @return string
      */
-    public function getexternalid()
+    public function getexternalId()
     {
         return $this->externalid;
     }
@@ -928,6 +957,10 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $this->modifiedColumns[] = EventPeer::CREATEPERSON_ID;
         }
 
+        if ($this->aCreatePerson !== null && $this->aCreatePerson->getid() !== $v) {
+            $this->aCreatePerson = null;
+        }
+
 
         return $this;
     } // setcreatePersonId()
@@ -972,6 +1005,10 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $this->modifiedColumns[] = EventPeer::MODIFYPERSON_ID;
         }
 
+        if ($this->aModifyPerson !== null && $this->aModifyPerson->getid() !== $v) {
+            $this->aModifyPerson = null;
+        }
+
 
         return $this;
     } // setmodifyPersonId()
@@ -1011,7 +1048,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param string $v new value
      * @return Event The current object (for fluent API support)
      */
-    public function setexternalid($v)
+    public function setexternalId($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
@@ -1024,7 +1061,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
 
         return $this;
-    } // setexternalid()
+    } // setexternalId()
 
     /**
      * Set the value of [eventtype_id] column.
@@ -1181,6 +1218,10 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $this->modifiedColumns[] = EventPeer::SETPERSON_ID;
         }
 
+        if ($this->aSetPerson !== null && $this->aSetPerson->getid() !== $v) {
+            $this->aSetPerson = null;
+        }
+
 
         return $this;
     } // setsetPersonId()
@@ -1223,6 +1264,10 @@ abstract class BaseEvent extends BaseObject implements Persistent
         if ($this->execperson_id !== $v) {
             $this->execperson_id = $v;
             $this->modifiedColumns[] = EventPeer::EXECPERSON_ID;
+        }
+
+        if ($this->aDoctor !== null && $this->aDoctor->getid() !== $v) {
+            $this->aDoctor = null;
         }
 
 
@@ -1616,6 +1661,10 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $this->modifiedColumns[] = EventPeer::ORGSTRUCTURE_ID;
         }
 
+        if ($this->aOrgStructure !== null && $this->aOrgStructure->getId() !== $v) {
+            $this->aOrgStructure = null;
+        }
+
 
         return $this;
     } // setorgStructureId()
@@ -1784,11 +1833,26 @@ abstract class BaseEvent extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
+        if ($this->aCreatePerson !== null && $this->createperson_id !== $this->aCreatePerson->getid()) {
+            $this->aCreatePerson = null;
+        }
+        if ($this->aModifyPerson !== null && $this->modifyperson_id !== $this->aModifyPerson->getid()) {
+            $this->aModifyPerson = null;
+        }
         if ($this->aEventType !== null && $this->eventtype_id !== $this->aEventType->getid()) {
             $this->aEventType = null;
         }
         if ($this->aClient !== null && $this->client_id !== $this->aClient->getid()) {
             $this->aClient = null;
+        }
+        if ($this->aSetPerson !== null && $this->setperson_id !== $this->aSetPerson->getid()) {
+            $this->aSetPerson = null;
+        }
+        if ($this->aDoctor !== null && $this->execperson_id !== $this->aDoctor->getid()) {
+            $this->aDoctor = null;
+        }
+        if ($this->aOrgStructure !== null && $this->orgstructure_id !== $this->aOrgStructure->getId()) {
+            $this->aOrgStructure = null;
         }
     } // ensureConsistency
 
@@ -1831,6 +1895,11 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
             $this->aEventType = null;
             $this->aClient = null;
+            $this->aCreatePerson = null;
+            $this->aModifyPerson = null;
+            $this->aSetPerson = null;
+            $this->aDoctor = null;
+            $this->aOrgStructure = null;
             $this->collActions = null;
 
         } // if (deep)
@@ -1905,8 +1974,19 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+                if (!$this->isColumnModified(EventPeer::CREATEDATETIME)) {
+                    $this->setcreateDatetime(time());
+                }
+                if (!$this->isColumnModified(EventPeer::MODIFYDATETIME)) {
+                    $this->setmodifyDatetime(time());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(EventPeer::MODIFYDATETIME)) {
+                    $this->setmodifyDatetime(time());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -1963,6 +2043,41 @@ abstract class BaseEvent extends BaseObject implements Persistent
                     $affectedRows += $this->aClient->save($con);
                 }
                 $this->setClient($this->aClient);
+            }
+
+            if ($this->aCreatePerson !== null) {
+                if ($this->aCreatePerson->isModified() || $this->aCreatePerson->isNew()) {
+                    $affectedRows += $this->aCreatePerson->save($con);
+                }
+                $this->setCreatePerson($this->aCreatePerson);
+            }
+
+            if ($this->aModifyPerson !== null) {
+                if ($this->aModifyPerson->isModified() || $this->aModifyPerson->isNew()) {
+                    $affectedRows += $this->aModifyPerson->save($con);
+                }
+                $this->setModifyPerson($this->aModifyPerson);
+            }
+
+            if ($this->aSetPerson !== null) {
+                if ($this->aSetPerson->isModified() || $this->aSetPerson->isNew()) {
+                    $affectedRows += $this->aSetPerson->save($con);
+                }
+                $this->setSetPerson($this->aSetPerson);
+            }
+
+            if ($this->aDoctor !== null) {
+                if ($this->aDoctor->isModified() || $this->aDoctor->isNew()) {
+                    $affectedRows += $this->aDoctor->save($con);
+                }
+                $this->setDoctor($this->aDoctor);
+            }
+
+            if ($this->aOrgStructure !== null) {
+                if ($this->aOrgStructure->isModified() || $this->aOrgStructure->isNew()) {
+                    $affectedRows += $this->aOrgStructure->save($con);
+                }
+                $this->setOrgStructure($this->aOrgStructure);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -2352,6 +2467,36 @@ abstract class BaseEvent extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->aCreatePerson !== null) {
+                if (!$this->aCreatePerson->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aCreatePerson->getValidationFailures());
+                }
+            }
+
+            if ($this->aModifyPerson !== null) {
+                if (!$this->aModifyPerson->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aModifyPerson->getValidationFailures());
+                }
+            }
+
+            if ($this->aSetPerson !== null) {
+                if (!$this->aSetPerson->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aSetPerson->getValidationFailures());
+                }
+            }
+
+            if ($this->aDoctor !== null) {
+                if (!$this->aDoctor->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aDoctor->getValidationFailures());
+                }
+            }
+
+            if ($this->aOrgStructure !== null) {
+                if (!$this->aOrgStructure->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aOrgStructure->getValidationFailures());
+                }
+            }
+
 
             if (($retval = EventPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
@@ -2420,7 +2565,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
                 return $this->getdeleted();
                 break;
             case 6:
-                return $this->getexternalid();
+                return $this->getexternalId();
                 break;
             case 7:
                 return $this->geteventTypeId();
@@ -2541,7 +2686,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $keys[3] => $this->getmodifyDatetime(),
             $keys[4] => $this->getmodifyPersonId(),
             $keys[5] => $this->getdeleted(),
-            $keys[6] => $this->getexternalid(),
+            $keys[6] => $this->getexternalId(),
             $keys[7] => $this->geteventTypeId(),
             $keys[8] => $this->getorgId(),
             $keys[9] => $this->getclientId(),
@@ -2577,6 +2722,21 @@ abstract class BaseEvent extends BaseObject implements Persistent
             }
             if (null !== $this->aClient) {
                 $result['Client'] = $this->aClient->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aCreatePerson) {
+                $result['CreatePerson'] = $this->aCreatePerson->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aModifyPerson) {
+                $result['ModifyPerson'] = $this->aModifyPerson->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aSetPerson) {
+                $result['SetPerson'] = $this->aSetPerson->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aDoctor) {
+                $result['Doctor'] = $this->aDoctor->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aOrgStructure) {
+                $result['OrgStructure'] = $this->aOrgStructure->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collActions) {
                 $result['Actions'] = $this->collActions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -2634,7 +2794,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
                 $this->setdeleted($value);
                 break;
             case 6:
-                $this->setexternalid($value);
+                $this->setexternalId($value);
                 break;
             case 7:
                 $this->seteventTypeId($value);
@@ -2750,7 +2910,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
         if (array_key_exists($keys[3], $arr)) $this->setmodifyDatetime($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setmodifyPersonId($arr[$keys[4]]);
         if (array_key_exists($keys[5], $arr)) $this->setdeleted($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setexternalid($arr[$keys[6]]);
+        if (array_key_exists($keys[6], $arr)) $this->setexternalId($arr[$keys[6]]);
         if (array_key_exists($keys[7], $arr)) $this->seteventTypeId($arr[$keys[7]]);
         if (array_key_exists($keys[8], $arr)) $this->setorgId($arr[$keys[8]]);
         if (array_key_exists($keys[9], $arr)) $this->setclientId($arr[$keys[9]]);
@@ -2893,7 +3053,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
         $copyObj->setmodifyDatetime($this->getmodifyDatetime());
         $copyObj->setmodifyPersonId($this->getmodifyPersonId());
         $copyObj->setdeleted($this->getdeleted());
-        $copyObj->setexternalid($this->getexternalid());
+        $copyObj->setexternalId($this->getexternalId());
         $copyObj->seteventTypeId($this->geteventTypeId());
         $copyObj->setorgId($this->getorgId());
         $copyObj->setclientId($this->getclientId());
@@ -3088,6 +3248,266 @@ abstract class BaseEvent extends BaseObject implements Persistent
         }
 
         return $this->aClient;
+    }
+
+    /**
+     * Declares an association between this object and a Person object.
+     *
+     * @param             Person $v
+     * @return Event The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setCreatePerson(Person $v = null)
+    {
+        if ($v === null) {
+            $this->setcreatePersonId(NULL);
+        } else {
+            $this->setcreatePersonId($v->getid());
+        }
+
+        $this->aCreatePerson = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Person object, it will not be re-added.
+        if ($v !== null) {
+            $v->addEventRelatedBycreatePersonId($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Person object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Person The associated Person object.
+     * @throws PropelException
+     */
+    public function getCreatePerson(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aCreatePerson === null && ($this->createperson_id !== null) && $doQuery) {
+            $this->aCreatePerson = PersonQuery::create()->findPk($this->createperson_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aCreatePerson->addEventsRelatedBycreatePersonId($this);
+             */
+        }
+
+        return $this->aCreatePerson;
+    }
+
+    /**
+     * Declares an association between this object and a Person object.
+     *
+     * @param             Person $v
+     * @return Event The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setModifyPerson(Person $v = null)
+    {
+        if ($v === null) {
+            $this->setmodifyPersonId(NULL);
+        } else {
+            $this->setmodifyPersonId($v->getid());
+        }
+
+        $this->aModifyPerson = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Person object, it will not be re-added.
+        if ($v !== null) {
+            $v->addEventRelatedBymodifyPersonId($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Person object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Person The associated Person object.
+     * @throws PropelException
+     */
+    public function getModifyPerson(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aModifyPerson === null && ($this->modifyperson_id !== null) && $doQuery) {
+            $this->aModifyPerson = PersonQuery::create()->findPk($this->modifyperson_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aModifyPerson->addEventsRelatedBymodifyPersonId($this);
+             */
+        }
+
+        return $this->aModifyPerson;
+    }
+
+    /**
+     * Declares an association between this object and a Person object.
+     *
+     * @param             Person $v
+     * @return Event The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setSetPerson(Person $v = null)
+    {
+        if ($v === null) {
+            $this->setsetPersonId(NULL);
+        } else {
+            $this->setsetPersonId($v->getid());
+        }
+
+        $this->aSetPerson = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Person object, it will not be re-added.
+        if ($v !== null) {
+            $v->addEventRelatedBysetPersonId($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Person object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Person The associated Person object.
+     * @throws PropelException
+     */
+    public function getSetPerson(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aSetPerson === null && ($this->setperson_id !== null) && $doQuery) {
+            $this->aSetPerson = PersonQuery::create()->findPk($this->setperson_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aSetPerson->addEventsRelatedBysetPersonId($this);
+             */
+        }
+
+        return $this->aSetPerson;
+    }
+
+    /**
+     * Declares an association between this object and a Person object.
+     *
+     * @param             Person $v
+     * @return Event The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setDoctor(Person $v = null)
+    {
+        if ($v === null) {
+            $this->setexecPersonId(NULL);
+        } else {
+            $this->setexecPersonId($v->getid());
+        }
+
+        $this->aDoctor = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Person object, it will not be re-added.
+        if ($v !== null) {
+            $v->addEventRelatedByexecPersonId($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Person object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Person The associated Person object.
+     * @throws PropelException
+     */
+    public function getDoctor(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aDoctor === null && ($this->execperson_id !== null) && $doQuery) {
+            $this->aDoctor = PersonQuery::create()->findPk($this->execperson_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aDoctor->addEventsRelatedByexecPersonId($this);
+             */
+        }
+
+        return $this->aDoctor;
+    }
+
+    /**
+     * Declares an association between this object and a OrgStructure object.
+     *
+     * @param             OrgStructure $v
+     * @return Event The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setOrgStructure(OrgStructure $v = null)
+    {
+        if ($v === null) {
+            $this->setorgStructureId(NULL);
+        } else {
+            $this->setorgStructureId($v->getId());
+        }
+
+        $this->aOrgStructure = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the OrgStructure object, it will not be re-added.
+        if ($v !== null) {
+            $v->addEvent($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated OrgStructure object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return OrgStructure The associated OrgStructure object.
+     * @throws PropelException
+     */
+    public function getOrgStructure(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aOrgStructure === null && ($this->orgstructure_id !== null) && $doQuery) {
+            $this->aOrgStructure = OrgStructureQuery::create()->findPk($this->orgstructure_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aOrgStructure->addEvents($this);
+             */
+        }
+
+        return $this->aOrgStructure;
     }
 
 
@@ -3423,6 +3843,21 @@ abstract class BaseEvent extends BaseObject implements Persistent
             if ($this->aClient instanceof Persistent) {
               $this->aClient->clearAllReferences($deep);
             }
+            if ($this->aCreatePerson instanceof Persistent) {
+              $this->aCreatePerson->clearAllReferences($deep);
+            }
+            if ($this->aModifyPerson instanceof Persistent) {
+              $this->aModifyPerson->clearAllReferences($deep);
+            }
+            if ($this->aSetPerson instanceof Persistent) {
+              $this->aSetPerson->clearAllReferences($deep);
+            }
+            if ($this->aDoctor instanceof Persistent) {
+              $this->aDoctor->clearAllReferences($deep);
+            }
+            if ($this->aOrgStructure instanceof Persistent) {
+              $this->aOrgStructure->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
@@ -3433,6 +3868,11 @@ abstract class BaseEvent extends BaseObject implements Persistent
         $this->collActions = null;
         $this->aEventType = null;
         $this->aClient = null;
+        $this->aCreatePerson = null;
+        $this->aModifyPerson = null;
+        $this->aSetPerson = null;
+        $this->aDoctor = null;
+        $this->aOrgStructure = null;
     }
 
     /**
@@ -3453,6 +3893,20 @@ abstract class BaseEvent extends BaseObject implements Persistent
     public function isAlreadyInSave()
     {
         return $this->alreadyInSave;
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     Event The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[] = EventPeer::MODIFYDATETIME;
+
+        return $this;
     }
 
 }

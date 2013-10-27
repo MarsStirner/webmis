@@ -39,13 +39,14 @@ define(function(require) {
             }
 
 
-            var beginDate = this.requestData.filter.beginDate;
+            var beginDate = moment(this.requestData.filter.beginDate).startOf('day');
             var startOfDay = moment().startOf('day');
+            //console.log('beginDate',beginDate);
 
             _.each(raw.data, function(person) {
                 var nowTime = 0;
 
-                if (beginDate === startOfDay.valueOf()) {
+                if (beginDate.valueOf() === startOfDay.valueOf()) {
                     nowTime = moment().diff(startOfDay);
                 }
 

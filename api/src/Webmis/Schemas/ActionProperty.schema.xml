@@ -21,7 +21,7 @@
       <reference local="type_id" foreign="id"/>
     </foreign-key>
 
-    <foreign-key foreignTable="ActionProperty_String" name="ActionProperty_ActionPropertyString">
+    <foreign-key foreignTable="ActionProperty_String" name="ActionProperty_ActionPropertyString" >
       <reference local="id" foreign="id"/>
     </foreign-key>
 
@@ -33,10 +33,19 @@
       <reference local="id" foreign="id"/>
     </foreign-key>
 
+    <foreign-key foreignTable="ActionProperty_OrgStructure" name="ActionProperty_ActionPropertyOrgStructure">
+      <reference local="id" foreign="id"/>
+    </foreign-key>
+
 
     <foreign-key foreignTable="ActionProperty_FDRecord" name="ActionProperty_ActionPropertyFDRecord">
       <reference local="id" foreign="id"/>
     </foreign-key>
+
+    <behavior name="timestampable">
+        <parameter name="create_column" value="createDatetime" />
+        <parameter name="update_column" value="modifyDatetime" />
+    </behavior>
 
     <index name="createPerson_id">
       <index-column name="createPerson_id"/>

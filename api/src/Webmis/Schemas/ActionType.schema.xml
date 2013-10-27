@@ -46,15 +46,21 @@
     <column name="testTubeType_id" phpName="testTubeTypeId" type="INTEGER" required="false"/>
     <column name="jobType_id" phpName="jobTypeId" type="INTEGER" required="false"/>
     <column name="mnem" phpName="mnem" type="VARCHAR" size="32" required="false" defaultValue=""/>
-<!--     <foreign-key foreignTable="Person" name="ActionType_defaultExecPerson_id" onDelete="SET NULL">
-      <reference local="defaultExecPerson_id" foreign="id"/>
-    </foreign-key> -->
+    <foreign-key foreignTable="ActionPropertyType" name="FK_ActionType_ActionPropertyType">
+      <reference local="id" foreign="actionType_id"/>
+    </foreign-key>
    <!--  <foreign-key foreignTable="rbJobType" name="rbJobType_id_fk" onUpdate="CASCADE">
       <reference local="jobType_id" foreign="id"/>
     </foreign-key>
     <foreign-key foreignTable="rbTestTubeType" name="rbTestTubeType_id_fk" onUpdate="CASCADE">
       <reference local="testTubeType_id" foreign="id"/>
     </foreign-key> -->
+
+    <behavior name="timestampable">
+        <parameter name="create_column" value="createDatetime" />
+        <parameter name="update_column" value="modifyDatetime" />
+    </behavior>
+
     <index name="createPerson_id">
       <index-column name="createPerson_id"/>
     </index>
