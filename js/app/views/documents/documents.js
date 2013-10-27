@@ -606,7 +606,7 @@ define(function (require) {
 
 		isSubHeader: function () {
 			var result = false;
-			var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {console.log(a); return a.code === "DISPLAY_AS_SUBHEADER";});
+			var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "DISPLAY_AS_SUBHEADER";});
 			if (la) {
 				var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
 				if (lav) {
@@ -615,6 +615,30 @@ define(function (require) {
 			}
 			return result;
 		},
+
+    isSubHeaderVGroup: function () {
+      var result = false;
+      var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "VGROUP";});
+      if (la) {
+        var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
+        if (lav) {
+          result = lav.value === "true";
+        }
+      }
+      return result;
+    },
+
+    getVGroupRowsNumber: function () {
+      var result = 0;
+      var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "VGROUP_ROWS";});
+      if (la) {
+        var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
+        if (lav) {
+          result = lav.value;
+        }
+      }
+      return result;
+    },
 
 		isIdType: function () {
 			return ID_TYPES.indexOf(this.get("type").toUpperCase()) != -1;
@@ -2617,11 +2641,13 @@ define(function (require) {
 				$(this).prop("tabindex", ++i);
 			});
 
-			/*this.$(".doc-sub-header").each(function () {
-				if ($(this).siblings(".span6").length > 0) {
+			this.$(".vgroup").each(function () {
+        var $this = $(this);
+        $this.parent().nextAll("*:lt("+$this.data("vgroup-rows-number")+")").find(".span4:eq("+$this.index()+") *").toggle();
+				/*if ($(this).siblings(".span6").length > 0) {
 					$(this).parent().before($(this).detach());
-				}
-			});*/
+				}*/
+			});
 
 			return this;
 		}
@@ -4061,13 +4087,19 @@ define(function (require) {
 	 * @type {Function}
 	 */
 	Documents.Views.Edit.UIElement.SubHeader = ViewBase.extend({
-		className: "span6 doc-sub-header",
+		className: "doc-sub-header",
 		template: _.template("<h3><%=model.get('name')%></h3>"),
 		data: function () {
 			return {
 				model: this.model
 			}
-		}
+		},
+    layoutAttributes: UIElementBase.prototype.layoutAttributes,
+    initialize: function () {
+    	this.mapLayoutAttributes();
+      this.$el.addClass("span" + this.layoutAttributes.width);
+    },
+    mapLayoutAttributes: UIElementBase.prototype.mapLayoutAttributes
 		/*,
 		render: function () {
 			ViewBase.prototype.render.call(this);
@@ -4075,6 +4107,23 @@ define(function (require) {
 			return this;
 		}*/
 	});
+
+  Documents.Views.Edit.UIElement.SubHeaderVGroup = Documents.Views.Edit.UIElement.SubHeader.extend({
+    className: "doc-sub-header vgroup",
+    template: _.template("<h3><%=model.get('name')%> +</h3>"),
+    events: {
+      "click": "onClick"
+    },
+    onClick: function (event) {
+      //var $t = $(event.currentTarget);
+    	this.$el.parent().nextAll("*:lt("+this.model.getVGroupRowsNumber()+")").find(".span4:eq("+this.$el.index()+") *").toggle();
+    },
+    render: function () {
+      Documents.Views.Edit.UIElement.SubHeader.prototype.render.call(this);
+      this.$el.data("vgroup-rows-number", this.model.getVGroupRowsNumber());
+      return this;
+    }
+  });
 
 	/**
 	 * Фабрика для создания элементов шаблона соответсвующего типа
@@ -4092,7 +4141,11 @@ define(function (require) {
 			case "string":
 				//if (options.model.get("scope") === "''") {
 				if (options.model.isSubHeader()) {
-					this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
+          if (options.model.isSubHeaderVGroup()) {
+					  this.UIElementClass = Documents.Views.Edit.UIElement.SubHeaderVGroup;
+          } else {
+            this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
+          }
 				} else {
 					this.UIElementClass = Documents.Views.Edit.UIElement.String;
 				}
