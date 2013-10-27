@@ -12,73 +12,73 @@ use \PropelCollection;
 use \PropelException;
 use \PropelObjectCollection;
 use \PropelPDO;
-use Webmis\Models\APString;
-use Webmis\Models\APStringPeer;
-use Webmis\Models\APStringQuery;
 use Webmis\Models\ActionProperty;
+use Webmis\Models\ActionPropertyOrgStructure;
+use Webmis\Models\ActionPropertyOrgStructurePeer;
+use Webmis\Models\ActionPropertyOrgStructureQuery;
 
 /**
- * Base class that represents a query for the 'ActionProperty_String' table.
+ * Base class that represents a query for the 'ActionProperty_OrgStructure' table.
  *
  *
  *
- * @method APStringQuery orderByid($order = Criteria::ASC) Order by the id column
- * @method APStringQuery orderByindex($order = Criteria::ASC) Order by the index column
- * @method APStringQuery orderByvalue($order = Criteria::ASC) Order by the value column
+ * @method ActionPropertyOrgStructureQuery orderByid($order = Criteria::ASC) Order by the id column
+ * @method ActionPropertyOrgStructureQuery orderByindex($order = Criteria::ASC) Order by the index column
+ * @method ActionPropertyOrgStructureQuery orderByvalue($order = Criteria::ASC) Order by the value column
  *
- * @method APStringQuery groupByid() Group by the id column
- * @method APStringQuery groupByindex() Group by the index column
- * @method APStringQuery groupByvalue() Group by the value column
+ * @method ActionPropertyOrgStructureQuery groupByid() Group by the id column
+ * @method ActionPropertyOrgStructureQuery groupByindex() Group by the index column
+ * @method ActionPropertyOrgStructureQuery groupByvalue() Group by the value column
  *
- * @method APStringQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method APStringQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method APStringQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method ActionPropertyOrgStructureQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method ActionPropertyOrgStructureQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method ActionPropertyOrgStructureQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method APStringQuery leftJoinActionProperty($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionProperty relation
- * @method APStringQuery rightJoinActionProperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionProperty relation
- * @method APStringQuery innerJoinActionProperty($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionProperty relation
+ * @method ActionPropertyOrgStructureQuery leftJoinActionProperty($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionProperty relation
+ * @method ActionPropertyOrgStructureQuery rightJoinActionProperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionProperty relation
+ * @method ActionPropertyOrgStructureQuery innerJoinActionProperty($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionProperty relation
  *
- * @method APString findOne(PropelPDO $con = null) Return the first APString matching the query
- * @method APString findOneOrCreate(PropelPDO $con = null) Return the first APString matching the query, or a new APString object populated from the query conditions when no match is found
+ * @method ActionPropertyOrgStructure findOne(PropelPDO $con = null) Return the first ActionPropertyOrgStructure matching the query
+ * @method ActionPropertyOrgStructure findOneOrCreate(PropelPDO $con = null) Return the first ActionPropertyOrgStructure matching the query, or a new ActionPropertyOrgStructure object populated from the query conditions when no match is found
  *
- * @method APString findOneByid(int $id) Return the first APString filtered by the id column
- * @method APString findOneByindex(int $index) Return the first APString filtered by the index column
- * @method APString findOneByvalue(string $value) Return the first APString filtered by the value column
+ * @method ActionPropertyOrgStructure findOneByid(int $id) Return the first ActionPropertyOrgStructure filtered by the id column
+ * @method ActionPropertyOrgStructure findOneByindex(int $index) Return the first ActionPropertyOrgStructure filtered by the index column
+ * @method ActionPropertyOrgStructure findOneByvalue(int $value) Return the first ActionPropertyOrgStructure filtered by the value column
  *
- * @method array findByid(int $id) Return APString objects filtered by the id column
- * @method array findByindex(int $index) Return APString objects filtered by the index column
- * @method array findByvalue(string $value) Return APString objects filtered by the value column
+ * @method array findByid(int $id) Return ActionPropertyOrgStructure objects filtered by the id column
+ * @method array findByindex(int $index) Return ActionPropertyOrgStructure objects filtered by the index column
+ * @method array findByvalue(int $value) Return ActionPropertyOrgStructure objects filtered by the value column
  *
  * @package    propel.generator.Models.om
  */
-abstract class BaseAPStringQuery extends ModelCriteria
+abstract class BaseActionPropertyOrgStructureQuery extends ModelCriteria
 {
     /**
-     * Initializes internal state of BaseAPStringQuery object.
+     * Initializes internal state of BaseActionPropertyOrgStructureQuery object.
      *
      * @param     string $dbName The dabase name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'Webmis-API', $modelName = 'Webmis\\Models\\APString', $modelAlias = null)
+    public function __construct($dbName = 'Webmis-API', $modelName = 'Webmis\\Models\\ActionPropertyOrgStructure', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
     /**
-     * Returns a new APStringQuery object.
+     * Returns a new ActionPropertyOrgStructureQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
-     * @param   APStringQuery|Criteria $criteria Optional Criteria to build the query from
+     * @param   ActionPropertyOrgStructureQuery|Criteria $criteria Optional Criteria to build the query from
      *
-     * @return APStringQuery
+     * @return ActionPropertyOrgStructureQuery
      */
     public static function create($modelAlias = null, $criteria = null)
     {
-        if ($criteria instanceof APStringQuery) {
+        if ($criteria instanceof ActionPropertyOrgStructureQuery) {
             return $criteria;
         }
-        $query = new APStringQuery();
+        $query = new ActionPropertyOrgStructureQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -102,19 +102,19 @@ abstract class BaseAPStringQuery extends ModelCriteria
                          A Primary key composition: [$id, $index]
      * @param     PropelPDO $con an optional connection object
      *
-     * @return   APString|APString[]|mixed the result, formatted by the current formatter
+     * @return   ActionPropertyOrgStructure|ActionPropertyOrgStructure[]|mixed the result, formatted by the current formatter
      */
     public function findPk($key, $con = null)
     {
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = APStringPeer::getInstanceFromPool(serialize(array((string) $key[0], (string) $key[1]))))) && !$this->formatter) {
+        if ((null !== ($obj = ActionPropertyOrgStructurePeer::getInstanceFromPool(serialize(array((string) $key[0], (string) $key[1]))))) && !$this->formatter) {
             // the object is alredy in the instance pool
             return $obj;
         }
         if ($con === null) {
-            $con = Propel::getConnection(APStringPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(ActionPropertyOrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
         $this->basePreSelect($con);
         if ($this->formatter || $this->modelAlias || $this->with || $this->select
@@ -133,12 +133,12 @@ abstract class BaseAPStringQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     PropelPDO $con A connection object
      *
-     * @return                 APString A model object, or null if the key is not found
+     * @return                 ActionPropertyOrgStructure A model object, or null if the key is not found
      * @throws PropelException
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `id`, `index`, `value` FROM `ActionProperty_String` WHERE `id` = :p0 AND `index` = :p1';
+        $sql = 'SELECT `id`, `index`, `value` FROM `ActionProperty_OrgStructure` WHERE `id` = :p0 AND `index` = :p1';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
@@ -150,9 +150,9 @@ abstract class BaseAPStringQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $obj = new APString();
+            $obj = new ActionPropertyOrgStructure();
             $obj->hydrate($row);
-            APStringPeer::addInstanceToPool($obj, serialize(array((string) $key[0], (string) $key[1])));
+            ActionPropertyOrgStructurePeer::addInstanceToPool($obj, serialize(array((string) $key[0], (string) $key[1])));
         }
         $stmt->closeCursor();
 
@@ -165,7 +165,7 @@ abstract class BaseAPStringQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     PropelPDO $con A connection object
      *
-     * @return APString|APString[]|mixed the result, formatted by the current formatter
+     * @return ActionPropertyOrgStructure|ActionPropertyOrgStructure[]|mixed the result, formatted by the current formatter
      */
     protected function findPkComplex($key, $con)
     {
@@ -186,7 +186,7 @@ abstract class BaseAPStringQuery extends ModelCriteria
      * @param     array $keys Primary keys to use for the query
      * @param     PropelPDO $con an optional connection object
      *
-     * @return PropelObjectCollection|APString[]|mixed the list of results, formatted by the current formatter
+     * @return PropelObjectCollection|ActionPropertyOrgStructure[]|mixed the list of results, formatted by the current formatter
      */
     public function findPks($keys, $con = null)
     {
@@ -207,12 +207,12 @@ abstract class BaseAPStringQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return APStringQuery The current query, for fluid interface
+     * @return ActionPropertyOrgStructureQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
-        $this->addUsingAlias(APStringPeer::ID, $key[0], Criteria::EQUAL);
-        $this->addUsingAlias(APStringPeer::INDEX, $key[1], Criteria::EQUAL);
+        $this->addUsingAlias(ActionPropertyOrgStructurePeer::ID, $key[0], Criteria::EQUAL);
+        $this->addUsingAlias(ActionPropertyOrgStructurePeer::INDEX, $key[1], Criteria::EQUAL);
 
         return $this;
     }
@@ -222,7 +222,7 @@ abstract class BaseAPStringQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return APStringQuery The current query, for fluid interface
+     * @return ActionPropertyOrgStructureQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
@@ -230,8 +230,8 @@ abstract class BaseAPStringQuery extends ModelCriteria
             return $this->add(null, '1<>1', Criteria::CUSTOM);
         }
         foreach ($keys as $key) {
-            $cton0 = $this->getNewCriterion(APStringPeer::ID, $key[0], Criteria::EQUAL);
-            $cton1 = $this->getNewCriterion(APStringPeer::INDEX, $key[1], Criteria::EQUAL);
+            $cton0 = $this->getNewCriterion(ActionPropertyOrgStructurePeer::ID, $key[0], Criteria::EQUAL);
+            $cton1 = $this->getNewCriterion(ActionPropertyOrgStructurePeer::INDEX, $key[1], Criteria::EQUAL);
             $cton0->addAnd($cton1);
             $this->addOr($cton0);
         }
@@ -256,18 +256,18 @@ abstract class BaseAPStringQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return APStringQuery The current query, for fluid interface
+     * @return ActionPropertyOrgStructureQuery The current query, for fluid interface
      */
     public function filterByid($id = null, $comparison = null)
     {
         if (is_array($id)) {
             $useMinMax = false;
             if (isset($id['min'])) {
-                $this->addUsingAlias(APStringPeer::ID, $id['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(ActionPropertyOrgStructurePeer::ID, $id['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($id['max'])) {
-                $this->addUsingAlias(APStringPeer::ID, $id['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(ActionPropertyOrgStructurePeer::ID, $id['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -278,7 +278,7 @@ abstract class BaseAPStringQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(APStringPeer::ID, $id, $comparison);
+        return $this->addUsingAlias(ActionPropertyOrgStructurePeer::ID, $id, $comparison);
     }
 
     /**
@@ -298,18 +298,18 @@ abstract class BaseAPStringQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return APStringQuery The current query, for fluid interface
+     * @return ActionPropertyOrgStructureQuery The current query, for fluid interface
      */
     public function filterByindex($index = null, $comparison = null)
     {
         if (is_array($index)) {
             $useMinMax = false;
             if (isset($index['min'])) {
-                $this->addUsingAlias(APStringPeer::INDEX, $index['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(ActionPropertyOrgStructurePeer::INDEX, $index['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($index['max'])) {
-                $this->addUsingAlias(APStringPeer::INDEX, $index['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(ActionPropertyOrgStructurePeer::INDEX, $index['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -320,7 +320,7 @@ abstract class BaseAPStringQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(APStringPeer::INDEX, $index, $comparison);
+        return $this->addUsingAlias(ActionPropertyOrgStructurePeer::INDEX, $index, $comparison);
     }
 
     /**
@@ -328,28 +328,41 @@ abstract class BaseAPStringQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByvalue('fooValue');   // WHERE value = 'fooValue'
-     * $query->filterByvalue('%fooValue%'); // WHERE value LIKE '%fooValue%'
+     * $query->filterByvalue(1234); // WHERE value = 1234
+     * $query->filterByvalue(array(12, 34)); // WHERE value IN (12, 34)
+     * $query->filterByvalue(array('min' => 12)); // WHERE value >= 12
+     * $query->filterByvalue(array('max' => 12)); // WHERE value <= 12
      * </code>
      *
-     * @param     string $value The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     mixed $value The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return APStringQuery The current query, for fluid interface
+     * @return ActionPropertyOrgStructureQuery The current query, for fluid interface
      */
     public function filterByvalue($value = null, $comparison = null)
     {
-        if (null === $comparison) {
-            if (is_array($value)) {
+        if (is_array($value)) {
+            $useMinMax = false;
+            if (isset($value['min'])) {
+                $this->addUsingAlias(ActionPropertyOrgStructurePeer::VALUE, $value['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($value['max'])) {
+                $this->addUsingAlias(ActionPropertyOrgStructurePeer::VALUE, $value['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $value)) {
-                $value = str_replace('*', '%', $value);
-                $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(APStringPeer::VALUE, $value, $comparison);
+        return $this->addUsingAlias(ActionPropertyOrgStructurePeer::VALUE, $value, $comparison);
     }
 
     /**
@@ -358,14 +371,14 @@ abstract class BaseAPStringQuery extends ModelCriteria
      * @param   ActionProperty|PropelObjectCollection $actionProperty  the related object to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return                 APStringQuery The current query, for fluid interface
+     * @return                 ActionPropertyOrgStructureQuery The current query, for fluid interface
      * @throws PropelException - if the provided filter is invalid.
      */
     public function filterByActionProperty($actionProperty, $comparison = null)
     {
         if ($actionProperty instanceof ActionProperty) {
             return $this
-                ->addUsingAlias(APStringPeer::ID, $actionProperty->getid(), $comparison);
+                ->addUsingAlias(ActionPropertyOrgStructurePeer::ID, $actionProperty->getid(), $comparison);
         } elseif ($actionProperty instanceof PropelObjectCollection) {
             return $this
                 ->useActionPropertyQuery()
@@ -382,7 +395,7 @@ abstract class BaseAPStringQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return APStringQuery The current query, for fluid interface
+     * @return ActionPropertyOrgStructureQuery The current query, for fluid interface
      */
     public function joinActionProperty($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -429,15 +442,15 @@ abstract class BaseAPStringQuery extends ModelCriteria
     /**
      * Exclude object from result
      *
-     * @param   APString $aPString Object to remove from the list of results
+     * @param   ActionPropertyOrgStructure $actionPropertyOrgStructure Object to remove from the list of results
      *
-     * @return APStringQuery The current query, for fluid interface
+     * @return ActionPropertyOrgStructureQuery The current query, for fluid interface
      */
-    public function prune($aPString = null)
+    public function prune($actionPropertyOrgStructure = null)
     {
-        if ($aPString) {
-            $this->addCond('pruneCond0', $this->getAliasedColName(APStringPeer::ID), $aPString->getid(), Criteria::NOT_EQUAL);
-            $this->addCond('pruneCond1', $this->getAliasedColName(APStringPeer::INDEX), $aPString->getindex(), Criteria::NOT_EQUAL);
+        if ($actionPropertyOrgStructure) {
+            $this->addCond('pruneCond0', $this->getAliasedColName(ActionPropertyOrgStructurePeer::ID), $actionPropertyOrgStructure->getid(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond1', $this->getAliasedColName(ActionPropertyOrgStructurePeer::INDEX), $actionPropertyOrgStructure->getindex(), Criteria::NOT_EQUAL);
             $this->combine(array('pruneCond0', 'pruneCond1'), Criteria::LOGICAL_OR);
         }
 

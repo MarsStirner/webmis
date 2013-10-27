@@ -7,7 +7,7 @@ use \TableMap;
 
 
 /**
- * This class defines the structure of the 'ActionProperty_String' table.
+ * This class defines the structure of the 'ActionProperty_OrgStructure' table.
  *
  *
  *
@@ -18,13 +18,13 @@ use \TableMap;
  *
  * @package    propel.generator.Models.map
  */
-class APStringTableMap extends TableMap
+class ActionPropertyOrgStructureTableMap extends TableMap
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Models.map.APStringTableMap';
+    const CLASS_NAME = 'Models.map.ActionPropertyOrgStructureTableMap';
 
     /**
      * Initialize the table attributes, columns and validators
@@ -36,15 +36,15 @@ class APStringTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('ActionProperty_String');
-        $this->setPhpName('APString');
-        $this->setClassname('Webmis\\Models\\APString');
+        $this->setName('ActionProperty_OrgStructure');
+        $this->setPhpName('ActionPropertyOrgStructure');
+        $this->setClassname('Webmis\\Models\\ActionPropertyOrgStructure');
         $this->setPackage('Models');
         $this->setUseIdGenerator(false);
         // columns
         $this->addPrimaryKey('id', 'id', 'INTEGER', true, null, null);
         $this->addPrimaryKey('index', 'index', 'INTEGER', true, null, 0);
-        $this->addColumn('value', 'value', 'LONGVARCHAR', true, null, null);
+        $this->addColumn('value', 'value', 'INTEGER', false, null, null);
         // validators
     } // initialize()
 
@@ -56,4 +56,4 @@ class APStringTableMap extends TableMap
         $this->addRelation('ActionProperty', 'Webmis\\Models\\ActionProperty', RelationMap::ONE_TO_ONE, array('id' => 'id', ), null, null);
     } // buildRelations()
 
-} // APStringTableMap
+} // ActionPropertyOrgStructureTableMap

@@ -78,22 +78,31 @@ class TherapyController
                         case 'Html':
                         case 'Text':
                         case 'Constructor':
-                            $p['value'] = $actionProperty->getActionPropertyString()->getValue();
+                            if($actionProperty->getActionPropertyString()){
+                                $p['value'] = $actionProperty->getActionPropertyString()->getValue();
+                            }
                         break;
                         case 'Double':
-                            $p['value'] = $actionProperty->getActionPropertyDouble()->getValue();
+                            if($actionProperty->getActionPropertyDouble()){
+                                $p['value'] = $actionProperty->getActionPropertyDouble()->getValue();
+                            }
                         break;
                         case 'FlatDirectory':
-                            $p['value'] = $actionProperty->getActionPropertyFDRecord()->getValue();
+                            if($actionProperty->getActionPropertyFDRecord()){
+                                $p['value'] = $actionProperty->getActionPropertyFDRecord()->getValue();
+                            }
                         break;
                         case 'Date':
-                            $date = $actionProperty->getActionPropertyDate()->getValue();
-                            $dateArray = explode('-', $date);
-                            $year = $dateArray[0];
-                            if($year < 1000){
-                                $p['value'] = null;
-                            }else{
-                                $p['value'] = strtotime($date)*1000;
+                            if($actionProperty->getActionPropertyDate()){
+                                $date = $actionProperty->getActionPropertyDate()->getValue();
+                                $dateArray = explode('-', $date);
+                                $year = $dateArray[0];
+                                if($year < 1000){
+                                    $p['value'] = null;
+                                }else{
+                                    $p['value'] = strtotime($date)*1000;
+                                }
+
                             }
 
                         break;
@@ -103,29 +112,57 @@ class TherapyController
                     }
 
                     if($p['code'] == 'therapyTitle'){
-                        $a['therapyTitleId'] = $p['value'];
+                        if (array_key_exists('value', $p)){
+                            $a['therapyTitleId'] = $p['value'];
+                        }else{
+                            $a['therapyTitleId'] = null;
+                        }
                     }
                     if($p['code'] == 'therapyBegDate'){
-                        $a['therapyBegDate'] = $p['value'];
+                        if (array_key_exists('value', $p)){
+                            $a['therapyBegDate'] = $p['value'];
+                        }else{
+                            $a['therapyBegDate'] = null;
+                        }
                     }
 
                     if($p['code'] == 'therapyEndDate'){
-                        $a['therapyEndDate'] = $p['value'];
+                        if (array_key_exists('value', $p)){
+                            $a['therapyEndDate'] = $p['value'];
+                        }else{
+                            $a['therapyEndDate'] = null;
+                        }
                     }
 
                     if($p['code'] == 'therapyPhaseTitle'){
-                        $a['therapyPhaseTitle'] = $p['value'];
+                        if (array_key_exists('value', $p)){
+                            $a['therapyPhaseTitle'] = $p['value'];
+                        }else{
+                            $a['therapyPhaseTitle'] = null;
+                        }
                     }
 
                     if($p['code'] == 'therapyPhaseBegDate'){
-                        $a['therapyPhaseBegDate'] = $p['value'];
+                        if (array_key_exists('value', $p)){
+                            $a['therapyPhaseBegDate'] = $p['value'];
+                        }else{
+                            $a['therapyPhaseBegDate'] = null;
+                        }
                     }
 
                     if($p['code'] == 'therapyPhaseEndDate'){
-                        $a['therapyPhaseEndDate'] = $p['value'];
+                        if (array_key_exists('value', $p)){
+                            $a['therapyPhaseEndDate'] = $p['value'];
+                        }else{
+                            $a['therapyPhaseEndDate'] = null;
+                        }
                     }
                     if($p['code'] == 'therapyPhaseDay'){
-                        $a['therapyPhaseDay'] = $p['value'];
+                        if (array_key_exists('value', $p)){
+                            $a['therapyPhaseDay'] = $p['value'];
+                        }else{
+                             $a['therapyPhaseDay'] = null;
+                        }
                     }
 
                 }

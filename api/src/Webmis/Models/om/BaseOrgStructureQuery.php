@@ -16,6 +16,7 @@ use Webmis\Models\Event;
 use Webmis\Models\OrgStructure;
 use Webmis\Models\OrgStructurePeer;
 use Webmis\Models\OrgStructureQuery;
+use Webmis\Models\RbStorage;
 
 /**
  * Base class that represents a query for the 'OrgStructure' table.
@@ -83,6 +84,10 @@ use Webmis\Models\OrgStructureQuery;
  * @method OrgStructureQuery leftJoinEvent($relationAlias = null) Adds a LEFT JOIN clause to the query using the Event relation
  * @method OrgStructureQuery rightJoinEvent($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Event relation
  * @method OrgStructureQuery innerJoinEvent($relationAlias = null) Adds a INNER JOIN clause to the query using the Event relation
+ *
+ * @method OrgStructureQuery leftJoinRbStorage($relationAlias = null) Adds a LEFT JOIN clause to the query using the RbStorage relation
+ * @method OrgStructureQuery rightJoinRbStorage($relationAlias = null) Adds a RIGHT JOIN clause to the query using the RbStorage relation
+ * @method OrgStructureQuery innerJoinRbStorage($relationAlias = null) Adds a INNER JOIN clause to the query using the RbStorage relation
  *
  * @method OrgStructure findOne(PropelPDO $con = null) Return the first OrgStructure matching the query
  * @method OrgStructure findOneOrCreate(PropelPDO $con = null) Return the first OrgStructure matching the query, or a new OrgStructure object populated from the query conditions when no match is found
@@ -1316,6 +1321,80 @@ abstract class BaseOrgStructureQuery extends ModelCriteria
         return $this
             ->joinEvent($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Event', '\Webmis\Models\EventQuery');
+    }
+
+    /**
+     * Filter the query by a related RbStorage object
+     *
+     * @param   RbStorage|PropelObjectCollection $rbStorage  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 OrgStructureQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByRbStorage($rbStorage, $comparison = null)
+    {
+        if ($rbStorage instanceof RbStorage) {
+            return $this
+                ->addUsingAlias(OrgStructurePeer::ID, $rbStorage->getorgStructureId(), $comparison);
+        } elseif ($rbStorage instanceof PropelObjectCollection) {
+            return $this
+                ->useRbStorageQuery()
+                ->filterByPrimaryKeys($rbStorage->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByRbStorage() only accepts arguments of type RbStorage or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the RbStorage relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return OrgStructureQuery The current query, for fluid interface
+     */
+    public function joinRbStorage($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('RbStorage');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'RbStorage');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the RbStorage relation RbStorage object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\RbStorageQuery A secondary query class using the current class as primary query
+     */
+    public function useRbStorageQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinRbStorage($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'RbStorage', '\Webmis\Models\RbStorageQuery');
     }
 
     /**

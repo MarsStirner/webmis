@@ -13,31 +13,31 @@ use \PropelCollection;
 use \PropelException;
 use \PropelObjectCollection;
 use \PropelPDO;
-use Webmis\Models\APString;
-use Webmis\Models\APStringPeer;
-use Webmis\Models\APStringQuery;
 use Webmis\Models\ActionProperty;
+use Webmis\Models\ActionPropertyOrgStructure;
+use Webmis\Models\ActionPropertyOrgStructurePeer;
+use Webmis\Models\ActionPropertyOrgStructureQuery;
 use Webmis\Models\ActionPropertyQuery;
 
 /**
- * Base class that represents a row from the 'ActionProperty_String' table.
+ * Base class that represents a row from the 'ActionProperty_OrgStructure' table.
  *
  *
  *
  * @package    propel.generator.Models.om
  */
-abstract class BaseAPString extends BaseObject implements Persistent
+abstract class BaseActionPropertyOrgStructure extends BaseObject implements Persistent
 {
     /**
      * Peer class name
      */
-    const PEER = 'Webmis\\Models\\APStringPeer';
+    const PEER = 'Webmis\\Models\\ActionPropertyOrgStructurePeer';
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        APStringPeer
+     * @var        ActionPropertyOrgStructurePeer
      */
     protected static $peer;
 
@@ -62,7 +62,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
 
     /**
      * The value for the value field.
-     * @var        string
+     * @var        int
      */
     protected $value;
 
@@ -109,7 +109,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
     }
 
     /**
-     * Initializes internal state of BaseAPString object.
+     * Initializes internal state of BaseActionPropertyOrgStructure object.
      * @see        applyDefaults()
      */
     public function __construct()
@@ -141,7 +141,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
     /**
      * Get the [value] column value.
      *
-     * @return string
+     * @return int
      */
     public function getvalue()
     {
@@ -152,7 +152,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return APString The current object (for fluent API support)
+     * @return ActionPropertyOrgStructure The current object (for fluent API support)
      */
     public function setid($v)
     {
@@ -162,7 +162,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[] = APStringPeer::ID;
+            $this->modifiedColumns[] = ActionPropertyOrgStructurePeer::ID;
         }
 
 
@@ -173,7 +173,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
      * Set the value of [index] column.
      *
      * @param int $v new value
-     * @return APString The current object (for fluent API support)
+     * @return ActionPropertyOrgStructure The current object (for fluent API support)
      */
     public function setindex($v)
     {
@@ -183,7 +183,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
 
         if ($this->index !== $v) {
             $this->index = $v;
-            $this->modifiedColumns[] = APStringPeer::INDEX;
+            $this->modifiedColumns[] = ActionPropertyOrgStructurePeer::INDEX;
         }
 
 
@@ -193,18 +193,18 @@ abstract class BaseAPString extends BaseObject implements Persistent
     /**
      * Set the value of [value] column.
      *
-     * @param string $v new value
-     * @return APString The current object (for fluent API support)
+     * @param int $v new value
+     * @return ActionPropertyOrgStructure The current object (for fluent API support)
      */
     public function setvalue($v)
     {
         if ($v !== null && is_numeric($v)) {
-            $v = (string) $v;
+            $v = (int) $v;
         }
 
         if ($this->value !== $v) {
             $this->value = $v;
-            $this->modifiedColumns[] = APStringPeer::VALUE;
+            $this->modifiedColumns[] = ActionPropertyOrgStructurePeer::VALUE;
         }
 
 
@@ -249,7 +249,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
 
             $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->index = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->value = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            $this->value = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -258,10 +258,10 @@ abstract class BaseAPString extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 3; // 3 = APStringPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating APString object", $e);
+            throw new PropelException("Error populating ActionPropertyOrgStructure object", $e);
         }
     }
 
@@ -304,13 +304,13 @@ abstract class BaseAPString extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(APStringPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(ActionPropertyOrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $stmt = APStringPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+        $stmt = ActionPropertyOrgStructurePeer::doSelectStmt($this->buildPkeyCriteria(), $con);
         $row = $stmt->fetch(PDO::FETCH_NUM);
         $stmt->closeCursor();
         if (!$row) {
@@ -342,12 +342,12 @@ abstract class BaseAPString extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(APStringPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(ActionPropertyOrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = APStringQuery::create()
+            $deleteQuery = ActionPropertyOrgStructureQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -385,7 +385,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(APStringPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(ActionPropertyOrgStructurePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
@@ -405,7 +405,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                APStringPeer::addInstanceToPool($this);
+                ActionPropertyOrgStructurePeer::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -483,18 +483,18 @@ abstract class BaseAPString extends BaseObject implements Persistent
 
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(APStringPeer::ID)) {
+        if ($this->isColumnModified(ActionPropertyOrgStructurePeer::ID)) {
             $modifiedColumns[':p' . $index++]  = '`id`';
         }
-        if ($this->isColumnModified(APStringPeer::INDEX)) {
+        if ($this->isColumnModified(ActionPropertyOrgStructurePeer::INDEX)) {
             $modifiedColumns[':p' . $index++]  = '`index`';
         }
-        if ($this->isColumnModified(APStringPeer::VALUE)) {
+        if ($this->isColumnModified(ActionPropertyOrgStructurePeer::VALUE)) {
             $modifiedColumns[':p' . $index++]  = '`value`';
         }
 
         $sql = sprintf(
-            'INSERT INTO `ActionProperty_String` (%s) VALUES (%s)',
+            'INSERT INTO `ActionProperty_OrgStructure` (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -510,7 +510,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
                         $stmt->bindValue($identifier, $this->index, PDO::PARAM_INT);
                         break;
                     case '`value`':
-                        $stmt->bindValue($identifier, $this->value, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->value, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -599,7 +599,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = APStringPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = ActionPropertyOrgStructurePeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -629,7 +629,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = APStringPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = ActionPropertyOrgStructurePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -677,11 +677,11 @@ abstract class BaseAPString extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['APString'][serialize($this->getPrimaryKey())])) {
+        if (isset($alreadyDumpedObjects['ActionPropertyOrgStructure'][serialize($this->getPrimaryKey())])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['APString'][serialize($this->getPrimaryKey())] = true;
-        $keys = APStringPeer::getFieldNames($keyType);
+        $alreadyDumpedObjects['ActionPropertyOrgStructure'][serialize($this->getPrimaryKey())] = true;
+        $keys = ActionPropertyOrgStructurePeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getid(),
             $keys[1] => $this->getindex(),
@@ -709,7 +709,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = APStringPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = ActionPropertyOrgStructurePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 
         $this->setByPosition($pos, $value);
     }
@@ -756,7 +756,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = APStringPeer::getFieldNames($keyType);
+        $keys = ActionPropertyOrgStructurePeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setid($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setindex($arr[$keys[1]]);
@@ -770,11 +770,11 @@ abstract class BaseAPString extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(APStringPeer::DATABASE_NAME);
+        $criteria = new Criteria(ActionPropertyOrgStructurePeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(APStringPeer::ID)) $criteria->add(APStringPeer::ID, $this->id);
-        if ($this->isColumnModified(APStringPeer::INDEX)) $criteria->add(APStringPeer::INDEX, $this->index);
-        if ($this->isColumnModified(APStringPeer::VALUE)) $criteria->add(APStringPeer::VALUE, $this->value);
+        if ($this->isColumnModified(ActionPropertyOrgStructurePeer::ID)) $criteria->add(ActionPropertyOrgStructurePeer::ID, $this->id);
+        if ($this->isColumnModified(ActionPropertyOrgStructurePeer::INDEX)) $criteria->add(ActionPropertyOrgStructurePeer::INDEX, $this->index);
+        if ($this->isColumnModified(ActionPropertyOrgStructurePeer::VALUE)) $criteria->add(ActionPropertyOrgStructurePeer::VALUE, $this->value);
 
         return $criteria;
     }
@@ -789,9 +789,9 @@ abstract class BaseAPString extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(APStringPeer::DATABASE_NAME);
-        $criteria->add(APStringPeer::ID, $this->id);
-        $criteria->add(APStringPeer::INDEX, $this->index);
+        $criteria = new Criteria(ActionPropertyOrgStructurePeer::DATABASE_NAME);
+        $criteria->add(ActionPropertyOrgStructurePeer::ID, $this->id);
+        $criteria->add(ActionPropertyOrgStructurePeer::INDEX, $this->index);
 
         return $criteria;
     }
@@ -838,7 +838,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param object $copyObj An object of APString (or compatible) type.
+     * @param object $copyObj An object of ActionPropertyOrgStructure (or compatible) type.
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -879,7 +879,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
      * objects.
      *
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return APString Clone of current object.
+     * @return ActionPropertyOrgStructure Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -899,12 +899,12 @@ abstract class BaseAPString extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return APStringPeer
+     * @return ActionPropertyOrgStructurePeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new APStringPeer();
+            self::$peer = new ActionPropertyOrgStructurePeer();
         }
 
         return self::$peer;
@@ -944,7 +944,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
      * Sets a single ActionProperty object as related to this object by a one-to-one relationship.
      *
      * @param             ActionProperty $v ActionProperty
-     * @return APString The current object (for fluent API support)
+     * @return ActionPropertyOrgStructure The current object (for fluent API support)
      * @throws PropelException
      */
     public function setActionProperty(ActionProperty $v = null)
@@ -952,8 +952,8 @@ abstract class BaseAPString extends BaseObject implements Persistent
         $this->singleActionProperty = $v;
 
         // Make sure that that the passed-in ActionProperty isn't already associated with this object
-        if ($v !== null && $v->getAPString(null, false) === null) {
-            $v->setAPString($this);
+        if ($v !== null && $v->getActionPropertyOrgStructure(null, false) === null) {
+            $v->setActionPropertyOrgStructure($this);
         }
 
         return $this;
@@ -1010,7 +1010,7 @@ abstract class BaseAPString extends BaseObject implements Persistent
      */
     public function __toString()
     {
-        return (string) $this->exportTo(APStringPeer::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(ActionPropertyOrgStructurePeer::DEFAULT_STRING_FORMAT);
     }
 
     /**

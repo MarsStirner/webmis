@@ -123,15 +123,22 @@ define(function(require) {
                 var diagnosisCode = '';
                 if(self.consultation.getProperty('Направительный диагноз')){
 
-                    diagnosisArray = self.consultation.getProperty('Направительный диагноз').split(' ')
+                    diagnosisArray = self.consultation.getProperty('Направительный диагноз').split(' ');
                     diagnosisCode = diagnosisArray[0];
                 }
+
+                // if(self.consultation.getProperty('pacientInQueueType') === 0){
+                    self.newConsultation.plannedTimeChanged = false;
+                // }else{
+                //     self.newConsultation.plannedTimeChanged = true;
+                // }
 
 
                 self.newConsultation.set({
                     'finance': {
                         'id': parseInt(self.consultation.getProperty('finance'), 10)
                       },
+                      'pacientInQueue': parseInt(self.consultation.getProperty('pacientInQueueType'), 10),
                       'eventId': self.options.appealId,
                       'patientId': parseInt(self.options.appeal.get('patient').get('id'), 10),
                       'assignerId': parseInt(self.consultation.getProperty('assignerId'), 10),
@@ -146,6 +153,7 @@ define(function(require) {
 
                       'executorId': parseInt(self.consultation.getProperty('executorId'), 10)
                 });
+
 
                 var executorId = self.consultation.getProperty('executorId');
 
@@ -197,10 +205,7 @@ define(function(require) {
                 self.newConsultation.on('change:actionTypeId', self.loadConsultants, self);
                 self.newConsultation.on('changed:plannedEndDate', self.loadConsultants, self);
 
-                self.newConsultation.on('change:plannedEndDate', function(){
-
-                    console.log('change:plannedEndDate');
-                }, self);
+                self.newConsultation.on('change:urgent change:overQueue change:plannedTime', self.setPacientInQueue, self);
 
                 self.newConsultation.on('change', self.validateForm, self);
 
@@ -270,28 +275,31 @@ define(function(require) {
 
         //при выборе времени
         onTimeSelect: function(plannedTime) {
-
-            // var time = plannedTime.time;
-            // var hours = Math.floor(time / (60 * 60 * 1000));
-            // var minutes = Math.floor((time - hours * 60 * 60 * 1000) / (60 * 1000));
-            // var seconds = Math.floor((time - hours * 60 * 60 * 1000 - minutes * 60 * 1000) / 1000);
-            // var plannedEndDate = this.newConsultation.get('plannedEndDate');
-
-            // var plannedDate = moment(plannedEndDate)
-            //     .hours(hours).minutes(minutes).seconds(seconds).valueOf();
-
-            // this.newConsultation.set('plannedEndDate', plannedDate);
             this.newConsultation.set('plannedTime', plannedTime);
+            this.newConsultation.plannedTimeChanged = true;
         },
 
         onTimeUnselect: function() {
-            // var plannedEndDate = this.newConsultation.get('plannedEndDate');
-
-            // var plannedDate = moment(plannedEndDate)
-            //     .hours(0).minutes(0).seconds(0).valueOf();
-
-            // this.newConsultation.set('plannedEndDate', plannedDate);
             this.newConsultation.set('plannedTime', null);
+        },
+
+        setPacientInQueue: function(){
+
+            if(this.newConsultation.get('plannedTime')){
+                this.newConsultation.set('pacientInQueue', 0);
+            }else{
+                if(this.newConsultation.plannedTimeChanged){
+                    if(this.newConsultation.get('urgent')){
+                        this.newConsultation.set('pacientInQueue', 1);
+                    }
+
+                    if(this.newConsultation.get('overQueue')){
+                        this.newConsultation.set('pacientInQueue', 2);
+                    }
+
+                }
+            }
+
         },
 
         onChangeAssignDate: function() {
@@ -389,6 +397,10 @@ define(function(require) {
         //при клике на кнопку 'Сохранить'
         onSave: function() {
             var self = this;
+            //this.setPacientInQueue();
+            if(!this.newConsultation.get('plannedTime')) this.newConsultation.unset('plannedTime');
+            //.unset
+
             this.saveButton(false, 'Сохраняем...');
 
             this.newConsultation.save({}, {
@@ -485,7 +497,7 @@ define(function(require) {
             //     // console.log('create', moment(this.newConsultation.get('createDateTime')).diff(moment()));
             // }
 
-            if (!this.newConsultation.get('plannedTime') && !(this.newConsultation.get('overQueue') || this.newConsultation.get('urgent'))) {
+            if (this.newConsultation.plannedTimeChanged && !this.newConsultation.get('plannedTime') && !(this.newConsultation.get('overQueue') || this.newConsultation.get('urgent'))) {
                 errors.push({
                     message: 'Не выбрано планируемое время консультации. '
                 });

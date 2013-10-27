@@ -21,7 +21,7 @@
       <reference local="type_id" foreign="id"/>
     </foreign-key>
 
-    <foreign-key foreignTable="ActionProperty_String" name="ActionProperty_ActionPropertyString">
+    <foreign-key foreignTable="ActionProperty_String" name="ActionProperty_ActionPropertyString" >
       <reference local="id" foreign="id"/>
     </foreign-key>
 
@@ -30,6 +30,10 @@
     </foreign-key>
 
     <foreign-key foreignTable="ActionProperty_Double" name="ActionProperty_ActionPropertyDouble">
+      <reference local="id" foreign="id"/>
+    </foreign-key>
+
+    <foreign-key foreignTable="ActionProperty_OrgStructure" name="ActionProperty_ActionPropertyOrgStructure">
       <reference local="id" foreign="id"/>
     </foreign-key>
 
