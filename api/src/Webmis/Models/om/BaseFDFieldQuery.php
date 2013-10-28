@@ -31,8 +31,6 @@ use Webmis\Models\FDFieldValue;
  * @method FDFieldQuery orderByMask($order = Criteria::ASC) Order by the mask column
  * @method FDFieldQuery orderByMandatory($order = Criteria::ASC) Order by the mandatory column
  * @method FDFieldQuery orderByOrder($order = Criteria::ASC) Order by the order column
- * @method FDFieldQuery orderByCreatedatetime($order = Criteria::ASC) Order by the createDatetime column
- * @method FDFieldQuery orderByModifydatetime($order = Criteria::ASC) Order by the modifyDatetime column
  *
  * @method FDFieldQuery groupById() Group by the id column
  * @method FDFieldQuery groupByFDFieldTypeId() Group by the fdFieldType_id column
@@ -43,8 +41,6 @@ use Webmis\Models\FDFieldValue;
  * @method FDFieldQuery groupByMask() Group by the mask column
  * @method FDFieldQuery groupByMandatory() Group by the mandatory column
  * @method FDFieldQuery groupByOrder() Group by the order column
- * @method FDFieldQuery groupByCreatedatetime() Group by the createDatetime column
- * @method FDFieldQuery groupByModifydatetime() Group by the modifyDatetime column
  *
  * @method FDFieldQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method FDFieldQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -69,8 +65,6 @@ use Webmis\Models\FDFieldValue;
  * @method FDField findOneByMask(string $mask) Return the first FDField filtered by the mask column
  * @method FDField findOneByMandatory(boolean $mandatory) Return the first FDField filtered by the mandatory column
  * @method FDField findOneByOrder(int $order) Return the first FDField filtered by the order column
- * @method FDField findOneByCreatedatetime(string $createDatetime) Return the first FDField filtered by the createDatetime column
- * @method FDField findOneByModifydatetime(string $modifyDatetime) Return the first FDField filtered by the modifyDatetime column
  *
  * @method array findById(int $id) Return FDField objects filtered by the id column
  * @method array findByFDFieldTypeId(int $fdFieldType_id) Return FDField objects filtered by the fdFieldType_id column
@@ -81,8 +75,6 @@ use Webmis\Models\FDFieldValue;
  * @method array findByMask(string $mask) Return FDField objects filtered by the mask column
  * @method array findByMandatory(boolean $mandatory) Return FDField objects filtered by the mandatory column
  * @method array findByOrder(int $order) Return FDField objects filtered by the order column
- * @method array findByCreatedatetime(string $createDatetime) Return FDField objects filtered by the createDatetime column
- * @method array findByModifydatetime(string $modifyDatetime) Return FDField objects filtered by the modifyDatetime column
  *
  * @package    propel.generator.Models.om
  */
@@ -186,7 +178,7 @@ abstract class BaseFDFieldQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `id`, `fdFieldType_id`, `flatDirectory_id`, `flatDirectory_code`, `name`, `description`, `mask`, `mandatory`, `order`, `createDatetime`, `modifyDatetime` FROM `FDField` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `fdFieldType_id`, `flatDirectory_id`, `flatDirectory_code`, `name`, `description`, `mask`, `mandatory`, `order` FROM `FDField` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -589,92 +581,6 @@ abstract class BaseFDFieldQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the createDatetime column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByCreatedatetime('2011-03-14'); // WHERE createDatetime = '2011-03-14'
-     * $query->filterByCreatedatetime('now'); // WHERE createDatetime = '2011-03-14'
-     * $query->filterByCreatedatetime(array('max' => 'yesterday')); // WHERE createDatetime > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $createdatetime The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return FDFieldQuery The current query, for fluid interface
-     */
-    public function filterByCreatedatetime($createdatetime = null, $comparison = null)
-    {
-        if (is_array($createdatetime)) {
-            $useMinMax = false;
-            if (isset($createdatetime['min'])) {
-                $this->addUsingAlias(FDFieldPeer::CREATEDATETIME, $createdatetime['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($createdatetime['max'])) {
-                $this->addUsingAlias(FDFieldPeer::CREATEDATETIME, $createdatetime['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(FDFieldPeer::CREATEDATETIME, $createdatetime, $comparison);
-    }
-
-    /**
-     * Filter the query on the modifyDatetime column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByModifydatetime('2011-03-14'); // WHERE modifyDatetime = '2011-03-14'
-     * $query->filterByModifydatetime('now'); // WHERE modifyDatetime = '2011-03-14'
-     * $query->filterByModifydatetime(array('max' => 'yesterday')); // WHERE modifyDatetime > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $modifydatetime The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return FDFieldQuery The current query, for fluid interface
-     */
-    public function filterByModifydatetime($modifydatetime = null, $comparison = null)
-    {
-        if (is_array($modifydatetime)) {
-            $useMinMax = false;
-            if (isset($modifydatetime['min'])) {
-                $this->addUsingAlias(FDFieldPeer::MODIFYDATETIME, $modifydatetime['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($modifydatetime['max'])) {
-                $this->addUsingAlias(FDFieldPeer::MODIFYDATETIME, $modifydatetime['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(FDFieldPeer::MODIFYDATETIME, $modifydatetime, $comparison);
-    }
-
-    /**
      * Filter the query by a related FDFieldValue object
      *
      * @param   FDFieldValue|PropelObjectCollection $fDFieldValue The related object(s) to use as filter
@@ -840,69 +746,4 @@ abstract class BaseFDFieldQuery extends ModelCriteria
         return $this;
     }
 
-    // timestampable behavior
-
-    /**
-     * Filter by the latest updated
-     *
-     * @param      int $nbDays Maximum age of the latest update in days
-     *
-     * @return     FDFieldQuery The current query, for fluid interface
-     */
-    public function recentlyUpdated($nbDays = 7)
-    {
-        return $this->addUsingAlias(FDFieldPeer::MODIFYDATETIME, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
-    }
-
-    /**
-     * Order by update date desc
-     *
-     * @return     FDFieldQuery The current query, for fluid interface
-     */
-    public function lastUpdatedFirst()
-    {
-        return $this->addDescendingOrderByColumn(FDFieldPeer::MODIFYDATETIME);
-    }
-
-    /**
-     * Order by update date asc
-     *
-     * @return     FDFieldQuery The current query, for fluid interface
-     */
-    public function firstUpdatedFirst()
-    {
-        return $this->addAscendingOrderByColumn(FDFieldPeer::MODIFYDATETIME);
-    }
-
-    /**
-     * Filter by the latest created
-     *
-     * @param      int $nbDays Maximum age of in days
-     *
-     * @return     FDFieldQuery The current query, for fluid interface
-     */
-    public function recentlyCreated($nbDays = 7)
-    {
-        return $this->addUsingAlias(FDFieldPeer::CREATEDATETIME, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
-    }
-
-    /**
-     * Order by create date desc
-     *
-     * @return     FDFieldQuery The current query, for fluid interface
-     */
-    public function lastCreatedFirst()
-    {
-        return $this->addDescendingOrderByColumn(FDFieldPeer::CREATEDATETIME);
-    }
-
-    /**
-     * Order by create date asc
-     *
-     * @return     FDFieldQuery The current query, for fluid interface
-     */
-    public function firstCreatedFirst()
-    {
-        return $this->addAscendingOrderByColumn(FDFieldPeer::CREATEDATETIME);
-    }
 }
