@@ -3246,8 +3246,6 @@ define(function (require) {
 
       this.filterFd = false;
 
-      console.log("FD MODEL", this.model);
-
 			return {
 				model: this.model,
 				directoryEntries: directoryEntries
@@ -3295,6 +3293,12 @@ define(function (require) {
 			}
 			UIElementBase.prototype.onAttributeValueChange.call(this, event);
 		}
+    /*,
+    render: function () {
+      UIElementBase.prototype.render.call(this);
+      this.$("select").select2();
+      return this;
+    }*/
 	});
 
 	/**
