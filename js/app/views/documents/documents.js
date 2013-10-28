@@ -4134,7 +4134,7 @@ define(function (require) {
   Documents.Views.Edit.UIElement.SubHeaderVGroup = Documents.Views.Edit.UIElement.SubHeader.extend({
     className: "doc-sub-header vgroup",
     attributes: {style: "border: 1px solid #D9D9D9;padding: 1em;border-radius:5px;"},
-    template: _.template("<h3 class='sb-hdr' style='line-height: 1em;'><%=model.get('name')%><span class='sb-tgl icon-plus' style='float: right'></span></h3>"),
+    template: _.template("<h3 class='sb-hdr' style='line-height: 1em;cursor: pointer;'><%=model.get('name')%><span class='sb-tgl icon-plus' style='float: right'></span></h3>"),
     events: {
       "click .sb-hdr": "onClick"
     },
@@ -4142,6 +4142,7 @@ define(function (require) {
       console.log("VGROUP CLICK");
       var $t = $(event.currentTarget);
       $t.next().toggle();
+      this.$(".sb-tgl").toggleClass("icon-plus icon-minus");
     	//this.$el.parent().nextAll("*:lt("+this.model.getVGroupRowsNumber()+")").find(".span4:eq("+this.$el.index()+") *").toggle();
     },
     render: function () {
