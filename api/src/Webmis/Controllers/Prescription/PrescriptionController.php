@@ -72,14 +72,8 @@ class PrescriptionController
     {
 
         $dateRangeMin = (int) $request->get('dateRangeMin');
-        if($dateRangeMin){
-            $dateRangeMin = round($dateRangeMin/1000);
-        }
-
         $dateRangeMax = (int) $request->get('dateRangeMax');
-        if($dateRangeMax){
-            $dateRangeMax = round($dateRangeMax/1000);
-        }
+
 
         $clientId = (int) $request->get('clientId');
         $drugName = $request->get('drugName');
@@ -98,22 +92,41 @@ class PrescriptionController
                         'dateRangeMax' => $dateRangeMax,
                         'dateRangeMin' => $dateRangeMin);
 
-        $query = ActionQuery::create()->getPrescriptions($filter);
+        $hidrate = array(
+            'actionType' => true,
+            'properties' => true,
+            'doctor' => true,
+            'drugs' => true,
+            'intervals' => true,
+            'client' => true
+            );
+
+        $filterQuery = ActionQuery::create()->filterPrescriptions($filter);
+        $filteredPrescriptions = $filterQuery->find()->toArray();
+
+        $filteredPrescriptionsIds = array_map(function($prescription) { return $prescription['id'];}, $filteredPrescriptions);
+
+        // return $app['jsonp']->jsonp(array(
+        //     'filterSql' => $filterQuery->toString(),
+        //     'data' => $filteredPrescriptionsIds
+        //     ));
+
+        $query = ActionQuery::create()->getPrescriptions($filteredPrescriptionsIds, $hidrate);
 
         $prescriptions = $query->find();
 
         if($prescriptions){
             foreach ($prescriptions as $prescription) {
-                $data[] = $prescription->serializePrescription();
+                $data[] = $prescription->serializePrescription($hidrate);
             }
         }
 
 
         return $app['jsonp']->jsonp(array(
-            // 'time' => time(),
-            // 'sql' => $query->toString(),
+            //'sql' => $query->toString(),
             'data' => $data
             ));
+
     }
 
 

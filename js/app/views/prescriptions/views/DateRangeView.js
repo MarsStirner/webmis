@@ -24,8 +24,8 @@ define(function(require) {
 			this.ui.$dateRangeMax = this.$el.find("#dateRangeMax");
 			this.ui.$dateRangeMax.datepicker();
 
-			this.ui.$dateRangeType = this.$el.find("#dateRangeType");
-			this.ui.$dateRangeType.buttonset();
+			// this.ui.$dateRangeType = this.$el.find("#dateRangeType");
+			// this.ui.$dateRangeType.buttonset();
 
 			rivets.formatters.date = {
 				read: function(value) {

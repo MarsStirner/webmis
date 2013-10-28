@@ -115,80 +115,103 @@ class Action extends BaseAction
 
     }
 
-    public function serializePrescription(){
+    public function serializePrescription($hidrate = array(
+            'actionType' => true,
+            'properties' => true,
+            'doctor' => false,
+            'drugs' => false,
+            'intervals' => true,
+            'client' => false
+            )){
 
-        $data = array(
-            'assigmentIntervals' => array(),//интервалы назначения
-        );
-
-        $actionType = $this->getActionType();
-        $event = $this->getEvent();
+        $data = array();
 
         $data['id'] = $this->getId();
-        $data['name'] = $actionType->getName();
+
+        if($hidrate['actionType']){
+            $actionType = $this->getActionType();
+            $data['name'] = $actionType->getName();
+        }
+
+
+        if($hidrate['properties']){
+            $data['properties'] = array();
+            $properties = $this->getActionPropertys();
+
+            if($properties){
+                foreach ($properties  as $property) {
+                    $data['properties'][] = $this->serializeProperty($property);
+                }
+            }
+        }
+
+
         $data['eventId'] = $this->getEventId();
 
-        //пациен
-        $client = $event->getClient();
-        $data['client'] = null;
-        if($client){
-            $data['client'] = array(
-                'id' => $client->getId(),
-                'firstName' => $client->getFirstName(),
-                'middleName' => $client->getPatrName(),
-                'lastName' => $client->getLastName()
-            );
-        }
+        if($hidrate['doctor'] || $hidrate['client']){
+            $event = $this->getEvent();
 
-        //лечащий врач
-        $doctor = $event->getDoctor();
-        $data['doctor'] = null;
-        if($doctor){
-            $data['doctor'] = array(
-                'id' => $doctor->getId(),
-                'firstName' => $doctor->getFirstName(),
-                'middleName' => $doctor->getPatrName(),
-                'lastName' => $doctor->getLastName()
-            );
-        }
-
-
-
-        $data['properties'] = array();
-
-        //$data['flatCode'] = $actionType->getFlatCode();
-
-        $properties = $this->getActionPropertys();
-
-        if($properties){
-            foreach ($properties  as $property) {
-                $data['properties'][] = $this->serializeProperty($property);
-            }
-        }
-
-
-
-        $data['drugs'] = array();
-
-        $drugs = $this->getDrugComponents();
-
-        if($drugs){
-            foreach ($drugs as $drug) {
-
-                $data['drugs'][] = array(
-                    'id' => $drug->getId(),
-                    'name' => $drug->getName(),
-                    'dose' => $drug->getDose(),
-                    'unit' => $drug->getUnit()
+            if($hidrate['doctor']){
+                //лечащий врач
+                $doctor = $event->getDoctor();
+                $data['doctor'] = null;
+                if($doctor){
+                    $data['doctor'] = array(
+                        'id' => $doctor->getId(),
+                        'firstName' => $doctor->getFirstName(),
+                        'middleName' => $doctor->getPatrName(),
+                        'lastName' => $doctor->getLastName()
                     );
+                }
+            }
+
+            if($hidrate['client']){
+                //пациен
+                $client = $event->getClient();
+                $data['client'] = null;
+                if($client){
+                    $data['client'] = array(
+                        'id' => $client->getId(),
+                        'firstName' => $client->getFirstName(),
+                        'middleName' => $client->getPatrName(),
+                        'lastName' => $client->getLastName()
+                    );
+                }
+            }
+
+        }
+
+
+        if($hidrate['drugs']){
+            $data['drugs'] = array();
+
+            $drugs = $this->getDrugComponents();
+
+            if($drugs){
+                foreach ($drugs as $drug) {
+
+                    $data['drugs'][] = array(
+                        'id' => $drug->getId(),
+                        'name' => $drug->getName(),
+                        'dose' => $drug->getDose(),
+                        'unit' => $drug->getUnit()
+                        );
+                }
+            }
+
+        }
+
+        if($hidrate['intervals']){
+            $data['assigmentIntervals'] = array();
+
+            $intervals = $this->getDrugCharts();
+
+            if($intervals){
+                $data['assigmentIntervals'] = $this->serializeIntervals($intervals);
             }
         }
 
-        $intervals = $this->getDrugCharts();
 
-        if($intervals){
-            $data['assigmentIntervals'] = $this->serializeIntervals($intervals);
-        }
 
         ksort($data);
 

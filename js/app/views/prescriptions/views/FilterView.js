@@ -1,8 +1,10 @@
 define(function(require) {
 	var BaseView = require('./BaseView');
 	var DateRangeView = require('./DateRangeView');
+	var SelectView = require('./SelectView');
 	var rivets = require('rivets');
 	var template = require('text!../templates/filter.html');
+		require('collections/departments');
 
 	return BaseView.extend({
 		template: template,
@@ -18,8 +20,28 @@ define(function(require) {
 			});
 
 
+			this.departments = new App.Collections.Departments();
+			this.departments.setParams({
+				filter: {
+					hasBeds: true
+				},
+				limit: 0,
+				sortingField: 'name',
+				sortingMethod: 'asc'
+			});
+
+			this.departmentsView = new SelectView({
+				collection: this.departments,
+				model: this.model,
+				modelKey: 'departmentId'
+			});
+
+			this.departments.fetch();
+
+
 			this.addSubViews({
-				'.date-range': this.dateRangeView
+				'#date-range': this.dateRangeView,
+				'#departments':this.departmentsView
 			});
 
 		},

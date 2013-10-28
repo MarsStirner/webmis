@@ -1,0 +1,7 @@
+<select data-value="<%= data.modelKey %>">
+	<option value="false">...</option>
+	<%_.each(data.items, function(item){%>
+		<option value="<%= item.value %>"><%= item.text %></option>
+	<%})%>
+
+</select>
