@@ -213,7 +213,12 @@ class TherapyController
                     ->filterByFDRecordId($action['therapyPhaseTitleId'])
                     ->findOne();
 
-                    $therapyPhaseTitle = $fieldValue->getValue();
+                    if($fieldValue){
+                        $therapyPhaseTitle = $fieldValue->getValue();
+                    }else{
+                        $therapyPhaseTitle = $action['therapyPhaseTitleId'];
+                    }
+
 
                         $phase = array(
                             'eventId' => $action['eventId'],
