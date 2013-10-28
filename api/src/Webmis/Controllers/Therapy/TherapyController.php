@@ -136,9 +136,9 @@ class TherapyController
 
                     if($p['code'] == 'therapyPhaseTitle'){
                         if (array_key_exists('value', $p)){
-                            $a['therapyPhaseTitle'] = $p['value'];
+                            $a['therapyPhaseTitleId'] = $p['value'];
                         }else{
-                            $a['therapyPhaseTitle'] = null;
+                            $a['therapyPhaseTitleId'] = null;
                         }
                     }
 
@@ -206,9 +206,23 @@ class TherapyController
                 foreach ($data as $action){
                     if($therapy['beginDate'] == $action['therapyBegDate']){
 
+                     $fieldValue = FDFieldValueQuery::create()
+                    ->useFDFieldRelatedByIdQuery()
+                        ->filterByName('Наименование')
+                    ->endUse()
+                    ->filterByFDRecordId($action['therapyPhaseTitleId'])
+                    ->findOne();
+
+                    if($fieldValue){
+                        $therapyPhaseTitle = $fieldValue->getValue();
+                    }else{
+                        $therapyPhaseTitle = $action['therapyPhaseTitleId'];
+                    }
+
+
                         $phase = array(
                             'eventId' => $action['eventId'],
-                            'title' => $action['therapyPhaseTitle'],
+                            'title' => $therapyPhaseTitle,
                             'beginDate' => $action['therapyPhaseBegDate'],
                             'endDate' => $action['therapyPhaseEndDate'],
                             'days' => array()
