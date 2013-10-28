@@ -230,7 +230,7 @@ define(function (require) {
 
 						if (shouldSetTherapyPhaseFields) {
 							if (ta.therapyFieldCode == "therapyPhaseTitle") {
-								ta.properties[0].value = lastTherapy.get("phases")[0].titleId.toString();
+								ta.properties[1].value = lastTherapy.get("phases")[0].titleId.toString();
 								ta.readOnly = "true";
 							}
 							if (ta.therapyFieldCode == "therapyPhaseBegDate") {
