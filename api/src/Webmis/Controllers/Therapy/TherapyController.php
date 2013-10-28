@@ -201,7 +201,12 @@ class TherapyController
                     ->filterByFDRecordId($therapy['titleId'])
                     ->findOne();
 
-                $therapies[$key]['title'] = $fieldValue->getValue();
+                if($fieldValue){
+                    $therapies[$key]['title'] = $fieldValue->getValue();
+                }else{
+                    $therapies[$key]['title'] = '';
+                }
+
 
                 foreach ($data as $action){
                     if($therapy['beginDate'] == $action['therapyBegDate']){
