@@ -244,23 +244,20 @@ define(function (require) {
 				console.log(therapyAttrs);
 			}
 
-			var groupedByRow = _(attributes).groupBy(function (item) {
-				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
-				//var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
+      var groupedByRow = _(attributes).groupBy(function (item) {
+        var rowAttr = _(layoutAttributesDir.get(item.type)).find(function (a) {return a.code === "ROW";});
+        var rowValue = "UNDEFINED";
 
-				var rowAttr = _(layoutAttributesDir.get(item.type)).find(function (a) {return a.code === "ROW";});
-				var rowValue = "UNDEFINED";
+        if (rowAttr) {
+          var rowAttrId = rowAttr["id"];
+          var rowValueParams = _(item.layoutAttributeValues).find(function (la) {return la.layoutAttribute_id === rowAttrId;});
+          if (rowValueParams && rowValueParams["value"]) {
+            rowValue = rowValueParams["value"];
+          }
+        }
 
-				if (rowAttr) {
-					var rowAttrId = rowAttr["id"];
-					var rowValueParams = _(item.layoutAttributeValues).find(function (la) {return la.layoutAttribute_id === rowAttrId;});
-					if (rowValueParams && rowValueParams["value"]) {
-						rowValue = rowValueParams["value"];
-					}
-				}
-
-				return rowValue;
-			}, this);
+        return rowValue;
+      }, this);
 
 			/*if (!groupedByRow.UNDEFINED) {
 				groupedByRow.UNDEFINED = [];
@@ -2641,13 +2638,34 @@ define(function (require) {
 				$(this).prop("tabindex", ++i);
 			});
 
-			this.$(".vgroup").each(function () {
+      var self = this;
+
+			this.$(".vgroup").each(function (i) {
         var $this = $(this);
-        $this.parent().nextAll("*:lt("+$this.data("vgroup-rows-number")+")").find(".span4:eq("+$this.index()+") *").toggle();
-				/*if ($(this).siblings(".span6").length > 0) {
-					$(this).parent().before($(this).detach());
-				}*/
+        $this.addClass("vgroup-"+i);
+
+
+        $this
+          .parent()
+          .nextAll("*:lt("+$this.data("vgroup-rows-number")+")")
+          .find(".span4:eq("+$this.index()+")")
+          .addClass("vgroup-"+i+"-span");
 			});
+
+      this.$(".vgroup").each(function (i) {
+        var $vgroupContent = $("<span class='span12 vgroup-content-"+i+"'>");
+        self.$(".vgroup-"+i+"-span")
+          .removeClass("span4")
+          .addClass("span12")
+          .wrap("<div class='row-fluid vgroup-row' style='margin-top: 1em;margin-bottom: 1em;'></div>")
+          .parent()
+          .detach()
+          .appendTo($vgroupContent);
+        $(this).append($vgroupContent.toggle());
+        $vgroupContent.toggle();
+      });
+
+      this.$(".row-fluid:empty").hide();
 
 			return this;
 		}
@@ -2769,19 +2787,19 @@ define(function (require) {
 		render: function (subViews) {
 			ViewBase.prototype.render.call(this, subViews);
 			this.updateFieldCollapse();
-			/*var therapyFieldCode = this.model.get("therapyFieldCode");
+			var therapyFieldCode = this.model.get("therapyFieldCode");
 			switch (therapyFieldCode) {
-				case "therapyPhaseTitle":
+				/*case "therapyPhaseTitle":
 					this.$(".wysisyg").remove();
 					this.$(".RichText").css({"min-height": "2.25em"});
-					break;
+					break;*/
 				//case "therapyPhaseBegDate":
 				case "therapyPhaseDay":
 				//case "therapyPhaseEndDate":
 					this.$(".editor-controls").remove();
 					this.$(".RichText").css({"min-height": "2.25em"});
 					break;
-			}*/
+			}
 			return this;
 		}
 	});
@@ -3220,11 +3238,15 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({
 		template: templates.uiElements._flatDirectory,
 		data: function () {
-			var directoryEntries = (this.model.get("code") === "therapyPhaseTitle" ?
+			var directoryEntries = (this.filterFd ?
 				_(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
 					return frd["parentFdr_id"] == this.parentFdrId;
 				}, this) :
 				_(fds[this.model.get("scope")].toBeautyJSON()));
+
+      this.filterFd = false;
+
+      console.log(directoryEntries.value());
 
 			return {
 				model: this.model,
@@ -3255,6 +3277,7 @@ define(function (require) {
 				this.listenTo(fds, "change-therapyTitle", function (event) {
 					this.parentFdrId = event.id;
 					this.$(".attribute-value").val("").change();
+          this.filterFd = true;
 					this.render();
 				});
 			}
@@ -4110,13 +4133,16 @@ define(function (require) {
 
   Documents.Views.Edit.UIElement.SubHeaderVGroup = Documents.Views.Edit.UIElement.SubHeader.extend({
     className: "doc-sub-header vgroup",
-    template: _.template("<h3><%=model.get('name')%> +</h3>"),
+    attributes: {style: "border: 1px solid #D9D9D9;padding: 1em;border-radius:5px;"},
+    template: _.template("<h3 class='sb-hdr' style='line-height: 1em;'><%=model.get('name')%><span class='sb-tgl icon-plus' style='float: right'></span></h3>"),
     events: {
-      "click": "onClick"
+      "click .sb-hdr": "onClick"
     },
     onClick: function (event) {
-      //var $t = $(event.currentTarget);
-    	this.$el.parent().nextAll("*:lt("+this.model.getVGroupRowsNumber()+")").find(".span4:eq("+this.$el.index()+") *").toggle();
+      console.log("VGROUP CLICK");
+      var $t = $(event.currentTarget);
+      $t.next().toggle();
+    	//this.$el.parent().nextAll("*:lt("+this.model.getVGroupRowsNumber()+")").find(".span4:eq("+this.$el.index()+") *").toggle();
     },
     render: function () {
       Documents.Views.Edit.UIElement.SubHeader.prototype.render.call(this);
