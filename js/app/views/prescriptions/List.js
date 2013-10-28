@@ -1,5 +1,5 @@
 define(function(require) {
-	var template = _.template(require('text!views/prescriptions/templates/list-main.html'));
+	var template = require('text!views/prescriptions/templates/list-main.html');
 
 	var BaseView = require('./views/BaseView');
 

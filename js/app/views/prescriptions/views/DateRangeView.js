@@ -1,5 +1,5 @@
 define(function(require) {
-	var template = _.template(require('text!../templates/date-range.html'));
+	var template = require('text!../templates/date-range.html');
 	var BaseView = require('./BaseView');
 	var rivets = require('rivets');
 
@@ -11,6 +11,10 @@ define(function(require) {
 				this.model.set('dateRangeMin', moment().startOf('day').format('X'));
 				this.model.set('dateRangeMax', moment().startOf('day').add('days', 1).format('X'));
 			}
+		},
+		data: function(){
+			console.log('dateRange data',this.model.toJSON());
+			return this.model.toJSON();
 		},
 		afterRender: function() {
 			this.ui = {};

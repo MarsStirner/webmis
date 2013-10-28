@@ -1,5 +1,5 @@
 define(function(require) {
-	var list = _.template(require('text!../templates/list.html'));
+	var list = require('text!../templates/list.html');
 	var BaseView = require('./BaseView');
 
 	return BaseView.extend({

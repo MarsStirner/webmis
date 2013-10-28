@@ -5,7 +5,7 @@ define(function(require) {
 	var template = require('text!../templates/filter.html');
 
 	return BaseView.extend({
-		template: _.template(template),
+		template: template,
 
 		initialize: function() {
 			this.listenTo(this.model, 'change', this.filter);

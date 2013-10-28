@@ -16,9 +16,11 @@
     data-value="filter.dateRangeMax | date" />
 
 
-    <div id="dateRangeType">
-      <input type="checkbox" id="days" /><label for="days">День</label>
-      <input type="checkbox" id="weeks" /><label for="weeks">Неделя</label>
-      <input type="checkbox" id="months" /><label for="months">Месяц</label>
+    <div id="dateRangeType"><% if(data.dateType){%>
+sdfghfgh
+    <%} %>
+      <input name="date-type" type="radio" id="days" data-checked="filter.dateType" value="days"/><label for="days">День</label>
+      <input name="date-type" type="radio" id="weeks"  data-checked="filter.dateType" value="weeks"/><label for="weeks">Неделя</label>
+      <input name="date-type" type="radio" id="months"  data-checked="filter.dateType" value="months"/><label for="months">Месяц</label>
     </div>
 </div>
