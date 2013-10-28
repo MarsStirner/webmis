@@ -228,6 +228,7 @@ class TherapyController
                         $phase = array(
                             'eventId' => $action['eventId'],
                             'title' => $therapyPhaseTitle,
+                            'titleId' => $action['therapyPhaseTitleId'],
                             'beginDate' => $action['therapyPhaseBegDate'],
                             'endDate' => $action['therapyPhaseEndDate'],
                             'days' => array()
