@@ -22,8 +22,10 @@ define(function(require) {
 		},
 
 		renderSubViews: function() {
-			// console.log('renderSubViews', this.subViews)
 			_.each(this._subViews, function(view, selector) {
+				if(!view){
+
+				}
 				view.setElement(this.$(selector)).render();
 			}, this);
 		},

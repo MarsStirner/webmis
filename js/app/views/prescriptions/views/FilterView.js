@@ -1,16 +1,27 @@
 define(function(require) {
-	var template = _.template(require('text!../templates/filter.html'));
 	var BaseView = require('./BaseView');
+	var DateRangeView = require('./DateRangeView');
 	var rivets = require('rivets');
+	var template = require('text!../templates/filter.html');
 
 	return BaseView.extend({
-		template: template,
+		template: _.template(template),
 
 		initialize: function() {
 			this.listenTo(this.model, 'change', this.filter);
 			this.listenTo(this.model, 'change', this.setUrlParams);
 
 			this.model.set(this.getUrlParams());
+
+			this.dateRangeView = new DateRangeView({
+				model: this.model
+			});
+
+
+			this.addSubViews({
+				'.date-range': this.dateRangeView
+			});
+
 		},
 
 		getUrlParams: function() {
@@ -27,6 +38,8 @@ define(function(require) {
 			// 	this.fetchXhr.abort();
 			// }
 
+			console.log('filter', this.model.toJSON());
+
 			this.fetchXhr = this.collection.fetch({
 				data: this.model.toJSON(),
 				processData: true
@@ -34,21 +47,6 @@ define(function(require) {
 		},
 
 		afterRender: function() {
-			this.ui = {};
-			this.ui.$datepicker = this.$el.find("#datepicker");
-			this.ui.$datepicker.datepicker();
-
-			rivets.formatters.date = {
-				read: function(value) {
-					var output = moment(value,'X').format('DD.MM.YYYY');
-					return output;
-				},
-				publish: function(value) {
-					var output = moment(value, 'DD.MM.YYYY').format('X');
-					return output;
-				}
-			}
-
 			rivets.bind(this.el, {
 				filter: this.model
 			});
