@@ -5,13 +5,11 @@ namespace Webmis\Models\om;
 use \BaseObject;
 use \BasePeer;
 use \Criteria;
-use \DateTime;
 use \Exception;
 use \PDO;
 use \Persistent;
 use \Propel;
 use \PropelCollection;
-use \PropelDateTime;
 use \PropelException;
 use \PropelObjectCollection;
 use \PropelPDO;
@@ -102,18 +100,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
      * @var        int
      */
     protected $order;
-
-    /**
-     * The value for the createdatetime field.
-     * @var        string
-     */
-    protected $createdatetime;
-
-    /**
-     * The value for the modifydatetime field.
-     * @var        string
-     */
-    protected $modifydatetime;
 
     /**
      * @var        FDFieldValue
@@ -240,86 +226,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
     public function getOrder()
     {
         return $this->order;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [createdatetime] column value.
-     *
-     *
-     * @param string $format The date/time format string (either date()-style or strftime()-style).
-     *				 If format is null, then the raw DateTime object will be returned.
-     * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getCreatedatetime($format = 'Y-m-d H:i:s')
-    {
-        if ($this->createdatetime === null) {
-            return null;
-        }
-
-        if ($this->createdatetime === '0000-00-00 00:00:00') {
-            // while technically this is not a default value of null,
-            // this seems to be closest in meaning.
-            return null;
-        }
-
-        try {
-            $dt = new DateTime($this->createdatetime);
-        } catch (Exception $x) {
-            throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->createdatetime, true), $x);
-        }
-
-        if ($format === null) {
-            // Because propel.useDateTimeClass is true, we return a DateTime object.
-            return $dt;
-        }
-
-        if (strpos($format, '%') !== false) {
-            return strftime($format, $dt->format('U'));
-        }
-
-        return $dt->format($format);
-
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [modifydatetime] column value.
-     *
-     *
-     * @param string $format The date/time format string (either date()-style or strftime()-style).
-     *				 If format is null, then the raw DateTime object will be returned.
-     * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getModifydatetime($format = 'Y-m-d H:i:s')
-    {
-        if ($this->modifydatetime === null) {
-            return null;
-        }
-
-        if ($this->modifydatetime === '0000-00-00 00:00:00') {
-            // while technically this is not a default value of null,
-            // this seems to be closest in meaning.
-            return null;
-        }
-
-        try {
-            $dt = new DateTime($this->modifydatetime);
-        } catch (Exception $x) {
-            throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->modifydatetime, true), $x);
-        }
-
-        if ($format === null) {
-            // Because propel.useDateTimeClass is true, we return a DateTime object.
-            return $dt;
-        }
-
-        if (strpos($format, '%') !== false) {
-            return strftime($format, $dt->format('U'));
-        }
-
-        return $dt->format($format);
-
     }
 
     /**
@@ -524,52 +430,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
     } // setOrder()
 
     /**
-     * Sets the value of [createdatetime] column to a normalized version of the date/time value specified.
-     *
-     * @param mixed $v string, integer (timestamp), or DateTime value.
-     *               Empty strings are treated as null.
-     * @return FDField The current object (for fluent API support)
-     */
-    public function setCreatedatetime($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->createdatetime !== null || $dt !== null) {
-            $currentDateAsString = ($this->createdatetime !== null && $tmpDt = new DateTime($this->createdatetime)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-            $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-            if ($currentDateAsString !== $newDateAsString) {
-                $this->createdatetime = $newDateAsString;
-                $this->modifiedColumns[] = FDFieldPeer::CREATEDATETIME;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setCreatedatetime()
-
-    /**
-     * Sets the value of [modifydatetime] column to a normalized version of the date/time value specified.
-     *
-     * @param mixed $v string, integer (timestamp), or DateTime value.
-     *               Empty strings are treated as null.
-     * @return FDField The current object (for fluent API support)
-     */
-    public function setModifydatetime($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->modifydatetime !== null || $dt !== null) {
-            $currentDateAsString = ($this->modifydatetime !== null && $tmpDt = new DateTime($this->modifydatetime)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-            $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-            if ($currentDateAsString !== $newDateAsString) {
-                $this->modifydatetime = $newDateAsString;
-                $this->modifiedColumns[] = FDFieldPeer::MODIFYDATETIME;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setModifydatetime()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -610,8 +470,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
             $this->mask = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
             $this->mandatory = ($row[$startcol + 7] !== null) ? (boolean) $row[$startcol + 7] : null;
             $this->order = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
-            $this->createdatetime = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-            $this->modifydatetime = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -620,7 +478,7 @@ abstract class BaseFDField extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 11; // 11 = FDFieldPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 9; // 9 = FDFieldPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating FDField object", $e);
@@ -760,19 +618,8 @@ abstract class BaseFDField extends BaseObject implements Persistent
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
-                // timestampable behavior
-                if (!$this->isColumnModified(FDFieldPeer::CREATEDATETIME)) {
-                    $this->setCreatedatetime(time());
-                }
-                if (!$this->isColumnModified(FDFieldPeer::MODIFYDATETIME)) {
-                    $this->setModifydatetime(time());
-                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
-                // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(FDFieldPeer::MODIFYDATETIME)) {
-                    $this->setModifydatetime(time());
-                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -905,12 +752,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
         if ($this->isColumnModified(FDFieldPeer::ORDER)) {
             $modifiedColumns[':p' . $index++]  = '`order`';
         }
-        if ($this->isColumnModified(FDFieldPeer::CREATEDATETIME)) {
-            $modifiedColumns[':p' . $index++]  = '`createDatetime`';
-        }
-        if ($this->isColumnModified(FDFieldPeer::MODIFYDATETIME)) {
-            $modifiedColumns[':p' . $index++]  = '`modifyDatetime`';
-        }
 
         $sql = sprintf(
             'INSERT INTO `FDField` (%s) VALUES (%s)',
@@ -948,12 +789,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
                         break;
                     case '`order`':
                         $stmt->bindValue($identifier, $this->order, PDO::PARAM_INT);
-                        break;
-                    case '`createDatetime`':
-                        $stmt->bindValue($identifier, $this->createdatetime, PDO::PARAM_STR);
-                        break;
-                    case '`modifyDatetime`':
-                        $stmt->bindValue($identifier, $this->modifydatetime, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1136,12 +971,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
             case 8:
                 return $this->getOrder();
                 break;
-            case 9:
-                return $this->getCreatedatetime();
-                break;
-            case 10:
-                return $this->getModifydatetime();
-                break;
             default:
                 return null;
                 break;
@@ -1180,8 +1009,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
             $keys[6] => $this->getMask(),
             $keys[7] => $this->getMandatory(),
             $keys[8] => $this->getOrder(),
-            $keys[9] => $this->getCreatedatetime(),
-            $keys[10] => $this->getModifydatetime(),
         );
         if ($includeForeignObjects) {
             if (null !== $this->aFDFieldValueRelatedById) {
@@ -1251,12 +1078,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
             case 8:
                 $this->setOrder($value);
                 break;
-            case 9:
-                $this->setCreatedatetime($value);
-                break;
-            case 10:
-                $this->setModifydatetime($value);
-                break;
         } // switch()
     }
 
@@ -1290,8 +1111,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
         if (array_key_exists($keys[6], $arr)) $this->setMask($arr[$keys[6]]);
         if (array_key_exists($keys[7], $arr)) $this->setMandatory($arr[$keys[7]]);
         if (array_key_exists($keys[8], $arr)) $this->setOrder($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setCreatedatetime($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setModifydatetime($arr[$keys[10]]);
     }
 
     /**
@@ -1312,8 +1131,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
         if ($this->isColumnModified(FDFieldPeer::MASK)) $criteria->add(FDFieldPeer::MASK, $this->mask);
         if ($this->isColumnModified(FDFieldPeer::MANDATORY)) $criteria->add(FDFieldPeer::MANDATORY, $this->mandatory);
         if ($this->isColumnModified(FDFieldPeer::ORDER)) $criteria->add(FDFieldPeer::ORDER, $this->order);
-        if ($this->isColumnModified(FDFieldPeer::CREATEDATETIME)) $criteria->add(FDFieldPeer::CREATEDATETIME, $this->createdatetime);
-        if ($this->isColumnModified(FDFieldPeer::MODIFYDATETIME)) $criteria->add(FDFieldPeer::MODIFYDATETIME, $this->modifydatetime);
 
         return $criteria;
     }
@@ -1385,8 +1202,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
         $copyObj->setMask($this->getMask());
         $copyObj->setMandatory($this->getMandatory());
         $copyObj->setOrder($this->getOrder());
-        $copyObj->setCreatedatetime($this->getCreatedatetime());
-        $copyObj->setModifydatetime($this->getModifydatetime());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1777,8 +1592,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
         $this->mask = null;
         $this->mandatory = null;
         $this->order = null;
-        $this->createdatetime = null;
-        $this->modifydatetime = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
@@ -1838,20 +1651,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
     public function isAlreadyInSave()
     {
         return $this->alreadyInSave;
-    }
-
-    // timestampable behavior
-
-    /**
-     * Mark the current object so that the update date doesn't get updated during next save
-     *
-     * @return     FDField The current object (for fluent API support)
-     */
-    public function keepUpdateDateUnchanged()
-    {
-        $this->modifiedColumns[] = FDFieldPeer::MODIFYDATETIME;
-
-        return $this;
     }
 
 }
