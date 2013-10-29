@@ -9,31 +9,31 @@ use \PDOStatement;
 use \Propel;
 use \PropelException;
 use \PropelPDO;
-use Webmis\Models\ActionPropertyHospitalBed;
-use Webmis\Models\ActionPropertyHospitalBedPeer;
-use Webmis\Models\map\ActionPropertyHospitalBedTableMap;
+use Webmis\Models\RbMethodOfAdministration;
+use Webmis\Models\RbMethodOfAdministrationPeer;
+use Webmis\Models\map\RbMethodOfAdministrationTableMap;
 
 /**
- * Base static class for performing query and update operations on the 'ActionProperty_HospitalBed' table.
+ * Base static class for performing query and update operations on the 'rbMethodOfAdministration' table.
  *
  *
  *
  * @package propel.generator.Models.om
  */
-abstract class BaseActionPropertyHospitalBedPeer
+abstract class BaseRbMethodOfAdministrationPeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'Webmis-API';
 
     /** the table name for this class */
-    const TABLE_NAME = 'ActionProperty_HospitalBed';
+    const TABLE_NAME = 'rbMethodOfAdministration';
 
     /** the related Propel class for this table */
-    const OM_CLASS = 'Webmis\\Models\\ActionPropertyHospitalBed';
+    const OM_CLASS = 'Webmis\\Models\\RbMethodOfAdministration';
 
     /** the related TableMap class for this table */
-    const TM_CLASS = 'ActionPropertyHospitalBedTableMap';
+    const TM_CLASS = 'RbMethodOfAdministrationTableMap';
 
     /** The total number of columns. */
     const NUM_COLUMNS = 3;
@@ -45,22 +45,22 @@ abstract class BaseActionPropertyHospitalBedPeer
     const NUM_HYDRATE_COLUMNS = 3;
 
     /** the column name for the id field */
-    const ID = 'ActionProperty_HospitalBed.id';
+    const ID = 'rbMethodOfAdministration.id';
 
-    /** the column name for the index field */
-    const INDEX = 'ActionProperty_HospitalBed.index';
+    /** the column name for the code field */
+    const CODE = 'rbMethodOfAdministration.code';
 
-    /** the column name for the value field */
-    const VALUE = 'ActionProperty_HospitalBed.value';
+    /** the column name for the name field */
+    const NAME = 'rbMethodOfAdministration.name';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
     /**
-     * An identiy map to hold any loaded instances of ActionPropertyHospitalBed objects.
+     * An identiy map to hold any loaded instances of RbMethodOfAdministration objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
-     * @var        array ActionPropertyHospitalBed[]
+     * @var        array RbMethodOfAdministration[]
      */
     public static $instances = array();
 
@@ -69,14 +69,14 @@ abstract class BaseActionPropertyHospitalBedPeer
      * holds an array of fieldnames
      *
      * first dimension keys are the type constants
-     * e.g. ActionPropertyHospitalBedPeer::$fieldNames[ActionPropertyHospitalBedPeer::TYPE_PHPNAME][0] = 'Id'
+     * e.g. RbMethodOfAdministrationPeer::$fieldNames[RbMethodOfAdministrationPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('id', 'index', 'value', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'index', 'value', ),
-        BasePeer::TYPE_COLNAME => array (ActionPropertyHospitalBedPeer::ID, ActionPropertyHospitalBedPeer::INDEX, ActionPropertyHospitalBedPeer::VALUE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'INDEX', 'VALUE', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'index', 'value', ),
+        BasePeer::TYPE_PHPNAME => array ('id', 'code', 'name', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'code', 'name', ),
+        BasePeer::TYPE_COLNAME => array (RbMethodOfAdministrationPeer::ID, RbMethodOfAdministrationPeer::CODE, RbMethodOfAdministrationPeer::NAME, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'CODE', 'NAME', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'code', 'name', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
@@ -84,14 +84,14 @@ abstract class BaseActionPropertyHospitalBedPeer
      * holds an array of keys for quick access to the fieldnames array
      *
      * first dimension keys are the type constants
-     * e.g. ActionPropertyHospitalBedPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
+     * e.g. RbMethodOfAdministrationPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('id' => 0, 'index' => 1, 'value' => 2, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'index' => 1, 'value' => 2, ),
-        BasePeer::TYPE_COLNAME => array (ActionPropertyHospitalBedPeer::ID => 0, ActionPropertyHospitalBedPeer::INDEX => 1, ActionPropertyHospitalBedPeer::VALUE => 2, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'INDEX' => 1, 'VALUE' => 2, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'index' => 1, 'value' => 2, ),
+        BasePeer::TYPE_PHPNAME => array ('id' => 0, 'code' => 1, 'name' => 2, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'code' => 1, 'name' => 2, ),
+        BasePeer::TYPE_COLNAME => array (RbMethodOfAdministrationPeer::ID => 0, RbMethodOfAdministrationPeer::CODE => 1, RbMethodOfAdministrationPeer::NAME => 2, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'CODE' => 1, 'NAME' => 2, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'code' => 1, 'name' => 2, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, )
     );
 
@@ -107,10 +107,10 @@ abstract class BaseActionPropertyHospitalBedPeer
      */
     public static function translateFieldName($name, $fromType, $toType)
     {
-        $toNames = ActionPropertyHospitalBedPeer::getFieldNames($toType);
-        $key = isset(ActionPropertyHospitalBedPeer::$fieldKeys[$fromType][$name]) ? ActionPropertyHospitalBedPeer::$fieldKeys[$fromType][$name] : null;
+        $toNames = RbMethodOfAdministrationPeer::getFieldNames($toType);
+        $key = isset(RbMethodOfAdministrationPeer::$fieldKeys[$fromType][$name]) ? RbMethodOfAdministrationPeer::$fieldKeys[$fromType][$name] : null;
         if ($key === null) {
-            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(ActionPropertyHospitalBedPeer::$fieldKeys[$fromType], true));
+            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(RbMethodOfAdministrationPeer::$fieldKeys[$fromType], true));
         }
 
         return $toNames[$key];
@@ -127,11 +127,11 @@ abstract class BaseActionPropertyHospitalBedPeer
      */
     public static function getFieldNames($type = BasePeer::TYPE_PHPNAME)
     {
-        if (!array_key_exists($type, ActionPropertyHospitalBedPeer::$fieldNames)) {
+        if (!array_key_exists($type, RbMethodOfAdministrationPeer::$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
         }
 
-        return ActionPropertyHospitalBedPeer::$fieldNames[$type];
+        return RbMethodOfAdministrationPeer::$fieldNames[$type];
     }
 
     /**
@@ -143,12 +143,12 @@ abstract class BaseActionPropertyHospitalBedPeer
      *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. ActionPropertyHospitalBedPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. RbMethodOfAdministrationPeer::COLUMN_NAME).
      * @return string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(ActionPropertyHospitalBedPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(RbMethodOfAdministrationPeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -166,13 +166,13 @@ abstract class BaseActionPropertyHospitalBedPeer
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ActionPropertyHospitalBedPeer::ID);
-            $criteria->addSelectColumn(ActionPropertyHospitalBedPeer::INDEX);
-            $criteria->addSelectColumn(ActionPropertyHospitalBedPeer::VALUE);
+            $criteria->addSelectColumn(RbMethodOfAdministrationPeer::ID);
+            $criteria->addSelectColumn(RbMethodOfAdministrationPeer::CODE);
+            $criteria->addSelectColumn(RbMethodOfAdministrationPeer::NAME);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.index');
-            $criteria->addSelectColumn($alias . '.value');
+            $criteria->addSelectColumn($alias . '.code');
+            $criteria->addSelectColumn($alias . '.name');
         }
     }
 
@@ -192,21 +192,21 @@ abstract class BaseActionPropertyHospitalBedPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ActionPropertyHospitalBedPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(RbMethodOfAdministrationPeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            ActionPropertyHospitalBedPeer::addSelectColumns($criteria);
+            RbMethodOfAdministrationPeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-        $criteria->setDbName(ActionPropertyHospitalBedPeer::DATABASE_NAME); // Set the correct dbName
+        $criteria->setDbName(RbMethodOfAdministrationPeer::DATABASE_NAME); // Set the correct dbName
 
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyHospitalBedPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(RbMethodOfAdministrationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
         // BasePeer returns a PDOStatement
         $stmt = BasePeer::doCount($criteria, $con);
@@ -225,7 +225,7 @@ abstract class BaseActionPropertyHospitalBedPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      PropelPDO $con
-     * @return                 ActionPropertyHospitalBed
+     * @return                 RbMethodOfAdministration
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -233,7 +233,7 @@ abstract class BaseActionPropertyHospitalBedPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = ActionPropertyHospitalBedPeer::doSelect($critcopy, $con);
+        $objects = RbMethodOfAdministrationPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -251,7 +251,7 @@ abstract class BaseActionPropertyHospitalBedPeer
      */
     public static function doSelect(Criteria $criteria, PropelPDO $con = null)
     {
-        return ActionPropertyHospitalBedPeer::populateObjects(ActionPropertyHospitalBedPeer::doSelectStmt($criteria, $con));
+        return RbMethodOfAdministrationPeer::populateObjects(RbMethodOfAdministrationPeer::doSelectStmt($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
@@ -269,16 +269,16 @@ abstract class BaseActionPropertyHospitalBedPeer
     public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyHospitalBedPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(RbMethodOfAdministrationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         if (!$criteria->hasSelectClause()) {
             $criteria = clone $criteria;
-            ActionPropertyHospitalBedPeer::addSelectColumns($criteria);
+            RbMethodOfAdministrationPeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
-        $criteria->setDbName(ActionPropertyHospitalBedPeer::DATABASE_NAME);
+        $criteria->setDbName(RbMethodOfAdministrationPeer::DATABASE_NAME);
 
         // BasePeer returns a PDOStatement
         return BasePeer::doSelect($criteria, $con);
@@ -292,16 +292,16 @@ abstract class BaseActionPropertyHospitalBedPeer
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
      * and retrieveByPK*() calls.
      *
-     * @param      ActionPropertyHospitalBed $obj A ActionPropertyHospitalBed object.
+     * @param      RbMethodOfAdministration $obj A RbMethodOfAdministration object.
      * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
             if ($key === null) {
-                $key = serialize(array((string) $obj->getid(), (string) $obj->getindex()));
+                $key = (string) $obj->getid();
             } // if key === null
-            ActionPropertyHospitalBedPeer::$instances[$key] = $obj;
+            RbMethodOfAdministrationPeer::$instances[$key] = $obj;
         }
     }
 
@@ -313,7 +313,7 @@ abstract class BaseActionPropertyHospitalBedPeer
      * methods in your stub classes -- you may need to explicitly remove objects
      * from the cache in order to prevent returning objects that no longer exist.
      *
-     * @param      mixed $value A ActionPropertyHospitalBed object or a primary key value.
+     * @param      mixed $value A RbMethodOfAdministration object or a primary key value.
      *
      * @return void
      * @throws PropelException - if the value is invalid.
@@ -321,17 +321,17 @@ abstract class BaseActionPropertyHospitalBedPeer
     public static function removeInstanceFromPool($value)
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
-            if (is_object($value) && $value instanceof ActionPropertyHospitalBed) {
-                $key = serialize(array((string) $value->getid(), (string) $value->getindex()));
-            } elseif (is_array($value) && count($value) === 2) {
+            if (is_object($value) && $value instanceof RbMethodOfAdministration) {
+                $key = (string) $value->getid();
+            } elseif (is_scalar($value)) {
                 // assume we've been passed a primary key
-                $key = serialize(array((string) $value[0], (string) $value[1]));
+                $key = (string) $value;
             } else {
-                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or ActionPropertyHospitalBed object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or RbMethodOfAdministration object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
                 throw $e;
             }
 
-            unset(ActionPropertyHospitalBedPeer::$instances[$key]);
+            unset(RbMethodOfAdministrationPeer::$instances[$key]);
         }
     } // removeInstanceFromPool()
 
@@ -342,14 +342,14 @@ abstract class BaseActionPropertyHospitalBedPeer
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
      * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-     * @return   ActionPropertyHospitalBed Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+     * @return   RbMethodOfAdministration Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see        getPrimaryKeyHash()
      */
     public static function getInstanceFromPool($key)
     {
         if (Propel::isInstancePoolingEnabled()) {
-            if (isset(ActionPropertyHospitalBedPeer::$instances[$key])) {
-                return ActionPropertyHospitalBedPeer::$instances[$key];
+            if (isset(RbMethodOfAdministrationPeer::$instances[$key])) {
+                return RbMethodOfAdministrationPeer::$instances[$key];
             }
         }
 
@@ -365,16 +365,16 @@ abstract class BaseActionPropertyHospitalBedPeer
     {
       if ($and_clear_all_references)
       {
-        foreach (ActionPropertyHospitalBedPeer::$instances as $instance)
+        foreach (RbMethodOfAdministrationPeer::$instances as $instance)
         {
           $instance->clearAllReferences(true);
         }
       }
-        ActionPropertyHospitalBedPeer::$instances = array();
+        RbMethodOfAdministrationPeer::$instances = array();
     }
 
     /**
-     * Method to invalidate the instance pool of all tables related to ActionProperty_HospitalBed
+     * Method to invalidate the instance pool of all tables related to rbMethodOfAdministration
      * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
@@ -394,11 +394,11 @@ abstract class BaseActionPropertyHospitalBedPeer
     public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
     {
         // If the PK cannot be derived from the row, return null.
-        if ($row[$startcol] === null && $row[$startcol + 1] === null) {
+        if ($row[$startcol] === null) {
             return null;
         }
 
-        return serialize(array((string) $row[$startcol], (string) $row[$startcol + 1]));
+        return (string) $row[$startcol];
     }
 
     /**
@@ -413,7 +413,7 @@ abstract class BaseActionPropertyHospitalBedPeer
     public static function getPrimaryKeyFromRow($row, $startcol = 0)
     {
 
-        return array((int) $row[$startcol], (int) $row[$startcol + 1]);
+        return (int) $row[$startcol];
     }
 
     /**
@@ -428,11 +428,11 @@ abstract class BaseActionPropertyHospitalBedPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = ActionPropertyHospitalBedPeer::getOMClass();
+        $cls = RbMethodOfAdministrationPeer::getOMClass();
         // populate the object(s)
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key = ActionPropertyHospitalBedPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj = ActionPropertyHospitalBedPeer::getInstanceFromPool($key))) {
+            $key = RbMethodOfAdministrationPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj = RbMethodOfAdministrationPeer::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
@@ -441,7 +441,7 @@ abstract class BaseActionPropertyHospitalBedPeer
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                ActionPropertyHospitalBedPeer::addInstanceToPool($obj, $key);
+                RbMethodOfAdministrationPeer::addInstanceToPool($obj, $key);
             } // if key exists
         }
         $stmt->closeCursor();
@@ -455,21 +455,21 @@ abstract class BaseActionPropertyHospitalBedPeer
      * @param      int $startcol The 0-based offset for reading from the resultset row.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
-     * @return array (ActionPropertyHospitalBed object, last column rank)
+     * @return array (RbMethodOfAdministration object, last column rank)
      */
     public static function populateObject($row, $startcol = 0)
     {
-        $key = ActionPropertyHospitalBedPeer::getPrimaryKeyHashFromRow($row, $startcol);
-        if (null !== ($obj = ActionPropertyHospitalBedPeer::getInstanceFromPool($key))) {
+        $key = RbMethodOfAdministrationPeer::getPrimaryKeyHashFromRow($row, $startcol);
+        if (null !== ($obj = RbMethodOfAdministrationPeer::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $startcol, true); // rehydrate
-            $col = $startcol + ActionPropertyHospitalBedPeer::NUM_HYDRATE_COLUMNS;
+            $col = $startcol + RbMethodOfAdministrationPeer::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = ActionPropertyHospitalBedPeer::OM_CLASS;
+            $cls = RbMethodOfAdministrationPeer::OM_CLASS;
             $obj = new $cls();
             $col = $obj->hydrate($row, $startcol);
-            ActionPropertyHospitalBedPeer::addInstanceToPool($obj, $key);
+            RbMethodOfAdministrationPeer::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -484,7 +484,7 @@ abstract class BaseActionPropertyHospitalBedPeer
      */
     public static function getTableMap()
     {
-        return Propel::getDatabaseMap(ActionPropertyHospitalBedPeer::DATABASE_NAME)->getTable(ActionPropertyHospitalBedPeer::TABLE_NAME);
+        return Propel::getDatabaseMap(RbMethodOfAdministrationPeer::DATABASE_NAME)->getTable(RbMethodOfAdministrationPeer::TABLE_NAME);
     }
 
     /**
@@ -492,9 +492,9 @@ abstract class BaseActionPropertyHospitalBedPeer
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getDatabaseMap(BaseActionPropertyHospitalBedPeer::DATABASE_NAME);
-      if (!$dbMap->hasTable(BaseActionPropertyHospitalBedPeer::TABLE_NAME)) {
-        $dbMap->addTableObject(new ActionPropertyHospitalBedTableMap());
+      $dbMap = Propel::getDatabaseMap(BaseRbMethodOfAdministrationPeer::DATABASE_NAME);
+      if (!$dbMap->hasTable(BaseRbMethodOfAdministrationPeer::TABLE_NAME)) {
+        $dbMap->addTableObject(new RbMethodOfAdministrationTableMap());
       }
     }
 
@@ -506,13 +506,13 @@ abstract class BaseActionPropertyHospitalBedPeer
      */
     public static function getOMClass($row = 0, $colnum = 0)
     {
-        return ActionPropertyHospitalBedPeer::OM_CLASS;
+        return RbMethodOfAdministrationPeer::OM_CLASS;
     }
 
     /**
-     * Performs an INSERT on the database, given a ActionPropertyHospitalBed or Criteria object.
+     * Performs an INSERT on the database, given a RbMethodOfAdministration or Criteria object.
      *
-     * @param      mixed $values Criteria or ActionPropertyHospitalBed object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or RbMethodOfAdministration object containing data that is used to create the INSERT statement.
      * @param      PropelPDO $con the PropelPDO connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -521,18 +521,22 @@ abstract class BaseActionPropertyHospitalBedPeer
     public static function doInsert($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyHospitalBedPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(RbMethodOfAdministrationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from ActionPropertyHospitalBed object
+            $criteria = $values->buildCriteria(); // build Criteria from RbMethodOfAdministration object
+        }
+
+        if ($criteria->containsKey(RbMethodOfAdministrationPeer::ID) && $criteria->keyContainsValue(RbMethodOfAdministrationPeer::ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.RbMethodOfAdministrationPeer::ID.')');
         }
 
 
         // Set the correct dbName
-        $criteria->setDbName(ActionPropertyHospitalBedPeer::DATABASE_NAME);
+        $criteria->setDbName(RbMethodOfAdministrationPeer::DATABASE_NAME);
 
         try {
             // use transaction because $criteria could contain info
@@ -549,9 +553,9 @@ abstract class BaseActionPropertyHospitalBedPeer
     }
 
     /**
-     * Performs an UPDATE on the database, given a ActionPropertyHospitalBed or Criteria object.
+     * Performs an UPDATE on the database, given a RbMethodOfAdministration or Criteria object.
      *
-     * @param      mixed $values Criteria or ActionPropertyHospitalBed object containing data that is used to create the UPDATE statement.
+     * @param      mixed $values Criteria or RbMethodOfAdministration object containing data that is used to create the UPDATE statement.
      * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
      * @return int             The number of affected rows (if supported by underlying database driver).
      * @throws PropelException Any exceptions caught during processing will be
@@ -560,43 +564,35 @@ abstract class BaseActionPropertyHospitalBedPeer
     public static function doUpdate($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyHospitalBedPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(RbMethodOfAdministrationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
-        $selectCriteria = new Criteria(ActionPropertyHospitalBedPeer::DATABASE_NAME);
+        $selectCriteria = new Criteria(RbMethodOfAdministrationPeer::DATABASE_NAME);
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(ActionPropertyHospitalBedPeer::ID);
-            $value = $criteria->remove(ActionPropertyHospitalBedPeer::ID);
+            $comparison = $criteria->getComparison(RbMethodOfAdministrationPeer::ID);
+            $value = $criteria->remove(RbMethodOfAdministrationPeer::ID);
             if ($value) {
-                $selectCriteria->add(ActionPropertyHospitalBedPeer::ID, $value, $comparison);
+                $selectCriteria->add(RbMethodOfAdministrationPeer::ID, $value, $comparison);
             } else {
-                $selectCriteria->setPrimaryTableName(ActionPropertyHospitalBedPeer::TABLE_NAME);
+                $selectCriteria->setPrimaryTableName(RbMethodOfAdministrationPeer::TABLE_NAME);
             }
 
-            $comparison = $criteria->getComparison(ActionPropertyHospitalBedPeer::INDEX);
-            $value = $criteria->remove(ActionPropertyHospitalBedPeer::INDEX);
-            if ($value) {
-                $selectCriteria->add(ActionPropertyHospitalBedPeer::INDEX, $value, $comparison);
-            } else {
-                $selectCriteria->setPrimaryTableName(ActionPropertyHospitalBedPeer::TABLE_NAME);
-            }
-
-        } else { // $values is ActionPropertyHospitalBed object
+        } else { // $values is RbMethodOfAdministration object
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
         }
 
         // set the correct dbName
-        $criteria->setDbName(ActionPropertyHospitalBedPeer::DATABASE_NAME);
+        $criteria->setDbName(RbMethodOfAdministrationPeer::DATABASE_NAME);
 
         return BasePeer::doUpdate($selectCriteria, $criteria, $con);
     }
 
     /**
-     * Deletes all rows from the ActionProperty_HospitalBed table.
+     * Deletes all rows from the rbMethodOfAdministration table.
      *
      * @param      PropelPDO $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).
@@ -605,19 +601,19 @@ abstract class BaseActionPropertyHospitalBedPeer
     public static function doDeleteAll(PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyHospitalBedPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(RbMethodOfAdministrationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
         $affectedRows = 0; // initialize var to track total num of affected rows
         try {
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
-            $affectedRows += BasePeer::doDeleteAll(ActionPropertyHospitalBedPeer::TABLE_NAME, $con, ActionPropertyHospitalBedPeer::DATABASE_NAME);
+            $affectedRows += BasePeer::doDeleteAll(RbMethodOfAdministrationPeer::TABLE_NAME, $con, RbMethodOfAdministrationPeer::DATABASE_NAME);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            ActionPropertyHospitalBedPeer::clearInstancePool();
-            ActionPropertyHospitalBedPeer::clearRelatedInstancePool();
+            RbMethodOfAdministrationPeer::clearInstancePool();
+            RbMethodOfAdministrationPeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -628,9 +624,9 @@ abstract class BaseActionPropertyHospitalBedPeer
     }
 
     /**
-     * Performs a DELETE on the database, given a ActionPropertyHospitalBed or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a RbMethodOfAdministration or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or ActionPropertyHospitalBed object or primary key or array of primary keys
+     * @param      mixed $values Criteria or RbMethodOfAdministration object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      PropelPDO $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -641,40 +637,32 @@ abstract class BaseActionPropertyHospitalBedPeer
      public static function doDelete($values, PropelPDO $con = null)
      {
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyHospitalBedPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(RbMethodOfAdministrationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             // invalidate the cache for all objects of this type, since we have no
             // way of knowing (without running a query) what objects should be invalidated
             // from the cache based on this Criteria.
-            ActionPropertyHospitalBedPeer::clearInstancePool();
+            RbMethodOfAdministrationPeer::clearInstancePool();
             // rename for clarity
             $criteria = clone $values;
-        } elseif ($values instanceof ActionPropertyHospitalBed) { // it's a model object
+        } elseif ($values instanceof RbMethodOfAdministration) { // it's a model object
             // invalidate the cache for this single object
-            ActionPropertyHospitalBedPeer::removeInstanceFromPool($values);
+            RbMethodOfAdministrationPeer::removeInstanceFromPool($values);
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(ActionPropertyHospitalBedPeer::DATABASE_NAME);
-            // primary key is composite; we therefore, expect
-            // the primary key passed to be an array of pkey values
-            if (count($values) == count($values, COUNT_RECURSIVE)) {
-                // array is not multi-dimensional
-                $values = array($values);
-            }
-            foreach ($values as $value) {
-                $criterion = $criteria->getNewCriterion(ActionPropertyHospitalBedPeer::ID, $value[0]);
-                $criterion->addAnd($criteria->getNewCriterion(ActionPropertyHospitalBedPeer::INDEX, $value[1]));
-                $criteria->addOr($criterion);
-                // we can invalidate the cache for this single PK
-                ActionPropertyHospitalBedPeer::removeInstanceFromPool($value);
+            $criteria = new Criteria(RbMethodOfAdministrationPeer::DATABASE_NAME);
+            $criteria->add(RbMethodOfAdministrationPeer::ID, (array) $values, Criteria::IN);
+            // invalidate the cache for this object(s)
+            foreach ((array) $values as $singleval) {
+                RbMethodOfAdministrationPeer::removeInstanceFromPool($singleval);
             }
         }
 
         // Set the correct dbName
-        $criteria->setDbName(ActionPropertyHospitalBedPeer::DATABASE_NAME);
+        $criteria->setDbName(RbMethodOfAdministrationPeer::DATABASE_NAME);
 
         $affectedRows = 0; // initialize var to track total num of affected rows
 
@@ -684,7 +672,7 @@ abstract class BaseActionPropertyHospitalBedPeer
             $con->beginTransaction();
 
             $affectedRows += BasePeer::doDelete($criteria, $con);
-            ActionPropertyHospitalBedPeer::clearRelatedInstancePool();
+            RbMethodOfAdministrationPeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -695,13 +683,13 @@ abstract class BaseActionPropertyHospitalBedPeer
     }
 
     /**
-     * Validates all modified columns of given ActionPropertyHospitalBed object.
+     * Validates all modified columns of given RbMethodOfAdministration object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      ActionPropertyHospitalBed $obj The object to validate.
+     * @param      RbMethodOfAdministration $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
@@ -711,8 +699,8 @@ abstract class BaseActionPropertyHospitalBedPeer
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(ActionPropertyHospitalBedPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(ActionPropertyHospitalBedPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(RbMethodOfAdministrationPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(RbMethodOfAdministrationPeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -728,35 +716,65 @@ abstract class BaseActionPropertyHospitalBedPeer
 
         }
 
-        return BasePeer::doValidate(ActionPropertyHospitalBedPeer::DATABASE_NAME, ActionPropertyHospitalBedPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(RbMethodOfAdministrationPeer::DATABASE_NAME, RbMethodOfAdministrationPeer::TABLE_NAME, $columns);
     }
 
     /**
-     * Retrieve object using using composite pkey values.
-     * @param   int $id
-     * @param   int $index
-     * @param      PropelPDO $con
-     * @return   ActionPropertyHospitalBed
+     * Retrieve a single object by pkey.
+     *
+     * @param      int $pk the primary key.
+     * @param      PropelPDO $con the connection to use
+     * @return RbMethodOfAdministration
      */
-    public static function retrieveByPK($id, $index, PropelPDO $con = null) {
-        $_instancePoolKey = serialize(array((string) $id, (string) $index));
-         if (null !== ($obj = ActionPropertyHospitalBedPeer::getInstanceFromPool($_instancePoolKey))) {
-             return $obj;
+    public static function retrieveByPK($pk, PropelPDO $con = null)
+    {
+
+        if (null !== ($obj = RbMethodOfAdministrationPeer::getInstanceFromPool((string) $pk))) {
+            return $obj;
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyHospitalBedPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(RbMethodOfAdministrationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
-        $criteria = new Criteria(ActionPropertyHospitalBedPeer::DATABASE_NAME);
-        $criteria->add(ActionPropertyHospitalBedPeer::ID, $id);
-        $criteria->add(ActionPropertyHospitalBedPeer::INDEX, $index);
-        $v = ActionPropertyHospitalBedPeer::doSelect($criteria, $con);
 
-        return !empty($v) ? $v[0] : null;
+        $criteria = new Criteria(RbMethodOfAdministrationPeer::DATABASE_NAME);
+        $criteria->add(RbMethodOfAdministrationPeer::ID, $pk);
+
+        $v = RbMethodOfAdministrationPeer::doSelect($criteria, $con);
+
+        return !empty($v) > 0 ? $v[0] : null;
     }
-} // BaseActionPropertyHospitalBedPeer
+
+    /**
+     * Retrieve multiple objects by pkey.
+     *
+     * @param      array $pks List of primary keys
+     * @param      PropelPDO $con the connection to use
+     * @return RbMethodOfAdministration[]
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function retrieveByPKs($pks, PropelPDO $con = null)
+    {
+        if ($con === null) {
+            $con = Propel::getConnection(RbMethodOfAdministrationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $objs = null;
+        if (empty($pks)) {
+            $objs = array();
+        } else {
+            $criteria = new Criteria(RbMethodOfAdministrationPeer::DATABASE_NAME);
+            $criteria->add(RbMethodOfAdministrationPeer::ID, $pks, Criteria::IN);
+            $objs = RbMethodOfAdministrationPeer::doSelect($criteria, $con);
+        }
+
+        return $objs;
+    }
+
+} // BaseRbMethodOfAdministrationPeer
 
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-BaseActionPropertyHospitalBedPeer::buildTableMap();
+BaseRbMethodOfAdministrationPeer::buildTableMap();
 

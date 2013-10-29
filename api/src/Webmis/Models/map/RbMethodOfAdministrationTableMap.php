@@ -7,7 +7,7 @@ use \TableMap;
 
 
 /**
- * This class defines the structure of the 'ActionProperty_MKB' table.
+ * This class defines the structure of the 'rbMethodOfAdministration' table.
  *
  *
  *
@@ -18,13 +18,13 @@ use \TableMap;
  *
  * @package    propel.generator.Models.map
  */
-class ActionPropertyMkbTableMap extends TableMap
+class RbMethodOfAdministrationTableMap extends TableMap
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Models.map.ActionPropertyMkbTableMap';
+    const CLASS_NAME = 'Models.map.RbMethodOfAdministrationTableMap';
 
     /**
      * Initialize the table attributes, columns and validators
@@ -36,15 +36,15 @@ class ActionPropertyMkbTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('ActionProperty_MKB');
-        $this->setPhpName('ActionPropertyMkb');
-        $this->setClassname('Webmis\\Models\\ActionPropertyMkb');
+        $this->setName('rbMethodOfAdministration');
+        $this->setPhpName('RbMethodOfAdministration');
+        $this->setClassname('Webmis\\Models\\RbMethodOfAdministration');
         $this->setPackage('Models');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'id', 'INTEGER', true, null, null);
-        $this->addPrimaryKey('index', 'index', 'INTEGER', true, null, 0);
-        $this->addColumn('value', 'value', 'INTEGER', false, null, null);
+        $this->addColumn('code', 'code', 'VARCHAR', true, 16, null);
+        $this->addColumn('name', 'name', 'VARCHAR', true, 64, null);
         // validators
     } // initialize()
 
@@ -55,4 +55,4 @@ class ActionPropertyMkbTableMap extends TableMap
     {
     } // buildRelations()
 
-} // ActionPropertyMkbTableMap
+} // RbMethodOfAdministrationTableMap

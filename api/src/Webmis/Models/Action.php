@@ -21,44 +21,56 @@ class Action extends BaseAction
     public function serializeProperty($property){
 
             $data = array();
-            $type = $property->getActionPropertyType();
             $data['id'] = $property->getId();
-            $data['name'] = $type->getName();
-            $data['type'] = $type->getTypeName();
-            $data['code'] = $type->getCode();
+            $type = $property->getActionPropertyType();
             $value = null;
 
-            switch ($data['type']) {
-                    case 'String':
-                    case 'Html':
-                    case 'Text':
-                    //case 'Constructor':
-                        if($property->getActionPropertyString()){
-                            $value =  $property->getActionPropertyString()->getValue();
-                        }
-                    break;
-                    case 'Double':
-                        if($property->getActionPropertyDouble()){
-                            $value = $property->getActionPropertyDouble()->getValue();
-                        }
-                    break;
-                    // case 'FlatDirectory':
-                    //     // $p['value'] = $actionProperty->getActionPropertyFDRecord()->getValue();
-                    // break;
-                    case 'Date':
-                        if($property->getActionPropertyDate()){
-                            $date = $property->getActionPropertyDate()->getValue();
-                            $dateArray = explode('-', $date);
-                            $year = $dateArray[0];
-                            if($year > 1000){
-                                $value = strtotime($date)*1000;
-                            }
-                        }
+            if($type){
 
-                    break;
-                    default:
-                        $value = 'этот тип экшен проперти пока не поддерживается';
-                    break;
+                $data['name'] = $type->getName();
+                $data['type'] = $type->getTypeName();
+                $data['code'] = $type->getCode();
+
+                switch ($data['type']) {
+                        case 'String':
+                        case 'Html':
+                        case 'Text':
+
+                        //case 'Constructor':
+                            if($property->getActionPropertyString()){
+                                $value =  $property->getActionPropertyString()->getValue();
+                            }
+                        break;
+                        case 'ReferenceRb':
+                            if($property->getActionPropertyInteger()){
+                                $value =  $property->getActionPropertyInteger()->getValue();
+                            }
+
+                        break;
+                        case 'Double':
+                            if($property->getActionPropertyDouble()){
+                                $value = $property->getActionPropertyDouble()->getValue();
+                            }
+                        break;
+                        // case 'FlatDirectory':
+                        //     // $p['value'] = $actionProperty->getActionPropertyFDRecord()->getValue();
+                        // break;
+                        case 'Date':
+                            if($property->getActionPropertyDate()){
+                                $date = $property->getActionPropertyDate()->getValue();
+                                $dateArray = explode('-', $date);
+                                $year = $dateArray[0];
+                                if($year > 1000){
+                                    $value = strtotime($date)*1000;
+                                }
+                            }
+
+                        break;
+                        default:
+                            $value = 'этот тип экшен проперти пока не поддерживается';
+                        break;
+                }
+
             }
 
             $data['value'] = $value;

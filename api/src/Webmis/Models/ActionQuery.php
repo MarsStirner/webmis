@@ -73,7 +73,10 @@ class ActionQuery extends BaseActionQuery
                                     'clientId' => null,
                                     'drugName' => null,
                                     'doctorId' => null,
+                                    'pacientName' => null,
+                                    'doctorName' => null,
                                     'departmentId' => null,
+                                    'administrationId' => null,
                                     'dateRangeMin' => null,
                                     'dateRangeMax' => null
                                     );
@@ -92,8 +95,19 @@ class ActionQuery extends BaseActionQuery
                         ->filterByFlatCode(array('chemotherapy','prescription','infusion','analgesia'))
                         ->filterByDeleted(false)
                     ->endUse()
+                    ->_if($administrationId)
+                        //фильтр по способу введения
+                        ->useActionPropertyQuery('ap')
+                            ->useActionPropertyTypeQuery('apt')
+                                ->filterByCode('moa')
+                            ->endUse()
+                            ->useActionPropertyIntegerQuery('api_v')
+                                ->filterByValue($administrationId)
+                            ->endUse()
+                        ->endUse()
+                    ->_endIf()
 
-                    ->_if($eventId || $clientId || $doctorId || $departmentId)
+                    ->_if($eventId || $clientId || $doctorId || $departmentId || $pacientName || $doctorName)
                          ->useEventQuery()
                             //фильтр по истории боле
                             ->_if($eventId)
@@ -102,6 +116,18 @@ class ActionQuery extends BaseActionQuery
                             //фильтр по пациенту
                             ->_if($clientId)
                                 ->filterByClientId($clientId)
+                            ->_endIf()
+                            //
+                            ->_if($pacientName)
+                                ->useClientQuery()
+                                    ->filterByLastName($pacientName.'%')
+                                ->endUse()
+                            ->_endIf()
+
+                            ->_if($doctorName)
+                                ->useDoctorQuery()
+                                    ->filterByLastName($doctorName.'%')
+                                ->endUse()
                             ->_endIf()
 
                             //фильтр по доктору
@@ -146,7 +172,7 @@ class ActionQuery extends BaseActionQuery
                         ->useDrugComponentQuery()
                             //фильтр по названию лекарства
                             ->_if($drugName)
-                                ->filterByName($drugName)
+                                ->filterByName($drugName.'%')
                             ->_endif()
                         ->endUse()
                     ->_endif();

@@ -76,9 +76,12 @@ class PrescriptionController
 
 
         $clientId = (int) $request->get('clientId');
+        $pacientName = $request->get('pacientName');
         $drugName = $request->get('drugName');
         $departmentId = (int) $request->get('departmentId');
+        $administrationId = (int) $request->get('administrationId');
         $doctorId = (int) $request->get('doctorId');
+        $doctorName = $request->get('doctorName');
         $eventId = (int) $request->get('eventId');
         $page = (int) $request->get('page') ?: 1;
         $limit = (int) $request->get('limit') ?: 20;
@@ -87,8 +90,11 @@ class PrescriptionController
 
         $filter = array('eventId' => $eventId,
                         'clientId' => $clientId,
+                        'pacientName' => $pacientName,
+                        'doctorName' => $doctorName,
                         'drugName' => $drugName,
                         'departmentId' => $departmentId,
+                        'administrationId' => $administrationId,
                         'dateRangeMax' => $dateRangeMax,
                         'dateRangeMin' => $dateRangeMin);
 
@@ -107,19 +113,23 @@ class PrescriptionController
         $filteredPrescriptionsIds = array_map(function($prescription) { return $prescription['id'];}, $filteredPrescriptions);
 
         // return $app['jsonp']->jsonp(array(
+        //     'filter' => $filter,
         //     'filterSql' => $filterQuery->toString(),
         //     'data' => $filteredPrescriptionsIds
         //     ));
 
-        $query = ActionQuery::create()->getPrescriptions($filteredPrescriptionsIds, $hidrate);
+        if(count($filteredPrescriptionsIds)){
+            $query = ActionQuery::create()->getPrescriptions($filteredPrescriptionsIds, $hidrate);
 
-        $prescriptions = $query->find();
+            $prescriptions = $query->find();
 
-        if($prescriptions){
-            foreach ($prescriptions as $prescription) {
-                $data[] = $prescription->serializePrescription($hidrate);
+            if($prescriptions){
+                foreach ($prescriptions as $prescription) {
+                    $data[] = $prescription->serializePrescription($hidrate);
+                }
             }
         }
+
 
 
         return $app['jsonp']->jsonp(array(

@@ -11,29 +11,29 @@ use \Persistent;
 use \Propel;
 use \PropelException;
 use \PropelPDO;
-use Webmis\Models\ActionPropertyAction;
-use Webmis\Models\ActionPropertyActionPeer;
-use Webmis\Models\ActionPropertyActionQuery;
+use Webmis\Models\RbMethodOfAdministration;
+use Webmis\Models\RbMethodOfAdministrationPeer;
+use Webmis\Models\RbMethodOfAdministrationQuery;
 
 /**
- * Base class that represents a row from the 'ActionProperty_Action' table.
+ * Base class that represents a row from the 'rbMethodOfAdministration' table.
  *
  *
  *
  * @package    propel.generator.Models.om
  */
-abstract class BaseActionPropertyAction extends BaseObject implements Persistent
+abstract class BaseRbMethodOfAdministration extends BaseObject implements Persistent
 {
     /**
      * Peer class name
      */
-    const PEER = 'Webmis\\Models\\ActionPropertyActionPeer';
+    const PEER = 'Webmis\\Models\\RbMethodOfAdministrationPeer';
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        ActionPropertyActionPeer
+     * @var        RbMethodOfAdministrationPeer
      */
     protected static $peer;
 
@@ -50,17 +50,16 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
     protected $id;
 
     /**
-     * The value for the index field.
-     * Note: this column has a database default value of: 0
-     * @var        int
+     * The value for the code field.
+     * @var        string
      */
-    protected $index;
+    protected $code;
 
     /**
-     * The value for the value field.
-     * @var        int
+     * The value for the name field.
+     * @var        string
      */
-    protected $value;
+    protected $name;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -83,27 +82,6 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
     protected $alreadyInClearAllReferencesDeep = false;
 
     /**
-     * Applies default values to this object.
-     * This method should be called from the object's constructor (or
-     * equivalent initialization method).
-     * @see        __construct()
-     */
-    public function applyDefaultValues()
-    {
-        $this->index = 0;
-    }
-
-    /**
-     * Initializes internal state of BaseActionPropertyAction object.
-     * @see        applyDefaults()
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->applyDefaultValues();
-    }
-
-    /**
      * Get the [id] column value.
      *
      * @return int
@@ -114,30 +92,30 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [index] column value.
+     * Get the [code] column value.
      *
-     * @return int
+     * @return string
      */
-    public function getindex()
+    public function getcode()
     {
-        return $this->index;
+        return $this->code;
     }
 
     /**
-     * Get the [value] column value.
+     * Get the [name] column value.
      *
-     * @return int
+     * @return string
      */
-    public function getvalue()
+    public function getname()
     {
-        return $this->value;
+        return $this->name;
     }
 
     /**
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return ActionPropertyAction The current object (for fluent API support)
+     * @return RbMethodOfAdministration The current object (for fluent API support)
      */
     public function setid($v)
     {
@@ -147,7 +125,7 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[] = ActionPropertyActionPeer::ID;
+            $this->modifiedColumns[] = RbMethodOfAdministrationPeer::ID;
         }
 
 
@@ -155,46 +133,46 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
     } // setid()
 
     /**
-     * Set the value of [index] column.
+     * Set the value of [code] column.
      *
-     * @param int $v new value
-     * @return ActionPropertyAction The current object (for fluent API support)
+     * @param string $v new value
+     * @return RbMethodOfAdministration The current object (for fluent API support)
      */
-    public function setindex($v)
+    public function setcode($v)
     {
         if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
-        if ($this->index !== $v) {
-            $this->index = $v;
-            $this->modifiedColumns[] = ActionPropertyActionPeer::INDEX;
+        if ($this->code !== $v) {
+            $this->code = $v;
+            $this->modifiedColumns[] = RbMethodOfAdministrationPeer::CODE;
         }
 
 
         return $this;
-    } // setindex()
+    } // setcode()
 
     /**
-     * Set the value of [value] column.
+     * Set the value of [name] column.
      *
-     * @param int $v new value
-     * @return ActionPropertyAction The current object (for fluent API support)
+     * @param string $v new value
+     * @return RbMethodOfAdministration The current object (for fluent API support)
      */
-    public function setvalue($v)
+    public function setname($v)
     {
         if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
-        if ($this->value !== $v) {
-            $this->value = $v;
-            $this->modifiedColumns[] = ActionPropertyActionPeer::VALUE;
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[] = RbMethodOfAdministrationPeer::NAME;
         }
 
 
         return $this;
-    } // setvalue()
+    } // setname()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -206,10 +184,6 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->index !== 0) {
-                return false;
-            }
-
         // otherwise, everything was equal, so return true
         return true;
     } // hasOnlyDefaultValues()
@@ -233,8 +207,8 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
         try {
 
             $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-            $this->index = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->value = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+            $this->code = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+            $this->name = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -243,10 +217,10 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 3; // 3 = ActionPropertyActionPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = RbMethodOfAdministrationPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating ActionPropertyAction object", $e);
+            throw new PropelException("Error populating RbMethodOfAdministration object", $e);
         }
     }
 
@@ -289,13 +263,13 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyActionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(RbMethodOfAdministrationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $stmt = ActionPropertyActionPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+        $stmt = RbMethodOfAdministrationPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
         $row = $stmt->fetch(PDO::FETCH_NUM);
         $stmt->closeCursor();
         if (!$row) {
@@ -325,12 +299,12 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyActionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(RbMethodOfAdministrationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = ActionPropertyActionQuery::create()
+            $deleteQuery = RbMethodOfAdministrationQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -368,7 +342,7 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ActionPropertyActionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(RbMethodOfAdministrationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
@@ -388,7 +362,7 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ActionPropertyActionPeer::addInstanceToPool($this);
+                RbMethodOfAdministrationPeer::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -449,20 +423,24 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
         $modifiedColumns = array();
         $index = 0;
 
+        $this->modifiedColumns[] = RbMethodOfAdministrationPeer::ID;
+        if (null !== $this->id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . RbMethodOfAdministrationPeer::ID . ')');
+        }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ActionPropertyActionPeer::ID)) {
+        if ($this->isColumnModified(RbMethodOfAdministrationPeer::ID)) {
             $modifiedColumns[':p' . $index++]  = '`id`';
         }
-        if ($this->isColumnModified(ActionPropertyActionPeer::INDEX)) {
-            $modifiedColumns[':p' . $index++]  = '`index`';
+        if ($this->isColumnModified(RbMethodOfAdministrationPeer::CODE)) {
+            $modifiedColumns[':p' . $index++]  = '`code`';
         }
-        if ($this->isColumnModified(ActionPropertyActionPeer::VALUE)) {
-            $modifiedColumns[':p' . $index++]  = '`value`';
+        if ($this->isColumnModified(RbMethodOfAdministrationPeer::NAME)) {
+            $modifiedColumns[':p' . $index++]  = '`name`';
         }
 
         $sql = sprintf(
-            'INSERT INTO `ActionProperty_Action` (%s) VALUES (%s)',
+            'INSERT INTO `rbMethodOfAdministration` (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -474,11 +452,11 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
                     case '`id`':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case '`index`':
-                        $stmt->bindValue($identifier, $this->index, PDO::PARAM_INT);
+                    case '`code`':
+                        $stmt->bindValue($identifier, $this->code, PDO::PARAM_STR);
                         break;
-                    case '`value`':
-                        $stmt->bindValue($identifier, $this->value, PDO::PARAM_INT);
+                    case '`name`':
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -487,6 +465,13 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
         }
+
+        try {
+            $pk = $con->lastInsertId();
+        } catch (Exception $e) {
+            throw new PropelException('Unable to get autoincrement id.', $e);
+        }
+        $this->setid($pk);
 
         $this->setNew(false);
     }
@@ -567,7 +552,7 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = ActionPropertyActionPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = RbMethodOfAdministrationPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -591,7 +576,7 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = ActionPropertyActionPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = RbMethodOfAdministrationPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -611,10 +596,10 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
                 return $this->getid();
                 break;
             case 1:
-                return $this->getindex();
+                return $this->getcode();
                 break;
             case 2:
-                return $this->getvalue();
+                return $this->getname();
                 break;
             default:
                 return null;
@@ -638,15 +623,15 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
-        if (isset($alreadyDumpedObjects['ActionPropertyAction'][serialize($this->getPrimaryKey())])) {
+        if (isset($alreadyDumpedObjects['RbMethodOfAdministration'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['ActionPropertyAction'][serialize($this->getPrimaryKey())] = true;
-        $keys = ActionPropertyActionPeer::getFieldNames($keyType);
+        $alreadyDumpedObjects['RbMethodOfAdministration'][$this->getPrimaryKey()] = true;
+        $keys = RbMethodOfAdministrationPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getid(),
-            $keys[1] => $this->getindex(),
-            $keys[2] => $this->getvalue(),
+            $keys[1] => $this->getcode(),
+            $keys[2] => $this->getname(),
         );
 
         return $result;
@@ -665,7 +650,7 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = ActionPropertyActionPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = RbMethodOfAdministrationPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 
         $this->setByPosition($pos, $value);
     }
@@ -685,10 +670,10 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
                 $this->setid($value);
                 break;
             case 1:
-                $this->setindex($value);
+                $this->setcode($value);
                 break;
             case 2:
-                $this->setvalue($value);
+                $this->setname($value);
                 break;
         } // switch()
     }
@@ -712,11 +697,11 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = ActionPropertyActionPeer::getFieldNames($keyType);
+        $keys = RbMethodOfAdministrationPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setid($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setindex($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setvalue($arr[$keys[2]]);
+        if (array_key_exists($keys[1], $arr)) $this->setcode($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setname($arr[$keys[2]]);
     }
 
     /**
@@ -726,11 +711,11 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ActionPropertyActionPeer::DATABASE_NAME);
+        $criteria = new Criteria(RbMethodOfAdministrationPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(ActionPropertyActionPeer::ID)) $criteria->add(ActionPropertyActionPeer::ID, $this->id);
-        if ($this->isColumnModified(ActionPropertyActionPeer::INDEX)) $criteria->add(ActionPropertyActionPeer::INDEX, $this->index);
-        if ($this->isColumnModified(ActionPropertyActionPeer::VALUE)) $criteria->add(ActionPropertyActionPeer::VALUE, $this->value);
+        if ($this->isColumnModified(RbMethodOfAdministrationPeer::ID)) $criteria->add(RbMethodOfAdministrationPeer::ID, $this->id);
+        if ($this->isColumnModified(RbMethodOfAdministrationPeer::CODE)) $criteria->add(RbMethodOfAdministrationPeer::CODE, $this->code);
+        if ($this->isColumnModified(RbMethodOfAdministrationPeer::NAME)) $criteria->add(RbMethodOfAdministrationPeer::NAME, $this->name);
 
         return $criteria;
     }
@@ -745,37 +730,30 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(ActionPropertyActionPeer::DATABASE_NAME);
-        $criteria->add(ActionPropertyActionPeer::ID, $this->id);
-        $criteria->add(ActionPropertyActionPeer::INDEX, $this->index);
+        $criteria = new Criteria(RbMethodOfAdministrationPeer::DATABASE_NAME);
+        $criteria->add(RbMethodOfAdministrationPeer::ID, $this->id);
 
         return $criteria;
     }
 
     /**
-     * Returns the composite primary key for this object.
-     * The array elements will be in same order as specified in XML.
-     * @return array
+     * Returns the primary key for this object (row).
+     * @return int
      */
     public function getPrimaryKey()
     {
-        $pks = array();
-        $pks[0] = $this->getid();
-        $pks[1] = $this->getindex();
-
-        return $pks;
+        return $this->getid();
     }
 
     /**
-     * Set the [composite] primary key.
+     * Generic method to set the primary key (id column).
      *
-     * @param array $keys The elements of the composite key (order must match the order in XML file).
+     * @param  int $key Primary key.
      * @return void
      */
-    public function setPrimaryKey($keys)
+    public function setPrimaryKey($key)
     {
-        $this->setid($keys[0]);
-        $this->setindex($keys[1]);
+        $this->setid($key);
     }
 
     /**
@@ -785,7 +763,7 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return (null === $this->getid()) && (null === $this->getindex());
+        return null === $this->getid();
     }
 
     /**
@@ -794,18 +772,18 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param object $copyObj An object of ActionPropertyAction (or compatible) type.
+     * @param object $copyObj An object of RbMethodOfAdministration (or compatible) type.
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setid($this->getid());
-        $copyObj->setindex($this->getindex());
-        $copyObj->setvalue($this->getvalue());
+        $copyObj->setcode($this->getcode());
+        $copyObj->setname($this->getname());
         if ($makeNew) {
             $copyObj->setNew(true);
+            $copyObj->setid(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -818,7 +796,7 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      * objects.
      *
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return ActionPropertyAction Clone of current object.
+     * @return RbMethodOfAdministration Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -838,12 +816,12 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return ActionPropertyActionPeer
+     * @return RbMethodOfAdministrationPeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new ActionPropertyActionPeer();
+            self::$peer = new RbMethodOfAdministrationPeer();
         }
 
         return self::$peer;
@@ -855,13 +833,12 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
     public function clear()
     {
         $this->id = null;
-        $this->index = null;
-        $this->value = null;
+        $this->code = null;
+        $this->name = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
         $this->clearAllReferences();
-        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -893,7 +870,7 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ActionPropertyActionPeer::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(RbMethodOfAdministrationPeer::DEFAULT_STRING_FORMAT);
     }
 
     /**

@@ -4,7 +4,8 @@ define(function(require) {
 	var SelectView = require('./SelectView');
 	var rivets = require('rivets');
 	var template = require('text!../templates/filter.html');
-		require('collections/departments');
+	require('collections/departments');
+	var AdministrationMethod = require('collections/AdministrationMethod');
 
 	return BaseView.extend({
 		template: template,
@@ -17,6 +18,14 @@ define(function(require) {
 
 			this.dateRangeView = new DateRangeView({
 				model: this.model
+			});
+
+			this.administration = new AdministrationMethod();
+
+			this.administrationView = new SelectView({
+				collection: this.administration,
+				model: this.model,
+				modelKey: 'administrationId'
 			});
 
 
@@ -36,12 +45,14 @@ define(function(require) {
 				modelKey: 'departmentId'
 			});
 
+			this.administration.fetch()
 			this.departments.fetch();
 
 
 			this.addSubViews({
 				'#date-range': this.dateRangeView,
-				'#departments':this.departmentsView
+				'#departments': this.departmentsView,
+				'#administration': this.administrationView
 			});
 
 		},
@@ -56,13 +67,17 @@ define(function(require) {
 		},
 
 		filter: function() {
-			// if(this.fetchXhr){
-			// 	this.fetchXhr.abort();
-			// }
+			if (_.isObject(this.lastXHR)) {
+				// console.log('filter0', this.lastXHR, this.model.toJSON());
+				if (this.lastXHR && this.lastXHR.readyState != 4) {
+					this.lastXHR.abort('stale');
 
-			console.log('filter', this.model.toJSON());
+				}
+				// console.log('filter1', this.lastXHR, this.model.toJSON());
+			}
 
-			this.fetchXhr = this.collection.fetch({
+
+			this.lastXHR = this.collection.fetch({
 				data: this.model.toJSON(),
 				processData: true
 			});

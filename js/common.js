@@ -332,7 +332,7 @@ Collection = Backbone.Collection.extend({
 
 		var errorHandler = $.extend(function (model, xhr) {
 			// TODO Отрабатывать ошибки
-			if (xhr.responseText.length) {
+			if (xhr && xhr.responseText && xhr.responseText.length) {
 				var json;
 				try {
 					json = JSON.parse(xhr.responseText);

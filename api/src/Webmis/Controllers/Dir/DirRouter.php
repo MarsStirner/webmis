@@ -24,6 +24,9 @@ class DirRouter implements ControllerProviderInterface
 		//справочник rbResult
 		$dirRouter->get('/result', getController('rbResult/list'));
 
+		//справочник RbMethodOfAdministrationController
+		$dirRouter->get('/administration', getController('rbMethodOfAdministration/list'));
+
 		//справочник rbTreatment
 		$dirRouter->get('/treatment', getController('rbTreatment/list'));
 

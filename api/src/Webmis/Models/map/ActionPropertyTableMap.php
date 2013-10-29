@@ -43,6 +43,7 @@ class ActionPropertyTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addForeignPrimaryKey('id', 'id', 'INTEGER' , 'ActionProperty_String', 'id', true, null, null);
+        $this->addForeignPrimaryKey('id', 'id', 'INTEGER' , 'ActionProperty_Integer', 'id', true, null, null);
         $this->addForeignPrimaryKey('id', 'id', 'INTEGER' , 'ActionProperty_Date', 'id', true, null, null);
         $this->addForeignPrimaryKey('id', 'id', 'INTEGER' , 'ActionProperty_Double', 'id', true, null, null);
         $this->addForeignPrimaryKey('id', 'id', 'INTEGER' , 'ActionProperty_OrgStructure', 'id', true, null, null);
@@ -70,14 +71,11 @@ class ActionPropertyTableMap extends TableMap
         $this->addRelation('Action', 'Webmis\\Models\\Action', RelationMap::MANY_TO_ONE, array('action_id' => 'id', ), null, null);
         $this->addRelation('ActionPropertyType', 'Webmis\\Models\\ActionPropertyType', RelationMap::MANY_TO_ONE, array('type_id' => 'id', ), null, null);
         $this->addRelation('ActionPropertyString', 'Webmis\\Models\\ActionPropertyString', RelationMap::MANY_TO_ONE, array('id' => 'id', ), null, null);
+        $this->addRelation('ActionPropertyInteger', 'Webmis\\Models\\ActionPropertyInteger', RelationMap::MANY_TO_ONE, array('id' => 'id', ), null, null);
         $this->addRelation('ActionPropertyDate', 'Webmis\\Models\\ActionPropertyDate', RelationMap::MANY_TO_ONE, array('id' => 'id', ), null, null);
         $this->addRelation('ActionPropertyDouble', 'Webmis\\Models\\ActionPropertyDouble', RelationMap::MANY_TO_ONE, array('id' => 'id', ), null, null);
         $this->addRelation('ActionPropertyOrgStructure', 'Webmis\\Models\\ActionPropertyOrgStructure', RelationMap::MANY_TO_ONE, array('id' => 'id', ), null, null);
         $this->addRelation('ActionPropertyFDRecord', 'Webmis\\Models\\ActionPropertyFDRecord', RelationMap::MANY_TO_ONE, array('id' => 'id', ), null, null);
-        $this->addRelation('ActionPropertyAction', 'Webmis\\Models\\ActionPropertyAction', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', 'CASCADE', 'ActionPropertyActions');
-        $this->addRelation('ActionPropertyHospitalBed', 'Webmis\\Models\\ActionPropertyHospitalBed', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', 'CASCADE', 'ActionPropertyHospitalBeds');
-        $this->addRelation('ActionPropertyInteger', 'Webmis\\Models\\ActionPropertyInteger', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', 'CASCADE', 'ActionPropertyIntegers');
-        $this->addRelation('ActionPropertyMkb', 'Webmis\\Models\\ActionPropertyMkb', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', 'CASCADE', 'ActionPropertyMkbs');
         $this->addRelation('ActionPropertyTime', 'Webmis\\Models\\ActionPropertyTime', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', 'CASCADE', 'ActionPropertyTimes');
     } // buildRelations()
 
