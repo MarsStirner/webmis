@@ -10,9 +10,13 @@ use \Exception;
 use \PDO;
 use \Persistent;
 use \Propel;
+use \PropelCollection;
 use \PropelDateTime;
 use \PropelException;
+use \PropelObjectCollection;
 use \PropelPDO;
+use Webmis\Models\RlsBalanceOfGoods;
+use Webmis\Models\RlsBalanceOfGoodsQuery;
 use Webmis\Models\rbUnit;
 use Webmis\Models\rbUnitQuery;
 use Webmis\Models\rlsActMatters;
@@ -165,6 +169,12 @@ abstract class BaserlsNomen extends BaseObject implements Persistent
     protected $arlsTradeName;
 
     /**
+     * @var        PropelObjectCollection|RlsBalanceOfGoods[] Collection to store aggregation of RlsBalanceOfGoods objects.
+     */
+    protected $collRlsBalanceOfGoodss;
+    protected $collRlsBalanceOfGoodssPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -183,6 +193,12 @@ abstract class BaserlsNomen extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $rlsBalanceOfGoodssScheduledForDeletion = null;
 
     /**
      * Get the [id] column value.
@@ -790,6 +806,8 @@ abstract class BaserlsNomen extends BaseObject implements Persistent
             $this->arlsPacking = null;
             $this->arlsActMatters = null;
             $this->arlsTradeName = null;
+            $this->collRlsBalanceOfGoodss = null;
+
         } // if (deep)
     }
 
@@ -966,6 +984,23 @@ abstract class BaserlsNomen extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
+            }
+
+            if ($this->rlsBalanceOfGoodssScheduledForDeletion !== null) {
+                if (!$this->rlsBalanceOfGoodssScheduledForDeletion->isEmpty()) {
+                    RlsBalanceOfGoodsQuery::create()
+                        ->filterByPrimaryKeys($this->rlsBalanceOfGoodssScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->rlsBalanceOfGoodssScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collRlsBalanceOfGoodss !== null) {
+                foreach ($this->collRlsBalanceOfGoodss as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -1213,6 +1248,14 @@ abstract class BaserlsNomen extends BaseObject implements Persistent
             }
 
 
+                if ($this->collRlsBalanceOfGoodss !== null) {
+                    foreach ($this->collRlsBalanceOfGoodss as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
 
             $this->alreadyInValidation = false;
         }
@@ -1347,6 +1390,9 @@ abstract class BaserlsNomen extends BaseObject implements Persistent
             }
             if (null !== $this->arlsTradeName) {
                 $result['rlsTradeName'] = $this->arlsTradeName->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collRlsBalanceOfGoodss) {
+                $result['RlsBalanceOfGoodss'] = $this->collRlsBalanceOfGoodss->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1558,6 +1604,12 @@ abstract class BaserlsNomen extends BaseObject implements Persistent
             $copyObj->setNew(false);
             // store object hash to prevent cycle
             $this->startCopy = true;
+
+            foreach ($this->getRlsBalanceOfGoodss() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addRlsBalanceOfGoods($relObj->copy($deepCopy));
+                }
+            }
 
             //unflag object copy
             $this->startCopy = false;
@@ -1973,6 +2025,265 @@ abstract class BaserlsNomen extends BaseObject implements Persistent
         return $this->arlsTradeName;
     }
 
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('RlsBalanceOfGoods' == $relationName) {
+            $this->initRlsBalanceOfGoodss();
+        }
+    }
+
+    /**
+     * Clears out the collRlsBalanceOfGoodss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return rlsNomen The current object (for fluent API support)
+     * @see        addRlsBalanceOfGoodss()
+     */
+    public function clearRlsBalanceOfGoodss()
+    {
+        $this->collRlsBalanceOfGoodss = null; // important to set this to null since that means it is uninitialized
+        $this->collRlsBalanceOfGoodssPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collRlsBalanceOfGoodss collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialRlsBalanceOfGoodss($v = true)
+    {
+        $this->collRlsBalanceOfGoodssPartial = $v;
+    }
+
+    /**
+     * Initializes the collRlsBalanceOfGoodss collection.
+     *
+     * By default this just sets the collRlsBalanceOfGoodss collection to an empty array (like clearcollRlsBalanceOfGoodss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initRlsBalanceOfGoodss($overrideExisting = true)
+    {
+        if (null !== $this->collRlsBalanceOfGoodss && !$overrideExisting) {
+            return;
+        }
+        $this->collRlsBalanceOfGoodss = new PropelObjectCollection();
+        $this->collRlsBalanceOfGoodss->setModel('RlsBalanceOfGoods');
+    }
+
+    /**
+     * Gets an array of RlsBalanceOfGoods objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this rlsNomen is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|RlsBalanceOfGoods[] List of RlsBalanceOfGoods objects
+     * @throws PropelException
+     */
+    public function getRlsBalanceOfGoodss($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collRlsBalanceOfGoodssPartial && !$this->isNew();
+        if (null === $this->collRlsBalanceOfGoodss || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collRlsBalanceOfGoodss) {
+                // return empty collection
+                $this->initRlsBalanceOfGoodss();
+            } else {
+                $collRlsBalanceOfGoodss = RlsBalanceOfGoodsQuery::create(null, $criteria)
+                    ->filterByrlsNomen($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collRlsBalanceOfGoodssPartial && count($collRlsBalanceOfGoodss)) {
+                      $this->initRlsBalanceOfGoodss(false);
+
+                      foreach($collRlsBalanceOfGoodss as $obj) {
+                        if (false == $this->collRlsBalanceOfGoodss->contains($obj)) {
+                          $this->collRlsBalanceOfGoodss->append($obj);
+                        }
+                      }
+
+                      $this->collRlsBalanceOfGoodssPartial = true;
+                    }
+
+                    $collRlsBalanceOfGoodss->getInternalIterator()->rewind();
+                    return $collRlsBalanceOfGoodss;
+                }
+
+                if($partial && $this->collRlsBalanceOfGoodss) {
+                    foreach($this->collRlsBalanceOfGoodss as $obj) {
+                        if($obj->isNew()) {
+                            $collRlsBalanceOfGoodss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collRlsBalanceOfGoodss = $collRlsBalanceOfGoodss;
+                $this->collRlsBalanceOfGoodssPartial = false;
+            }
+        }
+
+        return $this->collRlsBalanceOfGoodss;
+    }
+
+    /**
+     * Sets a collection of RlsBalanceOfGoods objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $rlsBalanceOfGoodss A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return rlsNomen The current object (for fluent API support)
+     */
+    public function setRlsBalanceOfGoodss(PropelCollection $rlsBalanceOfGoodss, PropelPDO $con = null)
+    {
+        $rlsBalanceOfGoodssToDelete = $this->getRlsBalanceOfGoodss(new Criteria(), $con)->diff($rlsBalanceOfGoodss);
+
+        $this->rlsBalanceOfGoodssScheduledForDeletion = unserialize(serialize($rlsBalanceOfGoodssToDelete));
+
+        foreach ($rlsBalanceOfGoodssToDelete as $rlsBalanceOfGoodsRemoved) {
+            $rlsBalanceOfGoodsRemoved->setrlsNomen(null);
+        }
+
+        $this->collRlsBalanceOfGoodss = null;
+        foreach ($rlsBalanceOfGoodss as $rlsBalanceOfGoods) {
+            $this->addRlsBalanceOfGoods($rlsBalanceOfGoods);
+        }
+
+        $this->collRlsBalanceOfGoodss = $rlsBalanceOfGoodss;
+        $this->collRlsBalanceOfGoodssPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related RlsBalanceOfGoods objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related RlsBalanceOfGoods objects.
+     * @throws PropelException
+     */
+    public function countRlsBalanceOfGoodss(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collRlsBalanceOfGoodssPartial && !$this->isNew();
+        if (null === $this->collRlsBalanceOfGoodss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collRlsBalanceOfGoodss) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getRlsBalanceOfGoodss());
+            }
+            $query = RlsBalanceOfGoodsQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByrlsNomen($this)
+                ->count($con);
+        }
+
+        return count($this->collRlsBalanceOfGoodss);
+    }
+
+    /**
+     * Method called to associate a RlsBalanceOfGoods object to this object
+     * through the RlsBalanceOfGoods foreign key attribute.
+     *
+     * @param    RlsBalanceOfGoods $l RlsBalanceOfGoods
+     * @return rlsNomen The current object (for fluent API support)
+     */
+    public function addRlsBalanceOfGoods(RlsBalanceOfGoods $l)
+    {
+        if ($this->collRlsBalanceOfGoodss === null) {
+            $this->initRlsBalanceOfGoodss();
+            $this->collRlsBalanceOfGoodssPartial = true;
+        }
+        if (!in_array($l, $this->collRlsBalanceOfGoodss->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddRlsBalanceOfGoods($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	RlsBalanceOfGoods $rlsBalanceOfGoods The rlsBalanceOfGoods object to add.
+     */
+    protected function doAddRlsBalanceOfGoods($rlsBalanceOfGoods)
+    {
+        $this->collRlsBalanceOfGoodss[]= $rlsBalanceOfGoods;
+        $rlsBalanceOfGoods->setrlsNomen($this);
+    }
+
+    /**
+     * @param	RlsBalanceOfGoods $rlsBalanceOfGoods The rlsBalanceOfGoods object to remove.
+     * @return rlsNomen The current object (for fluent API support)
+     */
+    public function removeRlsBalanceOfGoods($rlsBalanceOfGoods)
+    {
+        if ($this->getRlsBalanceOfGoodss()->contains($rlsBalanceOfGoods)) {
+            $this->collRlsBalanceOfGoodss->remove($this->collRlsBalanceOfGoodss->search($rlsBalanceOfGoods));
+            if (null === $this->rlsBalanceOfGoodssScheduledForDeletion) {
+                $this->rlsBalanceOfGoodssScheduledForDeletion = clone $this->collRlsBalanceOfGoodss;
+                $this->rlsBalanceOfGoodssScheduledForDeletion->clear();
+            }
+            $this->rlsBalanceOfGoodssScheduledForDeletion[]= clone $rlsBalanceOfGoods;
+            $rlsBalanceOfGoods->setrlsNomen(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this rlsNomen is new, it will return
+     * an empty collection; or if this rlsNomen has previously
+     * been saved, it will retrieve related RlsBalanceOfGoodss from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in rlsNomen.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|RlsBalanceOfGoods[] List of RlsBalanceOfGoods objects
+     */
+    public function getRlsBalanceOfGoodssJoinRbStorage($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = RlsBalanceOfGoodsQuery::create(null, $criteria);
+        $query->joinWith('RbStorage', $join_behavior);
+
+        return $this->getRlsBalanceOfGoodss($query, $con);
+    }
+
     /**
      * Clears the current object and sets all attributes to their default values
      */
@@ -2012,6 +2323,11 @@ abstract class BaserlsNomen extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->collRlsBalanceOfGoodss) {
+                foreach ($this->collRlsBalanceOfGoodss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->arbUnitRelatedByunitId instanceof Persistent) {
               $this->arbUnitRelatedByunitId->clearAllReferences($deep);
             }
@@ -2037,6 +2353,10 @@ abstract class BaserlsNomen extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        if ($this->collRlsBalanceOfGoodss instanceof PropelCollection) {
+            $this->collRlsBalanceOfGoodss->clearIterator();
+        }
+        $this->collRlsBalanceOfGoodss = null;
         $this->arbUnitRelatedByunitId = null;
         $this->arbUnitRelatedBydosageUnitId = null;
         $this->arlsFilling = null;

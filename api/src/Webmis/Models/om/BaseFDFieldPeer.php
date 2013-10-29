@@ -37,13 +37,13 @@ abstract class BaseFDFieldPeer
     const TM_CLASS = 'FDFieldTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 11;
+    const NUM_COLUMNS = 9;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 11;
+    const NUM_HYDRATE_COLUMNS = 9;
 
     /** the column name for the id field */
     const ID = 'FDField.id';
@@ -72,12 +72,6 @@ abstract class BaseFDFieldPeer
     /** the column name for the order field */
     const ORDER = 'FDField.order';
 
-    /** the column name for the createDatetime field */
-    const CREATEDATETIME = 'FDField.createDatetime';
-
-    /** the column name for the modifyDatetime field */
-    const MODIFYDATETIME = 'FDField.modifyDatetime';
-
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
@@ -97,12 +91,12 @@ abstract class BaseFDFieldPeer
      * e.g. FDFieldPeer::$fieldNames[FDFieldPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'FDFieldTypeId', 'FlatDirectoryId', 'FlatDirectoryCode', 'Name', 'Description', 'Mask', 'Mandatory', 'Order', 'Createdatetime', 'Modifydatetime', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'fDFieldTypeId', 'flatDirectoryId', 'flatDirectoryCode', 'name', 'description', 'mask', 'mandatory', 'order', 'createdatetime', 'modifydatetime', ),
-        BasePeer::TYPE_COLNAME => array (FDFieldPeer::ID, FDFieldPeer::FDFIELDTYPE_ID, FDFieldPeer::FLATDIRECTORY_ID, FDFieldPeer::FLATDIRECTORY_CODE, FDFieldPeer::NAME, FDFieldPeer::DESCRIPTION, FDFieldPeer::MASK, FDFieldPeer::MANDATORY, FDFieldPeer::ORDER, FDFieldPeer::CREATEDATETIME, FDFieldPeer::MODIFYDATETIME, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'FDFIELDTYPE_ID', 'FLATDIRECTORY_ID', 'FLATDIRECTORY_CODE', 'NAME', 'DESCRIPTION', 'MASK', 'MANDATORY', 'ORDER', 'CREATEDATETIME', 'MODIFYDATETIME', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'fdFieldType_id', 'flatDirectory_id', 'flatDirectory_code', 'name', 'description', 'mask', 'mandatory', 'order', 'createDatetime', 'modifyDatetime', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'FDFieldTypeId', 'FlatDirectoryId', 'FlatDirectoryCode', 'Name', 'Description', 'Mask', 'Mandatory', 'Order', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'fDFieldTypeId', 'flatDirectoryId', 'flatDirectoryCode', 'name', 'description', 'mask', 'mandatory', 'order', ),
+        BasePeer::TYPE_COLNAME => array (FDFieldPeer::ID, FDFieldPeer::FDFIELDTYPE_ID, FDFieldPeer::FLATDIRECTORY_ID, FDFieldPeer::FLATDIRECTORY_CODE, FDFieldPeer::NAME, FDFieldPeer::DESCRIPTION, FDFieldPeer::MASK, FDFieldPeer::MANDATORY, FDFieldPeer::ORDER, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'FDFIELDTYPE_ID', 'FLATDIRECTORY_ID', 'FLATDIRECTORY_CODE', 'NAME', 'DESCRIPTION', 'MASK', 'MANDATORY', 'ORDER', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'fdFieldType_id', 'flatDirectory_id', 'flatDirectory_code', 'name', 'description', 'mask', 'mandatory', 'order', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -112,12 +106,12 @@ abstract class BaseFDFieldPeer
      * e.g. FDFieldPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'FDFieldTypeId' => 1, 'FlatDirectoryId' => 2, 'FlatDirectoryCode' => 3, 'Name' => 4, 'Description' => 5, 'Mask' => 6, 'Mandatory' => 7, 'Order' => 8, 'Createdatetime' => 9, 'Modifydatetime' => 10, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'fDFieldTypeId' => 1, 'flatDirectoryId' => 2, 'flatDirectoryCode' => 3, 'name' => 4, 'description' => 5, 'mask' => 6, 'mandatory' => 7, 'order' => 8, 'createdatetime' => 9, 'modifydatetime' => 10, ),
-        BasePeer::TYPE_COLNAME => array (FDFieldPeer::ID => 0, FDFieldPeer::FDFIELDTYPE_ID => 1, FDFieldPeer::FLATDIRECTORY_ID => 2, FDFieldPeer::FLATDIRECTORY_CODE => 3, FDFieldPeer::NAME => 4, FDFieldPeer::DESCRIPTION => 5, FDFieldPeer::MASK => 6, FDFieldPeer::MANDATORY => 7, FDFieldPeer::ORDER => 8, FDFieldPeer::CREATEDATETIME => 9, FDFieldPeer::MODIFYDATETIME => 10, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'FDFIELDTYPE_ID' => 1, 'FLATDIRECTORY_ID' => 2, 'FLATDIRECTORY_CODE' => 3, 'NAME' => 4, 'DESCRIPTION' => 5, 'MASK' => 6, 'MANDATORY' => 7, 'ORDER' => 8, 'CREATEDATETIME' => 9, 'MODIFYDATETIME' => 10, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'fdFieldType_id' => 1, 'flatDirectory_id' => 2, 'flatDirectory_code' => 3, 'name' => 4, 'description' => 5, 'mask' => 6, 'mandatory' => 7, 'order' => 8, 'createDatetime' => 9, 'modifyDatetime' => 10, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'FDFieldTypeId' => 1, 'FlatDirectoryId' => 2, 'FlatDirectoryCode' => 3, 'Name' => 4, 'Description' => 5, 'Mask' => 6, 'Mandatory' => 7, 'Order' => 8, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'fDFieldTypeId' => 1, 'flatDirectoryId' => 2, 'flatDirectoryCode' => 3, 'name' => 4, 'description' => 5, 'mask' => 6, 'mandatory' => 7, 'order' => 8, ),
+        BasePeer::TYPE_COLNAME => array (FDFieldPeer::ID => 0, FDFieldPeer::FDFIELDTYPE_ID => 1, FDFieldPeer::FLATDIRECTORY_ID => 2, FDFieldPeer::FLATDIRECTORY_CODE => 3, FDFieldPeer::NAME => 4, FDFieldPeer::DESCRIPTION => 5, FDFieldPeer::MASK => 6, FDFieldPeer::MANDATORY => 7, FDFieldPeer::ORDER => 8, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'FDFIELDTYPE_ID' => 1, 'FLATDIRECTORY_ID' => 2, 'FLATDIRECTORY_CODE' => 3, 'NAME' => 4, 'DESCRIPTION' => 5, 'MASK' => 6, 'MANDATORY' => 7, 'ORDER' => 8, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'fdFieldType_id' => 1, 'flatDirectory_id' => 2, 'flatDirectory_code' => 3, 'name' => 4, 'description' => 5, 'mask' => 6, 'mandatory' => 7, 'order' => 8, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -200,8 +194,6 @@ abstract class BaseFDFieldPeer
             $criteria->addSelectColumn(FDFieldPeer::MASK);
             $criteria->addSelectColumn(FDFieldPeer::MANDATORY);
             $criteria->addSelectColumn(FDFieldPeer::ORDER);
-            $criteria->addSelectColumn(FDFieldPeer::CREATEDATETIME);
-            $criteria->addSelectColumn(FDFieldPeer::MODIFYDATETIME);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.fdFieldType_id');
@@ -212,8 +204,6 @@ abstract class BaseFDFieldPeer
             $criteria->addSelectColumn($alias . '.mask');
             $criteria->addSelectColumn($alias . '.mandatory');
             $criteria->addSelectColumn($alias . '.order');
-            $criteria->addSelectColumn($alias . '.createDatetime');
-            $criteria->addSelectColumn($alias . '.modifyDatetime');
         }
     }
 

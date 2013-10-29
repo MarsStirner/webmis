@@ -98,7 +98,8 @@ define(["text!templates/app.tmpl", "views/header-new"], function(tmpl, Header) {
 		render: function() {
 			this.$el.html($.tmpl(tmpl));
 			this.$("header").html(this.header.render().el);
-			this.$("#main").html(this.renderView.render().el);
+			this.renderView.render();
+			this.$("#main").html(this.renderView.el);
 
 			return this;
 		},

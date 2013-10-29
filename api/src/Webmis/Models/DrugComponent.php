@@ -18,4 +18,8 @@ use Webmis\Models\om\BaseDrugComponent;
  */
 class DrugComponent extends BaseDrugComponent
 {
+    public function cancel(){
+        $this->setCancelDateTime(time());
+        return $this;
+    }
 }
