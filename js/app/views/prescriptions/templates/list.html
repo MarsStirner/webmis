@@ -1,4 +1,4 @@
-<table>
+<table class="Grid">
 	<thead>
 		<tr>
 			<th>Тип назначения</th>
@@ -33,9 +33,19 @@
 			<td>
 				<ul>
 					<% _.each(item.assigmentIntervals, function(assigmentInterval){%>
-					<li><%= Core.Date.formatDateTime(assigmentInterval.beginDateTime) %> -
-					<%= Core.Date.formatDateTime(assigmentInterval.endDateTime) %>
-					</li>
+						<li>
+							<ul>
+								<% _.each(assigmentInterval.executionIntervals, function(executionInterval){%>
+										<li>
+											<%= executionInterval.status %> |
+											<%= Core.Date.formatDateTime(executionInterval.beginDateTime) %>
+											<%if(executionInterval.endDateTime){%>
+												 - <%= Core.Date.formatDateTime(executionInterval.endDateTime) %>
+											<%}%>
+										</li>
+								<% })%>
+							</ul>
+						</li>
 					<%})%>
 				</ul>
 			</td>

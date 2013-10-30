@@ -3,6 +3,8 @@
 namespace Webmis\Models;
 
 use Webmis\Models\om\BaseAction;
+use Webmis\Models\RbMethodOfAdministrationQuery;
+
 
 
 /**
@@ -24,12 +26,17 @@ class Action extends BaseAction
             $data['id'] = $property->getId();
             $type = $property->getActionPropertyType();
             $value = null;
+            $valueId = null;
 
             if($type){
 
                 $data['name'] = $type->getName();
                 $data['type'] = $type->getTypeName();
                 $data['code'] = $type->getCode();
+                $valueDomain = $type->getValueDomain();
+                if($valueDomain){
+                    $data['valueDomain'] = $valueDomain;
+                }
 
                 switch ($data['type']) {
                         case 'String':
@@ -43,7 +50,14 @@ class Action extends BaseAction
                         break;
                         case 'ReferenceRb':
                             if($property->getActionPropertyInteger()){
-                                $value =  $property->getActionPropertyInteger()->getValue();
+                                $valueId =  $property->getActionPropertyInteger()->getValue();
+                                // $tableName = explode(';', $valueDomain);
+                                // $queryClassName = ucfirst(trim($tableName[0]).'Query');
+                                        //RbMethodOfAdministrationQuery
+                                // $query = RbMethodOfAdministrationQuery::create()->findOneById($valueId);
+
+
+                                // $value = $query->getName();
                             }
 
                         break;
@@ -74,6 +88,9 @@ class Action extends BaseAction
             }
 
             $data['value'] = $value;
+            if($valueId){
+                $data['valueId'] = $valueId;
+            }
 
             return $data;
     }

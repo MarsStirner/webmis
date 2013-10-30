@@ -25,6 +25,7 @@ include_once 'phing/TaskAdapter.php';
 include_once 'phing/util/StringHelper.php';
 include_once 'phing/BuildEvent.php';
 include_once 'phing/input/DefaultInputHandler.php';
+include_once 'phing/types/PropertyValue.php';
 
 /**
  *  The Phing project class. Represents a completely configured Phing project.
@@ -210,6 +211,7 @@ class Project {
 
         $this->log("Setting project property: " . $name . " -> " . $value, Project::MSG_DEBUG);
         $this->properties[$name] = $value;
+        $this->addReference($name, new PropertyValue($value));
     }
 
     /**
@@ -230,6 +232,7 @@ class Project {
         }
         $this->log("Setting project property: " . $name . " -> " . $value, Project::MSG_DEBUG);
         $this->properties[$name] = $value;
+        $this->addReference($name, new PropertyValue($value));
     }
 
     /**
@@ -245,6 +248,7 @@ class Project {
         $this->log("Setting user project property: " . $name . " -> " . $value, Project::MSG_DEBUG);
         $this->userProperties[$name] = $value;
         $this->properties[$name] = $value;
+        $this->addReference($name, new PropertyValue($value));
     }
 
     /**
@@ -278,6 +282,7 @@ class Project {
             return;
         }
         $this->properties[$name] = $value;
+        $this->addReference($name, new PropertyValue($value));
     }
 
     /**
@@ -488,6 +493,7 @@ class Project {
         }
 
         $dir = $this->fileUtils->normalize($dir);
+        $dir = FileSystem::getFilesystem()->canonicalize($dir);
 
         $dir = new PhingFile((string) $dir);
         if (!$dir->exists()) {
@@ -974,7 +980,7 @@ class Project {
      */
     public function addReference($name, $object) {
         if (isset($this->references[$name])) {
-            $this->log("Overriding previous definition of reference to $name", Project::MSG_WARN);
+            $this->log("Overriding previous definition of reference to $name", Project::MSG_VERBOSE);
         }
         $this->log("Adding reference: $name -> ".get_class($object), Project::MSG_DEBUG);
         $this->references[$name] = $object;

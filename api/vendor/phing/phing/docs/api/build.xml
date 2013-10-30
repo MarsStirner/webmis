@@ -23,18 +23,29 @@
     </target>
 
     <target name="docs">
-        <phpdoc2 title="Phing API Documentation" output="${buildfile.dir}/docs"
-            quiet="true">
+        <phpdoc2 title="Phing API Documentation"
+	    output="${buildfile.dir}/docs">
             <fileset dir="${phingpkg.home}/classes">
                 <include name="**/*.php"/>
             </fileset>
         </phpdoc2>
+        <delete includeemptydirs="true">
+            <fileset dir="${buildfile.dir}/docs">
+                <include name="phpdoc-cache*/**"/>
+            </fileset>
+        </delete>
+        <delete>
+            <fileset dir=".">
+                <include name="*.log"/>
+            </fileset>
+        </delete>
      </target>
 
     <target name="build">
         <fail unless="phpdoc2.task.available"
             message="PhpDocumentor 2 is not installed" />
 
+        <phingcall target="clean" />
         <phingcall target="prepare" />
         <phingcall target="docs" />
     </target>

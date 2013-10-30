@@ -876,120 +876,6 @@ file_put_contents('/www/live/testcases/coverage.data', serialize(xdebug_get_code
 				</tr>
 			</tbody>
 		</table>
-		<h2>
-			<a name="FileSyncTask"></a>FileSyncTask </h2>
-		<p>Syncs files or directories using the rsync command. Syncing can be done on the 
-		   same server or from/to a remote server.</p>
-		<h3>Example</h3>
-		<pre>
-&lt;sync sourcedir="/var/www/development/project1" destinationdir="/var/www/project1" /&gt;
-
-&lt;sync
-sourcedir="/var/www/development/project1"
-destinationdir="user@server:/var/www/project1"
-dryrun="true"
-itemizechanges="true"
-verbose="true"
-checksum="true" /&gt;
-</pre>
-		<h3>Attributes</h3>
-		<table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Type</th>
-					<th>Description</th>
-					<th>Default</th>
-					<th>Required</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>rsyncPath</td>
-					<td>String</td>
-					<td>Path to rsync command</td>
-					<td>/usr/bin/rsync</td>
-					<td>Yes</td>
-				</tr>
-				<tr>
-					<td>sourceDir</td>
-					<td>String</td>
-					<td>Source directory (with user&amp;host for remote sources)</td>
-					<td>n/a</td>
-					<td>Yes</td>
-				</tr>
-				<tr>
-					<td>destinationDir</td>
-					<td>String</td>
-					<td>Destination directory (with user&amp;host for remote destinations)</td>
-					<td>n/a</td>
-					<td>Yes</td>
-				</tr>
-				<tr>
-					<td>excludeFile</td>
-					<td>String</td>
-					<td>Excluded patterns file</td>
-					<td>n/a</td>
-					<td>No</td>
-				</tr>
-				<tr>
-					<td>backupDir</td>
-					<td>String</td>
-					<td>Creates a backup so users can rollback to an existing restore point</td>
-					<td>n/a</td>
-					<td>No</td>
-				</tr>
-				<tr>
-					<td>options</td>
-					<td>String</td>
-					<td>Any options that rsync supports, removes the default options</td>
-					<td>-rpKz</td>
-					<td>No</td>
-				</tr>
-				<tr>
-					<td>verbose</td>
-					<td>Boolean</td>
-					<td>This option increases the amount of information you are given during the transfer</td>
-					<td>True</td>
-					<td>No</td>
-				</tr>
-				<tr>
-					<td>dryRun</td>
-					<td>Boolean</td>
-					<td>This option makes rsync perform a trial run that doesn't make any changes</td>
-					<td>False</td>
-					<td>No</td>
-				</tr>
-				<tr>
-					<td>itemizeChanges</td>
-					<td>Boolean</td>
-					<td>This option requests a simple itemized list of the changes that are being made to each file, including attribute changes</td>
-					<td>False</td>
-					<td>No</td>
-				</tr>
-				<tr>
-					<td>checksum</td>
-					<td>Boolean</td>
-					<td>This option will cause rsync to skip files based on checksum, not mod-time &amp; size</td>
-					<td>False</td>
-					<td>No</td>
-				</tr>
-				<tr>
-					<td>delete</td>
-					<td>Boolean</td>
-					<td>This option deletes files that don't exist on sender after transfer including 'force' and 'ignore-errors'</td>
-					<td>False</td>
-					<td>No</td>
-				</tr>
-				<tr>
-					<td>identityFile</td>
-					<td>String</td>
-					<td>Identity file for ssh authentication of a remote transfer</td>
-					<td>n/a</td>
-					<td>No</td>
-				</tr>
-			</tbody>
-		</table>
 
 		<h2>
 			<a name="FileSizeTask"></a>FileSizeTask </h2>
@@ -1031,6 +917,122 @@ checksum="true" /&gt;
 				</tr>
 			</tbody>
 		</table>
+
+        <h2>
+            <a name="FileSyncTask"></a>FileSyncTask </h2>
+        <p>Syncs files or directories using the rsync command. Syncing can be done on the 
+           same server or from/to a remote server.</p>
+        <h3>Example</h3>
+        <pre>
+&lt;filesync sourcedir="/var/www/development/project1" destinationdir="/var/www/project1" /&gt;
+
+&lt;filesync
+sourcedir="/var/www/development/project1"
+destinationdir="user@server:/var/www/project1"
+dryrun="true"
+itemizechanges="true"
+verbose="true"
+checksum="true" /&gt;
+</pre>
+        <h3>Attributes</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Default</th>
+                    <th>Required</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>rsyncPath</td>
+                    <td>String</td>
+                    <td>Path to rsync command</td>
+                    <td>/usr/bin/rsync</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>sourceDir</td>
+                    <td>String</td>
+                    <td>Source directory (with user&amp;host for remote sources)</td>
+                    <td>n/a</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>destinationDir</td>
+                    <td>String</td>
+                    <td>Destination directory (with user&amp;host for remote destinations)</td>
+                    <td>n/a</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>excludeFile</td>
+                    <td>String</td>
+                    <td>Excluded patterns file</td>
+                    <td>n/a</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>backupDir</td>
+                    <td>String</td>
+                    <td>Creates a backup so users can rollback to an existing restore point</td>
+                    <td>n/a</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>options</td>
+                    <td>String</td>
+                    <td>Any options that rsync supports, removes the default options</td>
+                    <td>-rpKz</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>verbose</td>
+                    <td>Boolean</td>
+                    <td>This option increases the amount of information you are given during the transfer</td>
+                    <td>True</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>dryRun</td>
+                    <td>Boolean</td>
+                    <td>This option makes rsync perform a trial run that doesn't make any changes</td>
+                    <td>False</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>itemizeChanges</td>
+                    <td>Boolean</td>
+                    <td>This option requests a simple itemized list of the changes that are being made to each file, including attribute changes</td>
+                    <td>False</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>checksum</td>
+                    <td>Boolean</td>
+                    <td>This option will cause rsync to skip files based on checksum, not mod-time &amp; size</td>
+                    <td>False</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>delete</td>
+                    <td>Boolean</td>
+                    <td>This option deletes files that don't exist on sender after transfer including 'force' and 'ignore-errors'</td>
+                    <td>False</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>identityFile</td>
+                    <td>String</td>
+                    <td>Identity file for ssh authentication of a remote transfer</td>
+                    <td>n/a</td>
+                    <td>No</td>
+                </tr>
+            </tbody>
+        </table>
+        
 		<h2>
 			<a name="FtpDeployTask"></a>FtpDeployTask </h2>
 		<p>Deploys a set of files to a remote FTP server.</p>
@@ -1822,6 +1824,63 @@ Note that you can omit both startpoint and track attributes in this case
     repository="${repo.dir.resolved}" 
     branchname="mybranch" quiet="true" 
     forceCreate="true" /&gt;
+</pre>
+        <h2>
+            <a name="GitCommitTask"></a>GitCommitTask </h2>
+        <p> Record changes to the repository. See official <a
+                href="http://www.kernel.org/pub/software/scm/git/docs/git-commit.html"
+                >documentation</a>. </p>
+        <h3>Attributes</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Default</th>
+                    <th>Required</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>gitPath</td>
+                    <td>String</td>
+                    <td>Path to Git binary</td>
+                    <td>/usr/bin/git</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>repository</td>
+                    <td>String</td>
+                    <td>Path to Git repository</td>
+                    <td>n/a</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>message</td>
+                    <td>String</td>
+                    <td>Commit message</td>
+                    <td>n/a</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>allFiles</td>
+                    <td>Boolean</td>
+                    <td>Whether to automatically stage files that have been modified and deleted
+                    (see --all in <a
+                            href="http://www.kernel.org/pub/software/scm/git/docs/git-commit.html"
+                            >git-commit</a>)</td>
+                    <td>false</td>
+                    <td>No</td>
+                </tr>
+            </tbody>
+        </table>
+        <h3>Examples</h3>
+        <pre>
+&lt;!-- commit all modified / deleted files --&gt;
+&lt;gitcommit
+    repository="/path/to/repo" 
+    message="Commit message" allFiles="true" /&gt;
 </pre>
 		<h2>
 			<a name="GitMergeTask"></a>GitMergeTask </h2>
@@ -3775,7 +3834,7 @@ Note that you can omit both startpoint and track attributes in this case
 			</tbody>
 		</table>
 		<h2><a name="LiquibaseRollbackTask"></a>LiquibaseRollbackTask </h2>
-		<p> The <em>LiquibaseRollbackTask</em> rolls back the database to the the state is was when the tag was applied.</p>
+		<p> The <em>LiquibaseRollbackTask</em> rolls back the database to the state is was when the tag was applied.</p>
 		<h3>Example</h3>
 		<pre>
 &lt;liquibase-rollback
@@ -4200,6 +4259,10 @@ Note that you can omit both startpoint and track attributes in this case
   &lt;/pdosqlexec&gt;
 </pre>
 		<p>
+			<strong>Note:</strong> the combination of large SQL files
+			and <em>delimitertype</em> set to <em>normal</em> can trigger
+			segmentation faults with large files.</p>
+		<p>
 			<strong>Note:</strong> because of backwards compatiblity, the PDOSQLExecTask can also be
 			called using the <em>'pdo'</em> statement. </p>
 		<h3>Attributes</h3>
@@ -4267,11 +4330,11 @@ Note that you can omit both startpoint and track attributes in this case
 				<tr>
 					<td>delimitertype</td>
 					<td>String</td>
-					<td>The delimiter type (&quot;normal&quot; or &quot;row&quot;). Normal means
+					<td>The delimiter type (&quot;normal&quot;, &quot;row&quot; or &quot;none&quot;). Normal means
 						that any occurence of the delimiter terminate the SQL command whereas with
 						row, only a line containing just the delimiter is recognized as the end of
-						the command.</td>
-					<td>normal</td>
+						the command. None disables all delimiter detection.</td>
+					<td>none</td>
 					<td>No</td>
 				</tr>
 				<tr>
@@ -5368,7 +5431,7 @@ Note that you can omit both startpoint and track attributes in this case
 						<tr>
 							<td>type</td>
 							<td>String</td>
-							<td>The output format. Accepts the the same values as the
+							<td>The output format. Accepts the same values as the
 									<em>format</em> attribute (<em>default</em>, <em>xml</em>,
 									<em>checkstyle</em>, <em>csv</em>, <em>report</em>,
 									<em>summary</em> &amp; <em>doc</em>).</td>
@@ -5582,7 +5645,7 @@ Note that you can omit both startpoint and track attributes in this case
 						<tr>
 							<td>type</td>
 							<td>String</td>
-							<td>The output format. Accepts the the same values as the
+							<td>The output format. Accepts the same values as the
 									<em>format</em> attribute (<em>default</em>, <em>pmd</em>).</td>
 							<td>n/a</td>
 							<td>Yes</td>
@@ -5716,7 +5779,7 @@ Note that you can omit both startpoint and track attributes in this case
 						<tr>
 							<td>type</td>
 							<td>String</td>
-							<td>The output format. Accepts the the same values as the
+							<td>The output format. Accepts the same values as the
 									<em>format</em> attribute (<em>xml</em>, <em>html</em>,
 									<em>text</em>).</td>
 							<td>n/a</td>
@@ -6142,15 +6205,14 @@ Note that you can omit both startpoint and track attributes in this case
 					<td>template</td>
 					<td>String</td>
 					<td>Name of the documentation template to use.</td>
-					<td>responsive</td>
+					<td>responsive-twig</td>
 					<td>No</td>
 				</tr>
 				<tr>
 					<td>quiet</td>
 					<td>Boolean</td>
-					<td>Suppress chatter / warning
-					messages.</td>
-					<td>true</td>
+					<td>DEPRECATED</td>
+					<td>n/a</td>
 					<td>No</td>
 				</tr>
 			</tbody>
@@ -6163,7 +6225,7 @@ Note that you can omit both startpoint and track attributes in this case
 		<pre>
 &lt;phpdoc2 title=&quot;API Documentation&quot;
   destdir=&quot;apidocs&quot;
-  template=&quot;responsive&quot;&gt;
+  template=&quot;responsive-twig&quot;&gt;
    &lt;fileset dir=&quot;./classes&quot;&gt;
       &lt;include name=&quot;**/*.php&quot; /&gt;
    &lt;/fileset&gt;
@@ -7377,6 +7439,24 @@ host=&quot;webserver&quot; command=&quot;ls&quot; /&gt;</pre>
 					<td>Boolean</td>
 					<td>Whether to display the output of the command</td>
 					<td>true</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>pty</td>
+					<td>String</td>
+					<td>The terminal type to open</td>
+					<td>none</td>
+					<td>No</td>
+				</tr>
+				<tr>
+					<td>failonerror</td>
+					<td>Boolean</td>
+					<td>Decides if a command chain will
+					fail if one of the executed commands failed.
+					Added for backward compatibility. Set to true
+					if you execute more than one command and want
+					the task to fail on any error.</td>
+					<td>false</td>
 					<td>No</td>
 				</tr>
 			</tbody>
@@ -8923,6 +9003,81 @@ revision | author | date         | item
 			</tbody>
 		</table>
 		<h2>
+			<a name="WikiPublishTask"></a>WikiPublishTask</h2>
+		<p>This task can publish Wiki document via Wiki WebAPI.
+			It supports only <a href="http://www.mediawiki.org/" target="_blank">MediaWiki</a> engine for now.
+			<a href="http://www.php.net/manual/en/book.curl.php" target="_blank">cURL</a> extension is required.</p>
+		<h3>Examples</h3>
+		<pre>&lt;wikipublish
+	apiUrl="http://localhost/wiki/api.php"
+	apiUser="testUser"
+	apiPassword="testPassword"
+	title="Some Page"
+	content="Some content"
+	mode="prepend"/&gt;</pre>
+		<h3>Attributes</h3>
+		<table>
+			<thead>
+			<tr>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+				<th>Required</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>apiUrl</td>
+				<td>String</td>
+				<td>Wiki API URL (e.g. http://localhost/wiki/api.php)</td>
+				<td>n/a</td>
+				<td>Yes</td>
+			</tr>
+			<tr>
+				<td>apiUser</td>
+				<td>String</td>
+				<td>Wiki API user name</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>apiPassword</td>
+				<td>String</td>
+				<td>Wiki API user password</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>id</td>
+				<td>Integer</td>
+				<td>ID of page that will be changed</td>
+				<td>n/a</td>
+				<td rowspan="2">One of these attributes is required.</td>
+			</tr>
+			<tr>
+				<td>title</td>
+				<td>String</td>
+				<td>Title of page that will be changes. Can also be used as page identifier</td>
+				<td>n/a</td>
+			</tr>
+			<tr>
+				<td>content</td>
+				<td>String</td>
+				<td>Content of published page</td>
+				<td>n/a</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>mode</td>
+				<td>String</td>
+				<td>Edit mode (overwrite, prepend, append)</td>
+				<td>append</td>
+				<td>No</td>
+			</tr>
+			</tbody>
+		</table>
+		<h2>
 			<a name="XmlLintTask"></a>XmlLintTask </h2>
 		<p>The <em>XmlLintTask</em> checks syntax (lint) one or more XML files against an XML Schema
 			Definition. </p><p><em>Note:</em> This assumes that the DOM extension is loaded in PHP5
@@ -9067,7 +9222,7 @@ revision | author | date         | item
     &lt;inner-tag someattr="val"&gt;Text&lt;/inner-tag&gt;
     &lt;a2&gt;&lt;a3&gt;&lt;a4&gt;false&lt;/a4&gt;&lt;/a3&gt;&lt;/a2&gt;
 &lt;/root-tag&gt;</pre>
-		<p> Used with the the following entry (<b>default</b>): </p>
+		<p> Used with the following entry (<b>default</b>): </p>
 		<pre>
 &lt;xmlproperty file=&quot;somefile.xml&quot;/&gt;
 </pre>
@@ -9077,7 +9232,7 @@ root-tag(myattr)=true
 root-tag.inner-tag=Text
 root-tag.inner-tag(someattr)=val
 root-tag.a2.a3.a4=false</pre>
-		<p> Used with the the following entry (<b>collapseAttributes=true</b>): </p>
+		<p> Used with the following entry (<b>collapseAttributes=true</b>): </p>
 		<pre>
 &lt;xmlproperty file=&quot;somefile.xml&quot; collapseAttributes=&quot;true&quot;/&gt;
 </pre>
@@ -9087,7 +9242,7 @@ root-tag.myattr=true
 root-tag.inner-tag=Text
 root-tag.inner-tag.someatt=val
 root-tag.a2.a3.a4=false</pre>
-		<p> Used with the the following entry (<b>keepRoot=false</b>): </p>
+		<p> Used with the following entry (<b>keepRoot=false</b>): </p>
 		<pre>
 &lt;xmlproperty file=&quot;somefile.xml&quot; keepRoot=&quot;false&quot;/&gt;
 </pre>

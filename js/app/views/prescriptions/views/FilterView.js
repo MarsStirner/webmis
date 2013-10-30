@@ -9,6 +9,11 @@ define(function(require) {
 
 	return BaseView.extend({
 		template: template,
+		events: {
+			'keyup #doctor-name':'onKeyUp',
+			'keyup #drug-name':'onKeyUp',
+			'keyup #pacient-name':'onKeyUp'
+		},
 
 		initialize: function() {
 			this.listenTo(this.model, 'change', this.filter);
@@ -55,6 +60,15 @@ define(function(require) {
 				'#administration': this.administrationView
 			});
 
+		},
+
+		onKeyUp: function(e){
+			$target = this.$(e.target);
+			var value = $target.val();
+			if(value && value.length > 2){
+				$target.trigger('change');
+			}
+			console.log('keyup', $target.val());
 		},
 
 		getUrlParams: function() {

@@ -27,6 +27,7 @@
     <xsl:param name="table.frame.border.style" select="'double'"/>
     <xsl:param name="default.table.frame" select="'topbot'"/>
     <xsl:param name="generate.toc" select="'book toc'"/>
+    <xsl:param name="body.font.family">sans-serif</xsl:param>
 
 
     <xsl:template match="processing-instruction('hard-pagebreak')">
@@ -39,8 +40,47 @@
         ==========================================================================
     -->
     <xsl:attribute-set name="component.title.properties">
-        <xsl:attribute name="color">#003399</xsl:attribute>
+        <xsl:attribute name="color">#317c9c</xsl:attribute>
     </xsl:attribute-set>
+
+    <xsl:template name="book.titlepage.recto">
+        <fo:block text-align="center">
+            <fo:external-graphic src="url(/tmp/_tmpxslimg/images/phing.svg)" content-width="15cm"/>
+        </fo:block>
+
+        <xsl:choose>
+            <xsl:when test="bookinfo/title">
+                <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="bookinfo/title"/>
+            </xsl:when>
+            <xsl:when test="info/title">
+                <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="info/title"/>
+            </xsl:when>
+            <xsl:when test="title">
+                <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="title"/>
+            </xsl:when>
+        </xsl:choose>
+
+        <xsl:choose>
+            <xsl:when test="bookinfo/subtitle">
+                <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="bookinfo/subtitle"/>
+            </xsl:when>
+            <xsl:when test="info/subtitle">
+                <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="info/subtitle"/>
+            </xsl:when>
+            <xsl:when test="subtitle">
+                <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="subtitle"/>
+            </xsl:when>
+        </xsl:choose>
+
+        <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="bookinfo/corpauthor"/>
+        <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="info/corpauthor"/>
+        <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="bookinfo/authorgroup"/>
+        <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="info/authorgroup"/>
+        <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="bookinfo/author"/>
+        <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="info/author"/>
+        <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="bookinfo/itermset"/>
+        <xsl:apply-templates mode="book.titlepage.recto.auto.mode" select="info/itermset"/>
+    </xsl:template>
 
     <!-- 
         ==========================================================================
@@ -51,7 +91,7 @@
         <xsl:attribute name="font-size">20pt</xsl:attribute>
         <xsl:attribute name="font-weight">bold</xsl:attribute>
         <xsl:attribute name="font-family">sans-serif</xsl:attribute>
-        <xsl:attribute name="color">#003399</xsl:attribute>
+        <xsl:attribute name="color">#317c9c</xsl:attribute>
         <xsl:attribute name="space-before.minimum">1.5em</xsl:attribute>
         <xsl:attribute name="space-before.optimum">2.0em</xsl:attribute>
         <xsl:attribute name="space-before.maximum">3.0em</xsl:attribute>
@@ -61,7 +101,7 @@
         <xsl:attribute name="font-size">12pt</xsl:attribute>
         <xsl:attribute name="font-weight">bold</xsl:attribute>
         <xsl:attribute name="font-family">sans-serif</xsl:attribute>
-        <xsl:attribute name="color">#003399</xsl:attribute>
+        <xsl:attribute name="color">#317c9c</xsl:attribute>
         <xsl:attribute name="space-before.minimum">1.5em</xsl:attribute>
         <xsl:attribute name="space-before.optimum">2.0em</xsl:attribute>
         <xsl:attribute name="space-before.maximum">3.0em</xsl:attribute>
@@ -71,7 +111,7 @@
         <xsl:attribute name="font-size">11pt</xsl:attribute>
         <xsl:attribute name="font-weight">bold</xsl:attribute>
         <xsl:attribute name="font-family">sans-serif</xsl:attribute>
-        <xsl:attribute name="color">#003399</xsl:attribute>
+        <xsl:attribute name="color">#317c9c</xsl:attribute>
         <xsl:attribute name="margin-left">3em</xsl:attribute>
         <xsl:attribute name="space-before.minimum">1.5em</xsl:attribute>
         <xsl:attribute name="space-before.optimum">2.0em</xsl:attribute>
@@ -85,25 +125,25 @@
         ==========================================================================
     -->
     <xsl:attribute-set name="shade.verbatim.style">
-        <xsl:attribute name="border-style">dashed</xsl:attribute>
+        <xsl:attribute name="border-style">solid</xsl:attribute>
         <xsl:attribute name="border-width">0.5pt</xsl:attribute>
-        <xsl:attribute name="border-color">#ADD6C2</xsl:attribute>
-        <xsl:attribute name="background-color">#B4DAC7</xsl:attribute>
+        <xsl:attribute name="border-color">#666666</xsl:attribute>
+        <xsl:attribute name="background-color">#EEEEEE</xsl:attribute>
+        <xsl:attribute name="color">#000000</xsl:attribute>
         <xsl:attribute name="padding">3pt</xsl:attribute>
-        <xsl:attribute name="font-size">8.5pt</xsl:attribute>
-        <xsl:attribute name="font-weight">bold</xsl:attribute>
+        <xsl:attribute name="font-size">8.2pt</xsl:attribute>
+        <xsl:attribute name="font-weight">normal</xsl:attribute>
         <xsl:attribute name="margin-left">6pt</xsl:attribute>
         <xsl:attribute name="margin-right">1pt</xsl:attribute>
     </xsl:attribute-set>
 
 
     <xsl:attribute-set name="programlisting.style">
-        <xsl:attribute name="border-right">solid</xsl:attribute>
-        <xsl:attribute name="border-right-width">2pt</xsl:attribute>
-        <xsl:attribute name="border-bottom">solid</xsl:attribute>
-        <xsl:attribute name="border-bottom-width">2pt</xsl:attribute>
-        <xsl:attribute name="border-color">#777777</xsl:attribute>
-        <xsl:attribute name="background-color">#eeeeee</xsl:attribute>
+        <xsl:attribute name="border-style">solid</xsl:attribute>
+        <xsl:attribute name="border-width">0.5pt</xsl:attribute>
+        <xsl:attribute name="border-color">#666666</xsl:attribute>
+        <xsl:attribute name="background-color">#EEEEEE</xsl:attribute>
+        <xsl:attribute name="color">#000000</xsl:attribute>
         <xsl:attribute name="padding">3pt</xsl:attribute>
         <xsl:attribute name="font-size">8.2pt</xsl:attribute>
         <xsl:attribute name="font-weight">normal</xsl:attribute>
@@ -172,36 +212,6 @@
     </xsl:template>
 
     <!--
-        ================================================================================================
-        PROGRAMLISTING Template
-        This is a very simplified matching to be able to get programlistings in a different style
-        from the screen and synopsis components. In the original XSLT stylesheets a single template handles
-        all three together with source highlitning and optional line numbering. 
-        
-        This very simplified template and can't do any of this besides doing a verbatim formatting using 
-        the attribute set "programlisting.style"
-        
-        - Programlisting have grey background
-        - A thick border below and to the right
-        ================================================================================================
-    -->
-
-    <xsl:attribute-set name="programlisting.style">
-        <!-- <xsl:attribute name="border-style">dashed</xsl:attribute>-->
-        <xsl:attribute name="border-right">solid</xsl:attribute>
-        <xsl:attribute name="border-right-width">2pt</xsl:attribute>
-        <xsl:attribute name="border-bottom">solid</xsl:attribute>
-        <xsl:attribute name="border-bottom-width">2pt</xsl:attribute>
-        <xsl:attribute name="border-color">#777777</xsl:attribute>
-        <xsl:attribute name="background-color">#eeeeee</xsl:attribute>
-        <xsl:attribute name="padding">3pt</xsl:attribute>
-        <xsl:attribute name="font-size">8.2pt</xsl:attribute>
-        <xsl:attribute name="font-weight">normal</xsl:attribute>
-        <xsl:attribute name="margin-left">6pt</xsl:attribute>
-        <xsl:attribute name="margin-right">1pt</xsl:attribute>
-    </xsl:attribute-set>
-
-    <!--
     <xsl:template match="d:programlisting">
         <fo:block xsl:use-attribute-sets="monospace.verbatim.properties programlisting.style">
             <xsl:attribute name="writing-mode">lr-tb</xsl:attribute>
@@ -226,10 +236,10 @@
 
     <!-- Directory where to find graphics. Full path from the root with trailing '/' -->
     <xsl:param name="admon.graphics.path"
-        >/home/ljp/Documents/mailsetup/xsl_stylesheets/images/</xsl:param>
+        >/tmp/_tmpxslimg/images/</xsl:param>
 
     <!-- File extension for grphic files -->
-    <xsl:param name="admon.graphics.extension" select="'.png'"/>
+    <xsl:param name="admon.graphics.extension" select="'.svg'"/>
 
     <!-- Maker sure our customized admonitions are not scaled since that looks ugly.
     This means that the size needs to match the original size of the icons -->
@@ -258,7 +268,7 @@
         <xsl:attribute name="font-size">90%</xsl:attribute>
         <xsl:attribute name="font-weight">bold</xsl:attribute>
         <xsl:attribute name="font-family">sans-serif</xsl:attribute>
-        <xsl:attribute name="color">#CF7C00</xsl:attribute>
+        <xsl:attribute name="color">#317c9c</xsl:attribute>
         <!-- Dark orange -->
     </xsl:attribute-set>
 
@@ -305,15 +315,15 @@
                     </fo:list-item-label>
                     <fo:list-item-body start-indent="body-start()">
                         <xsl:if test="$admon.textlabel != 0 or d:title or d:info/d:title">
-                            <fo:block border-top="2pt solid #cf7c00"
-                                border-bottom="0.5pt solid #cf7c00" padding-top="4pt"
+                            <fo:block border-top="2pt solid #317c9c"
+                                border-bottom="0.5pt solid #317c9c" padding-top="4pt"
                                 xsl:use-attribute-sets="admonition.title.properties">
                                 <xsl:apply-templates select="." mode="object.title.markup">
                                     <xsl:with-param name="allow-anchors" select="1"/>
                                 </xsl:apply-templates>
                             </fo:block>
                         </xsl:if>
-                        <fo:block border-bottom="2pt solid #cf7c00" padding-top="1pt"
+                        <fo:block border-bottom="2pt solid #317c9c" padding-top="1pt"
                             padding-bottom="4pt" xsl:use-attribute-sets="admonition.properties">
                             <xsl:apply-templates/>
                         </fo:block>
