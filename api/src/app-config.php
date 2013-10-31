@@ -1,6 +1,7 @@
 <?php
 
 use Webmis\Services\JsonpResponce;
+use Webmis\Services\PrescriptionService;
 
 
 
@@ -21,6 +22,10 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 
 $app['jsonp'] = function ($app) {
     return new JsonpResponce($app);
+};
+
+$app['prescriptionExchange'] = function () use($thrift_server_host, $thrift_server_port) {
+    return new PrescriptionService($thrift_server_host, $thrift_server_port);
 };
 
 
