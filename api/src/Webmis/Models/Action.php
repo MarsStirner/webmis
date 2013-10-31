@@ -54,10 +54,10 @@ class Action extends BaseAction
                                 // $tableName = explode(';', $valueDomain);
                                 // $queryClassName = ucfirst(trim($tableName[0]).'Query');
                                         //RbMethodOfAdministrationQuery
-                                // $query = RbMethodOfAdministrationQuery::create()->findOneById($valueId);
+                                $query = RbMethodOfAdministrationQuery::create()->findOneById($valueId);
 
 
-                                // $value = $query->getName();
+                                $value = $query->getName();
                             }
 
                         break;
@@ -218,13 +218,21 @@ class Action extends BaseAction
 
             if($drugs){
                 foreach ($drugs as $drug) {
-
-                    $data['drugs'][] = array(
+                    $d = array(
                         'id' => $drug->getId(),
                         'name' => $drug->getName(),
                         'dose' => $drug->getDose(),
-                        'unit' => $drug->getUnit()
+                        //'unitId' => $drug->getUnit(),
+                        'unit' => ''
                         );
+
+                    $rbUnit = $drug->getRbUnit();
+                    if($rbUnit){
+                        $d['unit'] = $rbUnit->getName();
+                    }
+
+                    $data['drugs'][] = $d;
+
                 }
             }
 

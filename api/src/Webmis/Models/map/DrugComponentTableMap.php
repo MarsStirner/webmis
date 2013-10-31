@@ -47,7 +47,7 @@ class DrugComponentTableMap extends TableMap
         $this->addColumn('nomen', 'nomen', 'INTEGER', false, null, null);
         $this->addColumn('name', 'name', 'VARCHAR', false, 255, null);
         $this->addColumn('dose', 'dose', 'FLOAT', false, null, null);
-        $this->addColumn('unit', 'unit', 'INTEGER', false, 10, null);
+        $this->addForeignKey('unit', 'unit', 'INTEGER', 'rbUnit', 'id', false, 10, null);
         $this->addColumn('createDateTime', 'createDateTime', 'TIMESTAMP', true, null, null);
         $this->addColumn('cancelDateTime', 'cancelDateTime', 'TIMESTAMP', false, null, null);
         // validators
@@ -59,6 +59,7 @@ class DrugComponentTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Action', 'Webmis\\Models\\Action', RelationMap::MANY_TO_ONE, array('action_id' => 'id', ), null, null);
+        $this->addRelation('rbUnit', 'Webmis\\Models\\rbUnit', RelationMap::MANY_TO_ONE, array('unit' => 'id', ), null, null);
     } // buildRelations()
 
     /**

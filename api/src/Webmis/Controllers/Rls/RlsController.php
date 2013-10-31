@@ -26,13 +26,17 @@ class RlsController
 
         $items = rlsNomenQuery::create()
         ->useRlsTradeNameQuery()
-            ->filterByLocalName($name.'%')
+            ->_if($name)
+                ->filterByLocalName($name.'%')
+            ->_endIf()
             ->orderByLocalName()
         ->endUse()
         ->with('rlsTradeName')
 
         ->useRlsActMattersQuery()
-            // ->filterByName($material.'%')
+            ->_if($material)
+                ->filterByName($material.'%')
+            ->_endIf()
         ->endUse()
         ->with('rlsActMatters')
 

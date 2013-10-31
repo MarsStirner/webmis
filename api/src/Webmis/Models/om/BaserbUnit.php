@@ -13,6 +13,8 @@ use \PropelCollection;
 use \PropelException;
 use \PropelObjectCollection;
 use \PropelPDO;
+use Webmis\Models\DrugComponent;
+use Webmis\Models\DrugComponentQuery;
 use Webmis\Models\rbUnit;
 use Webmis\Models\rbUnitPeer;
 use Webmis\Models\rbUnitQuery;
@@ -66,6 +68,12 @@ abstract class BaserbUnit extends BaseObject implements Persistent
     protected $name;
 
     /**
+     * @var        PropelObjectCollection|DrugComponent[] Collection to store aggregation of DrugComponent objects.
+     */
+    protected $collDrugComponents;
+    protected $collDrugComponentsPartial;
+
+    /**
      * @var        PropelObjectCollection|rlsNomen[] Collection to store aggregation of rlsNomen objects.
      */
     protected $collrlsNomensRelatedByunitId;
@@ -96,6 +104,12 @@ abstract class BaserbUnit extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $drugComponentsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -307,6 +321,8 @@ abstract class BaserbUnit extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->collDrugComponents = null;
+
             $this->collrlsNomensRelatedByunitId = null;
 
             $this->collrlsNomensRelatedBydosageUnitId = null;
@@ -433,6 +449,24 @@ abstract class BaserbUnit extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
+            }
+
+            if ($this->drugComponentsScheduledForDeletion !== null) {
+                if (!$this->drugComponentsScheduledForDeletion->isEmpty()) {
+                    foreach ($this->drugComponentsScheduledForDeletion as $drugComponent) {
+                        // need to save related object because we set the relation to null
+                        $drugComponent->save($con);
+                    }
+                    $this->drugComponentsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collDrugComponents !== null) {
+                foreach ($this->collDrugComponents as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             if ($this->rlsNomensRelatedByunitIdScheduledForDeletion !== null) {
@@ -625,6 +659,14 @@ abstract class BaserbUnit extends BaseObject implements Persistent
             }
 
 
+                if ($this->collDrugComponents !== null) {
+                    foreach ($this->collDrugComponents as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collrlsNomensRelatedByunitId !== null) {
                     foreach ($this->collrlsNomensRelatedByunitId as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -719,6 +761,9 @@ abstract class BaserbUnit extends BaseObject implements Persistent
             $keys[2] => $this->getname(),
         );
         if ($includeForeignObjects) {
+            if (null !== $this->collDrugComponents) {
+                $result['DrugComponents'] = $this->collDrugComponents->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collrlsNomensRelatedByunitId) {
                 $result['rlsNomensRelatedByunitId'] = $this->collrlsNomensRelatedByunitId->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -882,6 +927,12 @@ abstract class BaserbUnit extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
+            foreach ($this->getDrugComponents() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDrugComponent($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getrlsNomensRelatedByunitId() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addrlsNomenRelatedByunitId($relObj->copy($deepCopy));
@@ -955,12 +1006,258 @@ abstract class BaserbUnit extends BaseObject implements Persistent
      */
     public function initRelation($relationName)
     {
+        if ('DrugComponent' == $relationName) {
+            $this->initDrugComponents();
+        }
         if ('rlsNomenRelatedByunitId' == $relationName) {
             $this->initrlsNomensRelatedByunitId();
         }
         if ('rlsNomenRelatedBydosageUnitId' == $relationName) {
             $this->initrlsNomensRelatedBydosageUnitId();
         }
+    }
+
+    /**
+     * Clears out the collDrugComponents collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return rbUnit The current object (for fluent API support)
+     * @see        addDrugComponents()
+     */
+    public function clearDrugComponents()
+    {
+        $this->collDrugComponents = null; // important to set this to null since that means it is uninitialized
+        $this->collDrugComponentsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collDrugComponents collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialDrugComponents($v = true)
+    {
+        $this->collDrugComponentsPartial = $v;
+    }
+
+    /**
+     * Initializes the collDrugComponents collection.
+     *
+     * By default this just sets the collDrugComponents collection to an empty array (like clearcollDrugComponents());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDrugComponents($overrideExisting = true)
+    {
+        if (null !== $this->collDrugComponents && !$overrideExisting) {
+            return;
+        }
+        $this->collDrugComponents = new PropelObjectCollection();
+        $this->collDrugComponents->setModel('DrugComponent');
+    }
+
+    /**
+     * Gets an array of DrugComponent objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this rbUnit is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|DrugComponent[] List of DrugComponent objects
+     * @throws PropelException
+     */
+    public function getDrugComponents($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collDrugComponentsPartial && !$this->isNew();
+        if (null === $this->collDrugComponents || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDrugComponents) {
+                // return empty collection
+                $this->initDrugComponents();
+            } else {
+                $collDrugComponents = DrugComponentQuery::create(null, $criteria)
+                    ->filterByrbUnit($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collDrugComponentsPartial && count($collDrugComponents)) {
+                      $this->initDrugComponents(false);
+
+                      foreach($collDrugComponents as $obj) {
+                        if (false == $this->collDrugComponents->contains($obj)) {
+                          $this->collDrugComponents->append($obj);
+                        }
+                      }
+
+                      $this->collDrugComponentsPartial = true;
+                    }
+
+                    $collDrugComponents->getInternalIterator()->rewind();
+                    return $collDrugComponents;
+                }
+
+                if($partial && $this->collDrugComponents) {
+                    foreach($this->collDrugComponents as $obj) {
+                        if($obj->isNew()) {
+                            $collDrugComponents[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDrugComponents = $collDrugComponents;
+                $this->collDrugComponentsPartial = false;
+            }
+        }
+
+        return $this->collDrugComponents;
+    }
+
+    /**
+     * Sets a collection of DrugComponent objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $drugComponents A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return rbUnit The current object (for fluent API support)
+     */
+    public function setDrugComponents(PropelCollection $drugComponents, PropelPDO $con = null)
+    {
+        $drugComponentsToDelete = $this->getDrugComponents(new Criteria(), $con)->diff($drugComponents);
+
+        $this->drugComponentsScheduledForDeletion = unserialize(serialize($drugComponentsToDelete));
+
+        foreach ($drugComponentsToDelete as $drugComponentRemoved) {
+            $drugComponentRemoved->setrbUnit(null);
+        }
+
+        $this->collDrugComponents = null;
+        foreach ($drugComponents as $drugComponent) {
+            $this->addDrugComponent($drugComponent);
+        }
+
+        $this->collDrugComponents = $drugComponents;
+        $this->collDrugComponentsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related DrugComponent objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related DrugComponent objects.
+     * @throws PropelException
+     */
+    public function countDrugComponents(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collDrugComponentsPartial && !$this->isNew();
+        if (null === $this->collDrugComponents || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDrugComponents) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getDrugComponents());
+            }
+            $query = DrugComponentQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByrbUnit($this)
+                ->count($con);
+        }
+
+        return count($this->collDrugComponents);
+    }
+
+    /**
+     * Method called to associate a DrugComponent object to this object
+     * through the DrugComponent foreign key attribute.
+     *
+     * @param    DrugComponent $l DrugComponent
+     * @return rbUnit The current object (for fluent API support)
+     */
+    public function addDrugComponent(DrugComponent $l)
+    {
+        if ($this->collDrugComponents === null) {
+            $this->initDrugComponents();
+            $this->collDrugComponentsPartial = true;
+        }
+        if (!in_array($l, $this->collDrugComponents->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddDrugComponent($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	DrugComponent $drugComponent The drugComponent object to add.
+     */
+    protected function doAddDrugComponent($drugComponent)
+    {
+        $this->collDrugComponents[]= $drugComponent;
+        $drugComponent->setrbUnit($this);
+    }
+
+    /**
+     * @param	DrugComponent $drugComponent The drugComponent object to remove.
+     * @return rbUnit The current object (for fluent API support)
+     */
+    public function removeDrugComponent($drugComponent)
+    {
+        if ($this->getDrugComponents()->contains($drugComponent)) {
+            $this->collDrugComponents->remove($this->collDrugComponents->search($drugComponent));
+            if (null === $this->drugComponentsScheduledForDeletion) {
+                $this->drugComponentsScheduledForDeletion = clone $this->collDrugComponents;
+                $this->drugComponentsScheduledForDeletion->clear();
+            }
+            $this->drugComponentsScheduledForDeletion[]= $drugComponent;
+            $drugComponent->setrbUnit(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this rbUnit is new, it will return
+     * an empty collection; or if this rbUnit has previously
+     * been saved, it will retrieve related DrugComponents from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in rbUnit.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|DrugComponent[] List of DrugComponent objects
+     */
+    public function getDrugComponentsJoinAction($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = DrugComponentQuery::create(null, $criteria);
+        $query->joinWith('Action', $join_behavior);
+
+        return $this->getDrugComponents($query, $con);
     }
 
     /**
@@ -1679,6 +1976,11 @@ abstract class BaserbUnit extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->collDrugComponents) {
+                foreach ($this->collDrugComponents as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collrlsNomensRelatedByunitId) {
                 foreach ($this->collrlsNomensRelatedByunitId as $o) {
                     $o->clearAllReferences($deep);
@@ -1693,6 +1995,10 @@ abstract class BaserbUnit extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        if ($this->collDrugComponents instanceof PropelCollection) {
+            $this->collDrugComponents->clearIterator();
+        }
+        $this->collDrugComponents = null;
         if ($this->collrlsNomensRelatedByunitId instanceof PropelCollection) {
             $this->collrlsNomensRelatedByunitId->clearIterator();
         }

@@ -63,12 +63,12 @@ define(function(require) {
 		},
 
 		onKeyUp: function(e){
-			$target = this.$(e.target);
-			var value = $target.val();
-			if(value && value.length > 2){
-				$target.trigger('change');
-			}
-			console.log('keyup', $target.val());
+			// $target = this.$(e.target);
+			// var value = $target.val();
+			// if(value && value.length > 2){
+			// 	$target.trigger('change');
+			// }
+			// console.log('keyup', $target.val());
 		},
 
 		getUrlParams: function() {

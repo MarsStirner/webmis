@@ -234,7 +234,11 @@ class ActionQuery extends BaseActionQuery
 
 
                         ->_if($hidrate['drugs'])
-                            ->leftJoinWithDrugComponent('drugs')
+                            ->useDrugComponentQuery('drugs')
+                                ->leftJoinRbUnit('unit')
+                            ->endUse()
+                            ->with('drugs')
+                            ->with('unit')
                         ->_endIf();
 
     }

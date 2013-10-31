@@ -13,7 +13,8 @@ define(function(require) {
 	var ConsultationResultView = require("views/diagnostics/consultations/ConsultationsResultView");
 	var QuotesView = require("views/appeal/edit/pages/QuotesView");
 	var PatientMonitoringView = require("views/appeal/edit/pages/PatientMonitoringView");
-
+	var AppealPrescriptionsView = require("views/prescriptions/AppealPrescriptions");
+	var NewPrescriptionView = require("views/prescriptions/views/appeal/NewPrescriptionView");
 	var Monitoring = require("views/appeal/edit/pages/monitoring/monitoring");
 	var Documents = require("views/documents/documents");
 	var Moves = require("views/moves/moves");
@@ -79,6 +80,11 @@ define(function(require) {
 				"REVIEW": ConsultationView,
 				"SUB_REVIEW": ConsultationResultView,
 				"SUB_EDIT": Documents.Views.Edit.Consultation.Layout
+			},
+
+			"prescriptions": {
+				"REVIEW": AppealPrescriptionsView,
+				"SUB_REVIEW": NewPrescriptionView
 			},
 
 			"quotes": {
@@ -311,7 +317,8 @@ define(function(require) {
 
 		renderPageContent: function() {
 			this.menu.setPage(this.page);
-			this.$(".ContentSide").html(this.contentView.render().el);
+			this.contentView.render();
+			this.$(".ContentSide").html(this.contentView.el);
 		},
 
 		togglePrintBtn: function() {

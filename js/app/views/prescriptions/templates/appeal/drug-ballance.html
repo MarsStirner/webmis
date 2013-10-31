@@ -1,0 +1,31 @@
+<% if(!_.isEmpty(data.items)){ %>
+	<table class="Grid">
+		<tr>
+			<td>rlsNomen</td>
+			<td>Препарат</td>
+			<td>Количество</td>
+			<td>Годен до</td>
+			<td>Склад</td>
+		</tr>
+		<% _.each(data.items, function(item){%>
+			<tr>
+				<td>
+					<%= item.rlsNomenId %>
+				</td>
+				<td>
+					<%= item.tradeLocalName%>
+				</td>
+				<td>
+					<%= item.value%>
+				</td>
+				<td>
+					<%= item.bestBefore%>
+				</td>
+				<td>
+					<%= item.storageName%>
+				</td>
+			</tr>
+		<% }) %>
+
+	</table>
+<% } %>
