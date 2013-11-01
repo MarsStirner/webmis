@@ -2648,16 +2648,16 @@ define(function (require) {
         $this
           .parent()
           .nextAll("*:lt("+$this.data("vgroup-rows-number")+")")
-          .find(".span4:eq("+$this.index()+")")
+          .find(".span"+$this.data("span-width")+":eq("+$this.index()+")")
           .addClass("vgroup-"+i+"-span");
 			});
 
       this.$(".vgroup").each(function (i) {
-        var $vgroupContent = $("<span class='span12 vgroup-content-"+i+"'>");
+        var $vgroupContent = $("<span style='padding: 0;margin: 1em 0 0 0;' class='span12 vgroup-content-"+i+"'>");
         self.$(".vgroup-"+i+"-span")
-          .removeClass("span4")
+          .removeClass("span"+$(this).data("span-width"))
           .addClass("span12")
-          .wrap("<div class='row-fluid vgroup-row' style='margin-top: 1em;margin-bottom: 1em;'></div>")
+          .wrap("<div class='row-fluid vgroup-row' style='padding-top: 1em;'></div>")
           .parent()
           .detach()
           .appendTo($vgroupContent);
@@ -4152,6 +4152,7 @@ define(function (require) {
     render: function () {
       Documents.Views.Edit.UIElement.SubHeader.prototype.render.call(this);
       this.$el.data("vgroup-rows-number", this.model.getVGroupRowsNumber());
+      this.$el.data("span-width", this.layoutAttributes.width);
       return this;
     }
   });
