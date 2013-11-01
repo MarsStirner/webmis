@@ -1,4 +1,3 @@
-
 <h4>Терапия</h4>
 <% if(collection.length > 0){%>
 <div class="therapy-info">
@@ -25,7 +24,7 @@
 					<p><%= phase.title %> (Дата начала: <%= Core.Date.format(phase.beginDate) %>)</p>
 					<ul>
 						<% _.each([phase.days[0]], function(day){ %>
-							<li><p>День терапии: <a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>"><%= day.day %></a></p></li>
+							<li><p>День терапии: <a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>" target="_blank"><%= day.day %></a></p></li>
 
 						<%});%>
 					</ul>
