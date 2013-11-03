@@ -1,5 +1,5 @@
 define(function(require) {
-
+    var Collection = require('./Collection');
 	var DrugBalance = Collection.extend({
 		initialize: function(models, options) {
 

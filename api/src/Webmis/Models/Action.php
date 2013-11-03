@@ -159,6 +159,7 @@ class Action extends BaseAction
 
         if($hidrate['actionType']){
             $actionType = $this->getActionType();
+            $data['actionTypeId'] = $actionType->getId();
             $data['name'] = $actionType->getName();
         }
 

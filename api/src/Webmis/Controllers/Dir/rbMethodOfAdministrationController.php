@@ -23,7 +23,7 @@ class RbMethodOfAdministrationController
             ->_endIf()
 
             ->select(array('id', 'code','name'))
-            ->orderByName()
+//            ->orderByName()
             ->find()
             ->toArray();
 
