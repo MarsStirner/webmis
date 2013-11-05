@@ -202,6 +202,7 @@ define(function(require) {
 
                 self.render();
 
+                self.showType();
                 self.newConsultation.on('change:actionTypeId', self.loadConsultants, self);
                 self.newConsultation.on('changed:plannedEndDate', self.loadConsultants, self);
 
@@ -297,11 +298,12 @@ define(function(require) {
                         this.newConsultation.set('pacientInQueue', 2);
                     }
 
+                }else{
+                    this.newConsultation.set('pacientInQueue', undefined );
                 }
             }
 
         },
-
         onChangeAssignDate: function() {
             var date = this.ui.$assignDate.val();
             var time = this.ui.$assignTime.val();
@@ -442,7 +444,17 @@ define(function(require) {
             }
 
         },
+        showType: function(){
+            var type = this.newConsultation.get('pacientInQueue');
+            var message = 'Тип консультации не определён';
 
+            if(type===0||type===1||type===2){
+             message = type;   
+            }
+            this.ui.$type.html(message);
+            this.ui.$type.addClass('test');
+            console.log('showType'); 
+        },
         showErrors: function(errors) {
             var self = this;
             self.ui.$errors.html('').hide();
@@ -459,6 +471,7 @@ define(function(require) {
             var errors = this.isValid();
             this.saveButton(!errors.length);
             this.showErrors(errors);
+            this.showType();
         },
 
         isValid: function() {
@@ -522,7 +535,7 @@ define(function(require) {
             this.ui.$saveButton = this.$el.find('.save');
             //this.ui.$consultations = this.$el.find('#consultations');
             this.ui.$planedDate = this.$el.find('#datepicker');
-
+            this.ui.$type = this.$el.find('[data-type]');
             //this.ui.$saveButton.button('disable');
             this.ui.$finance = this.$el.find('#finance');
             //this.ui.$assignPerson = this.$el.find('#assign-person');

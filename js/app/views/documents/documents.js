@@ -61,7 +61,8 @@ define(function (require) {
 	var appealId = 0;
 	var appeal = null;
 	var dispatcher = _.extend({}, Backbone.Events);
-	var fds = {};
+	var fds = _.extend({}, Backbone.Events);
+	var therapiesCollection;
 	//endregion
 
 
@@ -229,7 +230,7 @@ define(function (require) {
 
 						if (shouldSetTherapyPhaseFields) {
 							if (ta.therapyFieldCode == "therapyPhaseTitle") {
-								ta.properties[0].value = lastTherapy.get("phases")[0].title;
+								ta.properties[1].value = lastTherapy.get("phases")[0].titleId.toString();
 								ta.readOnly = "true";
 							}
 							if (ta.therapyFieldCode == "therapyPhaseBegDate") {
@@ -243,19 +244,28 @@ define(function (require) {
 				console.log(therapyAttrs);
 			}
 
-			var groupedByRow = _(attributes).groupBy(function (item) {
-				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
-				//var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
-				return item.therapyFieldCode ? "THERAPY" : "UNDEFINED";
-			}, this);
+      var groupedByRow = _(attributes).groupBy(function (item) {
+        var rowAttr = _(layoutAttributesDir.get(item.type)).find(function (a) {return a.code === "ROW";});
+        var rowValue = "UNDEFINED";
 
-			if (!groupedByRow.UNDEFINED) {
+        if (rowAttr) {
+          var rowAttrId = rowAttr["id"];
+          var rowValueParams = _(item.layoutAttributeValues).find(function (la) {return la.layoutAttribute_id === rowAttrId;});
+          if (rowValueParams && rowValueParams["value"]) {
+            rowValue = rowValueParams["value"];
+          }
+        }
+
+        return rowValue;
+      }, this);
+
+			/*if (!groupedByRow.UNDEFINED) {
 				groupedByRow.UNDEFINED = [];
-			}
+			}*/
 
 			var rows = [];
 
-			if (groupedByRow.THERAPY) {
+			/*if (groupedByRow.THERAPY) {
 				rows.push(
 					{spans: new Backbone.Collection([
 						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[0]),
@@ -272,15 +282,37 @@ define(function (require) {
 						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[7])
 					])}
 				);
-			}
+			}*/
 
-			for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
+			//////////////////
+			_.forEach(groupedByRow, function (row, rowNumber) {
+				if (rowNumber !== "UNDEFINED") {
+					rows.push({spans: new Backbone.Collection()});
+
+					_.forEach(row, function (span) {
+						_.last(rows).spans.add(new Documents.Models.TemplateAttribute(span));
+					}, this);
+				} else {
+					_.forEach(row, function (span, i) {
+						if (i == 0 || i % 2 == 0) {
+							rows.push({spans: new Backbone.Collection()});
+						}
+
+						_.last(rows).spans.add(new Documents.Models.TemplateAttribute(row[i]));
+					}, this);
+				}
+			}, this);
+
+			console.log(rows);
+			//////////////////
+
+			/*for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
 				if (i == 0 || i % 2 == 0) {
 					rows.push({spans: new Backbone.Collection()});
 				}
 
 				rows[rows.length - 1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
-			}
+			}*/
 
 			return rows;
 		},
@@ -568,6 +600,42 @@ define(function (require) {
 		isMandatory: function () {
 			return this.get("mandatory") === "true";
 		},
+
+		isSubHeader: function () {
+			var result = false;
+			var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "DISPLAY_AS_SUBHEADER";});
+			if (la) {
+				var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
+				if (lav) {
+					result = lav.value === "true";
+				}
+			}
+			return result;
+		},
+
+    isSubHeaderVGroup: function () {
+      var result = false;
+      var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "VGROUP";});
+      if (la) {
+        var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
+        if (lav) {
+          result = lav.value === "true";
+        }
+      }
+      return result;
+    },
+
+    getVGroupRowsNumber: function () {
+      var result = 0;
+      var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "VGROUP_ROWS";});
+      if (la) {
+        var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
+        if (lav) {
+          result = lav.value;
+        }
+      }
+      return result;
+    },
 
 		isIdType: function () {
 			return ID_TYPES.indexOf(this.get("type").toUpperCase()) != -1;
@@ -1944,7 +2012,7 @@ define(function (require) {
 	});
 	//endregion
 
-	var therapiesCollection;
+
 	//region VIEWS EDIT BASE
 	//---------------------
 	Documents.Views.Edit.Base.Layout = LayoutBase.extend({
@@ -2570,11 +2638,34 @@ define(function (require) {
 				$(this).prop("tabindex", ++i);
 			});
 
-			this.$(".doc-sub-header").each(function () {
-				if ($(this).siblings(".span6").length > 0) {
-					$(this).parent().before($(this).detach());
-				}
+      var self = this;
+
+			this.$(".vgroup").each(function (i) {
+        var $this = $(this);
+        $this.addClass("vgroup-"+i);
+
+
+        $this
+          .parent()
+          .nextAll("*:lt("+$this.data("vgroup-rows-number")+")")
+          .find(".span"+$this.data("span-width")+":eq("+$this.index()+")")
+          .addClass("vgroup-"+i+"-span");
 			});
+
+      this.$(".vgroup").each(function (i) {
+        var $vgroupContent = $("<span style='padding: 0;margin: 1em 0 0 0;' class='span12 vgroup-content-"+i+"'>");
+        self.$(".vgroup-"+i+"-span")
+          .removeClass("span"+$(this).data("span-width"))
+          .addClass("span12")
+          .wrap("<div class='row-fluid vgroup-row' style='padding-top: 1em;'></div>")
+          .parent()
+          .detach()
+          .appendTo($vgroupContent);
+        $(this).append($vgroupContent.toggle());
+        $vgroupContent.toggle();
+      });
+
+      this.$(".row-fluid:empty").hide();
 
 			return this;
 		}
@@ -2616,7 +2707,7 @@ define(function (require) {
 			this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
 			//common attrs to fit into grid
 			//TODO: TEMP HELL
-			if (this.model.get("therapyFieldCode")) {
+			/*if (this.model.get("therapyFieldCode")) {
 				var therapyFieldCode = this.model.get("therapyFieldCode");
 				switch (therapyFieldCode) {
 					case "therapyTitle":
@@ -2632,9 +2723,9 @@ define(function (require) {
 						break;
 				}
 				//console.log(this.model.get("therapyFieldCode"));
-			} else {
+			} else {*/
 				this.$el.addClass("span" + this.layoutAttributes.width);
-			}
+			//}
 		},
 
 		mapLayoutAttributes: function () {
@@ -2665,7 +2756,7 @@ define(function (require) {
 		},
 
 		onAttributeValueChange: function (event) {
-			console.log('onAttributeValueChange',this.getAttributeValue());
+			//console.log('onAttributeValueChange',this.getAttributeValue());
 			this.model.setValue(this.getAttributeValue());
 			this.$(".Mandatory").removeClass("WrongField");
 		},
@@ -2698,15 +2789,10 @@ define(function (require) {
 			this.updateFieldCollapse();
 			var therapyFieldCode = this.model.get("therapyFieldCode");
 			switch (therapyFieldCode) {
-				/*case "therapyTitle":
-				case "therapyBegDate":
-				case "therapyEndDate":
-					this.$el.addClass("span4");
-					break;*/
-				case "therapyPhaseTitle":
+				/*case "therapyPhaseTitle":
 					this.$(".wysisyg").remove();
 					this.$(".RichText").css({"min-height": "2.25em"});
-					break;
+					break;*/
 				//case "therapyPhaseBegDate":
 				case "therapyPhaseDay":
 				//case "therapyPhaseEndDate":
@@ -3152,9 +3238,17 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({
 		template: templates.uiElements._flatDirectory,
 		data: function () {
+			var directoryEntries = (this.filterFd ?
+				_(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
+					return frd["parentFdr_id"] == this.parentFdrId;
+				}, this) :
+				_(fds[this.model.get("scope")].toBeautyJSON()));
+
+      this.filterFd = false;
+
 			return {
 				model: this.model,
-				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())
+				directoryEntries: directoryEntries
 			};
 		},
 		initialize: function () {
@@ -3167,6 +3261,7 @@ define(function (require) {
 			} else {
 				this.onDirectoryReady();
 			}
+			this.parentFdrId = null;
 			/*this.directoryEntries = new FlatDirectory();
 			this.directoryEntries.set({id: this.model.get("scope")});
 			$.when(this.directoryEntries.fetch()).then(_.bind(function () {
@@ -3176,15 +3271,34 @@ define(function (require) {
 			UIElementBase.prototype.initialize.apply(this);
 		},
 		onDirectoryReady: function () {
+			if (this.model.get("code") === "therapyPhaseTitle") {
+				this.listenTo(fds, "change-therapyTitle", function (event) {
+					this.parentFdrId = event.id;
+					this.$(".attribute-value").val("").change();
+          this.filterFd = true;
+					this.render();
+				});
+			}
+
 			//this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
+			console.log(fds);
 			this.render();
 		},
 		onAttributeValueChange: function (event) {
 			if (_.isEmpty(this.getAttributeValue())) {
 				this.model.setPropertyValueFor("value", "");
 			}
+			if (this.model.get("code") === "therapyTitle") {
+				fds.trigger("change-therapyTitle", {id: this.getAttributeValue()});
+			}
 			UIElementBase.prototype.onAttributeValueChange.call(this, event);
 		}
+    /*,
+    render: function () {
+      UIElementBase.prototype.render.call(this);
+      this.$("select").select2();
+      return this;
+    }*/
 	});
 
 	/**
@@ -4000,19 +4114,48 @@ define(function (require) {
 	 * @type {Function}
 	 */
 	Documents.Views.Edit.UIElement.SubHeader = ViewBase.extend({
-		className: "row-fluid doc-sub-header",
+		className: "doc-sub-header",
 		template: _.template("<h3><%=model.get('name')%></h3>"),
 		data: function () {
 			return {
 				model: this.model
 			}
-		}/*,
+		},
+    layoutAttributes: UIElementBase.prototype.layoutAttributes,
+    initialize: function () {
+    	this.mapLayoutAttributes();
+      this.$el.addClass("span" + this.layoutAttributes.width);
+    },
+    mapLayoutAttributes: UIElementBase.prototype.mapLayoutAttributes
+		/*,
 		render: function () {
 			ViewBase.prototype.render.call(this);
 			//this.$el.parent().prepend(this.$el.detach());
 			return this;
 		}*/
 	});
+
+  Documents.Views.Edit.UIElement.SubHeaderVGroup = Documents.Views.Edit.UIElement.SubHeader.extend({
+    className: "doc-sub-header vgroup",
+    attributes: {style: "border: 1px solid #D9D9D9;padding: 1em;border-radius:5px;"},
+    template: _.template("<h3 class='sb-hdr' style='line-height: 1em;cursor: pointer;'><%=model.get('name')%><span class='sb-tgl icon-plus' style='float: right'></span></h3>"),
+    events: {
+      "click .sb-hdr": "onClick"
+    },
+    onClick: function (event) {
+      console.log("VGROUP CLICK");
+      var $t = $(event.currentTarget);
+      $t.next().toggle();
+      this.$(".sb-tgl").toggleClass("icon-plus icon-minus");
+    	//this.$el.parent().nextAll("*:lt("+this.model.getVGroupRowsNumber()+")").find(".span4:eq("+this.$el.index()+") *").toggle();
+    },
+    render: function () {
+      Documents.Views.Edit.UIElement.SubHeader.prototype.render.call(this);
+      this.$el.data("vgroup-rows-number", this.model.getVGroupRowsNumber());
+      this.$el.data("span-width", this.layoutAttributes.width);
+      return this;
+    }
+  });
 
 	/**
 	 * Фабрика для создания элементов шаблона соответсвующего типа
@@ -4028,8 +4171,13 @@ define(function (require) {
 				this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
 				break;
 			case "string":
-				if (options.model.get("scope") === "''") {
-					this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
+				//if (options.model.get("scope") === "''") {
+				if (options.model.isSubHeader()) {
+          if (options.model.isSubHeaderVGroup()) {
+					  this.UIElementClass = Documents.Views.Edit.UIElement.SubHeaderVGroup;
+          } else {
+            this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
+          }
 				} else {
 					this.UIElementClass = Documents.Views.Edit.UIElement.String;
 				}
