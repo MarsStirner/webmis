@@ -190,3 +190,4 @@ sftp-config.json
 tasks.todo
 
 .tern-project
+.directory
