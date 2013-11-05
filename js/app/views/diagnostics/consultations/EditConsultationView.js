@@ -116,7 +116,6 @@ define(function(require) {
 
                 var overQueue = false;
                 if(self.consultation.getProperty('pacientInQueueType') === '2'){
-                    console.log('pacientInQueueType 2');
                     overQueue = true;
                 }
 
@@ -194,7 +193,6 @@ define(function(require) {
                     var consultant = self.consultantsFree.find(function(item) {
                         return item.get('doctor').id == executorId;
                     });
-                    console.log('self.consultantsFree', self.consultantsFree, consultant);
 
                     self.renderShedule(consultant);
                     self.consultantsFree._params = null;
@@ -206,7 +204,7 @@ define(function(require) {
                 self.newConsultation.on('change:actionTypeId', self.loadConsultants, self);
                 self.newConsultation.on('changed:plannedEndDate', self.loadConsultants, self);
 
-                self.newConsultation.on('change:urgent change:overQueue change:plannedTime', self.setPacientInQueue, self);
+               // self.newConsultation.on('change', self.setPacientInQueue, self);
 
                 self.newConsultation.on('change', self.validateForm, self);
 
@@ -285,7 +283,7 @@ define(function(require) {
         },
 
         setPacientInQueue: function(){
-
+            console.log('setPacientInQueue',this.newConsultation.get('pacientInQueue'),this.newConsultation.get('plannedTime'),this.newConsultation.get('urgent'),this.newConsultation.get('overQueue'))
             if(this.newConsultation.get('plannedTime')){
                 this.newConsultation.set('pacientInQueue', 0);
             }else{
@@ -297,11 +295,15 @@ define(function(require) {
                     if(this.newConsultation.get('overQueue')){
                         this.newConsultation.set('pacientInQueue', 2);
                     }
+                    if(!this.newConsultation.get('urgent') && !this.newConsultation.get('overQueue')){
+                        this.newConsultation.set('pacientInQueue', 4); 
+                    }
 
                 }else{
-                    this.newConsultation.set('pacientInQueue', undefined );
+                    this.newConsultation.set('pacientInQueue', 4 );
                 }
             }
+            console.log('setPacientInQueue2',this.newConsultation.get('pacientInQueue'),this.newConsultation.get('plannedTime'),this.newConsultation.get('urgent'),this.newConsultation.get('overQueue'))
 
         },
         onChangeAssignDate: function() {
@@ -324,6 +326,9 @@ define(function(require) {
         onChangeUrgent: function(e) {
             var $target = this.$(e.target);
             this.newConsultation.set('urgent', $target.prop('checked'));
+            if($target.prop('checked')){
+                this.ui.$over.prop('checked',false).trigger('change'); 
+            }
         },
 
         //при изменении 'Сверх сетки приёма'
@@ -335,8 +340,10 @@ define(function(require) {
 
             if (over) {
                 this.scheduleView.disable();
+                this.ui.$urgent.prop('checked',false).trigger('change');
             } else {
                 this.scheduleView.enable();
+                
             }
         },
 
@@ -446,14 +453,24 @@ define(function(require) {
         },
         showType: function(){
             var type = this.newConsultation.get('pacientInQueue');
-            var message = 'Тип консультации не определён';
+            var message = 'не определён';
 
             if(type===0||type===1||type===2){
-             message = type;   
+                if(type===0){
+                    message = 'запись по времени'; 
+                }
+                if(type===0 && this.newConsultation.get('urgent')){
+                    message = 'срочная запись по времени'; 
+                }
+                if(type===1){
+                    message = 'срочная запись'; 
+                }
+                if(type===2){
+                    message = 'запись сверх сетки'; 
+                }
+
             }
             this.ui.$type.html(message);
-            this.ui.$type.addClass('test');
-            console.log('showType'); 
         },
         showErrors: function(errors) {
             var self = this;
@@ -471,6 +488,8 @@ define(function(require) {
             var errors = this.isValid();
             this.saveButton(!errors.length);
             this.showErrors(errors);
+            this.setPacientInQueue();
+
             this.showType();
         },
 
