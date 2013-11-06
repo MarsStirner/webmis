@@ -81,6 +81,7 @@ define(function (require) {
 		_documentTypesTree: _.template(require("text!templates/documents/list/doc-types-tree.html")),
 		_documentsTableHead: _.template(require("text!templates/documents/list/docs-table-head.html")),
 		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
+        _summaryTable: _.template(require("text!template/documents/list/summary-table.html")),
 		_documentsTablePaging: _.template(require("text!templates/documents/list/paging.html")),
 		_editLayout: _.template(require("text!templates/documents/edit/layout.html")),
 		_editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
@@ -838,6 +839,7 @@ define(function (require) {
 		},
 
 		render: function (subViews) {
+            console.log('render', this.data())
 			this.$el.html(this.template(this.data()));
 			if (subViews) {
 				this.subViews = {};
@@ -4812,9 +4814,67 @@ define(function (require) {
 	});
 	//endregion
 	//endregion
+    Documents.Summary = {
+        List: {},
+        Review: {}
+    };
+    Documents.Summary.Review.Layout = Documents.Views.Review.Base.Layout.extend({
+		getEditPageTypeName: Documents.Views.Review.Examination.NoControlsLayout.prototype.getEditPageTypeName,
+		getDefaultDocumentsMnems: function () {
+			return ["EXAM"];
+		},
+		render: function () {
+			Documents.Views.Review.Base.Layout.prototype.render.call(this, {
+				".documents-controls": new Documents.Views.List.Base.Controls({editPageTypeName: this.getEditPageTypeName()})
+			});
 
+			this.$(".controls-block-row").show();
 
+			return this;
+		}
+	});
 
+    Documents.Summary.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
+        template: templates._summaryTable 
+    });
+
+    Documents.Summary.List.Layout = ListLayoutBase.extend({
+		template: templates._listLayout,
+
+		getDefaultDocumentsMnems: function () {
+			return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH","CONS","LAB"];
+		},
+
+		getReviewLayout: function () {
+			return new Documents.Summary.Review.Layout({
+				collection: this.selectedDocuments,
+				documents: this.documents,
+				included: true,
+				showIcons: !this.options.included
+			});
+		},
+
+		getEditPageTypeName: function () {
+			return "examinations";
+		},
+
+		render: function (subViews) {
+			return ListLayoutBase.prototype.render.call(this, _.extend({
+				".documents-table-body": new Documents.Summary.DocumentsTable({
+					collection: this.documents,
+					selectedDocuments: this.selectedDocuments,
+					included: false,
+					editPageTypeName: this.getEditPageTypeName()
+				}),
+				/*".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
+					collection: this.documents,
+					included: !!this.options.included
+				}),*/
+				".documents-filters": new Documents.Views.List.Base.Filters({collection: this.documents})
+			}, subViews));
+		}
+	});
+ 
 	//Редактирование консультаций
 
 	Documents.Views.Edit.Consultation.DocControls = Documents.Views.Edit.DocControls.extend({

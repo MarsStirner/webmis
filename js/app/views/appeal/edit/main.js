@@ -13,7 +13,7 @@ define(function(require) {
 	var ConsultationResultView = require("views/diagnostics/consultations/ConsultationsResultView");
 	var QuotesView = require("views/appeal/edit/pages/QuotesView");
 	var PatientMonitoringView = require("views/appeal/edit/pages/PatientMonitoringView");
-
+    var SummaryListView = require("views/summary/List");
 	var Monitoring = require("views/appeal/edit/pages/monitoring/monitoring");
 	var Documents = require("views/documents/documents");
 	var Moves = require("views/moves/moves");
@@ -80,7 +80,6 @@ define(function(require) {
 				"SUB_REVIEW": ConsultationResultView,
 				"SUB_EDIT": Documents.Views.Edit.Consultation.Layout
 			},
-
 			"quotes": {
 				"REVIEW": QuotesView
 			},
@@ -114,7 +113,10 @@ define(function(require) {
 				"SUB_EDIT": Documents.Views.Edit.Therapy.Layout,
 				"SUB_NEW": Documents.Views.Edit.Therapy.Layout
 			},
-
+            "summary": {
+                "REVIEW": Documents.Summary.List.Layout,
+                "SUB_REVIEW": Documents.Summary.Review.Layout
+            },
 			"examinations": {
 				"REVIEW": Documents.Views.List.Examination.Layout,
 				"SUB_REVIEW": Documents.Views.Review.Examination.Layout,
@@ -311,7 +313,8 @@ define(function(require) {
 
 		renderPageContent: function() {
 			this.menu.setPage(this.page);
-			this.$(".ContentSide").html(this.contentView.render().el);
+            this.contentView.render();
+			this.$(".ContentSide").html(this.contentView.el);
 		},
 
 		togglePrintBtn: function() {
