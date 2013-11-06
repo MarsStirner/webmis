@@ -126,11 +126,11 @@ define(function(require) {
                     diagnosisCode = diagnosisArray[0];
                 }
 
-                // if(self.consultation.getProperty('pacientInQueueType') === 0){
+                if(self.consultation.getProperty('pacientInQueueType') == 0){
                     self.newConsultation.plannedTimeChanged = false;
-                // }else{
-                //     self.newConsultation.plannedTimeChanged = true;
-                // }
+                }else{
+                    self.newConsultation.plannedTimeChanged = true;
+                }
 
 
                 self.newConsultation.set({
@@ -280,14 +280,21 @@ define(function(require) {
 
         onTimeUnselect: function() {
             this.newConsultation.set('plannedTime', null);
+            this.newConsultation.plannedTimeChanged = true;
         },
 
         setPacientInQueue: function(){
-            console.log('setPacientInQueue',this.newConsultation.get('pacientInQueue'),this.newConsultation.get('plannedTime'),this.newConsultation.get('urgent'),this.newConsultation.get('overQueue'))
-            if(this.newConsultation.get('plannedTime')){
+            console.log('setPacientInQueue',
+                this.newConsultation.get('pacientInQueue'),
+                this.newConsultation.get('plannedTime'),
+                this.newConsultation.plannedTimeChanged,
+                this.newConsultation.get('urgent'),
+                this.newConsultation.get('overQueue'));
+
+            if(this.newConsultation.get('plannedTime') || !this.newConsultation.plannedTimeChanged){
                 this.newConsultation.set('pacientInQueue', 0);
             }else{
-                if(this.newConsultation.plannedTimeChanged){
+                //if(this.newConsultation.plannedTimeChanged){
                     if(this.newConsultation.get('urgent')){
                         this.newConsultation.set('pacientInQueue', 1);
                     }
@@ -296,14 +303,20 @@ define(function(require) {
                         this.newConsultation.set('pacientInQueue', 2);
                     }
                     if(!this.newConsultation.get('urgent') && !this.newConsultation.get('overQueue')){
-                        this.newConsultation.set('pacientInQueue', 4); 
+                        this.newConsultation.set('pacientInQueue', 4);
                     }
 
-                }else{
-                    this.newConsultation.set('pacientInQueue', 4 );
-                }
+                //}else{
+                //    this.newConsultation.set('pacientInQueue', 4 );
+                //}
             }
-            console.log('setPacientInQueue2',this.newConsultation.get('pacientInQueue'),this.newConsultation.get('plannedTime'),this.newConsultation.get('urgent'),this.newConsultation.get('overQueue'))
+            console.log('setPacientInQueue2',
+                this.newConsultation.get('pacientInQueue')
+                ,this.newConsultation.get('plannedTime'),
+                this.newConsultation.plannedTimeChanged,
+                this.newConsultation.get('urgent'),
+                this.newConsultation.get('overQueue'));
+
 
         },
         onChangeAssignDate: function() {
@@ -327,7 +340,7 @@ define(function(require) {
             var $target = this.$(e.target);
             this.newConsultation.set('urgent', $target.prop('checked'));
             if($target.prop('checked')){
-                this.ui.$over.prop('checked',false).trigger('change'); 
+                this.ui.$over.prop('checked',false).trigger('change');
             }
         },
 
@@ -336,15 +349,17 @@ define(function(require) {
             var $target = this.$(e.target);
             var over = $target.prop('checked');
 
-            this.newConsultation.set('overQueue', over);
 
             if (over) {
+                this.onTimeUnselect();
                 this.scheduleView.disable();
                 this.ui.$urgent.prop('checked',false).trigger('change');
+
             } else {
                 this.scheduleView.enable();
-                
+
             }
+            this.newConsultation.set('overQueue', over);
         },
 
         //при изменении диагноза
@@ -457,16 +472,16 @@ define(function(require) {
 
             if(type===0||type===1||type===2){
                 if(type===0){
-                    message = 'запись по времени'; 
+                    message = 'запись по времени';
                 }
                 if(type===0 && this.newConsultation.get('urgent')){
-                    message = 'срочная запись по времени'; 
+                    message = 'срочная запись по времени';
                 }
                 if(type===1){
-                    message = 'срочная запись'; 
+                    message = 'срочная запись';
                 }
                 if(type===2){
-                    message = 'запись сверх сетки'; 
+                    message = 'запись сверх сетки';
                 }
 
             }
