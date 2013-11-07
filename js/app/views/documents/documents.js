@@ -81,7 +81,8 @@ define(function (require) {
 		_documentTypesTree: _.template(require("text!templates/documents/list/doc-types-tree.html")),
 		_documentsTableHead: _.template(require("text!templates/documents/list/docs-table-head.html")),
 		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
-        _summaryTable: _.template(require("text!template/documents/list/summary-table.html")),
+		_summaryTypeDateFilters: _.template(require("text!templates/documents/list/summary-filter.html")),
+		_summaryTable: _.template(require("text!template/documents/list/summary-table.html")),
 		_documentsTablePaging: _.template(require("text!templates/documents/list/paging.html")),
 		_editLayout: _.template(require("text!templates/documents/edit/layout.html")),
 		_editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
@@ -245,20 +246,20 @@ define(function (require) {
 				console.log(therapyAttrs);
 			}
 
-      var groupedByRow = _(attributes).groupBy(function (item) {
-        var rowAttr = _(layoutAttributesDir.get(item.type)).find(function (a) {return a.code === "ROW";});
-        var rowValue = "UNDEFINED";
+		  var groupedByRow = _(attributes).groupBy(function (item) {
+			var rowAttr = _(layoutAttributesDir.get(item.type)).find(function (a) {return a.code === "ROW";});
+			var rowValue = "UNDEFINED";
 
-        if (rowAttr) {
-          var rowAttrId = rowAttr["id"];
-          var rowValueParams = _(item.layoutAttributeValues).find(function (la) {return la.layoutAttribute_id === rowAttrId;});
-          if (rowValueParams && rowValueParams["value"]) {
-            rowValue = rowValueParams["value"];
-          }
-        }
+			if (rowAttr) {
+			  var rowAttrId = rowAttr["id"];
+			  var rowValueParams = _(item.layoutAttributeValues).find(function (la) {return la.layoutAttribute_id === rowAttrId;});
+			  if (rowValueParams && rowValueParams["value"]) {
+				rowValue = rowValueParams["value"];
+			  }
+			}
 
-        return rowValue;
-      }, this);
+			return rowValue;
+		  }, this);
 
 			/*if (!groupedByRow.UNDEFINED) {
 				groupedByRow.UNDEFINED = [];
@@ -362,18 +363,18 @@ define(function (require) {
 			}
 		},
 
-    getExecutorPost: function () {
-      if (this.get("group")) {
-        if (!this.executorPost) {
-          this.executorPost = new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
-            return attr.name == "executorPost";
-          }));
-        }
-        return this.executorPost;
-      } else {
-        return {};
-      }
-    },
+		getExecutorPost: function () {
+		  if (this.get("group")) {
+			if (!this.executorPost) {
+			  this.executorPost = new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
+				return attr.name == "executorPost";
+			  }));
+			}
+			return this.executorPost;
+		  } else {
+			return {};
+		  }
+		},
 
 		spoofDates: function () {
 			_.each(this.get("group")[1].attribute, function (attr) {
@@ -614,29 +615,29 @@ define(function (require) {
 			return result;
 		},
 
-    isSubHeaderVGroup: function () {
-      var result = false;
-      var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "VGROUP";});
-      if (la) {
-        var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
-        if (lav) {
-          result = lav.value === "true";
-        }
-      }
-      return result;
-    },
+		isSubHeaderVGroup: function () {
+		  var result = false;
+		  var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "VGROUP";});
+		  if (la) {
+			var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
+			if (lav) {
+			  result = lav.value === "true";
+			}
+		  }
+		  return result;
+		},
 
-    getVGroupRowsNumber: function () {
-      var result = 0;
-      var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "VGROUP_ROWS";});
-      if (la) {
-        var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
-        if (lav) {
-          result = lav.value;
-        }
-      }
-      return result;
-    },
+		getVGroupRowsNumber: function () {
+		  var result = 0;
+		  var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "VGROUP_ROWS";});
+		  if (la) {
+			var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
+			if (lav) {
+			  result = lav.value;
+			}
+		  }
+		  return result;
+		},
 
 		isIdType: function () {
 			return ID_TYPES.indexOf(this.get("type").toUpperCase()) != -1;
@@ -826,6 +827,12 @@ define(function (require) {
 	//Базовые классы
 	var ViewBase = Documents.Views.Base = Backbone.View.extend({
 		template: _.template(""),
+		initialize: function(){
+			console.log('initialize '+this, arguments);
+		},
+		toString: function(){
+			return 'Documents.Views.Base';
+		},
 
 		data: function () {
 			return {};
@@ -839,7 +846,7 @@ define(function (require) {
 		},
 
 		render: function (subViews) {
-            console.log('render', this.data())
+			console.log('render '+this +' '+this.cid, this.data())
 			this.$el.html(this.template(this.data()));
 			if (subViews) {
 				this.subViews = {};
@@ -870,10 +877,12 @@ define(function (require) {
 			this.remove();
 		},
 
-		tearDownSubviews: function () {
-			if (this.subViews) _.each(this.subViews, function (subView) {
-				subView.tearDown();
-			});
+		tearDownSubviews: function() {
+			if (this.subViews) {
+				_.each(this.subViews, function(subView) {
+					subView.tearDown();
+				});
+			}
 		},
 
 		on: function (event, callback, context) {
@@ -898,10 +907,16 @@ define(function (require) {
 
 	var LayoutBase = Documents.Views.LayoutBase = ViewBase.extend({
 		className: "container-fluid",
+		toString: function(){
+			return 'LayoutBase';
+		},
 
 		topLevel: false,
 
 		initialize: function () {
+			ViewBase.prototype.initialize.call(this);
+
+
 			if (this.options.appealId) {
 				appealId = this.options.appealId;
 				appeal = this.options.appeal;
@@ -1067,6 +1082,7 @@ define(function (require) {
 		},
 
 		toggleReviewState: function (enabled) {
+			console.log('toggle review state', this)
 			//this.$(".documents-table, .controls-filters, .documents-paging").toggle(!enabled);
 			this.$(this.reviewStateToggles.join(",")).toggle(!enabled);
 
@@ -1227,7 +1243,8 @@ define(function (require) {
 		},
 
 		data: function () {
-			return {documents: this.collection, showIcons: !this.options.included && !appeal.isClosed()};
+			return {documents: this.collection,
+				showIcons: !this.options.included && !appeal.isClosed()};
 		},
 
 		initialize: function () {
@@ -2640,34 +2657,34 @@ define(function (require) {
 				$(this).prop("tabindex", ++i);
 			});
 
-      var self = this;
+	  var self = this;
 
 			this.$(".vgroup").each(function (i) {
-        var $this = $(this);
-        $this.addClass("vgroup-"+i);
+		var $this = $(this);
+		$this.addClass("vgroup-"+i);
 
 
-        $this
-          .parent()
-          .nextAll("*:lt("+$this.data("vgroup-rows-number")+")")
-          .find(".span"+$this.data("span-width")+":eq("+$this.index()+")")
-          .addClass("vgroup-"+i+"-span");
+		$this
+		  .parent()
+		  .nextAll("*:lt("+$this.data("vgroup-rows-number")+")")
+		  .find(".span"+$this.data("span-width")+":eq("+$this.index()+")")
+		  .addClass("vgroup-"+i+"-span");
 			});
 
-      this.$(".vgroup").each(function (i) {
-        var $vgroupContent = $("<span style='padding: 0;margin: 1em 0 0 0;' class='span12 vgroup-content-"+i+"'>");
-        self.$(".vgroup-"+i+"-span")
-          .removeClass("span"+$(this).data("span-width"))
-          .addClass("span12")
-          .wrap("<div class='row-fluid vgroup-row' style='padding-top: 1em;'></div>")
-          .parent()
-          .detach()
-          .appendTo($vgroupContent);
-        $(this).append($vgroupContent.toggle());
-        $vgroupContent.toggle();
-      });
+	  this.$(".vgroup").each(function (i) {
+		var $vgroupContent = $("<span style='padding: 0;margin: 1em 0 0 0;' class='span12 vgroup-content-"+i+"'>");
+		self.$(".vgroup-"+i+"-span")
+		  .removeClass("span"+$(this).data("span-width"))
+		  .addClass("span12")
+		  .wrap("<div class='row-fluid vgroup-row' style='padding-top: 1em;'></div>")
+		  .parent()
+		  .detach()
+		  .appendTo($vgroupContent);
+		$(this).append($vgroupContent.toggle());
+		$vgroupContent.toggle();
+	  });
 
-      this.$(".row-fluid:empty").hide();
+	  this.$(".row-fluid:empty").hide();
 
 			return this;
 		}
@@ -2815,12 +2832,12 @@ define(function (require) {
 
 		events: _.extend({
 			"click .wysisyg a": "onWysisygAClick",
-      "paste .RichText": "onRichTextPaste"
+	  "paste .RichText": "onRichTextPaste"
 		}, UIElementBase.prototype.events),
 
 		onWysisygAClick: function (e) {
 			e.preventDefault();
-      e.stopPropagation();
+	  e.stopPropagation();
 
 			var command = $(e.currentTarget).data('role');
 
@@ -2836,25 +2853,25 @@ define(function (require) {
 			}
 		},
 
-    onRichTextPaste: function (event) {
-      setTimeout(_.bind(function () {
-        console.log("paste! ", event);
-        this.$(".attribute-value").html($.htmlClean(this.$(".attribute-value").html(), {
-          format: true,
-          removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
-            "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button"
-            //, "table","tbody", "thead", "tr", "th", "td"
-          ],
-          removeAttrs: ["style", "class"],
-          replace: [
-            [["h1", "h2", "h3", "h4"], "b"],
-            [["table", "tr", "thead", "tbody"], "div"],
-            [["td", "th"], "span"]
-          ]
-        }));
-        this.model.setValue(this.$(".attribute-value").html());
-      }, this), 0);
-    },
+	onRichTextPaste: function (event) {
+	  setTimeout(_.bind(function () {
+		console.log("paste! ", event);
+		this.$(".attribute-value").html($.htmlClean(this.$(".attribute-value").html(), {
+		  format: true,
+		  removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
+			"isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button"
+			//, "table","tbody", "thead", "tr", "th", "td"
+		  ],
+		  removeAttrs: ["style", "class"],
+		  replace: [
+			[["h1", "h2", "h3", "h4"], "b"],
+			[["table", "tr", "thead", "tbody"], "div"],
+			[["td", "th"], "span"]
+		  ]
+		}));
+		this.model.setValue(this.$(".attribute-value").html());
+	  }, this), 0);
+	},
 
 		toggleField: function (visible) {
 			this.$(".editor-controls").toggle(visible);
@@ -3246,7 +3263,7 @@ define(function (require) {
 				}, this) :
 				_(fds[this.model.get("scope")].toBeautyJSON()));
 
-      this.filterFd = false;
+	  this.filterFd = false;
 
 			return {
 				model: this.model,
@@ -3277,7 +3294,7 @@ define(function (require) {
 				this.listenTo(fds, "change-therapyTitle", function (event) {
 					this.parentFdrId = event.id;
 					this.$(".attribute-value").val("").change();
-          this.filterFd = true;
+		  this.filterFd = true;
 					this.render();
 				});
 			}
@@ -3295,12 +3312,12 @@ define(function (require) {
 			}
 			UIElementBase.prototype.onAttributeValueChange.call(this, event);
 		}
-    /*,
-    render: function () {
-      UIElementBase.prototype.render.call(this);
-      this.$("select").select2();
-      return this;
-    }*/
+	/*,
+	render: function () {
+	  UIElementBase.prototype.render.call(this);
+	  this.$("select").select2();
+	  return this;
+	}*/
 	});
 
 	/**
@@ -4123,12 +4140,12 @@ define(function (require) {
 				model: this.model
 			}
 		},
-    layoutAttributes: UIElementBase.prototype.layoutAttributes,
-    initialize: function () {
-    	this.mapLayoutAttributes();
-      this.$el.addClass("span" + this.layoutAttributes.width);
-    },
-    mapLayoutAttributes: UIElementBase.prototype.mapLayoutAttributes
+	layoutAttributes: UIElementBase.prototype.layoutAttributes,
+	initialize: function () {
+		this.mapLayoutAttributes();
+	  this.$el.addClass("span" + this.layoutAttributes.width);
+	},
+	mapLayoutAttributes: UIElementBase.prototype.mapLayoutAttributes
 		/*,
 		render: function () {
 			ViewBase.prototype.render.call(this);
@@ -4138,25 +4155,25 @@ define(function (require) {
 	});
 
   Documents.Views.Edit.UIElement.SubHeaderVGroup = Documents.Views.Edit.UIElement.SubHeader.extend({
-    className: "doc-sub-header vgroup",
-    attributes: {style: "border: 1px solid #D9D9D9;padding: 1em;border-radius:5px;"},
-    template: _.template("<h3 class='sb-hdr' style='line-height: 1em;cursor: pointer;'><%=model.get('name')%><span class='sb-tgl icon-plus' style='float: right'></span></h3>"),
-    events: {
-      "click .sb-hdr": "onClick"
-    },
-    onClick: function (event) {
-      console.log("VGROUP CLICK");
-      var $t = $(event.currentTarget);
-      $t.next().toggle();
-      this.$(".sb-tgl").toggleClass("icon-plus icon-minus");
-    	//this.$el.parent().nextAll("*:lt("+this.model.getVGroupRowsNumber()+")").find(".span4:eq("+this.$el.index()+") *").toggle();
-    },
-    render: function () {
-      Documents.Views.Edit.UIElement.SubHeader.prototype.render.call(this);
-      this.$el.data("vgroup-rows-number", this.model.getVGroupRowsNumber());
-      this.$el.data("span-width", this.layoutAttributes.width);
-      return this;
-    }
+	className: "doc-sub-header vgroup",
+	attributes: {style: "border: 1px solid #D9D9D9;padding: 1em;border-radius:5px;"},
+	template: _.template("<h3 class='sb-hdr' style='line-height: 1em;cursor: pointer;'><%=model.get('name')%><span class='sb-tgl icon-plus' style='float: right'></span></h3>"),
+	events: {
+	  "click .sb-hdr": "onClick"
+	},
+	onClick: function (event) {
+	  console.log("VGROUP CLICK");
+	  var $t = $(event.currentTarget);
+	  $t.next().toggle();
+	  this.$(".sb-tgl").toggleClass("icon-plus icon-minus");
+		//this.$el.parent().nextAll("*:lt("+this.model.getVGroupRowsNumber()+")").find(".span4:eq("+this.$el.index()+") *").toggle();
+	},
+	render: function () {
+	  Documents.Views.Edit.UIElement.SubHeader.prototype.render.call(this);
+	  this.$el.data("vgroup-rows-number", this.model.getVGroupRowsNumber());
+	  this.$el.data("span-width", this.layoutAttributes.width);
+	  return this;
+	}
   });
 
 	/**
@@ -4175,11 +4192,11 @@ define(function (require) {
 			case "string":
 				//if (options.model.get("scope") === "''") {
 				if (options.model.isSubHeader()) {
-          if (options.model.isSubHeaderVGroup()) {
+		  if (options.model.isSubHeaderVGroup()) {
 					  this.UIElementClass = Documents.Views.Edit.UIElement.SubHeaderVGroup;
-          } else {
-            this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
-          }
+		  } else {
+			this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
+		  }
 				} else {
 					this.UIElementClass = Documents.Views.Edit.UIElement.String;
 				}
@@ -4311,6 +4328,9 @@ define(function (require) {
 	//---------------------
 	Documents.Views.Review.Base.NoControlsLayout = LayoutBase.extend({
 		template: templates._reviewLayout,
+		toString: function(){
+			return 'Documents.Views.Review.Base.NoControlsLayout';
+		},
 
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
@@ -4388,6 +4408,9 @@ define(function (require) {
 
 	Documents.Views.Review.Base.Layout = Documents.Views.Review.Base.NoControlsLayout.extend({
 		attributes: {style: "display: table; width: 100%;"},
+		toString: function(){
+			return 'Documents.Views.Review.Base.Layout';
+		},
 
 		initialize: function () {
 			if (this.options.documentTypes) {
@@ -4512,11 +4535,11 @@ define(function (require) {
 					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
 					attributes: document.getCleanHtmlFilledAttrs(),
 					flatCode: document.get("flatCode"),
-          doctorPost: {
-            id: document.getExecutorPost().getPropertyByName("valueId").value,
-            code: document.getExecutorPost().getPropertyByName("code").value,
-            name: document.getExecutorPost().getPropertyByName("value").value
-          },
+		  doctorPost: {
+			id: document.getExecutorPost().getPropertyByName("valueId").value,
+			code: document.getExecutorPost().getPropertyByName("code").value,
+			name: document.getExecutorPost().getPropertyByName("value").value
+		  },
 					execPerson: appeal.get("execPerson")
 				};
 
@@ -4726,6 +4749,9 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.Review.Base.SheetList = RepeaterBase.extend({
+		toString: function(){
+			return 'Documents.Views.Review.Base.SheetList';
+		},
 		initialize: function () {
 			RepeaterBase.prototype.initialize.call(this, this.options);
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
@@ -4814,67 +4840,122 @@ define(function (require) {
 	});
 	//endregion
 	//endregion
-    Documents.Summary = {
-        List: {},
-        Review: {}
-    };
-    Documents.Summary.Review.Layout = Documents.Views.Review.Base.Layout.extend({
-		getEditPageTypeName: Documents.Views.Review.Examination.NoControlsLayout.prototype.getEditPageTypeName,
-		getDefaultDocumentsMnems: function () {
-			return ["EXAM"];
+
+	Documents.Summary = {
+		List: {},
+		Review: {}
+	};
+
+
+	Documents.Summary.Filters = Documents.Views.List.Common.Filters.extend({
+		template: templates._summaryTypeDateFilters,
+		toString: function(){
+			return 'Documents.Summary.Filters';
 		},
-		render: function () {
-			Documents.Views.Review.Base.Layout.prototype.render.call(this, {
-				".documents-controls": new Documents.Views.List.Base.Controls({editPageTypeName: this.getEditPageTypeName()})
-			});
+		applyDocumentTypeFilter: function (type) {
+			var mnems = [];
 
-			this.$(".controls-block-row").show();
-
-			return this;
+			switch (type) {
+				case "ALL":
+					mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "THER"];
+					break;
+				case "EXAM":
+					mnems = ["EXAM"];
+					break;
+				case "EPI":
+					mnems = ["EPI"];
+					break;
+				case "ORD":
+					mnems = ["ORD"];
+					break;
+				case "LAB":
+					mnems = ["LAB"];
+					break;
+				case "CONS":
+					mnems = ["CONS"];
+					break;
+				case "DIAG":
+					mnems = ["DIAG"];
+					break;
+				case "THER":
+					mnems = ["THER"];
+					break;
+				case "JOUR":
+					mnems = ["JOUR"];
+					break;
+				case "NOT":
+					mnems = ["NOT"];
+				// 	break;
+				case "OTH":
+					mnems = ["OTH"];
+					break;
+			}
+			this.collection.mnemFilter = type;
+			this.collection.mnems = mnems;
+			this.collection.pageNumber = 1;
+			this.collection.fetch();
 		}
 	});
 
-    Documents.Summary.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
-        template: templates._summaryTable 
-    });
+	Documents.Summary.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
+		template: templates._summaryTable,
+		toString: function(){
+			return 'Documents.Summary.DocumentsTable';
+		},
+		data: function () {
+			var data = {documents: this.collection,
+				showIcons: false//!this.options.included && !appeal.isClosed()
+			};
 
-    Documents.Summary.List.Layout = ListLayoutBase.extend({
+			return data;
+		}
+	});
+
+
+
+	Documents.Summary.List.Layout = Documents.Views.List.Common.Layout.extend({
+		attributes: {style: "display: table; width: 100%;"},
 		template: templates._listLayout,
-
-		getDefaultDocumentsMnems: function () {
-			return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH","CONS","LAB"];
+		toString: function(){
+			return 'Documents.Summary.List.Layout';
 		},
 
-		getReviewLayout: function () {
+		getDefaultDocumentsMnems: function() {
+			return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "LAB", "DIAG", "THER"];
+		},
+		getEditPageTypeName: function () {
+			return "summary";
+		},
+
+		getReviewLayout: function() {
 			return new Documents.Summary.Review.Layout({
 				collection: this.selectedDocuments,
 				documents: this.documents,
-				included: true,
-				showIcons: !this.options.included
+				reviewPageTypeName: 'summary',
+				included: false,
+				showIcons: false
 			});
 		},
-
-		getEditPageTypeName: function () {
-			return "examinations";
-		},
-
-		render: function (subViews) {
-			return ListLayoutBase.prototype.render.call(this, _.extend({
+		render: function(subViews) {
+			return ListLayoutBase.prototype.render.call(this, {
 				".documents-table-body": new Documents.Summary.DocumentsTable({
 					collection: this.documents,
 					selectedDocuments: this.selectedDocuments,
-					included: false,
-					editPageTypeName: this.getEditPageTypeName()
+					included: false
 				}),
-				/*".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
-					collection: this.documents,
-					included: !!this.options.included
-				}),*/
-				".documents-filters": new Documents.Views.List.Base.Filters({collection: this.documents})
-			}, subViews));
+				".documents-filters": new Documents.Summary.Filters({
+					collection: this.documents
+				})
+			});
 		}
 	});
- 
+
+// Documents.Views.Review.Base.NoControlsLayout
+	Documents.Summary.Review.Layout = Documents.Views.Review.Base.NoControlsLayout.extend({
+		attributes: {style: "display: table; width: 100%;"},
+		getEditPageTypeName: function(){ return 'summary'},
+	});
+
 	//Редактирование консультаций
 
 	Documents.Views.Edit.Consultation.DocControls = Documents.Views.Edit.DocControls.extend({

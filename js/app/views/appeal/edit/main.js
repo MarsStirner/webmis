@@ -13,7 +13,6 @@ define(function(require) {
 	var ConsultationResultView = require("views/diagnostics/consultations/ConsultationsResultView");
 	var QuotesView = require("views/appeal/edit/pages/QuotesView");
 	var PatientMonitoringView = require("views/appeal/edit/pages/PatientMonitoringView");
-    var SummaryListView = require("views/summary/List");
 	var Monitoring = require("views/appeal/edit/pages/monitoring/monitoring");
 	var Documents = require("views/documents/documents");
 	var Moves = require("views/moves/moves");
