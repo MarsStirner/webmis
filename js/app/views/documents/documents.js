@@ -828,10 +828,10 @@ define(function (require) {
 	var ViewBase = Documents.Views.Base = Backbone.View.extend({
 		template: _.template(""),
 		initialize: function(){
-			console.log('initialize '+this, arguments);
+			console.log('initialize '+this+' '+this.cid, arguments);
 		},
 		toString: function(){
-			return 'Documents.Views.Base';
+			return 'Base';
 		},
 
 		data: function () {
@@ -846,7 +846,7 @@ define(function (require) {
 		},
 
 		render: function (subViews) {
-			console.log('render '+this +' '+this.cid, this.data())
+			console.log('render '+this +' '+this.cid, subViews, this.data())
 			this.$el.html(this.template(this.data()));
 			if (subViews) {
 				this.subViews = {};
@@ -935,7 +935,11 @@ define(function (require) {
 	});
 
 	var RepeaterBase = Documents.Views.RepeaterBase = ViewBase.extend({
+		toString: function(){
+			return 'RepeaterBase';
+		},
 		initialize: function () {
+			console.log('initialize '+this, arguments);
 			this.subViews = [];
 		},
 
@@ -990,7 +994,7 @@ define(function (require) {
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.fetch({data: {filter: {flatCode: FLAT_CODES.PANIC}}});
-				console.log("documentTypes.fetch");
+				//console.log("documentTypes.fetch");
 			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
@@ -1048,6 +1052,9 @@ define(function (require) {
 	 * @type {*}
 	 */
 	var ListLayoutBase = Documents.Views.List.Base.Layout = LayoutBase.extend({
+		toString: function(){
+			return 'List.Base.Layout';
+		},
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
 
@@ -1138,6 +1145,9 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.List.Base.DocumentsTableHead = ViewBase.extend({
+		toString: function(){
+			return 'List.Base.DocumentsTableHead';
+		},
 		template: templates._documentsTableHead,
 
 		events: {
@@ -1232,6 +1242,9 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.List.Base.DocumentsTable = ViewBase.extend({
+		toString: function(){
+			return 'List.Base.DocumentsTable';
+		},
 		template: templates._documentsTable,
 
 		events: {
@@ -1248,6 +1261,7 @@ define(function (require) {
 		},
 
 		initialize: function () {
+			ViewBase.prototype.initialize.call(this);
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
 			this.listenTo(this.collection, "mark-all", this.onCollectionMarkAll);
 			this.listenTo(this.options.selectedDocuments, "review:quit", this.onCollectionReset);
@@ -1342,6 +1356,9 @@ define(function (require) {
 	 */
 	Documents.Views.List.Base.TableControls = ViewBase.extend({
 		template: templates._listTableControls,
+		toString: function(){
+			return 'List.Base.TableControls';
+		},
 
 		data: function () {
 			return {
@@ -1356,6 +1373,7 @@ define(function (require) {
 		},
 
 		initialize: function () {
+			ViewBase.prototype.initialize.call(this);
 			this.listenTo(this.collection, "add remove reset", this.onCollectionChange);
 		},
 
@@ -1400,6 +1418,9 @@ define(function (require) {
 	 */
 	Documents.Views.List.Base.Paging = ViewBase.extend({
 		template: templates._documentsTablePaging,
+		toString: function(){
+			return 'List.Base.Paging';
+		},
 		data: function () {
 			if (this.collection.requestData) {
 				return {
@@ -1507,7 +1528,7 @@ define(function (require) {
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.fetch();
-				console.log("documentTypes.fetch");
+				//console.log("documentTypes.fetch");
 			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
@@ -1739,7 +1760,7 @@ define(function (require) {
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.fetch();
-				console.log("documentTypes.fetch");
+				//console.log("documentTypes.fetch");
 			}
 
 			//this.reviewStateToggles.push(".documents-controls");
@@ -1997,7 +2018,7 @@ define(function (require) {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.mnems = ["THER"];
 				this.documentTypes.fetch();
-				console.log("documentTypes.fetch");
+				//console.log("documentTypes.fetch");
 			}
 
 			//this.reviewStateToggles.push(".controls-block");
@@ -4419,7 +4440,7 @@ define(function (require) {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.mnems = this.getDefaultDocumentsMnems();
 				this.documentTypes.fetch();
-				console.log("documentTypes.fetch");
+				//console.log("documentTypes.fetch");
 			}
 
 			Documents.Views.Review.Base.NoControlsLayout.prototype.initialize.call(this, this.options);
@@ -4850,7 +4871,7 @@ define(function (require) {
 	Documents.Summary.Filters = Documents.Views.List.Common.Filters.extend({
 		template: templates._summaryTypeDateFilters,
 		toString: function(){
-			return 'Documents.Summary.Filters';
+			return 'Summary.Filters';
 		},
 		applyDocumentTypeFilter: function (type) {
 			var mnems = [];
@@ -4900,7 +4921,7 @@ define(function (require) {
 	Documents.Summary.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
 		template: templates._summaryTable,
 		toString: function(){
-			return 'Documents.Summary.DocumentsTable';
+			return 'Summary.DocumentsTable';
 		},
 		data: function () {
 			var data = {documents: this.collection,
@@ -4917,7 +4938,7 @@ define(function (require) {
 		attributes: {style: "display: table; width: 100%;"},
 		template: templates._listLayout,
 		toString: function(){
-			return 'Documents.Summary.List.Layout';
+			return 'Summary.List.Layout';
 		},
 
 		getDefaultDocumentsMnems: function() {
@@ -4932,7 +4953,7 @@ define(function (require) {
 				collection: this.selectedDocuments,
 				documents: this.documents,
 				reviewPageTypeName: 'summary',
-				included: false,
+				included: true,
 				showIcons: false
 			});
 		},
@@ -4941,7 +4962,8 @@ define(function (require) {
 				".documents-table-body": new Documents.Summary.DocumentsTable({
 					collection: this.documents,
 					selectedDocuments: this.selectedDocuments,
-					included: false
+					included: true,
+					showIcons: false
 				}),
 				".documents-filters": new Documents.Summary.Filters({
 					collection: this.documents
@@ -4952,6 +4974,7 @@ define(function (require) {
 
 // Documents.Views.Review.Base.NoControlsLayout
 	Documents.Summary.Review.Layout = Documents.Views.Review.Base.NoControlsLayout.extend({
+		toString: function(){ return 'Summary.Review.Layout';},
 		attributes: {style: "display: table; width: 100%;"},
 		getEditPageTypeName: function(){ return 'summary'},
 	});
