@@ -842,6 +842,10 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		REPORTS: {
 			title: "Отчёты",
 			uri: "/reports/"
+		},
+		SUMMARY: {
+			title: "Сводная информация",
+			uri: "/appeals/:id/summary"
 		}
 	};
 	App.Router.compile = function(link, options) {

@@ -134,7 +134,7 @@ define(function(require) {
 			"quotes": App.Router.cachedBreadcrumbs.QUOTES,
 			"patient-monitoring": App.Router.cachedBreadcrumbs.PATIENT_MONITORING,
 			"examinations": App.Router.cachedBreadcrumbs.EXAMS,
-			//"first-examination-edit": App.Router.cachedBreadcrumbs.EXAMS,
+			"summary": App.Router.cachedBreadcrumbs.SUMMARY,
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
 			"card": App.Router.cachedBreadcrumbs.APPEAL,
 			"moves": App.Router.cachedBreadcrumbs.MOVES,
@@ -401,6 +401,12 @@ define(function(require) {
 							name: "card",
 							title: "Титульный лист ИБ",
 							uri: "/appeals/:id/"
+						}, appealJSON),
+
+						App.Router.compile({
+							name: "summary",
+							title: "Сводная информация",
+							uri: "/appeals/:id/summary"
 						}, appealJSON)
 					]
 				}

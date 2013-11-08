@@ -4962,19 +4962,7 @@ define(function (require) {
 		}
 	});
 
-	Documents.Summary.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
-		template: templates._summaryTable,
-		toString: function(){
-			return 'Summary.DocumentsTable';
-		},
-		data: function () {
-			var data = {documents: this.collection,
-				showIcons: false//!this.options.included && !appeal.isClosed()
-			};
 
-			return data;
-		}
-	});
 
 
 
@@ -5002,8 +4990,18 @@ define(function (require) {
 			});
 		},
 		render: function(subViews) {
-			return ListLayoutBase.prototype.render.call(this, {
-				".documents-table-body": new Documents.Summary.DocumentsTable({
+			return LayoutBase.prototype.render.call(this, {
+
+				".table-controls": new Documents.Views.List.Base.TableControls({
+					collection: this.selectedDocuments,
+					listItems: this.documents
+				}),
+				".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
+					collection: this.documents,
+					selectedDocuments: this.selectedDocuments,
+					included: !!this.options.included
+				}),
+				".documents-table-tbody": new Documents.Views.List.Base.DocumentsTable({
 					collection: this.documents,
 					selectedDocuments: this.selectedDocuments,
 					included: true,
@@ -5011,7 +5009,8 @@ define(function (require) {
 				}),
 				".documents-filters": new Documents.Summary.Filters({
 					collection: this.documents
-				})
+				}),
+				".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents})
 			});
 		}
 	});
@@ -5021,6 +5020,21 @@ define(function (require) {
 		toString: function(){ return 'Summary.Review.Layout';},
 		attributes: {style: "display: table; width: 100%;"},
 		getEditPageTypeName: function(){ return 'summary'},
+				render: function (subViews) {
+			return LayoutBase.prototype.render.call(this, _.extend({
+				".review-controls": new Documents.Views.Review.Base.Controls({
+					collection: this.collection,
+					documents: this.options.documents,
+					reviewPageTypeName: this.getEditPageTypeName(),
+					included: this.options.included
+				}),
+				".sheets": new Documents.Views.Review.Base.SheetList({
+					collection: this.collection,
+					showIcons: false,
+					editPageTypeName: this.getEditPageTypeName()
+				})
+			}, subViews));
+		}
 	});
 
 	//Редактирование консультаций
