@@ -226,7 +226,9 @@ define(function (require) {
 							ta.readOnly = "true";
 						}
 						if (ta.therapyFieldCode == "therapyBegDate") {
-							ta.properties[0].value = moment(lastTherapy.get("beginDate")).format(CD_DATE_FORMAT);
+							if(lastTherapy.get("beginDate")){
+								ta.properties[0].value = moment(lastTherapy.get("beginDate")).format(CD_DATE_FORMAT);
+							}
 							ta.readOnly = "true";
 						}
 
@@ -3285,6 +3287,7 @@ define(function (require) {
 				_(fds[this.model.get("scope")].toBeautyJSON()));
 
 	  this.filterFd = false;
+	  console.log('directoryEntries',directoryEntries)
 
 			return {
 				model: this.model,
@@ -3311,6 +3314,7 @@ define(function (require) {
 			UIElementBase.prototype.initialize.apply(this);
 		},
 		onDirectoryReady: function () {
+			var id;
 			if (this.model.get("code") === "therapyPhaseTitle") {
 				this.listenTo(fds, "change-therapyTitle", function (event) {
 					this.parentFdrId = event.id;
@@ -3323,15 +3327,55 @@ define(function (require) {
 			//this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
 			console.log(fds);
 			this.render();
+			if (this.model.get("code") === "therapyTitle") {
+				var valueProperty = _.find(this.model.get("properties"),function(item){
+					return item.name === "value";
+				});
+				id = valueProperty.value;
+
+				this.showLink(id);
+			}
+
 		},
-		onAttributeValueChange: function (event) {
+
+		onAttributeValueChange: function(event) {
+			var id = this.getAttributeValue();
+			var code = this.model.get("code");
+
 			if (_.isEmpty(this.getAttributeValue())) {
 				this.model.setPropertyValueFor("value", "");
 			}
 			if (this.model.get("code") === "therapyTitle") {
-				fds.trigger("change-therapyTitle", {id: this.getAttributeValue()});
+				fds.trigger("change-therapyTitle", {
+					id: this.getAttributeValue()
+				});
+			}
+			if (code === "therapyTitle" || code === "therapyPhaseTitle") {
+				this.showLink(id);
 			}
 			UIElementBase.prototype.onAttributeValueChange.call(this, event);
+		},
+
+		showLink: function(id) {
+			var link = this.getLink(id) ? this.getLink(id) : '';
+			this.$el.find('.link').html(link);
+		},
+
+		getLink: function(id) {
+			var link = '';
+			var items = fds[this.model.get("scope")].toBeautyJSON();
+			var selectedItem = _.find(items, function(item) {
+				return item["id"] == id;
+			});
+
+			if (selectedItem) {
+				link = selectedItem['Ссылка'];
+				if (link) {
+					link = '<a href="' + link + '" target="_blank"><i class="icon-book"></i> ' + selectedItem['Наименование'] + '</a>'
+				}
+			}
+
+			return link;
 		}
 	/*,
 	render: function () {
