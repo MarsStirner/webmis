@@ -86,6 +86,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			"patients/:id/edit/": "editPatient",
 			"patients/:id/edit/:page/": "editPatient",
 			"patients/:id/": "patient",
+			"patients/:id/summary": "patientSummaryList",
+
 			"patients/:id/appeals/new/": "newAppeal",
 			"patients/:id/appeals/new/:query": "newAppeal",
 			"patients/:id/appeals/": "patientAppeals",
@@ -129,6 +131,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			"reports/*path": "reports",
 			"statements/*path": "statements",
 			"prescriptions/*path": "prescriptions",
+
+
 
 
 			"prints/": "prints",
@@ -368,6 +372,38 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				}
 
 				//this.appView.render();
+			});
+		},
+
+		patientSummaryList: function(patientId){
+			if (!this.checkAuthToken()) {
+				return false
+			}
+			console.log('patientSummaryList', arguments);
+			window.document.title = "Сводная информация";
+
+			this.currentPage = "patientSummaryList";
+
+			require(["views/app","views/summary/MainView"], function(AppView, MainView) {
+
+				var view = new MainView({
+					path: Backbone.history.fragment,
+					patientId: patientId
+				});
+
+				if (!this.appView) {
+					this.appView = new AppView({
+						renderView: view
+					});
+					this.appView.render();
+				} else {
+					var newMain = $('<div id="main"></div>').append(view.render().el);
+					this.appView.$("#main").remove();
+					this.appView.$el.append(newMain);
+
+				}
+
+
 			});
 		},
 

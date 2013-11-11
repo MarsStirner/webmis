@@ -133,6 +133,7 @@ define(function (require) {
 	var Consultation = require("models/diagnostics/consultations/Consultation");
 	var Consultations = require("collections/diagnostics/consultations/Consultations");
 	//var ConsultationsResultView = require("views/diagnostics/consultations/ConsultationsResultView");
+	require("collections/diagnostics/laboratory/laboratory-diags");
 
 	var TherapiesCollection = require('collections/therapy/Therapies');
 
@@ -4967,7 +4968,7 @@ define(function (require) {
 
 
 	Documents.Summary.List.Layout = Documents.Views.List.Common.Layout.extend({
-		attributes: {style: "display: table; width: 100%;"},
+		attributes: {style: "display: table; width: 100%;padding-left:0px;"},
 		template: templates._listLayout,
 		toString: function(){
 			return 'Summary.List.Layout';
