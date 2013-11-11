@@ -815,7 +815,7 @@ define(function (require) {
 		parse: function (raw) {
 			raw = Collection.prototype.parse.call(this, raw);
 			return _.filter(raw, function (item) {
-				return !(item.name && item.name.search(/дневник/i) !== -1 && item.name !== 'Дневниковый осмотр');
+				return !(item.name && item.name.search(/дневник/) !== -1);
 			});
 		}
 	});
