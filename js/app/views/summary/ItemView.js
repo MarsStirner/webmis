@@ -59,7 +59,7 @@ define(function(require) {
 
 			this.itemView = new Documents.Summary.Review.Layout({
 				patientId: this.options.patientId,
-				subId: this.options.docIds
+				subId: this.options.docIds.split(',')
 			})
 
 			this.itemView.render();
