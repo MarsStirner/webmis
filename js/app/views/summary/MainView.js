@@ -23,22 +23,28 @@ define(function(require) {
 		initialize: function(){
 			var self = this;
 
-			console.log('init main view', this.options);
 			this.appealsList = new AppealsList({},{
 				patientId: this.options.patientId
 			});
+
+			//this.patient = new App.Models.Patient();
 
 			self.appeal = new App.Models.Appeal();
 
 			this.getPatientAppeals(this.options.patientId).done(function() {
 				console.log('appeals', self.appealsList);
 
-				var firstAppeal = self.appealsList.first();
+				self.firstAppeal = self.appealsList.first();
 
-				if(firstAppeal){
-					self.getAppealById(firstAppeal.get('id')).done(function() {
-						console.log('appeal', self.appeal);
-						self.renderPage(self.appeal)
+				if(self.firstAppeal){
+					var appealId = self.firstAppeal.get('id');
+					self.getAppealById(appealId).done(function() {
+
+						var patient = self.appeal.get("patient");
+						patient.fetch().done(function(){
+							console.log('appeal', self.appeal);
+							self.renderPage(self.appeal, self.appealsList, appealId);
+						});
 					});
 				}
 
@@ -56,14 +62,18 @@ define(function(require) {
 		render: function() {
 			return this;
 		},
-		renderPage: function(appeal){
+		renderPage: function(appeal, events, selectedEventId){
 			var html = _.template(template, {
-				patientId: this.options.patientId
+				patientId: this.options.patientId,
+				patientName: appeal.get('patient').get('name').get('raw')
 			});
 
 			this.listView = new Documents.Summary.List.Layout({
 				appealId: appeal.get('id'),
-				appeal: appeal
+				appeal: appeal,
+				patientId: this.options.patientId,
+				events: events,
+				selectedEventId: selectedEventId
 
 			});
 

@@ -1084,6 +1084,7 @@ define(function (require) {
 		},
 
 		onEnteredReviewState: function () {
+			console.log('onEnteredReviewState')
 			this.toggleReviewState(true);
 		},
 
@@ -4918,6 +4919,15 @@ define(function (require) {
 		toString: function(){
 			return 'Summary.Filters';
 		},
+		events: _.extend({
+			"change #event-filter": "onChangeEvent"
+		},Documents.Views.List.Common.Filters.prototype.events),
+		onChangeEvent: function(e){
+			var $target = $(e.target);
+			this.collection.appealId = $target.val();
+			this.collection.pageNumber = 1;
+			this.collection.fetch();
+		},
 		applyDocumentTypeFilter: function (type) {
 			var mnems = [];
 
@@ -4960,6 +4970,13 @@ define(function (require) {
 			this.collection.mnems = mnems;
 			this.collection.pageNumber = 1;
 			this.collection.fetch();
+		},
+		data: function () {
+			var data = {};
+			data.events = this.options.events.toJSON();
+			data.selectedEventId = this.options.selectedEventId;
+
+			return data;
 		}
 	});
 
@@ -4987,7 +5004,8 @@ define(function (require) {
 				documents: this.documents,
 				reviewPageTypeName: 'summary',
 				included: true,
-				showIcons: false
+				showIcons: false,
+				patientId: this.options.patientId
 			});
 		},
 		render: function(subViews) {
@@ -5009,11 +5027,32 @@ define(function (require) {
 					showIcons: false
 				}),
 				".documents-filters": new Documents.Summary.Filters({
-					collection: this.documents
+					collection: this.documents,
+					events: this.options.events,
+					selectedEventId: this.options.selectedEventId
 				}),
 				".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents})
 			});
 		}
+	});
+
+	Documents.Summary.Review.Controls = Documents.Views.Review.Base.Controls.extend({
+		onBackToDocumentListClick: function () {
+
+			//if (this.options.included) {
+			//	this.collection.trigger("review:quit");
+			//} else {
+				App.Router.navigate(["patients",this.options.patientId,'summary'].join("/"),{trigger: true});
+				// dispatcher.trigger("change:viewState", {
+				// 	type: this.options.reviewPageTypeName,
+				// 	mode: "REVIEW",
+				// 	options: {
+				// 		documentTypes: this.options.documentTypes,
+				// 		documents: this.options.documents
+				// 	}
+				// });
+			//}
+		},
 	});
 
 // Documents.Views.Review.Base.NoControlsLayout
@@ -5021,13 +5060,15 @@ define(function (require) {
 		toString: function(){ return 'Summary.Review.Layout';},
 		attributes: {style: "display: table; width: 100%;"},
 		getEditPageTypeName: function(){ return 'summary'},
-				render: function (subViews) {
+		render: function (subViews) {
+			console.log('Documents.Summary.Review.Layout', this.options)
 			return LayoutBase.prototype.render.call(this, _.extend({
-				".review-controls": new Documents.Views.Review.Base.Controls({
+				".review-controls": new Documents.Summary.Review.Controls({
 					collection: this.collection,
 					documents: this.options.documents,
 					reviewPageTypeName: this.getEditPageTypeName(),
-					included: this.options.included
+					included: this.options.included,
+					patientId: 9090//this.options.patientId
 				}),
 				".sheets": new Documents.Views.Review.Base.SheetList({
 					collection: this.collection,

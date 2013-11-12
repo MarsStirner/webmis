@@ -87,6 +87,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			"patients/:id/edit/:page/": "editPatient",
 			"patients/:id/": "patient",
 			"patients/:id/summary": "patientSummaryList",
+			"patients/:id/summary/:docs": "patientSummaryItem",
 
 			"patients/:id/appeals/new/": "newAppeal",
 			"patients/:id/appeals/new/:query": "newAppeal",
@@ -405,6 +406,39 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 
 			});
+		},
+
+		patientSummaryItem: function(patientId, docIds){
+			if (!this.checkAuthToken()) {
+				return false
+			}
+			console.log('patientSummaryItem', patientId, docIds);
+			window.document.title = "Сводная информация";
+			this.currentPage = "patientSummaryList";
+
+			require(["views/app","views/summary/ItemView"], function(AppView, ItemView) {
+
+				var view = new ItemView({
+					path: Backbone.history.fragment,
+					patientId: patientId,
+					docIds: docIds
+				});
+
+				if (!this.appView) {
+					this.appView = new AppView({
+						renderView: view
+					});
+					this.appView.render();
+				} else {
+					var newMain = $('<div id="main"></div>').append(view.render().el);
+					this.appView.$("#main").remove();
+					this.appView.$el.append(newMain);
+
+				}
+
+
+			});
+
 		},
 
 		newPatient: function(page) {
