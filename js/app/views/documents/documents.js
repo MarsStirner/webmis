@@ -458,18 +458,18 @@ define(function (require) {
 								return p.name === "value";
 							});
 
-							if (valueProp && valueProp.value && valueProp.value !== "0.0") {
-								if (valueProp.value.substring(0, 5) != "<div>" &&
-									valueProp.value.substring(valueProp.value.length - 1, 6) != "</div>") {
-									valueProp.value = "<div>"+valueProp.value+"</div>";
+							if (valueProp && valueProp.value) {
+								var wrapStart = "<pre>";
+								var wrapEnd = "</pre>";
+								if (valueProp.value.substring(0, wrapStart.length) != wrapStart ||
+									valueProp.value.substring(valueProp.value.length - 1, wrapEnd.length) != wrapEnd) {
+									valueProp.value = wrapStart + valueProp.value + wrapEnd;
 								}
 							}
 						}
 					});
 				}
 			}
-			var docJSON = this.toJSON();
-			console.log("MY toJSON is ", docJSON);
 		}
 	});
 
@@ -2680,7 +2680,7 @@ define(function (require) {
 			this.stopListening(this.model, "change", this.onModelReset);
 			if (this.model.hasTherapyAttrs()) {
 				$.when(therapiesCollection.fetch()).then(_.bind(function () {
-					this.model.setTherapyAttrs(therapiesCollection);
+					//this.model.setTherapyAttrs(therapiesCollection);
 					this.resetCollectionGroupedByRow();
 				}, this));
 			} else {
