@@ -446,7 +446,7 @@ define(function (require) {
 			} else {
 				return [];
 			}
-		},
+		}
 
 		/*wrapTextValues: function () {
 			if (this.get("group") && this.get("group").length) {
