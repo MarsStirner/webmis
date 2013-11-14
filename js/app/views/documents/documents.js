@@ -448,7 +448,7 @@ define(function (require) {
 			}
 		},
 
-		wrapTextValues: function () {
+		/*wrapTextValues: function () {
 			if (this.get("group") && this.get("group").length) {
 				var examAttributes = this.getFieldsGroup();
 				if (examAttributes) {
@@ -470,7 +470,7 @@ define(function (require) {
 					});
 				}
 			}
-		}
+		}*/
 	});
 
 	Documents.Models.Document = Documents.Models.DocumentBase.extend({
@@ -509,7 +509,7 @@ define(function (require) {
 
 		save: function (attrs, options) {
 			this.setCloseDate();
-			this.wrapTextValues();
+			//this.wrapTextValues();
 			return Documents.Models.DocumentBase.prototype.save.call(this, attrs, options);
 		}
 	});
@@ -530,7 +530,7 @@ define(function (require) {
 
 			this.setCloseDate();
 			this.spoofDates();
-			this.wrapTextValues();
+			//this.wrapTextValues();
 
 			options.data = JSON.stringify({
 				requestData: {},
