@@ -167,8 +167,10 @@ class TherapyController
                     }
 
                 }
+                if($a['therapyTitleId']){
+                     array_push($data, $a);
+                }
 
-                array_push($data, $a);
 
             }
 
@@ -177,7 +179,7 @@ class TherapyController
             //терапии
             foreach ($data as $action){
                 $therapy = array(
-
+                    'id' => $action['docId'],
                     'titleId' => $action['therapyTitleId'],
                     'title' => $action['therapyTitleId'],
                     'beginDate' => $action['therapyBegDate'],
