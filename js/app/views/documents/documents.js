@@ -171,7 +171,6 @@ define(function (require) {
 		hasTherapyAttrs: function () {
 			//TODO: TEMP!!!
 			return !!_(this.get("group")[1].attribute).find(function (attr) {
-				//console.log(attr);
 				return attr.code === "therapyTitle";
 			});
 		},
@@ -186,7 +185,7 @@ define(function (require) {
 			var attributes = this.get("group")[1].attribute;
 
 			attributes = _.reject(attributes, function (attribute) {
-				return _.contains(HIDDEN_TYPES, attribute.type)
+				return _.contains(HIDDEN_TYPES, attribute.type);
 			}, this);
 
 			if (this.hasTherapyAttrs()) {
@@ -246,7 +245,7 @@ define(function (require) {
 					}
 				});
 
-				console.log(therapyAttrs);
+//				console.log(therapyAttrs);
 			}
 
 		  var groupedByRow = _(attributes).groupBy(function (item) {
@@ -308,7 +307,7 @@ define(function (require) {
 				}
 			}, this);
 
-			console.log(rows);
+//			console.log(rows);
 			//////////////////
 
 			/*for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
@@ -1060,7 +1059,16 @@ define(function (require) {
 		},
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
-
+            var self = this;
+            console.log('init '+this,(function(){
+                for (var name in self) {  
+                    if(!this.hasOwnProperty(name)){
+                        console.log(self+' inhirited:',name) 
+                    }else{
+                         console.log(self+' own:',name) 
+                    }
+                }
+            })());
 			if (this.options.documents) {
 				this.documents = this.options.documents;
 			} else {
@@ -1084,7 +1092,7 @@ define(function (require) {
 		},
 
 		onEnteredReviewState: function () {
-			console.log('onEnteredReviewState')
+			console.log('onEnteredReviewState',this.toString())
 			this.toggleReviewState(true);
 		},
 
@@ -4997,6 +5005,10 @@ define(function (require) {
 		getEditPageTypeName: function () {
 			return "summary";
 		},
+        toggleReviewState: function(enable){
+            Documents.Views.List.Common.Layout.prototype.toggleReviewState.call(this,enable)
+            console.log('dfjfhjhk') 
+        },
 
 		getReviewLayout: function() {
 			return new Documents.Summary.Review.Layout({
@@ -5068,7 +5080,7 @@ define(function (require) {
 					documents: this.options.documents,
 					reviewPageTypeName: this.getEditPageTypeName(),
 					included: this.options.included,
-					patientId: 9090//this.options.patientId
+					patientId: this.options.patientId
 				}),
 				".sheets": new Documents.Views.Review.Base.SheetList({
 					collection: this.collection,
