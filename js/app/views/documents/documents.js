@@ -133,6 +133,7 @@ define(function (require) {
 	var Consultation = require("models/diagnostics/consultations/Consultation");
 	var Consultations = require("collections/diagnostics/consultations/Consultations");
 	//var ConsultationsResultView = require("views/diagnostics/consultations/ConsultationsResultView");
+	require("collections/diagnostics/laboratory/laboratory-diags");
 
 	var TherapiesCollection = require('collections/therapy/Therapies');
 
@@ -169,8 +170,7 @@ define(function (require) {
 
 		hasTherapyAttrs: function () {
 			//TODO: TEMP!!!
-			return !!_(this.getFieldsGroup()).find(function (attr) {
-				//console.log(attr);
+			return !!_(this.get("group")[1].attribute).find(function (attr) {
 				return attr.code === "therapyTitle";
 			});
 		},
@@ -185,7 +185,7 @@ define(function (require) {
 			var attributes = this.getFieldsGroup();
 
 			attributes = _.reject(attributes, function (attribute) {
-				return _.contains(HIDDEN_TYPES, attribute.type)
+				return _.contains(HIDDEN_TYPES, attribute.type);
 			}, this);
 
 			if (this.hasTherapyAttrs()) {
@@ -245,7 +245,7 @@ define(function (require) {
 					}
 				});
 
-				console.log(therapyAttrs);
+//				console.log(therapyAttrs);
 			}
 
 		  var groupedByRow = _(attributes).groupBy(function (item) {
@@ -307,7 +307,7 @@ define(function (require) {
 				}
 			}, this);
 
-			console.log(rows);
+//			console.log(rows);
 			//////////////////
 
 			/*for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
@@ -1085,7 +1085,16 @@ define(function (require) {
 		},
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
-
+            var self = this;
+            console.log('init '+this,(function(){
+                for (var name in self) {  
+                    if(!this.hasOwnProperty(name)){
+                        console.log(self+' inhirited:',name) 
+                    }else{
+                         console.log(self+' own:',name) 
+                    }
+                }
+            })());
 			if (this.options.documents) {
 				this.documents = this.options.documents;
 			} else {
@@ -1109,6 +1118,7 @@ define(function (require) {
 		},
 
 		onEnteredReviewState: function () {
+			console.log('onEnteredReviewState',this.toString())
 			this.toggleReviewState(true);
 		},
 
@@ -4937,6 +4947,15 @@ define(function (require) {
 		toString: function(){
 			return 'Summary.Filters';
 		},
+		events: _.extend({
+			"change #event-filter": "onChangeEvent"
+		},Documents.Views.List.Common.Filters.prototype.events),
+		onChangeEvent: function(e){
+			var $target = $(e.target);
+			this.collection.appealId = $target.val();
+			this.collection.pageNumber = 1;
+			this.collection.fetch();
+		},
 		applyDocumentTypeFilter: function (type) {
 			var mnems = [];
 
@@ -4979,6 +4998,13 @@ define(function (require) {
 			this.collection.mnems = mnems;
 			this.collection.pageNumber = 1;
 			this.collection.fetch();
+		},
+		data: function () {
+			var data = {};
+			data.events = this.options.events.toJSON();
+			data.selectedEventId = this.options.selectedEventId;
+
+			return data;
 		}
 	});
 
@@ -4987,11 +5013,17 @@ define(function (require) {
 
 
 	Documents.Summary.List.Layout = Documents.Views.List.Common.Layout.extend({
-		attributes: {style: "display: table; width: 100%;"},
+		attributes: {style: "display: table; width: 100%;padding-left:0px;"},
 		template: templates._listLayout,
 		toString: function(){
 			return 'Summary.List.Layout';
 		},
+		toggleReviewState: function () {
+            console.log('summary toggle',this)
+			App.Router.navigate(["patients",this.options.patientId,this.getEditPageTypeName(),this.selectedDocuments.pluck("id").join(",")].join("/"),{trigger: true});
+		
+		},
+
 
 		getDefaultDocumentsMnems: function() {
 			return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "LAB", "DIAG", "THER"];
@@ -4999,14 +5031,14 @@ define(function (require) {
 		getEditPageTypeName: function () {
 			return "summary";
 		},
-
-		getReviewLayout: function() {
+        getReviewLayout: function() {
 			return new Documents.Summary.Review.Layout({
 				collection: this.selectedDocuments,
 				documents: this.documents,
 				reviewPageTypeName: 'summary',
 				included: true,
-				showIcons: false
+				showIcons: false,
+				patientId: this.options.patientId
 			});
 		},
 		render: function(subViews) {
@@ -5028,11 +5060,32 @@ define(function (require) {
 					showIcons: false
 				}),
 				".documents-filters": new Documents.Summary.Filters({
-					collection: this.documents
+					collection: this.documents,
+					events: this.options.events,
+					selectedEventId: this.options.selectedEventId
 				}),
 				".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents})
 			});
 		}
+	});
+
+	Documents.Summary.Review.Controls = Documents.Views.Review.Base.Controls.extend({
+		onBackToDocumentListClick: function () {
+
+			//if (this.options.included) {
+			//	this.collection.trigger("review:quit");
+			//} else {
+				App.Router.navigate(["patients",this.options.patientId,'summary'].join("/"),{trigger: true});
+				// dispatcher.trigger("change:viewState", {
+				// 	type: this.options.reviewPageTypeName,
+				// 	mode: "REVIEW",
+				// 	options: {
+				// 		documentTypes: this.options.documentTypes,
+				// 		documents: this.options.documents
+				// 	}
+				// });
+			//}
+		},
 	});
 
 // Documents.Views.Review.Base.NoControlsLayout
@@ -5040,13 +5093,15 @@ define(function (require) {
 		toString: function(){ return 'Summary.Review.Layout';},
 		attributes: {style: "display: table; width: 100%;"},
 		getEditPageTypeName: function(){ return 'summary'},
-				render: function (subViews) {
+		render: function (subViews) {
+			console.log('Documents.Summary.Review.Layout', this.options)
 			return LayoutBase.prototype.render.call(this, _.extend({
-				".review-controls": new Documents.Views.Review.Base.Controls({
+				".review-controls": new Documents.Summary.Review.Controls({
 					collection: this.collection,
 					documents: this.options.documents,
 					reviewPageTypeName: this.getEditPageTypeName(),
-					included: this.options.included
+					included: this.options.included,
+					patientId: this.options.patientId
 				}),
 				".sheets": new Documents.Views.Review.Base.SheetList({
 					collection: this.collection,

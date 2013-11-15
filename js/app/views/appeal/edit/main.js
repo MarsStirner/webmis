@@ -112,10 +112,6 @@ define(function(require) {
 				"SUB_EDIT": Documents.Views.Edit.Therapy.Layout,
 				"SUB_NEW": Documents.Views.Edit.Therapy.Layout
 			},
-            "summary": {
-                "REVIEW": Documents.Summary.List.Layout,
-                "SUB_REVIEW": Documents.Summary.Review.Layout
-            },
 			"examinations": {
 				"REVIEW": Documents.Views.List.Examination.Layout,
 				"SUB_REVIEW": Documents.Views.Review.Examination.Layout,
@@ -147,8 +143,6 @@ define(function(require) {
 			var self = this;
 			this.appealId = this.options.appealId;
 			this.page = this.options.page;
-
-			//console.log('this', this);
 
 			if (!(this.appealId && this.pageViews[this.page])) {
 				throw new Error("Invalid diagnostic type or empty appeal id");
@@ -226,7 +220,7 @@ define(function(require) {
 		},
 
 		onViewStateChange: function(event) {
-			console.log('onViewStateChange', event);
+			//console.log('onViewStateChange', event);
 			this.setContentView(event.type, event.mode, event.options);
 		},
 
@@ -347,11 +341,6 @@ define(function(require) {
 							title: "Мониторинг&nbsp;состояния",
 							uri: "/appeals/:id/patient-monitoring"
 						}, appealJSON),
-						// App.Router.compile({
-						// 	name: "examinations",
-						// 	title: "Осмотры",
-						// 	uri: "/appeals/:id/examinations/"
-						// }, appealJSON),
 						App.Router.compile({
 							name: "documents",
 							title: "Документы",
@@ -402,12 +391,6 @@ define(function(require) {
 							title: "Титульный лист ИБ",
 							uri: "/appeals/:id/"
 						}, appealJSON),
-
-						App.Router.compile({
-							name: "summary",
-							title: "Сводная информация",
-							uri: "/appeals/:id/summary"
-						}, appealJSON)
 					]
 				}
 			}, this);
@@ -426,11 +409,6 @@ define(function(require) {
 							title: "Мониторинг&nbsp;состояния",
 							uri: "/appeals/:id/patient-monitoring"
 						}, appealJSON),
-						// App.Router.compile({
-						// 	name: "examinations",
-						// 	title: "Осмотры",
-						// 	uri: "/appeals/:id/examinations/"
-						// }, appealJSON),
 						App.Router.compile({
 							name: "documents",
 							title: "Документы",

@@ -1,0 +1,30 @@
+<section class="OneCol Clearfix">
+	<div id="page-head">
+
+	</div>
+	<div class="CardHeader Clearfix">
+		<div class="CardNav">
+			<h2>
+				<%= patientName %>
+			</h2>
+			<ul class="SectionNav">
+				<li>
+					<a href="/patients/<%= patientId %>/">Карточка пациента</a>
+				</li>
+				<li>
+					<a href="/patients/<%= patientId %>/appeals/">Госпитализации</a>
+				</li>
+				<li  class="Selected">
+					<a href="/patients/<%= patientId %>/summary">Сводная информация
+					</a>
+				</li>
+			</ul>
+		</div>
+
+	</div>
+	<div class="ContentSide">
+		<div id="summary-list"></div>
+	</div>
+
+
+</section>
