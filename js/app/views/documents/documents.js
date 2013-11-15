@@ -175,14 +175,14 @@ define(function (require) {
 			});
 		},
 
-		setTherapyAttrs: function (therapiesCollection) {
-
+		getFieldsGroup: function () {
+			return this.get("group")[1].attribute;
 		},
 
 		groupByRow: function () {
 			console.log("hasTherapyAttrs", this.hasTherapyAttrs());
 
-			var attributes = this.get("group")[1].attribute;
+			var attributes = this.getFieldsGroup();
 
 			attributes = _.reject(attributes, function (attribute) {
 				return _.contains(HIDDEN_TYPES, attribute.type);
@@ -379,7 +379,7 @@ define(function (require) {
 		},
 
 		spoofDates: function () {
-			_.each(this.get("group")[1].attribute, function (attr) {
+			_.each(this.getFieldsGroup(), function (attr) {
 				if (attr.type == "Date" && attr.properties[0] && attr.properties[0].value == "") {
 					attr.properties[0].value = "0000-00-00 00:00:00";
 				}
@@ -419,17 +419,11 @@ define(function (require) {
 
 				if (requiredValidationFail) return requiredValidationFail;
 			}
-		}
-	});
-
-	Documents.Models.Document = Documents.Models.DocumentBase.extend({
-		urlRoot: function () {
-			return DATA_PATH + "appeals/" + this.appealId + "/documents/";
 		},
 
 		getFilledAttrs: function () {
 			if (this.get("group") && this.get("group").length) {
-				var examAttributes = this.get("group")[1].attribute;
+				var examAttributes = this.getFieldsGroup();
 				var examFlatJSON = [];
 				if (examAttributes) {
 					_(examAttributes).each(function (a) {
@@ -452,6 +446,36 @@ define(function (require) {
 			} else {
 				return [];
 			}
+		}
+
+		/*wrapTextValues: function () {
+			if (this.get("group") && this.get("group").length) {
+				var examAttributes = this.getFieldsGroup();
+				if (examAttributes) {
+					_(examAttributes).each(function (a) {
+						if (_.contains(["html", "text", "constructor"], a.type.toString().toLowerCase())) {
+							var valueProp = _(a.properties).find(function (p) {
+								return p.name === "value";
+							});
+
+							if (valueProp && valueProp.value) {
+								var wrapStart = "<pre>";
+								var wrapEnd = "</pre>";
+								if (valueProp.value.substring(0, wrapStart.length) != wrapStart ||
+									valueProp.value.substring(valueProp.value.length - 1, wrapEnd.length) != wrapEnd) {
+									valueProp.value = wrapStart + valueProp.value + wrapEnd;
+								}
+							}
+						}
+					});
+				}
+			}
+		}*/
+	});
+
+	Documents.Models.Document = Documents.Models.DocumentBase.extend({
+		urlRoot: function () {
+			return DATA_PATH + "appeals/" + this.appealId + "/documents/";
 		},
 
 		/*collectTextNodes: function (element, texts) {
@@ -485,7 +509,8 @@ define(function (require) {
 
 		save: function (attrs, options) {
 			this.setCloseDate();
-			Documents.Models.DocumentBase.prototype.save.call(this, attrs, options);
+			//this.wrapTextValues();
+			return Documents.Models.DocumentBase.prototype.save.call(this, attrs, options);
 		}
 	});
 
@@ -505,6 +530,7 @@ define(function (require) {
 
 			this.setCloseDate();
 			this.spoofDates();
+			//this.wrapTextValues();
 
 			options.data = JSON.stringify({
 				requestData: {},
@@ -2664,7 +2690,7 @@ define(function (require) {
 			this.stopListening(this.model, "change", this.onModelReset);
 			if (this.model.hasTherapyAttrs()) {
 				$.when(therapiesCollection.fetch()).then(_.bind(function () {
-					this.model.setTherapyAttrs(therapiesCollection);
+					//this.model.setTherapyAttrs(therapiesCollection);
 					this.resetCollectionGroupedByRow();
 				}, this));
 			} else {
@@ -3329,14 +3355,14 @@ define(function (require) {
 				this.listenTo(fds, "change-therapyTitle", function (event) {
 					this.parentFdrId = event.id;
 					this.$(".attribute-value").val("").change();
-		  this.filterFd = true;
+					this.filterFd = true;
+					this.model.set({mandatory: (this.parentFdrId ? "true" : "false")});
 					this.render();
 				});
 			}
 
-			//this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
-			console.log(fds);
 			this.render();
+
 			if (this.model.get("code") === "therapyTitle") {
 				var valueProperty = _.find(this.model.get("properties"),function(item){
 					return item.name === "value";
