@@ -3345,14 +3345,14 @@ define(function (require) {
 				this.listenTo(fds, "change-therapyTitle", function (event) {
 					this.parentFdrId = event.id;
 					this.$(".attribute-value").val("").change();
-		  this.filterFd = true;
+					this.filterFd = true;
+					this.model.set({mandatory: (this.parentFdrId ? "true" : "false")});
 					this.render();
 				});
 			}
 
-			//this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
-			console.log(fds);
 			this.render();
+
 			if (this.model.get("code") === "therapyTitle") {
 				var valueProperty = _.find(this.model.get("properties"),function(item){
 					return item.name === "value";
