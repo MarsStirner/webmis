@@ -3313,7 +3313,7 @@ define(function (require) {
 				_(fds[this.model.get("scope")].toBeautyJSON()));
 
 	  this.filterFd = false;
-	  console.log('directoryEntries',directoryEntries)
+	  //console.log('directoryEntries',directoryEntries);
 
 			return {
 				model: this.model,
@@ -3340,8 +3340,8 @@ define(function (require) {
 			UIElementBase.prototype.initialize.apply(this);
 		},
 		onDirectoryReady: function () {
-			var id;
 			if (this.model.get("code") === "therapyPhaseTitle") {
+				this.filterFd = true;
 				this.listenTo(fds, "change-therapyTitle", function (event) {
 					this.parentFdrId = event.id;
 					this.$(".attribute-value").val("").change();
@@ -3357,9 +3357,9 @@ define(function (require) {
 				var valueProperty = _.find(this.model.get("properties"),function(item){
 					return item.name === "value";
 				});
-				id = valueProperty.value;
-
-				this.showLink(id);
+				if (valueProperty && valueProperty.value) {
+					this.showLink(valueProperty.value);
+				}
 			}
 
 		},
@@ -3403,12 +3403,6 @@ define(function (require) {
 
 			return link;
 		}
-	/*,
-	render: function () {
-	  UIElementBase.prototype.render.call(this);
-	  this.$("select").select2();
-	  return this;
-	}*/
 	});
 
 	/**
