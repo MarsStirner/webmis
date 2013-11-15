@@ -4998,6 +4998,12 @@ define(function (require) {
 		toString: function(){
 			return 'Summary.List.Layout';
 		},
+		toggleReviewState: function () {
+            console.log('summary toggle',this)
+			App.Router.navigate(["patients",this.options.patientId,this.getEditPageTypeName(),this.selectedDocuments.pluck("id").join(",")].join("/"),{trigger: true});
+		
+		},
+
 
 		getDefaultDocumentsMnems: function() {
 			return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "LAB", "DIAG", "THER"];
@@ -5005,12 +5011,7 @@ define(function (require) {
 		getEditPageTypeName: function () {
 			return "summary";
 		},
-        toggleReviewState: function(enable){
-            Documents.Views.List.Common.Layout.prototype.toggleReviewState.call(this,enable)
-            console.log('dfjfhjhk') 
-        },
-
-		getReviewLayout: function() {
+        getReviewLayout: function() {
 			return new Documents.Summary.Review.Layout({
 				collection: this.selectedDocuments,
 				documents: this.documents,
