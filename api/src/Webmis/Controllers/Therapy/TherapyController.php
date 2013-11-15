@@ -34,6 +34,7 @@ class TherapyController
             }
 
             $actions = ActionQuery::create()
+            ->filterByDeleted(false)
             ->useEventQuery()
                 ->filterByClientId($patientId)
                 //->where('Event.id != ?', $eventId)

@@ -849,7 +849,7 @@ define(function (require) {
 		},
 
 		render: function (subViews) {
-			console.log('render '+this +' '+this.cid, subViews, this.data())
+			//console.log('render '+this +' '+this.cid, subViews, this.data())
 			this.$el.html(this.template(this.data()));
 			if (subViews) {
 				this.subViews = {};
