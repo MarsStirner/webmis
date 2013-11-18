@@ -13,7 +13,7 @@ define(function(require) {
 			this.balanceView = new DrugBalanceView({
 				collection: this.balance
 			});
-
+            this.prescription = this.options.prescription;
 			this.addSubViews({
 				'.balance': this.balanceView
 			});
@@ -32,6 +32,17 @@ define(function(require) {
 			console.log('searchByNomen', item)
 
 		},
+        onSave: function(){
+            console.log('add drug') 
+            var drug = this.balance.first();
+            var drugs = this.prescription.get('drugs');
+            drugs.add({
+               "nomen": drug.get('rlsNomenId'),
+               "name": drug.get('tradeLocalName'),
+               "dose":""
+            })
+            this.close();
+        },
 
 
 		afterRender: function() {

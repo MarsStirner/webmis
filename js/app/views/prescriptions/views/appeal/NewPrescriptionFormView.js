@@ -15,8 +15,7 @@ define(function (require) {
             this.prescription = new Prescription({}, {
                 actionTypeId: 754
             });
-
-            this.administration = new AdministrationMethod();
+                        this.administration = new AdministrationMethod();
 
             this.administrationView = new SelectView({
                 collection: this.administration,
@@ -34,6 +33,9 @@ define(function (require) {
 
 
                 self.administration.fetch({data: {code:moaKeys}});
+                self.prescription.on('change', self.showJSON,self);
+                self.prescription.get('drugs').on('add remove',self.showJSON, self);
+
 
                 self.prescription.set('eventId', 788899);
                 self.prescription.set('moa', 788899);
@@ -54,11 +56,17 @@ define(function (require) {
             });
 
         },
+        showJSON: function(){
+            this.$el.find('#debug').html(JSON.stringify(this.prescription.toJSON(),null,4));
+        
+        },
         events: {
             'click [data-add-drug]': 'onClickAddDrug'
         },
         onClickAddDrug: function () {
-            var popup = new AddDrugPopupView();
+            var popup = new AddDrugPopupView({
+                prescription: this.prescription 
+            });
 
             popup.render();
             popup.open();
