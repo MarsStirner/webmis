@@ -1,5 +1,6 @@
 define(function (require) {
 	var Prescription = require('../models/Prescription');
+    var Collection = require('./Collection');
 
 	var Prescriptions = Collection.extend({
 		model: Prescription,
@@ -11,5 +12,4 @@ define(function (require) {
 	});
 
 	return Prescriptions;
-
 });
