@@ -13,8 +13,6 @@ define(function(require) {
 	var ConsultationResultView = require("views/diagnostics/consultations/ConsultationsResultView");
 	var QuotesView = require("views/appeal/edit/pages/QuotesView");
 	var PatientMonitoringView = require("views/appeal/edit/pages/PatientMonitoringView");
-	var AppealPrescriptionsView = require("views/prescriptions/AppealPrescriptions");
-	var NewPrescriptionView = require("views/prescriptions/views/appeal/NewPrescriptionView");
 	var Monitoring = require("views/appeal/edit/pages/monitoring/monitoring");
 	var Documents = require("views/documents/documents");
 	var Moves = require("views/moves/moves");
@@ -81,12 +79,6 @@ define(function(require) {
 				"SUB_REVIEW": ConsultationResultView,
 				"SUB_EDIT": Documents.Views.Edit.Consultation.Layout
 			},
-
-			"prescriptions": {
-				"REVIEW": AppealPrescriptionsView,
-				"SUB_REVIEW": NewPrescriptionView
-			},
-
 			"quotes": {
 				"REVIEW": QuotesView
 			},
@@ -120,7 +112,6 @@ define(function(require) {
 				"SUB_EDIT": Documents.Views.Edit.Therapy.Layout,
 				"SUB_NEW": Documents.Views.Edit.Therapy.Layout
 			},
-
 			"examinations": {
 				"REVIEW": Documents.Views.List.Examination.Layout,
 				"SUB_REVIEW": Documents.Views.Review.Examination.Layout,
@@ -139,7 +130,7 @@ define(function(require) {
 			"quotes": App.Router.cachedBreadcrumbs.QUOTES,
 			"patient-monitoring": App.Router.cachedBreadcrumbs.PATIENT_MONITORING,
 			"examinations": App.Router.cachedBreadcrumbs.EXAMS,
-			//"first-examination-edit": App.Router.cachedBreadcrumbs.EXAMS,
+			"summary": App.Router.cachedBreadcrumbs.SUMMARY,
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
 			"card": App.Router.cachedBreadcrumbs.APPEAL,
 			"moves": App.Router.cachedBreadcrumbs.MOVES,
@@ -152,8 +143,6 @@ define(function(require) {
 			var self = this;
 			this.appealId = this.options.appealId;
 			this.page = this.options.page;
-
-			//console.log('this', this);
 
 			if (!(this.appealId && this.pageViews[this.page])) {
 				throw new Error("Invalid diagnostic type or empty appeal id");
@@ -231,7 +220,7 @@ define(function(require) {
 		},
 
 		onViewStateChange: function(event) {
-			console.log('onViewStateChange', event);
+			//console.log('onViewStateChange', event);
 			this.setContentView(event.type, event.mode, event.options);
 		},
 
@@ -352,11 +341,6 @@ define(function(require) {
 							title: "Мониторинг&nbsp;состояния",
 							uri: "/appeals/:id/patient-monitoring"
 						}, appealJSON),
-						// App.Router.compile({
-						// 	name: "examinations",
-						// 	title: "Осмотры",
-						// 	uri: "/appeals/:id/examinations/"
-						// }, appealJSON),
 						App.Router.compile({
 							name: "documents",
 							title: "Документы",
@@ -406,7 +390,7 @@ define(function(require) {
 							name: "card",
 							title: "Титульный лист ИБ",
 							uri: "/appeals/:id/"
-						}, appealJSON)
+						}, appealJSON),
 					]
 				}
 			}, this);
@@ -425,11 +409,6 @@ define(function(require) {
 							title: "Мониторинг&nbsp;состояния",
 							uri: "/appeals/:id/patient-monitoring"
 						}, appealJSON),
-						// App.Router.compile({
-						// 	name: "examinations",
-						// 	title: "Осмотры",
-						// 	uri: "/appeals/:id/examinations/"
-						// }, appealJSON),
 						App.Router.compile({
 							name: "documents",
 							title: "Документы",

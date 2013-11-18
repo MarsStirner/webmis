@@ -19,7 +19,7 @@ class EventRouter implements ControllerProviderInterface
         $dirRouter = $app['controllers_factory'];
 
 
-        $dirRouter->get('/', getController('Event/no'));
+        $dirRouter->get('/', getController('Event/list'));
         $dirRouter->get('/{eventId}', getController('Event/read'));
         $dirRouter->get('/{eventId}/actions', getController('Event/eventActions'));
         // $dirRouter->get('/{eventId}/actions/{actionId}', function(Request $request){

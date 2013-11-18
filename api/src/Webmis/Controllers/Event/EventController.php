@@ -18,6 +18,30 @@ class EventController
         return $app['jsonp']->jsonp(array('message' => 'тут ничего нет' ));
     }
 
+    public function listAction(Request $request, Application $app)
+    {
+        $patientId = (int) $request->get('patientId');
+        $data = array();
+
+        if(!$patientId){
+            return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора пациента.' ));
+        }
+
+        $events = EventQuery:: create()
+        ->filterByDeleted(0)
+        ->filterByclientId($patientId)
+        ->useEventTypeQuery()
+            ->filterByCode(array('01','14', '11', '12', '06', '15', '16', '03', '04', '17', '18'))
+        ->endUse()
+        ->select(array('id', 'externalId'))
+        ->find();
+
+        $data = $events->toArray();
+
+
+        return $app['jsonp']->jsonp(array('data' => $data ));
+    }
+
     public function eventActionsAction(Request $request, Application $app)
     {
         $route_params = $request->get('_route_params') ;

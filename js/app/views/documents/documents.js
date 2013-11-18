@@ -61,7 +61,8 @@ define(function (require) {
 	var appealId = 0;
 	var appeal = null;
 	var dispatcher = _.extend({}, Backbone.Events);
-	var fds = {};
+	var fds = _.extend({}, Backbone.Events);
+	var therapiesCollection;
 	//endregion
 
 
@@ -80,6 +81,8 @@ define(function (require) {
 		_documentTypesTree: _.template(require("text!templates/documents/list/doc-types-tree.html")),
 		_documentsTableHead: _.template(require("text!templates/documents/list/docs-table-head.html")),
 		_documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
+		_summaryTypeDateFilters: _.template(require("text!templates/documents/list/summary-filter.html")),
+		_summaryTable: _.template(require("text!template/documents/list/summary-table.html")),
 		_documentsTablePaging: _.template(require("text!templates/documents/list/paging.html")),
 		_editLayout: _.template(require("text!templates/documents/edit/layout.html")),
 		_editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
@@ -130,6 +133,7 @@ define(function (require) {
 	var Consultation = require("models/diagnostics/consultations/Consultation");
 	var Consultations = require("collections/diagnostics/consultations/Consultations");
 	//var ConsultationsResultView = require("views/diagnostics/consultations/ConsultationsResultView");
+	require("collections/diagnostics/laboratory/laboratory-diags");
 
 	var TherapiesCollection = require('collections/therapy/Therapies');
 
@@ -167,22 +171,21 @@ define(function (require) {
 		hasTherapyAttrs: function () {
 			//TODO: TEMP!!!
 			return !!_(this.get("group")[1].attribute).find(function (attr) {
-				//console.log(attr);
 				return attr.code === "therapyTitle";
 			});
 		},
 
-		setTherapyAttrs: function (therapiesCollection) {
-
+		getFieldsGroup: function () {
+			return this.get("group")[1].attribute;
 		},
 
 		groupByRow: function () {
 			console.log("hasTherapyAttrs", this.hasTherapyAttrs());
 
-			var attributes = this.get("group")[1].attribute;
+			var attributes = this.getFieldsGroup();
 
 			attributes = _.reject(attributes, function (attribute) {
-				return _.contains(HIDDEN_TYPES, attribute.type)
+				return _.contains(HIDDEN_TYPES, attribute.type);
 			}, this);
 
 			if (this.hasTherapyAttrs()) {
@@ -223,13 +226,15 @@ define(function (require) {
 							ta.readOnly = "true";
 						}
 						if (ta.therapyFieldCode == "therapyBegDate") {
-							ta.properties[0].value = moment(lastTherapy.get("beginDate")).format(CD_DATE_FORMAT);
+							if(lastTherapy.get("beginDate")){
+								ta.properties[0].value = moment(lastTherapy.get("beginDate")).format(CD_DATE_FORMAT);
+							}
 							ta.readOnly = "true";
 						}
 
 						if (shouldSetTherapyPhaseFields) {
 							if (ta.therapyFieldCode == "therapyPhaseTitle") {
-								ta.properties[0].value = lastTherapy.get("phases")[0].title;
+								ta.properties[1].value = lastTherapy.get("phases")[0].titleId.toString();
 								ta.readOnly = "true";
 							}
 							if (ta.therapyFieldCode == "therapyPhaseBegDate") {
@@ -240,22 +245,31 @@ define(function (require) {
 					}
 				});
 
-				console.log(therapyAttrs);
+//				console.log(therapyAttrs);
 			}
 
-			var groupedByRow = _(attributes).groupBy(function (item) {
-				//return item.layoutAttributes[]; //TODO: groupBy ROW attr
-				//var rowValue = _(item.layoutAttributeValues).where("layoutAttribute_id", layoutAttributesDir[item.type]).value;
-				return item.therapyFieldCode ? "THERAPY" : "UNDEFINED";
-			}, this);
+		  var groupedByRow = _(attributes).groupBy(function (item) {
+			var rowAttr = _(layoutAttributesDir.get(item.type)).find(function (a) {return a.code === "ROW";});
+			var rowValue = "UNDEFINED";
 
-			if (!groupedByRow.UNDEFINED) {
+			if (rowAttr) {
+			  var rowAttrId = rowAttr["id"];
+			  var rowValueParams = _(item.layoutAttributeValues).find(function (la) {return la.layoutAttribute_id === rowAttrId;});
+			  if (rowValueParams && rowValueParams["value"]) {
+				rowValue = rowValueParams["value"];
+			  }
+			}
+
+			return rowValue;
+		  }, this);
+
+			/*if (!groupedByRow.UNDEFINED) {
 				groupedByRow.UNDEFINED = [];
-			}
+			}*/
 
 			var rows = [];
 
-			if (groupedByRow.THERAPY) {
+			/*if (groupedByRow.THERAPY) {
 				rows.push(
 					{spans: new Backbone.Collection([
 						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[0]),
@@ -272,15 +286,37 @@ define(function (require) {
 						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[7])
 					])}
 				);
-			}
+			}*/
 
-			for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
+			//////////////////
+			_.forEach(groupedByRow, function (row, rowNumber) {
+				if (rowNumber !== "UNDEFINED") {
+					rows.push({spans: new Backbone.Collection()});
+
+					_.forEach(row, function (span) {
+						_.last(rows).spans.add(new Documents.Models.TemplateAttribute(span));
+					}, this);
+				} else {
+					_.forEach(row, function (span, i) {
+						if (i == 0 || i % 2 == 0) {
+							rows.push({spans: new Backbone.Collection()});
+						}
+
+						_.last(rows).spans.add(new Documents.Models.TemplateAttribute(row[i]));
+					}, this);
+				}
+			}, this);
+
+//			console.log(rows);
+			//////////////////
+
+			/*for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
 				if (i == 0 || i % 2 == 0) {
 					rows.push({spans: new Backbone.Collection()});
 				}
 
 				rows[rows.length - 1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
-			}
+			}*/
 
 			return rows;
 		},
@@ -329,21 +365,21 @@ define(function (require) {
 			}
 		},
 
-    getExecutorPost: function () {
-      if (this.get("group")) {
-        if (!this.executorPost) {
-          this.executorPost = new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
-            return attr.name == "executorPost";
-          }));
-        }
-        return this.executorPost;
-      } else {
-        return {};
-      }
-    },
+		getExecutorPost: function () {
+		  if (this.get("group")) {
+			if (!this.executorPost) {
+			  this.executorPost = new Documents.Models.TemplateAttribute(_(this.get("group")[0].attribute).find(function (attr) {
+				return attr.name == "executorPost";
+			  }));
+			}
+			return this.executorPost;
+		  } else {
+			return {};
+		  }
+		},
 
 		spoofDates: function () {
-			_.each(this.get("group")[1].attribute, function (attr) {
+			_.each(this.getFieldsGroup(), function (attr) {
 				if (attr.type == "Date" && attr.properties[0] && attr.properties[0].value == "") {
 					attr.properties[0].value = "0000-00-00 00:00:00";
 				}
@@ -383,17 +419,11 @@ define(function (require) {
 
 				if (requiredValidationFail) return requiredValidationFail;
 			}
-		}
-	});
-
-	Documents.Models.Document = Documents.Models.DocumentBase.extend({
-		urlRoot: function () {
-			return DATA_PATH + "appeals/" + this.appealId + "/documents/";
 		},
 
 		getFilledAttrs: function () {
 			if (this.get("group") && this.get("group").length) {
-				var examAttributes = this.get("group")[1].attribute;
+				var examAttributes = this.getFieldsGroup();
 				var examFlatJSON = [];
 				if (examAttributes) {
 					_(examAttributes).each(function (a) {
@@ -416,6 +446,36 @@ define(function (require) {
 			} else {
 				return [];
 			}
+		}
+
+		/*wrapTextValues: function () {
+			if (this.get("group") && this.get("group").length) {
+				var examAttributes = this.getFieldsGroup();
+				if (examAttributes) {
+					_(examAttributes).each(function (a) {
+						if (_.contains(["html", "text", "constructor"], a.type.toString().toLowerCase())) {
+							var valueProp = _(a.properties).find(function (p) {
+								return p.name === "value";
+							});
+
+							if (valueProp && valueProp.value) {
+								var wrapStart = "<pre>";
+								var wrapEnd = "</pre>";
+								if (valueProp.value.substring(0, wrapStart.length) != wrapStart ||
+									valueProp.value.substring(valueProp.value.length - 1, wrapEnd.length) != wrapEnd) {
+									valueProp.value = wrapStart + valueProp.value + wrapEnd;
+								}
+							}
+						}
+					});
+				}
+			}
+		}*/
+	});
+
+	Documents.Models.Document = Documents.Models.DocumentBase.extend({
+		urlRoot: function () {
+			return DATA_PATH + "appeals/" + this.appealId + "/documents/";
 		},
 
 		/*collectTextNodes: function (element, texts) {
@@ -449,7 +509,8 @@ define(function (require) {
 
 		save: function (attrs, options) {
 			this.setCloseDate();
-			Documents.Models.DocumentBase.prototype.save.call(this, attrs, options);
+			//this.wrapTextValues();
+			return Documents.Models.DocumentBase.prototype.save.call(this, attrs, options);
 		}
 	});
 
@@ -469,6 +530,7 @@ define(function (require) {
 
 			this.setCloseDate();
 			this.spoofDates();
+			//this.wrapTextValues();
 
 			options.data = JSON.stringify({
 				requestData: {},
@@ -567,6 +629,42 @@ define(function (require) {
 
 		isMandatory: function () {
 			return this.get("mandatory") === "true";
+		},
+
+		isSubHeader: function () {
+			var result = false;
+			var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "DISPLAY_AS_SUBHEADER";});
+			if (la) {
+				var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
+				if (lav) {
+					result = lav.value === "true";
+				}
+			}
+			return result;
+		},
+
+		isSubHeaderVGroup: function () {
+		  var result = false;
+		  var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "VGROUP";});
+		  if (la) {
+			var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
+			if (lav) {
+			  result = lav.value === "true";
+			}
+		  }
+		  return result;
+		},
+
+		getVGroupRowsNumber: function () {
+		  var result = 0;
+		  var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {return a.code === "VGROUP_ROWS";});
+		  if (la) {
+			var lav = _(this.get("layoutAttributeValues")).find(function (lav) {return lav.layoutAttribute_id === la.id;});
+			if (lav) {
+			  result = lav.value;
+			}
+		  }
+		  return result;
 		},
 
 		isIdType: function () {
@@ -743,7 +841,7 @@ define(function (require) {
 		parse: function (raw) {
 			raw = Collection.prototype.parse.call(this, raw);
 			return _.filter(raw, function (item) {
-				return !(item.name && item.name.search(/дневник/i) !== -1 && item.name !== 'Дневниковый осмотр');
+				return !(item.name && item.name.search(/дневник/) !== -1);
 			});
 		}
 	});
@@ -757,6 +855,12 @@ define(function (require) {
 	//Базовые классы
 	var ViewBase = Documents.Views.Base = Backbone.View.extend({
 		template: _.template(""),
+		initialize: function(){
+			console.log('initialize '+this+' '+this.cid, arguments);
+		},
+		toString: function(){
+			return 'Base';
+		},
 
 		data: function () {
 			return {};
@@ -770,6 +874,7 @@ define(function (require) {
 		},
 
 		render: function (subViews) {
+			//console.log('render '+this +' '+this.cid, subViews, this.data())
 			this.$el.html(this.template(this.data()));
 			if (subViews) {
 				this.subViews = {};
@@ -800,10 +905,12 @@ define(function (require) {
 			this.remove();
 		},
 
-		tearDownSubviews: function () {
-			if (this.subViews) _.each(this.subViews, function (subView) {
-				subView.tearDown();
-			});
+		tearDownSubviews: function() {
+			if (this.subViews) {
+				_.each(this.subViews, function(subView) {
+					subView.tearDown();
+				});
+			}
 		},
 
 		on: function (event, callback, context) {
@@ -828,10 +935,16 @@ define(function (require) {
 
 	var LayoutBase = Documents.Views.LayoutBase = ViewBase.extend({
 		className: "container-fluid",
+		toString: function(){
+			return 'LayoutBase';
+		},
 
 		topLevel: false,
 
 		initialize: function () {
+			ViewBase.prototype.initialize.call(this);
+
+
 			if (this.options.appealId) {
 				appealId = this.options.appealId;
 				appeal = this.options.appeal;
@@ -850,7 +963,11 @@ define(function (require) {
 	});
 
 	var RepeaterBase = Documents.Views.RepeaterBase = ViewBase.extend({
+		toString: function(){
+			return 'RepeaterBase';
+		},
 		initialize: function () {
+			console.log('initialize '+this, arguments);
 			this.subViews = [];
 		},
 
@@ -905,7 +1022,7 @@ define(function (require) {
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.fetch({data: {filter: {flatCode: FLAT_CODES.PANIC}}});
-				console.log("documentTypes.fetch");
+				//console.log("documentTypes.fetch");
 			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
@@ -963,9 +1080,21 @@ define(function (require) {
 	 * @type {*}
 	 */
 	var ListLayoutBase = Documents.Views.List.Base.Layout = LayoutBase.extend({
+		toString: function(){
+			return 'List.Base.Layout';
+		},
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
-
+            var self = this;
+            console.log('init '+this,(function(){
+                for (var name in self) {  
+                    if(!this.hasOwnProperty(name)){
+                        console.log(self+' inhirited:',name) 
+                    }else{
+                         console.log(self+' own:',name) 
+                    }
+                }
+            })());
 			if (this.options.documents) {
 				this.documents = this.options.documents;
 			} else {
@@ -989,6 +1118,7 @@ define(function (require) {
 		},
 
 		onEnteredReviewState: function () {
+			console.log('onEnteredReviewState',this.toString())
 			this.toggleReviewState(true);
 		},
 
@@ -997,6 +1127,7 @@ define(function (require) {
 		},
 
 		toggleReviewState: function (enabled) {
+			console.log('toggle review state', this)
 			//this.$(".documents-table, .controls-filters, .documents-paging").toggle(!enabled);
 			this.$(this.reviewStateToggles.join(",")).toggle(!enabled);
 
@@ -1052,6 +1183,9 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.List.Base.DocumentsTableHead = ViewBase.extend({
+		toString: function(){
+			return 'List.Base.DocumentsTableHead';
+		},
 		template: templates._documentsTableHead,
 
 		events: {
@@ -1146,6 +1280,9 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.List.Base.DocumentsTable = ViewBase.extend({
+		toString: function(){
+			return 'List.Base.DocumentsTable';
+		},
 		template: templates._documentsTable,
 
 		events: {
@@ -1157,10 +1294,12 @@ define(function (require) {
 		},
 
 		data: function () {
-			return {documents: this.collection, showIcons: !this.options.included && !appeal.isClosed()};
+			return {documents: this.collection,
+				showIcons: !this.options.included && !appeal.isClosed()};
 		},
 
 		initialize: function () {
+			ViewBase.prototype.initialize.call(this);
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
 			this.listenTo(this.collection, "mark-all", this.onCollectionMarkAll);
 			this.listenTo(this.options.selectedDocuments, "review:quit", this.onCollectionReset);
@@ -1255,6 +1394,9 @@ define(function (require) {
 	 */
 	Documents.Views.List.Base.TableControls = ViewBase.extend({
 		template: templates._listTableControls,
+		toString: function(){
+			return 'List.Base.TableControls';
+		},
 
 		data: function () {
 			return {
@@ -1269,6 +1411,7 @@ define(function (require) {
 		},
 
 		initialize: function () {
+			ViewBase.prototype.initialize.call(this);
 			this.listenTo(this.collection, "add remove reset", this.onCollectionChange);
 		},
 
@@ -1313,6 +1456,9 @@ define(function (require) {
 	 */
 	Documents.Views.List.Base.Paging = ViewBase.extend({
 		template: templates._documentsTablePaging,
+		toString: function(){
+			return 'List.Base.Paging';
+		},
 		data: function () {
 			if (this.collection.requestData) {
 				return {
@@ -1420,7 +1566,7 @@ define(function (require) {
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.fetch();
-				console.log("documentTypes.fetch");
+				//console.log("documentTypes.fetch");
 			}
 
 			this.listenTo(this.documentTypes, "reset", function () {
@@ -1652,7 +1798,7 @@ define(function (require) {
 			} else {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.fetch();
-				console.log("documentTypes.fetch");
+				//console.log("documentTypes.fetch");
 			}
 
 			//this.reviewStateToggles.push(".documents-controls");
@@ -1910,7 +2056,7 @@ define(function (require) {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.mnems = ["THER"];
 				this.documentTypes.fetch();
-				console.log("documentTypes.fetch");
+				//console.log("documentTypes.fetch");
 			}
 
 			//this.reviewStateToggles.push(".controls-block");
@@ -1944,7 +2090,7 @@ define(function (require) {
 	});
 	//endregion
 
-	var therapiesCollection;
+
 	//region VIEWS EDIT BASE
 	//---------------------
 	Documents.Views.Edit.Base.Layout = LayoutBase.extend({
@@ -2544,7 +2690,7 @@ define(function (require) {
 			this.stopListening(this.model, "change", this.onModelReset);
 			if (this.model.hasTherapyAttrs()) {
 				$.when(therapiesCollection.fetch()).then(_.bind(function () {
-					this.model.setTherapyAttrs(therapiesCollection);
+					//this.model.setTherapyAttrs(therapiesCollection);
 					this.resetCollectionGroupedByRow();
 				}, this));
 			} else {
@@ -2570,11 +2716,34 @@ define(function (require) {
 				$(this).prop("tabindex", ++i);
 			});
 
-			this.$(".doc-sub-header").each(function () {
-				if ($(this).siblings(".span6").length > 0) {
-					$(this).parent().before($(this).detach());
-				}
+	  var self = this;
+
+			this.$(".vgroup").each(function (i) {
+		var $this = $(this);
+		$this.addClass("vgroup-"+i);
+
+
+		$this
+		  .parent()
+		  .nextAll("*:lt("+$this.data("vgroup-rows-number")+")")
+		  .find(".span"+$this.data("span-width")+":eq("+$this.index()+")")
+		  .addClass("vgroup-"+i+"-span");
 			});
+
+	  this.$(".vgroup").each(function (i) {
+		var $vgroupContent = $("<span style='padding: 0;margin: 1em 0 0 0;' class='span12 vgroup-content-"+i+"'>");
+		self.$(".vgroup-"+i+"-span")
+		  .removeClass("span"+$(this).data("span-width"))
+		  .addClass("span12")
+		  .wrap("<div class='row-fluid vgroup-row' style='padding-top: 1em;'></div>")
+		  .parent()
+		  .detach()
+		  .appendTo($vgroupContent);
+		$(this).append($vgroupContent.toggle());
+		$vgroupContent.toggle();
+	  });
+
+	  this.$(".row-fluid:empty").hide();
 
 			return this;
 		}
@@ -2616,7 +2785,7 @@ define(function (require) {
 			this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
 			//common attrs to fit into grid
 			//TODO: TEMP HELL
-			if (this.model.get("therapyFieldCode")) {
+			/*if (this.model.get("therapyFieldCode")) {
 				var therapyFieldCode = this.model.get("therapyFieldCode");
 				switch (therapyFieldCode) {
 					case "therapyTitle":
@@ -2632,9 +2801,9 @@ define(function (require) {
 						break;
 				}
 				//console.log(this.model.get("therapyFieldCode"));
-			} else {
+			} else {*/
 				this.$el.addClass("span" + this.layoutAttributes.width);
-			}
+			//}
 		},
 
 		mapLayoutAttributes: function () {
@@ -2665,7 +2834,7 @@ define(function (require) {
 		},
 
 		onAttributeValueChange: function (event) {
-			console.log('onAttributeValueChange',this.getAttributeValue());
+			//console.log('onAttributeValueChange',this.getAttributeValue());
 			this.model.setValue(this.getAttributeValue());
 			this.$(".Mandatory").removeClass("WrongField");
 		},
@@ -2698,15 +2867,10 @@ define(function (require) {
 			this.updateFieldCollapse();
 			var therapyFieldCode = this.model.get("therapyFieldCode");
 			switch (therapyFieldCode) {
-				/*case "therapyTitle":
-				case "therapyBegDate":
-				case "therapyEndDate":
-					this.$el.addClass("span4");
-					break;*/
-				case "therapyPhaseTitle":
+				/*case "therapyPhaseTitle":
 					this.$(".wysisyg").remove();
 					this.$(".RichText").css({"min-height": "2.25em"});
-					break;
+					break;*/
 				//case "therapyPhaseBegDate":
 				case "therapyPhaseDay":
 				//case "therapyPhaseEndDate":
@@ -2727,12 +2891,12 @@ define(function (require) {
 
 		events: _.extend({
 			"click .wysisyg a": "onWysisygAClick",
-      "paste .RichText": "onRichTextPaste"
+	  "paste .RichText": "onRichTextPaste"
 		}, UIElementBase.prototype.events),
 
 		onWysisygAClick: function (e) {
 			e.preventDefault();
-      e.stopPropagation();
+	  e.stopPropagation();
 
 			var command = $(e.currentTarget).data('role');
 
@@ -2748,25 +2912,25 @@ define(function (require) {
 			}
 		},
 
-    onRichTextPaste: function (event) {
-      setTimeout(_.bind(function () {
-        console.log("paste! ", event);
-        this.$(".attribute-value").html($.htmlClean(this.$(".attribute-value").html(), {
-          format: true,
-          removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
-            "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button"
-            //, "table","tbody", "thead", "tr", "th", "td"
-          ],
-          removeAttrs: ["style", "class"],
-          replace: [
-            [["h1", "h2", "h3", "h4"], "b"],
-            [["table", "tr", "thead", "tbody"], "div"],
-            [["td", "th"], "span"]
-          ]
-        }));
-        this.model.setValue(this.$(".attribute-value").html());
-      }, this), 0);
-    },
+	onRichTextPaste: function (event) {
+	  setTimeout(_.bind(function () {
+		console.log("paste! ", event);
+		this.$(".attribute-value").html($.htmlClean(this.$(".attribute-value").html(), {
+		  format: true,
+		  removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
+			"isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button"
+			//, "table","tbody", "thead", "tr", "th", "td"
+		  ],
+		  removeAttrs: ["style", "class"],
+		  replace: [
+			[["h1", "h2", "h3", "h4"], "b"],
+			[["table", "tr", "thead", "tbody"], "div"],
+			[["td", "th"], "span"]
+		  ]
+		}));
+		this.model.setValue(this.$(".attribute-value").html());
+	  }, this), 0);
+	},
 
 		toggleField: function (visible) {
 			this.$(".editor-controls").toggle(visible);
@@ -3152,9 +3316,18 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({
 		template: templates.uiElements._flatDirectory,
 		data: function () {
+			var directoryEntries = (this.filterFd ?
+				_(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
+					return frd["parentFdr_id"] == this.parentFdrId;
+				}, this) :
+				_(fds[this.model.get("scope")].toBeautyJSON()));
+
+	  this.filterFd = false;
+	  //console.log('directoryEntries',directoryEntries);
+
 			return {
 				model: this.model,
-				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())
+				directoryEntries: directoryEntries
 			};
 		},
 		initialize: function () {
@@ -3167,6 +3340,7 @@ define(function (require) {
 			} else {
 				this.onDirectoryReady();
 			}
+			this.parentFdrId = null;
 			/*this.directoryEntries = new FlatDirectory();
 			this.directoryEntries.set({id: this.model.get("scope")});
 			$.when(this.directoryEntries.fetch()).then(_.bind(function () {
@@ -3176,14 +3350,68 @@ define(function (require) {
 			UIElementBase.prototype.initialize.apply(this);
 		},
 		onDirectoryReady: function () {
-			//this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
+			if (this.model.get("code") === "therapyPhaseTitle") {
+				this.filterFd = true;
+				this.listenTo(fds, "change-therapyTitle", function (event) {
+					this.parentFdrId = event.id;
+					this.$(".attribute-value").val("").change();
+					this.filterFd = true;
+					this.model.set({mandatory: (this.parentFdrId ? "true" : "false")});
+					this.render();
+				});
+			}
+
 			this.render();
+
+			if (this.model.get("code") === "therapyTitle") {
+				var valueProperty = _.find(this.model.get("properties"),function(item){
+					return item.name === "value";
+				});
+				if (valueProperty && valueProperty.value) {
+					this.showLink(valueProperty.value);
+				}
+			}
+
 		},
-		onAttributeValueChange: function (event) {
+
+		onAttributeValueChange: function(event) {
+			var id = this.getAttributeValue();
+			var code = this.model.get("code");
+
 			if (_.isEmpty(this.getAttributeValue())) {
 				this.model.setPropertyValueFor("value", "");
 			}
+			if (this.model.get("code") === "therapyTitle") {
+				fds.trigger("change-therapyTitle", {
+					id: this.getAttributeValue()
+				});
+			}
+			if (code === "therapyTitle" || code === "therapyPhaseTitle") {
+				this.showLink(id);
+			}
 			UIElementBase.prototype.onAttributeValueChange.call(this, event);
+		},
+
+		showLink: function(id) {
+			var link = this.getLink(id) ? this.getLink(id) : '';
+			this.$el.find('.link').html(link);
+		},
+
+		getLink: function(id) {
+			var link = '';
+			var items = fds[this.model.get("scope")].toBeautyJSON();
+			var selectedItem = _.find(items, function(item) {
+				return item["id"] == id;
+			});
+
+			if (selectedItem) {
+				link = selectedItem['Ссылка'];
+				if (link) {
+					link = '<a href="' + link + '" target="_blank"><i class="icon-book"></i> ' + selectedItem['Наименование'] + '</a>'
+				}
+			}
+
+			return link;
 		}
 	});
 
@@ -4000,19 +4228,48 @@ define(function (require) {
 	 * @type {Function}
 	 */
 	Documents.Views.Edit.UIElement.SubHeader = ViewBase.extend({
-		className: "row-fluid doc-sub-header",
+		className: "doc-sub-header",
 		template: _.template("<h3><%=model.get('name')%></h3>"),
 		data: function () {
 			return {
 				model: this.model
 			}
-		}/*,
+		},
+	layoutAttributes: UIElementBase.prototype.layoutAttributes,
+	initialize: function () {
+		this.mapLayoutAttributes();
+	  this.$el.addClass("span" + this.layoutAttributes.width);
+	},
+	mapLayoutAttributes: UIElementBase.prototype.mapLayoutAttributes
+		/*,
 		render: function () {
 			ViewBase.prototype.render.call(this);
 			//this.$el.parent().prepend(this.$el.detach());
 			return this;
 		}*/
 	});
+
+  Documents.Views.Edit.UIElement.SubHeaderVGroup = Documents.Views.Edit.UIElement.SubHeader.extend({
+	className: "doc-sub-header vgroup",
+	attributes: {style: "border: 1px solid #D9D9D9;padding: 1em;border-radius:5px;"},
+	template: _.template("<h3 class='sb-hdr' style='line-height: 1em;cursor: pointer;'><%=model.get('name')%><span class='sb-tgl icon-plus' style='float: right'></span></h3>"),
+	events: {
+	  "click .sb-hdr": "onClick"
+	},
+	onClick: function (event) {
+	  console.log("VGROUP CLICK");
+	  var $t = $(event.currentTarget);
+	  $t.next().toggle();
+	  this.$(".sb-tgl").toggleClass("icon-plus icon-minus");
+		//this.$el.parent().nextAll("*:lt("+this.model.getVGroupRowsNumber()+")").find(".span4:eq("+this.$el.index()+") *").toggle();
+	},
+	render: function () {
+	  Documents.Views.Edit.UIElement.SubHeader.prototype.render.call(this);
+	  this.$el.data("vgroup-rows-number", this.model.getVGroupRowsNumber());
+	  this.$el.data("span-width", this.layoutAttributes.width);
+	  return this;
+	}
+  });
 
 	/**
 	 * Фабрика для создания элементов шаблона соответсвующего типа
@@ -4028,8 +4285,13 @@ define(function (require) {
 				this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
 				break;
 			case "string":
-				if (options.model.get("scope") === "''") {
-					this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
+				//if (options.model.get("scope") === "''") {
+				if (options.model.isSubHeader()) {
+		  if (options.model.isSubHeaderVGroup()) {
+					  this.UIElementClass = Documents.Views.Edit.UIElement.SubHeaderVGroup;
+		  } else {
+			this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
+		  }
 				} else {
 					this.UIElementClass = Documents.Views.Edit.UIElement.String;
 				}
@@ -4161,6 +4423,9 @@ define(function (require) {
 	//---------------------
 	Documents.Views.Review.Base.NoControlsLayout = LayoutBase.extend({
 		template: templates._reviewLayout,
+		toString: function(){
+			return 'Documents.Views.Review.Base.NoControlsLayout';
+		},
 
 		initialize: function () {
 			LayoutBase.prototype.initialize.call(this, this.options);
@@ -4238,6 +4503,9 @@ define(function (require) {
 
 	Documents.Views.Review.Base.Layout = Documents.Views.Review.Base.NoControlsLayout.extend({
 		attributes: {style: "display: table; width: 100%;"},
+		toString: function(){
+			return 'Documents.Views.Review.Base.Layout';
+		},
 
 		initialize: function () {
 			if (this.options.documentTypes) {
@@ -4246,7 +4514,7 @@ define(function (require) {
 				this.documentTypes = new Documents.Collections.DocumentTypes();
 				this.documentTypes.mnems = this.getDefaultDocumentsMnems();
 				this.documentTypes.fetch();
-				console.log("documentTypes.fetch");
+				//console.log("documentTypes.fetch");
 			}
 
 			Documents.Views.Review.Base.NoControlsLayout.prototype.initialize.call(this, this.options);
@@ -4362,11 +4630,11 @@ define(function (require) {
 					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
 					attributes: document.getCleanHtmlFilledAttrs(),
 					flatCode: document.get("flatCode"),
-          doctorPost: {
-            id: document.getExecutorPost().getPropertyByName("valueId").value,
-            code: document.getExecutorPost().getPropertyByName("code").value,
-            name: document.getExecutorPost().getPropertyByName("value").value
-          },
+		  doctorPost: {
+			id: document.getExecutorPost().getPropertyByName("valueId").value,
+			code: document.getExecutorPost().getPropertyByName("code").value,
+			name: document.getExecutorPost().getPropertyByName("value").value
+		  },
 					execPerson: appeal.get("execPerson")
 				};
 
@@ -4576,6 +4844,9 @@ define(function (require) {
 	 * @type {*}
 	 */
 	Documents.Views.Review.Base.SheetList = RepeaterBase.extend({
+		toString: function(){
+			return 'Documents.Views.Review.Base.SheetList';
+		},
 		initialize: function () {
 			RepeaterBase.prototype.initialize.call(this, this.options);
 			this.listenTo(this.collection, "reset", this.onCollectionReset);
@@ -4665,7 +4936,181 @@ define(function (require) {
 	//endregion
 	//endregion
 
+	Documents.Summary = {
+		List: {},
+		Review: {}
+	};
 
+
+	Documents.Summary.Filters = Documents.Views.List.Common.Filters.extend({
+		template: templates._summaryTypeDateFilters,
+		toString: function(){
+			return 'Summary.Filters';
+		},
+		events: _.extend({
+			"change #event-filter": "onChangeEvent"
+		},Documents.Views.List.Common.Filters.prototype.events),
+		onChangeEvent: function(e){
+			var $target = $(e.target);
+			this.collection.appealId = $target.val();
+			this.collection.pageNumber = 1;
+			this.collection.fetch();
+		},
+		applyDocumentTypeFilter: function (type) {
+			var mnems = [];
+
+			switch (type) {
+				case "ALL":
+					mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "THER"];
+					break;
+				case "EXAM":
+					mnems = ["EXAM"];
+					break;
+				case "EPI":
+					mnems = ["EPI"];
+					break;
+				case "ORD":
+					mnems = ["ORD"];
+					break;
+				case "LAB":
+					mnems = ["LAB"];
+					break;
+				case "CONS":
+					mnems = ["CONS"];
+					break;
+				case "DIAG":
+					mnems = ["DIAG"];
+					break;
+				case "THER":
+					mnems = ["THER"];
+					break;
+				case "JOUR":
+					mnems = ["JOUR"];
+					break;
+				case "NOT":
+					mnems = ["NOT"];
+				// 	break;
+				case "OTH":
+					mnems = ["OTH"];
+					break;
+			}
+			this.collection.mnemFilter = type;
+			this.collection.mnems = mnems;
+			this.collection.pageNumber = 1;
+			this.collection.fetch();
+		},
+		data: function () {
+			var data = {};
+			data.events = this.options.events.toJSON();
+			data.selectedEventId = this.options.selectedEventId;
+
+			return data;
+		}
+	});
+
+
+
+
+
+	Documents.Summary.List.Layout = Documents.Views.List.Common.Layout.extend({
+		attributes: {style: "display: table; width: 100%;padding-left:0px;"},
+		template: templates._listLayout,
+		toString: function(){
+			return 'Summary.List.Layout';
+		},
+		toggleReviewState: function () {
+            console.log('summary toggle',this)
+			App.Router.navigate(["patients",this.options.patientId,this.getEditPageTypeName(),this.selectedDocuments.pluck("id").join(",")].join("/"),{trigger: true});
+		
+		},
+
+
+		getDefaultDocumentsMnems: function() {
+			return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "LAB", "DIAG", "THER"];
+		},
+		getEditPageTypeName: function () {
+			return "summary";
+		},
+        getReviewLayout: function() {
+			return new Documents.Summary.Review.Layout({
+				collection: this.selectedDocuments,
+				documents: this.documents,
+				reviewPageTypeName: 'summary',
+				included: true,
+				showIcons: false,
+				patientId: this.options.patientId
+			});
+		},
+		render: function(subViews) {
+			return LayoutBase.prototype.render.call(this, {
+
+				".table-controls": new Documents.Views.List.Base.TableControls({
+					collection: this.selectedDocuments,
+					listItems: this.documents
+				}),
+				".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
+					collection: this.documents,
+					selectedDocuments: this.selectedDocuments,
+					included: !!this.options.included
+				}),
+				".documents-table-tbody": new Documents.Views.List.Base.DocumentsTable({
+					collection: this.documents,
+					selectedDocuments: this.selectedDocuments,
+					included: true,
+					showIcons: false
+				}),
+				".documents-filters": new Documents.Summary.Filters({
+					collection: this.documents,
+					events: this.options.events,
+					selectedEventId: this.options.selectedEventId
+				}),
+				".documents-paging": new Documents.Views.List.Base.Paging({collection: this.documents})
+			});
+		}
+	});
+
+	Documents.Summary.Review.Controls = Documents.Views.Review.Base.Controls.extend({
+		onBackToDocumentListClick: function () {
+
+			//if (this.options.included) {
+			//	this.collection.trigger("review:quit");
+			//} else {
+				App.Router.navigate(["patients",this.options.patientId,'summary'].join("/"),{trigger: true});
+				// dispatcher.trigger("change:viewState", {
+				// 	type: this.options.reviewPageTypeName,
+				// 	mode: "REVIEW",
+				// 	options: {
+				// 		documentTypes: this.options.documentTypes,
+				// 		documents: this.options.documents
+				// 	}
+				// });
+			//}
+		},
+	});
+
+// Documents.Views.Review.Base.NoControlsLayout
+	Documents.Summary.Review.Layout = Documents.Views.Review.Base.NoControlsLayout.extend({
+		toString: function(){ return 'Summary.Review.Layout';},
+		attributes: {style: "display: table; width: 100%;"},
+		getEditPageTypeName: function(){ return 'summary'},
+		render: function (subViews) {
+			console.log('Documents.Summary.Review.Layout', this.options)
+			return LayoutBase.prototype.render.call(this, _.extend({
+				".review-controls": new Documents.Summary.Review.Controls({
+					collection: this.collection,
+					documents: this.options.documents,
+					reviewPageTypeName: this.getEditPageTypeName(),
+					included: this.options.included,
+					patientId: this.options.patientId
+				}),
+				".sheets": new Documents.Views.Review.Base.SheetList({
+					collection: this.collection,
+					showIcons: false,
+					editPageTypeName: this.getEditPageTypeName()
+				})
+			}, subViews));
+		}
+	});
 
 	//Редактирование консультаций
 

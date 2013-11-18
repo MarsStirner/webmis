@@ -34,6 +34,7 @@ class TherapyController
             }
 
             $actions = ActionQuery::create()
+            ->filterByDeleted(false)
             ->useEventQuery()
                 ->filterByClientId($patientId)
                 //->where('Event.id != ?', $eventId)
@@ -166,8 +167,10 @@ class TherapyController
                     }
 
                 }
+                if($a['therapyTitleId']){
+                     array_push($data, $a);
+                }
 
-                array_push($data, $a);
 
             }
 
@@ -176,7 +179,7 @@ class TherapyController
             //терапии
             foreach ($data as $action){
                 $therapy = array(
-
+                    'id' => $action['docId'],
                     'titleId' => $action['therapyTitleId'],
                     'title' => $action['therapyTitleId'],
                     'beginDate' => $action['therapyBegDate'],
@@ -201,7 +204,12 @@ class TherapyController
                     ->filterByFDRecordId($therapy['titleId'])
                     ->findOne();
 
-                $therapies[$key]['title'] = $fieldValue->getValue();
+                if($fieldValue){
+                    $therapies[$key]['title'] = $fieldValue->getValue();
+                }else{
+                    $therapies[$key]['title'] = '';
+                }
+
 
                 foreach ($data as $action){
                     if($therapy['beginDate'] == $action['therapyBegDate']){
@@ -223,6 +231,7 @@ class TherapyController
                         $phase = array(
                             'eventId' => $action['eventId'],
                             'title' => $therapyPhaseTitle,
+                            'titleId' => $action['therapyPhaseTitleId'],
                             'beginDate' => $action['therapyPhaseBegDate'],
                             'endDate' => $action['therapyPhaseEndDate'],
                             'days' => array()

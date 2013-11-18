@@ -367,7 +367,9 @@ Backbone.View.prototype.assign = function (selector, view) {
 	}
 	if (!selectors) return;
 	_.each(selectors, function (view, selector) {
-		view.setElement(this.$(selector)).render();
+		if(view){
+			view.setElement(this.$(selector)).render();
+		}
 	}, this);
 };
 

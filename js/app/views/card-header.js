@@ -36,6 +36,7 @@ define(["text!templates/card-" +
 		},
 
 		initialize: function (options) {
+			console.log('header options', options)
 			this.model.on("change", this.render, this);
 		},
 
