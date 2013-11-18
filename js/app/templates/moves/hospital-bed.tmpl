@@ -71,6 +71,15 @@
 		</div>
 		<% } %>
 	</div>
+    <div class="LineBlock">
+    <label>Профиль койки</label>
+        <select class="bed-profiles">
+        <% _.each(bedProfiles, function(bedProfile){%>
+        <option val=""><%=bedProfile.name%></option>
+        <%})%>
+        </select>
+    
+    </div>
 </li>
 <li>
 

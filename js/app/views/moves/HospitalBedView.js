@@ -10,6 +10,7 @@ define(function(require) {
 	var HospitalBed = require('models/moves/HospitalBed');
 	//var Move = require('models/moves/move');
 	var Departments = require('collections/departments');
+    var BedProfilesDir = require('collections/moves/BedProfilesDir')
 	var BedView = require('views/moves/BedView');
 
 
@@ -51,20 +52,22 @@ define(function(require) {
 				sortingMethod: 'asc'
 			});
 
+            this.bedProfiles = new BedProfilesDir();
+
 
 			this.moves = new Moves();
 			this.moves.appealId = this.options.appeal.get("id");
 
 
-			$.when(this.departments.fetch(), this.moves.fetch()).done(function() {
+			$.when(this.departments.fetch(),this.bedProfiles.fetch(), this.moves.fetch()).done(function() {
 
-				self.setMoveDateAndMovedDepartment()
+				self.setMoveDateAndMovedDepartment();
 
 				self.render();
 
 				self.loadBeds(self.getLastMoveDepartment());
 
-			})
+			});
 
 		},
 
@@ -236,6 +239,7 @@ define(function(require) {
 				model: this.model.toJSON(),
 				moveNumber: this.getMoveNumber(),
 				departments: this.departments.toJSON(),
+                bedProfiles: this.bedProfiles.toJSON(),
 				movedToUnitId: this.moves.last() ? this.moves.last().get("unitId") : ''
 			};
 
@@ -251,6 +255,7 @@ define(function(require) {
 			view.ui = {};
 			view.ui.$saveButton = view.$el.find('.save');
 			view.ui.$department = view.$el.find('.Departments');
+            view.ui.$bedProfiles = view.$el.find('.bed-profiles')
 			view.ui.$beds = view.$el.find('.beds');
 
 
@@ -265,6 +270,7 @@ define(function(require) {
 
 			view.$(".HourPicker").mask("99:99");
 			view.$(".Departments").width("100%").select2();
+            view.ui.$bedProfiles.select2();
 
 			view.delegateEvents();
 

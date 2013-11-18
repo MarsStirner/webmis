@@ -35,6 +35,8 @@ class DirRouter implements ControllerProviderInterface
 
 		$dirRouter->get('/fd/{code}', getController('fd/listByCode'));
 
+        $dirRouter->get('/bed_profile', getController('bedProfile/list'));
+
 		return $dirRouter;
 	}
 }
