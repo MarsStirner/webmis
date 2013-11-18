@@ -210,6 +210,20 @@ class TherapyController
                     $therapies[$key]['title'] = '';
                 }
 
+                $fieldValue2 = FDFieldValueQuery::create()
+                    ->useFDFieldRelatedByIdQuery()
+                        ->filterByName('Ссылка')
+                    ->endUse()
+                    ->filterByFDRecordId($therapy['titleId'])
+                    ->findOne();
+
+                if($fieldValue2){
+                    $therapies[$key]['link'] = $fieldValue2->getValue();
+                }else{
+                    $therapies[$key]['link'] = '';
+                }
+
+
 
                 foreach ($data as $action){
                     if($therapy['beginDate'] == $action['therapyBegDate']){
@@ -227,10 +241,25 @@ class TherapyController
                         $therapyPhaseTitle = $action['therapyPhaseTitleId'];
                     }
 
+                     $fieldValue2 = FDFieldValueQuery::create()
+                    ->useFDFieldRelatedByIdQuery()
+                        ->filterByName('Ссылка')
+                    ->endUse()
+                    ->filterByFDRecordId($action['therapyPhaseTitleId'])
+                    ->findOne();
+
+                    if($fieldValue2){
+                        $therapyPhaseLink = $fieldValue2->getValue();
+                    }else{
+                        $therapyPhaseLink = '';
+                    }
+
+
 
                         $phase = array(
                             'eventId' => $action['eventId'],
                             'title' => $therapyPhaseTitle,
+                            'link' => $therapyPhaseLink,
                             'titleId' => $action['therapyPhaseTitleId'],
                             'beginDate' => $action['therapyPhaseBegDate'],
                             'endDate' => $action['therapyPhaseEndDate'],
