@@ -432,12 +432,17 @@ define(function (require) {
 						});
 
 						if (valueProp && valueProp.value && valueProp.value !== "0.0") {
+							var unitProp = _(a.properties).find(function (p) {
+								return p.name === "unit";
+							});
+
 							examFlatJSON.push({
 								id: a.typeId,
 								name: a.name,
 								value: valueProp.value,
 								type: a.type,
-								scope: a.scope
+								scope: a.scope,
+								unit: unitProp ? unitProp.value : ""
 							});
 						}
 					});
