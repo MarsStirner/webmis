@@ -4812,7 +4812,8 @@ define(function (require) {
 			return {
 				attr: {
 					name: this.model.get("name"),
-					value: displayValue
+					value: displayValue,
+					unit: this.model.get("unit")
 				}
 			};
 		},
