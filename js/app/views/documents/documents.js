@@ -509,6 +509,7 @@ define(function (require) {
 
 		save: function (attrs, options) {
 			this.setCloseDate();
+			this.spoofDates();
 			//this.wrapTextValues();
 			return Documents.Models.DocumentBase.prototype.save.call(this, attrs, options);
 		}
