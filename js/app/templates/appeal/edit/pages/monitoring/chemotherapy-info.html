@@ -5,7 +5,11 @@
 	<div class="therapy">
 		<div class="therapy-header">
 			<div class="therapy-header-content">
-				<span class="therapy-header-title"><%= therapy.get('title') %></span>
+				<%if(therapy.get('link')){%>
+					<a href="<%= therapy.get('link') %>" target="_blank"><span class="therapy-header-title"><%= therapy.get('title') %></span></a>
+				<%}else{%>
+					<span class="therapy-header-title"><%= therapy.get('title') %></span>
+				<%}%>
 				<span class="therapy-header-dates">
 					<%if(therapy.get('endDate')){%>
 						(<%= Core.Date.format(therapy.get('beginDate')) %> - <%= Core.Date.format(therapy.get('endDate')) %>)
@@ -21,7 +25,7 @@
 				<h3>Текущий этап</h3>
 
 				<% _.each(therapy.getCurrentPhases(), function(phase){ %>
-					<p><%= phase.title %> (Дата начала: <%= Core.Date.format(phase.beginDate) %>)</p>
+					<p><%if(phase.link){%><a href="<%= phase.link %>" target="_blank"><%= phase.title %></a><%}else{%><%= phase.title %><%}%> (Дата начала: <%= Core.Date.format(phase.beginDate) %>)</p>
 					<ul>
 						<% _.each([phase.days[0]], function(day){ %>
 							<li><p>День терапии: <a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>" target="_blank"><%= day.day %></a></p></li>
