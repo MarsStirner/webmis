@@ -102,15 +102,10 @@ abstract class BaseFDField extends BaseObject implements Persistent
     protected $order;
 
     /**
-     * @var        FDFieldValue
-     */
-    protected $aFDFieldValueRelatedById;
-
-    /**
      * @var        PropelObjectCollection|FDFieldValue[] Collection to store aggregation of FDFieldValue objects.
      */
-    protected $collFDFieldValuesRelatedByFDFieldId;
-    protected $collFDFieldValuesRelatedByFDFieldIdPartial;
+    protected $collFDFieldValues;
+    protected $collFDFieldValuesPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -136,7 +131,7 @@ abstract class BaseFDField extends BaseObject implements Persistent
      * An array of objects scheduled for deletion.
      * @var		PropelObjectCollection
      */
-    protected $fDFieldValuesRelatedByFDFieldIdScheduledForDeletion = null;
+    protected $fDFieldValuesScheduledForDeletion = null;
 
     /**
      * Get the [id] column value.
@@ -243,10 +238,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
         if ($this->id !== $v) {
             $this->id = $v;
             $this->modifiedColumns[] = FDFieldPeer::ID;
-        }
-
-        if ($this->aFDFieldValueRelatedById !== null && $this->aFDFieldValueRelatedById->getFDFieldId() !== $v) {
-            $this->aFDFieldValueRelatedById = null;
         }
 
 
@@ -501,9 +492,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aFDFieldValueRelatedById !== null && $this->id !== $this->aFDFieldValueRelatedById->getFDFieldId()) {
-            $this->aFDFieldValueRelatedById = null;
-        }
     } // ensureConsistency
 
     /**
@@ -543,8 +531,7 @@ abstract class BaseFDField extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aFDFieldValueRelatedById = null;
-            $this->collFDFieldValuesRelatedByFDFieldId = null;
+            $this->collFDFieldValues = null;
 
         } // if (deep)
     }
@@ -659,18 +646,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their coresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aFDFieldValueRelatedById !== null) {
-                if ($this->aFDFieldValueRelatedById->isModified() || $this->aFDFieldValueRelatedById->isNew()) {
-                    $affectedRows += $this->aFDFieldValueRelatedById->save($con);
-                }
-                $this->setFDFieldValueRelatedById($this->aFDFieldValueRelatedById);
-            }
-
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -682,17 +657,17 @@ abstract class BaseFDField extends BaseObject implements Persistent
                 $this->resetModified();
             }
 
-            if ($this->fDFieldValuesRelatedByFDFieldIdScheduledForDeletion !== null) {
-                if (!$this->fDFieldValuesRelatedByFDFieldIdScheduledForDeletion->isEmpty()) {
+            if ($this->fDFieldValuesScheduledForDeletion !== null) {
+                if (!$this->fDFieldValuesScheduledForDeletion->isEmpty()) {
                     FDFieldValueQuery::create()
-                        ->filterByPrimaryKeys($this->fDFieldValuesRelatedByFDFieldIdScheduledForDeletion->getPrimaryKeys(false))
+                        ->filterByPrimaryKeys($this->fDFieldValuesScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->fDFieldValuesRelatedByFDFieldIdScheduledForDeletion = null;
+                    $this->fDFieldValuesScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collFDFieldValuesRelatedByFDFieldId !== null) {
-                foreach ($this->collFDFieldValuesRelatedByFDFieldId as $referrerFK) {
+            if ($this->collFDFieldValues !== null) {
+                foreach ($this->collFDFieldValues as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -884,25 +859,13 @@ abstract class BaseFDField extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            // We call the validate method on the following object(s) if they
-            // were passed to this object by their coresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aFDFieldValueRelatedById !== null) {
-                if (!$this->aFDFieldValueRelatedById->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aFDFieldValueRelatedById->getValidationFailures());
-                }
-            }
-
-
             if (($retval = FDFieldPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
 
-                if ($this->collFDFieldValuesRelatedByFDFieldId !== null) {
-                    foreach ($this->collFDFieldValuesRelatedByFDFieldId as $referrerFK) {
+                if ($this->collFDFieldValues !== null) {
+                    foreach ($this->collFDFieldValues as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
@@ -1011,11 +974,8 @@ abstract class BaseFDField extends BaseObject implements Persistent
             $keys[8] => $this->getOrder(),
         );
         if ($includeForeignObjects) {
-            if (null !== $this->aFDFieldValueRelatedById) {
-                $result['FDFieldValueRelatedById'] = $this->aFDFieldValueRelatedById->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->collFDFieldValuesRelatedByFDFieldId) {
-                $result['FDFieldValuesRelatedByFDFieldId'] = $this->collFDFieldValuesRelatedByFDFieldId->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            if (null !== $this->collFDFieldValues) {
+                $result['FDFieldValues'] = $this->collFDFieldValues->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1210,15 +1170,10 @@ abstract class BaseFDField extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
-            foreach ($this->getFDFieldValuesRelatedByFDFieldId() as $relObj) {
+            foreach ($this->getFDFieldValues() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addFDFieldValueRelatedByFDFieldId($relObj->copy($deepCopy));
+                    $copyObj->addFDFieldValue($relObj->copy($deepCopy));
                 }
-            }
-
-            $relObj = $this->getFDFieldValueRelatedById();
-            if ($relObj) {
-                $copyObj->setFDFieldValueRelatedById($relObj->copy($deepCopy));
             }
 
             //unflag object copy
@@ -1271,54 +1226,6 @@ abstract class BaseFDField extends BaseObject implements Persistent
         return self::$peer;
     }
 
-    /**
-     * Declares an association between this object and a FDFieldValue object.
-     *
-     * @param             FDFieldValue $v
-     * @return FDField The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setFDFieldValueRelatedById(FDFieldValue $v = null)
-    {
-        if ($v === null) {
-            $this->setId(NULL);
-        } else {
-            $this->setId($v->getFDFieldId());
-        }
-
-        $this->aFDFieldValueRelatedById = $v;
-
-        // Add binding for other direction of this 1:1 relationship.
-        if ($v !== null) {
-            $v->setFDFieldRelatedById($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated FDFieldValue object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return FDFieldValue The associated FDFieldValue object.
-     * @throws PropelException
-     */
-    public function getFDFieldValueRelatedById(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aFDFieldValueRelatedById === null && ($this->id !== null) && $doQuery) {
-            $this->aFDFieldValueRelatedById = FDFieldValueQuery::create()
-                ->filterByFDFieldRelatedById($this) // here
-                ->findOne($con);
-            // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
-            $this->aFDFieldValueRelatedById->setFDFieldRelatedById($this);
-        }
-
-        return $this->aFDFieldValueRelatedById;
-    }
-
 
     /**
      * Initializes a collection based on the name of a relation.
@@ -1330,42 +1237,42 @@ abstract class BaseFDField extends BaseObject implements Persistent
      */
     public function initRelation($relationName)
     {
-        if ('FDFieldValueRelatedByFDFieldId' == $relationName) {
-            $this->initFDFieldValuesRelatedByFDFieldId();
+        if ('FDFieldValue' == $relationName) {
+            $this->initFDFieldValues();
         }
     }
 
     /**
-     * Clears out the collFDFieldValuesRelatedByFDFieldId collection
+     * Clears out the collFDFieldValues collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return FDField The current object (for fluent API support)
-     * @see        addFDFieldValuesRelatedByFDFieldId()
+     * @see        addFDFieldValues()
      */
-    public function clearFDFieldValuesRelatedByFDFieldId()
+    public function clearFDFieldValues()
     {
-        $this->collFDFieldValuesRelatedByFDFieldId = null; // important to set this to null since that means it is uninitialized
-        $this->collFDFieldValuesRelatedByFDFieldIdPartial = null;
+        $this->collFDFieldValues = null; // important to set this to null since that means it is uninitialized
+        $this->collFDFieldValuesPartial = null;
 
         return $this;
     }
 
     /**
-     * reset is the collFDFieldValuesRelatedByFDFieldId collection loaded partially
+     * reset is the collFDFieldValues collection loaded partially
      *
      * @return void
      */
-    public function resetPartialFDFieldValuesRelatedByFDFieldId($v = true)
+    public function resetPartialFDFieldValues($v = true)
     {
-        $this->collFDFieldValuesRelatedByFDFieldIdPartial = $v;
+        $this->collFDFieldValuesPartial = $v;
     }
 
     /**
-     * Initializes the collFDFieldValuesRelatedByFDFieldId collection.
+     * Initializes the collFDFieldValues collection.
      *
-     * By default this just sets the collFDFieldValuesRelatedByFDFieldId collection to an empty array (like clearcollFDFieldValuesRelatedByFDFieldId());
+     * By default this just sets the collFDFieldValues collection to an empty array (like clearcollFDFieldValues());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1374,13 +1281,13 @@ abstract class BaseFDField extends BaseObject implements Persistent
      *
      * @return void
      */
-    public function initFDFieldValuesRelatedByFDFieldId($overrideExisting = true)
+    public function initFDFieldValues($overrideExisting = true)
     {
-        if (null !== $this->collFDFieldValuesRelatedByFDFieldId && !$overrideExisting) {
+        if (null !== $this->collFDFieldValues && !$overrideExisting) {
             return;
         }
-        $this->collFDFieldValuesRelatedByFDFieldId = new PropelObjectCollection();
-        $this->collFDFieldValuesRelatedByFDFieldId->setModel('FDFieldValue');
+        $this->collFDFieldValues = new PropelObjectCollection();
+        $this->collFDFieldValues->setModel('FDFieldValue');
     }
 
     /**
@@ -1397,77 +1304,77 @@ abstract class BaseFDField extends BaseObject implements Persistent
      * @return PropelObjectCollection|FDFieldValue[] List of FDFieldValue objects
      * @throws PropelException
      */
-    public function getFDFieldValuesRelatedByFDFieldId($criteria = null, PropelPDO $con = null)
+    public function getFDFieldValues($criteria = null, PropelPDO $con = null)
     {
-        $partial = $this->collFDFieldValuesRelatedByFDFieldIdPartial && !$this->isNew();
-        if (null === $this->collFDFieldValuesRelatedByFDFieldId || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collFDFieldValuesRelatedByFDFieldId) {
+        $partial = $this->collFDFieldValuesPartial && !$this->isNew();
+        if (null === $this->collFDFieldValues || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collFDFieldValues) {
                 // return empty collection
-                $this->initFDFieldValuesRelatedByFDFieldId();
+                $this->initFDFieldValues();
             } else {
-                $collFDFieldValuesRelatedByFDFieldId = FDFieldValueQuery::create(null, $criteria)
-                    ->filterByFDFieldRelatedByFDFieldId($this)
+                $collFDFieldValues = FDFieldValueQuery::create(null, $criteria)
+                    ->filterByFDField($this)
                     ->find($con);
                 if (null !== $criteria) {
-                    if (false !== $this->collFDFieldValuesRelatedByFDFieldIdPartial && count($collFDFieldValuesRelatedByFDFieldId)) {
-                      $this->initFDFieldValuesRelatedByFDFieldId(false);
+                    if (false !== $this->collFDFieldValuesPartial && count($collFDFieldValues)) {
+                      $this->initFDFieldValues(false);
 
-                      foreach($collFDFieldValuesRelatedByFDFieldId as $obj) {
-                        if (false == $this->collFDFieldValuesRelatedByFDFieldId->contains($obj)) {
-                          $this->collFDFieldValuesRelatedByFDFieldId->append($obj);
+                      foreach($collFDFieldValues as $obj) {
+                        if (false == $this->collFDFieldValues->contains($obj)) {
+                          $this->collFDFieldValues->append($obj);
                         }
                       }
 
-                      $this->collFDFieldValuesRelatedByFDFieldIdPartial = true;
+                      $this->collFDFieldValuesPartial = true;
                     }
 
-                    $collFDFieldValuesRelatedByFDFieldId->getInternalIterator()->rewind();
-                    return $collFDFieldValuesRelatedByFDFieldId;
+                    $collFDFieldValues->getInternalIterator()->rewind();
+                    return $collFDFieldValues;
                 }
 
-                if($partial && $this->collFDFieldValuesRelatedByFDFieldId) {
-                    foreach($this->collFDFieldValuesRelatedByFDFieldId as $obj) {
+                if($partial && $this->collFDFieldValues) {
+                    foreach($this->collFDFieldValues as $obj) {
                         if($obj->isNew()) {
-                            $collFDFieldValuesRelatedByFDFieldId[] = $obj;
+                            $collFDFieldValues[] = $obj;
                         }
                     }
                 }
 
-                $this->collFDFieldValuesRelatedByFDFieldId = $collFDFieldValuesRelatedByFDFieldId;
-                $this->collFDFieldValuesRelatedByFDFieldIdPartial = false;
+                $this->collFDFieldValues = $collFDFieldValues;
+                $this->collFDFieldValuesPartial = false;
             }
         }
 
-        return $this->collFDFieldValuesRelatedByFDFieldId;
+        return $this->collFDFieldValues;
     }
 
     /**
-     * Sets a collection of FDFieldValueRelatedByFDFieldId objects related by a one-to-many relationship
+     * Sets a collection of FDFieldValue objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param PropelCollection $fDFieldValuesRelatedByFDFieldId A Propel collection.
+     * @param PropelCollection $fDFieldValues A Propel collection.
      * @param PropelPDO $con Optional connection object
      * @return FDField The current object (for fluent API support)
      */
-    public function setFDFieldValuesRelatedByFDFieldId(PropelCollection $fDFieldValuesRelatedByFDFieldId, PropelPDO $con = null)
+    public function setFDFieldValues(PropelCollection $fDFieldValues, PropelPDO $con = null)
     {
-        $fDFieldValuesRelatedByFDFieldIdToDelete = $this->getFDFieldValuesRelatedByFDFieldId(new Criteria(), $con)->diff($fDFieldValuesRelatedByFDFieldId);
+        $fDFieldValuesToDelete = $this->getFDFieldValues(new Criteria(), $con)->diff($fDFieldValues);
 
-        $this->fDFieldValuesRelatedByFDFieldIdScheduledForDeletion = unserialize(serialize($fDFieldValuesRelatedByFDFieldIdToDelete));
+        $this->fDFieldValuesScheduledForDeletion = unserialize(serialize($fDFieldValuesToDelete));
 
-        foreach ($fDFieldValuesRelatedByFDFieldIdToDelete as $fDFieldValueRelatedByFDFieldIdRemoved) {
-            $fDFieldValueRelatedByFDFieldIdRemoved->setFDFieldRelatedByFDFieldId(null);
+        foreach ($fDFieldValuesToDelete as $fDFieldValueRemoved) {
+            $fDFieldValueRemoved->setFDField(null);
         }
 
-        $this->collFDFieldValuesRelatedByFDFieldId = null;
-        foreach ($fDFieldValuesRelatedByFDFieldId as $fDFieldValueRelatedByFDFieldId) {
-            $this->addFDFieldValueRelatedByFDFieldId($fDFieldValueRelatedByFDFieldId);
+        $this->collFDFieldValues = null;
+        foreach ($fDFieldValues as $fDFieldValue) {
+            $this->addFDFieldValue($fDFieldValue);
         }
 
-        $this->collFDFieldValuesRelatedByFDFieldId = $fDFieldValuesRelatedByFDFieldId;
-        $this->collFDFieldValuesRelatedByFDFieldIdPartial = false;
+        $this->collFDFieldValues = $fDFieldValues;
+        $this->collFDFieldValuesPartial = false;
 
         return $this;
     }
@@ -1481,16 +1388,16 @@ abstract class BaseFDField extends BaseObject implements Persistent
      * @return int             Count of related FDFieldValue objects.
      * @throws PropelException
      */
-    public function countFDFieldValuesRelatedByFDFieldId(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    public function countFDFieldValues(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
     {
-        $partial = $this->collFDFieldValuesRelatedByFDFieldIdPartial && !$this->isNew();
-        if (null === $this->collFDFieldValuesRelatedByFDFieldId || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collFDFieldValuesRelatedByFDFieldId) {
+        $partial = $this->collFDFieldValuesPartial && !$this->isNew();
+        if (null === $this->collFDFieldValues || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collFDFieldValues) {
                 return 0;
             }
 
             if($partial && !$criteria) {
-                return count($this->getFDFieldValuesRelatedByFDFieldId());
+                return count($this->getFDFieldValues());
             }
             $query = FDFieldValueQuery::create(null, $criteria);
             if ($distinct) {
@@ -1498,11 +1405,11 @@ abstract class BaseFDField extends BaseObject implements Persistent
             }
 
             return $query
-                ->filterByFDFieldRelatedByFDFieldId($this)
+                ->filterByFDField($this)
                 ->count($con);
         }
 
-        return count($this->collFDFieldValuesRelatedByFDFieldId);
+        return count($this->collFDFieldValues);
     }
 
     /**
@@ -1512,42 +1419,42 @@ abstract class BaseFDField extends BaseObject implements Persistent
      * @param    FDFieldValue $l FDFieldValue
      * @return FDField The current object (for fluent API support)
      */
-    public function addFDFieldValueRelatedByFDFieldId(FDFieldValue $l)
+    public function addFDFieldValue(FDFieldValue $l)
     {
-        if ($this->collFDFieldValuesRelatedByFDFieldId === null) {
-            $this->initFDFieldValuesRelatedByFDFieldId();
-            $this->collFDFieldValuesRelatedByFDFieldIdPartial = true;
+        if ($this->collFDFieldValues === null) {
+            $this->initFDFieldValues();
+            $this->collFDFieldValuesPartial = true;
         }
-        if (!in_array($l, $this->collFDFieldValuesRelatedByFDFieldId->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddFDFieldValueRelatedByFDFieldId($l);
+        if (!in_array($l, $this->collFDFieldValues->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddFDFieldValue($l);
         }
 
         return $this;
     }
 
     /**
-     * @param	FDFieldValueRelatedByFDFieldId $fDFieldValueRelatedByFDFieldId The fDFieldValueRelatedByFDFieldId object to add.
+     * @param	FDFieldValue $fDFieldValue The fDFieldValue object to add.
      */
-    protected function doAddFDFieldValueRelatedByFDFieldId($fDFieldValueRelatedByFDFieldId)
+    protected function doAddFDFieldValue($fDFieldValue)
     {
-        $this->collFDFieldValuesRelatedByFDFieldId[]= $fDFieldValueRelatedByFDFieldId;
-        $fDFieldValueRelatedByFDFieldId->setFDFieldRelatedByFDFieldId($this);
+        $this->collFDFieldValues[]= $fDFieldValue;
+        $fDFieldValue->setFDField($this);
     }
 
     /**
-     * @param	FDFieldValueRelatedByFDFieldId $fDFieldValueRelatedByFDFieldId The fDFieldValueRelatedByFDFieldId object to remove.
+     * @param	FDFieldValue $fDFieldValue The fDFieldValue object to remove.
      * @return FDField The current object (for fluent API support)
      */
-    public function removeFDFieldValueRelatedByFDFieldId($fDFieldValueRelatedByFDFieldId)
+    public function removeFDFieldValue($fDFieldValue)
     {
-        if ($this->getFDFieldValuesRelatedByFDFieldId()->contains($fDFieldValueRelatedByFDFieldId)) {
-            $this->collFDFieldValuesRelatedByFDFieldId->remove($this->collFDFieldValuesRelatedByFDFieldId->search($fDFieldValueRelatedByFDFieldId));
-            if (null === $this->fDFieldValuesRelatedByFDFieldIdScheduledForDeletion) {
-                $this->fDFieldValuesRelatedByFDFieldIdScheduledForDeletion = clone $this->collFDFieldValuesRelatedByFDFieldId;
-                $this->fDFieldValuesRelatedByFDFieldIdScheduledForDeletion->clear();
+        if ($this->getFDFieldValues()->contains($fDFieldValue)) {
+            $this->collFDFieldValues->remove($this->collFDFieldValues->search($fDFieldValue));
+            if (null === $this->fDFieldValuesScheduledForDeletion) {
+                $this->fDFieldValuesScheduledForDeletion = clone $this->collFDFieldValues;
+                $this->fDFieldValuesScheduledForDeletion->clear();
             }
-            $this->fDFieldValuesRelatedByFDFieldIdScheduledForDeletion[]= clone $fDFieldValueRelatedByFDFieldId;
-            $fDFieldValueRelatedByFDFieldId->setFDFieldRelatedByFDFieldId(null);
+            $this->fDFieldValuesScheduledForDeletion[]= clone $fDFieldValue;
+            $fDFieldValue->setFDField(null);
         }
 
         return $this;
@@ -1559,7 +1466,7 @@ abstract class BaseFDField extends BaseObject implements Persistent
      * an identical criteria, it returns the collection.
      * Otherwise if this FDField is new, it will return
      * an empty collection; or if this FDField has previously
-     * been saved, it will retrieve related FDFieldValuesRelatedByFDFieldId from storage.
+     * been saved, it will retrieve related FDFieldValues from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
@@ -1570,12 +1477,12 @@ abstract class BaseFDField extends BaseObject implements Persistent
      * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return PropelObjectCollection|FDFieldValue[] List of FDFieldValue objects
      */
-    public function getFDFieldValuesRelatedByFDFieldIdJoinFDRecordRelatedByFDRecordId($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public function getFDFieldValuesJoinFDRecord($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $query = FDFieldValueQuery::create(null, $criteria);
-        $query->joinWith('FDRecordRelatedByFDRecordId', $join_behavior);
+        $query->joinWith('FDRecord', $join_behavior);
 
-        return $this->getFDFieldValuesRelatedByFDFieldId($query, $con);
+        return $this->getFDFieldValues($query, $con);
     }
 
     /**
@@ -1614,23 +1521,19 @@ abstract class BaseFDField extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->collFDFieldValuesRelatedByFDFieldId) {
-                foreach ($this->collFDFieldValuesRelatedByFDFieldId as $o) {
+            if ($this->collFDFieldValues) {
+                foreach ($this->collFDFieldValues as $o) {
                     $o->clearAllReferences($deep);
                 }
-            }
-            if ($this->aFDFieldValueRelatedById instanceof Persistent) {
-              $this->aFDFieldValueRelatedById->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        if ($this->collFDFieldValuesRelatedByFDFieldId instanceof PropelCollection) {
-            $this->collFDFieldValuesRelatedByFDFieldId->clearIterator();
+        if ($this->collFDFieldValues instanceof PropelCollection) {
+            $this->collFDFieldValues->clearIterator();
         }
-        $this->collFDFieldValuesRelatedByFDFieldId = null;
-        $this->aFDFieldValueRelatedById = null;
+        $this->collFDFieldValues = null;
     }
 
     /**

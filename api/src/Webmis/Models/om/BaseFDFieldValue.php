@@ -78,28 +78,18 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
     /**
      * @var        FDField
      */
-    protected $aFDFieldRelatedByFDFieldId;
+    protected $aFDField;
 
     /**
      * @var        FDRecord
      */
-    protected $aFDRecordRelatedByFDRecordId;
+    protected $aFDRecord;
 
     /**
      * @var        PropelObjectCollection|ActionPropertyFDRecord[] Collection to store aggregation of ActionPropertyFDRecord objects.
      */
     protected $collActionPropertyFDRecords;
     protected $collActionPropertyFDRecordsPartial;
-
-    /**
-     * @var        FDField one-to-one related FDField object
-     */
-    protected $singleFDFieldRelatedById;
-
-    /**
-     * @var        FDRecord one-to-one related FDRecord object
-     */
-    protected $singleFDRecordRelatedById;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -126,18 +116,6 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $actionPropertyFDRecordsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $fDFieldsRelatedByIdScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $fDRecordsRelatedByIdScheduledForDeletion = null;
 
     /**
      * Get the [id] column value.
@@ -217,8 +195,8 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
             $this->modifiedColumns[] = FDFieldValuePeer::FDRECORD_ID;
         }
 
-        if ($this->aFDRecordRelatedByFDRecordId !== null && $this->aFDRecordRelatedByFDRecordId->getId() !== $v) {
-            $this->aFDRecordRelatedByFDRecordId = null;
+        if ($this->aFDRecord !== null && $this->aFDRecord->getId() !== $v) {
+            $this->aFDRecord = null;
         }
 
 
@@ -242,8 +220,8 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
             $this->modifiedColumns[] = FDFieldValuePeer::FDFIELD_ID;
         }
 
-        if ($this->aFDFieldRelatedByFDFieldId !== null && $this->aFDFieldRelatedByFDFieldId->getId() !== $v) {
-            $this->aFDFieldRelatedByFDFieldId = null;
+        if ($this->aFDField !== null && $this->aFDField->getId() !== $v) {
+            $this->aFDField = null;
         }
 
 
@@ -338,11 +316,11 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aFDRecordRelatedByFDRecordId !== null && $this->fdrecord_id !== $this->aFDRecordRelatedByFDRecordId->getId()) {
-            $this->aFDRecordRelatedByFDRecordId = null;
+        if ($this->aFDRecord !== null && $this->fdrecord_id !== $this->aFDRecord->getId()) {
+            $this->aFDRecord = null;
         }
-        if ($this->aFDFieldRelatedByFDFieldId !== null && $this->fdfield_id !== $this->aFDFieldRelatedByFDFieldId->getId()) {
-            $this->aFDFieldRelatedByFDFieldId = null;
+        if ($this->aFDField !== null && $this->fdfield_id !== $this->aFDField->getId()) {
+            $this->aFDField = null;
         }
     } // ensureConsistency
 
@@ -383,13 +361,9 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aFDFieldRelatedByFDFieldId = null;
-            $this->aFDRecordRelatedByFDRecordId = null;
+            $this->aFDField = null;
+            $this->aFDRecord = null;
             $this->collActionPropertyFDRecords = null;
-
-            $this->singleFDFieldRelatedById = null;
-
-            $this->singleFDRecordRelatedById = null;
 
         } // if (deep)
     }
@@ -509,18 +483,18 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aFDFieldRelatedByFDFieldId !== null) {
-                if ($this->aFDFieldRelatedByFDFieldId->isModified() || $this->aFDFieldRelatedByFDFieldId->isNew()) {
-                    $affectedRows += $this->aFDFieldRelatedByFDFieldId->save($con);
+            if ($this->aFDField !== null) {
+                if ($this->aFDField->isModified() || $this->aFDField->isNew()) {
+                    $affectedRows += $this->aFDField->save($con);
                 }
-                $this->setFDFieldRelatedByFDFieldId($this->aFDFieldRelatedByFDFieldId);
+                $this->setFDField($this->aFDField);
             }
 
-            if ($this->aFDRecordRelatedByFDRecordId !== null) {
-                if ($this->aFDRecordRelatedByFDRecordId->isModified() || $this->aFDRecordRelatedByFDRecordId->isNew()) {
-                    $affectedRows += $this->aFDRecordRelatedByFDRecordId->save($con);
+            if ($this->aFDRecord !== null) {
+                if ($this->aFDRecord->isModified() || $this->aFDRecord->isNew()) {
+                    $affectedRows += $this->aFDRecord->save($con);
                 }
-                $this->setFDRecordRelatedByFDRecordId($this->aFDRecordRelatedByFDRecordId);
+                $this->setFDRecord($this->aFDRecord);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -548,36 +522,6 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
-                }
-            }
-
-            if ($this->fDFieldsRelatedByIdScheduledForDeletion !== null) {
-                if (!$this->fDFieldsRelatedByIdScheduledForDeletion->isEmpty()) {
-                    FDFieldQuery::create()
-                        ->filterByPrimaryKeys($this->fDFieldsRelatedByIdScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->fDFieldsRelatedByIdScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->singleFDFieldRelatedById !== null) {
-                if (!$this->singleFDFieldRelatedById->isDeleted() && ($this->singleFDFieldRelatedById->isNew() || $this->singleFDFieldRelatedById->isModified())) {
-                        $affectedRows += $this->singleFDFieldRelatedById->save($con);
-                }
-            }
-
-            if ($this->fDRecordsRelatedByIdScheduledForDeletion !== null) {
-                if (!$this->fDRecordsRelatedByIdScheduledForDeletion->isEmpty()) {
-                    FDRecordQuery::create()
-                        ->filterByPrimaryKeys($this->fDRecordsRelatedByIdScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->fDRecordsRelatedByIdScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->singleFDRecordRelatedById !== null) {
-                if (!$this->singleFDRecordRelatedById->isDeleted() && ($this->singleFDRecordRelatedById->isNew() || $this->singleFDRecordRelatedById->isModified())) {
-                        $affectedRows += $this->singleFDRecordRelatedById->save($con);
                 }
             }
 
@@ -741,15 +685,15 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aFDFieldRelatedByFDFieldId !== null) {
-                if (!$this->aFDFieldRelatedByFDFieldId->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aFDFieldRelatedByFDFieldId->getValidationFailures());
+            if ($this->aFDField !== null) {
+                if (!$this->aFDField->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aFDField->getValidationFailures());
                 }
             }
 
-            if ($this->aFDRecordRelatedByFDRecordId !== null) {
-                if (!$this->aFDRecordRelatedByFDRecordId->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aFDRecordRelatedByFDRecordId->getValidationFailures());
+            if ($this->aFDRecord !== null) {
+                if (!$this->aFDRecord->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aFDRecord->getValidationFailures());
                 }
             }
 
@@ -764,18 +708,6 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
-                    }
-                }
-
-                if ($this->singleFDFieldRelatedById !== null) {
-                    if (!$this->singleFDFieldRelatedById->validate($columns)) {
-                        $failureMap = array_merge($failureMap, $this->singleFDFieldRelatedById->getValidationFailures());
-                    }
-                }
-
-                if ($this->singleFDRecordRelatedById !== null) {
-                    if (!$this->singleFDRecordRelatedById->validate($columns)) {
-                        $failureMap = array_merge($failureMap, $this->singleFDRecordRelatedById->getValidationFailures());
                     }
                 }
 
@@ -861,20 +793,14 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
             $keys[3] => $this->getValue(),
         );
         if ($includeForeignObjects) {
-            if (null !== $this->aFDFieldRelatedByFDFieldId) {
-                $result['FDFieldRelatedByFDFieldId'] = $this->aFDFieldRelatedByFDFieldId->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            if (null !== $this->aFDField) {
+                $result['FDField'] = $this->aFDField->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->aFDRecordRelatedByFDRecordId) {
-                $result['FDRecordRelatedByFDRecordId'] = $this->aFDRecordRelatedByFDRecordId->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            if (null !== $this->aFDRecord) {
+                $result['FDRecord'] = $this->aFDRecord->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collActionPropertyFDRecords) {
                 $result['ActionPropertyFDRecords'] = $this->collActionPropertyFDRecords->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->singleFDFieldRelatedById) {
-                $result['FDFieldRelatedById'] = $this->singleFDFieldRelatedById->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->singleFDRecordRelatedById) {
-                $result['FDRecordRelatedById'] = $this->singleFDRecordRelatedById->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
             }
         }
 
@@ -1045,16 +971,6 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
                 }
             }
 
-            $relObj = $this->getFDFieldRelatedById();
-            if ($relObj) {
-                $copyObj->setFDFieldRelatedById($relObj->copy($deepCopy));
-            }
-
-            $relObj = $this->getFDRecordRelatedById();
-            if ($relObj) {
-                $copyObj->setFDRecordRelatedById($relObj->copy($deepCopy));
-            }
-
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -1112,7 +1028,7 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
      * @return FDFieldValue The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setFDFieldRelatedByFDFieldId(FDField $v = null)
+    public function setFDField(FDField $v = null)
     {
         if ($v === null) {
             $this->setFDFieldId(NULL);
@@ -1120,12 +1036,12 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
             $this->setFDFieldId($v->getId());
         }
 
-        $this->aFDFieldRelatedByFDFieldId = $v;
+        $this->aFDField = $v;
 
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the FDField object, it will not be re-added.
         if ($v !== null) {
-            $v->addFDFieldValueRelatedByFDFieldId($this);
+            $v->addFDFieldValue($this);
         }
 
 
@@ -1141,20 +1057,20 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
      * @return FDField The associated FDField object.
      * @throws PropelException
      */
-    public function getFDFieldRelatedByFDFieldId(PropelPDO $con = null, $doQuery = true)
+    public function getFDField(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aFDFieldRelatedByFDFieldId === null && ($this->fdfield_id !== null) && $doQuery) {
-            $this->aFDFieldRelatedByFDFieldId = FDFieldQuery::create()->findPk($this->fdfield_id, $con);
+        if ($this->aFDField === null && ($this->fdfield_id !== null) && $doQuery) {
+            $this->aFDField = FDFieldQuery::create()->findPk($this->fdfield_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aFDFieldRelatedByFDFieldId->addFDFieldValuesRelatedByFDFieldId($this);
+                $this->aFDField->addFDFieldValues($this);
              */
         }
 
-        return $this->aFDFieldRelatedByFDFieldId;
+        return $this->aFDField;
     }
 
     /**
@@ -1164,7 +1080,7 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
      * @return FDFieldValue The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setFDRecordRelatedByFDRecordId(FDRecord $v = null)
+    public function setFDRecord(FDRecord $v = null)
     {
         if ($v === null) {
             $this->setFDRecordId(NULL);
@@ -1172,12 +1088,12 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
             $this->setFDRecordId($v->getId());
         }
 
-        $this->aFDRecordRelatedByFDRecordId = $v;
+        $this->aFDRecord = $v;
 
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the FDRecord object, it will not be re-added.
         if ($v !== null) {
-            $v->addFDFieldValueRelatedByFDRecordId($this);
+            $v->addFDFieldValue($this);
         }
 
 
@@ -1193,20 +1109,20 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
      * @return FDRecord The associated FDRecord object.
      * @throws PropelException
      */
-    public function getFDRecordRelatedByFDRecordId(PropelPDO $con = null, $doQuery = true)
+    public function getFDRecord(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aFDRecordRelatedByFDRecordId === null && ($this->fdrecord_id !== null) && $doQuery) {
-            $this->aFDRecordRelatedByFDRecordId = FDRecordQuery::create()->findPk($this->fdrecord_id, $con);
+        if ($this->aFDRecord === null && ($this->fdrecord_id !== null) && $doQuery) {
+            $this->aFDRecord = FDRecordQuery::create()->findPk($this->fdrecord_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aFDRecordRelatedByFDRecordId->addFDFieldValuesRelatedByFDRecordId($this);
+                $this->aFDRecord->addFDFieldValues($this);
              */
         }
 
-        return $this->aFDRecordRelatedByFDRecordId;
+        return $this->aFDRecord;
     }
 
 
@@ -1469,78 +1385,6 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
     }
 
     /**
-     * Gets a single FDField object, which is related to this object by a one-to-one relationship.
-     *
-     * @param PropelPDO $con optional connection object
-     * @return FDField
-     * @throws PropelException
-     */
-    public function getFDFieldRelatedById(PropelPDO $con = null)
-    {
-
-        if ($this->singleFDFieldRelatedById === null && !$this->isNew()) {
-            $this->singleFDFieldRelatedById = FDFieldQuery::create()->findPk($this->getPrimaryKey(), $con);
-        }
-
-        return $this->singleFDFieldRelatedById;
-    }
-
-    /**
-     * Sets a single FDField object as related to this object by a one-to-one relationship.
-     *
-     * @param             FDField $v FDField
-     * @return FDFieldValue The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setFDFieldRelatedById(FDField $v = null)
-    {
-        $this->singleFDFieldRelatedById = $v;
-
-        // Make sure that that the passed-in FDField isn't already associated with this object
-        if ($v !== null && $v->getFDFieldValueRelatedById(null, false) === null) {
-            $v->setFDFieldValueRelatedById($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Gets a single FDRecord object, which is related to this object by a one-to-one relationship.
-     *
-     * @param PropelPDO $con optional connection object
-     * @return FDRecord
-     * @throws PropelException
-     */
-    public function getFDRecordRelatedById(PropelPDO $con = null)
-    {
-
-        if ($this->singleFDRecordRelatedById === null && !$this->isNew()) {
-            $this->singleFDRecordRelatedById = FDRecordQuery::create()->findPk($this->getPrimaryKey(), $con);
-        }
-
-        return $this->singleFDRecordRelatedById;
-    }
-
-    /**
-     * Sets a single FDRecord object as related to this object by a one-to-one relationship.
-     *
-     * @param             FDRecord $v FDRecord
-     * @return FDFieldValue The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setFDRecordRelatedById(FDRecord $v = null)
-    {
-        $this->singleFDRecordRelatedById = $v;
-
-        // Make sure that that the passed-in FDRecord isn't already associated with this object
-        if ($v !== null && $v->getrecordValues(null, false) === null) {
-            $v->setrecordValues($this);
-        }
-
-        return $this;
-    }
-
-    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1576,17 +1420,11 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->singleFDFieldRelatedById) {
-                $this->singleFDFieldRelatedById->clearAllReferences($deep);
+            if ($this->aFDField instanceof Persistent) {
+              $this->aFDField->clearAllReferences($deep);
             }
-            if ($this->singleFDRecordRelatedById) {
-                $this->singleFDRecordRelatedById->clearAllReferences($deep);
-            }
-            if ($this->aFDFieldRelatedByFDFieldId instanceof Persistent) {
-              $this->aFDFieldRelatedByFDFieldId->clearAllReferences($deep);
-            }
-            if ($this->aFDRecordRelatedByFDRecordId instanceof Persistent) {
-              $this->aFDRecordRelatedByFDRecordId->clearAllReferences($deep);
+            if ($this->aFDRecord instanceof Persistent) {
+              $this->aFDRecord->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
@@ -1596,16 +1434,8 @@ abstract class BaseFDFieldValue extends BaseObject implements Persistent
             $this->collActionPropertyFDRecords->clearIterator();
         }
         $this->collActionPropertyFDRecords = null;
-        if ($this->singleFDFieldRelatedById instanceof PropelCollection) {
-            $this->singleFDFieldRelatedById->clearIterator();
-        }
-        $this->singleFDFieldRelatedById = null;
-        if ($this->singleFDRecordRelatedById instanceof PropelCollection) {
-            $this->singleFDRecordRelatedById->clearIterator();
-        }
-        $this->singleFDRecordRelatedById = null;
-        $this->aFDFieldRelatedByFDFieldId = null;
-        $this->aFDRecordRelatedByFDRecordId = null;
+        $this->aFDField = null;
+        $this->aFDRecord = null;
     }
 
     /**
