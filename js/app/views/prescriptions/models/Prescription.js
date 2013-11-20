@@ -8,26 +8,30 @@ define(function (require) {
     var Prescription = Model.extend({
         initialize: function (model, options) {
             var self = this;
-
-            if(options.actionTypeId){
-                this.template = new PrescriptionTemplate({},{
-                    actionTypeId: options.actionTypeId
-                });
-
-                this.loaded = this.template.fetch()
-
-                this.loaded.done(function(){
-                    self.set(self.template.toJSON());
-                    self.initCollections();
-                });
-
-            }else{
-                self.initCollections();
-            }
+            this.actionTypeId = options.actionTypeId ? options.actionTypeId : false;
 
             console.log('prescription model init', arguments);
         },
-        initCollections: function(actionTypeId){
+        initialized: function(){
+            var dfd = $.Deferred();
+            var self = this;
+            if(self.actionTypeId){
+                self.template = new PrescriptionTemplate({},{
+                    actionTypeId: self.actionTypeId
+                });
+
+                self.template.fetch().done(function(){
+                    self.set(self.template.toJSON());
+                    self.initCollections(dfd.resolve);
+                });
+
+            }else{
+                self.initCollections(dfd.resolve);
+            }
+
+            return dfd.promise();
+        },
+        initCollections: function(callback){
             if (this.get('drugs')) {
                 var drugs = new Drugs(this.get('drugs'));
                 this.set('drugs', drugs);
@@ -41,6 +45,9 @@ define(function (require) {
             if(this.get('properties')){
                 var properties = new Collection(this.get('properties'));
                 this.set('properties', properties);
+            }
+            if(callback){
+                callback(); 
             }
         },
         toJSON: function() {
@@ -64,6 +71,10 @@ define(function (require) {
             }
 
             return moaModel;
+        },
+        addInterval:function(){
+            console.log('add interval') 
+            this.get('assigmentIntervals').addInterval();
         },
         set: function(key, value, options) {
             // Normalize the key-value into an object

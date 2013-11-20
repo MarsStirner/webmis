@@ -6,6 +6,10 @@ define(function (require) {
         model: Interval,
         initialize: function(){
             console.log('init intervals collection', this);
+        },
+        addInterval: function(){
+            var interval = new Interval();
+            this.add(interval); 
         }
     });
 

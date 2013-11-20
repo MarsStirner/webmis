@@ -6,7 +6,6 @@ define(function (require) {
     var SelectView = require('../SelectView');
     var Prescription = require('../../models/Prescription');
     var rivets = require('rivets');
-    var IntervalsView = require('./IntervalsView');
 
     return BaseView.extend({
         template: template,
@@ -15,7 +14,8 @@ define(function (require) {
             this.prescription = new Prescription({}, {
                 actionTypeId: 754
             });
-                        this.administration = new AdministrationMethod();
+
+            this.administration = new AdministrationMethod();
 
             this.administrationView = new SelectView({
                 collection: this.administration,
@@ -23,37 +23,36 @@ define(function (require) {
                 modelKey: 'moa'
             });
 
-            this.intervalsView = new IntervalsView();
-
-            $.when(this.prescription.loaded).then(function () {
+            $.when(this.prescription.initialized()).then(function () {
+                console.log('prescription initialized', self.prescription);
                 var moaModel = self.prescription.getMoaModel();
                 var moaModelValueDomain = moaModel.get('valueDomain');
                 var moaKeys = (moaModelValueDomain.split(';'))[1];
                 console.log('moaModelValueDomain',moaKeys, moaModelValueDomain)
 
-
                 self.administration.fetch({data: {code:moaKeys}});
                 self.prescription.on('change', self.showJSON,self);
-                self.prescription.get('drugs').on('add remove',self.showJSON, self);
+                self.prescription.get('drugs').on('add remove change',self.showJSON, self);
+                self.prescription.get('assigmentIntervals').on('add remove change',self.showJSON, self);
 
 
                 self.prescription.set('eventId', 788899);
                 self.prescription.set('moa', 788899);
                 self.prescription.set('note', 'wertyui');
                 self.prescription.set('voa', 2345);
+            console.log('prescription', self.prescription);
+                self.render();
+
             })
 
+            this.addSubViews({
+                '#moa': this.administrationView,
+            });
 
 
             this.prescription.on('change', function () {
                 console.log('prescription change', this.prescription);
             }, this);
-
-            console.log('prescription', this.prescription);
-            this.addSubViews({
-                '#moa': this.administrationView,
-                '#intervals': this.intervalsView
-            });
 
         },
         showJSON: function(){
@@ -61,7 +60,7 @@ define(function (require) {
         
         },
         events: {
-            'click [data-add-drug]': 'onClickAddDrug'
+            'click .add-drug': 'onClickAddDrug'
         },
         onClickAddDrug: function () {
             var popup = new AddDrugPopupView({
@@ -73,12 +72,14 @@ define(function (require) {
         },
         render: function () {
             var self = this;
-            $.when(this.prescription.loaded).then(function () {
+            $.when(this.prescription.initialized).then(function () {
 
                 BaseView.prototype.render.call(self);
                 rivets.bind(self.el, {
                     prescription: self.prescription
                 });
+
+                //self.prescription.get('assigmentIntervals').add([{beginDateTime: 123456789}])
             });
         }
     });
