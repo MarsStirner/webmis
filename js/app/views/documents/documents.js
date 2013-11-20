@@ -5085,7 +5085,7 @@ define(function (require) {
 				// 	}
 				// });
 			//}
-		},
+		}
 	});
 
 // Documents.Views.Review.Base.NoControlsLayout

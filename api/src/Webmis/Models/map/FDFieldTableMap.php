@@ -42,7 +42,7 @@ class FDFieldTableMap extends TableMap
         $this->setPackage('Models');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addForeignPrimaryKey('id', 'Id', 'INTEGER' , 'FDFieldValue', 'fdField_id', true, 10, null);
+        $this->addPrimaryKey('id', 'Id', 'INTEGER', true, 10, null);
         $this->addColumn('fdFieldType_id', 'FDFieldTypeId', 'INTEGER', true, 10, null);
         $this->addColumn('flatDirectory_id', 'FlatDirectoryId', 'INTEGER', true, 10, null);
         $this->addColumn('flatDirectory_code', 'FlatDirectoryCode', 'CHAR', false, 128, null);
@@ -59,8 +59,7 @@ class FDFieldTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('FDFieldValueRelatedById', 'Webmis\\Models\\FDFieldValue', RelationMap::MANY_TO_ONE, array('id' => 'fdField_id', ), null, null);
-        $this->addRelation('FDFieldValueRelatedByFDFieldId', 'Webmis\\Models\\FDFieldValue', RelationMap::ONE_TO_MANY, array('id' => 'fdField_id', ), null, null, 'FDFieldValuesRelatedByFDFieldId');
+        $this->addRelation('FDFieldValue', 'Webmis\\Models\\FDFieldValue', RelationMap::ONE_TO_MANY, array('id' => 'fdField_id', ), null, null, 'FDFieldValues');
     } // buildRelations()
 
 } // FDFieldTableMap

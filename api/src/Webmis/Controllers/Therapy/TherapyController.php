@@ -33,28 +33,51 @@ class TherapyController
                 return $app['jsonp']->jsonp($error);
             }
 
-            $actions = ActionQuery::create()
+            $filterActionsQuery = ActionQuery::create()
             ->filterByDeleted(false)
             ->useEventQuery()
                 ->filterByClientId($patientId)
-                //->where('Event.id != ?', $eventId)
                 ->where('Event.deleted != 1')
             ->endUse()
-            ->getProperties()
             ->onlyWithTherapyProperties()
-
             ->groupBy('id')
-            ->orderByCreateDatetime('desc')
-            //->limit(1)
-            ->find();
+            ->select(array('id'))
+            ->orderByCreateDatetime('desc');
 
-            $data = $this->serializeEventTherapy($actions);//serializeTherapyActions($actions);
+            $actionsIds = $filterActionsQuery->find()->toArray();
 
-            return $app['jsonp']->jsonp(array('data'=>$data));
+            $actionsQuery = ActionQuery::create()
+            ->filterById($actionsIds)
+            ->useActionPropertyQuery('ap')
+                ->leftJoinActionPropertyType('apt')
+                ->leftJoinActionPropertyString('string')
+                ->leftJoinActionPropertyDouble('double')
+                ->leftJoinActionPropertyDate('date')
+                ->useActionPropertyFDRecordQuery('fdr','left join')
+                    ->useFDFieldValueQuery('fdfv','left join')
+                        ->leftJoinFDField('fdf')
+                    ->endUse()
+                ->endUse()
+            ->endUse()
+            ->with('ap')
+            ->with('apt')
+            ->with('string')
+            ->with('date')
+            ->with('double')
+            ->with('fdr')
+            ->with('fdfv')
+            ->with('fdf')
+            ->orderByCreateDatetime('desc');
+
+            $rawSql = $actionsQuery->toString();
+            $actions = $actionsQuery->find();
+
+            $data = $this->therapyMagic($actions);
+            return $app['jsonp']->jsonp(array('sql'=>$rawSql,'data'=>$data));
     }
 
 
-        private function serializeEventTherapy($actions){
+        private function therapyMagic($actions){
             $data = array();
 
 
@@ -90,7 +113,20 @@ class TherapyController
                         break;
                         case 'FlatDirectory':
                             if($actionProperty->getActionPropertyFDRecord()){
-                                $p['value'] = $actionProperty->getActionPropertyFDRecord()->getValue();
+                                $p['valueId'] = $actionProperty->getActionPropertyFDRecord()->getValue();
+                                $fdr = $actionProperty->getActionPropertyFDRecord()->getFDRecord();
+                                $fdfvs = $fdr->getFDFieldValues();
+                                $v = array();
+
+                                foreach($fdfvs as $fdfv){
+                                    $fdf = $fdfv->getFDField();
+                                    if($fdf){
+                                        $v[$fdf->getName()] = $fdfv->getValue();
+                                    } 
+                                }
+
+                                $p['value'] = $v;
+
                             }
                         break;
                         case 'Date':
@@ -113,10 +149,19 @@ class TherapyController
                     }
 
                     if($p['code'] == 'therapyTitle'){
-                        if (array_key_exists('value', $p)){
-                            $a['therapyTitleId'] = $p['value'];
+                        if (array_key_exists('valueId', $p)){
+                            $a['therapyTitleId'] = $p['valueId'];
                         }else{
                             $a['therapyTitleId'] = null;
+                        }
+
+                        if(array_key_exists('value', $p)){
+                           // $a['therapyTitle'] =@$p['value']; 
+                            $a['therapyTitle'] =@$p['value']['Наименование']; 
+                            $a['therapyLink'] = @$p['value']['Ссылка'];
+                        }else{
+                            $a['therapyTitle'] = null; 
+                            $a['therapyLink'] = null;
                         }
                     }
                     if($p['code'] == 'therapyBegDate'){
@@ -136,10 +181,17 @@ class TherapyController
                     }
 
                     if($p['code'] == 'therapyPhaseTitle'){
-                        if (array_key_exists('value', $p)){
-                            $a['therapyPhaseTitleId'] = $p['value'];
+                        if (array_key_exists('valueId', $p)){
+                            $a['therapyPhaseTitleId'] = $p['valueId'];
                         }else{
                             $a['therapyPhaseTitleId'] = null;
+                        }
+                        if(array_key_exists('value', $p)){
+                            $a['therapyPhaseTitle'] = @$p['value']['Наименование']; 
+                            $a['therapyPhaseLink'] = @$p['value']['Ссылка'];
+                        }else{
+                            $a['therapyPhaseTitle'] = '';
+                            $a['therapyPhaseLink'] = ''; 
                         }
                     }
 
@@ -167,9 +219,12 @@ class TherapyController
                     }
 
                 }
-                if($a['therapyTitleId']){
+
+
+                if(array_key_exists('therapyTitle',$a) && $a['therapyTitle']!=null){
                      array_push($data, $a);
                 }
+
 
 
             }
@@ -181,7 +236,8 @@ class TherapyController
                 $therapy = array(
                     'id' => $action['docId'],
                     'titleId' => $action['therapyTitleId'],
-                    'title' => $action['therapyTitleId'],
+                    'title' => $action['therapyTitle'],
+                    'link' => $action['therapyLink'],
                     'beginDate' => $action['therapyBegDate'],
                     'endDate' => $action['therapyEndDate'],
                     'phases' => array());
@@ -197,40 +253,14 @@ class TherapyController
             }
             //фазы терапий
             foreach($therapies as $key => $therapy){
-                $fieldValue = FDFieldValueQuery::create()
-                    ->useFDFieldRelatedByIdQuery()
-                        ->filterByName('Наименование')
-                    ->endUse()
-                    ->filterByFDRecordId($therapy['titleId'])
-                    ->findOne();
-
-                if($fieldValue){
-                    $therapies[$key]['title'] = $fieldValue->getValue();
-                }else{
-                    $therapies[$key]['title'] = '';
-                }
-
 
                 foreach ($data as $action){
                     if($therapy['beginDate'] == $action['therapyBegDate']){
 
-                     $fieldValue = FDFieldValueQuery::create()
-                    ->useFDFieldRelatedByIdQuery()
-                        ->filterByName('Наименование')
-                    ->endUse()
-                    ->filterByFDRecordId($action['therapyPhaseTitleId'])
-                    ->findOne();
-
-                    if($fieldValue){
-                        $therapyPhaseTitle = $fieldValue->getValue();
-                    }else{
-                        $therapyPhaseTitle = $action['therapyPhaseTitleId'];
-                    }
-
-
-                        $phase = array(
+                       $phase = array(
                             'eventId' => $action['eventId'],
-                            'title' => $therapyPhaseTitle,
+                            'title' => $action['therapyPhaseTitle'],
+                            'link' => $action['therapyPhaseLink'],
                             'titleId' => $action['therapyPhaseTitleId'],
                             'beginDate' => $action['therapyPhaseBegDate'],
                             'endDate' => $action['therapyPhaseEndDate'],
