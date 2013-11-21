@@ -2,59 +2,73 @@
 	<button data-save-prescription>Создать</button>
 	<button data-cancel>Отменить</button>
 </div>
+
 <div>
     <label>
     	Препарат(ы)
     </label>
 	<button class="add-drug">Добавить препарат</button>
     <table id="drugs"> 
+        <tr>
+            <td>Название</td> 
+            <td>Доза</td>
+            <td></td>
+        </tr>
         <tr data-each-drug="prescription.drugs">
             <td>
                 <div data-text="drug.name"/>
             </td> 
             <td>
-                <button data-on-click="drug:delete">удалить</button>
+                <input type="text" data-value="drug.dose"> 
+            </td>
+            <td>
+                <button data-on-click="drug:delete">Удалить</button>
             </td>
         </tr>
     </table>
 </div>
+
 <div>
     <label>Интервал(ы)</label>
-    <button data-on-click="prescription:addInterval">добавить интервал</button>
+    <button data-on-click="prescription:addInterval">Добавить интервал</button>
 
     <table id="intervals" class="Grid"> 
-        <tr><td>начало</td><td>конец</td><td></td></tr>
+        <tr><td>Начало</td><td>Конец</td><td></td></tr>
         <tr data-each-interval="prescription.assigmentIntervals">
             <td>
                 <input data-value="interval.beginDateTime"> 
             </td><td>
                 <input data-value="interval.endDateTime">
             </td><td>
-                <button data-on-click="interval:delete">удалить</button>
+                <button data-on-click="interval:delete">Удалить</button>
             </td>
         </tr>
     </table>
 </div>
+
 <div>
-<label for="moa">
-    Способ введения
-    <select data-value="prescription.moa">
-        <%_.each(data.administration, function(opt){%>
-        <option value="<%=opt.id%>"><%=opt.name%></option>
-        <%})%>
-    </select>
-</label>
+    <label for="moa">
+        Способ введения
+        <select data-value="prescription.moa">
+            <%_.each(data.administration, function(opt){%>
+            <option value="<%=opt.id%>"><%=opt.name%></option>
+            <%})%>
+        </select>
+    </label>
 </div>
+
 <div>
-<label for="voa">
-    Скорость введения
-    <input name="voa" id="voa" type="text"  data-value="prescription.voa">
-</label>
+    <label for="voa">
+        Скорость введения
+        <input name="voa" id="voa" type="text"  data-value="prescription.voa">
+    </label>
 </div>
+
 <div>
-<label for="note">
-    Примечание
-    <input name="note" id="note" type="text"  data-value="prescription.note">
-</label>
+    <label for="note">
+        Примечание
+        <input name="note" id="note" type="text"  data-value="prescription.note">
+    </label>
 </div>
+
 <pre id="debug"></pre>
