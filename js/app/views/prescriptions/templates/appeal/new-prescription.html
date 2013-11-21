@@ -8,7 +8,7 @@
     	Препарат(ы)
     </label>
 	<button class="add-drug">Добавить препарат</button>
-    <table id="drugs"> 
+    <table id="drugs" class="Grid"> 
         <tr>
             <td>Название</td> 
             <td>Доза</td>
@@ -22,7 +22,7 @@
                 <input type="text" data-value="drug.dose"> 
             </td>
             <td>
-                <button data-on-click="drug:delete">Удалить</button>
+                <span data-on-click="drug:delete"></span>
             </td>
         </tr>
     </table>
@@ -40,7 +40,7 @@
             </td><td>
                 <input class="datetime_entry" type="text" data-value="interval.endDateTime | datetime">
             </td><td>
-                <button data-on-click="interval:delete">Удалить</button>
+                <span data-on-click="interval:delete" class="icon-remove"></span>
             </td>
         </tr>
     </table>
@@ -67,7 +67,7 @@
 <div>
     <label for="note">
         Примечание
-        <input name="note" id="note" type="text"  data-value="prescription.note">
+        <textarea  rows="8" cols="45"  name="note" id="note" data-value="prescription.note"></textarea>
     </label>
 </div>
 

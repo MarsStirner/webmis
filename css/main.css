@@ -191,7 +191,7 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
 
 /* line 30, ../sass/modules/_labs.scss */
 .column-box {
-  border: 1px solid #CCCCCC;
+  border: 1px solid #cccccc;
 }
 
 /* line 33, ../sass/modules/_labs.scss */
@@ -370,7 +370,7 @@ li.clicked > .icon-open, li.clicked > .icon-closed {
 
 /* line 174, ../sass/modules/_labs.scss */
 .edit .tests {
-  margin: 0 0 4px .4em;
+  margin: 0 0 4px 0.4em;
 }
 
 /* line 200, ../sass/modules/_labs.scss */
@@ -596,7 +596,7 @@ tr.norm-below {
   padding: 2px 4px;
   background-color: #fff;
   margin-bottom: -4px;
-  border: 1px solid #bbb;
+  border: 1px solid #bbbbbb;
 }
 
 /* line 13, ../sass/modules/_biomaterials.scss */
@@ -740,7 +740,7 @@ td.status-code-2, td.status-code-2 .Warning {
 /* line 140, ../sass/modules/_biomaterials.scss */
 .Grid td.highlight-it {
   background: #FFCBCB;
-  border-bottom: 1px solid #CF8E8E;
+  border-bottom: 1px solid #cf8e8e;
 }
 
 /* line 1, ../sass/modules/_vmp.scss */
@@ -800,4 +800,9 @@ td.status-code-2, td.status-code-2 .Warning {
 /* line 1, ../sass/modules/_ui_datepicker.scss */
 .ui-datepicker td.date-range-selected a {
   background-color: #b1c5ff;
+}
+
+/* line 1, ../sass/modules/_datetimeEntry.scss */
+.datetimeEntry_control {
+  display: none!important;
 }
