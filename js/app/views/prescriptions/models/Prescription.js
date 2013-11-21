@@ -54,7 +54,7 @@ define(function (require) {
             var attributes = _.clone(this.attributes);
 
             _.each(attributes, function(value, key) {
-                if(_.isFunction(value.toJSON)) {
+                if(value && _.isFunction(value.toJSON)) {
                     attributes[key] = value.toJSON();
                 }
             });

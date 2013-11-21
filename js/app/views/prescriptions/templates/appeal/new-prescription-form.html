@@ -3,10 +3,14 @@
     	Препарат(ы)
     </label>
 	<button class="add-drug">Добавить препарат</button>
-    <table id="drugs" data-each-drug="prescription.drugs">
-        <tr>
-            <td>  <div data-text="drug.name"/></td> 
-            <td> <button data-on-click="drug:delete">удалить</button></td>
+    <table id="drugs"> 
+        <tr data-each-drug="prescription.drugs">
+            <td>
+                <div data-text="drug.name"/>
+            </td> 
+            <td>
+                <button data-on-click="drug:delete">удалить</button>
+            </td>
         </tr>
     </table>
 </div>
@@ -14,14 +18,15 @@
     <label>Интервал(ы)</label>
     <button data-on-click="prescription:addInterval">добавить интервал</button>
 
-    <table id="intervals" data-each-interval="prescription.assigmentIntervals">
-        <tr>
+    <table id="intervals" class="Grid"> 
+        <tr><td>начало</td><td>конец</td><td></td></tr>
+        <tr data-each-interval="prescription.assigmentIntervals">
             <td>
-            <input data-value="interval.beginDateTime"> 
-        </td><td>
-            <input data-value="interval.endDateTime">
-        </td><td>
-            <button data-on-click="interval:delete">удалить</button>
+                <input data-value="interval.beginDateTime"> 
+            </td><td>
+                <input data-value="interval.endDateTime">
+            </td><td>
+                <button data-on-click="interval:delete">удалить</button>
             </td>
         </tr>
     </table>
