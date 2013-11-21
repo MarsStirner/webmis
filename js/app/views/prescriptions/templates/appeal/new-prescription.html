@@ -38,7 +38,11 @@
 <div>
 <label for="moa">
     Способ введения
-    <div id="moa"></div>
+    <select data-value="prescription.moa">
+        <%_.each(data.administration, function(opt){%>
+        <option value="<%=opt.id%>"><%=opt.name%></option>
+        <%})%>
+    </select>
 </label>
 </div>
 <div>

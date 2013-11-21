@@ -3,7 +3,6 @@ define(function (require) {
     var BaseView = require('../BaseView');
     var AddDrugPopupView = require('./AddDrugPopupView');
     var AdministrationMethod = require('collections/AdministrationMethod');
-    var SelectView = require('../SelectView');
     var Prescription = require('../../models/Prescription');
     var rivets = require('rivets');
 
@@ -11,56 +10,44 @@ define(function (require) {
         template: template,
         initialize: function () {
             var self = this;
-            console.log('init new prescription view',this);
+            console.log('init new prescription view', this);
             this.prescription = new Prescription({}, {
                 actionTypeId: 754
             });
 
             this.administration = new AdministrationMethod();
 
-            this.administrationView = new SelectView({
-                collection: this.administration,
-                model: this.prescription,
-                modelKey: 'moa'
-            });
-
             $.when(this.prescription.initialized())
                 .then(function () {
+                    self.prescription.set('eventId', self.options.appealId);
                     console.log('prescription initialized', self.prescription);
                     var moaModel = self.prescription.getMoaModel();
                     var moaModelValueDomain = moaModel.get('valueDomain');
                     var moaKeys = (moaModelValueDomain.split(';'))[1];
-                    console.log('moaModelValueDomain', moaKeys, moaModelValueDomain)
+//                    console.log('moaModelValueDomain', moaKeys, moaModelValueDomain)
 
                     self.administration.fetch({
                         data: {
                             code: moaKeys
                         }
-                    });
-                    self.prescription.on('change', self.showJSON, self);
-                    self.prescription.get('drugs')
-                        .on('add remove change', self.showJSON, self);
-                    self.prescription.get('assigmentIntervals')
-                        .on('add remove change', self.showJSON, self);
+                    })
+                        .done(function () {
+                            self.debug();
+                            self.render();
+                        });
 
-
-                    self.prescription.set('eventId', self.options.appealId);
-                    self.prescription.set('note', '');
-                    self.prescription.set('voa', '');
-
-                    self.render();
-
-                })
-
-            this.addSubViews({
-                '#moa': this.administrationView,
-            });
+                });
 
 
             this.prescription.on('change', function () {
                 console.log('prescription change', this.prescription);
             }, this);
 
+        },
+        debug: function(){
+            this.prescription.on('change', this.showJSON, this);
+            this.prescription.get('drugs').on('add remove change', this.showJSON, this);
+            this.prescription.get('assigmentIntervals').on('add remove change', this.showJSON, this);
         },
         showJSON: function () {
             this.$el.find('#debug')
@@ -74,22 +61,22 @@ define(function (require) {
         onClickSavePrescription: function () {
             console.log('onClickSave');
             var self = this;
-            this.prescription.save({},{
-                success: function(m,r){
-                    if(r.data){
-                        console.log('saved',arguments) 
+            this.prescription.save({}, {
+                success: function (m, r) {
+                    if (r.data) {
+                        console.log('saved', arguments);
                         self.redirectToList();
-                    }else{
-                        console.log('error',r.message) 
+                    } else {
+                        console.log('error', r.message);
                     }
-                } 
+                }
             });
         },
         onClickCancel: function () {
             this.redirectToList();
-           console.log('onClickCancel');
+            console.log('onClickCancel');
         },
-        redirectToList: function(){
+        redirectToList: function () {
             App.Router.navigate(['appeals', this.options.appealId, 'prescriptions'].join('/'), {
                 trigger: true
             });
@@ -102,20 +89,19 @@ define(function (require) {
             popup.render();
             popup.open();
         },
+        data: function () {
+            return {
+                administration: this.administration.toJSON()
+            };
+        },
         render: function () {
             var self = this;
-            $.when(this.prescription.initialized)
-                .then(function () {
+            BaseView.prototype.render.call(self);
+            rivets.bind(self.el, {
+                prescription: self.prescription
+            });
 
-                    BaseView.prototype.render.call(self);
-                    rivets.bind(self.el, {
-                        prescription: self.prescription
-                    });
-
-                    //self.prescription.get('assigmentIntervals').add([{beginDateTime: 123456789}])
-                });
         }
     });
 
 });
-
