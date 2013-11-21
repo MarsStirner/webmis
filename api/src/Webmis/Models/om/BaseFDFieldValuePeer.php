@@ -484,7 +484,7 @@ abstract class BaseFDFieldValuePeer
 
 
     /**
-     * Returns the number of rows matching criteria, joining the related FDFieldRelatedByFDFieldId table
+     * Returns the number of rows matching criteria, joining the related FDField table
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -492,7 +492,7 @@ abstract class BaseFDFieldValuePeer
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
      * @return int Number of matching rows.
      */
-    public static function doCountJoinFDFieldRelatedByFDFieldId(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doCountJoinFDField(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
@@ -535,7 +535,7 @@ abstract class BaseFDFieldValuePeer
 
 
     /**
-     * Returns the number of rows matching criteria, joining the related FDRecordRelatedByFDRecordId table
+     * Returns the number of rows matching criteria, joining the related FDRecord table
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -543,7 +543,7 @@ abstract class BaseFDFieldValuePeer
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
      * @return int Number of matching rows.
      */
-    public static function doCountJoinFDRecordRelatedByFDRecordId(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doCountJoinFDRecord(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
@@ -594,7 +594,7 @@ abstract class BaseFDFieldValuePeer
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoinFDFieldRelatedByFDFieldId(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doSelectJoinFDField(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $criteria = clone $criteria;
 
@@ -640,7 +640,7 @@ abstract class BaseFDFieldValuePeer
                 } // if obj2 already loaded
 
                 // Add the $obj1 (FDFieldValue) to $obj2 (FDField)
-                $obj2->addFDFieldValueRelatedByFDFieldId($obj1);
+                $obj2->addFDFieldValue($obj1);
 
             } // if joined row was not null
 
@@ -661,7 +661,7 @@ abstract class BaseFDFieldValuePeer
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoinFDRecordRelatedByFDRecordId(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doSelectJoinFDRecord(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $criteria = clone $criteria;
 
@@ -707,7 +707,7 @@ abstract class BaseFDFieldValuePeer
                 } // if obj2 already loaded
 
                 // Add the $obj1 (FDFieldValue) to $obj2 (FDRecord)
-                $obj2->addFDFieldValueRelatedByFDRecordId($obj1);
+                $obj2->addFDFieldValue($obj1);
 
             } // if joined row was not null
 
@@ -835,7 +835,7 @@ abstract class BaseFDFieldValuePeer
                 } // if obj2 loaded
 
                 // Add the $obj1 (FDFieldValue) to the collection in $obj2 (FDField)
-                $obj2->addFDFieldValueRelatedByFDFieldId($obj1);
+                $obj2->addFDFieldValue($obj1);
             } // if joined row not null
 
             // Add objects for joined FDRecord rows
@@ -853,7 +853,7 @@ abstract class BaseFDFieldValuePeer
                 } // if obj3 loaded
 
                 // Add the $obj1 (FDFieldValue) to the collection in $obj3 (FDRecord)
-                $obj3->addFDFieldValueRelatedByFDRecordId($obj1);
+                $obj3->addFDFieldValue($obj1);
             } // if joined row not null
 
             $results[] = $obj1;
@@ -865,7 +865,7 @@ abstract class BaseFDFieldValuePeer
 
 
     /**
-     * Returns the number of rows matching criteria, joining the related FDFieldRelatedByFDFieldId table
+     * Returns the number of rows matching criteria, joining the related FDField table
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -873,7 +873,7 @@ abstract class BaseFDFieldValuePeer
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
      * @return int Number of matching rows.
      */
-    public static function doCountJoinAllExceptFDFieldRelatedByFDFieldId(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doCountJoinAllExceptFDField(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
@@ -916,7 +916,7 @@ abstract class BaseFDFieldValuePeer
 
 
     /**
-     * Returns the number of rows matching criteria, joining the related FDRecordRelatedByFDRecordId table
+     * Returns the number of rows matching criteria, joining the related FDRecord table
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -924,7 +924,7 @@ abstract class BaseFDFieldValuePeer
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
      * @return int Number of matching rows.
      */
-    public static function doCountJoinAllExceptFDRecordRelatedByFDRecordId(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doCountJoinAllExceptFDRecord(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
@@ -967,7 +967,7 @@ abstract class BaseFDFieldValuePeer
 
 
     /**
-     * Selects a collection of FDFieldValue objects pre-filled with all related objects except FDFieldRelatedByFDFieldId.
+     * Selects a collection of FDFieldValue objects pre-filled with all related objects except FDField.
      *
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
@@ -976,7 +976,7 @@ abstract class BaseFDFieldValuePeer
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoinAllExceptFDFieldRelatedByFDFieldId(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doSelectJoinAllExceptFDField(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $criteria = clone $criteria;
 
@@ -1028,7 +1028,7 @@ abstract class BaseFDFieldValuePeer
                 } // if $obj2 already loaded
 
                 // Add the $obj1 (FDFieldValue) to the collection in $obj2 (FDRecord)
-                $obj2->addFDFieldValueRelatedByFDRecordId($obj1);
+                $obj2->addFDFieldValue($obj1);
 
             } // if joined row is not null
 
@@ -1041,7 +1041,7 @@ abstract class BaseFDFieldValuePeer
 
 
     /**
-     * Selects a collection of FDFieldValue objects pre-filled with all related objects except FDRecordRelatedByFDRecordId.
+     * Selects a collection of FDFieldValue objects pre-filled with all related objects except FDRecord.
      *
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
@@ -1050,7 +1050,7 @@ abstract class BaseFDFieldValuePeer
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoinAllExceptFDRecordRelatedByFDRecordId(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doSelectJoinAllExceptFDRecord(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $criteria = clone $criteria;
 
@@ -1102,7 +1102,7 @@ abstract class BaseFDFieldValuePeer
                 } // if $obj2 already loaded
 
                 // Add the $obj1 (FDFieldValue) to the collection in $obj2 (FDField)
-                $obj2->addFDFieldValueRelatedByFDFieldId($obj1);
+                $obj2->addFDFieldValue($obj1);
 
             } // if joined row is not null
 

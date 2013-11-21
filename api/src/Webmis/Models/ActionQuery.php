@@ -34,7 +34,12 @@ class ActionQuery extends BaseActionQuery
                             // ->useFDFieldValueQuery()
                             // ->endUse()
                         ->endUse()
-                    ->endUse();
+                        ->endUse()
+                        ->with('apt')
+                        ->with('string')
+                        ->with('double')
+                        ->with('date')
+                        ->with('fdir');
                     // ->groupBy('id');
     }
 

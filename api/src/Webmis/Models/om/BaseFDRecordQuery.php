@@ -45,17 +45,13 @@ use Webmis\Models\FDRecordQuery;
  * @method FDRecordQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method FDRecordQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method FDRecordQuery leftJoinrecordValues($relationAlias = null) Adds a LEFT JOIN clause to the query using the recordValues relation
- * @method FDRecordQuery rightJoinrecordValues($relationAlias = null) Adds a RIGHT JOIN clause to the query using the recordValues relation
- * @method FDRecordQuery innerJoinrecordValues($relationAlias = null) Adds a INNER JOIN clause to the query using the recordValues relation
- *
  * @method FDRecordQuery leftJoinActionPropertyFDRecord($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyFDRecord relation
  * @method FDRecordQuery rightJoinActionPropertyFDRecord($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyFDRecord relation
  * @method FDRecordQuery innerJoinActionPropertyFDRecord($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionPropertyFDRecord relation
  *
- * @method FDRecordQuery leftJoinFDFieldValueRelatedByFDRecordId($relationAlias = null) Adds a LEFT JOIN clause to the query using the FDFieldValueRelatedByFDRecordId relation
- * @method FDRecordQuery rightJoinFDFieldValueRelatedByFDRecordId($relationAlias = null) Adds a RIGHT JOIN clause to the query using the FDFieldValueRelatedByFDRecordId relation
- * @method FDRecordQuery innerJoinFDFieldValueRelatedByFDRecordId($relationAlias = null) Adds a INNER JOIN clause to the query using the FDFieldValueRelatedByFDRecordId relation
+ * @method FDRecordQuery leftJoinFDFieldValue($relationAlias = null) Adds a LEFT JOIN clause to the query using the FDFieldValue relation
+ * @method FDRecordQuery rightJoinFDFieldValue($relationAlias = null) Adds a RIGHT JOIN clause to the query using the FDFieldValue relation
+ * @method FDRecordQuery innerJoinFDFieldValue($relationAlias = null) Adds a INNER JOIN clause to the query using the FDFieldValue relation
  *
  * @method FDRecord findOne(PropelPDO $con = null) Return the first FDRecord matching the query
  * @method FDRecord findOneOrCreate(PropelPDO $con = null) Return the first FDRecord matching the query, or a new FDRecord object populated from the query conditions when no match is found
@@ -278,8 +274,6 @@ abstract class BaseFDRecordQuery extends ModelCriteria
      * $query->filterById(array('min' => 12)); // WHERE id >= 12
      * $query->filterById(array('max' => 12)); // WHERE id <= 12
      * </code>
-     *
-     * @see       filterByrecordValues()
      *
      * @param     mixed $id The value to use as filter.
      *              Use scalar values for equality.
@@ -570,82 +564,6 @@ abstract class BaseFDRecordQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related FDFieldValue object
-     *
-     * @param   FDFieldValue|PropelObjectCollection $fDFieldValue The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 FDRecordQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByrecordValues($fDFieldValue, $comparison = null)
-    {
-        if ($fDFieldValue instanceof FDFieldValue) {
-            return $this
-                ->addUsingAlias(FDRecordPeer::ID, $fDFieldValue->getFDRecordId(), $comparison);
-        } elseif ($fDFieldValue instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(FDRecordPeer::ID, $fDFieldValue->toKeyValue('PrimaryKey', 'FDRecordId'), $comparison);
-        } else {
-            throw new PropelException('filterByrecordValues() only accepts arguments of type FDFieldValue or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the recordValues relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return FDRecordQuery The current query, for fluid interface
-     */
-    public function joinrecordValues($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('recordValues');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'recordValues');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the recordValues relation FDFieldValue object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   \Webmis\Models\FDFieldValueQuery A secondary query class using the current class as primary query
-     */
-    public function userecordValuesQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinrecordValues($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'recordValues', '\Webmis\Models\FDFieldValueQuery');
-    }
-
-    /**
      * Filter the query by a related ActionPropertyFDRecord object
      *
      * @param   ActionPropertyFDRecord|PropelObjectCollection $actionPropertyFDRecord  the related object to use as filter
@@ -728,33 +646,33 @@ abstract class BaseFDRecordQuery extends ModelCriteria
      * @return                 FDRecordQuery The current query, for fluid interface
      * @throws PropelException - if the provided filter is invalid.
      */
-    public function filterByFDFieldValueRelatedByFDRecordId($fDFieldValue, $comparison = null)
+    public function filterByFDFieldValue($fDFieldValue, $comparison = null)
     {
         if ($fDFieldValue instanceof FDFieldValue) {
             return $this
                 ->addUsingAlias(FDRecordPeer::ID, $fDFieldValue->getFDRecordId(), $comparison);
         } elseif ($fDFieldValue instanceof PropelObjectCollection) {
             return $this
-                ->useFDFieldValueRelatedByFDRecordIdQuery()
+                ->useFDFieldValueQuery()
                 ->filterByPrimaryKeys($fDFieldValue->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByFDFieldValueRelatedByFDRecordId() only accepts arguments of type FDFieldValue or PropelCollection');
+            throw new PropelException('filterByFDFieldValue() only accepts arguments of type FDFieldValue or PropelCollection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the FDFieldValueRelatedByFDRecordId relation
+     * Adds a JOIN clause to the query using the FDFieldValue relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return FDRecordQuery The current query, for fluid interface
      */
-    public function joinFDFieldValueRelatedByFDRecordId($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinFDFieldValue($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('FDFieldValueRelatedByFDRecordId');
+        $relationMap = $tableMap->getRelation('FDFieldValue');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -769,14 +687,14 @@ abstract class BaseFDRecordQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'FDFieldValueRelatedByFDRecordId');
+            $this->addJoinObject($join, 'FDFieldValue');
         }
 
         return $this;
     }
 
     /**
-     * Use the FDFieldValueRelatedByFDRecordId relation FDFieldValue object
+     * Use the FDFieldValue relation FDFieldValue object
      *
      * @see       useQuery()
      *
@@ -786,11 +704,11 @@ abstract class BaseFDRecordQuery extends ModelCriteria
      *
      * @return   \Webmis\Models\FDFieldValueQuery A secondary query class using the current class as primary query
      */
-    public function useFDFieldValueRelatedByFDRecordIdQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useFDFieldValueQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinFDFieldValueRelatedByFDRecordId($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'FDFieldValueRelatedByFDRecordId', '\Webmis\Models\FDFieldValueQuery');
+            ->joinFDFieldValue($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'FDFieldValue', '\Webmis\Models\FDFieldValueQuery');
     }
 
     /**
