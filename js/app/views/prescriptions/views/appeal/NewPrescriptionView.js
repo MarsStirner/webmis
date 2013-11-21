@@ -24,13 +24,9 @@ define(function (require) {
                     console.log('prescription initialized', self.prescription);
                     //в экшенпроперти "Спооб введения" в valueDomain хранятся коды
                     //по которым надо отфильтровать справочник способов введения
-                    var moaModel = self.prescription.getPropertyByCode('moa');
-                    var moaModelValueDomain = moaModel.get('valueDomain');
-                    var moaKeys = (moaModelValueDomain.split(';'))[1];
-
                     self.administration.fetch({
                         data: {
-                            code: moaKeys
+                            code: self.getMoaKeys()
                         }
                     })
                         .done(function () {
@@ -41,6 +37,12 @@ define(function (require) {
                 });
 
 
+        },
+        getMoaKeys: function(){
+            var moaModel = this.prescription.getPropertyByCode('moa');
+            var moaModelValueDomain = moaModel.get('valueDomain');
+            var moaKeys = (moaModelValueDomain.split(';'))[1];
+            return moaKeys; 
         },
         debug: function () {
             /*
