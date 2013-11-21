@@ -17,7 +17,8 @@ require.config({
 		"select2": "../lib/select2/select2-3.1",
 
 		"rivetsLib": "../lib/rivets/rivets-0.5.0",
-		"rivets": "../lib/rivets/adapter"
+		"rivets": "../lib/rivets/adapter",
+        "datetimeEntry": "../lib/jquery.datetimeEntry/jquery.datetimeentry"
 	},
 	shim: {
 		'backbone': {
@@ -30,7 +31,11 @@ require.config({
 		'inputmask': {
 			//deps: ['inputmask/jquery.inputmask.date.extensions'],
 			exports: 'jQuery.fn.inputmask'
-		}
+		},
+        'datetimeEntry': {
+            deps: ['jquery'],
+            exports: 'jQuery.fn.datetimeEntry'
+        }
 	},
 	map: {
 		'*': { //короткие алиасы

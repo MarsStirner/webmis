@@ -5,6 +5,7 @@ define(function (require) {
     var AdministrationMethod = require('collections/AdministrationMethod');
     var Prescription = require('../../models/Prescription');
     var rivets = require('rivets');
+    require('datetimeEntry');
 
     return BaseView.extend({
         template: template,
@@ -31,7 +32,8 @@ define(function (require) {
                         data: {
                             code: moaKeys
                         }
-                    }).done(function () {
+                    })
+                        .done(function () {
                             self.debug();
                             self.render();
                         });
@@ -40,16 +42,18 @@ define(function (require) {
 
 
         },
-        debug: function(){
-/*
- *            this.prescription.on('change', function () {
- *                console.log('prescription change', this.prescription);
- *            }, this);
- *
- */
+        debug: function () {
+            /*
+             *            this.prescription.on('change', function () {
+             *                console.log('prescription change', this.prescription);
+             *            }, this);
+             *
+             */
             this.prescription.on('change', this.showJSON, this);
-            this.prescription.get('drugs').on('add remove change', this.showJSON, this);
-            this.prescription.get('assigmentIntervals').on('add remove change', this.showJSON, this);
+            this.prescription.get('drugs')
+                .on('add remove change', this.showJSON, this);
+            this.prescription.get('assigmentIntervals')
+                .on('add remove change', this.showJSON, this);
         },
         showJSON: function () {
             this.$el.find('#debug')
@@ -99,6 +103,45 @@ define(function (require) {
         render: function () {
             var self = this;
             BaseView.prototype.render.call(self);
+            if (this.prescription.get('assigmentIntervals')) {
+                this.prescription.get('assigmentIntervals')
+                    .on('add remove', function () {
+                        setTimeout(function () {
+                            $('.datetime_entry')
+                                .addClass('test')
+                                .datetimeEntry({
+                                    datetimeFormat: 'D.O.Y H:M'
+                                });
+                        }, 100);
+
+                    }, this);
+
+
+            }
+
+            rivets.formatters.datetime = {
+                read: function (value) { //вывод в хтмл
+                    var v;
+                    if (value) {
+                        v = moment(value)
+                            .format('DD.MM.YYYY HH:mm');
+                    } else {
+                        v = '';
+                    }
+                    return v;
+                },
+                publish: function (value) { //в модель
+                    var v;
+                    if (value) {
+                        v = moment(value, 'DD.MM.YYYY HH:mm')
+                            .valueOf();
+                    } else {
+                        v = null;
+                    }
+                    return v;
+                }
+            };
+
             rivets.bind(self.el, {
                 prescription: self.prescription
             });

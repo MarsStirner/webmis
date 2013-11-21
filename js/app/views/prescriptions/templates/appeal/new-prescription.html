@@ -36,9 +36,9 @@
         <tr><td>Начало</td><td>Конец</td><td></td></tr>
         <tr data-each-interval="prescription.assigmentIntervals">
             <td>
-                <input type="text" data-value="interval.beginDateTime"> 
+                <input class="datetime_entry" type="text" data-value="interval.beginDateTime | datetime"> 
             </td><td>
-                <input type="text" data-value="interval.endDateTime">
+                <input class="datetime_entry" type="text" data-value="interval.endDateTime | datetime">
             </td><td>
                 <button data-on-click="interval:delete">Удалить</button>
             </td>
