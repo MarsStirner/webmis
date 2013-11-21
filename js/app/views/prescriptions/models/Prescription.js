@@ -9,32 +9,31 @@ define(function (require) {
         initialize: function (model, options) {
             var self = this;
             this.actionTypeId = options.actionTypeId ? options.actionTypeId : false;
-
-            console.log('prescription model init', arguments);
         },
-        urlRoot: function(){
-            return '/api/v1/prescriptions/'; 
+        urlRoot: function () {
+            return '/api/v1/prescriptions/';
         },
-        initialized: function(){
+        initialized: function () {
             var dfd = $.Deferred();
             var self = this;
-            if(self.actionTypeId){
-                self.template = new PrescriptionTemplate({},{
+            if (self.actionTypeId) {
+                self.template = new PrescriptionTemplate({}, {
                     actionTypeId: self.actionTypeId
                 });
 
-                self.template.fetch().done(function(){
-                    self.set(self.template.toJSON());
-                    self.initCollections(dfd.resolve);
-                });
+                self.template.fetch()
+                    .done(function () {
+                        self.set(self.template.toJSON());
+                        self.initCollections(dfd.resolve);
+                    });
 
-            }else{
+            } else {
                 self.initCollections(dfd.resolve);
             }
 
             return dfd.promise();
         },
-        initCollections: function(callback){
+        initCollections: function (callback) {
             if (this.get('drugs')) {
                 var drugs = new Drugs(this.get('drugs'));
                 this.set('drugs', drugs);
@@ -45,43 +44,52 @@ define(function (require) {
                 this.set('assigmentIntervals', assigmentIntervals);
             }
 
-            if(this.get('properties')){
+            if (this.get('properties')) {
                 var properties = new Collection(this.get('properties'));
                 this.set('properties', properties);
             }
-            if(callback){
-                callback(); 
+            if (callback) {
+                callback();
             }
         },
-        toJSON: function() {
+
+        toJSON: function () {
             var attributes = _.clone(this.attributes);
 
-            _.each(attributes, function(value, key) {
-                if(value && _.isFunction(value.toJSON)) {
+            _.each(attributes, function (value, key) {
+                if (value && _.isFunction(value.toJSON)) {
                     attributes[key] = value.toJSON();
                 }
             });
-            console.log('attributes',attributes);
 
             return attributes;
         },
-        getMoaModel: function(){
-            var moaModel = null;
+
+        getProperty: function(key, value){
+            var model;
             if(this.get('properties')){
-                var moaModel = this.get('properties').find(function(model){
-                    return model.get('code') === 'moa';
+               model = this.get('properties').find(function(model){
+                    return model.get(key) === value; 
                 });
             }
+            
+            return model;
+        },
+        getPropertyByCode: function(value){
+            return this.getProperty('code', value); 
+        },
+        getPropertyByName: function(value){
+            return this.getProperty('name', value); 
+        },
 
-            return moaModel;
+        addInterval: function () {
+            this.get('assigmentIntervals')
+                .addInterval();
         },
-        addInterval:function(){
-            console.log('add interval') 
-            this.get('assigmentIntervals').addInterval();
-        },
-        set: function(key, value, options) {
+
+        set: function (key, value, options) {
             // Normalize the key-value into an object
-            if (_.isObject(key) || key == null) {
+            if (_.isObject(key) || key === null) {
                 attrs = key;
                 options = value;
             } else {
@@ -90,34 +98,29 @@ define(function (require) {
             }
 
             // Go over all the set attributes and make your changes
-            for (attr in attrs) {
-                console.log('attr',attr, attrs[attr])
+            for (var attr in attrs) {
+                if (!this.get('properties')) {
+                    break;
+                }
+
                 if (attr == 'moa') {
-                    var moaModel = this.getMoaModel();
-                    if(moaModel){
-                        moaModel.set('value', attrs[attr])
+                    var moaModel = this.getPropertyByCode('moa');
+                    if (moaModel) {
+                        moaModel.set('value', attrs[attr]);
                     }
                 }
 
                 if (attr == 'voa') {
-                    if(this.get('properties')){
-                        var voaModel = this.get('properties').find(function(model){
-                            return model.get('code') === 'voa';
-                        });
-                        if(voaModel){
-                            voaModel.set('value', attrs[attr])
-                        }
+                    var voaModel = this.getPropertyByCode('voa');
+                    if (voaModel) {
+                        voaModel.set('value', attrs[attr]);
                     }
                 }
 
                 if (attr == 'note') {
-                    if(this.get('properties')){
-                        var noteModel = this.get('properties').find(function(model){
-                            return model.get('name') === 'Примечание';
-                        });
-                        if(noteModel){
-                            noteModel.set('value', attrs[attr])
-                        }
+                    var noteModel = this.getPropertyByName('Примечание'); 
+                    if (noteModel) {
+                        noteModel.set('value', attrs[attr]);
                     }
                 }
             }

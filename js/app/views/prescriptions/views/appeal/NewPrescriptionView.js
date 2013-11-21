@@ -21,17 +21,17 @@ define(function (require) {
                 .then(function () {
                     self.prescription.set('eventId', self.options.appealId);
                     console.log('prescription initialized', self.prescription);
-                    var moaModel = self.prescription.getMoaModel();
+                    //в экшенпроперти "Спооб введения" в valueDomain хранятся коды
+                    //по которым надо отфильтровать справочник способов введения
+                    var moaModel = self.prescription.getPropertyByCode('moa');
                     var moaModelValueDomain = moaModel.get('valueDomain');
                     var moaKeys = (moaModelValueDomain.split(';'))[1];
-//                    console.log('moaModelValueDomain', moaKeys, moaModelValueDomain)
 
                     self.administration.fetch({
                         data: {
                             code: moaKeys
                         }
-                    })
-                        .done(function () {
+                    }).done(function () {
                             self.debug();
                             self.render();
                         });
@@ -39,12 +39,14 @@ define(function (require) {
                 });
 
 
-            this.prescription.on('change', function () {
-                console.log('prescription change', this.prescription);
-            }, this);
-
         },
         debug: function(){
+/*
+ *            this.prescription.on('change', function () {
+ *                console.log('prescription change', this.prescription);
+ *            }, this);
+ *
+ */
             this.prescription.on('change', this.showJSON, this);
             this.prescription.get('drugs').on('add remove change', this.showJSON, this);
             this.prescription.get('assigmentIntervals').on('add remove change', this.showJSON, this);
