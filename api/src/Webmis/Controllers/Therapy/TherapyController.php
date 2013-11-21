@@ -115,14 +115,16 @@ class TherapyController
                             if($actionProperty->getActionPropertyFDRecord()){
                                 $p['valueId'] = $actionProperty->getActionPropertyFDRecord()->getValue();
                                 $fdr = $actionProperty->getActionPropertyFDRecord()->getFDRecord();
-                                $fdfvs = $fdr->getFDFieldValues();
                                 $v = array();
 
-                                foreach($fdfvs as $fdfv){
-                                    $fdf = $fdfv->getFDField();
-                                    if($fdf){
-                                        $v[$fdf->getName()] = $fdfv->getValue();
-                                    } 
+                                if($fdr){
+                                   $fdfvs = $fdr->getFDFieldValues();
+                                   foreach($fdfvs as $fdfv){
+                                       $fdf = $fdfv->getFDField();
+                                       if($fdf){
+                                           $v[$fdf->getName()] = $fdfv->getValue();
+                                       } 
+                                   }
                                 }
 
                                 $p['value'] = $v;
