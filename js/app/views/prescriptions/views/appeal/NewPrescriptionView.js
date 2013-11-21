@@ -11,6 +11,7 @@ define(function (require) {
         template: template,
         initialize: function () {
             var self = this;
+            console.log('init new prescription view',this);
             this.prescription = new Prescription({}, {
                 actionTypeId: 754
             });
@@ -43,11 +44,10 @@ define(function (require) {
                         .on('add remove change', self.showJSON, self);
 
 
-                    self.prescription.set('eventId', 788899);
-                    self.prescription.set('moa', 788899);
-                    self.prescription.set('note', 'wertyui');
-                    self.prescription.set('voa', 2345);
-                    console.log('prescription', self.prescription);
+                    self.prescription.set('eventId', self.options.appealId);
+                    self.prescription.set('note', '');
+                    self.prescription.set('voa', '');
+
                     self.render();
 
                 })
@@ -73,12 +73,26 @@ define(function (require) {
         },
         onClickSavePrescription: function () {
             console.log('onClickSave');
+            var self = this;
+            this.prescription.save({},{
+                success: function(m,r){
+                    if(r.data){
+                        console.log('saved',arguments) 
+                        self.redirectToList();
+                    }else{
+                        console.log('error',r.message) 
+                    }
+                } 
+            });
         },
         onClickCancel: function () {
+            this.redirectToList();
+           console.log('onClickCancel');
+        },
+        redirectToList: function(){
             App.Router.navigate(['appeals', this.options.appealId, 'prescriptions'].join('/'), {
                 trigger: true
             });
-            console.log('onClickCancel');
         },
         onClickAddDrug: function () {
             var popup = new AddDrugPopupView({

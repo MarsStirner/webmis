@@ -12,6 +12,9 @@ define(function (require) {
 
             console.log('prescription model init', arguments);
         },
+        urlRoot: function(){
+            return '/api/v1/prescriptions/'; 
+        },
         initialized: function(){
             var dfd = $.Deferred();
             var self = this;
