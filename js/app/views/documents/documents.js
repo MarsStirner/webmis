@@ -3332,6 +3332,77 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({
 		template: templates.uiElements._flatDirectory,
 		data: function () {
+			return {
+				model: this.model,
+				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())
+			};
+		},
+		initialize: function () {
+			if (!fds[this.model.get("scope")]) {
+				fds[this.model.get("scope")] = new FlatDirectory();
+				fds[this.model.get("scope")].set({id: this.model.get("scope")});
+				$.
+					when(fds[this.model.get("scope")].fetch()).
+					then(_.bind(this.onDirectoryReady, this));
+			} else {
+				this.onDirectoryReady();
+			}
+			/*this.directoryEntries = new FlatDirectory();
+			 this.directoryEntries.set({id: this.model.get("scope")});
+			 $.when(this.directoryEntries.fetch()).then(_.bind(function () {
+			 this.model.setValue(this.directoryEntries.toBeautyJSON()[0].id);
+			 this.render();
+			 }, this));*/
+			UIElementBase.prototype.initialize.apply(this);
+		},
+		onDirectoryReady: function () {
+			//this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
+			this.render();
+		},
+		onAttributeValueChange: function (event) {
+			if (_.isEmpty(this.getAttributeValue())) {
+				this.model.setPropertyValueFor("value", "");
+			}
+			UIElementBase.prototype.onAttributeValueChange.call(this, event);
+		}
+	});
+
+	Documents.Views.Edit.UIElement.TherapyPhaseFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
+		data: function () {
+			return {
+				model: this.model,
+				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
+					return frd["parentFdr_id"] == fds.therapyFdrId;
+				}, this)
+			};
+		},
+
+		initialize: function () {
+			Documents.Views.Edit.UIElement.FlatDirectory.prototype.initialize.call(this, this.options);
+
+			this.listenTo(this.model.collection, "change-therapyTitle", function () {
+				this.$(".attribute-value").val("").change();
+				this.model.set({mandatory: (fds.therapyFdrId ? "true" : "false")});
+				this.render();
+			});
+		}
+	});
+
+
+	Documents.Views.Edit.UIElement.TherapyFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
+		onDirectoryReady: function () {
+			fds.therapyFdrId = this.model.getValue();
+			Documents.Views.Edit.UIElement.FlatDirectory.prototype.onDirectoryReady.call(this);
+		},
+
+		onAttributeValueChange: function (event) {
+			fds.therapyFdrId = this.getAttributeValue();
+			fds.trigger("change-therapyTitle");
+			Documents.Views.Edit.UIElement.FlatDirectory.prototype.onAttributeValueChange.call(this, event);
+		}
+
+		/*template: templates.uiElements._flatDirectory,
+		data: function () {
 			var directoryEntries = (this.filterFd ?
 				_(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
 					return frd["parentFdr_id"] == this.parentFdrId;
@@ -3357,12 +3428,12 @@ define(function (require) {
 				this.onDirectoryReady(true);
 			}
 			this.parentFdrId = null;
-			/*this.directoryEntries = new FlatDirectory();
+			*//*this.directoryEntries = new FlatDirectory();
 			this.directoryEntries.set({id: this.model.get("scope")});
 			$.when(this.directoryEntries.fetch()).then(_.bind(function () {
 				this.model.setValue(this.directoryEntries.toBeautyJSON()[0].id);
 				this.render();
-			}, this));*/
+			}, this));*//*
 			UIElementBase.prototype.initialize.apply(this);
 		},
 		onDirectoryReady: function (fromCache) {
@@ -3428,14 +3499,18 @@ define(function (require) {
 			}
 
 			return link;
-		}
+		}*/
 	});
+
+
 
 	/**
 	 * Поле типа Html
 	 * @type {*}
 	 */
-	Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({});
+	Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({
+
+	});
 
 	/**
 	 * Did I ever tell you definition of insanity?
@@ -4303,11 +4378,11 @@ define(function (require) {
 			case "string":
 				//if (options.model.get("scope") === "''") {
 				if (options.model.isSubHeader()) {
-		  if (options.model.isSubHeaderVGroup()) {
-					  this.UIElementClass = Documents.Views.Edit.UIElement.SubHeaderVGroup;
-		  } else {
-			this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
-		  }
+					if (options.model.isSubHeaderVGroup()) {
+						this.UIElementClass = Documents.Views.Edit.UIElement.SubHeaderVGroup;
+					} else {
+						this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
+					}
 				} else {
 					this.UIElementClass = Documents.Views.Edit.UIElement.String;
 				}
@@ -4331,7 +4406,13 @@ define(function (require) {
 				this.UIElementClass = Documents.Views.Edit.UIElement.MKB;
 				break;
 			case "flatdirectory":
-				this.UIElementClass = Documents.Views.Edit.UIElement.FlatDirectory;
+				if (options.model.get("code") === "therapyPhaseTitle") {
+					this.UIElementClass = Documents.Views.Edit.UIElement.TherapyPhaseFlatDirectory;
+				} else if (options.model.get("code") === "therapyTitle") {
+					this.UIElementClass = Documents.Views.Edit.UIElement.TherapyFlatDirectory;
+				} else {
+					this.UIElementClass = Documents.Views.Edit.UIElement.FlatDirectory;
+				}
 				break;
 			case "html":
 				if (options.model.get("scope") === "*1") {
