@@ -42,7 +42,7 @@ define(function(require) {
             _.each(drugs, function(drug){
                 names.push(drug.name); 
             })
-            return names.join(',')
+            return names.join(', ')
         },
         getEvents: function(){
             var prescriptions = this.collection;
