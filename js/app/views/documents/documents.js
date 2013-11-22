@@ -501,9 +501,19 @@ define(function (require) {
 		},*/
 
 		getCleanHtmlFilledAttrs: function () {
-			var filledAttrs = this.getFilledAttrs();
+			var filledAttrs = this.getFilledAttrs(true);
 			_.each(filledAttrs, function (attr) {
-				attr.value = attr.value.replace(/<br>/gi, "<br/>"); //Core.Strings.cleanTextMarkup(attr.value);
+				if (attr.type === "FlatDirectory") {
+					var directoryValue = _(fds[attr.scope].toBeautyJSON()).find(function (type) {
+						return type.id == attr.value;
+					}, this);
+
+					if (directoryValue) {
+						attr.value = directoryValue['Наименование'];
+					}
+				} else {
+					attr.value = attr.value.replace(/<br>/gi, "<br/>");
+				}
 			}, this);
 			return filledAttrs;
 		},
@@ -4615,49 +4625,50 @@ define(function (require) {
 		},
 
 		getPrintData: function () {
-			return {documents: this.collection.map(function (document) {
-				var summaryAttrs = document.get("group")[0]["attribute"];
+			return {
+				documents: this.collection.map(function (document) {
+					var summaryAttrs = document.get("group")[0]["attribute"];
 
-				return {
-					patientId: appeal.get("patient").get("id"),
-					patientName: appeal.get("patient").get("name").toJSON(),
+					return {
+						patientId: appeal.get("patient").get("id"),
+						patientName: appeal.get("patient").get("name").toJSON(),
 
-					appealId: appealId,
-					appealNumber: appeal.get("number"),
+						appealId: appealId,
+						appealNumber: appeal.get("number"),
 
-					id: document.get("id"),
-					name: summaryAttrs[1]["properties"][0]["value"],
-					endDate: moment(document.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm"),
-					doctorName: [
-						summaryAttrs[4]["properties"][0]["value"],
-						summaryAttrs[5]["properties"][0]["value"],
-						summaryAttrs[6]["properties"][0]["value"]
-					].join(" "),
-					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
-					attributes: document.getCleanHtmlFilledAttrs(),
-					flatCode: document.get("flatCode"),
-		  doctorPost: {
-			id: document.getExecutorPost().getPropertyByName("valueId").value,
-			code: document.getExecutorPost().getPropertyByName("code").value,
-			name: document.getExecutorPost().getPropertyByName("value").value
-		  },
-					execPerson: appeal.get("execPerson")
-				};
+						id: document.get("id"),
+						name: summaryAttrs[1]["properties"][0]["value"],
+						endDate: moment(document.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm"),
+						doctorName: [
+							summaryAttrs[4]["properties"][0]["value"],
+							summaryAttrs[5]["properties"][0]["value"],
+							summaryAttrs[6]["properties"][0]["value"]
+						].join(" "),
+						doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
+						attributes: document.getCleanHtmlFilledAttrs(),
+						flatCode: document.get("flatCode"),
+						doctorPost: {
+							id: document.getExecutorPost().getPropertyByName("valueId").value,
+							code: document.getExecutorPost().getPropertyByName("code").value,
+							name: document.getExecutorPost().getPropertyByName("value").value
+						},
+						execPerson: appeal.get("execPerson")
+					};
 
 
-				/*var pointType = _(data.attributes).where({id: 96});
+					/*var pointType = _(data.attributes).where({id: 96});
 
-				 if (pointType.length) {
-				 var pointTypeId = pointType[0].value;
-				 var directoryValue = _(this.hospitalizationPointTypes.toBeautyJSON()).find(function (type) {
-				 return type.id == pointTypeId;
-				 });
-				 if (directoryValue) {
-				 _(data.attributes).where({id: 96})[0].value = directoryValue['49'];
-				 //pointType.value = directoryValue['49'];
-				 }
-				 }*/
-			}, this)};
+					 if (pointType.length) {
+					 var pointTypeId = pointType[0].value;
+					 var directoryValue = _(this.hospitalizationPointTypes.toBeautyJSON()).find(function (type) {
+					 return type.id == pointTypeId;
+					 });
+					 if (directoryValue) {
+					 _(data.attributes).where({id: 96})[0].value = directoryValue['49'];
+					 //pointType.value = directoryValue['49'];
+					 }
+					 }*/
+				}, this)};
 		},
 
 		render: function () {
