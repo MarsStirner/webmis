@@ -3344,7 +3344,7 @@ define(function (require) {
 					when(fds[this.model.get("scope")].fetch()).
 					then(_.bind(this.onDirectoryReady, this));
 			} else {
-				this.onDirectoryReady();
+				this.onDirectoryReady(true);
 			}
 			this.parentFdrId = null;
 			/*this.directoryEntries = new FlatDirectory();
@@ -3355,7 +3355,7 @@ define(function (require) {
 			}, this));*/
 			UIElementBase.prototype.initialize.apply(this);
 		},
-		onDirectoryReady: function () {
+		onDirectoryReady: function (fromCache) {
 			if (this.model.get("code") === "therapyPhaseTitle") {
 				this.filterFd = true;
 				this.listenTo(fds, "change-therapyTitle", function (event) {
@@ -3367,7 +3367,7 @@ define(function (require) {
 				});
 			}
 
-			this.render();
+			if (!fromCache) this.render();
 
 			if (this.model.get("code") === "therapyTitle") {
 				var valueProperty = _.find(this.model.get("properties"),function(item){
