@@ -88,6 +88,7 @@ define(function(require) {
                 // for all other views
                   '': 'HH(:mm)'            // 7p
                 } ,
+                axisFormat: 'HH:mm',
                 monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July',
                  'August', 'September', 'October', 'Ноябрь', 'December'],
                 dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -106,8 +107,8 @@ define(function(require) {
                 
                 },
                 firstDay: 1,
-                slotMinutes: 15,
-                snapMinutes: 15,
+                slotMinutes: 30,
+                snapMinutes: 1,
                 eventDurationEditable: true,
                 editable: true,
                 selectable: true,
