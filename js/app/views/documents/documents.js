@@ -3367,6 +3367,10 @@ define(function (require) {
 		}
 	});
 
+	/**
+	 * Поле типа FlatDirectory для списка этапов терапии
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.TherapyPhaseFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
 		data: function () {
 			return {
@@ -3388,7 +3392,10 @@ define(function (require) {
 		}
 	});
 
-
+	/**
+	 * Поле типа FlatDirectory для списка терапии
+	 * @type {*}
+	 */
 	Documents.Views.Edit.UIElement.TherapyFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
 		onDirectoryReady: function () {
 			fds.therapyFdrId = this.model.getValue();
