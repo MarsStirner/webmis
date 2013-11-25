@@ -39,7 +39,7 @@
 			<%if(therapy.getClosedPhases().length > 0){%>
 				<h3>Завершенные этапы</h3>
 				<% _.each(therapy.getClosedPhases(), function(phase){ %>
-					<p><%= phase.title %>
+					<p><%if(phase.link){%><a href="<%= phase.link %>" target="_blank"><%= phase.title %></a><%}else{%><%= phase.title %><%}%>
 						<a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>">
 						(<%= Core.Date.format(phase.beginDate) %> - <%= Core.Date.format(phase.endDate) %>)
 						</a>
