@@ -107,6 +107,7 @@ define(function (require) {
 			_string: _.template(require("text!templates/documents/edit/ui-elements/string.html")),
 			_mkb: _.template(require("text!templates/documents/edit/ui-elements/mkb.html")),
 			_flatDirectory: _.template(require("text!templates/documents/edit/ui-elements/flat-directory.html")),
+			_therapyFlatDirectory: _.template(require("text!templates/documents/edit/ui-elements/therapy-flat-directory.html")),
 			_select: _.template(require("text!templates/documents/edit/ui-elements/select.html")),
 			_person: _.template(require("text!templates/documents/edit/ui-elements/person.html")),
 			_htmlHelper: _.template(require("text!templates/documents/edit/ui-elements/html-helper.html")),
@@ -3368,10 +3369,41 @@ define(function (require) {
 	});
 
 	/**
+	 * Поле типа FlatDirectory для терапии (с ссылкой на док)
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.TherapyFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
+		template: templates.uiElements._therapyFlatDirectory,
+		showDocLink: function () {
+			var selValue = this.getAttributeValue();
+			if (selValue) {
+				var selectedItem = _.find(fds[this.model.get("scope")].toBeautyJSON(), function(item) {
+					return item["id"] == selValue;
+				});
+				if (selectedItem && selectedItem["Ссылка"]) {
+					this.$(".therapy-doc-link-container")
+						.show()
+						.find(".therapy-doc-link")
+							.attr("href", selectedItem["Ссылка"])
+							.find(".therapy-doc-link-text")
+								.text(selectedItem["Наименование"]);
+				}
+
+			} else {
+				this.$(".therapy-doc-link-container").hide();
+			}
+		},
+		onAttributeValueChange: function (event) {
+			this.showDocLink();
+			Documents.Views.Edit.UIElement.FlatDirectory.prototype.onAttributeValueChange.call(this, event);
+		}
+	});
+
+	/**
 	 * Поле типа FlatDirectory для списка этапов терапии
 	 * @type {*}
 	 */
-	Documents.Views.Edit.UIElement.TherapyPhaseTitleFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
+	Documents.Views.Edit.UIElement.TherapyPhaseTitleFlatDirectory = Documents.Views.Edit.UIElement.TherapyFlatDirectory.extend({
 		data: function () {
 			return {
 				model: this.model,
@@ -3380,9 +3412,8 @@ define(function (require) {
 				}, this)
 			};
 		},
-
 		initialize: function () {
-			Documents.Views.Edit.UIElement.FlatDirectory.prototype.initialize.call(this, this.options);
+			Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.initialize.call(this, this.options);
 
 			this.listenTo(fds, "change-therapyTitle", function () {
 				//this.$(".attribute-value").val("").change();
@@ -3396,118 +3427,17 @@ define(function (require) {
 	 * Поле типа FlatDirectory для списка терапии
 	 * @type {*}
 	 */
-	Documents.Views.Edit.UIElement.TherapyTitleFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
+	Documents.Views.Edit.UIElement.TherapyTitleFlatDirectory = Documents.Views.Edit.UIElement.TherapyFlatDirectory.extend({
 		onDirectoryReady: function () {
 			fds.therapyFdrId = this.model.getValue();
 			fds.trigger("change-therapyTitle");
-			Documents.Views.Edit.UIElement.FlatDirectory.prototype.onDirectoryReady.call(this);
+			Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.onDirectoryReady.call(this);
 		},
-
 		onAttributeValueChange: function (event) {
 			fds.therapyFdrId = this.getAttributeValue();
 			fds.trigger("change-therapyTitle");
-			Documents.Views.Edit.UIElement.FlatDirectory.prototype.onAttributeValueChange.call(this, event);
+			Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.onAttributeValueChange.call(this, event);
 		}
-
-		/*template: templates.uiElements._flatDirectory,
-		data: function () {
-			var directoryEntries = (this.filterFd ?
-				_(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
-					return frd["parentFdr_id"] == this.parentFdrId;
-				}, this) :
-				_(fds[this.model.get("scope")].toBeautyJSON()));
-
-	  this.filterFd = false;
-	  //console.log('directoryEntries',directoryEntries);
-
-			return {
-				model: this.model,
-				directoryEntries: directoryEntries
-			};
-		},
-		initialize: function () {
-			if (!fds[this.model.get("scope")]) {
-				fds[this.model.get("scope")] = new FlatDirectory();
-				fds[this.model.get("scope")].set({id: this.model.get("scope")});
-				$.
-					when(fds[this.model.get("scope")].fetch()).
-					then(_.bind(this.onDirectoryReady, this));
-			} else {
-				this.onDirectoryReady(true);
-			}
-			this.parentFdrId = null;
-			*//*this.directoryEntries = new FlatDirectory();
-			this.directoryEntries.set({id: this.model.get("scope")});
-			$.when(this.directoryEntries.fetch()).then(_.bind(function () {
-				this.model.setValue(this.directoryEntries.toBeautyJSON()[0].id);
-				this.render();
-			}, this));*//*
-			UIElementBase.prototype.initialize.apply(this);
-		},
-		onDirectoryReady: function (fromCache) {
-			if (this.model.get("code") === "therapyPhaseTitle") {
-				this.filterFd = true;
-				this.listenTo(fds, "change-therapyTitle", function (event) {
-					this.parentFdrId = event.id;
-					this.$(".attribute-value").val("").change();
-					this.filterFd = true;
-					this.model.set({mandatory: (this.parentFdrId ? "true" : "false")});
-					this.render();
-				});
-			}
-
-			if (!fromCache) this.render();
-
-			if (this.model.get("code") === "therapyTitle") {
-				var valueProperty = _.find(this.model.get("properties"),function(item){
-					return item.name === "value";
-				});
-				if (valueProperty && valueProperty.value) {
-					this.showLink(valueProperty.value);
-				}
-			}
-
-		},
-
-		onAttributeValueChange: function(event) {
-			var id = this.getAttributeValue();
-			var code = this.model.get("code");
-
-			if (_.isEmpty(this.getAttributeValue())) {
-				this.model.setPropertyValueFor("value", "");
-			}
-			if (this.model.get("code") === "therapyTitle") {
-				fds.trigger("change-therapyTitle", {
-					id: this.getAttributeValue()
-				});
-			}
-			if (code === "therapyTitle" || code === "therapyPhaseTitle") {
-				this.showLink(id);
-			}
-			UIElementBase.prototype.onAttributeValueChange.call(this, event);
-		},
-
-		showLink: function(id) {
-			var link = this.getLink(id) ? this.getLink(id) : '';
-			this.$el.find('.link').html(link);
-		},
-
-		getLink: function(id) {
-			var link = '';
-			var items = fds[this.model.get("scope")].toBeautyJSON();
-			var selectedItem = _.find(items, function(item) {
-				return item["id"] == id;
-			});
-
-			if (selectedItem) {
-				link = selectedItem['Ссылка'];
-				if (link) {
-					link = '<a href="' + link + '" target="_blank"><i class="icon-book"></i> ' + selectedItem['Наименование'] + '</a>'
-				}
-			}
-
-			return link;
-		}*/
 	});
 
 
