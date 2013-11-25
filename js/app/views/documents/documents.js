@@ -227,9 +227,9 @@ define(function (require) {
 							ta.readOnly = "true";
 						}
 						if (ta.therapyFieldCode == "therapyBegDate") {
-							if(lastTherapy.get("beginDate")){
-								ta.properties[0].value = moment(lastTherapy.get("beginDate")).format(CD_DATE_FORMAT);
-							}
+							//if (lastTherapy.get("beginDate")) {
+								ta.properties[0].value = moment(lastTherapy.get("beginDate") || new Date()).format(CD_DATE_FORMAT);
+							//}
 							ta.readOnly = "true";
 						}
 
@@ -239,7 +239,7 @@ define(function (require) {
 								ta.readOnly = "true";
 							}
 							if (ta.therapyFieldCode == "therapyPhaseBegDate") {
-								ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate).format(CD_DATE_FORMAT);
+								ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate || new Date()).format(CD_DATE_FORMAT);
 								ta.readOnly = "true";
 							}
 						}
