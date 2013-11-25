@@ -19,7 +19,8 @@ require.config({
 		"rivetsLib": "../lib/rivets/rivets-0.5.0",
 		"rivets": "../lib/rivets/adapter",
         "datetimeEntry": "../lib/jquery.datetimeEntry/jquery.datetimeentry",
-        "fullCalendar": "../lib/fullcalendar/fullcalendar"
+        "fullCalendar": "../lib/fullcalendar/fullcalendar",
+        "qtip": "../lib/jquery.qtip/jquery.qtip"
 	},
 	shim: {
 		'backbone': {

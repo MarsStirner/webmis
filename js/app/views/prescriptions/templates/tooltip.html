@@ -1,0 +1,48 @@
+<div class="korus-tooltip">
+<div>
+    <p>
+    Препараты
+    </p>
+<table>
+    <tr>
+        <td>Название</td>
+        <td>Доза</td>
+    </tr>
+    <% _.each(data.drugs, function(drug){%>
+    <tr>
+        <td><%= drug.name %></td><td><%= drug.dose %></td>
+    </tr>
+    <%})%>
+</table>
+</div>
+<div>
+    <p>
+        Интервалы
+    </p>
+<table>
+    <tr>
+        <td>Состояние</td>
+        <td>Время</td>
+    </tr>
+    <% _.each(data.assigmentIntervals, function(interval){%>
+        <tr>
+            <td style="background-color:<%=interval.backgroundColor %>;">
+                <%= interval.stateName %>            
+            </td>
+            <td>
+                <%= Core.Date.formatDateTime(interval.beginDateTime) %> 
+            </td> 
+        </tr> 
+    <%})%>
+
+</table>
+</div>
+<% if(data.note){%>
+<p>   Примечание: <%= data.note %></p>
+<%}%>
+<% if(data.doctor){%>
+<p>
+    Назначивший врач: <%= data.doctor.firstName %> <%= data.doctor.lastName %>
+</p>
+<%}%>
+</div>

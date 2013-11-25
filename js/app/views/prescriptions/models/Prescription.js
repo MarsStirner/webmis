@@ -8,7 +8,20 @@ define(function (require) {
     var Prescription = Model.extend({
         initialize: function (model, options) {
             var self = this;
-            this.actionTypeId = options.actionTypeId ? options.actionTypeId : false;
+            this.actionTypeId = options.actionTypeId || false;
+            this.initialized().then(function(){
+                if(self.getPropertyByName('Примечание')){
+                    self.set('note', self.getPropertyByName('Примечание').get('value')) 
+                }
+                if(self.getPropertyByCode('moa')){
+                    self.set('moa', self.getPropertyByCode('moa').get('value')) 
+                }
+                if(self.getPropertyByCode('voa')){
+                    self.set('voa', self.getPropertyByCode('voa').get('value')) 
+                }
+
+
+            });
         },
         urlRoot: function () {
             return '/api/v1/prescriptions/';
@@ -65,21 +78,22 @@ define(function (require) {
             return attributes;
         },
 
-        getProperty: function(key, value){
+        getProperty: function (key, value) {
             var model;
-            if(this.get('properties')){
-               model = this.get('properties').find(function(model){
-                    return model.get(key) === value; 
-                });
+            if (this.get('properties')) {
+                model = this.get('properties')
+                    .find(function (model) {
+                        return model.get(key) === value;
+                    });
             }
-            
+
             return model;
         },
-        getPropertyByCode: function(value){
-            return this.getProperty('code', value); 
+        getPropertyByCode: function (value) {
+            return this.getProperty('code', value);
         },
-        getPropertyByName: function(value){
-            return this.getProperty('name', value); 
+        getPropertyByName: function (value) {
+            return this.getProperty('name', value);
         },
 
         addInterval: function () {
@@ -88,6 +102,7 @@ define(function (require) {
         },
 
         set: function (key, value, options) {
+            var attr;
             // Normalize the key-value into an object
             if (_.isObject(key) || key === null) {
                 attrs = key;
@@ -98,27 +113,27 @@ define(function (require) {
             }
 
             // Go over all the set attributes and make your changes
-            for (var attr in attrs) {
+            for (attr in attrs) {
                 if (!this.get('properties')) {
                     break;
                 }
 
-                if (attr == 'moa') {
+                if (attr === 'moa') {
                     var moaModel = this.getPropertyByCode('moa');
                     if (moaModel) {
                         moaModel.set('value', attrs[attr]);
                     }
                 }
 
-                if (attr == 'voa') {
+                if (attr === 'voa') {
                     var voaModel = this.getPropertyByCode('voa');
                     if (voaModel) {
                         voaModel.set('value', attrs[attr]);
                     }
                 }
 
-                if (attr == 'note') {
-                    var noteModel = this.getPropertyByName('Примечание'); 
+                if (attr === 'note') {
+                    var noteModel = this.getPropertyByName('Примечание');
                     if (noteModel) {
                         noteModel.set('value', attrs[attr]);
                     }
