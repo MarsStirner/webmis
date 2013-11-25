@@ -3388,7 +3388,6 @@ define(function (require) {
 							.find(".therapy-doc-link-text")
 								.text(selectedItem["Наименование"]);
 				}
-
 			} else {
 				this.$(".therapy-doc-link-container").hide();
 			}
