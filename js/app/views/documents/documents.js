@@ -3371,7 +3371,7 @@ define(function (require) {
 	 * Поле типа FlatDirectory для списка этапов терапии
 	 * @type {*}
 	 */
-	Documents.Views.Edit.UIElement.TherapyPhaseFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
+	Documents.Views.Edit.UIElement.TherapyPhaseTitleFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
 		data: function () {
 			return {
 				model: this.model,
@@ -3396,7 +3396,7 @@ define(function (require) {
 	 * Поле типа FlatDirectory для списка терапии
 	 * @type {*}
 	 */
-	Documents.Views.Edit.UIElement.TherapyFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
+	Documents.Views.Edit.UIElement.TherapyTitleFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
 		onDirectoryReady: function () {
 			fds.therapyFdrId = this.model.getValue();
 			fds.trigger("change-therapyTitle");
@@ -4415,9 +4415,9 @@ define(function (require) {
 				break;
 			case "flatdirectory":
 				if (options.model.get("code") === "therapyPhaseTitle") {
-					this.UIElementClass = Documents.Views.Edit.UIElement.TherapyPhaseFlatDirectory;
+					this.UIElementClass = Documents.Views.Edit.UIElement.TherapyPhaseTitleFlatDirectory;
 				} else if (options.model.get("code") === "therapyTitle") {
-					this.UIElementClass = Documents.Views.Edit.UIElement.TherapyFlatDirectory;
+					this.UIElementClass = Documents.Views.Edit.UIElement.TherapyTitleFlatDirectory;
 				} else {
 					this.UIElementClass = Documents.Views.Edit.UIElement.FlatDirectory;
 				}
