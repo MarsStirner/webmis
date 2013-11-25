@@ -1103,11 +1103,11 @@ define(function (require) {
 			LayoutBase.prototype.initialize.call(this, this.options);
             var self = this;
             console.log('init '+this,(function(){
-                for (var name in self) {  
+                for (var name in self) {
                     if(!this.hasOwnProperty(name)){
-                        console.log(self+' inhirited:',name) 
+                        console.log(self+' inhirited:',name)
                     }else{
-                         console.log(self+' own:',name) 
+                         console.log(self+' own:',name)
                     }
                 }
             })());
@@ -3380,8 +3380,8 @@ define(function (require) {
 		initialize: function () {
 			Documents.Views.Edit.UIElement.FlatDirectory.prototype.initialize.call(this, this.options);
 
-			this.listenTo(this.model.collection, "change-therapyTitle", function () {
-				this.$(".attribute-value").val("").change();
+			this.listenTo(fds, "change-therapyTitle", function () {
+				//this.$(".attribute-value").val("").change();
 				this.model.set({mandatory: (fds.therapyFdrId ? "true" : "false")});
 				this.render();
 			});
@@ -3392,6 +3392,7 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.TherapyFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
 		onDirectoryReady: function () {
 			fds.therapyFdrId = this.model.getValue();
+			fds.trigger("change-therapyTitle");
 			Documents.Views.Edit.UIElement.FlatDirectory.prototype.onDirectoryReady.call(this);
 		},
 
@@ -5120,7 +5121,7 @@ define(function (require) {
 		toggleReviewState: function () {
             console.log('summary toggle',this)
 			App.Router.navigate(["patients",this.options.patientId,this.getEditPageTypeName(),this.selectedDocuments.pluck("id").join(",")].join("/"),{trigger: true});
-		
+
 		},
 
 
