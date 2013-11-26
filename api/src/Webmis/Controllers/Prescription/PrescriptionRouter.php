@@ -20,6 +20,7 @@ class PrescriptionRouter implements ControllerProviderInterface
 
         $router->get('/template/{actionTypeId}', getController('Prescription/template'));
 
+        $router->get('/types', getController('Prescription/typesList'));
         $router->get('/', getController('Prescription/list'));
         $router->post('/', getController('Prescription/create'));
         $router->get('/{prescriptionId}', getController('Prescription/read'));
@@ -31,7 +32,6 @@ class PrescriptionRouter implements ControllerProviderInterface
 
         $router->get('/{prescriptionId}/intervals', getController('Prescription/readIntervals'));
         $router->put('/{prescriptionId}/intervals', getController('Prescription/updateIntervals'));
-
 
         return $router;
     }

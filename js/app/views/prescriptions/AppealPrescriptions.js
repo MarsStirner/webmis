@@ -4,6 +4,7 @@ define(function(require) {
 
 	var BaseView = require('./views/BaseView');
 	var Prescriptions = require('./collections/Prescriptions');
+    var PrescriptionEdit = require('./views/appeal/PrescriptionEditView');
 	var ListView = require('./views/appeal/ListView');
 	var ActionsView = require('./views/appeal/ListActionsView');
     require('qtip');
@@ -75,6 +76,16 @@ define(function(require) {
             return events;
         
         },
+        openPrescriptionEdit: function(prescriptionId){
+            var prescription = this.collection.get(prescriptionId);
+            console.log('open prescription edit', prescription); 
+            var pep = new PrescriptionEdit({
+                prescription: prescription 
+            });
+            pep.render();
+            pep.open();
+
+        },
         getTooltipText: function(id){
             var prescription = this.collection.get(id);
             console.log('tt data', prescription.toJSON())
@@ -124,10 +135,11 @@ define(function(require) {
                     week:     'неделя',
                     day:      'день'
                 },
-                // eventClick: function(calEvent, jsEvent, view) {
-                //     console.log('event click',arguments) 
+                eventClick: function(event, jsEvent, view) {
+                    console.log('event click',arguments) 
+                    self.openPrescriptionEdit(event.id);
                 
-                // },
+                },
                 firstDay: 1,
                 slotMinutes: 30,
                 snapMinutes: 1,

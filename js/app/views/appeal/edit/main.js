@@ -19,7 +19,8 @@ define(function(require) {
 	var HospitalBed = require("views/moves/HospitalBedView");
 
     var AppealPrescriptionsView = require("views/prescriptions/AppealPrescriptions");
-    var NewPrescriptionView = require("views/prescriptions/views/appeal/NewPrescriptionView");
+    var PrescriptionNewView = require("views/prescriptions/views/appeal/PrescriptionNewView");
+    var PrescriptionEditView = require("views/prescriptions/views/appeal/PrescriptionEditView");
 	require("models/appeal");
 	require("collections/patient-appeals");
 	require("views/breadcrumbs");
@@ -84,7 +85,8 @@ define(function(require) {
 			},
             "prescriptions": {
                 "REVIEW": AppealPrescriptionsView,
-                "SUB_REVIEW": NewPrescriptionView
+                "SUB_REVIEW": PrescriptionNewView,
+                "SUB_EDIT": PrescriptionEditView
             },
 			"quotes": {
 				"REVIEW": QuotesView

@@ -115,31 +115,46 @@ class RlsController
         $route_params = $request->get('_route_params') ;
         $nomenId = (int) $route_params['nomenId'];
         $data = array();
+        $client = $app['prescriptionExchange']->getClient();
+
+        $responce = $client->updateBalanceOfGoods(array($nomenId));
+
 
         $balance = RlsBalanceOfGoodsQuery::create()
         ->filterByRlsNomenId($nomenId)
         ->useRlsNomenQuery('nomen')
             ->leftJoinRlsTradeName('tradeName')
+            ->leftJoinrbUnitRelatedByunitId('rbUnit')
         ->endUse()
         ->with('nomen')
+        ->with('rbUnit')
         ->with('tradeName')
 
         ->leftJoinWithRbStorage()
         ->find();
 
         foreach ($balance as $item) {
-            $tradeLocalName = $item->getRlsNomen()->getRlsTradeName()->getLocalName();
+            $rlsNomen = $item->getRlsNomen();
+            $rbUnit = $rlsNomen->getRbUnitRelatedByunitId();
+            if($rbUnit){
+                $unitName = $rbUnit->getName();
+            }else{
+                $unitName = ''; 
+            }
+
+            $tradeLocalName = $rlsNomen->getRlsTradeName()->getLocalName();
 
             $data[] = array_merge(
                 $item->toArray(),
                 array('storageName' => $item->getRbStorage()->getName()),
-                array('tradeLocalName' => $tradeLocalName)
+                array('tradeLocalName' => $tradeLocalName),
+                array('unitName' => $unitName)
                 );
         }
 
 
 
-        return $app['jsonp']->jsonp(array('data' => $data ));
+        return $app['jsonp']->jsonp(array('data' => $data, 'trift'=>$responce ));
     }
 
 

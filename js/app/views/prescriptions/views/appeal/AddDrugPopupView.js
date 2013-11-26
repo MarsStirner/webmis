@@ -39,7 +39,8 @@ define(function(require) {
             drugs.add({
                "nomen": drug.get('rlsNomenId'),
                "name": drug.get('tradeLocalName'),
-               "dose":""
+               "dose":"",
+               "unit": drug.get('unitName')
             })
             this.close();
         },

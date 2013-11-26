@@ -13,6 +13,7 @@ use Webmis\Models\ActionPropertyDouble;
 use Webmis\Models\ActionPropertyString;
 use Webmis\Models\ActionPropertyTypeQuery;
 use Webmis\Models\ActionQuery;
+use Webmis\Models\ActionTypeQuery;
 use Webmis\Models\DrugChart;
 use Webmis\Models\DrugChartQuery;
 use Webmis\Models\DrugComponent;
@@ -24,6 +25,16 @@ class PrescriptionController
     public function noAction(Request $request, Application $app)
     {
         return $app['jsonp']->jsonp(array('message' => 'тут ничего нет, иди домой' ));
+    }
+
+    public function typesListAction(Request $request, Application $app)
+    {
+        $types = ActionTypeQuery::create()
+            ->filterByFlatCode(array('infusion'))
+            ->select(array('id','title')) 
+            ->find()->toArray();
+
+        return $app['jsonp']->jsonp(array('data' => $types));
     }
 
 
