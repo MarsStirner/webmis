@@ -54,11 +54,9 @@ class FDFieldValueTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('FDFieldRelatedByFDFieldId', 'Webmis\\Models\\FDField', RelationMap::MANY_TO_ONE, array('fdField_id' => 'id', ), null, null);
-        $this->addRelation('FDRecordRelatedByFDRecordId', 'Webmis\\Models\\FDRecord', RelationMap::MANY_TO_ONE, array('fdRecord_id' => 'id', ), null, null);
+        $this->addRelation('FDField', 'Webmis\\Models\\FDField', RelationMap::MANY_TO_ONE, array('fdField_id' => 'id', ), null, null);
+        $this->addRelation('FDRecord', 'Webmis\\Models\\FDRecord', RelationMap::MANY_TO_ONE, array('fdRecord_id' => 'id', ), null, null);
         $this->addRelation('ActionPropertyFDRecord', 'Webmis\\Models\\ActionPropertyFDRecord', RelationMap::ONE_TO_MANY, array('fdRecord_id' => 'value', ), null, null, 'ActionPropertyFDRecords');
-        $this->addRelation('FDFieldRelatedById', 'Webmis\\Models\\FDField', RelationMap::ONE_TO_ONE, array('fdField_id' => 'id', ), null, null);
-        $this->addRelation('FDRecordRelatedById', 'Webmis\\Models\\FDRecord', RelationMap::ONE_TO_ONE, array('fdRecord_id' => 'id', ), null, null);
     } // buildRelations()
 
 } // FDFieldValueTableMap
