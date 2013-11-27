@@ -166,6 +166,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		authorization: function() {
+			window.document.title = "Авторизация";
 			require(["views/authorization"], function() {
 				var authView = new App.Views.Authorization;
 				authView.render();
