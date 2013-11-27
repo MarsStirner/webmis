@@ -20,6 +20,7 @@ define(function(require) {
 
 		events: {
 			'change .Departments': 'onSelectDepartment',
+			'change .bed-profiles': 'onSelectBedProfile',
 			'change .movedFromUnitId': 'onChangeMovedFrom',
 			'click .save': 'onSave',
 			'click .actions.cancel': 'onCancel'
@@ -35,8 +36,20 @@ define(function(require) {
 			this.model.set({
 				"clientId": this.options.appeal.get("patient").get("id")
 			});
-			self.model.on("change", this.validate, this);
+			this.model.on("change", this.validate, this);
+            this.model.on("change:bedId", function(){
+                var bedId = this.model.get('bedId');
+                var bed = this.bedsCollection.find(function(model){
+                    return bedId = model.get('bedId');
+                });
+                if(bed){
+                    var profileId = bed.get('profileId'); 
+                    this.model.set('bedProfileId', profileId);
+                }
+                console.log('mc', this.model.toJSON(),bedId, bed, profileId); 
 
+
+            }, this);
 
 			this.bedsCollection = new Beds();
 			this.bedsCollection.on('reset', this.renderBeds, this);
@@ -135,8 +148,18 @@ define(function(require) {
 			}
 
 			this.model.set('bedId', '');
+            this.model.set('bedProfileId','');
 
 		},
+
+        onSelectBedProfile: function(){
+			var $target = this.$(event.target);
+            var bedProfileId = $target.val();
+            if(bedProfileId){
+                this.model.set('bedProfileId',bedProfileId);
+            }
+            console.log('onSelectBedProfile', bedProfileId); 
+        },
 
 		loadBeds: function(departmentId){
 			return this.bedsCollection.setDepartmentId(departmentId).fetch();
@@ -144,7 +167,7 @@ define(function(require) {
 
 		validate: function() {
 
-			if (!this.model.get('bedId')) {//!this.model.get('movedFromUnitId') ||
+			if (!this.model.get('bedId')||!this.model.get('bedProfileId')) {//!this.model.get('movedFromUnitId') ||
 				this.disableSaveButton();
 			} else {
 				this.enableSaveButton();
