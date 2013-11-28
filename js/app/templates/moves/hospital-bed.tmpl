@@ -72,11 +72,11 @@
 		<% } %>
 	</div>
     <div class="LineBlock">
-    <label>Профиль койки</label>
+    <label>Профиль&nbsp; койки</label>
         <select class="bed-profiles" style="width:200px;">
-        <option val="">...</option> 
+        <option value="">...</option> 
         <% _.each(bedProfiles, function(bedProfile){%>
-        <option val=""><%=bedProfile.name%></option>
+        <option value="<%=bedProfile.id%>"><%=bedProfile.name%></option>
         <%})%>
         </select>
     

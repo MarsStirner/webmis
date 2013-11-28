@@ -40,15 +40,21 @@ define(function(require) {
             this.model.on("change:bedId", function(){
                 var bedId = this.model.get('bedId');
                 var bed = this.bedsCollection.find(function(model){
-                    return bedId = model.get('bedId');
+                    return bedId == model.get('bedId');
                 });
                 if(bed){
                     var profileId = bed.get('profileId'); 
+                    console.log('change:bedId', bed,profileId);
                     this.model.set('bedProfileId', profileId);
+                }else{
+                    this.model.set('bedProfileId',''); 
                 }
-                console.log('mc', this.model.toJSON(),bedId, bed, profileId); 
 
+            }, this);
 
+            this.model.on("change:bedProfileId", function(model, bedProfileId){
+                console.log('change:bedProfileId', model, bedProfileId)
+                this.ui.$bedProfiles.select2('val',bedProfileId); 
             }, this);
 
 			this.bedsCollection = new Beds();
@@ -153,12 +159,12 @@ define(function(require) {
 		},
 
         onSelectBedProfile: function(){
-			var $target = this.$(event.target);
+			var $target = this.ui.$bedProfiles;//$(event.target);
             var bedProfileId = $target.val();
-            if(bedProfileId){
+            //if(bedProfileId){
                 this.model.set('bedProfileId',bedProfileId);
-            }
-            console.log('onSelectBedProfile', bedProfileId); 
+            //}
+            console.log('onSelectBedProfile', $target, bedProfileId); 
         },
 
 		loadBeds: function(departmentId){
