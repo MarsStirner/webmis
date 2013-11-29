@@ -104,7 +104,8 @@ define(function(require) {
             };
 
             function vacateBed() {
-                var closeBedDate = closeDate - (60 * 60 * 1000); //какой-то хак от Марины Владимировны, для поддержки НТК
+                //var closeBedDate = closeDate - (60 * 60 * 1000); //какой-то хак от Марины Владимировны, для поддержки НТК
+                var closeBedDate = closeDate - (1000); //какой-то хак , для поддержки НТК
                 //выписка с койки
                 return $.ajax({
                     url: '/api/v1/appeals/' + appealId + '/bed/vacate?execDate=' + closeBedDate,
