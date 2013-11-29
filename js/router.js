@@ -413,16 +413,19 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			if (!this.checkAuthToken()) {
 				return false
 			}
-			console.log('patientSummaryItem', patientId, docIds);
 			window.document.title = "Сводная информация";
 			this.currentPage = "patientSummaryList";
 
 			require(["views/app","views/summary/ItemView"], function(AppView, ItemView) {
+                var params = Core.Url.extractUrlParameters();
+                console.log('patientSummaryItem', params);
+            
 
 				var view = new ItemView({
 					path: Backbone.history.fragment,
 					patientId: patientId,
-					docIds: docIds
+					docIds: params.docIds,
+                    appealId: params.appealId
 				});
 
 				if (!this.appView) {
