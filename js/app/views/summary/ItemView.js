@@ -5,6 +5,7 @@ define(function(require) {
 	var Documents = require("views/documents/documents");
 
 	require("models/appeal");
+    require("views/print");
 
 	return View.extend({
 		initialize: function(){
@@ -63,7 +64,7 @@ define(function(require) {
 				patientId: this.options.patientId,
 				patientName: this.patient.get('name').get('raw')
 			});
-
+            appeal = this.appeal;
 			this.itemView = new Documents.Summary.Review.Layout({
 				patientId: this.options.patientId,
 				subId: this.options.docIds.split(','),

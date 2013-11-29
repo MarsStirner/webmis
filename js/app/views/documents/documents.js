@@ -4989,6 +4989,7 @@ define(function (require) {
 		onChangeEvent: function(e){
 			var $target = $(e.target);
 			this.collection.appealId = $target.val();
+            appealId = $target.val();
 			this.collection.pageNumber = 1;
 			this.collection.fetch();
 		},
@@ -5055,8 +5056,8 @@ define(function (require) {
 			return 'Summary.List.Layout';
 		},
 		toggleReviewState: function () {
-            console.log('summary toggle',this)
-			App.Router.navigate(["patients",this.options.patientId,this.getEditPageTypeName(),'?appealId='+this.options.appealId+'&docIds='+this.selectedDocuments.pluck("id").join(",")].join("/"),{trigger: true});
+            console.log('summary toggle',this, appealId)
+			App.Router.navigate(["patients",this.options.patientId,this.getEditPageTypeName(),'?appealId='+ appealId+'&docIds='+this.selectedDocuments.pluck("id").join(",")].join("/"),{trigger: true});
 
 		},
 
@@ -5106,20 +5107,7 @@ define(function (require) {
 
 	Documents.Summary.Review.Controls = Documents.Views.Review.Base.Controls.extend({
 		onBackToDocumentListClick: function () {
-
-			//if (this.options.included) {
-			//	this.collection.trigger("review:quit");
-			//} else {
-				App.Router.navigate(["patients",this.options.patientId,'summary'].join("/"),{trigger: true});
-				// dispatcher.trigger("change:viewState", {
-				// 	type: this.options.reviewPageTypeName,
-				// 	mode: "REVIEW",
-				// 	options: {
-				// 		documentTypes: this.options.documentTypes,
-				// 		documents: this.options.documents
-				// 	}
-				// });
-			//}
+            App.Router.navigate(["patients",this.options.patientId,'summary'].join("/"),{trigger: true});
 		}
 	});
 
