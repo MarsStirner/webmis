@@ -71,16 +71,6 @@
 		</div>
 		<% } %>
 	</div>
-    <div class="LineBlock">
-    <label>Профиль&nbsp; койки</label>
-        <select class="bed-profiles" style="width:200px;">
-        <option value="">...</option> 
-        <% _.each(bedProfiles, function(bedProfile){%>
-        <option value="<%=bedProfile.id%>"><%=bedProfile.name%></option>
-        <%})%>
-        </select>
-    
-    </div>
 </li>
 <li>
 
@@ -91,6 +81,16 @@
 <div class="beds clearfix">
 
 </div>
+    <div class="LineBlock">
+    <label>Профиль&nbsp; койки</label>
+        <select class="bed-profiles" style="width:200px;">
+        <option value="">...</option> 
+        <% _.each(bedProfiles, function(bedProfile){%>
+        <option value="<%=bedProfile.id%>"><%=bedProfile.name%></option>
+        <%})%>
+        </select>
+    
+    </div>
 </li>
 </ul>
 <div class="FormButtons">
