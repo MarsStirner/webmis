@@ -4,6 +4,9 @@ define(function(require) {
 
 	var Documents = require("views/documents/documents");
 
+	require("models/appeal");
+    require("views/print");
+
 	return View.extend({
 		initialize: function(){
 			var self = this;
@@ -11,12 +14,17 @@ define(function(require) {
 			// this.appealsList = new AppealsList({},{
 			// 	patientId: this.options.patientId
 			// });
+    		this.appeal = new App.Models.Appeal({
+				id: this.options.appealId
+			});
+
 
 			this.patient = new App.Models.Patient();
 			this.patient.set('id',this.options.patientId);
-			this.patient.fetch().done(function(){
+
+            $.when(this.patient.fetch(),this.appeal.fetch()).then(function(){
 				self.renderPage();
-			})
+            });
 
 			// self.appeal = new App.Models.Appeal();
 
@@ -56,11 +64,13 @@ define(function(require) {
 				patientId: this.options.patientId,
 				patientName: this.patient.get('name').get('raw')
 			});
-
+            appeal = this.appeal;
 			this.itemView = new Documents.Summary.Review.Layout({
 				patientId: this.options.patientId,
-				subId: this.options.docIds.split(',')
-			})
+				subId: this.options.docIds.split(','),
+                appealId: this.appeal.get('id'),
+                appeal: this.appeal
+			});
 
 			this.itemView.render();
 			this.$el.append(html);

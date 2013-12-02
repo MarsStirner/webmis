@@ -107,6 +107,7 @@ define(function (require) {
 			_string: _.template(require("text!templates/documents/edit/ui-elements/string.html")),
 			_mkb: _.template(require("text!templates/documents/edit/ui-elements/mkb.html")),
 			_flatDirectory: _.template(require("text!templates/documents/edit/ui-elements/flat-directory.html")),
+			_therapyFlatDirectory: _.template(require("text!templates/documents/edit/ui-elements/therapy-flat-directory.html")),
 			_select: _.template(require("text!templates/documents/edit/ui-elements/select.html")),
 			_person: _.template(require("text!templates/documents/edit/ui-elements/person.html")),
 			_htmlHelper: _.template(require("text!templates/documents/edit/ui-elements/html-helper.html")),
@@ -226,9 +227,9 @@ define(function (require) {
 							ta.readOnly = "true";
 						}
 						if (ta.therapyFieldCode == "therapyBegDate") {
-							if(lastTherapy.get("beginDate")){
-								ta.properties[0].value = moment(lastTherapy.get("beginDate")).format(CD_DATE_FORMAT);
-							}
+							//if (lastTherapy.get("beginDate")) {
+								ta.properties[0].value = moment(lastTherapy.get("beginDate") || new Date()).format(CD_DATE_FORMAT);
+							//}
 							ta.readOnly = "true";
 						}
 
@@ -238,7 +239,7 @@ define(function (require) {
 								ta.readOnly = "true";
 							}
 							if (ta.therapyFieldCode == "therapyPhaseBegDate") {
-								ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate).format(CD_DATE_FORMAT);
+								ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate || new Date()).format(CD_DATE_FORMAT);
 								ta.readOnly = "true";
 							}
 						}
@@ -432,12 +433,17 @@ define(function (require) {
 						});
 
 						if (valueProp && valueProp.value && valueProp.value !== "0.0") {
+							var unitProp = _(a.properties).find(function (p) {
+								return p.name === "unit";
+							});
+
 							examFlatJSON.push({
 								id: a.typeId,
 								name: a.name,
 								value: valueProp.value,
 								type: a.type,
-								scope: a.scope
+								scope: a.scope,
+								unit: unitProp ? unitProp.value : ""
 							});
 						}
 					});
@@ -496,9 +502,19 @@ define(function (require) {
 		},*/
 
 		getCleanHtmlFilledAttrs: function () {
-			var filledAttrs = this.getFilledAttrs();
+			var filledAttrs = this.getFilledAttrs(true);
 			_.each(filledAttrs, function (attr) {
-				attr.value = attr.value.replace(/<br>/gi, "<br/>"); //Core.Strings.cleanTextMarkup(attr.value);
+				if (attr.type === "FlatDirectory") {
+					var directoryValue = _(fds[attr.scope].toBeautyJSON()).find(function (type) {
+						return type.id == attr.value;
+					}, this);
+
+					if (directoryValue) {
+						attr.value = directoryValue['Наименование'];
+					}
+				} else {
+					attr.value = attr.value.replace(/<br>/gi, "<br/>");
+				}
 			}, this);
 			return filledAttrs;
 		},
@@ -509,6 +525,7 @@ define(function (require) {
 
 		save: function (attrs, options) {
 			this.setCloseDate();
+			this.spoofDates();
 			//this.wrapTextValues();
 			return Documents.Models.DocumentBase.prototype.save.call(this, attrs, options);
 		}
@@ -1087,11 +1104,11 @@ define(function (require) {
 			LayoutBase.prototype.initialize.call(this, this.options);
             var self = this;
             console.log('init '+this,(function(){
-                for (var name in self) {  
+                for (var name in self) {
                     if(!this.hasOwnProperty(name)){
-                        console.log(self+' inhirited:',name) 
+                        console.log(self+' inhirited:',name)
                     }else{
-                         console.log(self+' own:',name) 
+                         console.log(self+' own:',name)
                     }
                 }
             })());
@@ -3316,18 +3333,9 @@ define(function (require) {
 	Documents.Views.Edit.UIElement.FlatDirectory = UIElementBase.extend({
 		template: templates.uiElements._flatDirectory,
 		data: function () {
-			var directoryEntries = (this.filterFd ?
-				_(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
-					return frd["parentFdr_id"] == this.parentFdrId;
-				}, this) :
-				_(fds[this.model.get("scope")].toBeautyJSON()));
-
-	  this.filterFd = false;
-	  //console.log('directoryEntries',directoryEntries);
-
 			return {
 				model: this.model,
-				directoryEntries: directoryEntries
+				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())
 			};
 		},
 		initialize: function () {
@@ -3340,86 +3348,106 @@ define(function (require) {
 			} else {
 				this.onDirectoryReady();
 			}
-			this.parentFdrId = null;
 			/*this.directoryEntries = new FlatDirectory();
-			this.directoryEntries.set({id: this.model.get("scope")});
-			$.when(this.directoryEntries.fetch()).then(_.bind(function () {
-				this.model.setValue(this.directoryEntries.toBeautyJSON()[0].id);
-				this.render();
-			}, this));*/
+			 this.directoryEntries.set({id: this.model.get("scope")});
+			 $.when(this.directoryEntries.fetch()).then(_.bind(function () {
+			 this.model.setValue(this.directoryEntries.toBeautyJSON()[0].id);
+			 this.render();
+			 }, this));*/
 			UIElementBase.prototype.initialize.apply(this);
 		},
 		onDirectoryReady: function () {
-			if (this.model.get("code") === "therapyPhaseTitle") {
-				this.filterFd = true;
-				this.listenTo(fds, "change-therapyTitle", function (event) {
-					this.parentFdrId = event.id;
-					this.$(".attribute-value").val("").change();
-					this.filterFd = true;
-					this.model.set({mandatory: (this.parentFdrId ? "true" : "false")});
-					this.render();
-				});
-			}
-
+			//this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
 			this.render();
-
-			if (this.model.get("code") === "therapyTitle") {
-				var valueProperty = _.find(this.model.get("properties"),function(item){
-					return item.name === "value";
-				});
-				if (valueProperty && valueProperty.value) {
-					this.showLink(valueProperty.value);
-				}
-			}
-
 		},
-
-		onAttributeValueChange: function(event) {
-			var id = this.getAttributeValue();
-			var code = this.model.get("code");
-
+		onAttributeValueChange: function (event) {
 			if (_.isEmpty(this.getAttributeValue())) {
 				this.model.setPropertyValueFor("value", "");
 			}
-			if (this.model.get("code") === "therapyTitle") {
-				fds.trigger("change-therapyTitle", {
-					id: this.getAttributeValue()
-				});
-			}
-			if (code === "therapyTitle" || code === "therapyPhaseTitle") {
-				this.showLink(id);
-			}
 			UIElementBase.prototype.onAttributeValueChange.call(this, event);
-		},
-
-		showLink: function(id) {
-			var link = this.getLink(id) ? this.getLink(id) : '';
-			this.$el.find('.link').html(link);
-		},
-
-		getLink: function(id) {
-			var link = '';
-			var items = fds[this.model.get("scope")].toBeautyJSON();
-			var selectedItem = _.find(items, function(item) {
-				return item["id"] == id;
-			});
-
-			if (selectedItem) {
-				link = selectedItem['Ссылка'];
-				if (link) {
-					link = '<a href="' + link + '" target="_blank"><i class="icon-book"></i> ' + selectedItem['Наименование'] + '</a>'
-				}
-			}
-
-			return link;
 		}
 	});
+
+	/**
+	 * Поле типа FlatDirectory для терапии (с ссылкой на док)
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.TherapyFlatDirectory = Documents.Views.Edit.UIElement.FlatDirectory.extend({
+		template: templates.uiElements._therapyFlatDirectory,
+		showDocLink: function () {
+			var selValue = this.getAttributeValue();
+			if (selValue) {
+				var selectedItem = _.find(fds[this.model.get("scope")].toBeautyJSON(), function(item) {
+					return item["id"] == selValue;
+				});
+				if (selectedItem && selectedItem["Ссылка"]) {
+					this.$(".therapy-doc-link-container")
+						.show()
+						.find(".therapy-doc-link")
+							.attr("href", selectedItem["Ссылка"])
+							.find(".therapy-doc-link-text")
+								.text(selectedItem["Наименование"]);
+				}
+			} else {
+				this.$(".therapy-doc-link-container").hide();
+			}
+		},
+		onAttributeValueChange: function (event) {
+			this.showDocLink();
+			Documents.Views.Edit.UIElement.FlatDirectory.prototype.onAttributeValueChange.call(this, event);
+		}
+	});
+
+	/**
+	 * Поле типа FlatDirectory для списка этапов терапии
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.TherapyPhaseTitleFlatDirectory = Documents.Views.Edit.UIElement.TherapyFlatDirectory.extend({
+		data: function () {
+			return {
+				model: this.model,
+				directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
+					return frd["parentFdr_id"] == fds.therapyFdrId;
+				}, this)
+			};
+		},
+		initialize: function () {
+			Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.initialize.call(this, this.options);
+
+			this.listenTo(fds, "change-therapyTitle", function () {
+				//this.$(".attribute-value").val("").change();
+				this.model.set({mandatory: (fds.therapyFdrId ? "true" : "false")});
+				this.render();
+			});
+		}
+	});
+
+	/**
+	 * Поле типа FlatDirectory для списка терапии
+	 * @type {*}
+	 */
+	Documents.Views.Edit.UIElement.TherapyTitleFlatDirectory = Documents.Views.Edit.UIElement.TherapyFlatDirectory.extend({
+		onDirectoryReady: function () {
+			fds.therapyFdrId = this.model.getValue();
+			fds.trigger("change-therapyTitle");
+			Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.onDirectoryReady.call(this);
+		},
+		onAttributeValueChange: function (event) {
+			fds.therapyFdrId = this.getAttributeValue();
+			fds.trigger("change-therapyTitle");
+			Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.onAttributeValueChange.call(this, event);
+		}
+	});
+
+
 
 	/**
 	 * Поле типа Html
 	 * @type {*}
 	 */
-	Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({});
+	Documents.Views.Edit.UIElement.Html = Documents.Views.Edit.UIElement.Text.extend({
+
+	});
 
 	/**
 	 * Did I ever tell you definition of insanity?
@@ -4287,11 +4315,11 @@ define(function (require) {
 			case "string":
 				//if (options.model.get("scope") === "''") {
 				if (options.model.isSubHeader()) {
-		  if (options.model.isSubHeaderVGroup()) {
-					  this.UIElementClass = Documents.Views.Edit.UIElement.SubHeaderVGroup;
-		  } else {
-			this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
-		  }
+					if (options.model.isSubHeaderVGroup()) {
+						this.UIElementClass = Documents.Views.Edit.UIElement.SubHeaderVGroup;
+					} else {
+						this.UIElementClass = Documents.Views.Edit.UIElement.SubHeader;
+					}
 				} else {
 					this.UIElementClass = Documents.Views.Edit.UIElement.String;
 				}
@@ -4315,7 +4343,13 @@ define(function (require) {
 				this.UIElementClass = Documents.Views.Edit.UIElement.MKB;
 				break;
 			case "flatdirectory":
-				this.UIElementClass = Documents.Views.Edit.UIElement.FlatDirectory;
+				if (options.model.get("code") === "therapyPhaseTitle") {
+					this.UIElementClass = Documents.Views.Edit.UIElement.TherapyPhaseTitleFlatDirectory;
+				} else if (options.model.get("code") === "therapyTitle") {
+					this.UIElementClass = Documents.Views.Edit.UIElement.TherapyTitleFlatDirectory;
+				} else {
+					this.UIElementClass = Documents.Views.Edit.UIElement.FlatDirectory;
+				}
 				break;
 			case "html":
 				if (options.model.get("scope") === "*1") {
@@ -4609,49 +4643,50 @@ define(function (require) {
 		},
 
 		getPrintData: function () {
-			return {documents: this.collection.map(function (document) {
-				var summaryAttrs = document.get("group")[0]["attribute"];
+			return {
+				documents: this.collection.map(function (document) {
+					var summaryAttrs = document.get("group")[0]["attribute"];
 
-				return {
-					patientId: appeal.get("patient").get("id"),
-					patientName: appeal.get("patient").get("name").toJSON(),
+					return {
+						patientId: appeal.get("patient").get("id"),
+						patientName: appeal.get("patient").get("name").toJSON(),
 
-					appealId: appealId,
-					appealNumber: appeal.get("number"),
+						appealId: appealId,
+						appealNumber: appeal.get("number"),
 
-					id: document.get("id"),
-					name: summaryAttrs[1]["properties"][0]["value"],
-					endDate: moment(document.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm"),
-					doctorName: [
-						summaryAttrs[4]["properties"][0]["value"],
-						summaryAttrs[5]["properties"][0]["value"],
-						summaryAttrs[6]["properties"][0]["value"]
-					].join(" "),
-					doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
-					attributes: document.getCleanHtmlFilledAttrs(),
-					flatCode: document.get("flatCode"),
-		  doctorPost: {
-			id: document.getExecutorPost().getPropertyByName("valueId").value,
-			code: document.getExecutorPost().getPropertyByName("code").value,
-			name: document.getExecutorPost().getPropertyByName("value").value
-		  },
-					execPerson: appeal.get("execPerson")
-				};
+						id: document.get("id"),
+						name: summaryAttrs[1]["properties"][0]["value"],
+						endDate: moment(document.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm"),
+						doctorName: [
+							summaryAttrs[4]["properties"][0]["value"],
+							summaryAttrs[5]["properties"][0]["value"],
+							summaryAttrs[6]["properties"][0]["value"]
+						].join(" "),
+						doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
+						attributes: document.getCleanHtmlFilledAttrs(),
+						flatCode: document.get("flatCode"),
+						doctorPost: {
+							id: document.getExecutorPost().getPropertyByName("valueId").value,
+							code: document.getExecutorPost().getPropertyByName("code").value,
+							name: document.getExecutorPost().getPropertyByName("value").value
+						},
+						execPerson: appeal.get("execPerson")
+					};
 
 
-				/*var pointType = _(data.attributes).where({id: 96});
+					/*var pointType = _(data.attributes).where({id: 96});
 
-				 if (pointType.length) {
-				 var pointTypeId = pointType[0].value;
-				 var directoryValue = _(this.hospitalizationPointTypes.toBeautyJSON()).find(function (type) {
-				 return type.id == pointTypeId;
-				 });
-				 if (directoryValue) {
-				 _(data.attributes).where({id: 96})[0].value = directoryValue['49'];
-				 //pointType.value = directoryValue['49'];
-				 }
-				 }*/
-			}, this)};
+					 if (pointType.length) {
+					 var pointTypeId = pointType[0].value;
+					 var directoryValue = _(this.hospitalizationPointTypes.toBeautyJSON()).find(function (type) {
+					 return type.id == pointTypeId;
+					 });
+					 if (directoryValue) {
+					 _(data.attributes).where({id: 96})[0].value = directoryValue['49'];
+					 //pointType.value = directoryValue['49'];
+					 }
+					 }*/
+				}, this)};
 		},
 
 		render: function () {
@@ -4806,7 +4841,8 @@ define(function (require) {
 			return {
 				attr: {
 					name: this.model.get("name"),
-					value: displayValue
+					value: displayValue,
+					unit: this.model.get("unit")
 				}
 			};
 		},
@@ -4953,6 +4989,12 @@ define(function (require) {
 		onChangeEvent: function(e){
 			var $target = $(e.target);
 			this.collection.appealId = $target.val();
+            appealId = $target.val();
+            var event = this.options.events.find(function(event){
+                return event.get('id') == appealId; 
+            });
+            console.log('selected event', event);
+            appeal.get("execPerson").id = event.get('execPerson_id');
 			this.collection.pageNumber = 1;
 			this.collection.fetch();
 		},
@@ -5019,11 +5061,10 @@ define(function (require) {
 			return 'Summary.List.Layout';
 		},
 		toggleReviewState: function () {
-            console.log('summary toggle',this)
-			App.Router.navigate(["patients",this.options.patientId,this.getEditPageTypeName(),this.selectedDocuments.pluck("id").join(",")].join("/"),{trigger: true});
-		
-		},
+            console.log('summary toggle',this, appealId)
+			App.Router.navigate(["patients",this.options.patientId,this.getEditPageTypeName(),'?appealId='+ appealId+'&docIds='+this.selectedDocuments.pluck("id").join(",")].join("/"),{trigger: true});
 
+		},
 
 		getDefaultDocumentsMnems: function() {
 			return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "LAB", "DIAG", "THER"];
@@ -5071,20 +5112,7 @@ define(function (require) {
 
 	Documents.Summary.Review.Controls = Documents.Views.Review.Base.Controls.extend({
 		onBackToDocumentListClick: function () {
-
-			//if (this.options.included) {
-			//	this.collection.trigger("review:quit");
-			//} else {
-				App.Router.navigate(["patients",this.options.patientId,'summary'].join("/"),{trigger: true});
-				// dispatcher.trigger("change:viewState", {
-				// 	type: this.options.reviewPageTypeName,
-				// 	mode: "REVIEW",
-				// 	options: {
-				// 		documentTypes: this.options.documentTypes,
-				// 		documents: this.options.documents
-				// 	}
-				// });
-			//}
+            App.Router.navigate(["patients",this.options.patientId,'summary'].join("/"),{trigger: true});
 		}
 	});
 
