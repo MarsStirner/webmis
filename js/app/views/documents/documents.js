@@ -4990,6 +4990,11 @@ define(function (require) {
 			var $target = $(e.target);
 			this.collection.appealId = $target.val();
             appealId = $target.val();
+            var event = this.options.events.find(function(event){
+                return event.get('id') == appealId; 
+            });
+            console.log('selected event', event);
+            appeal.get("execPerson").id = event.get('execPerson_id');
 			this.collection.pageNumber = 1;
 			this.collection.fetch();
 		},
