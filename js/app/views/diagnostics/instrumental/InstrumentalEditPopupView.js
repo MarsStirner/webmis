@@ -142,7 +142,7 @@ define(function(require) {
 
 		saveButton: function(enabled, msg) {
 			var $saveButton = this.ui.$saveButton;
-
+            $saveButton.button();
 			if (enabled) {
 				$saveButton.button('enable');
 			} else {

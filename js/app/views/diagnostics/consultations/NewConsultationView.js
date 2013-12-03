@@ -415,6 +415,7 @@ define(function(require) {
 
 		saveButton: function(enabled, msg) {
 			var $saveButton = this.$el.closest('.ui-dialog').find('.save');
+            $saveButton.button();
 
 			if (enabled) {
 				$saveButton.button('enable');
@@ -525,6 +526,7 @@ define(function(require) {
 			pubsub.off('assigner:changed');
 
 
+            this.ui.$datepicker.datepicker('destroy');
 
 			this.$el.dialog("close");
 			this.undelegateEvents();

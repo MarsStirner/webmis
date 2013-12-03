@@ -453,6 +453,7 @@ define(function(require) {
 
         saveButton: function(enabled, msg) {
             var $saveButton = this.$el.closest('.ui-dialog').find('.save');
+            $saveButton.button();
 
             if (enabled) {
                 $saveButton.button('enable');
@@ -667,6 +668,8 @@ define(function(require) {
             this.consultationsGroupsView.close();
             this.consultantsFreeView.close();
             this.scheduleView.close();
+
+            this.ui.$planedDate.datepicker('destroy');
 
             pubsub.off('consultation:selected');
             pubsub.off('consultant:selected');
