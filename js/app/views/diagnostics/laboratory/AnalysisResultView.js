@@ -483,6 +483,7 @@ define(function(require) {
 				},
 				
 				parseValue: function(value){
+                    if(!value){ return false;}
 					var num = parseFloat(value.replace(/,/g, '.'));
 					
 					if(isNaN(num)) num = false;
