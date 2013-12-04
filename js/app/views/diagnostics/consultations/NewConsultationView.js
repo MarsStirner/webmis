@@ -240,7 +240,13 @@ define(function(require) {
 
 		onChangeUrgent: function(e) {
 			var $target = this.$(e.target);
-			this.consultation.set('urgent', $target.prop('checked'));
+            var urgent = $target.prop('checked');
+
+			this.consultation.set('urgent', urgent);
+            if(urgent){
+                this.ui.$over.prop('checked',false).trigger('change'); 
+            }
+            this.sheduleState();
 		},
 
 		//при изменении "Сверх сетки приёма"
@@ -249,12 +255,11 @@ define(function(require) {
 			var over = $target.prop('checked');
 
 			this.consultation.set('overQueue', over);
+            if(over){
+                this.ui.$urgent.prop('checked',false).trigger('change'); 
+            }
 
-			if (over) {
-				this.scheduleView.disable();
-			} else {
-				this.scheduleView.enable();
-			}
+            this.sheduleState();
 		},
 
 		//при изменении диагноза
@@ -305,11 +310,16 @@ define(function(require) {
 			}
 
 			this.scheduleView.render();
+            this.sheduleState();
 
-			if (this.consultation.get('overQueue')) {
-				this.scheduleView.disable();
-			}
 		},
+        sheduleState: function(){
+			if (this.consultation.get('overQueue') || this.consultation.get('urgent')) {
+				this.scheduleView.disable();
+			}else{
+                this.scheduleView.enable(); 
+            }
+        },
 
 		//при клике на кнопку "Сохранить"
 		onSave: function() {
@@ -445,6 +455,8 @@ define(function(require) {
 
 			this.ui.$assigner = this.$el.find('#assigner');
 			this.ui.$errors = this.$el.find('#errors');
+			this.ui.$over = this.$el.find('#over');
+			this.ui.$urgent = this.$el.find('#urgent');
 
 			this.$el.find('.change-assigner').button();
 
