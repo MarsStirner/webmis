@@ -2827,7 +2827,11 @@ define(function (require) {
 			//TODO: MAP ALL ATTRIBUTES
 			_(this.model.get('layoutAttributeValues')).each(function (value) {
 				var layoutAttributeParams = _(layoutAttributesDir.get(this.model.get('type'))).where({id: value.layoutAttribute_id})[0];
-				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
+				if (layoutAttributeParams) {
+					this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
+				} else {
+					console.error("failed to map LayoutAttributes:", this);
+				}
 			}, this);
 		},
 
