@@ -432,7 +432,7 @@ define(function (require) {
 							return p.name === "value";
 						});
 
-						if (valueProp && valueProp.value && valueProp.value !== "0.0") {
+						if (valueProp && valueProp.value && valueProp.value !== "0.0" && valueProp.value !== "0") {
 							var unitProp = _(a.properties).find(function (p) {
 								return p.name === "unit";
 							});
