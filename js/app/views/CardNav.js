@@ -1,5 +1,4 @@
 define(function(require){
-'use strict';
     var template = require('text!/templates/card-nav.html');
     var _ = require('underscore');
 
