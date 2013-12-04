@@ -4828,7 +4828,7 @@ define(function (require) {
 					displayValue = moment(value, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
 					break;
 				case 'DATE':
-					displayValue = moment(value, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
+					displayValue = moment(value, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY');
 					break;
 				case 'FLATDIRECTORY':
 					displayValue = this.model.get("fdValue") ? this.model.get("fdValue") : value;
