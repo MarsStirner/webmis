@@ -2,8 +2,12 @@
  * User: FKurilov
  * Date: 22.11.12
  */
-define(["text!templates/card-" +
-	"header.tmpl", "models/appeal"], function (template) {
+define(function (require) {
+    var template = require('text!templates/card-header.tmpl')
+    require('models/appeal');
+    var userPermissions = require('permissions');
+    var CardNav = require('views/CardNav');
+
 
 	/*var CardPrint = View.extend({
 		tagName: "",
@@ -129,6 +133,30 @@ define(["text!templates/card-" +
 
 		render: function () {
 			this.$el.html($.tmpl(this.template, this.data()));
+
+                var patient = this.model.get('patient');
+                var patientId = patient.get('id');
+
+                this.cardNav = new CardNav({
+                    permissions: userPermissions,
+                    patient: patient,
+                    structure: [{
+                        link: '/patients/' + patientId + '/',
+                        name: 'Карточка пациента',
+                        permissions: ['see_patient_card']
+                    }, {
+                        link: '/patients/' + patientId + '/appeals/',
+                        name: 'Госпитализации',
+                        permissions: ['see_patient_appeals'],
+                        active: true
+                    }, {
+                        link: '/patients/' + patientId + '/summary',
+                        name: 'Сводная информация',
+                        permissions: ['see_patient_summary']
+                    }]
+                });
+                console.log('rere',this.el)
+                this.$el.find('.CardNav').append(this.cardNav.render().el)
 
 			return this;
 		}
