@@ -181,7 +181,7 @@ class Action extends BaseAction
         if($hidrate['doctor'] || $hidrate['client']){
             $event = $this->getEvent();
 
-            if($hidrate['doctor']){
+            if($event && $hidrate['doctor']){
                 //лечащий врач
                 $doctor = $event->getDoctor();
                 $data['doctor'] = null;
@@ -195,7 +195,7 @@ class Action extends BaseAction
                 }
             }
 
-            if($hidrate['client']){
+            if($event && $hidrate['client']){
                 //пациен
                 $client = $event->getClient();
                 $data['client'] = null;
