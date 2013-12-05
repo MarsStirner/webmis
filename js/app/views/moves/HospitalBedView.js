@@ -10,6 +10,7 @@ define(function(require) {
 	var HospitalBed = require('models/moves/HospitalBed');
 	//var Move = require('models/moves/move');
 	var Departments = require('collections/departments');
+    var BedProfilesDir = require('collections/moves/BedProfilesDir')
 	var BedView = require('views/moves/BedView');
 
 
@@ -19,6 +20,7 @@ define(function(require) {
 
 		events: {
 			'change .Departments': 'onSelectDepartment',
+			'change .bed-profiles': 'onSelectBedProfile',
 			'change .movedFromUnitId': 'onChangeMovedFrom',
 			'click .save': 'onSave',
 			'click .actions.cancel': 'onCancel'
@@ -34,8 +36,26 @@ define(function(require) {
 			this.model.set({
 				"clientId": this.options.appeal.get("patient").get("id")
 			});
-			self.model.on("change", this.validate, this);
+			this.model.on("change", this.validate, this);
+            this.model.on("change:bedId", function(){
+                var bedId = this.model.get('bedId');
+                var bed = this.bedsCollection.find(function(model){
+                    return bedId == model.get('bedId');
+                });
+                if(bed){
+                    var profileId = bed.get('profileId'); 
+                    console.log('change:bedId', bed,profileId);
+                    this.model.set('bedProfileId', profileId);
+                }else{
+                    this.model.set('bedProfileId',''); 
+                }
 
+            }, this);
+
+            this.model.on("change:bedProfileId", function(model, bedProfileId){
+                console.log('change:bedProfileId', model, bedProfileId)
+                this.ui.$bedProfiles.select2('val',bedProfileId); 
+            }, this);
 
 			this.bedsCollection = new Beds();
 			this.bedsCollection.on('reset', this.renderBeds, this);
@@ -51,20 +71,22 @@ define(function(require) {
 				sortingMethod: 'asc'
 			});
 
+            this.bedProfiles = new BedProfilesDir();
+
 
 			this.moves = new Moves();
 			this.moves.appealId = this.options.appeal.get("id");
 
 
-			$.when(this.departments.fetch(), this.moves.fetch()).done(function() {
+			$.when(this.departments.fetch(),this.bedProfiles.fetch(), this.moves.fetch()).done(function() {
 
-				self.setMoveDateAndMovedDepartment()
+				self.setMoveDateAndMovedDepartment();
 
 				self.render();
 
 				self.loadBeds(self.getLastMoveDepartment());
 
-			})
+			});
 
 		},
 
@@ -132,8 +154,18 @@ define(function(require) {
 			}
 
 			this.model.set('bedId', '');
+            this.model.set('bedProfileId','');
 
 		},
+
+        onSelectBedProfile: function(){
+			var $target = this.ui.$bedProfiles;//$(event.target);
+            var bedProfileId = $target.val();
+            //if(bedProfileId){
+                this.model.set('bedProfileId',bedProfileId);
+            //}
+            console.log('onSelectBedProfile', $target, bedProfileId); 
+        },
 
 		loadBeds: function(departmentId){
 			return this.bedsCollection.setDepartmentId(departmentId).fetch();
@@ -141,7 +173,7 @@ define(function(require) {
 
 		validate: function() {
 
-			if (!this.model.get('bedId')) {//!this.model.get('movedFromUnitId') ||
+			if (!this.model.get('bedId')||!this.model.get('bedProfileId')) {//!this.model.get('movedFromUnitId') ||
 				this.disableSaveButton();
 			} else {
 				this.enableSaveButton();
@@ -236,6 +268,7 @@ define(function(require) {
 				model: this.model.toJSON(),
 				moveNumber: this.getMoveNumber(),
 				departments: this.departments.toJSON(),
+                bedProfiles: this.bedProfiles.toJSON(),
 				movedToUnitId: this.moves.last() ? this.moves.last().get("unitId") : ''
 			};
 
@@ -251,6 +284,7 @@ define(function(require) {
 			view.ui = {};
 			view.ui.$saveButton = view.$el.find('.save');
 			view.ui.$department = view.$el.find('.Departments');
+            view.ui.$bedProfiles = view.$el.find('.bed-profiles')
 			view.ui.$beds = view.$el.find('.beds');
 
 
@@ -265,6 +299,7 @@ define(function(require) {
 
 			view.$(".HourPicker").mask("99:99");
 			view.$(".Departments").width("100%").select2();
+            view.ui.$bedProfiles.select2();
 
 			view.delegateEvents();
 

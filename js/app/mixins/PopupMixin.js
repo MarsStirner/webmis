@@ -16,19 +16,16 @@ define([], function() {
 
 			close: function() {
 				var self = this;
-				console.log('popup view close',self)
 				self.$el.dialog("close");
 				self.$el.remove();
 			},
 
 			renderNested: function(view, selector) {
-				//console.log('renderNested', view);
 				var $element = (selector instanceof $) ? selector : this.$el.find(selector);
 				view.setElement($element).render();
 			},
 
 			onSave: function() {
-				//console.log('onSave');
 			},
 
 			beforeRender: function(){

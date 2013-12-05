@@ -33,7 +33,8 @@ class EventController
         ->useEventTypeQuery()
             ->filterByCode(array('01','14', '11', '12', '06', '15', '16', '03', '04', '17', '18'))
         ->endUse()
-        ->select(array('id', 'externalId'))
+        ->select(array('id', 'externalId','execPerson_id'))
+        ->orderByCreateDatetime('desc')
         ->find();
 
         $data = $events->toArray();

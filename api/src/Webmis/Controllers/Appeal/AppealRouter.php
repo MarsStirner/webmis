@@ -291,7 +291,7 @@ class AppealRouter implements ControllerProviderInterface
             ."WHERE Action.id = :lastMoveId";
 
             $lastMoveEndDate = new \DateTime($dischargeEndDate);
-            $lastMoveEndDate->modify('-1 hour');
+            $lastMoveEndDate->modify('-1 second');
 
             $stmt = $app['db']->prepare($update_last_move_sql);
             $stmt->bindValue('endDate', $lastMoveEndDate, "datetime");

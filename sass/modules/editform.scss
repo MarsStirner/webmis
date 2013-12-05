@@ -29,7 +29,7 @@
 
     .LineBlock {
 		margin-bottom:3em;
-		word-spacing:-0.3em;
+//		word-spacing:-0.3em;
 		white-space:nowrap;
 		margin-right:-3em;
 		padding-right:3em;
@@ -290,6 +290,9 @@
 			padding: 0 5px 0 2px;
 			color: rgb(108, 108, 113);
 		}
+        .bedMenu{
+            color: #47accd; 
+        }
 	}
 
 	.checkedBed {
@@ -299,6 +302,9 @@
 		.bedCheckbox {
 			background-position: 2px -58px;
 		}
+        .bedMenu{
+            color: #2ea880; 
+        }
 	}
 
 	.disabledBed {
