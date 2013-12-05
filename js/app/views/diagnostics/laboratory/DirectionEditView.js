@@ -384,6 +384,7 @@ define(function(require) {
 
 		saveButton: function(enabled, msg) {
 			var $saveButton = this.$el.closest('.ui-dialog').find('.save');
+            $saveButton.button();
 
 			if (enabled) {
 				$saveButton.button('enable');

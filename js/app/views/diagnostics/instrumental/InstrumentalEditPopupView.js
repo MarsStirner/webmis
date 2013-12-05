@@ -107,7 +107,7 @@ define(function(require) {
 		},
 
 		onChangeMkbInput: function() {
-			var mkbId = this.ui.$mbkCode.data('mkb-id');
+			var mkbId = this.ui.$mkbCode.data('mkb-id');
 			this.viewModel.set('mkbId', mkbId);
 		},
 
@@ -142,7 +142,7 @@ define(function(require) {
 
 		saveButton: function(enabled, msg) {
 			var $saveButton = this.ui.$saveButton;
-
+            $saveButton.button();
 			if (enabled) {
 				$saveButton.button('enable');
 			} else {

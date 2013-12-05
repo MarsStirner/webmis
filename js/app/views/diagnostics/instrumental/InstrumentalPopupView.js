@@ -45,7 +45,6 @@ define(function(require) {
                 appeal: this.options.appeal
             });
 
-            this.viewModel.on('change', this.validateForm, this);
 
 
             //диагнозы из госпитализации
@@ -234,7 +233,9 @@ define(function(require) {
         },
 
         saveButton: function(enabled, msg) {
+            console.log('saveButton', this.ui);
             var $saveButton = this.ui.$saveButton;
+            $saveButton.button();
 
             if (enabled) {
                 $saveButton.button('enable');
@@ -344,6 +345,7 @@ define(function(require) {
 
             this.$('.change-assigner,.change-executor').button();
 
+            
             view.ui.$createDate.datepicker({
                 minDate: now,
                 onSelect: function() {
@@ -466,6 +468,8 @@ define(function(require) {
                 }
             });
 
+            this.viewModel.on('change', this.validateForm, this);
+//            this.validateForm();
 
         },
         close: function() {

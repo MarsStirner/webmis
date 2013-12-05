@@ -68,7 +68,7 @@ define(function(require) {
 			var tree = [];
 
 			tree = this.convertToTree(raw.data);
-			console.log('this.parents', this.parents);
+//			console.log('this.parents', this.parents);
 			if (this.parents) {
 				tree = this.onlyParents(tree);
 			}
