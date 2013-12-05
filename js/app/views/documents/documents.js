@@ -432,7 +432,7 @@ define(function (require) {
 							return p.name === "value";
 						});
 
-						if (valueProp && valueProp.value && valueProp.value !== "0.0") {
+						if (valueProp && valueProp.value && valueProp.value !== "0.0" && valueProp.value !== "0") {
 							var unitProp = _(a.properties).find(function (p) {
 								return p.name === "unit";
 							});
@@ -4828,7 +4828,7 @@ define(function (require) {
 					displayValue = moment(value, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
 					break;
 				case 'DATE':
-					displayValue = moment(value, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
+					displayValue = moment(value, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY');
 					break;
 				case 'FLATDIRECTORY':
 					displayValue = this.model.get("fdValue") ? this.model.get("fdValue") : value;

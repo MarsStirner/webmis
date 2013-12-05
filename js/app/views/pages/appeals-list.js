@@ -1,32 +1,17 @@
-define([
-	"views/moves/send-to-department",
-	"collections/appeals",
-	"collections/doctors",
-	"collections/departments",
-	"views/grid",
-	"views/filter",
-	"views/filter-dictionaries",
-	"views/paginator",
-	"collections/department-patients",
-	"models/print/form007",
-	"views/print"
-], function(SendToDepartment) {
-	/*var AppealsList = {
-		Views: {}
-	};
+define(function(require){
+    var SendToDepartment = require("views/moves/send-to-department");
+	require("collections/appeals");
+	require("collections/doctors");
+	require("collections/departments");
+	require("views/grid");
+	require("views/filter");
+	require("views/filter-dictionaries");
+	require("views/paginator");
+	require("collections/department-patients");
+	require("models/print/form007");
+	require("views/print");
 
-	AppealsList.Views.Layout = View.extend({
-		initialize: function (options) {
-
-		},
-
-		render: function () {
-
-			return this;
-		}
-	});*/
-
-	App.Views.AppealsList = View.extend({
+   		App.Views.AppealsList = View.extend({
 		id: "main",
 
 		initialize: function() {
@@ -452,6 +437,8 @@ define([
 				}, this);
 			}, this);
 
+
+   
 			this.collection = Collection;
 
 

@@ -5,40 +5,6 @@
 </div>
 <div class="CardHeader Clearfix">
 	<div class="CardNav">
-		<h2>
-			{{if name}}
-			{{if name.first || name.last || name.middle}}
-			{{if name.last}}
-			${name.last}
-			{{/if}}
-			{{if name.first}}
-			${name.first}
-			{{/if}}
-			{{if name.middle}}
-			${name.middle}
-			{{/if}}
-			{{else}}
-			{{if name.raw}}
-			${name.raw}
-			{{/if}}
-			{{/if}}
-			{{/if}}
-			{{if birthDate}}
-			({{ageString birthDate}})
-			{{/if}}
-		</h2>
-		<ul class="SectionNav">
-			<li>
-				<a href="../">Карточка пациента</a>
-			</li>
-			<li class="Selected">
-				<a href="/patients/${id}/appeals/">Госпитализации</a>
-			</li>
-			<li>
-				<a href="/patients/${id}/summary">Сводная информация
-				</a>
-			</li>
-		</ul>
 	</div>
 	<!--<div class="CardPrint">
 		<button class="Styled Button">Печать</button>
