@@ -516,11 +516,17 @@ View = Backbone.View.extend({
 			} else if (dict.thesaurus) {
 				dictionary = new App.Collections.ThesaurusTerms();
 				dictionary.parentGroupId = dict.id;
+			} else if (dict.collection) {
+				dictionary = new dict.collection({data: {limit: 0}});
 			} else {
 				dictionary = new App.Collections.DictionaryValues([], {name: dict.pathPart});
 			}
 
-			promises.push(dictionary.fetch());
+			if (dict.collection) {
+				promises.push(dictionary.fetch({data: {limit: 0}}));
+			} else {
+				promises.push(dictionary.fetch());
+			}
 			dictionaries[dict.name] = dictionary;
 		});
 

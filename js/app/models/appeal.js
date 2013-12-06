@@ -360,7 +360,9 @@ define([
 				nextHospDate: null,
 				nextHospDepartment: null,
 				nextHospFinanceType: null
-			}
+			},
+			orgStructStay: null,
+			orgStructDirectedFrom: null
 		},
 		relations: [
 			{

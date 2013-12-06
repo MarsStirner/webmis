@@ -106,6 +106,15 @@
 										<option value="повторно">Повторно</option>
 									</select>
 								</div>
+								<div class="HalfCol">
+									<label>Отделение поступления</label>
+									<select class="Styled" name="org_struct_stay">
+										<option value="" selected="selected">...</option>
+										{{each(i, dep) dicts.departments}}
+										<option value="${dep['id']}">${dep['name']}</option>
+										{{/each}}
+									</select>
+								</div>
 							</div>
 							{{if havePrimary}}
 							<div class="LineBlock">
@@ -205,6 +214,15 @@
 								</div>
 							</div>
 							<div class="LineBlock">
+								<div class="HalfCol">
+									<label>Напрвлен из</label>
+									<select class="Styled" name="org_struct_directed_from">
+										<option value="" selected="selected">...</option>
+										{{each(i, dep) dicts.departments}}
+										<option value="${dep['id']}">${dep['name']}</option>
+										{{/each}}
+									</select>
+								</div>
 								<div class="HalfCol">
 									<span class="Label">Порядок госпитализации</span>
 									<select class="Styled Mandatory" name="hospitalization_type[id]">
