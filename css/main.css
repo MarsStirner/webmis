@@ -801,7 +801,6 @@ td.status-code-2, td.status-code-2 .Warning {
 .ui-datepicker td.date-range-selected a {
   background-color: #b1c5ff;
 }
-<<<<<<< HEAD
 
 /* line 1, ../sass/modules/_datetimeEntry.scss */
 .datetimeEntry_control {
@@ -1488,7 +1487,7 @@ table.fc-border-separate {
   left: -28000px;
   top: -28000px;
   display: none;
-  max-width: 280px;
+  max-width: 480px;
   min-width: 50px;
   font-size: 10.5px;
   line-height: 12px;
@@ -1736,5 +1735,3 @@ table.fc-border-separate {
   padding: 0.8em;
   border: 1px solid;
 }
-=======
->>>>>>> develop
