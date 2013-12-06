@@ -92,7 +92,9 @@ define(function (require) {
             string = begin.format('DD.MM.YYYY HH:mm');
 
             if(end){
-                var endInSameDay = (begin.diff(end, 'day') === 0);
+                // console.log(begin.format('DD.MM.YYYY HH:mm'),end.format('DD.MM.YYYY HH:mm'),begin.startOf('day').diff(end.startOf('day'), 'day'))
+                var end2 = moment(this.get('endDateTime'));
+                var endInSameDay = (begin.startOf('day').diff(end2.startOf('day'), 'day') === 0);
 
                 if(endInSameDay){
                     string = string + ' - ' + end.format('HH:mm');

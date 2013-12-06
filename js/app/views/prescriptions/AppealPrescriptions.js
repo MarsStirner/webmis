@@ -123,6 +123,7 @@ define(function (require) {
                         slotEventOverlap: false,
                         allDaySlot: false,
                         events: events1,
+                        eventTextColor: '#000',
                         timeFormat: {
                             // for agendaWeek and agendaDay
                             agenda: 'HH:mm{ - HH:mm}', // 5:00 - 6:30
