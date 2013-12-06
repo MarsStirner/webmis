@@ -40,7 +40,8 @@ define(function(require) {
                "nomen": drug.get('rlsNomenId'),
                "name": drug.get('tradeLocalName'),
                "dose":"",
-               "unit": drug.get('unitName')
+               "unit": drug.get('unitId'),
+               "unitName": drug.get('unitName')
             })
             this.close();
         },

@@ -138,8 +138,10 @@ class RlsController
             $rbUnit = $rlsNomen->getRbUnitRelatedByunitId();
             if($rbUnit){
                 $unitName = $rbUnit->getName();
+                $unitId = $rbUnit->getId();
             }else{
                 $unitName = ''; 
+                $unitId = ''; 
             }
 
             $tradeLocalName = $rlsNomen->getRlsTradeName()->getLocalName();
@@ -148,7 +150,8 @@ class RlsController
                 $item->toArray(),
                 array('storageName' => $item->getRbStorage()->getName()),
                 array('tradeLocalName' => $tradeLocalName),
-                array('unitName' => $unitName)
+                array('unitName' => $unitName),
+                array('unitId' => $unitId)
                 );
         }
 
