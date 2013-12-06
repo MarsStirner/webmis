@@ -7,10 +7,13 @@
     <tr>
         <td>Название</td>
         <td>Доза</td>
+        <td>Ед.</td>
     </tr>
     <% _.each(data.drugs, function(drug){%>
     <tr>
-        <td><%= drug.name %></td><td><%= drug.dose %></td>
+        <td><%= drug.name %></td>
+        <td><%= drug.dose %></td>
+        <td><%= drug.unit %></td>
     </tr>
     <%})%>
 </table>
@@ -25,14 +28,16 @@
         <td>Время</td>
     </tr>
     <% _.each(data.assigmentIntervals, function(interval){%>
+        <% _.each(interval.executionIntervals,function(interval){%>
         <tr>
             <td style="background-color:<%=interval.backgroundColor %>;">
                 <%= interval.stateName %>            
             </td>
             <td>
-                <%= Core.Date.formatDateTime(interval.beginDateTime) %> 
+                <%= interval.intervalString %> 
             </td> 
         </tr> 
+        <%})%>
     <%})%>
 
 </table>

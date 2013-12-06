@@ -54,6 +54,15 @@ define(function (require) {
 
             if (this.get('assigmentIntervals')) {
                 var assigmentIntervals = new Intervals(this.get('assigmentIntervals'));
+                console.log('aaaa',assigmentIntervals)
+                assigmentIntervals.each(function(interval){
+                    console.log('iiii', interval)
+                    if(interval.get('executionIntervals')){
+                        var executionIntervals = new Intervals(interval.get('executionIntervals'));
+                        interval.set('executionIntervals', executionIntervals);
+                    } 
+                });
+
                 this.set('assigmentIntervals', assigmentIntervals);
             }
 

@@ -96,16 +96,41 @@ define(function (require) {
             }
             return color;
         },
+        intervalToString: function(){
+            var string = '';
+            var begin = this.get('beginDateTime') ? moment(this.get('beginDateTime')) : null;
+            var end = this.get('endDateTime') ? moment(this.get('endDateTime')) : null;
+
+            string = begin.format('DD.MM.YYYY HH:mm');
+
+            if(end){
+                var endInSameDay = (begin.diff(end, 'day') === 0);
+
+                if(endInSameDay){
+                    string = string + ' - ' + end.format('HH:mm');
+                }else{
+                    string = string + ' - ' + end.format('DD.MM.YYYY HH:mm');
+                }
+            }
+
+            return string;
+        },
         toJSON: function () {
-            var json = _(this.attributes)
-                .clone();
+            var attributes = _.clone(this.attributes);
+
+            _.each(attributes, function (value, key) {
+                if (value && _.isFunction(value.toJSON)) {
+                    attributes[key] = value.toJSON();
+                }
+            });
+
             var state = this.getState();
-            json.backgroundColor = states[state].color;
-            json.stateName = states[state].title;
+            attributes.intervalString = this.intervalToString();
+            attributes.backgroundColor = states[state].color;
+            attributes.stateName = states[state].title;
 
-            
-
-            return json;
+            return attributes;
+ 
         }
     });
 
