@@ -6,7 +6,8 @@ define(function (require) {
         assigned: {title: 'Назначено', color: '#07ace3'},
         notExecuted: {title: 'Не исполнено',color: '#b2a7c9'},
         executed: {title: 'Исполнено',color: '#94cf51'},
-        canceled: {title: 'Отменено',color: '#999999'}
+        canceled: {title: 'Отменено',color: '#999999'},
+        stop: {title: 'Стоп', color: '#FFEA4F'}
     };
 
     var Interval = Model.extend({
@@ -36,6 +37,9 @@ define(function (require) {
             }
             if(status === 2){
                 state = 'canceled'; 
+            }
+            if(status === 3){
+                state = 'stop'; 
             }
 
             return state;
@@ -79,22 +83,6 @@ define(function (require) {
             }
             
             return bool;
-        },
-        getColor: function () {
-            var color;
-            var state = this.getState();
-            var colors = {
-                'runs': '#f57177',
-                'assigned': '#07ace3',
-                'executed': '#94cf51',
-                'notExecuted': '#b2a7c9',
-                'canceled': '#999'
-            };
-
-            if(state){
-                color = colors[state]; 
-            }
-            return color;
         },
         intervalToString: function(){
             var string = '';
