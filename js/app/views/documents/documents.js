@@ -3021,37 +3021,38 @@ define(function (require) {
 			UIElementBase.prototype.render.call(this);
 
 			//TODO: move this shit to the template
+			if (this.model.get('scope').length) {
+				this.$(".Combo").each(function () {
+					var $comboInput = $(this).wrap(
+						'<div class="DDList DDSelect ComboWrapper">' +
+							'<div class="Title">' +
+							'<span class="Actions"></span>' +
+							'</div>' +
+							'</div>'
+					);
+					var $wrapper = $comboInput.parents(".DDList").append('<div class="Content"><ul></ul></div>');
 
-			this.$(".Combo").each(function () {
-				var $comboInput = $(this).wrap(
-					'<div class="DDList DDSelect ComboWrapper">' +
-						'<div class="Title">' +
-						'<span class="Actions"></span>' +
-						'</div>' +
-						'</div>'
-				);
-				var $wrapper = $comboInput.parents(".DDList").append('<div class="Content"><ul></ul></div>');
+					if ($comboInput.hasClass("Mandatory")) $wrapper.addClass("Mandatory");
 
-				if ($comboInput.hasClass("Mandatory")) $wrapper.addClass("Mandatory");
+					$wrapper.find("ul").append($comboInput.data("options").split("|").map(function (opt) {
+						return $('<li>' + opt + '</li>');
+					}));
 
-				$wrapper.find("ul").append($comboInput.data("options").split("|").map(function (opt) {
-					return $('<li>' + opt + '</li>');
-				}));
+					$wrapper.on("click", function (event) {
+						event.stopPropagation();
+						$(".DDList.Active").not($wrapper).removeClass("Active");
+						$(this).toggleClass("Active");
+					});
 
-				$wrapper.on("click", function (event) {
-					event.stopPropagation();
-					$(".DDList.Active").not($wrapper).removeClass("Active");
-					$(this).toggleClass("Active");
+					$wrapper.find("li").on("click", function () {
+						$comboInput.val($(this).html()).change();
+					});
+
+					$comboInput.on("keyup", function () {
+						$wrapper.removeClass("Active");
+					});
 				});
-
-				$wrapper.find("li").on("click", function () {
-					$comboInput.val($(this).html()).change();
-				});
-
-				$comboInput.on("keyup", function () {
-					$wrapper.removeClass("Active");
-				});
-			});
+			}
 
 			return this;
 		}
