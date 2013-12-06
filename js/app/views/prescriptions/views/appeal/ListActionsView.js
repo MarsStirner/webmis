@@ -14,7 +14,10 @@ define(function(require) {
 			App.Router.navigate(["appeals", this.options.appealId, "prescriptions/new"].join("/"), {trigger: true});
 
 			console.log('create prescription')
-		}
+		},
+        afterRender: function(){
+            this.$el.find('button').button();  
+        }
 	});
 
 });
