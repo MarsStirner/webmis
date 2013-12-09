@@ -20,6 +20,8 @@ use Webmis\Models\DrugComponentPeer;
 use Webmis\Models\DrugComponentQuery;
 use Webmis\Models\rbUnit;
 use Webmis\Models\rbUnitQuery;
+use Webmis\Models\rlsNomen;
+use Webmis\Models\rlsNomenQuery;
 
 /**
  * Base class that represents a row from the 'DrugComponent' table.
@@ -106,6 +108,11 @@ abstract class BaseDrugComponent extends BaseObject implements Persistent
      * @var        rbUnit
      */
     protected $arbUnit;
+
+    /**
+     * @var        rlsNomen
+     */
+    protected $arlsNomen;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -330,6 +337,10 @@ abstract class BaseDrugComponent extends BaseObject implements Persistent
             $this->modifiedColumns[] = DrugComponentPeer::NOMEN;
         }
 
+        if ($this->arlsNomen !== null && $this->arlsNomen->getid() !== $v) {
+            $this->arlsNomen = null;
+        }
+
 
         return $this;
     } // setnomen()
@@ -521,6 +532,9 @@ abstract class BaseDrugComponent extends BaseObject implements Persistent
         if ($this->aAction !== null && $this->action_id !== $this->aAction->getid()) {
             $this->aAction = null;
         }
+        if ($this->arlsNomen !== null && $this->nomen !== $this->arlsNomen->getid()) {
+            $this->arlsNomen = null;
+        }
         if ($this->arbUnit !== null && $this->unit !== $this->arbUnit->getid()) {
             $this->arbUnit = null;
         }
@@ -565,6 +579,7 @@ abstract class BaseDrugComponent extends BaseObject implements Persistent
 
             $this->aAction = null;
             $this->arbUnit = null;
+            $this->arlsNomen = null;
         } // if (deep)
     }
 
@@ -699,6 +714,13 @@ abstract class BaseDrugComponent extends BaseObject implements Persistent
                     $affectedRows += $this->arbUnit->save($con);
                 }
                 $this->setrbUnit($this->arbUnit);
+            }
+
+            if ($this->arlsNomen !== null) {
+                if ($this->arlsNomen->isModified() || $this->arlsNomen->isNew()) {
+                    $affectedRows += $this->arlsNomen->save($con);
+                }
+                $this->setrlsNomen($this->arlsNomen);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -908,6 +930,12 @@ abstract class BaseDrugComponent extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->arlsNomen !== null) {
+                if (!$this->arlsNomen->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->arlsNomen->getValidationFailures());
+                }
+            }
+
 
             if (($retval = DrugComponentPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
@@ -1017,6 +1045,9 @@ abstract class BaseDrugComponent extends BaseObject implements Persistent
             }
             if (null !== $this->arbUnit) {
                 $result['rbUnit'] = $this->arbUnit->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->arlsNomen) {
+                $result['rlsNomen'] = $this->arlsNomen->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1360,6 +1391,58 @@ abstract class BaseDrugComponent extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a rlsNomen object.
+     *
+     * @param             rlsNomen $v
+     * @return DrugComponent The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setrlsNomen(rlsNomen $v = null)
+    {
+        if ($v === null) {
+            $this->setnomen(NULL);
+        } else {
+            $this->setnomen($v->getid());
+        }
+
+        $this->arlsNomen = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the rlsNomen object, it will not be re-added.
+        if ($v !== null) {
+            $v->addDrugComponent($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated rlsNomen object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return rlsNomen The associated rlsNomen object.
+     * @throws PropelException
+     */
+    public function getrlsNomen(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->arlsNomen === null && ($this->nomen !== null) && $doQuery) {
+            $this->arlsNomen = rlsNomenQuery::create()->findPk($this->nomen, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->arlsNomen->addDrugComponents($this);
+             */
+        }
+
+        return $this->arlsNomen;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1400,12 +1483,16 @@ abstract class BaseDrugComponent extends BaseObject implements Persistent
             if ($this->arbUnit instanceof Persistent) {
               $this->arbUnit->clearAllReferences($deep);
             }
+            if ($this->arlsNomen instanceof Persistent) {
+              $this->arlsNomen->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
         $this->aAction = null;
         $this->arbUnit = null;
+        $this->arlsNomen = null;
     }
 
     /**

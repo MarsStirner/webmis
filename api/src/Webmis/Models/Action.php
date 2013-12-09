@@ -227,7 +227,8 @@ class Action extends BaseAction
                         'unit' => ''
                         );
 
-                    $rbUnit = $drug->getRbUnit();
+                    $rlsNomen = $drug->getRlsNomen();
+                    $rbUnit = $rlsNomen->getrbUnitRelatedByunitId();
                     if($rbUnit){
                         $d['unit'] = $rbUnit->getName();
                     }

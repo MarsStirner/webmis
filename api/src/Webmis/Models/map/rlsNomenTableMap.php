@@ -69,6 +69,7 @@ class rlsNomenTableMap extends TableMap
         $this->addRelation('rlsPacking', 'Webmis\\Models\\rlsPacking', RelationMap::MANY_TO_ONE, array('packing_id' => 'id', ), null, null);
         $this->addRelation('rlsActMatters', 'Webmis\\Models\\rlsActMatters', RelationMap::MANY_TO_ONE, array('actMatters_id' => 'id', ), null, null);
         $this->addRelation('rlsTradeName', 'Webmis\\Models\\rlsTradeName', RelationMap::MANY_TO_ONE, array('tradeName_id' => 'id', ), null, null);
+        $this->addRelation('DrugComponent', 'Webmis\\Models\\DrugComponent', RelationMap::ONE_TO_MANY, array('id' => 'nomen', ), null, null, 'DrugComponents');
         $this->addRelation('RlsBalanceOfGoods', 'Webmis\\Models\\RlsBalanceOfGoods', RelationMap::ONE_TO_MANY, array('id' => 'rlsNomen_id', ), null, null, 'RlsBalanceOfGoodss');
     } // buildRelations()
 

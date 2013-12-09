@@ -12,6 +12,7 @@ use \PropelCollection;
 use \PropelException;
 use \PropelObjectCollection;
 use \PropelPDO;
+use Webmis\Models\DrugComponent;
 use Webmis\Models\RlsBalanceOfGoods;
 use Webmis\Models\rbUnit;
 use Webmis\Models\rlsActMatters;
@@ -85,6 +86,10 @@ use Webmis\Models\rlsTradeName;
  * @method rlsNomenQuery leftJoinrlsTradeName($relationAlias = null) Adds a LEFT JOIN clause to the query using the rlsTradeName relation
  * @method rlsNomenQuery rightJoinrlsTradeName($relationAlias = null) Adds a RIGHT JOIN clause to the query using the rlsTradeName relation
  * @method rlsNomenQuery innerJoinrlsTradeName($relationAlias = null) Adds a INNER JOIN clause to the query using the rlsTradeName relation
+ *
+ * @method rlsNomenQuery leftJoinDrugComponent($relationAlias = null) Adds a LEFT JOIN clause to the query using the DrugComponent relation
+ * @method rlsNomenQuery rightJoinDrugComponent($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DrugComponent relation
+ * @method rlsNomenQuery innerJoinDrugComponent($relationAlias = null) Adds a INNER JOIN clause to the query using the DrugComponent relation
  *
  * @method rlsNomenQuery leftJoinRlsBalanceOfGoods($relationAlias = null) Adds a LEFT JOIN clause to the query using the RlsBalanceOfGoods relation
  * @method rlsNomenQuery rightJoinRlsBalanceOfGoods($relationAlias = null) Adds a RIGHT JOIN clause to the query using the RlsBalanceOfGoods relation
@@ -1346,6 +1351,80 @@ abstract class BaserlsNomenQuery extends ModelCriteria
         return $this
             ->joinrlsTradeName($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'rlsTradeName', '\Webmis\Models\rlsTradeNameQuery');
+    }
+
+    /**
+     * Filter the query by a related DrugComponent object
+     *
+     * @param   DrugComponent|PropelObjectCollection $drugComponent  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 rlsNomenQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByDrugComponent($drugComponent, $comparison = null)
+    {
+        if ($drugComponent instanceof DrugComponent) {
+            return $this
+                ->addUsingAlias(rlsNomenPeer::ID, $drugComponent->getnomen(), $comparison);
+        } elseif ($drugComponent instanceof PropelObjectCollection) {
+            return $this
+                ->useDrugComponentQuery()
+                ->filterByPrimaryKeys($drugComponent->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDrugComponent() only accepts arguments of type DrugComponent or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the DrugComponent relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return rlsNomenQuery The current query, for fluid interface
+     */
+    public function joinDrugComponent($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('DrugComponent');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'DrugComponent');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the DrugComponent relation DrugComponent object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\DrugComponentQuery A secondary query class using the current class as primary query
+     */
+    public function useDrugComponentQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinDrugComponent($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'DrugComponent', '\Webmis\Models\DrugComponentQuery');
     }
 
     /**

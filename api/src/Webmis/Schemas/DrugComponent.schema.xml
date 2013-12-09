@@ -16,6 +16,10 @@
       <foreign-key foreignTable="rbUnit" name="FK_DrugComponent_rbUnit">
         <reference local="unit" foreign="id"/>
       </foreign-key>
+      <foreign-key foreignTable="rlsNomen" name="DrugComponent_rlsNomen">
+        <reference local="nomen" foreign="id"/>
+      </foreign-key>
+
       <behavior name="timestampable">
         <parameter name="create_column" value="createDateTime" />
         <!-- <parameter name="update_column" value="modifyDatetime" /> -->

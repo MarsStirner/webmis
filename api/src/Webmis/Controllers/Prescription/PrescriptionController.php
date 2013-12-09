@@ -234,7 +234,7 @@ class PrescriptionController
         }
 
 
-        $drugAllowedFields = array_flip(array('nomen', 'name', 'dose', 'unit'));
+        $drugAllowedFields = array_flip(array('nomen', 'name', 'dose'));
 
         foreach ($drugs as $drug) {
             $drug = array_intersect_key($drug, $drugAllowedFields);
