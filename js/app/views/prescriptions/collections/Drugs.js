@@ -5,7 +5,7 @@ define(function (require) {
     var Drugs = Collection.extend({
         model: Drug,
         initialize: function(){
-            console.log('init drugs collection', this);
+            // console.log('init drugs collection', this);
         }
     });
 

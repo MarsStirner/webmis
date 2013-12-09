@@ -90,7 +90,7 @@ define(function(require) {
 				// console.log('filter1', this.lastXHR, this.model.toJSON());
 			}
 
-
+            this.collection.filter = this.model.toJSON();
 			this.lastXHR = this.collection.fetch({
 				data: this.model.toJSON(),
 				processData: true

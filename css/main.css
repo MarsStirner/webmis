@@ -1469,6 +1469,16 @@ table.fc-border-separate {
   _overflow: hidden;
 }
 
+/* line 1, ../sass/modules/_prescription.scss */
+.Grid td {
+  border: 1px solid #d9d9d9;
+}
+
+/* line 5, ../sass/modules/_prescription.scss */
+h3.moa:first-letter {
+  text-transform: uppercase;
+}
+
 /*
  * qTip2 - Pretty powerful tooltips - v2.2.0
  * http://qtip2.com

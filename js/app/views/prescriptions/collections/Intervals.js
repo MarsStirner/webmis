@@ -5,7 +5,7 @@ define(function (require) {
     var Intervals = Collection.extend({
         model: Interval,
         initialize: function(){
-            console.log('init intervals collection', this);
+            // console.log('init intervals collection', this);
         },
         addInterval: function(){
             var interval = new Interval();

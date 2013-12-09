@@ -6,7 +6,7 @@ define(function (require) {
             beginDateTime: 123456789 
         },
         initialize: function(){
-            console.log('init drug model', this);
+//            console.log('init drug model', this);
         },
         delete: function(){
             this.collection.remove(this) 

@@ -1,54 +1,63 @@
-<table class="Grid">
+<% _.each(data.groupedByMoa, function(group, moa){%>
+<div>
+<h3 class="moa">
+<% if(moa === 'null'){%>
+    тип введения не определён
+<%}else{%>
+    <%= moa %>
+<%}%>
+    </h3>
+</div>
+<table class="Grid" style="margin-bottom:1em;">
 	<thead>
 		<tr>
-			<th>Тип назначения</th>
-			<th>Лечаший врач</th>
-			<th>Пациент</th>
-			<th>Препараты</th>
-			<th>Интервалы</th>
+			<th style="width:10%;">Пациент</th>
+			<th style="width:20%;">Препараты</th>
+			<th style="width:10%;">Примечание</th>
+			<th style="width:50%;">Интервалы</th>
+			<th style="width:10%">Лечаший врач</th>
 		</tr>
 	</thead>
-	<% _.each(data.items, function(item){%>
+	<% _.each(group, function(item){%>
 		<tr>
-			<td>
-				<%= item.name %>
-			</td>
-			<td>
-				<% if(item.doctor){ %>
-					<%= item.doctor.firstName%> <%= item.doctor.lastName %>
-				<% } %>
-			</td>
 			<td>
 				<% if(item.client){ %>
 					<%= item.client.firstName%> <%= item.client.lastName %>
 				<% } %>
 			</td>
 			<td>
-				<ul>
+				<ul style="margin-bottom:.5em;">
 					<% _.each(item.drugs, function(drug){%>
-					<li><%= drug.name %></li>
+					<li style="margin-bottom:.1em;">
+                        <%= drug.name %>
+                        <% if(drug.dose){%>
+                        (<%= drug.dose %> <%= drug.unit %>)
+                        <%}%>
+                    
+                    </li>
 					<%})%>
 				</ul>
+                    <% if(item.voa){%>
+                    <p>Скорость введения: <%= item.voa %> мл/час</p> 
+                    <%}%>
+			</td>
+            <td>
+                <%= item.note %> 
+            </td>
+			<td  class="intervals" style="padding: 0;margin:0;position: relative;overflow:hidden;">
+					<% _.each(item.assigmentIntervals, function(assigmentInterval){%>
+								<% _.each(assigmentInterval.executionIntervals, function(executionInterval){%>
+                                <span class="interval" data-prescription-id="<%= item.id %>" style="position: absolute; background-color:<%=executionInterval.backgroundColor%>;width:<%= executionInterval.w %>%;margin-left: <%= executionInterval.x1 %>%;display: inline-block;height: 100%;"></span>
+								<% })%>
+					<%})%>
 			</td>
 			<td>
-				<ul>
-					<% _.each(item.assigmentIntervals, function(assigmentInterval){%>
-						<li>
-							<ul>
-								<% _.each(assigmentInterval.executionIntervals, function(executionInterval){%>
-										<li>
-											<%= executionInterval.status %> |
-											<%= Core.Date.formatDateTime(executionInterval.beginDateTime) %>
-											<%if(executionInterval.endDateTime){%>
-												 - <%= Core.Date.formatDateTime(executionInterval.endDateTime) %>
-											<%}%>
-										</li>
-								<% })%>
-							</ul>
-						</li>
-					<%})%>
-				</ul>
+				<% if(item.doctor){ %>
+					<%= item.doctor.firstName%> <%= item.doctor.lastName %>
+				<% } %>
 			</td>
 		</tr>
 	<% }) %>
 </table>
+
+<%})%>
