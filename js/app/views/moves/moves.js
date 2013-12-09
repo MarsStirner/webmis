@@ -5,18 +5,19 @@ define(function(require) {
 	//var PaginatorView= require('views/paginator');
 	var SendToDepartmentView = require('views/moves/send-to-department');
 	var HospitalBedView = require('views/moves/HospitalBedView');
+	var Documents = require('views/documents/documents');
 
 	function days_between(date1, date2) {
 
 		// The number of milliseconds in one day
-		var ONE_DAY = 1000 * 60 * 60 * 24
+		var ONE_DAY = 1000 * 60 * 60 * 24;
 
 
 		// Calculate the difference in milliseconds
-		var difference_ms = Math.abs(date1 - date2)
+		var difference_ms = Math.abs(date1 - date2);
 
 		// Convert back to days and return
-		return Math.round(difference_ms / ONE_DAY)
+		return Math.round(difference_ms / ONE_DAY);
 
 	}
 
@@ -43,6 +44,7 @@ define(function(require) {
 			this.collection.bind('reset', this.countBedDays, this);
 			this.collection.on('reset', this.toggleDirectionText, this);
 			this.collection.on('reset', this.toggleHospitalbedMenu, this);
+			this.collection.on('reset', this.checkLeavedDocExists, this);
 
 
 			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT));
@@ -103,6 +105,19 @@ define(function(require) {
 			}
 
 			this.$('.direction').text(this.directionText);
+		},
+
+		checkLeavedDocExists: function () {
+			if (this.collection.length && this.collection.last().get("admission") && !this.collection.last().get("leaved")) {
+				var leavedDocs = new Documents.Collections.DocumentList([], {appealId: this.options.appealId});
+				leavedDocs.fetch({data: {filter: {flatCode: "leaved"}}}).then(_.bind(function () {
+					if (leavedDocs.length > 0) {
+						this.$(".last-move-leave-col").css({color:"green"}).text("BTN [ACTIVE]");
+					} else {
+						this.$(".last-move-leave-col").css({color:"red"}).text("BTN [DISABLED]");
+					}
+				}, this));
+			}
 		},
 
 		createNewMove: function(event) {
