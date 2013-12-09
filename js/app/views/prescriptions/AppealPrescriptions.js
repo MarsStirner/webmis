@@ -19,7 +19,6 @@ define(function (require) {
         template: template,
         initialize: function () {
             var self = this;
-            console.log('init a', this.options);
 
             this.collection = new Prescriptions();
 

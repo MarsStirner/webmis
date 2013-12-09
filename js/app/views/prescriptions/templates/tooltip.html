@@ -1,4 +1,21 @@
 <div class="korus-tooltip">
+<% if(data.moa){%>
+    <p>
+        Тип введения: <%= data.moa %>
+    </p>
+<%}%>
+
+<% if(data.voa){%>
+    <p>
+        Скорость введения: <%= data.voa %> мл/час
+    </p>
+<%}%>
+<% if(data.note){%>
+    <p>   
+        Примечание: <%= data.note %>
+    </p>
+<%}%>
+
 <div>
     <p>
     Препараты
@@ -42,9 +59,6 @@
 
 </table>
 </div>
-<% if(data.note){%>
-<p>   Примечание: <%= data.note %></p>
-<%}%>
 <% if(data.doctor){%>
 <p>
     Назначивший врач: <%= data.doctor.firstName %> <%= data.doctor.lastName %>
