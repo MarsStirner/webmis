@@ -1,8 +1,8 @@
-<% if(!data.docs.allDocs || !data.doctorId){%>
+<% if(!data.docs.allDocs || !data.doctorId || !data.lastMoveClosed){%>
     <% if(!data.doctorId){%>
         <h3>Не назначен лечащий врач.</h3>
     <% } %>
-    <% if(!data.docs.allDocs){%>
+    <% if(!data.docs.allDocs || !data.lastMoveClosed){%>
         <h3>Нет документов:</h3>
         <ul class="docs-list">
             <% if(data.docs.vmp && !data.docs.vmpTicket){ %>
