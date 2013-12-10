@@ -47,3 +47,32 @@ h3.moa{
 .interval{
     opacity: 0.8;
 }
+
+
+.intervals-legend{
+    float: right;
+    .interval-runs{
+        display:inline-block;width:3em;height: 1em;background-color: #f57177;           
+    }
+    .interval-assigned{
+        display:inline-block;width:3em;height: 1em;background-color: #07ace3;
+    }
+    .interval-notExecuted{
+        display:inline-block;width:3em;height: 1em;background-color: #b2a7c9;   
+    }
+    .interval-executed{
+        display:inline-block;width:3em;height: 1em;background-color: #94cf51;   
+    }
+    .interval-canceled{
+        display:inline-block;width:3em;height: 1em;background-color: #999;   
+    }
+    .interval-stop{
+        display:inline-block;width:3em;height: 1em;background-color: #FFEA4F;   
+    }
+}
+.filter{
+    label{
+        display: block;
+        margin-bottom: 1em;
+    }
+}

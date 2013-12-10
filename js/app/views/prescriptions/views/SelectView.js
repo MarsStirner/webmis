@@ -8,7 +8,7 @@ define(function(require) {
 		initialize: function() {
 			this.valueProperty = this.options.valueProperty ? this.options.valueProperty : 'id';
 			this.textProperty = this.options.textProperty ? this.options.textProperty : 'name';
-			this.listenTo(this.collection, 'reset', this.render);
+			this.listenTo(this.collection, 'add remove reset', this.render);
 			this.modelKey = 'model.'+this.options.modelKey;
 
 		},
@@ -39,6 +39,8 @@ define(function(require) {
 				model: this.model
 			});
 
+            this.$el.find('select').select2({width: 'copy'});
+            this.$el.find('select').val("23");
 		}
 	});
 

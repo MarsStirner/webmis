@@ -1,29 +1,69 @@
-<label for="drug-name">
-	Лекарственный препарат
-	<input name="drug-name" id="drug-name" type="text"  data-value="filter.drugName">
-</label>
-<label for="doctor-name">
-	Врач
-	<input name="doctor-name" id="doctor-name" type="text"  data-value="filter.doctorName">
-</label>
-<label for="pacient-name">
-	Пациент
-	<input name="pacient-name" id="pacient-name" type="text"  data-value="filter.pacientName">
-</label>
+<div class="row-fluid">
+    <div class="span6">
+        <div class="row-fluid">
+            <div class="span6">
+                <label>
+                    Способ введения
+                    <div id="administration"></div>
+                </label>
 
-<div id="departments"></div>
-<div id="administration"></div>
+                <label for="drug-name">
+                    Лекарственный препарат
+                    <input name="drug-name" id="drug-name" type="text"  data-value="filter.drugName">
+                </label>
+                <label>
+                    Департамент
+                    <div id="departments"></div>
+                </label>
 
+            </div>
+            <div class="span6">
+                <label for="pacient-name">
+                    Пациент
+                    <input name="pacient-name" id="pacient-name" type="text"  data-value="filter.pacientName">
+                </label>
+                <label for="doctor-name">
+                    Врач
+                    <input name="doctor-name" id="doctor-name" type="text"  data-value="filter.doctorName">
+                </label>
+                <label style="padding-top: 1em;">
+                    <button id="clear-filter">Очистить фильтр</button> 
+                </label>
+            </div> 
+        </div>
+    
 
+    </div>
+    <div class="span4">
+        <label>
+            Дата
+        <div id="date-range"></div>
+        </label>
+    </div>
+    <div class="span2">
+        <ul class="intervals-legend" >
+            <li>
+            <span class="interval-runs"></span> Выполняется
+            </li>
+            <li>
+            <span class="interval-assigned"></span> Назначено
+            </li>
+            <li>
+            <span class="interval-notExecuted"></span> Не исполнено
+            </li>
+            <li>
+            <span class="interval-executed"></span> Испонено
+            </li>
+            <li>
+            <span class="interval-canceled"></span> Отменено
+            </li>
+            <li>
+            <span class="interval-stop"></span> Стоп
+            </li>
+        </ul>
+    </div>
+</div>
 
-<!-- <select name="doctors" id="doctors" data-value="filter.doctorId">
-	<option value="false">...</option>
-	<option value="1">иван иваныч</option>
-	<option value="205">балашов</option>
-</select> -->
-
-
-<div id="date-range"></div>
 
 
 
