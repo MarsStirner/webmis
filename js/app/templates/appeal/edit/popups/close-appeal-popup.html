@@ -18,6 +18,8 @@
 
             <% if(!data.docs.discharge){ %>
                 <li>Выписка. <a href="/appeals/<%= data.appealId %>/documents/new/118"  target="_blank">Создать</a></li>
+            <% } else if (!data.lastMoveClosed) { %>
+								<li>Не закрыто последнее <a href="/appeals/<%= data.appealId %>/moves"  target="_blank">движение</a></li>
             <% } %>
 
             <% if(data.docs.oncology){%>
