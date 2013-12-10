@@ -37,15 +37,11 @@ define(function(require) {
 
 			this.appealIsClosed = this.options.appeal.closed;
 
-			this.collection.bind('remove', function() {
+			this.collection.on('remove', function() {
 				this.collection.fetch();
 			}, this);
 
-			this.collection.bind('reset', this.countBedDays, this);
-			this.collection.on('reset', this.toggleDirectionText, this);
-			this.collection.on('reset', this.toggleHospitalbedMenu, this);
-			this.collection.on('reset', this.checkLeavedDocExists, this);
-
+			this.collection.on('reset', this.onCollectionReset, this);
 
 			var allowToMove = ((Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) || (Core.Data.currentRole() === ROLES.NURSE_DEPARTMENT));
 
@@ -86,6 +82,13 @@ define(function(require) {
 			event.stopPropagation();
 		},
 
+		onCollectionReset: function () {
+			this.countBedDays();
+			this.toggleDirectionText();
+			this.toggleHospitalbedMenu();
+			this.checkLeavedDocExists();
+		},
+
 		toggleDirectionText: function(){
 			this.directionText = 'Направление в отделение';
 
@@ -94,7 +97,7 @@ define(function(require) {
 			}
 		},
 
-		toggleHospitalbedMenu: function(e) {
+		toggleHospitalbedMenu: function() {
 			var lastMove = this.collection.last();
 			var $hospitalbedAction = this.$('#hospitalbed-action');
 
@@ -108,16 +111,46 @@ define(function(require) {
 		},
 
 		checkLeavedDocExists: function () {
-			if (this.collection.length && this.collection.last().get("admission") && !this.collection.last().get("leaved")) {
+			var coll = this.collection;
+			var shouldCheck = coll.length && coll.last().get("admission") && !coll.last().get("leave");
+
+			if (shouldCheck) {
+				var self = this;
 				var leavedDocs = new Documents.Collections.DocumentList([], {appealId: this.options.appealId});
 				leavedDocs.fetch({data: {filter: {flatCode: "leaved"}}}).then(_.bind(function () {
-					if (leavedDocs.length > 0) {
-						this.$(".last-move-leave-col").css({color:"green"}).text("BTN [ACTIVE]");
+					this.$(".last-move-leave-col")
+						.append(
+							$("<button style='font-size: .8em;'>Закрыть движение</button>")
+								.prop("disabled", !leavedDocs.length)
+								.prop("title", "Для закрытия движения необходимо наличие выписки.")
+								.button()
+								.one("click", function () {
+									console.log("Закрыть движение");
+									$(this).prop("disabled", true);
+									$.ajax({
+										type: "POST",
+										url: DATA_PATH + ["appeals", self.options.appealId, "closemove"].join("/"),
+										contentType: "application/json",
+										complete: function () {
+											console.log("Moving has been closed.");
+											coll.fetch();
+										}
+									})
+								})
+						);
+
+					/*if (leavedDocs.length > 0) {
+						//this.$(".last-move-leave-col").css({color:"green"}).text("BTN [ACTIVE]");
+						this.$(".close-last-move").enable();
 					} else {
-						this.$(".last-move-leave-col").css({color:"red"}).text("BTN [DISABLED]");
-					}
+						this.$(".close-last-move").disable();
+					}*/
 				}, this));
 			}
+		},
+
+		onCloseLastMoveClick: function (event) {
+			console.log('aaaaaa');
 		},
 
 		createNewMove: function(event) {
