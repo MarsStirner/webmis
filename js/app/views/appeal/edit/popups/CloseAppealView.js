@@ -172,7 +172,7 @@ define(function (require) {
 			this.docs4closing.on('change', function () {
 				//Движения
 				self.moves = new Moves();
-				self.moves = this.options.appealId;
+				self.moves.appealId = this.options.appeal.get('id');
 
 				self.moves.on("reset", function () {
 					self.moves.off();
