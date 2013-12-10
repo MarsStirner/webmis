@@ -1529,43 +1529,44 @@ h3.moa:first-letter {
 /* line 52, ../sass/modules/_prescription.scss */
 .intervals-legend {
   float: right;
+  font-size: 1.2em;
 }
-/* line 54, ../sass/modules/_prescription.scss */
+/* line 55, ../sass/modules/_prescription.scss */
 .intervals-legend .interval-runs {
   display: inline-block;
   width: 3em;
   height: 1em;
   background-color: #f57177;
 }
-/* line 57, ../sass/modules/_prescription.scss */
+/* line 58, ../sass/modules/_prescription.scss */
 .intervals-legend .interval-assigned {
   display: inline-block;
   width: 3em;
   height: 1em;
   background-color: #07ace3;
 }
-/* line 60, ../sass/modules/_prescription.scss */
+/* line 61, ../sass/modules/_prescription.scss */
 .intervals-legend .interval-notExecuted {
   display: inline-block;
   width: 3em;
   height: 1em;
   background-color: #b2a7c9;
 }
-/* line 63, ../sass/modules/_prescription.scss */
+/* line 64, ../sass/modules/_prescription.scss */
 .intervals-legend .interval-executed {
   display: inline-block;
   width: 3em;
   height: 1em;
   background-color: #94cf51;
 }
-/* line 66, ../sass/modules/_prescription.scss */
+/* line 67, ../sass/modules/_prescription.scss */
 .intervals-legend .interval-canceled {
   display: inline-block;
   width: 3em;
   height: 1em;
   background-color: #999;
 }
-/* line 69, ../sass/modules/_prescription.scss */
+/* line 70, ../sass/modules/_prescription.scss */
 .intervals-legend .interval-stop {
   display: inline-block;
   width: 3em;
@@ -1573,7 +1574,7 @@ h3.moa:first-letter {
   background-color: #FFEA4F;
 }
 
-/* line 74, ../sass/modules/_prescription.scss */
+/* line 75, ../sass/modules/_prescription.scss */
 .filter label {
   display: block;
   margin-bottom: 1em;
