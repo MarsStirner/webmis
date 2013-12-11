@@ -1,6 +1,6 @@
 define(function(require) {
 	var template = require('text!views/prescriptions/templates/appeal/drug-ballance.html');
-	var BaseView = require('../BaseView');
+	var BaseView = require('views/prescriptions/views/BaseView');
 
 	return BaseView.extend({
 		template: template,

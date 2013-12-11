@@ -1,10 +1,10 @@
 define(function(require) {
 	var popupMixin = require('mixins/PopupMixin');
 	var template = require('text!views/prescriptions/templates/appeal/add-drug-popup.html');
-	var BaseView = require('../BaseView');
-	var DrugBalance = require('../../collections/DrugBalance');
+	var BaseView = require('views/prescriptions/views/BaseView');
+	var DrugBalance = require('views/prescriptions/collections/DrugBalance');
 
-	var DrugBalanceView = require('./DrugBalanceView');
+	var DrugBalanceView = require('views/prescriptions/views/appealPrescriptions/DrugBalanceView');
 
 	var AddDrugPopup = BaseView.extend({
 		template: template,

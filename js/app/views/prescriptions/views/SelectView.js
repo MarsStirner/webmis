@@ -1,6 +1,6 @@
 define(function(require) {
-	var template = require('text!../templates/select.html');
-	var BaseView = require('./BaseView');
+	var template = require('text!views/prescriptions/templates/select.html');
+	var BaseView = require('views/prescriptions/views/BaseView');
 	var rivets = require('rivets');
 
 	return BaseView.extend({
@@ -40,7 +40,7 @@ define(function(require) {
 			});
 
             var $select = this.$el.find('select');
-            
+
             $select.select2({width: 'copy'});
 
             this.listenTo(this.model,'change:'+this.options.modelKey, function(){

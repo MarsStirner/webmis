@@ -1,11 +1,12 @@
 define(function(require) {
 	var template = require('text!views/prescriptions/templates/list-main.html');
 
-	var BaseView = require('./views/BaseView');
+	var BaseView = require('views/prescriptions/views/BaseView');
 
-	var Prescriptions = require('./collections/Prescriptions');
-	var FilterView = require('./views/FilterView');
-	var ListView = require('./views/ListView');
+	var Prescriptions = require('views/prescriptions/collections/Prescriptions');
+	var FilterView = require('views/prescriptions/views/prescriptions/FilterView');
+    var ActionsView = require('views/prescriptions/views/prescriptions/ActionsView');
+	var ListView = require('views/prescriptions/views/prescriptions/ListView');
 
 
 	return BaseView.extend({
@@ -26,9 +27,15 @@ define(function(require) {
 				model: new Backbone.Model()
 			});
 
+
+            this.actionsView = new ActionsView({
+                collection:this.collection
+            })
+
 			this.addSubViews({
 				'.list': this.listView,
-				'.filter': this.filterView
+				'.filter': this.filterView,
+                '.actions': this.actionsView
 			});
 
 			///console.log();

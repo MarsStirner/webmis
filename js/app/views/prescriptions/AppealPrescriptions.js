@@ -1,14 +1,14 @@
 define(function (require) {
     var template = require('text!views/prescriptions/templates/appeal/prescriptions.html');
-    var tooltipTemplate = _.template(require('text!./templates/tooltip.html'), null, {
+    var tooltipTemplate = _.template(require('text!views/prescriptions/templates/tooltip.html'), null, {
         variable: 'data'
     });
 
-    var BaseView = require('./views/BaseView');
-    var Prescriptions = require('./collections/Prescriptions');
-    var PrescriptionEdit = require('./views/appeal/PrescriptionEditView');
-    var ListView = require('./views/appeal/ListView');
-    var ActionsView = require('./views/appeal/ListActionsView');
+    var BaseView = require('views/prescriptions/views/BaseView');
+    var Prescriptions = require('views/prescriptions/collections/Prescriptions');
+    var PrescriptionEdit = require('views/prescriptions/views/appealPrescriptions/PrescriptionEditView');
+    var ListView = require('views/prescriptions/views/appealPrescriptions/ListView');
+    var ActionsView = require('views/prescriptions/views/appealPrescriptions/ListActionsView');
     require('qtip');
     require('fullCalendar');
 

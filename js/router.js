@@ -304,7 +304,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			this.currentPage = "prescriptions";
 			console.log('presc')
 
-			require(["views/app", "views/prescriptions/List"], function(AppView, ListView) {
+			require(["views/app", "views/prescriptions/views/prescriptions/Prescriptions"], function(AppView, ListView) {
 				var view = new ListView({
 					path: path
 				});

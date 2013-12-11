@@ -1,9 +1,9 @@
 define(function (require) {
-    var BaseView = require('./BaseView');
-    var DateRangeView = require('./DateRangeView');
-    var SelectView = require('./SelectView');
+    var BaseView = require('views/prescriptions/views/BaseView');
+    var DateRangeView = require('views/prescriptions/views/DateRangeView');
+    var SelectView = require('views/prescriptions/views/SelectView');
     var rivets = require('rivets');
-    var template = require('text!../templates/filter.html');
+    var template = require('text!views/prescriptions/templates/filter.html');
     require('collections/departments');
     var AdministrationMethod = require('collections/AdministrationMethod');
 

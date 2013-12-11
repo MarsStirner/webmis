@@ -1,6 +1,6 @@
 define(function(require) {
 	var list = require('text!views/prescriptions/templates/appeal/prescriptions-list.html');
-	var BaseView = require('../BaseView');
+	var BaseView = require('views/prescriptions/views/BaseView');
 
 	return BaseView.extend({
 		template: list,

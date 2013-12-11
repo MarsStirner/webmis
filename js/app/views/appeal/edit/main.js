@@ -19,8 +19,8 @@ define(function(require) {
 	var HospitalBed = require("views/moves/HospitalBedView");
 
     var AppealPrescriptionsView = require("views/prescriptions/AppealPrescriptions");
-    var PrescriptionNewView = require("views/prescriptions/views/appeal/PrescriptionNewView");
-    var PrescriptionEditView = require("views/prescriptions/views/appeal/PrescriptionEditView");
+    var PrescriptionNewView = require("views/prescriptions/views/appealPrescriptions/PrescriptionNewView");
+    var PrescriptionEditView = require("views/prescriptions/views/appealPrescriptions/PrescriptionEditView");
 	require("models/appeal");
 	require("collections/patient-appeals");
 	require("views/breadcrumbs");

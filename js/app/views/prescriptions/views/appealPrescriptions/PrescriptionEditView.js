@@ -1,40 +1,33 @@
+
 define(function (require) {
-    var template = require('text!views/prescriptions/templates/appeal/prescription-new.html');
-    var BaseView = require('../BaseView');
-    var AddDrugPopupView = require('./AddDrugPopupView');
+    var template = require('text!views/prescriptions/templates/appeal/prescription-edit.html');
+    var BaseView = require('views/prescriptions/views/BaseView');
+    var AddDrugPopupView = require('views/prescriptions/views/appealPrescriptions/AddDrugPopupView');
     var AdministrationMethod = require('collections/AdministrationMethod');
-    var Prescription = require('../../models/Prescription');
+    var Prescription = require('views/prescriptions/models/Prescription');
     var rivets = require('rivets');
     require('datetimeEntry');
+    var popupMixin = require('mixins/PopupMixin');
 
     return BaseView.extend({
         template: template,
-        initialize: function () {
+        initialize: function (opt) {
             var self = this;
-            console.log('init new prescription view', this);
-            this.prescription = new Prescription({}, {
-                actionTypeId: 754
+            //console.log('init new prescription view', this);
+            this.prescription = opt.prescription; 
+            this.administration = new AdministrationMethod();
+            self.administration.fetch({
+
+                data: {
+                    code: self.getMoaKeys()
+                }
+            })
+            .done(function () {
+                self.debug();
+                self.render();
+
             });
 
-            this.administration = new AdministrationMethod();
-
-            $.when(this.prescription.initialized())
-                .then(function () {
-                    self.prescription.set('eventId', self.options.appealId);
-                    console.log('prescription initialized', self.prescription);
-                    //в экшенпроперти "Спооб введения" в valueDomain хранятся коды
-                    //по которым надо отфильтровать справочник способов введения
-                    self.administration.fetch({
-                        data: {
-                            code: self.getMoaKeys()
-                        }
-                    })
-                        .done(function () {
-                            self.debug();
-                            self.render();
-                        });
-
-                });
 
 
         },
@@ -82,7 +75,7 @@ define(function (require) {
         },
         onClickCancel: function () {
             this.redirectToList();
-            console.log('onClickCancel');
+            //console.log('onClickCancel');
         },
         redirectToList: function () {
             App.Router.navigate(['appeals', this.options.appealId, 'prescriptions'].join('/'), {
@@ -149,6 +142,7 @@ define(function (require) {
             });
 
         }
-    });
+    }).mixin([popupMixin]);
+
 
 });

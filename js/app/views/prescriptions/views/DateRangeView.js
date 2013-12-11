@@ -1,6 +1,6 @@
 define(function (require) {
-    var template = require('text!../templates/date-range.html');
-    var BaseView = require('./BaseView');
+    var template = require('text!views/prescriptions/templates/date-range.html');
+    var BaseView = require('views/prescriptions/views/BaseView');
     var rivets = require('rivets');
 
     return BaseView.extend({

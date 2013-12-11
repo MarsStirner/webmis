@@ -1,8 +1,8 @@
 define(function (require) {
-    var list = require('text!../templates/list.html');
-    var BaseView = require('./BaseView');
+    var list = require('text!views/prescriptions/templates/list.html');
+    var BaseView = require('views/prescriptions/views/BaseView');
     require('qtip');
-    var tooltipTemplate = _.template(require('text!../templates/tooltip.html'), null, {
+    var tooltipTemplate = _.template(require('text!views/prescriptions/templates/tooltip.html'), null, {
         variable: 'data'
     });
 
@@ -105,7 +105,7 @@ define(function (require) {
             var data = {};
             data.groupedByMoa = groupedByMoa;
             data.items = this.collection.toJSON();
-            console.log('data', data)
+            //console.log('data', data)
             return data;
         },
 
