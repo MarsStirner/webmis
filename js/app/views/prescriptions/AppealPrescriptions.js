@@ -116,7 +116,7 @@ define(function (require) {
                         header: {
                             left: 'prev,today,next',
                             center: 'title',
-                            right: 'month,agendaWeek,agendaDay'
+                            right: 'month,basicWeek,basicDay'
                         },
                         defaultView: 'month',
                         slotEventOverlap: false,
