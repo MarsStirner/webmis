@@ -9,6 +9,9 @@ define(function (require) {
 
     return BaseView.extend({
         template: list,
+        events: {
+            'change [data-prescription-id]': 'onSelectPrescription'
+        },
         initialize: function () {
             this.collection.on('reset', function () {
                 if (this.collection.length) {
@@ -28,17 +31,27 @@ define(function (require) {
             this.$el.html('Ищем...');
         },
 
+        onSelectPrescription: function(e){
+            var $target = this.$(e.target);
+            var selected = $target.prop('checked');
+            var id = $target.data('prescriptionId');
+            var prescription = this.collection.get(id);
+            prescription.set('selected', selected);
+
+            console.log('onSelectPrescription',selected, id, prescription);
+        },
+
         getRangeMinutes: function () {
-            var rangeMin = moment(this.collection.filter.dateRangeMin * 1000);
-            var rangeMax = moment(this.collection.filter.dateRangeMax * 1000);
+            var rangeMin = moment(this.collection._filter.dateRangeMin * 1000);
+            var rangeMax = moment(this.collection._filter.dateRangeMax * 1000);
             var minutes = rangeMax.diff(rangeMin, 'minutes');
             return minutes;
         },
 
         getIntervalCoordinates: function (interval) {
             var defaultIntervalLength = 45 * 60 * 1000;
-            var rangeStart = this.collection.filter.dateRangeMin * 1000;
-            var rangeEnd = this.collection.filter.dateRangeMax * 1000;
+            var rangeStart = this.collection._filter.dateRangeMin * 1000;
+            var rangeEnd = this.collection._filter.dateRangeMax * 1000;
             var intervalStart = interval.get('beginDateTime');
             var intervalEnd = interval.get('endDateTime');
             var coordinates = {};
@@ -119,14 +132,14 @@ define(function (require) {
 
         afterRender: function () {
             var self = this;
-            $('[data-prescription-id]')
+            $('[data-prescription]')
                 .each(function () {
                     var $el = $(this);
 
                     $el.qtip({
                         content: {
                             // title: event.name,
-                            text: self.getTooltipText($el.data('prescriptionId'))
+                            text: self.getTooltipText($el.data('prescription'))
                         },
                         style: 'qtip-light',
                         position: {

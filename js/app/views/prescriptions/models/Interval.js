@@ -1,5 +1,7 @@
 define(function (require) {
     var Model = require('./Model');
+    require('moment');
+    require('twix');
 
     var states = {
         runs: {title: 'Выполняется',color: '#f57177'},
@@ -44,6 +46,7 @@ define(function (require) {
 
             return state;
         },
+
         getCurrentTime: function () {
             return moment().valueOf();
         },
@@ -56,6 +59,24 @@ define(function (require) {
 
             return begin > current; 
         },
+        isNotExecuted: function(){
+            return this.getState() === 'notExecuted';
+        },
+
+        overlapRange: function(start, end){//пересекается ли интервал с интервалом...
+            var range = moment(start).twix(end);
+            var overlap = false;
+
+            if(this.get('endDateTime')){
+                var intervalRange = moment(this.get('beginDateTime')).twix(this.get('endDateTime'));
+                overlap = intervalRange.overlaps(range);
+            }else{
+                overlap = range.contains(this.get('beginDateTime'));
+            }
+
+            return overlap;
+        },
+
         timeIn: function () { //предикат: время начала интервала меньше текущего, время окончания интервала больше текущего
             var bool;
             var begin = this.roundToMinutes(this.get('beginDateTime'));
@@ -121,6 +142,18 @@ define(function (require) {
 
             return attributes;
  
+        },
+
+        execute: function(opts) {
+            var options = {
+                data: JSON.stringify({data:[this.get('id')]}),
+                url : '/api/v1/prescriptions/executeIntervals',
+                type: 'PUT',
+                dataType : "jsonp",
+                contentType : 'application/json'
+            }
+
+            return $.ajax(_.extend(options, opts))
         }
     });
 

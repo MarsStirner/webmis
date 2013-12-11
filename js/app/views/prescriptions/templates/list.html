@@ -23,7 +23,7 @@
 	</thead>
 	<% _.each(group, function(item){%>
 		<tr>
-            <td><input type="checkbox"/></td>
+            <td><input  type="checkbox" data-prescription-id="<%= item.id %>"/></td>
 			<td>
 				<% if(item.client){ %>
 					<%= item.client.firstName%> <%= item.client.lastName %>
@@ -52,7 +52,7 @@
                 <div class="hours"><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span></div>
 					<% _.each(item.assigmentIntervals, function(assigmentInterval){%>
 								<% _.each(assigmentInterval.executionIntervals, function(executionInterval){%>
-                                <span class="interval" data-prescription-id="<%= item.id %>" style="position: absolute; background-color:<%=executionInterval.backgroundColor%>;width:<%= executionInterval.w %>%;margin-left: <%= executionInterval.x1 %>%;display: inline-block;height: 100%;"></span>
+                                <span class="interval" data-prescription="<%= item.id %>" style="position: absolute; background-color:<%=executionInterval.backgroundColor%>;width:<%= executionInterval.w %>%;margin-left: <%= executionInterval.x1 %>%;display: inline-block;height: 100%;"></span>
 								<% })%>
 					<%})%>
 			</td>

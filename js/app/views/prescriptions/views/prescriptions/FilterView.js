@@ -105,10 +105,10 @@ define(function (require) {
                 }
             }
 
-            this.collection.filter = filter;
+            this.collection._filter = filter;
             this.lastXHR = this.collection.fetch({
-                data: filter,
-                processData: true
+//                data: filter,
+//                processData: true
             });
         },
 

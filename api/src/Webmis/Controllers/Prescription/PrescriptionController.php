@@ -494,6 +494,23 @@ class PrescriptionController
         return $app['jsonp']->jsonp(array('data' => $intervals->toArray() ));
     }
 
+    public function executeIntervalsAction(Request $request, Application $app){
+        $data = $request->get('data');
+
+        $intervals = DrugChartQuery::create()->filterById($data)->find();
+
+        //return $app['jsonp']->jsonp(array('data' => $data ));
+        foreach($intervals as $interval){
+            $interval->setStatus(1);
+        }
+
+        $intervals->save();
+
+        return $app['jsonp']->jsonp(array('data' => $intervals->toArray() ));
+    }
+
+
+
     public function getIntervalById($intervals, $id){
 
         // $filteredIntervals = array_filter($intervals, function ($interval) use ($id) {
