@@ -110,7 +110,7 @@ define(function (require) {
             var self = this;
             this.collection.on('reset', function () {
                 var events1 = this.getEvents();
-                console.log('events', events1);
+                //console.log('events', events1);
                 this.$el.find('.calendar')
                     .fullCalendar({
                         header: {

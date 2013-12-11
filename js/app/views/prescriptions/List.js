@@ -31,7 +31,7 @@ define(function(require) {
 				'.filter': this.filterView
 			});
 
-			console.log();
+			///console.log();
 
 			this.filterView.filter();
 		}

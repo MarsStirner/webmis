@@ -39,8 +39,14 @@ define(function(require) {
 				model: this.model
 			});
 
-            this.$el.find('select').select2({width: 'copy'});
-            this.$el.find('select').val("23");
+            var $select = this.$el.find('select');
+            
+            $select.select2({width: 'copy'});
+
+            this.listenTo(this.model,'change:'+this.options.modelKey, function(){
+                $select.trigger('change');
+            });
+
 		}
 	});
 

@@ -18,7 +18,7 @@ define(function(require) {
 			this.$el.html('Ничего не нашли.');
 		},
 		renderOnFetch: function(){
-			console.log('onFetch', this.cid, this.$el.html());
+			//console.log('onFetch', this.cid, this.$el.html());
 
 			this.$el.html('Ищем...');
 		},

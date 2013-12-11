@@ -23,7 +23,7 @@ define(function (require) {
             this.$el.html('Ничего не нашли.');
         },
         renderOnFetch: function () {
-            console.log('onFetch', this.cid, this.$el.html());
+            //console.log('onFetch', this.cid, this.$el.html());
 
             this.$el.html('Ищем...');
         },
@@ -60,13 +60,13 @@ define(function (require) {
                 coordinates.x2 = (intervalEnd - rangeStart) / (rangeEnd - rangeStart) * 100;
                 coordinates.w = coordinates.x2 - coordinates.x1;
             }
-            console.log('coordinates', coordinates);
+            //console.log('coordinates', coordinates);
             return coordinates;
 
         },
 
         data: function () {
-            console.log('data', this.collection, this.getRangeMinutes());
+            //console.log('data', this.collection, this.getRangeMinutes());
             var modelsGroupedByMoa = this.collection.groupBy(function (model) {
                 return model.get('moa');
             });
@@ -101,7 +101,7 @@ define(function (require) {
                 groupedByMoa = _.extend(groupedByMoa, group);
             });
 
-            console.log('groupedByMoa', groupedByMoa);
+            //console.log('groupedByMoa', groupedByMoa);
             var data = {};
             data.groupedByMoa = groupedByMoa;
             data.items = this.collection.toJSON();

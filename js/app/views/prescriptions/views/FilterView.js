@@ -96,18 +96,18 @@ define(function (require) {
         },
 
         filter: function () {
+            var filter = this.model.toJSON();
+
             if (_.isObject(this.lastXHR)) {
-                // console.log('filter0', this.lastXHR, this.model.toJSON());
+                // прерываем предыдущий запрос если он не успел выполнится
                 if (this.lastXHR && this.lastXHR.readyState != 4) {
                     this.lastXHR.abort('stale');
-
                 }
-                // console.log('filter1', this.lastXHR, this.model.toJSON());
             }
 
-            this.collection.filter = this.model.toJSON();
+            this.collection.filter = filter;
             this.lastXHR = this.collection.fetch({
-                data: this.model.toJSON(),
+                data: filter,
                 processData: true
             });
         },

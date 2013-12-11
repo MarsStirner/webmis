@@ -30,7 +30,7 @@ define(function(require) {
 		},
 
 		render: function() {
-			console.log('render', this.cid)
+			//console.log('render', this.cid)
 			this.$el.html(_.template(this.template, this.data(),{variable: 'data'}));
 			this.renderSubViews();
 

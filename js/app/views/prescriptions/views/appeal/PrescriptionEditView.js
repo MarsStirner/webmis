@@ -75,7 +75,7 @@ define(function (require) {
         },
         onClickCancel: function () {
             this.redirectToList();
-            console.log('onClickCancel');
+            //console.log('onClickCancel');
         },
         redirectToList: function () {
             App.Router.navigate(['appeals', this.options.appealId, 'prescriptions'].join('/'), {

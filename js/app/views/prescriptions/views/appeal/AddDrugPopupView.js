@@ -29,11 +29,11 @@ define(function(require) {
 				// console.log('balance', self.balance);
 			})
 
-			console.log('searchByNomen', item)
+			//console.log('searchByNomen', item)
 
 		},
         onSave: function(){
-            console.log('add drug') 
+            //console.log('add drug')
             var drug = this.balance.first();
             var drugs = this.prescription.get('drugs');
             drugs.add({
@@ -79,7 +79,7 @@ define(function(require) {
 						self.searchByNomen(item);
 
 					}
-					console.log('ui', event, ui)
+					//console.log('ui', event, ui)
 
 				}
 			})
