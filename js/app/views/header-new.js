@@ -157,6 +157,10 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 							name: "biomaterials",
 							uri: "/biomaterials/"
 						}, {
+                            title: "Лист назначений",
+                            name: "prescriptions",
+                            uri: "/prescriptions/"
+                        }, {
 							title: "Отчёты",
 							name: "reports",
 							uri: "/reports/"

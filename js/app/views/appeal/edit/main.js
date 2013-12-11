@@ -400,6 +400,11 @@ define(function(require) {
 							title: "Титульный лист ИБ",
 							uri: "/appeals/:id/"
 						}, appealJSON),
+                        App.Router.compile({
+                            name: "prescriptions",
+                            title: "Назначения",
+                            uri: "/appeals/:id/prescriptions/"
+                        }, appealJSON),
 					]
 				}
 			}, this);
