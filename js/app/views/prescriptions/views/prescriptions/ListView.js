@@ -37,8 +37,6 @@ define(function (require) {
             var id = $target.data('prescriptionId');
             var prescription = this.collection.get(id);
             prescription.set('selected', selected);
-
-            console.log('onSelectPrescription',selected, id, prescription);
         },
 
         getRangeMinutes: function () {

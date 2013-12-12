@@ -12,7 +12,25 @@ define(function (require) {
             'click .execute-not-executed-intervals': 'executeNotExecutedIntervals'
         },
         initialize: function(){
+            this.listenTo(this.collection, 'change reset', this.updateButtons);
+        },
+        updateButtons: function(){
+            var start = this.collection._filter.dateRangeMin*1000;
+            var end = this.collection._filter.dateRangeMax*1000;
 
+            var selected = this.collection.getSelected();
+            if(selected.length){
+                this.$el.find('.execute-intervals').button().button('enable'); 
+            }else{
+                this.$el.find('.execute-intervals').button().button('disable'); 
+            }
+
+            var notExecuted = this.collection.getNotExecutedIntervals(start, end);
+            if(notExecuted.length){
+                this.$el.find('.execute-not-executed-intervals').button().button('enable'); 
+            }else{
+                this.$el.find('.execute-not-executed-intervals').button().button('disable'); 
+            }
         },
         executeIntervals: function(){
             var self = this;
@@ -30,8 +48,6 @@ define(function (require) {
                     console.log('error');
                 }
             });
-
-            console.log('selected', selected);
 
         },
 
@@ -58,6 +74,7 @@ define(function (require) {
         afterRender: function(){
 
             this.$el.find('button').button();
+            this.updateButtons();
         }
     });
 });
