@@ -41,6 +41,7 @@ define([], function() {
 				var flattenedDetails = this.getFlattenedDetails();
 				_.each(flattenedDetails, function(attr) {
 					attr.value = Core.Strings.cleanTextMarkup(attr.value);
+					if (!attr.hasOwnProperty('unit')) attr.unit = '';
 				}, this);
 				return flattenedDetails;
 			},

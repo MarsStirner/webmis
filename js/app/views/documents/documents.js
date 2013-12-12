@@ -2827,7 +2827,11 @@ define(function (require) {
 			//TODO: MAP ALL ATTRIBUTES
 			_(this.model.get('layoutAttributeValues')).each(function (value) {
 				var layoutAttributeParams = _(layoutAttributesDir.get(this.model.get('type'))).where({id: value.layoutAttribute_id})[0];
-				this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
+				if (layoutAttributeParams) {
+					this.layoutAttributes[layoutAttributeParams.code.toLowerCase()] = value.value;
+				} else {
+					console.error("failed to map LayoutAttributes:", this);
+				}
 			}, this);
 		},
 
@@ -3017,37 +3021,38 @@ define(function (require) {
 			UIElementBase.prototype.render.call(this);
 
 			//TODO: move this shit to the template
+			if (this.model.get('scope').length) {
+				this.$(".Combo").each(function () {
+					var $comboInput = $(this).wrap(
+						'<div class="DDList DDSelect ComboWrapper">' +
+							'<div class="Title">' +
+							'<span class="Actions"></span>' +
+							'</div>' +
+							'</div>'
+					);
+					var $wrapper = $comboInput.parents(".DDList").append('<div class="Content"><ul></ul></div>');
 
-			this.$(".Combo").each(function () {
-				var $comboInput = $(this).wrap(
-					'<div class="DDList DDSelect ComboWrapper">' +
-						'<div class="Title">' +
-						'<span class="Actions"></span>' +
-						'</div>' +
-						'</div>'
-				);
-				var $wrapper = $comboInput.parents(".DDList").append('<div class="Content"><ul></ul></div>');
+					if ($comboInput.hasClass("Mandatory")) $wrapper.addClass("Mandatory");
 
-				if ($comboInput.hasClass("Mandatory")) $wrapper.addClass("Mandatory");
+					$wrapper.find("ul").append($comboInput.data("options").split("|").map(function (opt) {
+						return $('<li>' + opt + '</li>');
+					}));
 
-				$wrapper.find("ul").append($comboInput.data("options").split("|").map(function (opt) {
-					return $('<li>' + opt + '</li>');
-				}));
+					$wrapper.on("click", function (event) {
+						event.stopPropagation();
+						$(".DDList.Active").not($wrapper).removeClass("Active");
+						$(this).toggleClass("Active");
+					});
 
-				$wrapper.on("click", function (event) {
-					event.stopPropagation();
-					$(".DDList.Active").not($wrapper).removeClass("Active");
-					$(this).toggleClass("Active");
+					$wrapper.find("li").on("click", function () {
+						$comboInput.val($(this).html()).change();
+					});
+
+					$comboInput.on("keyup", function () {
+						$wrapper.removeClass("Active");
+					});
 				});
-
-				$wrapper.find("li").on("click", function () {
-					$comboInput.val($(this).html()).change();
-				});
-
-				$comboInput.on("keyup", function () {
-					$wrapper.removeClass("Active");
-				});
-			});
+			}
 
 			return this;
 		}
@@ -4977,7 +4982,6 @@ define(function (require) {
 		Review: {}
 	};
 
-
 	Documents.Summary.Filters = Documents.Views.List.Common.Filters.extend({
 		template: templates._summaryTypeDateFilters,
 		toString: function(){
@@ -5049,10 +5053,6 @@ define(function (require) {
 			return data;
 		}
 	});
-
-
-
-
 
 	Documents.Summary.List.Layout = Documents.Views.List.Common.Layout.extend({
 		attributes: {style: "display: table; width: 100%;padding-left:0px;"},
@@ -5141,7 +5141,6 @@ define(function (require) {
 	});
 
 	//Редактирование консультаций
-
 	Documents.Views.Edit.Consultation.DocControls = Documents.Views.Edit.DocControls.extend({
 		onSaveDocumentSuccess: function (result) {
 			// var resultId = result.id || result.data[0].id;
@@ -5171,8 +5170,6 @@ define(function (require) {
 			}, subViews));
 		}
 	});
-
-
 
 
 	return Documents;

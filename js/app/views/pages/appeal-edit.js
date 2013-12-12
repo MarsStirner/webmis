@@ -9,6 +9,7 @@ define([
     "collections/patient-appeals",
     "collections/dictionary-values",
     "collections/event-types",
+    "collections/departments",
     "views/breadcrumbs",
     "views/mkb-directory",
     "views/pages/appeal-representative",
@@ -95,7 +96,10 @@ define([
                     }, {
                         name: "relationTypes",
                         pathPart: "relationships"
-                    }
+                    }, {
+												name: "departments",
+												collection: App.Collections.Departments
+										}
                 ];
 
                 this.initWithDictionaries(appealDicts, this.ready, this, true);
@@ -264,6 +268,7 @@ define([
         },
 
         ready: function (dicts) {
+					console.log(dicts.departments);
             var view = this;
 
             var result = this.model.toJSON();
@@ -578,6 +583,8 @@ define([
                 .connect("height", "physical_parameters[height]", this.$el);
 
             this.model.connect("injury", "injury", this.$el);
+						this.model.connect("orgStructStay", "org_struct_stay", this.$el);
+						this.model.connect("orgStructDirectedFrom", "org_struct_directed_from", this.$el);
 
             // Ограничение ввода для полей формата Double
             this.$('.RestrictFloat')
