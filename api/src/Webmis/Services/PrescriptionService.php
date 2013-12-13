@@ -18,8 +18,8 @@ class PrescriptionService
     public function __construct($host, $port)
     {
         $socket = new TSocket($host, $port);
-        // $socket->setSendTimeout(100000);
-        // $socket->setRecvTimeout(100000);
+        $socket->setSendTimeout(100000);
+        $socket->setRecvTimeout(100000);
         $transport = new TBufferedTransport($socket, 1024, 1024);
         $protocol = new TBinaryProtocol($transport);
         $this->client = new PrescriptionExchangeClient($protocol);
