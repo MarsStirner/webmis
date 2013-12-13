@@ -33,21 +33,79 @@ define(function (require) {
                         }
                     })
                         .done(function () {
-                            
+
                             self.prescription.set('eventId', self.options.appealId);
                             // self.debug();
                             self.render();
+                            self.listenTo(self.prescription, 'change', self.validateForm);
                         });
 
                 });
 
 
         },
-        getMoaKeys: function(){
+        validateForm: function () {
+
+            var errors = this.validate();
+            if (errors.length) {
+                this.$el.find('.save')
+                    .button()
+                    .button('disable');
+            } else {
+                this.$el.find('.save')
+                    .button()
+                    .button('enable');
+            }
+
+            this.showErrors(errors);
+        },
+
+        showErrors: function (errors) {
+            var $errors = this.$el.find('.errors')
+            $errors.html('').hide();
+
+            if (errors.length > 0) {
+                _.each(errors, function (error) {
+                    $errors.append(error);
+                }, this);
+                //	$errors.append(errors[0]);
+                $errors.show();
+            }
+        },
+
+        validate: function () {
+            var errors = [];
+
+            var drugs = this.prescription.get('drugs');
+            if (drugs && drugs instanceof Backbone.Collection) {
+                if (!drugs.length) {
+                    errors.push('Список лекарственных препаратов пуст. ');
+                }
+                var drugsErrors = drugs.validateCollection();
+                if (drugsErrors && drugsErrors.length) {
+                    errors = errors.concat(drugsErrors);
+                }
+
+            }
+
+            var intervals = this.prescription.get('assigmentIntervals');
+            if (intervals && intervals instanceof Backbone.Collection) {
+                if(!intervals.length){
+                    errors.push('Список интервалов приёма препаратов пуст. ');
+                }
+                intervalsErrors = intervals.validateCollection();
+                if(intervalsErrors && intervalsErrors.length){
+                    errors = errors.concat(intervalsErrors); 
+                }
+            }
+            console.log('validate', errors);
+            return errors;
+        },
+        getMoaKeys: function () {
             var moaModel = this.prescription.getPropertyByCode('moa');
             var moaModelValueDomain = moaModel.get('valueDomain');
             var moaKeys = (moaModelValueDomain.split(';'))[1];
-            return moaKeys; 
+            return moaKeys;
         },
         debug: function () {
             /*
@@ -152,8 +210,11 @@ define(function (require) {
                 prescription: self.prescription
             });
 
-            this.$el.find('button').button();
-            this.$el.find('select').select2();
+            this.$el.find('button')
+                .button();
+            this.$el.find('select')
+                .select2();
+            this.validateForm();
 
         }
     });

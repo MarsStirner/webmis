@@ -49,21 +49,25 @@ define(function (require) {
         initCollections: function (callback) {
             if (this.get('drugs')) {
                 var drugs = new Drugs(this.get('drugs'));
+
+                drugs.on('add remove change', this.triggerChange, this);
                 this.set('drugs', drugs);
             }
 
             if (this.get('assigmentIntervals')) {
                 var assigmentIntervals = new Intervals(this.get('assigmentIntervals'));
+                assigmentIntervals.on('add remove change', this.triggerChange, this);
                 assigmentIntervals.each(function(interval){
                     if(interval.get('executionIntervals')){
                         var executionIntervals = new Intervals(interval.get('executionIntervals'));
+                        executionIntervals.on('add remove change', this.triggerChange, this);
                         interval.set('executionIntervals', executionIntervals);
                     } 
                 });
 
                 this.set('assigmentIntervals', assigmentIntervals);
             }
-
+            
             if (this.get('properties')) {
                 var properties = new Collection(this.get('properties'));
                 this.set('properties', properties);
@@ -71,6 +75,10 @@ define(function (require) {
             if (callback) {
                 callback();
             }
+        },
+
+        triggerChange: function(){
+            this.trigger('change'); 
         },
 
         toJSON: function () {

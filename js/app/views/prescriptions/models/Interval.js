@@ -154,7 +154,31 @@ define(function (require) {
             }
 
             return $.ajax(_.extend(options, opts))
-        }
+        },
+
+        validateModel: function(){
+            var errors = [];
+            if(!this.get('beginDateTime')){
+                errors.push('Не указано начало интервала. '); 
+            }
+
+            if(this.get('endDateTime') && this.get('beginDateTime')){
+               var diff = moment(this.get('endDateTime')).startOf('minute').diff(moment(this.get('beginDateTime')).startOf('minute')); 
+               if(diff < 0){
+                    errors.push('Время окончания интервала меньше времени начала');
+               }
+               if(diff === 0){
+                    errors.push('Время окончания интервала равно времени начала');
+               }
+
+               console.log('diff', diff);
+            }
+
+            if(errors.length){
+                return errors; 
+            } 
+        },
+
     });
 
     return Interval;
