@@ -14,6 +14,10 @@ define([
 			}else{
 				url = DATA_PATH + "reports/f007?filter[beginDate]="+ this.get('beginDate')+"&filter[endDate]="+this.get('endDate') ;
 			}
+			if (this.get("bedProfiles")) {
+				var bpFilter = "&filter[profileBed]=";
+				url += bpFilter + this.get("bedProfiles").join(bpFilter);
+			}
 			return url ;
 		}
 	});
