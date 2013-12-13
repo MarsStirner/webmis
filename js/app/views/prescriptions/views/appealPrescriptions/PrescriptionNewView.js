@@ -9,6 +9,9 @@ define(function (require) {
 
     return BaseView.extend({
         template: template,
+        attributes: {
+            "style": "display: table;"
+        },
         initialize: function () {
             var self = this;
             //console.log('init new prescription view', this);
@@ -30,7 +33,9 @@ define(function (require) {
                         }
                     })
                         .done(function () {
-                            self.debug();
+                            
+                            self.prescription.set('eventId', self.options.appealId);
+                            // self.debug();
                             self.render();
                         });
 
@@ -110,7 +115,6 @@ define(function (require) {
                     .on('add remove', function () {
                         setTimeout(function () {
                             $('.datetime_entry')
-                                .addClass('test')
                                 .datetimeEntry({
                                     datetimeFormat: 'D.O.Y H:M'
                                 });
@@ -147,6 +151,9 @@ define(function (require) {
             rivets.bind(self.el, {
                 prescription: self.prescription
             });
+
+            this.$el.find('button').button();
+            this.$el.find('select').select2();
 
         }
     });

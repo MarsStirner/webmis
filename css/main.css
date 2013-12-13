@@ -1580,6 +1580,28 @@ h3.moa:first-letter {
   margin-bottom: 1em;
 }
 
+/* line 81, ../sass/modules/_prescription.scss */
+.my-grid {
+  margin-bottom: 1.5em;
+}
+/* line 85, ../sass/modules/_prescription.scss */
+.my-grid tr {
+  border: 1px solid #dddddd;
+}
+/* line 88, ../sass/modules/_prescription.scss */
+.my-grid th {
+  background-color: #f3f3f3;
+}
+/* line 91, ../sass/modules/_prescription.scss */
+.my-grid td, .my-grid th {
+  padding: 0.8em;
+  vertical-align: middle;
+}
+/* line 98, ../sass/modules/_prescription.scss */
+.my-grid .icon-remove {
+  cursor: pointer;
+}
+
 /*
  * qTip2 - Pretty powerful tooltips - v2.2.0
  * http://qtip2.com

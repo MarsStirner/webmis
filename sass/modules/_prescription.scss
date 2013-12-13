@@ -77,3 +77,25 @@ h3.moa{
         margin-bottom: 1em;
     }
 }
+
+.my-grid{
+   // font-size: 1.3em;
+    margin-bottom: 1.5em;
+
+    tr{
+        border: 1px solid #ddd; 
+    }
+    th{
+        background-color: #f3f3f3; 
+    }
+    td, th{
+        padding:0.8em; 
+        vertical-align: middle;
+    }
+    // input[type="text"]: {
+    //     border: 1px solid #bebebe; 
+    // } 
+    .icon-remove{
+        cursor: pointer; 
+    }
+}
