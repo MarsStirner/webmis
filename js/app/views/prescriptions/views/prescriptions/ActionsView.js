@@ -13,6 +13,7 @@ define(function (require) {
         },
         initialize: function(){
             this.listenTo(this.collection, 'change reset', this.updateButtons);
+            this.listenTo(this.collection, 'fetch', this.disableButtons);
         },
         updateButtons: function(){
             var start = this.collection._filter.dateRangeMin*1000;
@@ -31,6 +32,10 @@ define(function (require) {
             }else{
                 this.$el.find('.execute-not-executed-intervals').button().button('disable'); 
             }
+        },
+        disableButtons: function(){
+                this.$el.find('.execute-not-executed-intervals').button().button('disable'); 
+                this.$el.find('.execute-intervals').button().button('disable'); 
         },
         executeIntervals: function(){
             var self = this;
