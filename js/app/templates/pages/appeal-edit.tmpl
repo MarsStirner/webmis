@@ -108,7 +108,7 @@
 								</div>
 								<div class="HalfCol">
 									<label>Отделение поступления</label>
-									<select class="Styled" name="org_struct_stay">
+									<select class="Styled Mandatory" name="org_struct_stay">
 										<option value="" selected="selected">...</option>
 										{{each(i, dep) dicts.departments}}
 										<option value="${dep['id']}">${dep['name']}</option>
