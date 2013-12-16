@@ -171,7 +171,8 @@ define(function (require) {
 
         onClickAddDrug: function () {
             var popup = new AddDrugPopupView({
-                prescription: this.prescription
+                prescription: this.prescription,
+                appeal: this.options.appeal
             });
 
             popup.render();

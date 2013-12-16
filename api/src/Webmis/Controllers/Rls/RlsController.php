@@ -121,14 +121,17 @@ class RlsController
 
 
         $balance = RlsBalanceOfGoodsQuery::create()
+        ->leftJoinWithRbStorage('storage')
         ->filterByRlsNomenId($nomenId)
         ->useRlsNomenQuery('nomen')
             ->leftJoinRlsTradeName('tradeName')
+            ->leftJoinRlsActMatters('actMatters')
             ->leftJoinrbUnitRelatedByunitId('rbUnit')
         ->endUse()
         ->with('nomen')
         ->with('rbUnit')
         ->with('tradeName')
+        ->with('actMatters')
 
         ->leftJoinWithRbStorage()
         ->find();
@@ -145,13 +148,27 @@ class RlsController
             }
 
             $tradeLocalName = $rlsNomen->getRlsTradeName()->getLocalName();
+            $tradeName = $rlsNomen->getRlsTradeName()->getName();
+            $rlsActMatters = $rlsNomen->getRlsActMatters();
+            $actMattersName = $rlsActMatters->getName(); 
+            $actMattersLocalName = $rlsActMatters->getLocalName(); 
+            $drugLifeTime = $rlsNomen->getDrugLifeTime();
+
+            $storage = $item->getRbStorage();
+            $storageName = $storage->getName();
+            $storageOrgstructureId = $storage->getOrgstructureId();
 
             $data[] = array_merge(
                 $item->toArray(),
-                array('storageName' => $item->getRbStorage()->getName()),
-                array('tradeLocalName' => $tradeLocalName),
-                array('unitName' => $unitName),
-                array('unitId' => $unitId)
+                array('drugLifeTime' => $drugLifeTime,
+                'storageName' => $storageName,
+                'storageOrgstructureId' => $storageOrgstructureId,
+                'tradeLocalName' => $tradeLocalName,
+                'tradeName' => $tradeName,
+                'actMattersName' => $actMattersName,
+                'actMattersLocalName' => $actMattersLocalName,
+                'unitName' => $unitName,
+                'unitId' => $unitId)
                 );
         }
 

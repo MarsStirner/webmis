@@ -44,6 +44,36 @@ h3.moa{
         }
     }
 }
+
+tr.inOtherDepartments{
+    td{
+        background-color: #FFEA4F;
+    }
+    &:hover td{
+        background-color: #FFEA4F;
+    }
+
+}
+
+tr.inCurrentDepartment{
+    td{
+        background-color: #07ace3;
+    }
+    &:hover td{
+        background-color: #07ace3;
+    }
+}
+
+tr.inHospital{
+    td{
+        background-color: #94cf51;
+    }
+    &:hover td{
+        background-color: #94cf51;
+    }
+}
+
+
 .interval{
     opacity: 0.8;
 }

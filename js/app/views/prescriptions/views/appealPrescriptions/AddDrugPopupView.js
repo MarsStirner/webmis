@@ -11,13 +11,45 @@ define(function(require) {
 		initialize: function(){
 			this.balance = new DrugBalance();
 			this.balanceView = new DrugBalanceView({
-				collection: this.balance
+				collection: this.balance,
+                appeal: this.options.appeal
 			});
             this.prescription = this.options.prescription;
 			this.addSubViews({
 				'.balance': this.balanceView
 			});
+            this.balance.on('reset', function () {
+                this.validateForm();
+            }, this);
+            this.balance.on('fetch', function(){
+                this.saveButton(false); 
+            }, this) 
 		},
+
+        validateForm: function () {
+            console.log('validateForm')
+            var found = ((this.balanceView.inHospital()).length || (this.balanceView.inCurrentDepartment()).length || (this.balanceView.inOtherDepartments()).length)
+            this.saveButton(found);
+        },
+
+        saveButton: function (enabled, msg) {
+            var $saveButton = this.$el.closest('.ui-dialog')
+                .find('.save');
+            $saveButton.button();
+
+            if (enabled) {
+                $saveButton.button('enable');
+            } else {
+                $saveButton.button('disable');
+            }
+            if (msg) {
+                $saveButton.button('option', 'label', msg);
+            } else {
+                $saveButton.button('option', 'label', 'Сохранить');
+            }
+
+        },
+
 		className: 'popup',
 
 		searchByNomen: function(item) {
@@ -32,6 +64,7 @@ define(function(require) {
 			//console.log('searchByNomen', item)
 
 		},
+
         onSave: function(){
             //console.log('add drug')
             var drug = this.balance.first();
@@ -52,6 +85,7 @@ define(function(require) {
 			self.ui = {};
 			self.ui.$drugName = this.$el.find('#drug-name');
 
+            self.saveButton(false); 
 			self.ui.$drugName.autocomplete({
 				source: function(request, response) {
 					$.ajax({

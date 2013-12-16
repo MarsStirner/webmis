@@ -1,31 +1,40 @@
-<% if(!_.isEmpty(data.items)){ %>
-	<table class="Grid">
+<% if(data.item){ %>
+	<table class="my-grid">
 		<tr>
-			<td>rlsNomen</td>
 			<td>Препарат</td>
-			<td>Количество</td>
+			<td></td>
+			<td>Активные вещества</td>
+			<td></td>
 			<td>Годен до</td>
-			<td>Склад</td>
+			<!-- <td>Склад</td> -->
 		</tr>
-		<% _.each(data.items, function(item){%>
-			<tr>
-				<td>
-					<%= item.rlsNomenId %>
-				</td>
-				<td>
-					<%= item.tradeLocalName%>
-				</td>
-				<td>
-					<%= item.value%>
-				</td>
-				<td>
-					<%= item.bestBefore%>
-				</td>
-				<td>
-					<%= item.storageName%>
-				</td>
-			</tr>
-		<% }) %>
+        
+        <tr <% if(data.where){%>  class="<%= data.where%>"<%}%>>
+            <td>
+                <!-- <%= data.item.rlsNomenId %> -->	
 
+                <%= data.item.tradeLocalName%>
+                <% if(data.item.isExpirationDateComesToEnd){%>*<%}%>
+            </td>
+            <td>
+                <%= data.item.tradeName %>
+            </td>
+            <td>
+                <%= data.item.actMattersName %>
+            </td>
+            <td>
+                <%= data.item.actMattersLocalName %>
+            </td>
+
+
+            <td>
+                <%= data.item.bestBefore%>
+            </td>
+            <!-- <td> -->
+            <!--     <%= data.item.storageName%> -->
+            <!-- </td> -->
+        </tr>
+
+        
 	</table>
 <% } %>
