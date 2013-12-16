@@ -30,7 +30,7 @@ define(["text!templates/reports/f007.html",
 	});
 
 	var BedProfileList = Documents.Views.Base.extend({
-		template: _.template("<select multiple class='bed-profiles'><%bedProfiles.each(function(bp){%><option value='<%=bp.id%>'><%=bp.get('name')%></option><%});%></select>"),
+		template: _.template("<select multiple data-placeholder='Профили коек' class='bed-profiles'><%bedProfiles.each(function(bp){%><option value='<%=bp.id%>'><%=bp.get('name')%></option><%});%></select>"),
 		data: function () {
 			return {bedProfiles: this.collection};
 		},
@@ -46,7 +46,7 @@ define(["text!templates/reports/f007.html",
 				this.collection.trigger("selected", {bedProfile: this.collection.get(event.added.id)});
 			} else if (event.removed) {
 				this.collection.trigger("deselected", {bedProfile: this.collection.get(event.removed.id)});
-			};
+			}
 		},
 		render: function () {
 			Documents.Views.Base.prototype.render.apply(this);
