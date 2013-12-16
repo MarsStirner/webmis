@@ -5,6 +5,7 @@ define(function(require) {
 	return BaseView.extend({
 		template: list,
 		initialize: function(){
+            console.log('init appeal prescriptions list', this);
 			this.collection.on('reset', function(){
 				if(this.collection.length){
 					this.render();

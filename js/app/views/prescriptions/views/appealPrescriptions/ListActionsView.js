@@ -1,17 +1,30 @@
 define(function(require) {
 	var template = require('text!views/prescriptions/templates/appeal/prescriptions-actions.html');
 	var BaseView = require('views/prescriptions/views/BaseView');
+    var PrescriptionNewView = require('views/prescriptions/views/appealPrescriptions/PrescriptionNewView');
 
 	return BaseView.extend({
 		template: template,
 		initialize: function(){
 //create-prescription
 		},
+        data: function(){
+            return {appeal:this.options.appeal.toJSON()}; 
+        },
 		events: {
 			'click [data-create-prescription]':'createPrescription'
 		},
 		createPrescription: function(){
-			App.Router.navigate(["appeals", this.options.appealId, "prescriptions/new"].join("/"), {trigger: true});
+            var popup = new PrescriptionNewView({
+                actionTypeId: 754,
+                appeal: this.options.appeal,
+                collection: this.options.collection
+            });
+
+            popup.render();
+            popup.open();
+ 
+			// App.Router.navigate(["appeals", this.options.appeal.get('id'), "prescriptions/new"].join("/"), {trigger: true});
 
 			console.log('create prescription')
 		},

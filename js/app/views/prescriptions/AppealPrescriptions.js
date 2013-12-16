@@ -18,20 +18,23 @@ define(function (require) {
         className: 'ContentHolder',
         template: template,
         initialize: function () {
+
+            console.log('init appeal prescriptions', this);
             var self = this;
 
             this.collection = new Prescriptions();
 
-            this.listView = new ListView({
+            // this.listView = new ListView({
+            //     collection: this.collection
+            // });
+
+            this.actionsView = new ActionsView({
+                appeal: this.options.appeal,
                 collection: this.collection
             });
 
-            this.actionsView = new ActionsView({
-                appealId: this.options.appealId
-            });
-
             this.addSubViews({
-                '.list': this.listView,
+                // '.list': this.listView,
                 '.actions': this.actionsView
             });
 
@@ -43,6 +46,7 @@ define(function (require) {
 
 
         },
+
         getDrugsNames: function (drugs) {
             var names = [];
             drugs.each(function (drug) {
@@ -111,7 +115,7 @@ define(function (require) {
             this.collection.on('reset', function () {
                 var events1 = this.getEvents();
                 //console.log('events', events1);
-                this.$el.find('.calendar')
+                this.$el.find('.calendar').html('')
                     .fullCalendar({
                         header: {
                             left: 'prev,today,next',
@@ -155,7 +159,7 @@ define(function (require) {
                             day: 'день'
                         },
                         eventClick: function (event, jsEvent, view) {
-                            self.openPrescriptionEdit(event.id);
+            //                self.openPrescriptionEdit(event.id);
                         },
                         firstDay: 1,
                         slotMinutes: 30,
