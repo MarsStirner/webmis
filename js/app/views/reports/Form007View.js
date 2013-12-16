@@ -131,6 +131,8 @@ define(["text!templates/reports/f007.html",
 			$iframe.load(function () {
 				if (!loaded) {
 					loaded = true;
+					var printData = form007.toJSON();
+					console.log(printData);
 					var form = self.make("form", {
 						"accept-charset": "utf-8",
 						"action": "/pdf/",
@@ -143,7 +145,7 @@ define(["text!templates/reports/f007.html",
 						name: "template",
 						value: "f007"
 					});
-					textarea.innerHTML = JSON.stringify(form007.toJSON());
+					textarea.innerHTML = JSON.stringify(printData);
 					var doc = $("#myiframe").contents()[0];
 					$(doc.body).html($(form).append(textarea).append(input)).hide();
 					$(doc.body).find('form').trigger('submit');
