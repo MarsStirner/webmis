@@ -1,13 +1,14 @@
 define(["text!templates/reports/f007.html",
+	"views/view-base",
 	"views/ui/RangeDatepickerView",
 	"views/ui/SelectView",
 	"views/documents/documents",
 	"collections/moves/BedProfilesDir",
 	"collections/departments",
 	"models/print/form007"
-], function(tmpl, RangeDatepickerView, SelectView, Documents, BedProfilesDir) {
+], function(tmpl, ViewBase, RangeDatepickerView, SelectView, Documents, BedProfilesDir) {
 
-	var BedProfileFilter = Documents.Views.Base.extend({
+	var BedProfileFilter = ViewBase.extend({
 		template: _.template("<div class='span6 bed-profile-list'></div>"),
 		initialize: function () {
 			this.bedProfilesDir = new BedProfilesDir();
@@ -29,8 +30,13 @@ define(["text!templates/reports/f007.html",
 		}
 	});
 
-	var BedProfileList = Documents.Views.Base.extend({
-		template: _.template("<select multiple data-placeholder='Профили коек' class='bed-profiles'><%bedProfiles.each(function(bp){%><option value='<%=bp.id%>'><%=bp.get('name')%></option><%});%></select>"),
+	var BedProfileList = ViewBase.extend({
+		template: _.template(
+			"<select multiple data-placeholder='Профили коек' class='bed-profiles'>" +
+				"<%bedProfiles.each(function(bp){%>" +
+					"<option value='<%=bp.id%>'><%=bp.get('name')%></option>" +
+				"<%});%>" +
+			"</select>"),
 		data: function () {
 			return {bedProfiles: this.collection};
 		},
@@ -62,26 +68,6 @@ define(["text!templates/reports/f007.html",
 			return this;
 		}
 	});
-
-	/*var BedProfileList = Documents.Views.RepeaterBase.extend({
-		template: "<div class='span6'><select multiple class='bed-profiles'></select></div>",
-		initialize: function () {
-
-		},
-		render: function () {
-
-		}
-	});*/
-
-	/*var BedProfileItem = Documents.Views.Base.extend({
-		template: "",
-		initialize: function () {
-
-		},
-		render: function () {
-
-		}
-	});*/
 
 	return View.extend({
 		template: tmpl,
