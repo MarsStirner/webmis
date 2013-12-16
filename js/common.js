@@ -810,7 +810,7 @@ jQuery.ajaxSetup(
 			showErrorTimeout = setTimeout(function () {
 				hideThrobber();
 				showError("Превышено время ожидания ответа от сервера. Повторите попытку.");
-			}, 90000);
+			}, 240000);
 			requestQueue.push(1);
 		},
 		complete: function () {

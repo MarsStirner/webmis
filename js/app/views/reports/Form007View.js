@@ -1,12 +1,11 @@
 define(["text!templates/reports/f007.html",
 	"views/view-base",
-	"views/ui/RangeDatepickerView",
 	"views/ui/SelectView",
 	"views/documents/documents",
 	"collections/moves/BedProfilesDir",
 	"collections/departments",
 	"models/print/form007"
-], function(tmpl, ViewBase, RangeDatepickerView, SelectView, Documents, BedProfilesDir) {
+], function (tmpl, ViewBase, SelectView, Documents, BedProfilesDir) {
 
 	var BedProfileFilter = ViewBase.extend({
 		template: _.template("<div class='span6 bed-profile-list'></div>"),
@@ -17,11 +16,11 @@ define(["text!templates/reports/f007.html",
 		},
 		onBedProfileSelected: function (event) {
 			this.collection.add(event.bedProfile);
-			console.log("bedProfile added");
+			console.log("bedProfile added", event);
 		},
 		onBedProfileDeselected: function (event) {
 			this.collection.remove(event.bedProfile.id);
-			console.log("bedProfile removed");
+			console.log("bedProfile removed", event);
 		},
 		render: function () {
 			Documents.Views.Base.prototype.render.call(this, {
@@ -32,9 +31,9 @@ define(["text!templates/reports/f007.html",
 
 	var BedProfileList = ViewBase.extend({
 		template: _.template(
-			"<select multiple data-placeholder='Профили коек' class='bed-profiles'>" +
+			"<select multiple data-placeholder='Профили коек (все по умолчанию)' class='bed-profiles'>" +
 				"<%bedProfiles.each(function(bp){%>" +
-					"<option value='<%=bp.id%>'><%=bp.get('name')%></option>" +
+				"<option value='<%=bp.id%>'><%=bp.get('name')%></option>" +
 				"<%});%>" +
 			"</select>"),
 		data: function () {
@@ -74,48 +73,14 @@ define(["text!templates/reports/f007.html",
 		events: {
 			"click .print": "print"
 		},
-
-		initialize: function() {
-			var view = this;
-			var now = (new Date()).getTime()/1000;
-
-			this.rangeView = new RangeDatepickerView({
-				startTimestamp: now - (60 * 60 * 24),
-				endTimestamp: now
-			});
-
+		initialize: function () {
+			_.bindAll(this);
 			this.selectedBedProfiles = new Backbone.Collection([]);
-
-			this.depended(this.rangeView);
-
-			// this.departments = new App.Collections.Departments();
-
-			// this.departments.setParams({
-			// 	filter: {
-			// 		hasBeds: true
-			// 	},
-			// 	sortingField: 'name',
-			// 	sortingMethod: 'asc'
-			// });
-
-			// this.departmentSelect = new SelectView({
-			// 	collection: this.departments,
-			// 	el: view.$('#departments'),
-			// 	selectText: 'name'
-			// });
-
-			// //this.departments.fetch();
-
-			// this.depended(this.departmentSelect);
 		},
+		initDepartments: function () {
+			this.departments = new App.Collections.Departments();
 
-		initDepartments: function() {
-			var view = this;
-
-			//список отделений
-			view.departments = new App.Collections.Departments();
-
-			view.departments.setParams({
+			this.departments.setParams({
 				filter: {
 					hasBeds: true
 				},
@@ -124,68 +89,73 @@ define(["text!templates/reports/f007.html",
 				sortingMethod: 'asc'
 			});
 
-			view.departmentSelect = new SelectView({
-				collection: view.departments,
-				el: view.$('#departments'),
+			this.departmentSelect = new SelectView({
+				collection: this.departments,
+				el: this.$('#departments'),
 				selectText: 'name'
 			});
 
-			view.depended(view.departmentSelect);
+			this.depended(this.departmentSelect);
 		},
+		print: function () {
+			this.$(".print").button("disable");
 
-		print: function() {
-			var view = this;
-			view.$("#iframe").html('');
+			var endDateSeconds = Math.floor(moment(this.$(".report-end-date").datepicker("getDate"))
+				.hour(this.$(".report-end-time").timepicker("getHour"))
+				.minute(this.$(".report-end-time").timepicker("getMinute"))
+				.toDate()
+					.getTime() / 1000);
 
 			var form007 = new App.Models.PrintForm007({
-				departmentId: $("#departments :selected").val(),
-				beginDate: this.rangeView.range.get('from'),
-				endDate: this.rangeView.range.get('to'),
+				departmentId: this.$("#departments").val(),
+				endDate: endDateSeconds,
 				bedProfiles: this.selectedBedProfiles.pluck("id")
 			});
 
-			form007.fetch().done(function() {
-				var $iframe = $("<iframe id='myiframe'  name='myiframe' src='/pdf/' style='width: 100%;height: 400px;'></iframe>");
-				view.$("#iframe").html($iframe); //.hide();
+			form007.fetch({
+				success: this.displayReport,
+				error: function () {
+					this.$(".print").button("enable");
+					App.Models.PrintForm007.prototype.errorHandler.apply(this, Array.prototype.slice.apply(arguments));
+				}
+			});
+		},
+		displayReport: function (form007) {
+			var self = this;
+			var $iframe = $("<iframe id='myiframe'  name='myiframe' src='/pdf/' style='width: 100%;height: 400px;'></iframe>");
+			var loaded = false;
 
-				var loaded = false;
-				$iframe.load(function() {
-					if(!loaded){
-						loaded = true;
-					}else{
-						return;
-					}
-					//создаём форму
-					var form = view.make("form", {
+			this.$(".print").button("enable");
+			this.$("#iframe").html($iframe);
+
+			$iframe.load(function () {
+				if (!loaded) {
+					loaded = true;
+					var form = self.make("form", {
 						"accept-charset": "utf-8",
 						"action": "/pdf/",
-						method: "post"
-					}); //, style: "visibility: hidden"
-					//создаём текстовую область для данных
-					var textarea = view.make("textarea", {
+						"method": "post"
+					});
+					var textarea = self.make("textarea", {
 						name: "data"
 					});
-					//создаём поле ввода для имени шаблона
-					var input = view.make("input", {
+					var input = self.make("input", {
 						name: "template",
-						value: 'f007'
+						value: "f007"
 					});
-
-					// вставляем данные в текстовую область
 					textarea.innerHTML = JSON.stringify(form007.toJSON());
-					//console.log(JSON.stringify(form007.toJSON()))
-
 					var doc = $("#myiframe").contents()[0];
 					$(doc.body).html($(form).append(textarea).append(input)).hide();
 					$(doc.body).find('form').trigger('submit');
-				});
+				}
 			});
 		},
-
-		render: function() {
-			this.$el.html($.tmpl(this.template));
+		render: function () {
+			this.$el.html(_.template(this.template));
 			this.$(".print").button();
-			this.$("#range").html(this.rangeView.render().el);
+			this.$(".date-input").datepicker();
+			this.$(".time-input").timepicker({showPeriodLabels: false, defaultTime: 'now'});
+
 			this.assign({
 				".bed-profile-filter": new BedProfileFilter({collection: this.selectedBedProfiles})
 			});
@@ -194,8 +164,7 @@ define(["text!templates/reports/f007.html",
 
 			return this;
 		},
-
-		cleanUp: function() {
+		cleanUp: function () {
 			this.departmentSelect.cleanUp();
 		}
 	});

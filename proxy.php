@@ -1,6 +1,6 @@
 <?php
 	function proxy_url ($url) {
-		set_time_limit(120);
+		set_time_limit(240);
 
 		$ch = curl_init( $url );
 
@@ -44,7 +44,7 @@
 
 		curl_setopt( $ch, CURLOPT_USERAGENT, !empty($_GET['user_agent']) ? $_GET['user_agent'] : $_SERVER['HTTP_USER_AGENT'] );
 
-		curl_setopt( $ch, CURLOPT_TIMEOUT, 120 );
+		curl_setopt( $ch, CURLOPT_TIMEOUT, 240 );
 
 
 		$result = curl_exec($ch);
@@ -80,9 +80,9 @@
 
 	//proxy_url("http://test.localhost".$_SERVER["REQUEST_URI"]);
 	if ( preg_match("/^\\/data\\/(auth|roles|changeRole)\\//", $_SERVER["REQUEST_URI"]) ) {
-		proxy_url("http://10.1.2.106:8080/tmis-ws-medipad/rest/tms-auth/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
+		proxy_url("http://10.1.2.109:8080/tmis-ws-medipad/rest/tms-auth/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
 	}else {
-		proxy_url("http://10.1.2.106:8080/tmis-ws-medipad/rest/tms-registry/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
+		proxy_url("http://10.1.2.109:8080/tmis-ws-medipad/rest/tms-registry/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
 	}
 
 ?>

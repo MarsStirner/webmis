@@ -1,22 +1,22 @@
 define(function () {
 	App.Models.PrintForm007 = Model.extend({
 		urlRoot: function () {
-			var url = DATA_PATH + 'reports/f007?';
+			var url = DATA_PATH + 'reports/f007';
+			var params = [];
 			
 			if (this.get('departmentId')) {
-				url += '&filter[departmentId]=' + this.get('departmentId');
-			}
-			//NOT USED
-			if (this.get('beginDate')) {
-				url += '&filter[beginDate]=' + this.get('beginDate');
+				params.push('filter[departmentId]=' + this.get('departmentId'));
 			}
 			if (this.get('endDate')) {
-				url += '&filter[endDate]=' + this.get('endDate');
+				params.push('filter[endDate]=' + this.get('endDate'));
 			}
 			if (this.get('bedProfiles') && this.get('bedProfiles').length) {
-				var bpFilter = '&filter[profileBed]=';
-				url += bpFilter + this.get('bedProfiles').join(bpFilter);
+				var bpFilter = 'filter[profileBed]=';
+				params.push(bpFilter + this.get('bedProfiles').join("&" + bpFilter));
 			}
+
+			if (params.length) url += "?" + params.join("&");
+
 			return url;
 		}
 	});
