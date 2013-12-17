@@ -1611,20 +1611,25 @@ tr.inHospital:hover td {
 .my-grid {
   margin-bottom: 1.5em;
 }
-/* line 115, ../sass/modules/_prescription.scss */
+/* line 112, ../sass/modules/_prescription.scss */
+.my-grid.sklad {
+  font-size: 1.2em;
+  color: #333;
+}
+/* line 119, ../sass/modules/_prescription.scss */
 .my-grid tr {
   border: 1px solid #dddddd;
 }
-/* line 118, ../sass/modules/_prescription.scss */
+/* line 122, ../sass/modules/_prescription.scss */
 .my-grid th {
   background-color: #f3f3f3;
 }
-/* line 121, ../sass/modules/_prescription.scss */
+/* line 125, ../sass/modules/_prescription.scss */
 .my-grid td, .my-grid th {
   padding: 0.8em;
   vertical-align: middle;
 }
-/* line 128, ../sass/modules/_prescription.scss */
+/* line 132, ../sass/modules/_prescription.scss */
 .my-grid .icon-remove {
   cursor: pointer;
 }

@@ -1,12 +1,12 @@
 <% if(data.item){ %>
-	<table class="my-grid">
+	<table class="my-grid sklad">
 		<tr>
-			<td>Препарат</td>
-			<td></td>
-			<td>Активные вещества</td>
-			<td></td>
-			<td>Годен до</td>
-			<!-- <td>Склад</td> -->
+			<td style="width:18%;">Препарат</td>
+			<td style="width:18%;"></td>
+			<td style="width:18%;">Активные вещества</td>
+			<td style="width:18%;"></td>
+			<td style="width:8%;">Годен до</td>
+			<td style="width: 16%;">Наличие</td>
 		</tr>
         
         <tr <% if(data.where){%>  class="<%= data.where%>"<%}%>>
@@ -27,12 +27,26 @@
             </td>
 
 
-            <td>
+            <td >
+                <span <% if(data.item.isExpirationDateComesToEnd){%>style="color:red;"<%}%>>
                 <%= data.item.bestBefore%>
+                </span>
             </td>
-            <!-- <td> -->
-            <!--     <%= data.item.storageName%> -->
-            <!-- </td> -->
+            <% if(data.where){%>
+            <td>
+                <% if(data.where === 'inCurrentDepartment'){%>
+                    На складе отделения
+                <%}%>
+                <% if(data.where === 'inOtherDepartments'){%>
+                    На складах других отделений
+                <%}%>
+                <% if(data.where === 'inHospital'){%>
+                    На складе ЛПУ
+                <%}%>
+
+            </td>
+            
+            <%}%>
         </tr>
 
         

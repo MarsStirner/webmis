@@ -109,6 +109,10 @@ tr.inHospital{
 }
 
 .my-grid{
+    &.sklad{
+        font-size: 1.2em; 
+        color: #333;
+    }
    // font-size: 1.3em;
     margin-bottom: 1.5em;
 

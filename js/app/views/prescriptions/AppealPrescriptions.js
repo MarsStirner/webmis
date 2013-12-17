@@ -122,7 +122,7 @@ define(function (require) {
                             center: 'title',
                             right: 'month,basicWeek,basicDay'
                         },
-                        defaultView: 'month',
+                        defaultView: 'basicWeek',
                         slotEventOverlap: false,
                         allDaySlot: false,
                         events: events1,
@@ -132,7 +132,7 @@ define(function (require) {
                             agenda: 'HH:mm{ - HH:mm}', // 5:00 - 6:30
 
                             // for all other views
-                            '': 'HH:mm' // 7p
+                            '': 'HH:mm{ - HH:mm}' // 7p
                         },
                         titleFormat: {
                             month: 'MMMM yyyy', // September 2009
