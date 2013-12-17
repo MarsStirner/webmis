@@ -516,6 +516,7 @@ define(function (require) {
 					}
 				} else {
 					attr.value = attr.value.replace(/<br>/gi, "<br/>");
+					attr.value = attr.value.replace(/&quot;/g,'"');
 				}
 			}, this);
 			return filledAttrs;
@@ -4938,7 +4939,7 @@ define(function (require) {
 			this.collection.appealId = $target.val();
             appealId = $target.val();
             var event = this.options.events.find(function(event){
-                return event.get('id') == appealId; 
+                return event.get('id') == appealId;
             });
             console.log('selected event', event);
             appeal.get("execPerson").id = event.get('execPerson_id');
