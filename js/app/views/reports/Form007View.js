@@ -100,15 +100,15 @@ define(["text!templates/reports/f007.html",
 		print: function () {
 			this.$(".print").button("disable");
 
-			var endDateSeconds = Math.floor(moment(this.$(".report-end-date").datepicker("getDate"))
+			var endDate = Math.floor(moment(this.$(".report-end-date").datepicker("getDate"))
 				.hour(this.$(".report-end-time").timepicker("getHour"))
 				.minute(this.$(".report-end-time").timepicker("getMinute"))
 				.toDate()
-					.getTime() / 1000);
+					.getTime());
 
 			var form007 = new App.Models.PrintForm007({
 				departmentId: this.$("#departments").val(),
-				endDate: endDateSeconds,
+				endDate: endDate,
 				bedProfiles: this.selectedBedProfiles.pluck("id")
 			});
 
@@ -121,12 +121,12 @@ define(["text!templates/reports/f007.html",
 			});
 		},
 		displayReport: function (form007) {
-            var range = form007.get('rangeReportDateTime');
-            var endDate = form007.get('endDate')*1000;
+   //         var range = form007.get('rangeReportDateTime');
+    //        var endDate = form007.get('endDate');//*1000;
 //
-            form007.set('endDate', endDate);
-            range.end = endDate;
-            range.start = endDate - (60*60*24*1000);
+  //          form007.set('endDate', endDate);
+//            range.end = endDate;
+ //           range.start = endDate - (60*60*24*1000);
 
 			var self = this;
 			var $iframe = $("<iframe id='myiframe'  name='myiframe' src='/pdf/' style='width: 100%;height: 400px;'></iframe>");
