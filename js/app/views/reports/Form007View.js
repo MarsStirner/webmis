@@ -121,6 +121,13 @@ define(["text!templates/reports/f007.html",
 			});
 		},
 		displayReport: function (form007) {
+            var range = form007.get('rangeReportDateTime');
+            var endDate = form007.get('endDate')*1000;
+//
+            form007.set('endDate', endDate);
+            range.end = endDate;
+            range.start = endDate - (60*60*24*1000);
+
 			var self = this;
 			var $iframe = $("<iframe id='myiframe'  name='myiframe' src='/pdf/' style='width: 100%;height: 400px;'></iframe>");
 			var loaded = false;
@@ -132,7 +139,6 @@ define(["text!templates/reports/f007.html",
 				if (!loaded) {
 					loaded = true;
 					var printData = form007.toJSON();
-					console.log(printData);
 					var form = self.make("form", {
 						"accept-charset": "utf-8",
 						"action": "/pdf/",
