@@ -9,7 +9,9 @@ define(function(require) {
 //create-prescription
 		},
         data: function(){
-            return {appeal:this.options.appeal.toJSON()}; 
+        	var data = {appeal:this.options.appeal.toJSON()};
+        	console.log('data', data)
+            return data;
         },
 		events: {
 			'click [data-create-prescription]':'createPrescription'
@@ -23,13 +25,13 @@ define(function(require) {
 
             popup.render();
             popup.open();
- 
+
 			// App.Router.navigate(["appeals", this.options.appeal.get('id'), "prescriptions/new"].join("/"), {trigger: true});
 
 			console.log('create prescription')
 		},
         afterRender: function(){
-            this.$el.find('button').button();  
+            this.$el.find('button').button();
         }
 	});
 
