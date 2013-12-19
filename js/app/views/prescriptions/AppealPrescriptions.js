@@ -139,6 +139,12 @@ define(function (require) {
                             week: "d MMM [ yyyy]{ '&#8212;' d MMM yyyy}", // Sep 7 - 13 2009
                             day: 'dddd, d MMM, yyyy'
                         },
+                        columnFormat: {
+                            month: 'ddd',    // Mon
+                            week: 'ddd d.M.yyyy', // Mon 9/7
+                            day: 'dddd d.M.yyyy'  // Monday 9/7
+
+                        },
                         axisFormat: 'HH:mm',
                         monthNamesShort: ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля',
                             'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'
