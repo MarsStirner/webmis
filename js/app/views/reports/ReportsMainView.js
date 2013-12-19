@@ -30,15 +30,12 @@ Form007View) {
 			}, this);
 		},
 		click: function(e){
-			console.log(e)
 			if($(e.target).data('step-name')){
 				e.preventDefault();
 				this.setContentView($(e.target).data('step-name'));
 			}
-
 		},
 		getMenuStructure: function() {
-
 			return {
 				structure: [{
 					name: "hospital",

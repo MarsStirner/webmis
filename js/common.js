@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "develop";
+var GUI_VERSION = "RC-1.3.10-161213";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
@@ -810,7 +810,7 @@ jQuery.ajaxSetup(
 			showErrorTimeout = setTimeout(function () {
 				hideThrobber();
 				showError("Превышено время ожидания ответа от сервера. Повторите попытку.");
-			}, 90000);
+			}, 240000);
 			requestQueue.push(1);
 		},
 		complete: function () {

@@ -583,7 +583,11 @@ define([
                 .connect("height", "physical_parameters[height]", this.$el);
 
             this.model.connect("injury", "injury", this.$el);
+
+						//Приемное отделение по умолчанию
+						if (!this.model.get("orgStructStay")) this.model.set("orgStructStay", 28);
 						this.model.connect("orgStructStay", "org_struct_stay", this.$el);
+
 						this.model.connect("orgStructDirectedFrom", "org_struct_directed_from", this.$el);
 
             // Ограничение ввода для полей формата Double

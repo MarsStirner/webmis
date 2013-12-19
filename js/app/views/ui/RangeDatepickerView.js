@@ -101,6 +101,8 @@ define(['text!templates/ui/range-datetime-picker.tmpl',
 		setDates: function(increment) {
 			increment = increment || 0;
 
+			var view = this;
+
 			var startDate = view.$fromDateInput.datepicker("getDate");
 			var endDate = view.$toDateInput.datepicker("getDate");
 

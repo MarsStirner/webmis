@@ -122,6 +122,8 @@ define(function (require) {
 		}
 	};
 
+	var ViewBase = require("views/view-base");
+
 	var Thesaurus = require("views/appeal/edit/popups/thesaurus");
 	var FlatDirectory = require("models/flat-directory");
 	var MKB = require("views/mkb-directory");
@@ -514,6 +516,7 @@ define(function (require) {
 					}
 				} else {
 					attr.value = attr.value.replace(/<br>/gi, "<br/>");
+					attr.value = attr.value.replace(/&quot;/g,'"');
 				}
 			}, this);
 			return filledAttrs;
@@ -870,66 +873,7 @@ define(function (require) {
 
 	//region VIEWS BASE
 	//Базовые классы
-	var ViewBase = Documents.Views.Base = Backbone.View.extend({
-		template: _.template(""),
-		initialize: function(){
-			console.log('initialize '+this+' '+this.cid, arguments);
-		},
-		toString: function(){
-			return 'Base';
-		},
-
-		data: function () {
-			return {};
-		},
-
-		//subViews: {},
-
-		assign: function (subViews) {
-			this.subViews = _.extend(this.subViews || {}, subViews);
-			Backbone.View.prototype.assign.call(this, subViews);
-		},
-
-		render: function (subViews) {
-			//console.log('render '+this +' '+this.cid, subViews, this.data())
-			this.$el.html(this.template(this.data()));
-			if (subViews) {
-				this.subViews = {};
-				this.assign(subViews);
-			}
-			this.$("button,[data-display-as=button]").each(function () {
-				var $this = $(this);
-				var icons = {};
-				if ($this.data("icon-primary")) {
-					icons.primary = $this.data("icon-primary");
-				}
-				if ($this.data("icon-secondary")) {
-					icons.secondary = $this.data("icon-secondary");
-				}
-				$this.button({
-					icons: icons,
-					text: !$this.data("notext")
-				});
-			});
-			//this.$("select").select2();
-			return this;
-		},
-
-		tearDown: function () {
-			this.tearDownSubviews();
-			this.stopListening();
-			this.undelegateEvents();
-			this.remove();
-		},
-
-		tearDownSubviews: function() {
-			if (this.subViews) {
-				_.each(this.subViews, function(subView) {
-					subView.tearDown();
-				});
-			}
-		},
-
+	ViewBase = Documents.Views.Base = ViewBase.extend({
 		on: function (event, callback, context) {
 			return dispatcher.on(event, callback, context);
 		}
@@ -4995,7 +4939,7 @@ define(function (require) {
 			this.collection.appealId = $target.val();
             appealId = $target.val();
             var event = this.options.events.find(function(event){
-                return event.get('id') == appealId; 
+                return event.get('id') == appealId;
             });
             console.log('selected event', event);
             appeal.get("execPerson").id = event.get('execPerson_id');

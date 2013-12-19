@@ -1,22 +1,25 @@
-define([
-	
-], function () {
-
+define(function () {
 	App.Models.PrintForm007 = Model.extend({
-		initialize: function(){
-			//console.log(this)
-		},
-		urlRoot: function(){
-			//checkForErrors(this.get("id"), "Form 007 required department id");
-			var url;
-			if(this.get('departmentId')){
-				url = DATA_PATH + "reports/f007?filter[departmentId]="+ this.get('departmentId')+"&filter[beginDate]="+ this.get('beginDate')+"&filter[endDate]="+this.get('endDate') ;
-			}else{
-				url = DATA_PATH + "reports/f007?filter[beginDate]="+ this.get('beginDate')+"&filter[endDate]="+this.get('endDate') ;
+		urlRoot: function () {
+			var url = DATA_PATH + 'reports/f007';
+			var params = [];
+			
+			if (this.get('departmentId')) {
+				params.push('filter[departmentId]=' + this.get('departmentId'));
 			}
-			return url ;
+			if (this.get('endDate')) {
+				params.push('filter[endDate]=' + this.get('endDate'));
+			}
+			if (this.get('bedProfiles') && this.get('bedProfiles').length) {
+				var bpFilter = 'filter[profileBed]=';
+				params.push(bpFilter + this.get('bedProfiles').join("&" + bpFilter));
+			}
+
+			if (params.length) url += "?" + params.join("&");
+
+			return url;
 		}
 	});
 
 	return App.Models.PrintForm007;
-} );
+});
