@@ -206,14 +206,48 @@ define(function (require) {
 				var lastTherapy = therapiesCollection.first();
 				var shouldSetTherapyFields = false;
 				var shouldSetTherapyPhaseFields = false;
+				var readOnlyTherapyFields;
+				var readOnlyTherapyPhaseFields;
 
 				if (lastTherapy) {
+					var docInLastTherapyLastPhase = !!_.find(lastTherapy.get("phases")[0].days, function(day){
+						return day.docId === this.get('id');
+					}, this);
+
+					var docInLastTherapyPhases = !!_.find(lastTherapy.get("phases"), function(phase){
+						return _.find(phase.days, function(day){
+							return day.docId === this.get('id');
+						}, this);
+					}, this);
+
+					console.log('docInLastTherapyLastPhase', docInLastTherapyLastPhase, docInLastTherapyPhases);
+
 					if (!lastTherapy.get("endDate") || lastTherapy.get("endDate") < 0) {
 						shouldSetTherapyFields = true;
+						if((lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("id") === this.get('id'))){
+							shouldSetTherapyFields = false;
+						}
 						if (!lastTherapy.get("phases")[0].endDate || lastTherapy.get("phases")[0].endDate < 0) {
 							shouldSetTherapyPhaseFields = true;
+							if((lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("phases")[0].days[0].docId === this.get('id'))){
+								shouldSetTherapyPhaseFields = false;
+							}
+						}else{
+							//если у фазы терапии есть дата окончания, и документ входит в документы из которых состоит терапия
+							if(docInLastTherapyLastPhase  || docInLastTherapyPhases){
+								shouldSetTherapyPhaseFields = true;
+							}
 						}
+
+					}else{
+						//если у терапии есть дата окончания , и документ входит в документы из которых состоит терапия
+						if(docInLastTherapyLastPhase || docInLastTherapyPhases){
+							shouldSetTherapyFields = true;
+							shouldSetTherapyPhaseFields = true;
+						}
+
 					}
+					console.log(shouldSetTherapyFields, shouldSetTherapyPhaseFields, lastTherapy.get("phases")[0].days.length, lastTherapy.get("phases")[0].days[0].docId, this.get('id'))
 				}
 
 				var therapyAttrs = _(attributes).filter(function (attr) {
