@@ -362,7 +362,8 @@ define([
 				nextHospFinanceType: null
 			},
 			orgStructStay: null,
-			orgStructDirectedFrom: null
+			orgStructDirectedFrom: null,
+            reopening: null
 		},
 		relations: [
 			{
