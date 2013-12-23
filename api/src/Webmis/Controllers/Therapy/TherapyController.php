@@ -223,7 +223,7 @@ class TherapyController
                 }
 
 
-                if(array_key_exists('therapyTitle',$a) && $a['therapyTitle']!=null){
+                if(array_key_exists('therapyPhaseTitle',$a) && $a['therapyPhaseTitle']!=null && array_key_exists('therapyTitle',$a) && $a['therapyTitle']!=null){
                      array_push($data, $a);
                 }
 
