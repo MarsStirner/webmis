@@ -115,6 +115,20 @@
 										{{/each}}
 									</select>
 								</div>
+								<div class="HalfCol">
+									<label>История болезни переоткрыта</label>
+									<select class="Styled Mandatory" name="reopening">
+                                    {{if reopening != 'Да'}}
+										<option value="Нет" selected="selected">Нет</option>
+										<option value="Да" >Да</option>
+                                        {{else}}
+
+										<option value="Нет">Нет</option>
+										<option value="Да" selected="selected">Да</option>
+                                    {{/if}}
+									</select>
+								</div>
+
 							</div>
 							{{if havePrimary}}
 							<div class="LineBlock">

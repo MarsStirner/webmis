@@ -277,7 +277,7 @@ define([
             result.dicts = dicts;
             result.isNew = this.model.isNew();
 
-            console.log("типы", result.dicts.requestTypes);
+            console.log("data", result, this.model);
 
             result.dicts.requestTypes = _(result.dicts.requestTypes)
                 .filter(function (rType) {
@@ -550,6 +550,7 @@ define([
             //this.model.get( "hospitalizationChannelType" ).connect("id", "hospitalization_channel_type[id]", this.$el );
 
             this.model.connect("movingType", "moving_type", this.$el);
+            this.model.connect("reopening", "reopening", this.$el);
 
             this.model.connect("deliveredType", "delivered_type[id]", this.$el);
             this.model.connect("deliveredAfterType", "delivered_after_type[id]", this.$el);
