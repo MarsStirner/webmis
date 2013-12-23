@@ -123,7 +123,7 @@ class TherapyController
                                        $fdf = $fdfv->getFDField();
                                        if($fdf){
                                            $v[$fdf->getName()] = $fdfv->getValue();
-                                       } 
+                                       }
                                    }
                                 }
 
@@ -158,11 +158,11 @@ class TherapyController
                         }
 
                         if(array_key_exists('value', $p)){
-                           // $a['therapyTitle'] =@$p['value']; 
-                            $a['therapyTitle'] =@$p['value']['Наименование']; 
+                           // $a['therapyTitle'] =@$p['value'];
+                            $a['therapyTitle'] =@$p['value']['Наименование'];
                             $a['therapyLink'] = @$p['value']['Ссылка'];
                         }else{
-                            $a['therapyTitle'] = null; 
+                            $a['therapyTitle'] = null;
                             $a['therapyLink'] = null;
                         }
                     }
@@ -189,11 +189,11 @@ class TherapyController
                             $a['therapyPhaseTitleId'] = null;
                         }
                         if(array_key_exists('value', $p)){
-                            $a['therapyPhaseTitle'] = @$p['value']['Наименование']; 
+                            $a['therapyPhaseTitle'] = @$p['value']['Наименование'];
                             $a['therapyPhaseLink'] = @$p['value']['Ссылка'];
                         }else{
                             $a['therapyPhaseTitle'] = '';
-                            $a['therapyPhaseLink'] = ''; 
+                            $a['therapyPhaseLink'] = '';
                         }
                     }
 
@@ -223,7 +223,7 @@ class TherapyController
                 }
 
 
-                if(array_key_exists('therapyTitle',$a) && $a['therapyTitle']!=null){
+                if(array_key_exists('therapyPhaseTitle',$a) && $a['therapyPhaseTitle']!=null && array_key_exists('therapyTitle',$a) && $a['therapyTitle']!=null){
                      array_push($data, $a);
                 }
 
@@ -234,9 +234,12 @@ class TherapyController
             $therapies = array();
 
             //терапии
+            $first = end($data);
+            reset($data);
+
             foreach ($data as $action){
                 $therapy = array(
-                    'id' => $action['docId'],
+                    'id' => $first['docId'],
                     'titleId' => $action['therapyTitleId'],
                     'title' => $action['therapyTitle'],
                     'link' => $action['therapyLink'],
