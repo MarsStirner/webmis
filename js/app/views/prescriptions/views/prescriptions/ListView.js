@@ -131,25 +131,57 @@ define(function (require) {
         afterRender: function () {
             var self = this;
             $('[data-prescription]')
-                .each(function () {
-                    var $el = $(this);
+            .each(function () {
+                var $el = $(this);
 
-                    $el.qtip({
-                        content: {
-                            // title: event.name,
-                            text: self.getTooltipText($el.data('prescription'))
-                        },
-                        style: 'qtip-light',
-                        position: {
-                            my: 'bottom left',
-                            at: 'top left',
-                            viewport: $('.calendar')
+                $el.qtip({
+                    content: {
+                        // title: event.name,
+                        text: self.getTooltipText($el.data('prescription'))
+                    },
+                    style: 'qtip-light',
+                    position: {
+                        my: 'bottom left',
+                        at: 'top left',
+                        viewport: $('.calendar')
 
-                        },
-                        prerender: true
-                    });
-
+                    },
+                    prerender: true
                 });
+
+            });
+
+                $.contextMenu({
+                    autoHide: true,
+                    selector: '[data-prescription]',
+                    callback: function(key, options) {
+                        //var m = "clicked: " + key + " " + options.$trigger.data("cid");
+
+                        //console.log(arguments, options.$trigger.data("cid"));
+                    },
+                    items: {
+                        "execute": {
+                            name: "Выполнить",
+                            callback: function() {
+                                console.log('execute', arguments);
+                            }
+                        },
+                        "cancel": {
+                            name: "Отменить",
+                            callback: function() {
+                                console.log('cancel');
+                            }
+                        },
+                        "cancelExecution": {
+                            name: "Отменить исполнение",
+                            callback: function() {
+                                console.log('cancelExecution');
+                            }
+                        }
+                    }
+                });
+
+
         }
     });
 

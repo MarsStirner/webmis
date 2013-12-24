@@ -1,74 +1,89 @@
-<div>
-	<button data-save-prescription>Создать</button>
-	<button data-cancel>Отменить</button>
-</div>
+<div class="row-fluid"><div class="span12 errors" style="color: red;"></div></div>
+<div class="row-fluid">
+    <div class="span7">
+        <div class="row-fluid">
+            <div class="span12">
+                <label>
+                    Лекарственные  препараты
+                </label>
+                <table id="drugs" class="my-grid"> 
+                    <tr>
+                        <th style="width: 70%;">Наименование</th> 
+                        <th style="width: 15%;">Доза</th>
+                        <th style="width: 15%;">Ед.из</th>
+                        <th style="width: 10%;"></th>
+                    </tr>
+                    <tr data-each-drug="prescription.drugs">
+                        <td>
+                            <div data-text="drug.name"/>
+                            </td> 
+                            <td>
+                                <input type="text" data-value="drug.dose"> 
+                            </td>
+                            <td>
+                                <span data-text="drug.unitName"></span> 
+                            </td>
+                            <td>
+                                <span data-on-click="drug:delete" class="icon-remove"></span>
+                            </td>
+                        </tr>
+                    </table>
+                    <button class="add-drug" style="float:right;">Добавить препарат</button>
+                </div>
+            </div>
+            
+            <div class="row-fluid" style="margin-bottom:1em;">
+                <div class="span12">
+                    <label for="moa">
+                        Способ введения
+                    </label><br />
+                    <select id="moa" name="moa" style="width:250px;margin-bottom:1em;" data-value="prescription.moa">
+                        <%_.each(data.administration, function(opt){%>
+                        <option value="<%=opt.id%>"><%=opt.name%></option>
+                        <%})%>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row-fluid">
+                <div class="span12">
+                    <label for="voa">
+                        Скорость введения
+                    </label>
+                    <input name="voa" id="voa" type="text" style="width: auto;" data-value="prescription.voa">мл/ч
+                </div>
+            </div>
+            
+            <div class="row-fluid">
+                <div class="span12">
+                    <label for="note">
+                        Примечание
+                        <textarea  rows="8" cols="45"  name="note" id="note" data-value="prescription.note"></textarea>
+                    </label>
+                </div>
+            </div>
 
-<div>
-    <label>
-    	Препарат(ы)
-    </label>
-	<button class="add-drug">Добавить препарат</button>
-    <table id="drugs" class="Grid"> 
-        <tr>
-            <td>Название</td> 
-            <td>Доза</td>
-            <td></td>
-        </tr>
-        <tr data-each-drug="prescription.drugs">
-            <td>
-                <div data-text="drug.name"/>
-            </td> 
-            <td>
-                <input type="text" data-value="drug.dose"> 
-            </td>
-            <td>
-                <span data-on-click="drug:delete"></span>
-            </td>
-        </tr>
-    </table>
-</div>
 
-<div>
-    <label>Интервал(ы)</label>
-    <button data-on-click="prescription:addInterval">Добавить интервал</button>
+        </div>
+        <div class="span5">
+            <label>Исполнение</label>
 
-    <table id="intervals" class="Grid"> 
-        <tr><td>Начало</td><td>Конец</td><td></td></tr>
-        <tr data-each-interval="prescription.assigmentIntervals">
-            <td>
-                <input class="datetime_entry" type="text" data-value="interval.beginDateTime | datetime"> 
-            </td><td>
-                <input class="datetime_entry" type="text" data-value="interval.endDateTime | datetime">
-            </td><td>
-                <span data-on-click="interval:delete" class="icon-remove"></span>
-            </td>
-        </tr>
-    </table>
-</div>
+            <table id="intervals" class="my-grid"> 
+                <tr><th>Начало</th><th>Окончание</th><th></th>&nbsp;</th>
+                <tbody>
+                <tr data-each-interval="prescription.assigmentIntervals">
+                    <td>
+                        <input class="datetime_entry" type="text" data-value="interval.beginDateTime | datetime"> 
+                    </td><td>
+                        <input class="datetime_entry" type="text" data-value="interval.endDateTime | datetime">
+                    </td><td>
+                        <span data-on-click="interval:delete" class="icon-remove"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <button data-on-click="prescription:addInterval" style="float:right;">Добавить время приёма</button>
+        </div>
+    </div>
 
-<div>
-    <label for="moa">
-        Способ введения
-        <select data-value="prescription.moa">
-            <%_.each(data.administration, function(opt){%>
-            <option value="<%=opt.id%>"><%=opt.name%></option>
-            <%})%>
-        </select>
-    </label>
-</div>
-
-<div>
-    <label for="voa">
-        Скорость введения
-        <input name="voa" id="voa" type="text"  data-value="prescription.voa">
-    </label>
-</div>
-
-<div>
-    <label for="note">
-        Примечание
-        <textarea  rows="8" cols="45"  name="note" id="note" data-value="prescription.note"></textarea>
-    </label>
-</div>
-
-<pre id="debug"></pre>
+    <pre id="debug"></pre>

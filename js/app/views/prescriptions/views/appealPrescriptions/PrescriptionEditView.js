@@ -17,7 +17,6 @@ define(function (require) {
             this.prescription = opt.prescription; 
             this.administration = new AdministrationMethod();
             self.administration.fetch({
-
                 data: {
                     code: self.getMoaKeys()
                 }

@@ -165,7 +165,7 @@ define(function (require) {
                             day: 'день'
                         },
                         eventClick: function (event, jsEvent, view) {
-            //                self.openPrescriptionEdit(event.id);
+                           self.openPrescriptionEdit(event.id);
                         },
                         firstDay: 1,
                         slotMinutes: 30,
