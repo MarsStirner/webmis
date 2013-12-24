@@ -1,6 +1,6 @@
 define(function (require) {
     var BaseView = require('views/prescriptions/views/BaseView');
-    var template = require('text!views/prescriptions/templates/actions.html');
+    var template = require('text!views/prescriptions/templates/prescriptionsExecution/actions.html');
 
     var Intervals = require('views/prescriptions/collections/Intervals');
     var Prescriptions = require('views/prescriptions/collections/Prescriptions');
@@ -11,15 +11,18 @@ define(function (require) {
             'click .execute-intervals': 'executeIntervals',
             'click .execute-not-executed-intervals': 'executeNotExecutedIntervals'
         },
+        
         initialize: function(){
             this.listenTo(this.collection, 'change reset', this.updateButtons);
             this.listenTo(this.collection, 'fetch', this.disableButtons);
         },
+
         updateButtons: function(){
             var start = this.collection._filter.dateRangeMin*1000;
             var end = this.collection._filter.dateRangeMax*1000;
 
             var selected = this.collection.getSelected();
+            selected = this.collection.getSelectedWithNotExecutedIntervals(start, end);
             if(selected.length){
                 this.$el.find('.execute-intervals').button().button('enable'); 
             }else{
@@ -33,10 +36,12 @@ define(function (require) {
                 this.$el.find('.execute-not-executed-intervals').button().button('disable'); 
             }
         },
+
         disableButtons: function(){
                 this.$el.find('.execute-not-executed-intervals').button().button('disable'); 
                 this.$el.find('.execute-intervals').button().button('disable'); 
         },
+
         executeIntervals: function(){
             var self = this;
             var start = this.collection._filter.dateRangeMin*1000;
@@ -47,13 +52,12 @@ define(function (require) {
 
             intervals.execute({
                 success: function(){
-                    console.log('ok');
+                    // console.log('ok');
                     self.collection.fetch();
                 },error: function(){
-                    console.log('error');
+                    // console.log('error');
                 }
             });
-
         },
 
         executeNotExecutedIntervals: function(){
@@ -72,7 +76,7 @@ define(function (require) {
                 }
             });
 
-            console.log('notExecutedIntervals', notExecutedIntervals);
+            // console.log('notExecutedIntervals', notExecutedIntervals);
 
         },
 

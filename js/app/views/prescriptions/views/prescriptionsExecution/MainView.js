@@ -1,12 +1,12 @@
 define(function(require) {
-	var template = require('text!views/prescriptions/templates/list-main.html');
+	var template = require('text!views/prescriptions/templates/prescriptionsExecution/list-main.html');
 
 	var BaseView = require('views/prescriptions/views/BaseView');
 
 	var Prescriptions = require('views/prescriptions/collections/Prescriptions');
-	var FilterView = require('views/prescriptions/views/prescriptions/FilterView');
-    var ActionsView = require('views/prescriptions/views/prescriptions/ActionsView');
-	var ListView = require('views/prescriptions/views/prescriptions/ListView');
+	var FilterView = require('views/prescriptions/views/prescriptionsExecution/Filter');
+    var ActionsView = require('views/prescriptions/views/prescriptionsExecution/Actions');
+	var GroupsView = require('views/prescriptions/views/prescriptionsExecution/Groups');
 
 
 	return BaseView.extend({
@@ -18,7 +18,7 @@ define(function(require) {
 			this.collection = new Prescriptions();
 
 
-			this.listView = new ListView({
+			this.groupsView = new GroupsView({
 				collection: this.collection
 			});
 
@@ -33,12 +33,10 @@ define(function(require) {
             })
 
 			this.addSubViews({
-				'.list': this.listView,
+				'.groups': this.groupsView,
 				'.filter': this.filterView,
                 '.actions': this.actionsView
 			});
-
-			///console.log();
 
 			this.filterView.filter();
 		}

@@ -3,7 +3,7 @@ define(function (require) {
     var DateRangeView = require('views/prescriptions/views/DateRangeView');
     var SelectView = require('views/prescriptions/views/SelectView');
     var rivets = require('rivets');
-    var template = require('text!views/prescriptions/templates/filter.html');
+    var template = require('text!views/prescriptions/templates/prescriptionsExecution/filter.html');
     require('collections/departments');
     var AdministrationMethod = require('collections/AdministrationMethod');
 
@@ -74,7 +74,7 @@ define(function (require) {
                 'drugName': '',
                 'departmentId': 'not-selected',
                 'administrationId': 'not-selected'
-            })
+            });
         },
 
         onKeyUp: function (e) {

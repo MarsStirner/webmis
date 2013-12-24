@@ -1,5 +1,5 @@
 define(function (require) {
-    var list = require('text!views/prescriptions/templates/list.html');
+    var list = require('text!views/prescriptions/templates/prescriptionsExecution/list.html');
     var BaseView = require('views/prescriptions/views/BaseView');
     require('qtip');
     var tooltipTemplate = _.template(require('text!views/prescriptions/templates/tooltip.html'), null, {
@@ -23,12 +23,12 @@ define(function (require) {
             this.collection.on('fetch', this.renderOnFetch, this);
         },
         renderNoResults: function () {
-            this.$el.html('Ничего не нашли.');
+            this.$el.html('Нет данных.');
         },
         renderOnFetch: function () {
             //console.log('onFetch', this.cid, this.$el.html());
 
-            this.$el.html('Ищем...');
+            this.$el.html('Загружаем...');
         },
 
         onSelectPrescription: function(e){

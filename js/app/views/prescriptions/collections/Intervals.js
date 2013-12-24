@@ -17,7 +17,6 @@ define(function (require) {
             var modelsJSON = this.toJSON();
             _.each(modelsJSON, function (mj) {
                 var modelsJSON2 = _.without(modelsJSON, mj);
-                console.log(modelsJSON, modelsJSON2, mj)
                 _.each(modelsJSON2, function (mj2) {
 
                     if (mj.beginDateTime && !mj.endDateTime) {
