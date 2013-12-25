@@ -98,7 +98,7 @@ define(function(require) {
 							console.log('success', raw);
 							response($.map(raw.data, function(item) {
 								return {
-									label: item.tradeLocalName + '(' + item.tradeName + ') '+item.formName+ ' ' +item.dosageValue+' '+item.unitName +', '+item.packingName,
+									label: item.tradeLocalName + '(' + item.tradeName + ') '+item.formName+ ' ' +item.dosageValue+' '+item.unitName,
 									value: item.tradeLocalName,
 									id: item.id
 								};
