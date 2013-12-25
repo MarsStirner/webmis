@@ -181,6 +181,9 @@ define(function (require) {
 		getFieldsGroup: function () {
 			return this.get("group")[1].attribute;
 		},
+        docIsNew: function(){
+            return this.get('id') === this.get('typeId'); 
+        },
 
 		groupByRow: function () {
 			console.log("hasTherapyAttrs", this.hasTherapyAttrs());
@@ -220,11 +223,11 @@ define(function (require) {
 						}, this);
 					}, this);
 
-					console.log('docInLastTherapyLastPhase', docInLastTherapyLastPhase, docInLastTherapyPhases);
+					console.log('docInLastTherapyLastPhase',this.docIsNew(), docInLastTherapyLastPhase, docInLastTherapyPhases);
 
 					if (!lastTherapy.get("endDate") || lastTherapy.get("endDate") < 0) {
 						shouldSetTherapyFields = true;
-						if((lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("id") === this.get('id'))){
+						if(this.docIsNew() && (lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("id") === this.get('id'))){
 							shouldSetTherapyFields = false;
 						}
 						if (!lastTherapy.get("phases")[0].endDate || lastTherapy.get("phases")[0].endDate < 0) {
@@ -259,28 +262,36 @@ define(function (require) {
 					if (shouldSetTherapyFields) {
 						if (ta.therapyFieldCode == "therapyTitle") {
 							//ta.properties[0].value = lastTherapy.get("titleId");
-							ta.properties[1].value = lastTherapy.get("titleId").toString();
+                            if(this.docIsNew()){
+						    	ta.properties[1].value = lastTherapy.get("titleId").toString();
+                            }
 							ta.readOnly = "true";
 						}
 						if (ta.therapyFieldCode == "therapyBegDate") {
 							//if (lastTherapy.get("beginDate")) {
+                            if(this.docIsNew()){
 								ta.properties[0].value = moment(lastTherapy.get("beginDate") || new Date()).format(CD_DATE_FORMAT);
+                            }
 							//}
 							ta.readOnly = "true";
 						}
 
 						if (shouldSetTherapyPhaseFields) {
 							if (ta.therapyFieldCode == "therapyPhaseTitle") {
-								ta.properties[1].value = lastTherapy.get("phases")[0].titleId.toString();
+                                if(this.docIsNew()){
+							    	ta.properties[1].value = lastTherapy.get("phases")[0].titleId.toString();
+                                }
 								ta.readOnly = "true";
 							}
 							if (ta.therapyFieldCode == "therapyPhaseBegDate") {
-								ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate || new Date()).format(CD_DATE_FORMAT);
+                                if(this.docIsNew()){
+								    ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate || new Date()).format(CD_DATE_FORMAT);
+                                }
 								ta.readOnly = "true";
 							}
 						}
 					}
-				});
+				}, this);
 
 //				console.log(therapyAttrs);
 			}
