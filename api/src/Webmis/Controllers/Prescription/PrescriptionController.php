@@ -94,6 +94,7 @@ class PrescriptionController
         $administrationId = (int) $request->get('administrationId');
         $doctorId = (int) $request->get('doctorId');
         $doctorName = $request->get('doctorName');
+        $setPersonName = $request->get('setPersonName');
         $eventId = (int) $request->get('eventId');
         $page = (int) $request->get('page') ?: 1;
         $limit = (int) $request->get('limit') ?: 20;
@@ -104,6 +105,7 @@ class PrescriptionController
                         'clientId' => $clientId,
                         'pacientName' => $pacientName,
                         'doctorName' => $doctorName,
+                        'setPersonName' => $setPersonName,
                         'drugName' => $drugName,
                         'departmentId' => $departmentId,
                         'administrationId' => $administrationId,
@@ -114,6 +116,9 @@ class PrescriptionController
             'actionType' => true,
             'properties' => true,
             'doctor' => true,
+            'setPerson' => true,
+            'createPerson' => true,
+            'modifyPerson' => true,
             'drugs' => true,
             'intervals' => true,
             'client' => true
@@ -182,6 +187,7 @@ class PrescriptionController
         $data = $request->get('data');
         $eventId = @$data['eventId'];
         $note = @$data['note'];
+        $isUrgent = @$data['isUrgent'];
         $actionTypeId = (int) @$data['actionTypeId'];
         $drugs = @$data['drugs'];
         $properties = $data['properties'];
@@ -213,6 +219,7 @@ class PrescriptionController
 
         $prescription->setEventId($eventId);
         $prescription->setNote($note);
+        $prescription->setIsUrgent($isUrgent);
         $prescription->setActionTypeId($actionTypeId);
         $prescription->setDeleted(false);
         $prescription->setCreatePersonId($createPersonId);

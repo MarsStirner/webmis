@@ -70,7 +70,7 @@ define(function (require) {
         clearFilter: function () {
             this.model.set({
                 'pacientName': '',
-                'doctorName': '',
+                'setPersonName': '',
                 'drugName': '',
                 'departmentId': 'not-selected',
                 'administrationId': 'not-selected'

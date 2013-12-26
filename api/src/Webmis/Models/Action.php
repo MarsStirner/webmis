@@ -148,6 +148,9 @@ class Action extends BaseAction
             'actionType' => true,
             'properties' => true,
             'doctor' => false,
+            'setPerson' => false,
+            'createPerson' => false,
+            'modifyPerson' => false,
             'drugs' => false,
             'intervals' => true,
             'client' => false
@@ -156,6 +159,10 @@ class Action extends BaseAction
         $data = array();
 
         $data['id'] = $this->getId();
+        $data['eventId'] = $this->getEventId();
+        $data['note'] = $this->getNote();
+        $data['isUrgent'] = $this->getIsUrgent();
+
 
         if($hidrate['actionType']){
             $actionType = $this->getActionType();
@@ -175,9 +182,50 @@ class Action extends BaseAction
             }
         }
 
+        if($hidrate['setPerson']){
+            //назначивший врач
+            $setPerson = $this->getSetPerson(); 
+            $data['setPerson'] = null;
 
-        $data['eventId'] = $this->getEventId();
-        $data['note'] = $this->getNote();
+            if($setPerson){
+                $data['setPerson'] = array(
+                    'id' => $setPerson->getId(),
+                    'firstName' => $setPerson->getFirstName(),
+                    'middleName' => $setPerson->getPatrName(),
+                    'lastName' => $setPerson->getLastName()
+                ); 
+            }
+        }
+
+        if($hidrate['createPerson']){
+            //создавший назначение пользователь
+            $createPerson = $this->getCreatePerson(); 
+            $data['createPerson'] = null;
+
+            if($createPerson){
+                $data['createPerson'] = array(
+                    'id' => $createPerson->getId(),
+                    'firstName' => $createPerson->getFirstName(),
+                    'middleName' => $createPerson->getPatrName(),
+                    'lastName' => $createPerson->getLastName()
+                ); 
+            }
+        }
+
+        if($hidrate['modifyPerson']){
+            //изменивший назначение пользователь
+            $modifyPerson = $this->getCreatePerson(); 
+            $data['modifyPerson'] = null;
+
+            if($modifyPerson){
+                $data['modifyPerson'] = array(
+                    'id' => $modifyPerson->getId(),
+                    'firstName' => $modifyPerson->getFirstName(),
+                    'middleName' => $modifyPerson->getPatrName(),
+                    'lastName' => $modifyPerson->getLastName()
+                ); 
+            }
+        }
 
         if($hidrate['doctor'] || $hidrate['client']){
             $event = $this->getEvent();

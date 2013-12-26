@@ -80,6 +80,7 @@ class ActionQuery extends BaseActionQuery
                                     'doctorId' => null,
                                     'pacientName' => null,
                                     'doctorName' => null,
+                                    'setPersonName' => null,
                                     'departmentId' => null,
                                     'administrationId' => null,
                                     'dateRangeMin' => null,
@@ -94,6 +95,11 @@ class ActionQuery extends BaseActionQuery
         return $this->filterByDeleted(false)
                     ->_if($id)
                         ->filterById($id)
+                    ->_endIf()
+                    ->_if($setPersonName)//назначивший врач
+                        ->useSetPersonQuery()
+                            ->filterByLastName($setPersonName.'%')
+                        ->endUse()
                     ->_endIf()
 
                     ->useActionTypeQuery()
@@ -191,6 +197,9 @@ class ActionQuery extends BaseActionQuery
             'actionType' => true,
             'properties' => false,
             'doctor' => true,
+            'createPerson' => true,
+            'modifyPerson' => true,
+            'setPerson' => true,
             'drugs' => false,
             'intervals' => true,
             'client' => false
@@ -203,6 +212,18 @@ class ActionQuery extends BaseActionQuery
                         ->_endIf()
                         ->_if($hidrate['actionType'])
                             ->leftJoinWithActionType()
+                        ->_endIf()
+                        ->_if($hidrate['setPerson'])
+                            ->leftJoinSetPerson('setPerson')
+                            ->with('setPerson')
+                        ->_endIf()
+                        ->_if($hidrate['createPerson'])
+                            ->leftJoinCreatePerson('createPerson')
+                            ->with('createPerson')
+                        ->_endIf()
+                        ->_if($hidrate['modifyPerson'])
+                            ->leftJoinModifyPerson('modifyPerson')
+                            ->with('modifyPerson')
                         ->_endIf()
 
                         ->_if($hidrate['properties'])

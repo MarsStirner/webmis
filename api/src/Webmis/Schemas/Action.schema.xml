@@ -13,7 +13,7 @@
     <column name="directionDate" phpName="directionDate" type="TIMESTAMP" required="false"/>
     <column name="status" phpName="status" type="TINYINT" required="true"/>
     <column name="setPerson_id" phpName="setPersonId" type="INTEGER" required="false"/>
-    <column name="isUrgent" phpName="isUrgent" type="INTEGER" size="1" required="true" defaultValue="0"/>
+    <column name="isUrgent" phpName="isUrgent" type="BOOLEAN" size="1" required="true" defaultValue="0"/>
     <column name="begDate" phpName="begDate" type="TIMESTAMP" required="false"/>
     <column name="plannedEndDate" phpName="plannedEndDate" type="TIMESTAMP" required="true"/>
     <column name="endDate" phpName="endDate" type="TIMESTAMP" required="false"/>
@@ -44,6 +44,16 @@
     <foreign-key foreignTable="Event" name="Action_Event">
       <reference local="event_id" foreign="id"/>
     </foreign-key>
+    <foreign-key foreignTable="Person" phpName="CreatePerson" name="Action_createPerson_id">
+        <reference local="createPerson_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="Person" phpName="ModifyPerson" name="Action_modifyPerson_id">
+        <reference local="modifyPerson_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="Person" phpName="SetPerson" name="Action_setPerson_id">
+        <reference local="setPerson_id" foreign="id"/>
+    </foreign-key>
+
     <foreign-key foreignTable="ActionType" name="Action_ActionType">
       <reference local="actionType_id" foreign="id"/>
     </foreign-key>

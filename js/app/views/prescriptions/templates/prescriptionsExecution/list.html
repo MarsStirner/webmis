@@ -18,7 +18,7 @@
 			<th style="width:50%;position:relative;padding:0; margin:0;">
                 <div class="hours"><span class="hour"><span>12</span></span><span class="hour">13</span><span class="hour">14</span><span class="hour">15</span><span class="hour">16</span><span class="hour">17</span><span class="hour">18</span><span class="hour">19</span><span class="hour">20</span><span class="hour">21</span><span class="hour">22</span><span class="hour">23</span><span class="hour">24</span><span class="hour">01</span><span class="hour">02</span><span class="hour">03</span><span class="hour">04</span><span class="hour">05</span><span class="hour">06</span><span class="hour">07</span><span class="hour">08</span><span class="hour">09</span><span class="hour">10</span><span class="hour">11</span></div>
             </th>
-			<th style="width:10%">Лечаший врач</th>
+			<th style="width:10%">Назначивший врач</th>
 		</tr>
 	</thead>
 	<% _.each(group, function(item){%>
@@ -57,8 +57,8 @@
 					<%})%>
 			</td>
 			<td>
-				<% if(item.doctor){ %>
-					<%= item.doctor.firstName%> <%= item.doctor.lastName %>
+				<% if(item.setPerson){ %>
+					<%= item.setPerson.firstName %> <%= item.setPerson.lastName %>
 				<% } %>
 			</td>
 		</tr>

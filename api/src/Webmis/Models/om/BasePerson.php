@@ -15,6 +15,8 @@ use \PropelDateTime;
 use \PropelException;
 use \PropelObjectCollection;
 use \PropelPDO;
+use Webmis\Models\Action;
+use Webmis\Models\ActionQuery;
 use Webmis\Models\Event;
 use Webmis\Models\EventQuery;
 use Webmis\Models\Person;
@@ -373,6 +375,24 @@ abstract class BasePerson extends BaseObject implements Persistent
     protected $uuid_id;
 
     /**
+     * @var        PropelObjectCollection|Action[] Collection to store aggregation of Action objects.
+     */
+    protected $collActionsRelatedBycreatePersonId;
+    protected $collActionsRelatedBycreatePersonIdPartial;
+
+    /**
+     * @var        PropelObjectCollection|Action[] Collection to store aggregation of Action objects.
+     */
+    protected $collActionsRelatedBymodifyPersonId;
+    protected $collActionsRelatedBymodifyPersonIdPartial;
+
+    /**
+     * @var        PropelObjectCollection|Action[] Collection to store aggregation of Action objects.
+     */
+    protected $collActionsRelatedBysetPersonId;
+    protected $collActionsRelatedBysetPersonIdPartial;
+
+    /**
      * @var        PropelObjectCollection|Event[] Collection to store aggregation of Event objects.
      */
     protected $collEventsRelatedBycreatePersonId;
@@ -415,6 +435,24 @@ abstract class BasePerson extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $actionsRelatedBycreatePersonIdScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $actionsRelatedBymodifyPersonIdScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $actionsRelatedBysetPersonIdScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -2457,6 +2495,12 @@ abstract class BasePerson extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->collActionsRelatedBycreatePersonId = null;
+
+            $this->collActionsRelatedBymodifyPersonId = null;
+
+            $this->collActionsRelatedBysetPersonId = null;
+
             $this->collEventsRelatedBycreatePersonId = null;
 
             $this->collEventsRelatedBymodifyPersonId = null;
@@ -2598,6 +2642,60 @@ abstract class BasePerson extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
+            }
+
+            if ($this->actionsRelatedBycreatePersonIdScheduledForDeletion !== null) {
+                if (!$this->actionsRelatedBycreatePersonIdScheduledForDeletion->isEmpty()) {
+                    foreach ($this->actionsRelatedBycreatePersonIdScheduledForDeletion as $actionRelatedBycreatePersonId) {
+                        // need to save related object because we set the relation to null
+                        $actionRelatedBycreatePersonId->save($con);
+                    }
+                    $this->actionsRelatedBycreatePersonIdScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collActionsRelatedBycreatePersonId !== null) {
+                foreach ($this->collActionsRelatedBycreatePersonId as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->actionsRelatedBymodifyPersonIdScheduledForDeletion !== null) {
+                if (!$this->actionsRelatedBymodifyPersonIdScheduledForDeletion->isEmpty()) {
+                    foreach ($this->actionsRelatedBymodifyPersonIdScheduledForDeletion as $actionRelatedBymodifyPersonId) {
+                        // need to save related object because we set the relation to null
+                        $actionRelatedBymodifyPersonId->save($con);
+                    }
+                    $this->actionsRelatedBymodifyPersonIdScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collActionsRelatedBymodifyPersonId !== null) {
+                foreach ($this->collActionsRelatedBymodifyPersonId as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->actionsRelatedBysetPersonIdScheduledForDeletion !== null) {
+                if (!$this->actionsRelatedBysetPersonIdScheduledForDeletion->isEmpty()) {
+                    foreach ($this->actionsRelatedBysetPersonIdScheduledForDeletion as $actionRelatedBysetPersonId) {
+                        // need to save related object because we set the relation to null
+                        $actionRelatedBysetPersonId->save($con);
+                    }
+                    $this->actionsRelatedBysetPersonIdScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collActionsRelatedBysetPersonId !== null) {
+                foreach ($this->collActionsRelatedBysetPersonId as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             if ($this->eventsRelatedBycreatePersonIdScheduledForDeletion !== null) {
@@ -3120,6 +3218,30 @@ abstract class BasePerson extends BaseObject implements Persistent
             }
 
 
+                if ($this->collActionsRelatedBycreatePersonId !== null) {
+                    foreach ($this->collActionsRelatedBycreatePersonId as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
+                if ($this->collActionsRelatedBymodifyPersonId !== null) {
+                    foreach ($this->collActionsRelatedBymodifyPersonId as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
+                if ($this->collActionsRelatedBysetPersonId !== null) {
+                    foreach ($this->collActionsRelatedBysetPersonId as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collEventsRelatedBycreatePersonId !== null) {
                     foreach ($this->collEventsRelatedBycreatePersonId as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -3426,6 +3548,15 @@ abstract class BasePerson extends BaseObject implements Persistent
             $keys[51] => $this->getuuidId(),
         );
         if ($includeForeignObjects) {
+            if (null !== $this->collActionsRelatedBycreatePersonId) {
+                $result['ActionsRelatedBycreatePersonId'] = $this->collActionsRelatedBycreatePersonId->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collActionsRelatedBymodifyPersonId) {
+                $result['ActionsRelatedBymodifyPersonId'] = $this->collActionsRelatedBymodifyPersonId->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collActionsRelatedBysetPersonId) {
+                $result['ActionsRelatedBysetPersonId'] = $this->collActionsRelatedBysetPersonId->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collEventsRelatedBycreatePersonId) {
                 $result['EventsRelatedBycreatePersonId'] = $this->collEventsRelatedBycreatePersonId->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -3889,6 +4020,24 @@ abstract class BasePerson extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
+            foreach ($this->getActionsRelatedBycreatePersonId() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addActionRelatedBycreatePersonId($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getActionsRelatedBymodifyPersonId() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addActionRelatedBymodifyPersonId($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getActionsRelatedBysetPersonId() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addActionRelatedBysetPersonId($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getEventsRelatedBycreatePersonId() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addEventRelatedBycreatePersonId($relObj->copy($deepCopy));
@@ -3974,6 +4123,15 @@ abstract class BasePerson extends BaseObject implements Persistent
      */
     public function initRelation($relationName)
     {
+        if ('ActionRelatedBycreatePersonId' == $relationName) {
+            $this->initActionsRelatedBycreatePersonId();
+        }
+        if ('ActionRelatedBymodifyPersonId' == $relationName) {
+            $this->initActionsRelatedBymodifyPersonId();
+        }
+        if ('ActionRelatedBysetPersonId' == $relationName) {
+            $this->initActionsRelatedBysetPersonId();
+        }
         if ('EventRelatedBycreatePersonId' == $relationName) {
             $this->initEventsRelatedBycreatePersonId();
         }
@@ -3986,6 +4144,810 @@ abstract class BasePerson extends BaseObject implements Persistent
         if ('EventRelatedByexecPersonId' == $relationName) {
             $this->initEventsRelatedByexecPersonId();
         }
+    }
+
+    /**
+     * Clears out the collActionsRelatedBycreatePersonId collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Person The current object (for fluent API support)
+     * @see        addActionsRelatedBycreatePersonId()
+     */
+    public function clearActionsRelatedBycreatePersonId()
+    {
+        $this->collActionsRelatedBycreatePersonId = null; // important to set this to null since that means it is uninitialized
+        $this->collActionsRelatedBycreatePersonIdPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collActionsRelatedBycreatePersonId collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialActionsRelatedBycreatePersonId($v = true)
+    {
+        $this->collActionsRelatedBycreatePersonIdPartial = $v;
+    }
+
+    /**
+     * Initializes the collActionsRelatedBycreatePersonId collection.
+     *
+     * By default this just sets the collActionsRelatedBycreatePersonId collection to an empty array (like clearcollActionsRelatedBycreatePersonId());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initActionsRelatedBycreatePersonId($overrideExisting = true)
+    {
+        if (null !== $this->collActionsRelatedBycreatePersonId && !$overrideExisting) {
+            return;
+        }
+        $this->collActionsRelatedBycreatePersonId = new PropelObjectCollection();
+        $this->collActionsRelatedBycreatePersonId->setModel('Action');
+    }
+
+    /**
+     * Gets an array of Action objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Person is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Action[] List of Action objects
+     * @throws PropelException
+     */
+    public function getActionsRelatedBycreatePersonId($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collActionsRelatedBycreatePersonIdPartial && !$this->isNew();
+        if (null === $this->collActionsRelatedBycreatePersonId || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collActionsRelatedBycreatePersonId) {
+                // return empty collection
+                $this->initActionsRelatedBycreatePersonId();
+            } else {
+                $collActionsRelatedBycreatePersonId = ActionQuery::create(null, $criteria)
+                    ->filterByCreatePerson($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collActionsRelatedBycreatePersonIdPartial && count($collActionsRelatedBycreatePersonId)) {
+                      $this->initActionsRelatedBycreatePersonId(false);
+
+                      foreach($collActionsRelatedBycreatePersonId as $obj) {
+                        if (false == $this->collActionsRelatedBycreatePersonId->contains($obj)) {
+                          $this->collActionsRelatedBycreatePersonId->append($obj);
+                        }
+                      }
+
+                      $this->collActionsRelatedBycreatePersonIdPartial = true;
+                    }
+
+                    $collActionsRelatedBycreatePersonId->getInternalIterator()->rewind();
+                    return $collActionsRelatedBycreatePersonId;
+                }
+
+                if($partial && $this->collActionsRelatedBycreatePersonId) {
+                    foreach($this->collActionsRelatedBycreatePersonId as $obj) {
+                        if($obj->isNew()) {
+                            $collActionsRelatedBycreatePersonId[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collActionsRelatedBycreatePersonId = $collActionsRelatedBycreatePersonId;
+                $this->collActionsRelatedBycreatePersonIdPartial = false;
+            }
+        }
+
+        return $this->collActionsRelatedBycreatePersonId;
+    }
+
+    /**
+     * Sets a collection of ActionRelatedBycreatePersonId objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $actionsRelatedBycreatePersonId A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Person The current object (for fluent API support)
+     */
+    public function setActionsRelatedBycreatePersonId(PropelCollection $actionsRelatedBycreatePersonId, PropelPDO $con = null)
+    {
+        $actionsRelatedBycreatePersonIdToDelete = $this->getActionsRelatedBycreatePersonId(new Criteria(), $con)->diff($actionsRelatedBycreatePersonId);
+
+        $this->actionsRelatedBycreatePersonIdScheduledForDeletion = unserialize(serialize($actionsRelatedBycreatePersonIdToDelete));
+
+        foreach ($actionsRelatedBycreatePersonIdToDelete as $actionRelatedBycreatePersonIdRemoved) {
+            $actionRelatedBycreatePersonIdRemoved->setCreatePerson(null);
+        }
+
+        $this->collActionsRelatedBycreatePersonId = null;
+        foreach ($actionsRelatedBycreatePersonId as $actionRelatedBycreatePersonId) {
+            $this->addActionRelatedBycreatePersonId($actionRelatedBycreatePersonId);
+        }
+
+        $this->collActionsRelatedBycreatePersonId = $actionsRelatedBycreatePersonId;
+        $this->collActionsRelatedBycreatePersonIdPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Action objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Action objects.
+     * @throws PropelException
+     */
+    public function countActionsRelatedBycreatePersonId(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collActionsRelatedBycreatePersonIdPartial && !$this->isNew();
+        if (null === $this->collActionsRelatedBycreatePersonId || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collActionsRelatedBycreatePersonId) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getActionsRelatedBycreatePersonId());
+            }
+            $query = ActionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByCreatePerson($this)
+                ->count($con);
+        }
+
+        return count($this->collActionsRelatedBycreatePersonId);
+    }
+
+    /**
+     * Method called to associate a Action object to this object
+     * through the Action foreign key attribute.
+     *
+     * @param    Action $l Action
+     * @return Person The current object (for fluent API support)
+     */
+    public function addActionRelatedBycreatePersonId(Action $l)
+    {
+        if ($this->collActionsRelatedBycreatePersonId === null) {
+            $this->initActionsRelatedBycreatePersonId();
+            $this->collActionsRelatedBycreatePersonIdPartial = true;
+        }
+        if (!in_array($l, $this->collActionsRelatedBycreatePersonId->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddActionRelatedBycreatePersonId($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	ActionRelatedBycreatePersonId $actionRelatedBycreatePersonId The actionRelatedBycreatePersonId object to add.
+     */
+    protected function doAddActionRelatedBycreatePersonId($actionRelatedBycreatePersonId)
+    {
+        $this->collActionsRelatedBycreatePersonId[]= $actionRelatedBycreatePersonId;
+        $actionRelatedBycreatePersonId->setCreatePerson($this);
+    }
+
+    /**
+     * @param	ActionRelatedBycreatePersonId $actionRelatedBycreatePersonId The actionRelatedBycreatePersonId object to remove.
+     * @return Person The current object (for fluent API support)
+     */
+    public function removeActionRelatedBycreatePersonId($actionRelatedBycreatePersonId)
+    {
+        if ($this->getActionsRelatedBycreatePersonId()->contains($actionRelatedBycreatePersonId)) {
+            $this->collActionsRelatedBycreatePersonId->remove($this->collActionsRelatedBycreatePersonId->search($actionRelatedBycreatePersonId));
+            if (null === $this->actionsRelatedBycreatePersonIdScheduledForDeletion) {
+                $this->actionsRelatedBycreatePersonIdScheduledForDeletion = clone $this->collActionsRelatedBycreatePersonId;
+                $this->actionsRelatedBycreatePersonIdScheduledForDeletion->clear();
+            }
+            $this->actionsRelatedBycreatePersonIdScheduledForDeletion[]= $actionRelatedBycreatePersonId;
+            $actionRelatedBycreatePersonId->setCreatePerson(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Person is new, it will return
+     * an empty collection; or if this Person has previously
+     * been saved, it will retrieve related ActionsRelatedBycreatePersonId from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Person.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Action[] List of Action objects
+     */
+    public function getActionsRelatedBycreatePersonIdJoinEvent($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActionQuery::create(null, $criteria);
+        $query->joinWith('Event', $join_behavior);
+
+        return $this->getActionsRelatedBycreatePersonId($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Person is new, it will return
+     * an empty collection; or if this Person has previously
+     * been saved, it will retrieve related ActionsRelatedBycreatePersonId from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Person.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Action[] List of Action objects
+     */
+    public function getActionsRelatedBycreatePersonIdJoinActionType($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActionQuery::create(null, $criteria);
+        $query->joinWith('ActionType', $join_behavior);
+
+        return $this->getActionsRelatedBycreatePersonId($query, $con);
+    }
+
+    /**
+     * Clears out the collActionsRelatedBymodifyPersonId collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Person The current object (for fluent API support)
+     * @see        addActionsRelatedBymodifyPersonId()
+     */
+    public function clearActionsRelatedBymodifyPersonId()
+    {
+        $this->collActionsRelatedBymodifyPersonId = null; // important to set this to null since that means it is uninitialized
+        $this->collActionsRelatedBymodifyPersonIdPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collActionsRelatedBymodifyPersonId collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialActionsRelatedBymodifyPersonId($v = true)
+    {
+        $this->collActionsRelatedBymodifyPersonIdPartial = $v;
+    }
+
+    /**
+     * Initializes the collActionsRelatedBymodifyPersonId collection.
+     *
+     * By default this just sets the collActionsRelatedBymodifyPersonId collection to an empty array (like clearcollActionsRelatedBymodifyPersonId());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initActionsRelatedBymodifyPersonId($overrideExisting = true)
+    {
+        if (null !== $this->collActionsRelatedBymodifyPersonId && !$overrideExisting) {
+            return;
+        }
+        $this->collActionsRelatedBymodifyPersonId = new PropelObjectCollection();
+        $this->collActionsRelatedBymodifyPersonId->setModel('Action');
+    }
+
+    /**
+     * Gets an array of Action objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Person is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Action[] List of Action objects
+     * @throws PropelException
+     */
+    public function getActionsRelatedBymodifyPersonId($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collActionsRelatedBymodifyPersonIdPartial && !$this->isNew();
+        if (null === $this->collActionsRelatedBymodifyPersonId || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collActionsRelatedBymodifyPersonId) {
+                // return empty collection
+                $this->initActionsRelatedBymodifyPersonId();
+            } else {
+                $collActionsRelatedBymodifyPersonId = ActionQuery::create(null, $criteria)
+                    ->filterByModifyPerson($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collActionsRelatedBymodifyPersonIdPartial && count($collActionsRelatedBymodifyPersonId)) {
+                      $this->initActionsRelatedBymodifyPersonId(false);
+
+                      foreach($collActionsRelatedBymodifyPersonId as $obj) {
+                        if (false == $this->collActionsRelatedBymodifyPersonId->contains($obj)) {
+                          $this->collActionsRelatedBymodifyPersonId->append($obj);
+                        }
+                      }
+
+                      $this->collActionsRelatedBymodifyPersonIdPartial = true;
+                    }
+
+                    $collActionsRelatedBymodifyPersonId->getInternalIterator()->rewind();
+                    return $collActionsRelatedBymodifyPersonId;
+                }
+
+                if($partial && $this->collActionsRelatedBymodifyPersonId) {
+                    foreach($this->collActionsRelatedBymodifyPersonId as $obj) {
+                        if($obj->isNew()) {
+                            $collActionsRelatedBymodifyPersonId[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collActionsRelatedBymodifyPersonId = $collActionsRelatedBymodifyPersonId;
+                $this->collActionsRelatedBymodifyPersonIdPartial = false;
+            }
+        }
+
+        return $this->collActionsRelatedBymodifyPersonId;
+    }
+
+    /**
+     * Sets a collection of ActionRelatedBymodifyPersonId objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $actionsRelatedBymodifyPersonId A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Person The current object (for fluent API support)
+     */
+    public function setActionsRelatedBymodifyPersonId(PropelCollection $actionsRelatedBymodifyPersonId, PropelPDO $con = null)
+    {
+        $actionsRelatedBymodifyPersonIdToDelete = $this->getActionsRelatedBymodifyPersonId(new Criteria(), $con)->diff($actionsRelatedBymodifyPersonId);
+
+        $this->actionsRelatedBymodifyPersonIdScheduledForDeletion = unserialize(serialize($actionsRelatedBymodifyPersonIdToDelete));
+
+        foreach ($actionsRelatedBymodifyPersonIdToDelete as $actionRelatedBymodifyPersonIdRemoved) {
+            $actionRelatedBymodifyPersonIdRemoved->setModifyPerson(null);
+        }
+
+        $this->collActionsRelatedBymodifyPersonId = null;
+        foreach ($actionsRelatedBymodifyPersonId as $actionRelatedBymodifyPersonId) {
+            $this->addActionRelatedBymodifyPersonId($actionRelatedBymodifyPersonId);
+        }
+
+        $this->collActionsRelatedBymodifyPersonId = $actionsRelatedBymodifyPersonId;
+        $this->collActionsRelatedBymodifyPersonIdPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Action objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Action objects.
+     * @throws PropelException
+     */
+    public function countActionsRelatedBymodifyPersonId(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collActionsRelatedBymodifyPersonIdPartial && !$this->isNew();
+        if (null === $this->collActionsRelatedBymodifyPersonId || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collActionsRelatedBymodifyPersonId) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getActionsRelatedBymodifyPersonId());
+            }
+            $query = ActionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByModifyPerson($this)
+                ->count($con);
+        }
+
+        return count($this->collActionsRelatedBymodifyPersonId);
+    }
+
+    /**
+     * Method called to associate a Action object to this object
+     * through the Action foreign key attribute.
+     *
+     * @param    Action $l Action
+     * @return Person The current object (for fluent API support)
+     */
+    public function addActionRelatedBymodifyPersonId(Action $l)
+    {
+        if ($this->collActionsRelatedBymodifyPersonId === null) {
+            $this->initActionsRelatedBymodifyPersonId();
+            $this->collActionsRelatedBymodifyPersonIdPartial = true;
+        }
+        if (!in_array($l, $this->collActionsRelatedBymodifyPersonId->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddActionRelatedBymodifyPersonId($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	ActionRelatedBymodifyPersonId $actionRelatedBymodifyPersonId The actionRelatedBymodifyPersonId object to add.
+     */
+    protected function doAddActionRelatedBymodifyPersonId($actionRelatedBymodifyPersonId)
+    {
+        $this->collActionsRelatedBymodifyPersonId[]= $actionRelatedBymodifyPersonId;
+        $actionRelatedBymodifyPersonId->setModifyPerson($this);
+    }
+
+    /**
+     * @param	ActionRelatedBymodifyPersonId $actionRelatedBymodifyPersonId The actionRelatedBymodifyPersonId object to remove.
+     * @return Person The current object (for fluent API support)
+     */
+    public function removeActionRelatedBymodifyPersonId($actionRelatedBymodifyPersonId)
+    {
+        if ($this->getActionsRelatedBymodifyPersonId()->contains($actionRelatedBymodifyPersonId)) {
+            $this->collActionsRelatedBymodifyPersonId->remove($this->collActionsRelatedBymodifyPersonId->search($actionRelatedBymodifyPersonId));
+            if (null === $this->actionsRelatedBymodifyPersonIdScheduledForDeletion) {
+                $this->actionsRelatedBymodifyPersonIdScheduledForDeletion = clone $this->collActionsRelatedBymodifyPersonId;
+                $this->actionsRelatedBymodifyPersonIdScheduledForDeletion->clear();
+            }
+            $this->actionsRelatedBymodifyPersonIdScheduledForDeletion[]= $actionRelatedBymodifyPersonId;
+            $actionRelatedBymodifyPersonId->setModifyPerson(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Person is new, it will return
+     * an empty collection; or if this Person has previously
+     * been saved, it will retrieve related ActionsRelatedBymodifyPersonId from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Person.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Action[] List of Action objects
+     */
+    public function getActionsRelatedBymodifyPersonIdJoinEvent($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActionQuery::create(null, $criteria);
+        $query->joinWith('Event', $join_behavior);
+
+        return $this->getActionsRelatedBymodifyPersonId($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Person is new, it will return
+     * an empty collection; or if this Person has previously
+     * been saved, it will retrieve related ActionsRelatedBymodifyPersonId from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Person.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Action[] List of Action objects
+     */
+    public function getActionsRelatedBymodifyPersonIdJoinActionType($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActionQuery::create(null, $criteria);
+        $query->joinWith('ActionType', $join_behavior);
+
+        return $this->getActionsRelatedBymodifyPersonId($query, $con);
+    }
+
+    /**
+     * Clears out the collActionsRelatedBysetPersonId collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Person The current object (for fluent API support)
+     * @see        addActionsRelatedBysetPersonId()
+     */
+    public function clearActionsRelatedBysetPersonId()
+    {
+        $this->collActionsRelatedBysetPersonId = null; // important to set this to null since that means it is uninitialized
+        $this->collActionsRelatedBysetPersonIdPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collActionsRelatedBysetPersonId collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialActionsRelatedBysetPersonId($v = true)
+    {
+        $this->collActionsRelatedBysetPersonIdPartial = $v;
+    }
+
+    /**
+     * Initializes the collActionsRelatedBysetPersonId collection.
+     *
+     * By default this just sets the collActionsRelatedBysetPersonId collection to an empty array (like clearcollActionsRelatedBysetPersonId());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initActionsRelatedBysetPersonId($overrideExisting = true)
+    {
+        if (null !== $this->collActionsRelatedBysetPersonId && !$overrideExisting) {
+            return;
+        }
+        $this->collActionsRelatedBysetPersonId = new PropelObjectCollection();
+        $this->collActionsRelatedBysetPersonId->setModel('Action');
+    }
+
+    /**
+     * Gets an array of Action objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Person is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Action[] List of Action objects
+     * @throws PropelException
+     */
+    public function getActionsRelatedBysetPersonId($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collActionsRelatedBysetPersonIdPartial && !$this->isNew();
+        if (null === $this->collActionsRelatedBysetPersonId || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collActionsRelatedBysetPersonId) {
+                // return empty collection
+                $this->initActionsRelatedBysetPersonId();
+            } else {
+                $collActionsRelatedBysetPersonId = ActionQuery::create(null, $criteria)
+                    ->filterBySetPerson($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collActionsRelatedBysetPersonIdPartial && count($collActionsRelatedBysetPersonId)) {
+                      $this->initActionsRelatedBysetPersonId(false);
+
+                      foreach($collActionsRelatedBysetPersonId as $obj) {
+                        if (false == $this->collActionsRelatedBysetPersonId->contains($obj)) {
+                          $this->collActionsRelatedBysetPersonId->append($obj);
+                        }
+                      }
+
+                      $this->collActionsRelatedBysetPersonIdPartial = true;
+                    }
+
+                    $collActionsRelatedBysetPersonId->getInternalIterator()->rewind();
+                    return $collActionsRelatedBysetPersonId;
+                }
+
+                if($partial && $this->collActionsRelatedBysetPersonId) {
+                    foreach($this->collActionsRelatedBysetPersonId as $obj) {
+                        if($obj->isNew()) {
+                            $collActionsRelatedBysetPersonId[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collActionsRelatedBysetPersonId = $collActionsRelatedBysetPersonId;
+                $this->collActionsRelatedBysetPersonIdPartial = false;
+            }
+        }
+
+        return $this->collActionsRelatedBysetPersonId;
+    }
+
+    /**
+     * Sets a collection of ActionRelatedBysetPersonId objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $actionsRelatedBysetPersonId A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Person The current object (for fluent API support)
+     */
+    public function setActionsRelatedBysetPersonId(PropelCollection $actionsRelatedBysetPersonId, PropelPDO $con = null)
+    {
+        $actionsRelatedBysetPersonIdToDelete = $this->getActionsRelatedBysetPersonId(new Criteria(), $con)->diff($actionsRelatedBysetPersonId);
+
+        $this->actionsRelatedBysetPersonIdScheduledForDeletion = unserialize(serialize($actionsRelatedBysetPersonIdToDelete));
+
+        foreach ($actionsRelatedBysetPersonIdToDelete as $actionRelatedBysetPersonIdRemoved) {
+            $actionRelatedBysetPersonIdRemoved->setSetPerson(null);
+        }
+
+        $this->collActionsRelatedBysetPersonId = null;
+        foreach ($actionsRelatedBysetPersonId as $actionRelatedBysetPersonId) {
+            $this->addActionRelatedBysetPersonId($actionRelatedBysetPersonId);
+        }
+
+        $this->collActionsRelatedBysetPersonId = $actionsRelatedBysetPersonId;
+        $this->collActionsRelatedBysetPersonIdPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Action objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Action objects.
+     * @throws PropelException
+     */
+    public function countActionsRelatedBysetPersonId(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collActionsRelatedBysetPersonIdPartial && !$this->isNew();
+        if (null === $this->collActionsRelatedBysetPersonId || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collActionsRelatedBysetPersonId) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getActionsRelatedBysetPersonId());
+            }
+            $query = ActionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterBySetPerson($this)
+                ->count($con);
+        }
+
+        return count($this->collActionsRelatedBysetPersonId);
+    }
+
+    /**
+     * Method called to associate a Action object to this object
+     * through the Action foreign key attribute.
+     *
+     * @param    Action $l Action
+     * @return Person The current object (for fluent API support)
+     */
+    public function addActionRelatedBysetPersonId(Action $l)
+    {
+        if ($this->collActionsRelatedBysetPersonId === null) {
+            $this->initActionsRelatedBysetPersonId();
+            $this->collActionsRelatedBysetPersonIdPartial = true;
+        }
+        if (!in_array($l, $this->collActionsRelatedBysetPersonId->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddActionRelatedBysetPersonId($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	ActionRelatedBysetPersonId $actionRelatedBysetPersonId The actionRelatedBysetPersonId object to add.
+     */
+    protected function doAddActionRelatedBysetPersonId($actionRelatedBysetPersonId)
+    {
+        $this->collActionsRelatedBysetPersonId[]= $actionRelatedBysetPersonId;
+        $actionRelatedBysetPersonId->setSetPerson($this);
+    }
+
+    /**
+     * @param	ActionRelatedBysetPersonId $actionRelatedBysetPersonId The actionRelatedBysetPersonId object to remove.
+     * @return Person The current object (for fluent API support)
+     */
+    public function removeActionRelatedBysetPersonId($actionRelatedBysetPersonId)
+    {
+        if ($this->getActionsRelatedBysetPersonId()->contains($actionRelatedBysetPersonId)) {
+            $this->collActionsRelatedBysetPersonId->remove($this->collActionsRelatedBysetPersonId->search($actionRelatedBysetPersonId));
+            if (null === $this->actionsRelatedBysetPersonIdScheduledForDeletion) {
+                $this->actionsRelatedBysetPersonIdScheduledForDeletion = clone $this->collActionsRelatedBysetPersonId;
+                $this->actionsRelatedBysetPersonIdScheduledForDeletion->clear();
+            }
+            $this->actionsRelatedBysetPersonIdScheduledForDeletion[]= $actionRelatedBysetPersonId;
+            $actionRelatedBysetPersonId->setSetPerson(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Person is new, it will return
+     * an empty collection; or if this Person has previously
+     * been saved, it will retrieve related ActionsRelatedBysetPersonId from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Person.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Action[] List of Action objects
+     */
+    public function getActionsRelatedBysetPersonIdJoinEvent($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActionQuery::create(null, $criteria);
+        $query->joinWith('Event', $join_behavior);
+
+        return $this->getActionsRelatedBysetPersonId($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Person is new, it will return
+     * an empty collection; or if this Person has previously
+     * been saved, it will retrieve related ActionsRelatedBysetPersonId from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Person.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Action[] List of Action objects
+     */
+    public function getActionsRelatedBysetPersonIdJoinActionType($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActionQuery::create(null, $criteria);
+        $query->joinWith('ActionType', $join_behavior);
+
+        return $this->getActionsRelatedBysetPersonId($query, $con);
     }
 
     /**
@@ -5240,6 +6202,21 @@ abstract class BasePerson extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->collActionsRelatedBycreatePersonId) {
+                foreach ($this->collActionsRelatedBycreatePersonId as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collActionsRelatedBymodifyPersonId) {
+                foreach ($this->collActionsRelatedBymodifyPersonId as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collActionsRelatedBysetPersonId) {
+                foreach ($this->collActionsRelatedBysetPersonId as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collEventsRelatedBycreatePersonId) {
                 foreach ($this->collEventsRelatedBycreatePersonId as $o) {
                     $o->clearAllReferences($deep);
@@ -5264,6 +6241,18 @@ abstract class BasePerson extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        if ($this->collActionsRelatedBycreatePersonId instanceof PropelCollection) {
+            $this->collActionsRelatedBycreatePersonId->clearIterator();
+        }
+        $this->collActionsRelatedBycreatePersonId = null;
+        if ($this->collActionsRelatedBymodifyPersonId instanceof PropelCollection) {
+            $this->collActionsRelatedBymodifyPersonId->clearIterator();
+        }
+        $this->collActionsRelatedBymodifyPersonId = null;
+        if ($this->collActionsRelatedBysetPersonId instanceof PropelCollection) {
+            $this->collActionsRelatedBysetPersonId->clearIterator();
+        }
+        $this->collActionsRelatedBysetPersonId = null;
         if ($this->collEventsRelatedBycreatePersonId instanceof PropelCollection) {
             $this->collEventsRelatedBycreatePersonId->clearIterator();
         }

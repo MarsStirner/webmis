@@ -44,17 +44,17 @@ class ActionTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'id', 'INTEGER', true, null, null);
         $this->addColumn('createDatetime', 'createDatetime', 'TIMESTAMP', true, null, null);
-        $this->addColumn('createPerson_id', 'createPersonId', 'INTEGER', false, null, null);
+        $this->addForeignKey('createPerson_id', 'createPersonId', 'INTEGER', 'Person', 'id', false, null, null);
         $this->addColumn('modifyDatetime', 'modifyDatetime', 'TIMESTAMP', true, null, null);
-        $this->addColumn('modifyPerson_id', 'modifyPersonId', 'INTEGER', false, null, null);
+        $this->addForeignKey('modifyPerson_id', 'modifyPersonId', 'INTEGER', 'Person', 'id', false, null, null);
         $this->addColumn('deleted', 'deleted', 'BOOLEAN', true, 1, false);
         $this->addForeignKey('actionType_id', 'actionTypeId', 'INTEGER', 'ActionType', 'id', true, null, null);
         $this->addForeignKey('event_id', 'eventId', 'INTEGER', 'Event', 'id', false, null, null);
         $this->addColumn('idx', 'idx', 'INTEGER', true, null, 0);
         $this->addColumn('directionDate', 'directionDate', 'TIMESTAMP', false, null, null);
         $this->addColumn('status', 'status', 'TINYINT', true, null, null);
-        $this->addColumn('setPerson_id', 'setPersonId', 'INTEGER', false, null, null);
-        $this->addColumn('isUrgent', 'isUrgent', 'INTEGER', true, 1, 0);
+        $this->addForeignKey('setPerson_id', 'setPersonId', 'INTEGER', 'Person', 'id', false, null, null);
+        $this->addColumn('isUrgent', 'isUrgent', 'BOOLEAN', true, 1, false);
         $this->addColumn('begDate', 'begDate', 'TIMESTAMP', false, null, null);
         $this->addColumn('plannedEndDate', 'plannedEndDate', 'TIMESTAMP', true, null, null);
         $this->addColumn('endDate', 'endDate', 'TIMESTAMP', false, null, null);
@@ -99,6 +99,9 @@ class ActionTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Event', 'Webmis\\Models\\Event', RelationMap::MANY_TO_ONE, array('event_id' => 'id', ), null, null);
+        $this->addRelation('CreatePerson', 'Webmis\\Models\\Person', RelationMap::MANY_TO_ONE, array('createPerson_id' => 'id', ), null, null);
+        $this->addRelation('ModifyPerson', 'Webmis\\Models\\Person', RelationMap::MANY_TO_ONE, array('modifyPerson_id' => 'id', ), null, null);
+        $this->addRelation('SetPerson', 'Webmis\\Models\\Person', RelationMap::MANY_TO_ONE, array('setPerson_id' => 'id', ), null, null);
         $this->addRelation('ActionType', 'Webmis\\Models\\ActionType', RelationMap::MANY_TO_ONE, array('actionType_id' => 'id', ), null, null);
         $this->addRelation('ActionProperty', 'Webmis\\Models\\ActionProperty', RelationMap::ONE_TO_MANY, array('id' => 'action_id', ), null, null, 'ActionPropertys');
         $this->addRelation('DrugChart', 'Webmis\\Models\\DrugChart', RelationMap::ONE_TO_MANY, array('id' => 'action_id', ), null, null, 'DrugCharts');

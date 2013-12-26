@@ -28,6 +28,8 @@ use Webmis\Models\DrugComponent;
 use Webmis\Models\DrugComponentQuery;
 use Webmis\Models\Event;
 use Webmis\Models\EventQuery;
+use Webmis\Models\Person;
+use Webmis\Models\PersonQuery;
 
 /**
  * Base class that represents a row from the 'Action' table.
@@ -133,8 +135,8 @@ abstract class BaseAction extends BaseObject implements Persistent
 
     /**
      * The value for the isurgent field.
-     * Note: this column has a database default value of: 0
-     * @var        int
+     * Note: this column has a database default value of: false
+     * @var        boolean
      */
     protected $isurgent;
 
@@ -308,6 +310,21 @@ abstract class BaseAction extends BaseObject implements Persistent
     protected $aEvent;
 
     /**
+     * @var        Person
+     */
+    protected $aCreatePerson;
+
+    /**
+     * @var        Person
+     */
+    protected $aModifyPerson;
+
+    /**
+     * @var        Person
+     */
+    protected $aSetPerson;
+
+    /**
      * @var        ActionType
      */
     protected $aActionType;
@@ -378,7 +395,7 @@ abstract class BaseAction extends BaseObject implements Persistent
     {
         $this->deleted = false;
         $this->idx = 0;
-        $this->isurgent = 0;
+        $this->isurgent = false;
         $this->uet = 0;
         $this->expose = 1;
         $this->coordagent = '';
@@ -612,7 +629,7 @@ abstract class BaseAction extends BaseObject implements Persistent
     /**
      * Get the [isurgent] column value.
      *
-     * @return int
+     * @return boolean
      */
     public function getisUrgent()
     {
@@ -1060,6 +1077,10 @@ abstract class BaseAction extends BaseObject implements Persistent
             $this->modifiedColumns[] = ActionPeer::CREATEPERSON_ID;
         }
 
+        if ($this->aCreatePerson !== null && $this->aCreatePerson->getid() !== $v) {
+            $this->aCreatePerson = null;
+        }
+
 
         return $this;
     } // setcreatePersonId()
@@ -1102,6 +1123,10 @@ abstract class BaseAction extends BaseObject implements Persistent
         if ($this->modifyperson_id !== $v) {
             $this->modifyperson_id = $v;
             $this->modifiedColumns[] = ActionPeer::MODIFYPERSON_ID;
+        }
+
+        if ($this->aModifyPerson !== null && $this->aModifyPerson->getid() !== $v) {
+            $this->aModifyPerson = null;
         }
 
 
@@ -1269,20 +1294,32 @@ abstract class BaseAction extends BaseObject implements Persistent
             $this->modifiedColumns[] = ActionPeer::SETPERSON_ID;
         }
 
+        if ($this->aSetPerson !== null && $this->aSetPerson->getid() !== $v) {
+            $this->aSetPerson = null;
+        }
+
 
         return $this;
     } // setsetPersonId()
 
     /**
-     * Set the value of [isurgent] column.
+     * Sets the value of the [isurgent] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      *
-     * @param int $v new value
+     * @param boolean|integer|string $v The new value
      * @return Action The current object (for fluent API support)
      */
     public function setisUrgent($v)
     {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
         }
 
         if ($this->isurgent !== $v) {
@@ -1874,7 +1911,7 @@ abstract class BaseAction extends BaseObject implements Persistent
                 return false;
             }
 
-            if ($this->isurgent !== 0) {
+            if ($this->isurgent !== false) {
                 return false;
             }
 
@@ -1944,7 +1981,7 @@ abstract class BaseAction extends BaseObject implements Persistent
             $this->directiondate = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
             $this->status = ($row[$startcol + 10] !== null) ? (int) $row[$startcol + 10] : null;
             $this->setperson_id = ($row[$startcol + 11] !== null) ? (int) $row[$startcol + 11] : null;
-            $this->isurgent = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
+            $this->isurgent = ($row[$startcol + 12] !== null) ? (boolean) $row[$startcol + 12] : null;
             $this->begdate = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
             $this->plannedenddate = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
             $this->enddate = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
@@ -2002,11 +2039,20 @@ abstract class BaseAction extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
+        if ($this->aCreatePerson !== null && $this->createperson_id !== $this->aCreatePerson->getid()) {
+            $this->aCreatePerson = null;
+        }
+        if ($this->aModifyPerson !== null && $this->modifyperson_id !== $this->aModifyPerson->getid()) {
+            $this->aModifyPerson = null;
+        }
         if ($this->aActionType !== null && $this->actiontype_id !== $this->aActionType->getid()) {
             $this->aActionType = null;
         }
         if ($this->aEvent !== null && $this->event_id !== $this->aEvent->getid()) {
             $this->aEvent = null;
+        }
+        if ($this->aSetPerson !== null && $this->setperson_id !== $this->aSetPerson->getid()) {
+            $this->aSetPerson = null;
         }
     } // ensureConsistency
 
@@ -2048,6 +2094,9 @@ abstract class BaseAction extends BaseObject implements Persistent
         if ($deep) {  // also de-associate any related objects?
 
             $this->aEvent = null;
+            $this->aCreatePerson = null;
+            $this->aModifyPerson = null;
+            $this->aSetPerson = null;
             $this->aActionType = null;
             $this->collActionPropertys = null;
 
@@ -2189,6 +2238,27 @@ abstract class BaseAction extends BaseObject implements Persistent
                     $affectedRows += $this->aEvent->save($con);
                 }
                 $this->setEvent($this->aEvent);
+            }
+
+            if ($this->aCreatePerson !== null) {
+                if ($this->aCreatePerson->isModified() || $this->aCreatePerson->isNew()) {
+                    $affectedRows += $this->aCreatePerson->save($con);
+                }
+                $this->setCreatePerson($this->aCreatePerson);
+            }
+
+            if ($this->aModifyPerson !== null) {
+                if ($this->aModifyPerson->isModified() || $this->aModifyPerson->isNew()) {
+                    $affectedRows += $this->aModifyPerson->save($con);
+                }
+                $this->setModifyPerson($this->aModifyPerson);
+            }
+
+            if ($this->aSetPerson !== null) {
+                if ($this->aSetPerson->isModified() || $this->aSetPerson->isNew()) {
+                    $affectedRows += $this->aSetPerson->save($con);
+                }
+                $this->setSetPerson($this->aSetPerson);
             }
 
             if ($this->aActionType !== null) {
@@ -2451,7 +2521,7 @@ abstract class BaseAction extends BaseObject implements Persistent
                         $stmt->bindValue($identifier, $this->setperson_id, PDO::PARAM_INT);
                         break;
                     case '`isUrgent`':
-                        $stmt->bindValue($identifier, $this->isurgent, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, (int) $this->isurgent, PDO::PARAM_INT);
                         break;
                     case '`begDate`':
                         $stmt->bindValue($identifier, $this->begdate, PDO::PARAM_STR);
@@ -2633,6 +2703,24 @@ abstract class BaseAction extends BaseObject implements Persistent
             if ($this->aEvent !== null) {
                 if (!$this->aEvent->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aEvent->getValidationFailures());
+                }
+            }
+
+            if ($this->aCreatePerson !== null) {
+                if (!$this->aCreatePerson->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aCreatePerson->getValidationFailures());
+                }
+            }
+
+            if ($this->aModifyPerson !== null) {
+                if (!$this->aModifyPerson->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aModifyPerson->getValidationFailures());
+                }
+            }
+
+            if ($this->aSetPerson !== null) {
+                if (!$this->aSetPerson->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aSetPerson->getValidationFailures());
                 }
             }
 
@@ -2896,6 +2984,15 @@ abstract class BaseAction extends BaseObject implements Persistent
         if ($includeForeignObjects) {
             if (null !== $this->aEvent) {
                 $result['Event'] = $this->aEvent->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aCreatePerson) {
+                $result['CreatePerson'] = $this->aCreatePerson->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aModifyPerson) {
+                $result['ModifyPerson'] = $this->aModifyPerson->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aSetPerson) {
+                $result['SetPerson'] = $this->aSetPerson->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->aActionType) {
                 $result['ActionType'] = $this->aActionType->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
@@ -3400,6 +3497,162 @@ abstract class BaseAction extends BaseObject implements Persistent
         }
 
         return $this->aEvent;
+    }
+
+    /**
+     * Declares an association between this object and a Person object.
+     *
+     * @param             Person $v
+     * @return Action The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setCreatePerson(Person $v = null)
+    {
+        if ($v === null) {
+            $this->setcreatePersonId(NULL);
+        } else {
+            $this->setcreatePersonId($v->getid());
+        }
+
+        $this->aCreatePerson = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Person object, it will not be re-added.
+        if ($v !== null) {
+            $v->addActionRelatedBycreatePersonId($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Person object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Person The associated Person object.
+     * @throws PropelException
+     */
+    public function getCreatePerson(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aCreatePerson === null && ($this->createperson_id !== null) && $doQuery) {
+            $this->aCreatePerson = PersonQuery::create()->findPk($this->createperson_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aCreatePerson->addActionsRelatedBycreatePersonId($this);
+             */
+        }
+
+        return $this->aCreatePerson;
+    }
+
+    /**
+     * Declares an association between this object and a Person object.
+     *
+     * @param             Person $v
+     * @return Action The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setModifyPerson(Person $v = null)
+    {
+        if ($v === null) {
+            $this->setmodifyPersonId(NULL);
+        } else {
+            $this->setmodifyPersonId($v->getid());
+        }
+
+        $this->aModifyPerson = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Person object, it will not be re-added.
+        if ($v !== null) {
+            $v->addActionRelatedBymodifyPersonId($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Person object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Person The associated Person object.
+     * @throws PropelException
+     */
+    public function getModifyPerson(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aModifyPerson === null && ($this->modifyperson_id !== null) && $doQuery) {
+            $this->aModifyPerson = PersonQuery::create()->findPk($this->modifyperson_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aModifyPerson->addActionsRelatedBymodifyPersonId($this);
+             */
+        }
+
+        return $this->aModifyPerson;
+    }
+
+    /**
+     * Declares an association between this object and a Person object.
+     *
+     * @param             Person $v
+     * @return Action The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setSetPerson(Person $v = null)
+    {
+        if ($v === null) {
+            $this->setsetPersonId(NULL);
+        } else {
+            $this->setsetPersonId($v->getid());
+        }
+
+        $this->aSetPerson = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Person object, it will not be re-added.
+        if ($v !== null) {
+            $v->addActionRelatedBysetPersonId($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Person object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return Person The associated Person object.
+     * @throws PropelException
+     */
+    public function getSetPerson(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aSetPerson === null && ($this->setperson_id !== null) && $doQuery) {
+            $this->aSetPerson = PersonQuery::create()->findPk($this->setperson_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aSetPerson->addActionsRelatedBysetPersonId($this);
+             */
+        }
+
+        return $this->aSetPerson;
     }
 
     /**
@@ -4465,6 +4718,15 @@ abstract class BaseAction extends BaseObject implements Persistent
             if ($this->aEvent instanceof Persistent) {
               $this->aEvent->clearAllReferences($deep);
             }
+            if ($this->aCreatePerson instanceof Persistent) {
+              $this->aCreatePerson->clearAllReferences($deep);
+            }
+            if ($this->aModifyPerson instanceof Persistent) {
+              $this->aModifyPerson->clearAllReferences($deep);
+            }
+            if ($this->aSetPerson instanceof Persistent) {
+              $this->aSetPerson->clearAllReferences($deep);
+            }
             if ($this->aActionType instanceof Persistent) {
               $this->aActionType->clearAllReferences($deep);
             }
@@ -4485,6 +4747,9 @@ abstract class BaseAction extends BaseObject implements Persistent
         }
         $this->collDrugComponents = null;
         $this->aEvent = null;
+        $this->aCreatePerson = null;
+        $this->aModifyPerson = null;
+        $this->aSetPerson = null;
         $this->aActionType = null;
     }
 
