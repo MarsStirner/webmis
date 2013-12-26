@@ -177,6 +177,7 @@ class Action extends BaseAction
 
 
         $data['eventId'] = $this->getEventId();
+        $data['note'] = $this->getNote();
 
         if($hidrate['doctor'] || $hidrate['client']){
             $event = $this->getEvent();

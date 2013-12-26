@@ -45,6 +45,7 @@ class PrescriptionController
         $data = array(
             'actionTypeId' => $actionTypeId,
             'eventId' => null,
+            'note' => '',
             'properties' => array(),
             'drugs' => array(),
             'assigmentIntervals' => array()
@@ -180,6 +181,7 @@ class PrescriptionController
 
         $data = $request->get('data');
         $eventId = @$data['eventId'];
+        $note = @$data['note'];
         $actionTypeId = (int) @$data['actionTypeId'];
         $drugs = @$data['drugs'];
         $properties = $data['properties'];
@@ -210,10 +212,12 @@ class PrescriptionController
         $prescription = new Action();
 
         $prescription->setEventId($eventId);
+        $prescription->setNote($note);
         $prescription->setActionTypeId($actionTypeId);
         $prescription->setDeleted(false);
         $prescription->setCreatePersonId($createPersonId);
         $prescription->setModifyPersonId($createPersonId);
+        $prescription->setSetPersonId($createPersonId);
         $prescription->setStatus(0);
 
 

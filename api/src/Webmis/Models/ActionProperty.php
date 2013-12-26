@@ -118,6 +118,18 @@ class ActionProperty extends BaseActionProperty
                 $this->setActionPropertyDouble($actionPropertyDouble);
 
                 break;
+
+            case 'ReferenceRb':
+                $actionPropertyInteger = new ActionPropertyInteger();
+                $actionPropertyInteger->fromArray(array(
+                    'id' => $actionPropertyId,
+                    'index' => 0,
+                    'value' => $value
+                    ));
+
+                $this->setActionPropertyInteger($actionPropertyInteger);
+
+                break;
             default:
                 # code...
                 break;

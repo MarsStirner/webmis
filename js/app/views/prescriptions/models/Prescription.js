@@ -10,9 +10,6 @@ define(function (require) {
             var self = this;
             this.actionTypeId = options.actionTypeId || false;
             this.initialized().then(function(){
-                if(self.getPropertyByName('Примечание')){
-                    self.set('note', self.getPropertyByName('Примечание').get('value')) 
-                }
                 if(self.getPropertyByCode('moa')){
                     self.set('moa', self.getPropertyByCode('moa').get('value')) 
                 }
@@ -136,7 +133,7 @@ define(function (require) {
                 if (attr === 'moa') {
                     var moaModel = this.getPropertyByCode('moa');
                     if (moaModel) {
-                        moaModel.set('value', attrs[attr]);
+                        moaModel.set('value', parseInt(attrs[attr], 10));
                     }
                 }
 
@@ -147,12 +144,6 @@ define(function (require) {
                     }
                 }
 
-                if (attr === 'note') {
-                    var noteModel = this.getPropertyByName('Примечание');
-                    if (noteModel) {
-                        noteModel.set('value', attrs[attr]);
-                    }
-                }
             }
 
             return Backbone.Model.prototype.set.call(this, attrs, options);
