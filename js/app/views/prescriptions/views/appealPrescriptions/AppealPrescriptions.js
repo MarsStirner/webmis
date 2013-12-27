@@ -94,12 +94,12 @@ define(function (require) {
 
         openPrescriptionEdit: function (prescriptionId) {
             var prescription = this.collection.get(prescriptionId);
-            // console.log('open prescription edit', prescription);
-            var pep = new PrescriptionEdit({
-                prescription: prescription
-            });
-            pep.render();
-            pep.open();
+            console.log('open prescription edit', prescription);
+            // var pep = new PrescriptionEdit({
+            //     prescription: prescription
+            // });
+            // pep.render();
+            // pep.open();
 
         },
 
