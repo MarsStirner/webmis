@@ -4,8 +4,7 @@
         <td style="width:18%;">Торговое название</td>
         <td style="width:18%;">Латинское название</td>
         <td style="width:12%;">Активные вещества</td>
-        <td style="width:8%;">Дозировка</td>
-        <td style="width:8%;">Ед.изм</td>
+        <td style="width:8%;">Дозировка/Ед.изм</td>
         <td style="width:8%;">Форма выпуска</td>
         <td style="width:8%;">Годен до</td>
         <td style="width: 16%;">Наличие</td>
@@ -25,10 +24,7 @@
             <%= data.item.actMattersName %>
         </td>
         <td>
-            <%= data.item.dosageValue %>
-        </td>
-        <td>
-            <%= data.item.unitName %>
+            <%= data.item.dosageValue %> <%= data.item.unitName %>
         </td>
         <td>
             <%= data.item.formName %>

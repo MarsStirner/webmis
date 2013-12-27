@@ -113,16 +113,16 @@ class RlsController
     public function balanceAction(Request $request, Application $app)
     {
         $route_params = $request->get('_route_params') ;
-        $nomenId = (int) $route_params['nomenId'];
+        $nomenIds = explode(',',$route_params['nomenId']);
         $data = array();
         $client = $app['prescriptionExchange']->getClient();
 
-        $responce = $client->updateBalanceOfGoods(array($nomenId));
+        $responce = $client->updateBalanceOfGoods($nomenIds);
 
 
         $balance = RlsBalanceOfGoodsQuery::create()
         ->leftJoinWithRbStorage('storage')
-        ->filterByRlsNomenId($nomenId)
+        ->filterByRlsNomenId($nomenIds)
         ->useRlsNomenQuery('nomen')
             ->leftJoinRlsTradeName('tradeName')
             ->leftJoinRlsActMatters('actMatters')
@@ -163,7 +163,7 @@ class RlsController
             $formName = $form->getName();
             $dosageValue = $rlsNomen->getDosageValue();
 
-            $data[] = array_merge(
+            array_push($data, array_merge(
                 $item->toArray(),
                 array('drugLifeTime' => $drugLifeTime,
                 'storageName' => $storageName,
@@ -176,7 +176,7 @@ class RlsController
                 'dosageValue' => $dosageValue,
                 'unitName' => $unitName,
                 'unitId' => $unitId)
-                );
+                ));
         }
 
 
