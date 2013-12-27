@@ -13,6 +13,7 @@ define(function (require) {
         template: template,
         initialize: function (opt) {
             var self = this;
+            this.options.title = 'Редактирование назначения';
             //console.log('init new prescription view', this);
             this.prescription = opt.prescription; 
             this.administration = new AdministrationMethod();

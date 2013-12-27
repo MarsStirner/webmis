@@ -1,54 +1,60 @@
 <% if(data.item){ %>
-	<table class="my-grid sklad">
-		<tr>
-			<td style="width:18%;">Препарат</td>
-			<td style="width:18%;"></td>
-			<td style="width:18%;">Активные вещества</td>
-			<td style="width:18%;"></td>
-			<td style="width:8%;">Годен до</td>
-			<td style="width: 16%;">Наличие</td>
-		</tr>
-        
-        <tr <% if(data.where){%>  class="<%= data.where%>"<%}%>>
-            <td>
-                <!-- <%= data.item.rlsNomenId %> -->	
+<table class="my-grid sklad">
+    <tr>
+        <td style="width:18%;">Торговое название</td>
+        <td style="width:18%;">Латинское название</td>
+        <td style="width:12%;">Активные вещества</td>
+        <td style="width:8%;">Дозировка</td>
+        <td style="width:8%;">Ед.изм</td>
+        <td style="width:8%;">Форма выпуска</td>
+        <td style="width:8%;">Годен до</td>
+        <td style="width: 16%;">Наличие</td>
+    </tr>
 
-                <%= data.item.tradeLocalName%>
-                <% if(data.item.isExpirationDateComesToEnd){%>*<%}%>
-            </td>
-            <td>
-                <%= data.item.tradeName %>
-            </td>
-            <td>
-                <%= data.item.actMattersName %>
-            </td>
-            <td>
-                <%= data.item.actMattersLocalName %>
-            </td>
+    <tr <% if(data.where){%>  class="<%= data.where%>"<%}%>>
+        <td>
+            <!-- <%= data.item.rlsNomenId %> -->	
 
-
-            <td >
-                <span <% if(data.item.isExpirationDateComesToEnd){%>style="color:red;"<%}%>>
+            <%= data.item.tradeLocalName%>
+            <% if(data.item.isExpirationDateComesToEnd){%>*<%}%>
+        </td>
+        <td>
+            <%= data.item.tradeName %>
+        </td>
+        <td>
+            <%= data.item.actMattersName %>
+        </td>
+        <td>
+            <%= data.item.dosageValue %>
+        </td>
+        <td>
+            <%= data.item.unitName %>
+        </td>
+        <td>
+            <%= data.item.formName %>
+        </td>
+        <td >
+            <span <% if(data.item.isExpirationDateComesToEnd){%>style="color:red;"<%}%>>
                 <%= data.item.bestBefore%>
-                </span>
-            </td>
-            <% if(data.where){%>
-            <td>
-                <% if(data.where === 'inCurrentDepartment'){%>
-                    На складе отделения
-                <%}%>
-                <% if(data.where === 'inOtherDepartments'){%>
-                    На складах других отделений
-                <%}%>
-                <% if(data.where === 'inHospital'){%>
-                    На складе ЛПУ
-                <%}%>
-
-            </td>
-            
+            </span>
+        </td>
+        <% if(data.where){%>
+        <td>
+            <% if(data.where === 'inCurrentDepartment'){%>
+            На складе отделения
             <%}%>
-        </tr>
+            <% if(data.where === 'inOtherDepartments'){%>
+            На складах других отделений
+            <%}%>
+            <% if(data.where === 'inHospital'){%>
+            На складе ЛПУ
+            <%}%>
 
-        
-	</table>
+        </td>
+
+        <%}%>
+    </tr>
+
+
+</table>
 <% } %>

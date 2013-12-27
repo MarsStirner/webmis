@@ -127,11 +127,13 @@ class RlsController
             ->leftJoinRlsTradeName('tradeName')
             ->leftJoinRlsActMatters('actMatters')
             ->leftJoinrbUnitRelatedByunitId('rbUnit')
+            ->leftJoinRlsForm('rlsForm')
         ->endUse()
         ->with('nomen')
         ->with('rbUnit')
         ->with('tradeName')
         ->with('actMatters')
+        ->with('rlsForm')
 
         ->leftJoinWithRbStorage()
         ->find();
@@ -157,6 +159,9 @@ class RlsController
             $storage = $item->getRbStorage();
             $storageName = $storage->getName();
             $storageOrgstructureId = $storage->getOrgstructureId();
+            $form = $rlsNomen->getRlsForm();
+            $formName = $form->getName();
+            $dosageValue = $rlsNomen->getDosageValue();
 
             $data[] = array_merge(
                 $item->toArray(),
@@ -167,6 +172,8 @@ class RlsController
                 'tradeName' => $tradeName,
                 'actMattersName' => $actMattersName,
                 'actMattersLocalName' => $actMattersLocalName,
+                'formName' => $formName,
+                'dosageValue' => $dosageValue,
                 'unitName' => $unitName,
                 'unitId' => $unitId)
                 );

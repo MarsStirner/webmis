@@ -15,6 +15,8 @@ define(function (require) {
         },
         initialize: function () {
             var self = this;
+            this.options.title = 'Создание назначения';
+
             this.appealId = this.options.appeal.get('id');
 
             //console.log('init new prescription view', this);

@@ -9,6 +9,8 @@ define(function(require) {
 	var AddDrugPopup = BaseView.extend({
 		template: template,
 		initialize: function(){
+            this.options.title = 'Поиск препарата';
+
 			this.balance = new DrugBalance();
 			this.balanceView = new DrugBalanceView({
 				collection: this.balance,
@@ -27,7 +29,6 @@ define(function(require) {
 		},
 
         validateForm: function () {
-            console.log('validateForm')
             var found = ((this.balanceView.inHospital()).length || (this.balanceView.inCurrentDepartment()).length || (this.balanceView.inOtherDepartments()).length)
             this.saveButton(found);
         },
