@@ -104,6 +104,7 @@ class Action extends BaseAction
             foreach ($intervals as $interval) {
                 $i = array();
                 $i['id'] = $interval->getId();
+                $i['actionId'] = $interval->getactionId();
                 $i['masterId'] = $interval->getMasterId();
 
                 $beginDateTimestamp = $interval->getBegDateTime('U');

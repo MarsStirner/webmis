@@ -33,7 +33,7 @@ define(function(require) {
             })
 
 			this.addSubViews({
-				'.groups': this.groupsView,
+				'.groups-el': this.groupsView,
 				'.filter': this.filterView,
                 '.actions': this.actionsView
 			});

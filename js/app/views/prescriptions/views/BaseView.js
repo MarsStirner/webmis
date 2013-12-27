@@ -6,6 +6,7 @@ define(function(require) {
 			this.render = _.wrap(this.render, function(render) {
 				render.apply(this);
 				this.afterRender.apply(this);
+                return this;
 			});
 
 			Backbone.View.apply(this, arguments);
