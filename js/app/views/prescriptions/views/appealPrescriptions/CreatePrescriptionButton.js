@@ -18,6 +18,8 @@ define(function (require) {
         },
         template: '<%= data.title %>',
         clickHandler: function () {
+            console.log('clickHandler', this);
+            
             var popup = new PrescriptionNewView({
                 actionTypeId: this.model.get('id'),
                 appeal: this.options.appeal,
@@ -28,7 +30,6 @@ define(function (require) {
             popup.open();
 
 
-            console.log('clickHandler', this.model.get('id'));
         }
 
     });
@@ -62,7 +63,8 @@ define(function (require) {
 
             this.collection.each(function (model) {
                 var itemView = new ItemView({
-                    model: model
+                    model: model,
+                    appeal: this.options.appeal
                 });
                 this.childs.push(itemView);
                 $itemsEl.append(itemView.render().el);
@@ -81,7 +83,7 @@ define(function (require) {
             var self = this;
             this.ui = {};
             this.ui.$mainButton = this.$el.find('.main-button');
-            this.ui.$dropDownTriggerButton = this.$el.find('.dropdown-trigger-button');
+            // this.ui.$dropDownTriggerButton = this.$el.find('.dropdown-trigger-button');
             this.ui.$dropDown = this.$el.find('.DDList');
 
             this.ui.$mainButton.button().click(function () {
@@ -94,20 +96,20 @@ define(function (require) {
                 return false;
             });
 
-            this.ui.$dropDownTriggerButton.button({
-                text: false,
-                icons: {
-                    primary: "ui-icon-triangle-1-s"
-                }
-            }).click(function () {
-                self.ui.$dropDown.position({
-                    my: "left top",
-                    at: "left bottom",
-                    of: $(this).parent().parent()
-                }).toggleClass("Active");
+            // this.ui.$dropDownTriggerButton.button({
+            //     text: false,
+            //     icons: {
+            //         primary: "ui-icon-triangle-1-s"
+            //     }
+            // }).click(function () {
+            //     self.ui.$dropDown.position({
+            //         my: "left top",
+            //         at: "left bottom",
+            //         of: $(this).parent().parent()
+            //     }).toggleClass("Active");
 
-                return false;
-            }).parent().buttonset();
+            //     return false;
+            // }).parent().buttonset();
 
         }
 

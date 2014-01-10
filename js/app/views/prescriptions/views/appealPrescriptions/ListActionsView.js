@@ -8,7 +8,7 @@ define(function (require) {
         template: template,
         initialize: function () {
             var createPrescriptionButtonView = new CreatePrescriptionButton({
-
+                appeal: this.options.appeal
             });
             this.addSubViews({
                 '.create-prescription-button': createPrescriptionButtonView

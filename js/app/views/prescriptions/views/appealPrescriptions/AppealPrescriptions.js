@@ -24,27 +24,25 @@ define(function (require) {
 
             this.collection = new Prescriptions();
 
-            // this.listView = new ListView({
-            //     collection: this.collection
-            // });
-
             this.actionsView = new ActionsView({
                 appeal: this.options.appeal,
                 collection: this.collection
             });
 
             this.addSubViews({
-                // '.list': this.listView,
                 '.actions': this.actionsView
             });
 
+            this.fetchCollection();
+            pubsub.on('prescription:saved', this.fetchCollection, this);
+        },
+
+        fetchCollection: function(){
             this.collection.fetch({
                 data: {
                     eventId: this.options.appealId
                 }
             });
-
-
         },
 
         getDrugsNames: function (drugs) {
