@@ -11,6 +11,11 @@ define(function (require) {
     return BaseView.extend({
         template: template,
         tagName: 'span',
+        initialize: function(){
+            var prescriptionId = this.model.get('actionId');
+            this.prescription = this.options.mainCollection.get(prescriptionId);
+        
+        },
 
         getIntervalCoordinates: function (interval) {
             var defaultIntervalLength = 45 * 60 * 1000;
@@ -54,11 +59,63 @@ define(function (require) {
         },
 
         getTooltipText: function (id) {
-            var prescription = this.options.mainCollection.get(id);
-            var html = tooltipTemplate(prescription.toJSON());
+            var html = tooltipTemplate(this.prescription.toJSON());
             return html;
         },
 
+        getContextMenuExecuteItem: function () {
+            var item = {};
+            item.name = "Выполнить";
+            item.callback = function (key, opt) {
+                var id = opt.$trigger.data('prescription');
+                console.log('execute', id, opt);
+            };
+
+            return item;
+        },
+
+        getContextMenuCancelItem: function () {
+            var item = {};
+            item.name = "Отменить";
+            item.callback = function (key, opt) {
+                var id = opt.$trigger.data('prescription');
+                console.log('cancel', id, opt);
+            };
+
+            return item;
+        },
+
+        getContextMenuCancelExecutionItem: function () {
+            var item = {};
+            item.name = "Отменить исполнение";
+            item.callback = function () {
+                console.log('cancelExecution');
+            };
+
+            return item;
+        },
+
+        getContextMenuItems: function () {
+            var items = {};
+            var state = this.model.getState();
+            var status = this.model.get('status');
+            console.log('state', state);
+            console.log('status', status);
+            
+            if((state === 'runs') || (state === 'notExecuted')){
+                console.log('execute')
+                items.execute = this.getContextMenuExecuteItem();
+            }
+            
+            if(state === 'assigned'){
+                items.cancel = this.getContextMenuCancelItem();
+            }
+
+            items.cancelExecution = this.getContextMenuCancelExecutionItem();
+            console.log('items', items, this);
+
+            return items;
+        },
 
         afterRender: function () {
             var self = this;
@@ -80,35 +137,12 @@ define(function (require) {
             });
 
 
-            // $.contextMenu({
-            //     autoHide: true,
-            //     selector: '[data-prescription]',
-            //     callback: function(key, options) {
-            //         //var m = "clicked: " + key + " " + options.$trigger.data("cid");
-
-            //         //console.log(arguments, options.$trigger.data("cid"));
-            //     },
-            //     items: {
-            //         "execute": {
-            //             name: "Выполнить",
-            //             callback: function() {
-            //                 console.log('execute', arguments);
-            //             }
-            //         },
-            //         "cancel": {
-            //             name: "Отменить",
-            //             callback: function() {
-            //                 console.log('cancel');
-            //             }
-            //         },
-            //         "cancelExecution": {
-            //             name: "Отменить исполнение",
-            //             callback: function() {
-            //                 console.log('cancelExecution');
-            //             }
-            //         }
-            //     }
-            // });
+            $.contextMenu({
+                autoHide: true,
+                selector: '[data-prescription="'+self.model.get("id")+'"]',
+                callback: function (key, options) {},
+                items: self.getContextMenuItems()
+            });
 
 
         }
