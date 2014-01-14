@@ -1,12 +1,14 @@
 {
-	"name": "webmis",
-	"version": "0.1.0",
-	"devDependencies": {
-		"grunt": "~0.4.1",
-		"grunt-contrib-compass": "~0.2.0",
-		"grunt-contrib-watch": "~0.3.1",
-		"grunt-contrib-clean": "0.4.0",
-		"grunt-contrib-copy": "0.4.0",
-		"grunt-contrib-compress":"0.4.10"
-	}
+  "name": "webmis",
+  "version": "0.1.0",
+  "devDependencies": {
+    "gulp": "~3.3.1",
+    "gulp-clean": "~0.2.2",
+    "git-rev": "~0.2.1",
+    "q": "~1.0.0",
+    "moment": "~2.5.0",
+    "gulp-zip": "~0.1.1",
+    "gulp-compass": "~1.0.6",
+    "gulp-filter": "~0.1.1"
+  }
 }

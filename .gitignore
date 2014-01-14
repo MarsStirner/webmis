@@ -191,3 +191,5 @@ tasks.todo
 
 .tern-project
 .directory
+
+dist
