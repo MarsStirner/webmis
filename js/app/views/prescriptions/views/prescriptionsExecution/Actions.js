@@ -69,7 +69,6 @@ define(function (require) {
 
             notExecutedIntervals.execute({
                 success: function(){
-                    console.log('ok');
                     self.collection.fetch()
                 },error: function(){
                     console.log('error');

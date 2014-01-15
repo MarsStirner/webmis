@@ -11,10 +11,11 @@ define(function (require) {
     return BaseView.extend({
         template: template,
         tagName: 'span',
-        initialize: function(){
+        initialize: function () {
             var prescriptionId = this.model.get('actionId');
             this.prescription = this.options.mainCollection.get(prescriptionId);
-        
+
+            console.log('init interval', this.prescription);
         },
 
         getIntervalCoordinates: function (interval) {
@@ -64,22 +65,29 @@ define(function (require) {
         },
 
         getContextMenuExecuteItem: function () {
+            var self = this;
             var item = {};
+
             item.name = "Выполнить";
             item.callback = function (key, opt) {
-                var id = opt.$trigger.data('prescription');
-                console.log('execute', id, opt);
+                console.log('execute', self, key, opt);
+                self.model.execute().then(function () {
+                    self.options.mainCollection.fetch();
+                });
             };
 
             return item;
         },
 
         getContextMenuCancelItem: function () {
+            var self = this;
             var item = {};
+
             item.name = "Отменить";
             item.callback = function (key, opt) {
-                var id = opt.$trigger.data('prescription');
-                console.log('cancel', id, opt);
+                self.model.cancel().then(function () {
+                    self.options.mainCollection.fetch();
+                });
             };
 
             return item;
@@ -87,13 +95,29 @@ define(function (require) {
 
         getContextMenuCancelExecutionItem: function () {
             var item = {};
+            var self = this;
             item.name = "Отменить исполнение";
             item.callback = function () {
-                console.log('cancelExecution');
+                self.model.cancelExecution().then(function () {
+                    self.options.mainCollection.fetch();
+                });
+                console.log('cancelExecution', self);
             };
 
             return item;
         },
+
+        getContextMenuEditItem: function () {
+            var item = {};
+            item.name = "Редактировать";
+            item.callback = function () {
+                console.log('edit');
+            };
+            item.disabled = true;
+            return item;
+        },
+
+
 
         getContextMenuItems: function () {
             var items = {};
@@ -101,17 +125,21 @@ define(function (require) {
             var status = this.model.get('status');
             console.log('state', state);
             console.log('status', status);
-            
-            if((state === 'runs') || (state === 'notExecuted')){
+
+            if ((state === 'runs') || (state === 'notExecuted')) {
                 console.log('execute')
                 items.execute = this.getContextMenuExecuteItem();
             }
-            
-            if(state === 'assigned'){
+
+            if (state === 'assigned') {
                 items.cancel = this.getContextMenuCancelItem();
             }
 
-            items.cancelExecution = this.getContextMenuCancelExecutionItem();
+            if (state === 'executed') {
+                items.cancelExecution = this.getContextMenuCancelExecutionItem();
+            }
+
+            items.edit = this.getContextMenuEditItem();
             console.log('items', items, this);
 
             return items;
@@ -119,33 +147,35 @@ define(function (require) {
 
         afterRender: function () {
             var self = this;
-            var prescriptionId = this.model.get('actionId');
-            var prescription = this.options.mainCollection.get(prescriptionId);
-
-            this.$el.qtip({
-                content: {
-                    title: prescription.get('name'),
-                    text: this.getTooltipText(prescriptionId)
-                },
-                style: 'qtip-light',
-                position: {
-                    my: 'bottom left',
-                    at: 'top left',
-                    viewport: $('.groups')
-                },
-                prerender: true
-            });
+            console.log('afterRender')
+            // this.$el.qtip({
+            //     content: {
+            //         title: prescription.get('name'),
+            //         text: this.getTooltipText(prescriptionId)
+            //     },
+            //     style: 'qtip-light',
+            //     position: {
+            //         my: 'bottom left',
+            //         at: 'top left',
+            //         viewport: $('.groups')
+            //     },
+            //     prerender: true
+            // });
 
 
             $.contextMenu({
                 autoHide: true,
-                selector: '[data-prescription="'+self.model.get("id")+'"]',
+                selector: '[data-prescription="' + self.model.get("id") + '"]',
                 callback: function (key, options) {},
                 items: self.getContextMenuItems()
             });
 
 
-        }
+        },
+        tearDown: function () {
+            $.contextMenu('destroy');
+            BaseView.prototype.tearDown.call(this)
+        },
 
     });
 });

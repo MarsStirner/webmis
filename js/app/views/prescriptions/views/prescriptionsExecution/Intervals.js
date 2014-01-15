@@ -28,6 +28,7 @@ define(function(require){
                 eic.each(function(ei){
                     var intervalView = new IntervalView({
                         model: ei,
+                        ai:ai,
                         mainCollection: this.options.mainCollection
                     });
 

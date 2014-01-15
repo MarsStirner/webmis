@@ -151,10 +151,36 @@ define(function (require) {
                 type: 'PUT',
                 dataType : "jsonp",
                 contentType : 'application/json'
-            }
+            };
 
-            return $.ajax(_.extend(options, opts))
+            return $.ajax(_.extend(options, opts));
         },
+
+        cancelExecution: function(opts) {
+            var options = {
+                data: JSON.stringify({data:[this.get('id')]}),
+                url : '/api/v1/prescriptions/cancelIntervalsExecution',
+                type: 'PUT',
+                dataType : "jsonp",
+                contentType : 'application/json'
+            };
+
+            return $.ajax(_.extend(options, opts));
+        },
+
+        cancel: function(opts) {
+            var options = {
+                data: JSON.stringify({data:[this.get('id')]}),
+                url : '/api/v1/prescriptions/cancelIntervals',
+                type: 'PUT',
+                dataType : "jsonp",
+                contentType : 'application/json'
+            };
+
+            return $.ajax(_.extend(options, opts));
+        },
+
+
 
         validateModel: function(){
             var errors = [];
