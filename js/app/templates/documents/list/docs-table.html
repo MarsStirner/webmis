@@ -13,7 +13,9 @@
 					<%} else {%>
 					<a class="edit-document" data-document-id="<%=document.id%>"><i class="icon-pencil" title="Редактировать"></i></a>
 					<%}%>
+					<%if (!document.isOldType()) {%>
 					<a class="duplicate-document" data-template-id="<%=document.get('typeId')%>" style="margin-left: .5em"><i class="icon-copy" title="Дублировать"></i></a>
+					<%}%>
 				</td>
 			<%}%>
 		</tr>

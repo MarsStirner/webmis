@@ -621,6 +621,9 @@ define(function (require) {
 			} else {
 				this.appealId = appealId;
 			}
+		},
+		isOldType: function () {
+			return _(["EXAM_OLD", "JOUR_OLD"]).contains(this.get("mnemonic"));
 		}
 	});
 
