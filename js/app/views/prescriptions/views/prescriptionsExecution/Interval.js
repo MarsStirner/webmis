@@ -5,6 +5,7 @@ define(function (require) {
     var tooltipTemplate = _.template(require('text!views/prescriptions/templates/tooltip.html'), null, {
         variable: 'data'
     });
+    var IntervalEdit = require('views/prescriptions/views/prescriptionsExecution/IntervalEdit');
 
 
 
@@ -15,7 +16,7 @@ define(function (require) {
             var prescriptionId = this.model.get('actionId');
             this.prescription = this.options.mainCollection.get(prescriptionId);
 
-            console.log('init interval', this.prescription);
+            // console.log('init interval', this.prescription);
         },
 
         getIntervalCoordinates: function (interval) {
@@ -55,7 +56,7 @@ define(function (require) {
             data = this.model.toJSON();
             var coordinates = this.getIntervalCoordinates(this.model);
             _.extend(data, coordinates);
-            console.log('interval data', data);
+            // console.log('interval data', data);
             return data;
         },
 
@@ -70,7 +71,6 @@ define(function (require) {
 
             item.name = "Выполнить";
             item.callback = function (key, opt) {
-                console.log('execute', self, key, opt);
                 self.model.execute().then(function () {
                     self.options.mainCollection.fetch();
                 });
@@ -101,33 +101,35 @@ define(function (require) {
                 self.model.cancelExecution().then(function () {
                     self.options.mainCollection.fetch();
                 });
-                console.log('cancelExecution', self);
             };
 
             return item;
         },
 
         getContextMenuEditItem: function () {
+            var self = this;
             var item = {};
             item.name = "Редактировать";
             item.callback = function () {
-                console.log('edit');
+                self.openEditPopup();
             };
             item.disabled = true;
             return item;
         },
 
+        openEditPopup: function () {
+            // var intervalEdit = new IntervalEdit();
+            // intervalEdit.render().open();
+            // console.log('openEditPopup');
 
+        },
 
         getContextMenuItems: function () {
             var items = {};
             var state = this.model.getState();
             var status = this.model.get('status');
-            console.log('state', state);
-            console.log('status', status);
 
             if ((state === 'runs') || (state === 'notExecuted')) {
-                console.log('execute')
                 items.execute = this.getContextMenuExecuteItem();
             }
 
@@ -140,14 +142,12 @@ define(function (require) {
             }
 
             items.edit = this.getContextMenuEditItem();
-            console.log('items', items, this);
 
             return items;
         },
 
         afterRender: function () {
             var self = this;
-            console.log('afterRender')
             // this.$el.qtip({
             //     content: {
             //         title: prescription.get('name'),
