@@ -621,6 +621,9 @@ define(function (require) {
 			} else {
 				this.appealId = appealId;
 			}
+		},
+		isOldType: function () {
+			return _(["EXAM_OLD", "JOUR_OLD"]).contains(this.get("mnemonic"));
 		}
 	});
 
@@ -777,7 +780,7 @@ define(function (require) {
 	//region COLLECTIONS
 	Documents.Collections.DocumentList = Collection.extend({
 		model: Documents.Models.DocumentListItem,
-		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
+		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "EXAM_OLD", "JOUR_OLD"],
 		dateRange: null,
 		typeId: null,
 		doctorId: null,
@@ -830,7 +833,7 @@ define(function (require) {
 
 	Documents.Collections.DocumentTypes = Collection.extend({
 		model: Documents.Models.DocumentType,
-
+		// don't let create "JOUR_OLD", "EXAM_OLD"
 		mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
 
 		lastCriteria: "",
@@ -1893,7 +1896,7 @@ define(function (require) {
 					mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH"];
 					break;
 				case "EXAM":
-					mnems = ["EXAM"];
+					mnems = ["EXAM", "EXAM_OLD"];
 					break;
 				case "EPI":
 					mnems = ["EPI"];
@@ -1902,7 +1905,7 @@ define(function (require) {
 					mnems = ["ORD"];
 					break;
 				case "JOUR":
-					mnems = ["JOUR"];
+					mnems = ["JOUR", "JOUR_OLD"];
 					break;
 				case "NOT":
 					mnems = ["NOT"];
@@ -4946,7 +4949,7 @@ define(function (require) {
 	Documents.Views.Review.Examination.Layout = Documents.Views.Review.Base.Layout.extend({
 		getEditPageTypeName: Documents.Views.Review.Examination.NoControlsLayout.prototype.getEditPageTypeName,
 		getDefaultDocumentsMnems: function () {
-			return ["EXAM"];
+			return ["EXAM", "EXAM_OLD"];
 		},
 		render: function () {
 			Documents.Views.Review.Base.Layout.prototype.render.call(this, {
@@ -5007,10 +5010,10 @@ define(function (require) {
 
 			switch (type) {
 				case "ALL":
-					mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "THER"];
+					mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "THER", "EXAM_OLD", "JOUR_OLD"];
 					break;
 				case "EXAM":
-					mnems = ["EXAM"];
+					mnems = ["EXAM", "EXAM_OLD"];
 					break;
 				case "EPI":
 					mnems = ["EPI"];
@@ -5031,7 +5034,7 @@ define(function (require) {
 					mnems = ["THER"];
 					break;
 				case "JOUR":
-					mnems = ["JOUR"];
+					mnems = ["JOUR", "JOUR_OLD"];
 					break;
 				case "NOT":
 					mnems = ["NOT"];
@@ -5067,7 +5070,7 @@ define(function (require) {
 		},
 
 		getDefaultDocumentsMnems: function() {
-			return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "LAB", "DIAG", "THER"];
+			return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "LAB", "DIAG", "THER", "EXAM_OLD", "JOUR_OLD"];
 		},
 		getEditPageTypeName: function () {
 			return "summary";
