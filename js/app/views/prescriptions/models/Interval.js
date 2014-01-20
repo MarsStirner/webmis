@@ -4,12 +4,30 @@ define(function (require) {
     require('twix');
 
     var states = {
-        runs: {title: 'Выполняется',color: '#f57177'},
-        assigned: {title: 'Назначено', color: '#07ace3'},
-        notExecuted: {title: 'Не исполнено',color: '#b2a7c9'},
-        executed: {title: 'Исполнено',color: '#94cf51'},
-        canceled: {title: 'Отменено',color: '#999999'},
-        stop: {title: 'Стоп', color: '#FFEA4F'}
+        runs: {
+            title: 'Выполняется',
+            color: '#f57177'
+        },
+        assigned: {
+            title: 'Назначено',
+            color: '#07ace3'
+        },
+        notExecuted: {
+            title: 'Не исполнено',
+            color: '#b2a7c9'
+        },
+        executed: {
+            title: 'Исполнено',
+            color: '#94cf51'
+        },
+        canceled: {
+            title: 'Отменено',
+            color: '#999999'
+        },
+        stop: {
+            title: 'Стоп',
+            color: '#FFEA4F'
+        }
     };
 
     var Interval = Model.extend({
@@ -25,23 +43,23 @@ define(function (require) {
         getState: function () {
             var status = this.get('status');
             var state = '';
-            if(status === 0 && this.timeIn()){
-                state = 'runs'; 
+            if (status === 0 && this.timeIn()) {
+                state = 'runs';
             }
-            if(status === 0 && this.timeBefore()){
-                state = 'assigned'; 
+            if (status === 0 && this.timeBefore()) {
+                state = 'assigned';
             }
-            if(status === 0 && this.timeAfter()){
-                state = 'notExecuted'; 
+            if (status === 0 && this.timeAfter()) {
+                state = 'notExecuted';
             }
-            if(status === 1){
-                state = 'executed'; 
+            if (status === 1) {
+                state = 'executed';
             }
-            if(status === 2){
-                state = 'canceled'; 
+            if (status === 2) {
+                state = 'canceled';
             }
-            if(status === 3){
-                state = 'stop'; 
+            if (status === 3) {
+                state = 'stop';
             }
 
             return state;
@@ -50,27 +68,27 @@ define(function (require) {
         getCurrentTime: function () {
             return moment().valueOf();
         },
-        roundToMinutes: function(timestamp){
+        roundToMinutes: function (timestamp) {
             return timestamp ? moment(timestamp).startOf('minute').valueOf() : timestamp;
         },
         timeBefore: function () { //предикат: время начала интервала больше текущего
             var begin = this.roundToMinutes(this.get('beginDateTime'));
             var current = this.roundToMinutes(this.getCurrentTime());
 
-            return begin > current; 
+            return begin > current;
         },
-        isNotExecuted: function(){
+        isNotExecuted: function () {
             return this.getState() === 'notExecuted';
         },
 
-        overlapRange: function(start, end){//пересекается ли интервал с интервалом...
+        overlapRange: function (start, end) { //пересекается ли интервал с интервалом...
             var range = moment(start).twix(end);
             var overlap = false;
 
-            if(this.get('endDateTime')){
+            if (this.get('endDateTime')) {
                 var intervalRange = moment(this.get('beginDateTime')).twix(this.get('endDateTime'));
                 overlap = intervalRange.overlaps(range);
-            }else{
+            } else {
                 overlap = range.contains(this.get('beginDateTime'));
             }
 
@@ -85,7 +103,7 @@ define(function (require) {
 
             if (end) {
                 bool = (begin <= current <= end);
-            } else {//если у интервала есть только начало, то считаем что интервал 'in', когда текущая минута равна минуте начала интервала
+            } else { //если у интервала есть только начало, то считаем что интервал 'in', когда текущая минута равна минуте начала интервала
                 bool = (begin === current);
             }
 
@@ -97,29 +115,29 @@ define(function (require) {
             var current = this.roundToMinutes(this.getCurrentTime());
             var end = this.roundToMinutes(this.get('endDateTime'));
 
-            if(end){
-                bool = (end < current);    
-            }else{
-                bool = (begin < current); 
+            if (end) {
+                bool = (end < current);
+            } else {
+                bool = (begin < current);
             }
-            
+
             return bool;
         },
-        intervalToString: function(){
+        intervalToString: function () {
             var string = '';
             var begin = this.get('beginDateTime') ? moment(this.get('beginDateTime')) : null;
             var end = this.get('endDateTime') ? moment(this.get('endDateTime')) : null;
 
             string = begin.format('DD.MM.YYYY HH:mm');
 
-            if(end){
+            if (end) {
                 // console.log(begin.format('DD.MM.YYYY HH:mm'),end.format('DD.MM.YYYY HH:mm'),begin.startOf('day').diff(end.startOf('day'), 'day'))
                 var end2 = moment(this.get('endDateTime'));
                 var endInSameDay = (begin.startOf('day').diff(end2.startOf('day'), 'day') === 0);
 
-                if(endInSameDay){
+                if (endInSameDay) {
                     string = string + ' - ' + end.format('HH:mm');
-                }else{
+                } else {
                     string = string + ' - ' + end.format('DD.MM.YYYY HH:mm');
                 }
             }
@@ -141,40 +159,60 @@ define(function (require) {
             attributes.stateName = states[state].title;
 
             return attributes;
- 
-        },
 
-        execute: function(opts) {
+        },
+        url: function () {
+            return '/api/v1/prescriptions/intervals'
+        },
+        sync: function (method, model, options) {
+            if(method === 'update'){
+                options.dataType = "jsonp";
+                options.url = model.url();
+                options.contentType = 'application/json';
+                options.data = {data: [model.toJSON()]};
+                console.log('options', options);
+                Backbone.sync.call(this, method, model, options);
+            }else{
+                Model.prototype.call(this, method, model, options); 
+            }
+        },
+        execute: function (opts) {
             var options = {
-                data: JSON.stringify({data:[this.get('id')]}),
-                url : '/api/v1/prescriptions/executeIntervals',
+                data: JSON.stringify({
+                    data: [this.get('id')]
+                }),
+                url: '/api/v1/prescriptions/executeIntervals',
                 type: 'PUT',
-                dataType : "jsonp",
-                contentType : 'application/json'
+                dataType: "jsonp",
+                contentType: 'application/json'
             };
 
             return $.ajax(_.extend(options, opts));
         },
 
-        cancelExecution: function(opts) {
+        cancelExecution: function (opts) {
             var options = {
-                data: JSON.stringify({data:[this.get('id')]}),
-                url : '/api/v1/prescriptions/cancelIntervalsExecution',
+                data: JSON.stringify({
+                    data: [this.get('id')]
+                }),
+                url: '/api/v1/prescriptions/cancelIntervalsExecution',
                 type: 'PUT',
-                dataType : "jsonp",
-                contentType : 'application/json'
+                dataType: "jsonp",
+                contentType: 'application/json'
             };
 
             return $.ajax(_.extend(options, opts));
         },
 
-        cancel: function(opts) {
+        cancel: function (opts) {
             var options = {
-                data: JSON.stringify({data:[this.get('id')]}),
-                url : '/api/v1/prescriptions/cancelIntervals',
+                data: JSON.stringify({
+                    data: [this.get('id')]
+                }),
+                url: '/api/v1/prescriptions/cancelIntervals',
                 type: 'PUT',
-                dataType : "jsonp",
-                contentType : 'application/json'
+                dataType: "jsonp",
+                contentType: 'application/json'
             };
 
             return $.ajax(_.extend(options, opts));
@@ -182,27 +220,27 @@ define(function (require) {
 
 
 
-        validateModel: function(){
+        validateModel: function () {
             var errors = [];
-            if(!this.get('beginDateTime')){
-                errors.push('Не указано начало интервала. '); 
+            if (!this.get('beginDateTime')) {
+                errors.push('Не указано начало интервала. ');
             }
 
-            if(this.get('endDateTime') && this.get('beginDateTime')){
-               var diff = moment(this.get('endDateTime')).startOf('minute').diff(moment(this.get('beginDateTime')).startOf('minute')); 
-               if(diff < 0){
+            if (this.get('endDateTime') && this.get('beginDateTime')) {
+                var diff = moment(this.get('endDateTime')).startOf('minute').diff(moment(this.get('beginDateTime')).startOf('minute'));
+                if (diff < 0) {
                     errors.push('Время окончания интервала меньше времени начала');
-               }
-               if(diff === 0){
+                }
+                if (diff === 0) {
                     errors.push('Время окончания интервала равно времени начала');
-               }
+                }
 
-               console.log('diff', diff);
+                console.log('diff', diff);
             }
 
-            if(errors.length){
-                return errors; 
-            } 
+            if (errors.length) {
+                return errors;
+            }
         },
 
     });

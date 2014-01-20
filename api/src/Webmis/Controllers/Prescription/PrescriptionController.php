@@ -508,7 +508,38 @@ class PrescriptionController
     public function updateIntervalsAction(Request $request, Application $app){
         $route_params = $request->get('_route_params') ;
         $data = $request->get('data');
+        
 
+        if(is_array($data)){
+            foreach($data as $executionInterval){
+                if(array_key_exists('id', $executionInterval)){
+                    //редактируем старый
+                    $id = $executionInterval['id'];
+                    $interval = DrugChartQuery::create()->filterById($id)->findOne();
+                             if($interval){
+                                if(array_key_exists('status', $executionInterval)){
+                                    if($interval->getStatus() != $executionInterval['status']){
+                                        $interval->setStatus($executionInterval['status']);
+                                    }
+                                }
+
+                                if(array_key_exists('note', $executionInterval)){
+                                    $interval->setNote($executionInterval['note']);
+                                }
+
+                                if(array_key_exists('beginDateTime', $executionInterval)){
+                                    $interval->setBegDateTime(round((int) $executionInterval['beginDateTime']/1000));
+                                }
+
+                                if(array_key_exists('endDateTime', $executionInterval)  && !empty($executionInterval['endDateTime'])){
+                                    $interval->setEndDateTime(round((int) $executionInterval['endDateTime']/1000));
+                                }
+                            }
+                }else{
+                    //создаём новый интервал 
+                }
+            }
+        }
 
         return $app['jsonp']->jsonp(array('data' => $data ));
         /* $prescription = ActionQuery::create() */

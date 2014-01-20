@@ -113,14 +113,16 @@ define(function (require) {
             item.callback = function () {
                 self.openEditPopup();
             };
-            item.disabled = true;
+            // item.disabled = true;
             return item;
         },
 
         openEditPopup: function () {
-            // var intervalEdit = new IntervalEdit();
-            // intervalEdit.render().open();
-            // console.log('openEditPopup');
+            var intervalEdit = new IntervalEdit({
+                model: this.options.model 
+            });
+            intervalEdit.render().open();
+            console.log('openEditPopup', this.model);
 
         },
 

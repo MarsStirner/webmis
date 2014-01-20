@@ -1,1 +1,23 @@
-iiiiii
+<div class="row-fluid">
+    <div class="span12">
+        <table id="intervals" class="my-grid"> 
+            <tr><th>Начало</th><th>Окончание</th></tr>
+            <tbody>
+            <tr>
+                <td>
+                    <span style="font-size:1.3em;" data-text="interval.beginDateTime | datetime"></span> 
+                </td><td>
+                    <span style="font-size:1.3em;" data-text="interval.endDateTime | datetime"></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="span12">
+        <label for="note">
+            Примечание
+            <textarea  rows="8" cols="45"  name="note" id="note" data-value="interval.note"></textarea>
+        </label>
+    </div>
+</div>
