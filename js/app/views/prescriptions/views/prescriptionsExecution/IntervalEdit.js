@@ -17,6 +17,9 @@ define(function (require) {
         initialize: function () {
             this.options.title = 'Редактирование интервала';
             this.options.width = '56em';
+            this.model.on('change', function(){
+                // console.log('model', this.model); 
+            }, this);
         },
 
         onSave: function () {
@@ -33,7 +36,8 @@ define(function (require) {
 
         render: function () {
             BaseView.prototype.render.call(this);
-
+            this.ui = {};
+            this.ui.$buttonset = this.$el.find('.radio');
             rivets.formatters.datetime = {
                 read: function (value) { //вывод в хтмл
                     var v;
@@ -61,6 +65,7 @@ define(function (require) {
             rivets.bind(this.el, {
                 interval: this.model
             });
+            this.ui.$buttonset.buttonset(); 
         }
     }).mixin([popupMixin]);
 

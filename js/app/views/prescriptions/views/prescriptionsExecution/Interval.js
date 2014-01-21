@@ -178,7 +178,7 @@ define(function (require) {
         },
         tearDown: function () {
             $.contextMenu('destroy');
-            BaseView.prototype.tearDown.call(this)
+            BaseView.prototype.tearDown.call(this);
         },
 
     });
