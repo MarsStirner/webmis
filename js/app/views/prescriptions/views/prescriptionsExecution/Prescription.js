@@ -9,7 +9,7 @@ define(function (require) {
             'change [data-prescription-select]': 'onSelectPrescription'
         },
 
-        onSelectPrescription: function(e){
+        onSelectPrescription: function (e) {
             var $target = this.$(e.target);
             var selected = $target.prop('checked');
 
@@ -18,20 +18,20 @@ define(function (require) {
 
         tagName: 'tr',
 
-        initialize: function(){
+        initialize: function () {
             this.intervalsView = new IntervalsView({
                 collection: this.model.get('assigmentIntervals'),
                 mainCollection: this.options.mainCollection
             });
 
-			this.addSubViews({
-                '.intervals': this.intervalsView 
+            this.addSubViews({
+                '.intervals': this.intervalsView
             });
         },
 
         data: function () {
             var data = this.model.toJSON();
-            console.log('presc data', data);
+            // console.log('presc data', data);
             return data;
         }
     });

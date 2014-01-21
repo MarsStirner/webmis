@@ -2,7 +2,7 @@ define(function (require) {
     var BaseView = require('views/prescriptions/views/BaseView');
     var template = require('text!views/prescriptions/templates/prescriptionsExecution/interval.html');
     require('qtip');
-    var tooltipTemplate = _.template(require('text!views/prescriptions/templates/tooltip.html'), null, {
+    var intervalTooltipTemplate = _.template(require('text!views/prescriptions/templates/interval-tooltip.html'), null, {
         variable: 'data'
     });
     var IntervalEdit = require('views/prescriptions/views/prescriptionsExecution/IntervalEdit');
@@ -61,7 +61,10 @@ define(function (require) {
         },
 
         getTooltipText: function (id) {
-            var html = tooltipTemplate(this.prescription.toJSON());
+            var html = intervalTooltipTemplate({
+                prescription: this.prescription.toJSON(),
+                interval: this.model.toJSON()
+            });
             return html;
         },
 
@@ -119,7 +122,7 @@ define(function (require) {
 
         openEditPopup: function () {
             var intervalEdit = new IntervalEdit({
-                model: this.options.model 
+                model: this.options.model
             });
             intervalEdit.render().open();
             console.log('openEditPopup', this.model);
@@ -150,19 +153,18 @@ define(function (require) {
 
         afterRender: function () {
             var self = this;
-            // this.$el.qtip({
-            //     content: {
-            //         title: prescription.get('name'),
-            //         text: this.getTooltipText(prescriptionId)
-            //     },
-            //     style: 'qtip-light',
-            //     position: {
-            //         my: 'bottom left',
-            //         at: 'top left',
-            //         viewport: $('.groups')
-            //     },
-            //     prerender: true
-            // });
+            this.$el.qtip({
+                content: {
+                    // title: prescription.get('name'),
+                    text: this.getTooltipText()
+                },
+                style: 'qtip-light',
+                position: {
+                    my: 'bottom left',
+                    at: 'top left',
+                    viewport: $('.groups')
+                }
+            });
 
 
             $.contextMenu({

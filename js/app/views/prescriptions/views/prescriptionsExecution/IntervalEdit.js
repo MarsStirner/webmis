@@ -6,26 +6,31 @@ define(function (require) {
 
     return BaseView.extend({
         template: template,
+
         data: function () {
             var data = {};
 
             data.interval = this.options.model.toJSON();
             return data;
         },
+
         initialize: function () {
             this.options.title = 'Редактирование интервала';
             this.options.width = '56em';
         },
 
         onSave: function () {
-            console.log('onSave', this.options.model);
-            this.options.model.save(null, {
+            var self = this;
+
+            this.model.save(null, {
                 success: function () {
-                    console.log('save');
+                    pubsub.trigger('intervals:updated', this.model)
+                    self.close();
                 }
             });
 
         },
+
         render: function () {
             BaseView.prototype.render.call(this);
 
@@ -54,7 +59,7 @@ define(function (require) {
 
 
             rivets.bind(this.el, {
-                interval: this.options.model
+                interval: this.model
             });
         }
     }).mixin([popupMixin]);

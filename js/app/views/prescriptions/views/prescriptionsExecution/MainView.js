@@ -1,46 +1,52 @@
-define(function(require) {
-	var template = require('text!views/prescriptions/templates/prescriptionsExecution/list-main.html');
+define(function (require) {
+    var template = require('text!views/prescriptions/templates/prescriptionsExecution/list-main.html');
 
-	var BaseView = require('views/prescriptions/views/BaseView');
+    var BaseView = require('views/prescriptions/views/BaseView');
 
-	var Prescriptions = require('views/prescriptions/collections/Prescriptions');
-	var FilterView = require('views/prescriptions/views/prescriptionsExecution/Filter');
+    var Prescriptions = require('views/prescriptions/collections/Prescriptions');
+    var FilterView = require('views/prescriptions/views/prescriptionsExecution/Filter');
     var ActionsView = require('views/prescriptions/views/prescriptionsExecution/Actions');
-	var GroupsView = require('views/prescriptions/views/prescriptionsExecution/Groups');
+    var GroupsView = require('views/prescriptions/views/prescriptionsExecution/Groups');
 
 
-	return BaseView.extend({
-		className: 'ContentHolder',
-		template: template,
-		initialize: function() {
-			var self = this;
+    return BaseView.extend({
+        className: 'ContentHolder',
+        template: template,
+        initialize: function () {
+            var self = this;
 
-			this.collection = new Prescriptions();
+            this.collection = new Prescriptions();
 
 
-			this.groupsView = new GroupsView({
-				collection: this.collection
-			});
+            this.groupsView = new GroupsView({
+                collection: this.collection
+            });
 
-			this.filterView = new FilterView({
-				collection: this.collection,
-				model: new Backbone.Model()
-			});
+            this.filterView = new FilterView({
+                collection: this.collection,
+                model: new Backbone.Model()
+            });
 
 
             this.actionsView = new ActionsView({
-                collection:this.collection
-            })
+                collection: this.collection
+            });
 
-			this.addSubViews({
-				'.groups-el': this.groupsView,
-				'.filter': this.filterView,
+            this.addSubViews({
+                '.groups-el': this.groupsView,
+                '.filter': this.filterView,
                 '.actions': this.actionsView
-			});
+            });
 
-			this.filterView.filter();
-		}
+            this.filterView.filter();
 
-	});
+            pubsub.on('intervals:executed intervals:updated', this.refresh, this);
+        },
+
+        refresh: function () {
+            this.collection.fetch();
+        }
+
+    });
 
 });

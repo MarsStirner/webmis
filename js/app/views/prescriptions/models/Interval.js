@@ -169,8 +169,7 @@ define(function (require) {
                 options.dataType = "jsonp";
                 options.url = model.url();
                 options.contentType = 'application/json';
-                options.data = {data: [model.toJSON()]};
-                console.log('options', options);
+                options.data = JSON.stringify({data: [model.toJSON()]});
                 Backbone.sync.call(this, method, model, options);
             }else{
                 Model.prototype.call(this, method, model, options); 

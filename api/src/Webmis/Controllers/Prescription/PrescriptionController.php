@@ -18,6 +18,7 @@ use Webmis\Models\DrugChart;
 use Webmis\Models\DrugChartQuery;
 use Webmis\Models\DrugComponent;
 use Webmis\Models\DrugComponentQuery;
+use \PropelObjectCollection;
 
 class PrescriptionController
 {
@@ -391,259 +392,50 @@ class PrescriptionController
         return $app['jsonp']->jsonp(array('data' => $data ));
     }
 
-    /* public function updateIntervalsAction(Request $request, Application $app){ */
-    /*     $route_params = $request->get('_route_params') ; */
-    /*     $prescriptionId = (int) $route_params['prescriptionId']; */
-    /*     $data = $request->get('data'); */
-
-    /*     if(!$prescriptionId){ */
-    /*         return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора назначения.' )); */
-    /*     } */
-
-    /*     $prescription = ActionQuery::create() */
-    /*         ->leftJoinWithDrugChart() */
-    /*         ->findOneById($prescriptionId); */
-
-    /*     $intervals = $prescription->getDrugCharts(); */
-
-
-    /*     if(is_array($data)){ */
-    /*         foreach ($data as $assigmentInterval) { */
-    /*             if(array_key_exists('id', $assigmentInterval)){ */
-    /*                 $interval = $this->getIntervalById($intervals, $assigmentInterval['id']); */
-    /*             }else{ */
-    /*                 $interval = null; */
-    /*             } */
-
-    /*             if($interval){ */
-    /*                 if(array_key_exists('status', $assigmentInterval)){ */
-    /*                     if($interval->getStatus() != $assigmentInterval['status']){ */
-    /*                         $interval->setStatus($assigmentInterval['status']); */
-    /*                     } */
-    /*                 } */
-
-    /*                 if(array_key_exists('note', $assigmentInterval)){ */
-    /*                     $interval->setNote($assigmentInterval['note']); */
-    /*                 } */
-
-    /*                 if(array_key_exists('beginDateTime', $assigmentInterval)){ */
-    /*                     $interval->setBegDateTime(round((int) $assigmentInterval['beginDateTime']/1000)); */
-    /*                 } */
-
-    /*                 if(array_key_exists('endDateTime', $assigmentInterval) && !empty($assigmentInterval['endDateTime'])){ */
-    /*                     $interval->setEndDateTime(round((int) $assigmentInterval['endDateTime']/1000)); */
-    /*                 } */
-
-    /*                 if(array_key_exists('executionIntervals', $assigmentInterval) && is_array($assigmentInterval['executionIntervals'])){ */
-
-    /*                     foreach ($assigmentInterval['executionIntervals'] as $executionInterval) { */
-
-    /*                         if(array_key_exists('id', $executionInterval)){ */
-    /*                             $interval2 = $this->getIntervalById($intervals, $executionInterval['id']); */
-    /*                         }else{ */
-    /*                             $interval2 = null; */
-    /*                         } */
-
-    /*                         if($interval2){ */
-    /*                             if(array_key_exists('status', $executionInterval)){ */
-    /*                                 if($interval2->getStatus() != $executionInterval['status']){ */
-    /*                                     $interval2->setStatus($executionInterval['status']); */
-    /*                                 } */
-    /*                             } */
-
-    /*                             if(array_key_exists('note', $executionInterval)){ */
-    /*                                 $interval2->setNote($executionInterval['note']); */
-    /*                             } */
-
-    /*                             if(array_key_exists('beginDateTime', $executionInterval)){ */
-    /*                                 $interval2->setBegDateTime(round((int) $executionInterval['beginDateTime']/1000)); */
-    /*                             } */
-
-    /*                             if(array_key_exists('endDateTime', $executionInterval)  && !empty($executionInterval['endDateTime'])){ */
-    /*                                 $interval2->setEndDateTime(round((int) $executionInterval['endDateTime']/1000)); */
-    /*                             } */
-    /*                         }else{ */
-    /*                             //новый интервал исполнения... */
-    /*                         } */
-
-
-    /*                     } */
-    /*                 } */
-
-    /*             }else{ */
-    /*                 //новый интервал назначения */
-
-    /*                 $drugChart = new DrugChart(); */
-
-    /*                 $drugChart->setStatus(0); */
-
-
-    /*                 if(array_key_exists('note', $assigmentInterval)){ */
-    /*                     $drugChart->setNote($assigmentInterval['note']); */
-    /*                 } */
-
-    /*                 if(array_key_exists('beginDateTime', $assigmentInterval)){ */
-    /*                     $drugChart->setBegDateTime(round((int) $assigmentInterval['beginDateTime']/1000)); */
-    /*                 } */
-
-    /*                 if(array_key_exists('endDateTime', $assigmentInterval) && !empty($assigmentInterval['endDateTime'])){ */
-    /*                     $drugChart->setEndDateTime(round((int) $assigmentInterval['endDateTime']/1000)); */
-    /*                 } */
-
-    /*                 $prescription->addDrugChart($drugChart); */
-    /*             } */
-
-
-    /*         } */
-    /*     } */
-
-    /*     $prescription->save(); */
-
-
-
-    /*     return $app['jsonp']->jsonp(array('data' => $intervals->toArray() )); */
-    /* } */
-
 
     public function updateIntervalsAction(Request $request, Application $app){
-        $route_params = $request->get('_route_params') ;
+        /* $route_params = $request->get('_route_params') ; */
         $data = $request->get('data');
-        
 
         if(is_array($data)){
+
             foreach($data as $executionInterval){
                 if(array_key_exists('id', $executionInterval)){
-                    //редактируем старый
-                    $id = $executionInterval['id'];
-                    $interval = DrugChartQuery::create()->filterById($id)->findOne();
-                             if($interval){
-                                if(array_key_exists('status', $executionInterval)){
-                                    if($interval->getStatus() != $executionInterval['status']){
-                                        $interval->setStatus($executionInterval['status']);
-                                    }
-                                }
-
-                                if(array_key_exists('note', $executionInterval)){
-                                    $interval->setNote($executionInterval['note']);
-                                }
-
-                                if(array_key_exists('beginDateTime', $executionInterval)){
-                                    $interval->setBegDateTime(round((int) $executionInterval['beginDateTime']/1000));
-                                }
-
-                                if(array_key_exists('endDateTime', $executionInterval)  && !empty($executionInterval['endDateTime'])){
-                                    $interval->setEndDateTime(round((int) $executionInterval['endDateTime']/1000));
-                                }
-                            }
+                    $interval = DrugChartQuery::create()->filterById($executionInterval['id'])->findOne();
                 }else{
-                    //создаём новый интервал 
+                    $interval = new DrugChart();
+                    $interval->setStatus(0);
+                }
+
+                if($interval){
+                    if(array_key_exists('master_id', $executionInterval)){
+                        $interval->setMasterId($executionInterval['master_id']);
+                    }
+
+                    if(array_key_exists('status', $executionInterval)){
+                        if($interval->getStatus() != $executionInterval['status']){
+                            $interval->setStatus($executionInterval['status']);
+                        }
+                    }
+
+                    if(array_key_exists('note', $executionInterval)){
+                        $interval->setNote($executionInterval['note']);
+                    }
+
+                    if(array_key_exists('beginDateTime', $executionInterval)){
+                        $interval->setBegDateTime(round((int) $executionInterval['beginDateTime']/1000));
+                    }
+
+                    if(array_key_exists('endDateTime', $executionInterval)  && !empty($executionInterval['endDateTime'])){
+                        $interval->setEndDateTime(round((int) $executionInterval['endDateTime']/1000));
+                    }
+
+                    $interval->save();
                 }
             }
         }
 
-        return $app['jsonp']->jsonp(array('data' => $data ));
-        /* $prescription = ActionQuery::create() */
-        /*     ->leftJoinWithDrugChart() */
-        /*     ->findOneById($prescriptionId); */
-
-        /* $intervals = $prescription->getDrugCharts(); */
-
-
-        /* if(is_array($data)){ */
-        /*     foreach ($data as $assigmentInterval) { */
-        /*         if(array_key_exists('id', $assigmentInterval)){ */
-        /*             $interval = $this->getIntervalById($intervals, $assigmentInterval['id']); */
-        /*         }else{ */
-        /*             $interval = null; */
-        /*         } */
-
-        /*         if($interval){ */
-        /*             if(array_key_exists('status', $assigmentInterval)){ */
-        /*                 if($interval->getStatus() != $assigmentInterval['status']){ */
-        /*                     $interval->setStatus($assigmentInterval['status']); */
-        /*                 } */
-        /*             } */
-
-        /*             if(array_key_exists('note', $assigmentInterval)){ */
-        /*                 $interval->setNote($assigmentInterval['note']); */
-        /*             } */
-
-        /*             if(array_key_exists('beginDateTime', $assigmentInterval)){ */
-        /*                 $interval->setBegDateTime(round((int) $assigmentInterval['beginDateTime']/1000)); */
-        /*             } */
-
-        /*             if(array_key_exists('endDateTime', $assigmentInterval) && !empty($assigmentInterval['endDateTime'])){ */
-        /*                 $interval->setEndDateTime(round((int) $assigmentInterval['endDateTime']/1000)); */
-        /*             } */
-
-        /*             if(array_key_exists('executionIntervals', $assigmentInterval) && is_array($assigmentInterval['executionIntervals'])){ */
-
-        /*                 foreach ($assigmentInterval['executionIntervals'] as $executionInterval) { */
-
-        /*                     if(array_key_exists('id', $executionInterval)){ */
-        /*                         $interval2 = $this->getIntervalById($intervals, $executionInterval['id']); */
-        /*                     }else{ */
-        /*                         $interval2 = null; */
-        /*                     } */
-
-        /*                     if($interval2){ */
-        /*                         if(array_key_exists('status', $executionInterval)){ */
-        /*                             if($interval2->getStatus() != $executionInterval['status']){ */
-        /*                                 $interval2->setStatus($executionInterval['status']); */
-        /*                             } */
-        /*                         } */
-
-        /*                         if(array_key_exists('note', $executionInterval)){ */
-        /*                             $interval2->setNote($executionInterval['note']); */
-        /*                         } */
-
-        /*                         if(array_key_exists('beginDateTime', $executionInterval)){ */
-        /*                             $interval2->setBegDateTime(round((int) $executionInterval['beginDateTime']/1000)); */
-        /*                         } */
-
-        /*                         if(array_key_exists('endDateTime', $executionInterval)  && !empty($executionInterval['endDateTime'])){ */
-        /*                             $interval2->setEndDateTime(round((int) $executionInterval['endDateTime']/1000)); */
-        /*                         } */
-        /*                     }else{ */
-        /*                         //новый интервал исполнения... */
-        /*                     } */
-
-
-        /*                 } */
-        /*             } */
-
-        /*         }else{ */
-        /*             //новый интервал назначения */
-
-        /*             $drugChart = new DrugChart(); */
-
-        /*             $drugChart->setStatus(0); */
-
-
-        /*             if(array_key_exists('note', $assigmentInterval)){ */
-        /*                 $drugChart->setNote($assigmentInterval['note']); */
-        /*             } */
-
-        /*             if(array_key_exists('beginDateTime', $assigmentInterval)){ */
-        /*                 $drugChart->setBegDateTime(round((int) $assigmentInterval['beginDateTime']/1000)); */
-        /*             } */
-
-        /*             if(array_key_exists('endDateTime', $assigmentInterval) && !empty($assigmentInterval['endDateTime'])){ */
-        /*                 $drugChart->setEndDateTime(round((int) $assigmentInterval['endDateTime']/1000)); */
-        /*             } */
-
-        /*             $prescription->addDrugChart($drugChart); */
-        /*         } */
-
-
-        /*     } */
-        /* } */
-
-        /* $prescription->save(); */
-
-
-
-        /* return $app['jsonp']->jsonp(array('data' => $intervals->toArray() )); */
+        return $app['jsonp']->jsonp(array('data' => '' ));
     }
 
     public function cancelIntervalsExecutionAction(Request $request, Application $app){
