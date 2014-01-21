@@ -123,6 +123,7 @@ define(function (require) {
 	};
 
 	var ViewBase = require("views/view-base");
+	var ModelBase = require("models/model-base");
 
 	var Thesaurus = require("views/appeal/edit/popups/thesaurus");
 	var FlatDirectory = require("models/flat-directory");
@@ -158,8 +159,7 @@ define(function (require) {
 	//region MODELS
 	//---------------------
 
-	Documents.Models.FetchableModelBase = Backbone.Model.extend({});
-	Documents.Models.FetchableModelBase.prototype.sync = Model.prototype.sync;
+	Documents.Models.FetchableModelBase = ModelBase;
 
 	Documents.Models.DocumentBase = Documents.Models.FetchableModelBase.extend({
 		initialize: function (options) {

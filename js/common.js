@@ -31,6 +31,7 @@ pubsub = _.extend({}, Backbone.Events);
 Data = {};
 Cache = {};
 
+// use models/mode-base.js instead
 Model = Backbone.RelationalModel.extend({
 	idAttribute: "_id",
 
