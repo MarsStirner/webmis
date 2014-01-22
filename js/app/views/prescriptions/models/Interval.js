@@ -190,12 +190,19 @@ define(function (require) {
             });
 
             var state = this.getState();
+            console.log('state', state);
+            if(state){
+                attributes.stateName = states[state].title;
+                attributes.backgroundColor = states[state].color;
+            }
+
             attributes.intervalString = this.intervalToString();
-            attributes.backgroundColor = states[state].color;
-            attributes.stateName = states[state].title;
+            attributes.canBeEdited = this.canBeEdited();
+            attributes.canBeCanceled = this.canBeCanceled();
+            attributes.canBeExecuted = this.canBeExecuted();
+            attributes.canBeCanceledExecution = this.canBeCanceledExecution();
 
             return attributes;
-
         },
 
         url: function () {
@@ -272,8 +279,6 @@ define(function (require) {
                 if (diff === 0) {
                     errors.push('Время окончания интервала равно времени начала');
                 }
-
-                console.log('diff', diff);
             }
 
             if (errors.length) {
@@ -283,22 +288,30 @@ define(function (require) {
 
         canBeCanceled: function () {
             var state = this.getState();
-            return state == 'assigned';
+            var status = this.get('status');
+
+            return (state == 'assigned' && status != 3);
         },
 
         canBeExecuted: function () {
             var state = this.getState();
-            return ((state === 'runs') || (state === 'notExecuted'));
+            var status = this.get('status');
+
+            return ((state === 'runs') || (state === 'notExecuted')) && (status != 3);
         },
 
         canBeCanceledExecution: function () {
             var state = this.getState();
-            return state === 'executed';
+            var status = this.get('status');
+
+            return state === 'executed' && status != 3;
         },
 
         canBeEdited: function () {
             var state = this.getState();
-            return state != 'canceled';
+            var status = this.get('status');
+
+            return state != 'canceled' && status !=3;
         }
 
     });

@@ -22,17 +22,13 @@
     </div>
 
     <div class="span12">
-        <% if(data.interval.status != 2){%>
             <div class="radio">
 
-            <% if(data.interval.status != 1){%>
-                <input type="checkbox" id="radio1" name="radio"  value="1"><label for="radio1">Выполнить</label>
-            <%}%>
-            <% if(data.interval.status != 0){%>
-                <input type="checkbox" id="radio2" name="radio"  value="0"><label for="radio2">Отменить исполнение</label>
-            <%}%>
-                <input type="checkbox" id="radio3" name="radio"  value="2"><label for="radio3">Отменить</label>
+                <input type="checkbox" <% if(!data.interval.canBeExecuted){%>disabled<%}%> id="execute-button" value="1"/><label for="execute-button">Выполнить</label>
+
+                <input type="checkbox" <% if(!data.interval.canBeCanceledExecution){%>disabled<%}%> id="cancel-execution-button" value="0"><label for="cancel-execution-button">Отменить исполнение</label>
+
+                <input type="checkbox" <% if(!data.interval.canBeCanceled){%>disabled<%}%> id="cancel-button" value="2"><label for="cancel-button">Отменить</label>
             </div> 
-        <%}%>
     </div>
 </div>

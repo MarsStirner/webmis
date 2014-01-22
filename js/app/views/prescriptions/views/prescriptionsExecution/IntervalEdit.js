@@ -7,19 +7,38 @@ define(function (require) {
     return BaseView.extend({
         template: template,
 
+        events: {
+            'change .radio :checkbox': 'onButtonClick' 
+        },
+        initialize: function () {
+            this.options.title = 'Редактирование интервала';
+            this.options.width = '56em';
+
+            this.initialStatus = this.model.get('status');
+
+            this.model.on('change', function(){
+                // console.log('model', this.model); 
+            }, this);
+        },
+
         data: function () {
             var data = {};
 
             data.interval = this.options.model.toJSON();
             return data;
         },
+        
+        onButtonClick: function(e){
+            var $target = this.$(e.target);
+            var status = this.initialStatus;
 
-        initialize: function () {
-            this.options.title = 'Редактирование интервала';
-            this.options.width = '56em';
-            this.model.on('change', function(){
-                // console.log('model', this.model); 
-            }, this);
+            $target.siblings().prop('checked', false);
+            this.ui.$buttonset.buttonset('refresh');
+
+            if($target.prop('checked')){
+                status = $target.val();
+            }
+            this.model.set('status', status);
         },
 
         onSave: function () {
