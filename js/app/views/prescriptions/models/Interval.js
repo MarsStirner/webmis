@@ -32,10 +32,19 @@ define(function (require) {
 
     var Interval = Model.extend({
         defaults: {
-            beginDateTime: (new Date())
-                .getTime(),
+            beginDateTime: (new Date()).getTime(),
             endDateTime: null,
             status: 0
+        },
+
+        initialize: function () {
+            var state = this.getState();
+            if (state) {
+                this.set('stateName',states[state].title);
+                this.set('backgroundColor',states[state].color);
+            }
+
+
         },
         delete: function () {
             this.collection.remove(this);
@@ -68,7 +77,7 @@ define(function (require) {
         getCurrentTime: function () {
             return moment().valueOf();
         },
-        
+
         roundToMinutes: function (timestamp) {
             return timestamp ? moment(timestamp).startOf('minute').valueOf() : timestamp;
         },
@@ -189,24 +198,18 @@ define(function (require) {
                 }
             });
 
-            var state = this.getState();
-            console.log('state', state);
-            if(state){
-                attributes.stateName = states[state].title;
-                attributes.backgroundColor = states[state].color;
-            }
-
             attributes.intervalString = this.intervalToString();
             attributes.canBeEdited = this.canBeEdited();
             attributes.canBeCanceled = this.canBeCanceled();
             attributes.canBeExecuted = this.canBeExecuted();
             attributes.canBeCanceledExecution = this.canBeCanceledExecution();
+            attributes.canBeAddedStop = this.canBeAddedStop();
 
             return attributes;
         },
 
         url: function () {
-            return '/api/v1/prescriptions/intervals'
+            return '/api/v1/prescriptions/intervals';
         },
 
         sync: function (method, model, options) {
@@ -290,28 +293,32 @@ define(function (require) {
             var state = this.getState();
             var status = this.get('status');
 
-            return (state == 'assigned' && status != 3);
+            return (state === 'assigned' && status !== 3);
         },
 
         canBeExecuted: function () {
             var state = this.getState();
             var status = this.get('status');
 
-            return ((state === 'runs') || (state === 'notExecuted')) && (status != 3);
+            return ((state === 'runs') || (state === 'notExecuted')) && (status !== 3);
         },
 
         canBeCanceledExecution: function () {
             var state = this.getState();
             var status = this.get('status');
 
-            return state === 'executed' && status != 3;
+            return state === 'executed' && status !== 3;
         },
 
         canBeEdited: function () {
             var state = this.getState();
             var status = this.get('status');
 
-            return state != 'canceled' && status !=3;
+            return state !== 'canceled' && status !== 3;
+        },
+
+        canBeAddedStop: function () {
+            return (this.get('endDateTime') && (this.get('status') !== 3));
         }
 
     });

@@ -22,10 +22,10 @@ define(function (require) {
                 .add('days', 1)
                 .format('X');
             this.model.set('dateRangeMax', dateRangeMax);
-            console.log('setDataRangeMax', arguments);
+            // console.log('setDataRangeMax', arguments);
         },
         data: function () {
-            console.log('dateRange data', this.model.toJSON());
+            // console.log('dateRange data', this.model.toJSON());
             return this.model.toJSON();
         },
         afterRender: function () {
