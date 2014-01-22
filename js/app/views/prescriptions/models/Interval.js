@@ -68,17 +68,50 @@ define(function (require) {
         getCurrentTime: function () {
             return moment().valueOf();
         },
+        
         roundToMinutes: function (timestamp) {
             return timestamp ? moment(timestamp).startOf('minute').valueOf() : timestamp;
         },
+
         timeBefore: function () { //предикат: время начала интервала больше текущего
             var begin = this.roundToMinutes(this.get('beginDateTime'));
             var current = this.roundToMinutes(this.getCurrentTime());
 
             return begin > current;
         },
+
         isNotExecuted: function () {
             return this.getState() === 'notExecuted';
+        },
+
+        getIntervalCoordinates: function (rangeStart, rangeEnd) {
+            var defaultIntervalLength = 45 * 60 * 1000;
+            var intervalStart = this.get('beginDateTime');
+            var intervalEnd = this.get('endDateTime');
+            var coordinates = {};
+
+            if ((intervalStart < rangeStart) && intervalEnd && (intervalEnd > rangeStart)) {
+                intervalStart = rangeStart;
+            }
+
+            if ((intervalStart >= rangeStart) && (intervalStart <= rangeEnd)) {
+                coordinates.x1 = (intervalStart - rangeStart) / (rangeEnd - rangeStart) * 100;
+            }
+
+            if (!intervalEnd) { //для интервалов без окончания задаём длинну
+                intervalEnd = intervalStart + defaultIntervalLength;
+            }
+
+            if (intervalEnd > rangeEnd) { //обрезаем если окончание интервала выходит за пределы диапозона
+                intervalEnd = rangeEnd;
+            }
+
+            if ((intervalEnd > rangeStart) && (intervalEnd <= rangeEnd) && _.isNumber(coordinates.x1)) {
+                coordinates.x2 = (intervalEnd - rangeStart) / (rangeEnd - rangeStart) * 100;
+                coordinates.w = coordinates.x2 - coordinates.x1;
+            }
+            //console.log('coordinates', coordinates);
+            return coordinates;
         },
 
         overlapRange: function (start, end) { //пересекается ли интервал с интервалом...
@@ -109,6 +142,7 @@ define(function (require) {
 
             return bool;
         },
+
         timeAfter: function () { //предикат: время окончания интервала меньше текущего
             var bool;
             var begin = this.roundToMinutes(this.get('beginDateTime'));
@@ -123,6 +157,7 @@ define(function (require) {
 
             return bool;
         },
+
         intervalToString: function () {
             var string = '';
             var begin = this.get('beginDateTime') ? moment(this.get('beginDateTime')) : null;
@@ -144,6 +179,7 @@ define(function (require) {
 
             return string;
         },
+
         toJSON: function () {
             var attributes = _.clone(this.attributes);
 
@@ -161,20 +197,25 @@ define(function (require) {
             return attributes;
 
         },
+
         url: function () {
             return '/api/v1/prescriptions/intervals'
         },
+
         sync: function (method, model, options) {
-            if(method === 'update'){
+            if (method === 'update') {
                 options.dataType = "jsonp";
                 options.url = model.url();
                 options.contentType = 'application/json';
-                options.data = JSON.stringify({data: [model.toJSON()]});
+                options.data = JSON.stringify({
+                    data: [model.toJSON()]
+                });
                 Backbone.sync.call(this, method, model, options);
-            }else{
-                Model.prototype.call(this, method, model, options); 
+            } else {
+                Model.prototype.call(this, method, model, options);
             }
         },
+
         execute: function (opts) {
             var options = {
                 data: JSON.stringify({
@@ -217,8 +258,6 @@ define(function (require) {
             return $.ajax(_.extend(options, opts));
         },
 
-
-
         validateModel: function () {
             var errors = [];
             if (!this.get('beginDateTime')) {
@@ -242,23 +281,24 @@ define(function (require) {
             }
         },
 
-        canBeCanceled: function(){
+        canBeCanceled: function () {
             var state = this.getState();
             return state == 'assigned';
         },
 
-        canBeExecuted: function(){
+        canBeExecuted: function () {
             var state = this.getState();
             return ((state === 'runs') || (state === 'notExecuted'));
         },
 
-        canBeCanceledExecution: function(){
+        canBeCanceledExecution: function () {
             var state = this.getState();
             return state === 'executed';
         },
 
-        canBeEdited: function(){
-            return true; 
+        canBeEdited: function () {
+            var state = this.getState();
+            return state != 'canceled';
         }
 
     });

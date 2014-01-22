@@ -7,67 +7,39 @@ define(function (require) {
     });
     var IntervalEdit = require('views/prescriptions/views/prescriptionsExecution/IntervalEdit');
 
-
-
     return BaseView.extend({
         template: template,
         events: {
-            'click': 'openEditPopup' 
+            'click': 'openEditPopup'
         },
         tagName: 'span',
+
         initialize: function () {
             var prescriptionId = this.model.get('actionId');
             this.prescription = this.options.mainCollection.get(prescriptionId);
-
-            // console.log('init interval', this.prescription);
-        },
-
-        getIntervalCoordinates: function (interval) {
-            var defaultIntervalLength = 45 * 60 * 1000;
-            var rangeStart = this.options.mainCollection._filter.dateRangeMin * 1000;
-            var rangeEnd = this.options.mainCollection._filter.dateRangeMax * 1000;
-            var intervalStart = interval.get('beginDateTime');
-            var intervalEnd = interval.get('endDateTime');
-            var coordinates = {};
-
-            if ((intervalStart < rangeStart) && intervalEnd && (intervalEnd > rangeStart)) {
-                intervalStart = rangeStart;
-            }
-
-            if ((intervalStart >= rangeStart) && (intervalStart <= rangeEnd)) {
-                coordinates.x1 = (intervalStart - rangeStart) / (rangeEnd - rangeStart) * 100;
-            }
-
-            if (!intervalEnd) { //для интервалов без окончания задаём длинну
-                intervalEnd = intervalStart + defaultIntervalLength;
-            }
-
-            if (intervalEnd > rangeEnd) { //обрезаем если окончание интервала выходит за пределы диапозона
-                intervalEnd = rangeEnd;
-            }
-
-            if ((intervalEnd > rangeStart) && (intervalEnd <= rangeEnd) && _.isNumber(coordinates.x1)) {
-                coordinates.x2 = (intervalEnd - rangeStart) / (rangeEnd - rangeStart) * 100;
-                coordinates.w = coordinates.x2 - coordinates.x1;
-            }
-            //console.log('coordinates', coordinates);
-            return coordinates;
         },
 
         data: function () {
             var data = {};
+            var rangeStart = this.options.mainCollection._filter.dateRangeMin * 1000;
+            var rangeEnd = this.options.mainCollection._filter.dateRangeMax * 1000;
+
             data = this.model.toJSON();
-            var coordinates = this.getIntervalCoordinates(this.model);
+
+            var coordinates = this.model.getIntervalCoordinates(rangeStart, rangeEnd);
+
             _.extend(data, coordinates);
-            // console.log('interval data', data);
+
             return data;
         },
 
         getTooltipText: function (id) {
+
             var html = intervalTooltipTemplate({
                 prescription: this.prescription.toJSON(),
                 interval: this.model.toJSON()
             });
+
             return html;
         },
 
@@ -124,12 +96,15 @@ define(function (require) {
         },
 
         openEditPopup: function () {
+            if (!this.model.canBeEdited()) {
+                return;
+            }
+
             var intervalEdit = new IntervalEdit({
                 model: this.options.model
             });
-            intervalEdit.render().open();
-            console.log('openEditPopup', this.model);
 
+            intervalEdit.render().open();
         },
 
         getContextMenuItems: function () {
@@ -147,7 +122,7 @@ define(function (require) {
                 items.cancelExecution = this.getContextMenuCancelExecutionItem();
             }
 
-            if(this.model.canBeEdited()){
+            if (this.model.canBeEdited()) {
                 items.edit = this.getContextMenuEditItem();
             }
 
@@ -169,16 +144,16 @@ define(function (require) {
                 }
             });
 
-
-            $.contextMenu({
-                autoHide: true,
-                selector: '[data-prescription="' + self.model.get("id") + '"]',
-                callback: function (key, options) {},
-                items: self.getContextMenuItems()
-            });
-
-
+            if (!_.isEmpty(this.getContextMenuItems())) {
+                $.contextMenu({
+                    autoHide: true,
+                    selector: '[data-prescription="' + self.model.get("id") + '"]',
+                    callback: function (key, options) {},
+                    items: self.getContextMenuItems()
+                });
+            }
         },
+
         tearDown: function () {
             $.contextMenu('destroy');
             BaseView.prototype.tearDown.call(this);
