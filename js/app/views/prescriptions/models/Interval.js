@@ -242,6 +242,25 @@ define(function (require) {
             }
         },
 
+        canBeCanceled: function(){
+            var state = this.getState();
+            return state == 'assigned';
+        },
+
+        canBeExecuted: function(){
+            var state = this.getState();
+            return ((state === 'runs') || (state === 'notExecuted'));
+        },
+
+        canBeCanceledExecution: function(){
+            var state = this.getState();
+            return state === 'executed';
+        },
+
+        canBeEdited: function(){
+            return true; 
+        }
+
     });
 
     return Interval;

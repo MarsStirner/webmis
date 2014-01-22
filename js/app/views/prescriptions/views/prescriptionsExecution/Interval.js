@@ -11,6 +11,9 @@ define(function (require) {
 
     return BaseView.extend({
         template: template,
+        events: {
+            'click': 'openEditPopup' 
+        },
         tagName: 'span',
         initialize: function () {
             var prescriptionId = this.model.get('actionId');
@@ -131,22 +134,22 @@ define(function (require) {
 
         getContextMenuItems: function () {
             var items = {};
-            var state = this.model.getState();
-            var status = this.model.get('status');
 
-            if ((state === 'runs') || (state === 'notExecuted')) {
+            if (this.model.canBeExecuted()) {
                 items.execute = this.getContextMenuExecuteItem();
             }
 
-            if (state === 'assigned') {
+            if (this.model.canBeCanceled()) {
                 items.cancel = this.getContextMenuCancelItem();
             }
 
-            if (state === 'executed') {
+            if (this.model.canBeCanceledExecution()) {
                 items.cancelExecution = this.getContextMenuCancelExecutionItem();
             }
 
-            items.edit = this.getContextMenuEditItem();
+            if(this.model.canBeEdited()){
+                items.edit = this.getContextMenuEditItem();
+            }
 
             return items;
         },
