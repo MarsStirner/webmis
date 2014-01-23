@@ -5,7 +5,9 @@ define(function (require) {
     var rivets = require('rivets');
     var Interval = require('views/prescriptions/models/Interval');
     var Intervals = require('views/prescriptions/collections/Intervals');
-
+    require('moment');
+    require('twix');
+    require('datetimeEntry');
 
     return BaseView.extend({
         template: template,
@@ -15,15 +17,21 @@ define(function (require) {
         },
         initialize: function () {
             this.options.title = 'Редактирование интервала';
-            this.options.width = '56em';
+            this.options.width = '66em';
 
             this.initialStatus = this.model.get('status');
             this.collection = new Intervals();
-            this.collection.add(this.model);
 
-            this.model.on('change', function () {
-                // console.log('model', this.model); 
+            this.form = new Model({
+                interval: this.model,
+                intervals: this.collection
+            });
+
+            this.collection.on('add remove', function () {
+                this.form.set('hideAddPause', ((this.collection.length > 1) || !(this.model.get('endDateTime'))));
             }, this);
+
+            this.collection.add(this.model);
         },
 
         data: function () {
@@ -49,20 +57,40 @@ define(function (require) {
 
         onSave: function () {
             var self = this;
+            
+            this.normilizeCollection();
 
-            this.model.save(null, {
-                success: function () {
-                    pubsub.trigger('intervals:updated', this.model)
-                    self.close();
-                }
+            // this.collection.update({
+            //     success: function () {
+            //         pubsub.trigger('intervals:updated', this.model);
+            //         self.close();
+            //     }
+            // });
+
+        },
+        //если добавлен стоп, то ...
+        normilizeCollection: function () {
+            var pause = this.collection.find(function (model) {
+                return model.get('status') === 3;
             });
-
+            console.log('n', pause)
         },
 
         addPause: function () {
             var pause = new Interval();
+            var actionId = this.model.get('actionId');
+            var masterId = this.model.get('masterId');
+            var beginDateTime = this.model.get('beginDateTime');
+            var endDateTime = moment(beginDateTime).add('minutes', 1).valueOf();
 
-            console.log('addPause', pause);
+            pause.set('actionId', actionId);
+            pause.set('status', 3);
+            pause.set('masterId', masterId);
+            pause.set('beginDateTime', beginDateTime);
+            pause.set('endDateTime', endDateTime);
+
+            this.collection.add(pause);
+            console.log('addPause', pause.toJSON(), this.collection.toJSON());
         },
 
         render: function () {
@@ -97,16 +125,30 @@ define(function (require) {
                 }
             };
 
-            rivets.binders.bc = function(el, value) {
+            rivets.binders.bc = function (el, value) {
                 el.style['background-color'] = value;
             };
 
+            this.collection.on('add remove', function () {
+                setTimeout(this.initDateMask, 100);
+            }, this);
+
+
+
             rivets.bind(this.el, {
                 interval: this.model,
-                intervals: this.collection,
+                form: this.form,
                 view: this
             });
+
             this.ui.$buttonset.buttonset();
+        },
+        initDateMask: function () {
+            $('.datetime_entry').each(function () {
+                $(this).datetimeEntry({
+                    datetimeFormat: 'D.O.Y H:M'
+                });
+            });
         }
     }).mixin([popupMixin]);
 

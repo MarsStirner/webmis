@@ -416,8 +416,12 @@ class PrescriptionController
                 }
 
                 if($interval){
-                    if(array_key_exists('master_id', $executionInterval)){
-                        $interval->setMasterId($executionInterval['master_id']);
+                    if(array_key_exists('actionId', $executionInterval)){
+                        $interval->setActionId($executionInterval['actionId']);
+                    }
+
+                    if(array_key_exists('masterId', $executionInterval)){
+                        $interval->setMasterId($executionInterval['masterId']);
                     }
 
                     if(array_key_exists('status', $executionInterval)){

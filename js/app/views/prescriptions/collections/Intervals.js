@@ -39,18 +39,18 @@ define(function (require) {
                             // console.log('begin diff', diff)
                         }
                     }
-                    
-                    if(mj.beginDateTime && mj.endDateTime){
-                        if(mj2.beginDateTime && mj2.endDateTime){
-                            var range1 = moment(mj.beginDateTime).startOf('minutes').twix(moment(mj.endDateTime).startOf('minutes')); 
-                            var range2 = moment(mj2.beginDateTime).startOf('minutes').twix(moment(mj2.endDateTime).startOf('minutes')); 
-                            if(range1.overlaps(range2)){
+
+                    if (mj.beginDateTime && mj.endDateTime) {
+                        if (mj2.beginDateTime && mj2.endDateTime) {
+                            var range1 = moment(mj.beginDateTime).startOf('minutes').twix(moment(mj.endDateTime).startOf('minutes'));
+                            var range2 = moment(mj2.beginDateTime).startOf('minutes').twix(moment(mj2.endDateTime).startOf('minutes'));
+                            if (range1.overlaps(range2)) {
                                 // console.log('пересекаются') 
                                 collectionErrors.push('Пересечение интервалов. ')
                             }
-                            
-                        
-                        } 
+
+
+                        }
                     }
 
                 });
@@ -85,9 +85,23 @@ define(function (require) {
                 type: 'PUT',
                 dataType: "jsonp",
                 contentType: 'application/json'
-            }
+            };
 
-            return $.ajax(_.extend(options, opts))
+            return $.ajax(_.extend(options, opts));
+        },
+
+        update: function (opts) {
+            var options = {
+                data: JSON.stringify({
+                    data: this.toJSON()
+                }),
+                url: '/api/v1/prescriptions/intervals',
+                type: 'PUT',
+                dataType: "jsonp",
+                contentType: 'application/json'
+            };
+
+            return $.ajax(_.extend(options, opts));
         }
     });
 

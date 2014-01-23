@@ -38,17 +38,22 @@ define(function (require) {
         },
 
         initialize: function () {
-            var state = this.getState();
-            if (state) {
-                this.set('stateName',states[state].title);
-                this.set('backgroundColor',states[state].color);
-            }
-
+            this.setState();
+            this.on('change:status change:beginDateTime change:endDateTime', this.setState, this);
 
         },
+        setState: function () {
+            var state = this.getState();
+            if (state) {
+                this.set('stateName', states[state].title);
+                this.set('backgroundColor', states[state].color);
+            }
+        },
+
         delete: function () {
             this.collection.remove(this);
         },
+
         getState: function () {
             var status = this.get('status');
             var state = '';
