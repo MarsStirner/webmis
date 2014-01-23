@@ -259,12 +259,16 @@ class PrescriptionController
         foreach ($assigmentIntervals as $interval) {
             $beginDateTime = round((int) @$interval['beginDateTime']/1000);
             $endDateTime = round((int) @$interval['endDateTime']/1000);
+            $note = @$interval['note'];
 
             $drugChart = new DrugChart();
 
             $drugChart->setBegDateTime($beginDateTime);
             if($endDateTime){
                 $drugChart->setEndDateTime($endDateTime);
+            }
+            if($note){
+                $drugChart->setNote($note); 
             }
 
             $prescription->addDrugChart($drugChart);
@@ -311,6 +315,10 @@ class PrescriptionController
                     if($drugChart->getEndDateTime()){
                         $drugChartCopy->setEndDateTime($drugChart->getEndDateTime());
                     }
+                    if($drugChart->getNote()){
+                        $drugChartCopy->setNote($drugChart->getNote());
+                    }
+
 
                     $prescription->addDrugChart($drugChartCopy);
                 }

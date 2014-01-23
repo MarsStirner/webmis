@@ -70,14 +70,27 @@
             <label>Исполнение</label>
 
             <table id="intervals" class="my-grid"> 
-                <tr><th>Начало</th><th>Окончание</th><th>&nbsp;</th></tr>
+                <thead>
+                <tr>
+                    <th>Начало</th>
+                    <th>Окончание</th>
+                    <th>Примечание</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
                 <tbody>
                 <tr data-each-interval="prescription.assigmentIntervals">
                     <td>
                         <input class="datetime_entry" type="text" data-value="interval.beginDateTime | datetime"> 
-                    </td><td>
+                    </td>
+                    <td>
                         <input class="datetime_entry" type="text" data-value="interval.endDateTime | datetime">
-                    </td><td>
+                    </td>
+                    <td>
+                        <input type="text" data-value="interval.note">
+                    </td>
+
+                    <td>
                         <span data-on-click="interval:delete" class="icon-remove"></span>
                     </td>
                 </tr>
