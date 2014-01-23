@@ -1,0 +1,142 @@
+{
+	"id": 677897,
+	"textResults": [
+		{
+			"id": 3028,
+			"actionId": 677897,
+			"textValue": "Общий комментарий: MRSA! Комментарий Инфекционного Контроля"
+		},
+		{
+			"id": 3029,
+			"actionId": 677897,
+			"textValue": "Aspergillus niger - МО КОММЕНТ"
+		},
+		{
+			"id": 3030,
+			"actionId": 677897,
+			"textValue": "АМОКСИЦИЛЛИН - коммент к аб"
+		}
+	],
+	"organismResults": [
+		{
+			"id": 2063,
+			"organismId": 24,
+			"concentration": "МО КОММЕНТ",
+			"sensValues": [
+				{
+					"id": 5161,
+					"antibiotic": {
+						"id": 11,
+						"code": "AB",
+						"name": "АМФОТЕРИЦИН B"
+					},
+					"mic": "",
+					"activity": "R"
+				},
+				{
+					"id": 5162,
+					"antibiotic": {
+						"id": 2,
+						"code": "FCT",
+						"name": "ФЛЮЦИТОЗИН"
+					},
+					"mic": "",
+					"activity": "S"
+				},
+				{
+					"id": 5163,
+					"antibiotic": {
+						"id": 3,
+						"code": "FLU",
+						"name": "ФЛЮКОНАЗОЛ"
+					},
+					"mic": "",
+					"activity": "R"
+				},
+				{
+					"id": 5164,
+					"antibiotic": {
+						"id": 4,
+						"code": "VOR",
+						"name": "ВОРИКОНАЗОЛ"
+					},
+					"mic": "",
+					"activity": "S"
+				}
+			]
+		},
+		{
+			"id": 2064,
+			"organismId": 4,
+			"concentration": "",
+			"sensValues": [
+				{
+					"id": 5165,
+					"antibiotic": {
+						"id": 5,
+						"code": "AMC",
+						"name": "АМОКСИЛИЛЛИН/КЛАВУЛОНАТ"
+					},
+					"mic": "",
+					"activity": "S"
+				},
+				{
+					"id": 5166,
+					"antibiotic": {
+						"id": 6,
+						"code": "AML",
+						"name": "АМОКСИЦИЛЛИН"
+					},
+					"mic": "",
+					"activity": "R"
+				},
+				{
+					"id": 5167,
+					"antibiotic": {
+						"id": 7,
+						"code": "AZM",
+						"name": "АЗИТРОМИЦИН"
+					},
+					"mic": "",
+					"activity": "S"
+				},
+				{
+					"id": 5168,
+					"antibiotic": {
+						"id": 8,
+						"code": "CIP",
+						"name": "ЦИПРОФЛОКСАЦИН"
+					},
+					"mic": "",
+					"activity": "I"
+				},
+				{
+					"id": 5169,
+					"antibiotic": {
+						"id": 9,
+						"code": "FEP",
+						"name": "ЦЕФЕПИМ"
+					},
+					"mic": "",
+					"activity": "R"
+				},
+				{
+					"id": 5170,
+					"antibiotic": {
+						"id": 10,
+						"code": "TZP",
+						"name": "ПИПЕРАЦЕЛЛИН/ТАЗОБАКТАМ"
+					},
+					"mic": "",
+					"activity": "S"
+				}
+			]
+		},
+		{
+			"id": 2065,
+			"organismId": 3,
+			"concentration": "",
+			"sensValues": []
+		}
+	]
+}

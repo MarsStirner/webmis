@@ -3,9 +3,7 @@
 define(function (require) {
 	var template = require('text!templates/diagnostics/laboratory/laboratory-result.html');
 	var Result = require('models/diagnostics/laboratory/laboratory-diag-form');
-
 	var Biomaterials = require('collections/biomaterials/Biomaterials');
-
 	var BakResult = require('models/diagnostics/laboratory/bak-result');
 
 	require('views/print');
@@ -540,8 +538,19 @@ define(function (require) {
 		render: function () {
 			var self = this;
 			self.getResult(function () {
-				console.log('render LaboratoryResultView', self, self.resultData());
-				self.$el.html(_.template(self.template, self.resultData(), {
+				var resultData = self.resultData();
+
+				if (resultData.mnem && resultData.mnem.toString().toUpperCase() === "BAK_LAB") {
+					var bakResult = new BakResult();
+					bakResult.diagnosticId = self.result.id;
+					bakResult.fetch({
+						success: function () {console.log("BAK SUCCESS", arguments);},
+						error: function () {console.log("BAK ERROR", arguments);}
+					});
+				}
+
+				console.log('render LaboratoryResultView', self, resultData);
+				self.$el.html(_.template(self.template, resultData, {
 					variable: 'data'
 				}));
 
