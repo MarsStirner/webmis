@@ -319,7 +319,7 @@ define(function (require) {
             var state = this.getState();
             var status = this.get('status');
 
-            return state !== 'canceled' && status !== 3;
+            return state !== 'canceled';// && status !== 3;
         },
 
         canBeAddedStop: function () {
