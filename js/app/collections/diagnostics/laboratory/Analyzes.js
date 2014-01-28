@@ -8,7 +8,7 @@ define(function(require) {
 		model: LabTest,
 
 		url: function() {
-			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=LAB";
+			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=LAB&filter[mnem]=BAK_LAB";
 
 			return path;
 		},

@@ -58,7 +58,7 @@ define(function(require) {
 		},
 
 		url: function() {
-			return DATA_PATH + 'dir/actionTypes?filter[mnem]=LAB&filter[code]=' + this.code + '&patientId=' + this.patientId;
+			return DATA_PATH + 'dir/actionTypes?filter[mnem]=LAB&filter[mnem]=BAK_LAB&filter[code]=' + this.code + '&patientId=' + this.patientId;
 		},
 
 		parse: function(raw) {
