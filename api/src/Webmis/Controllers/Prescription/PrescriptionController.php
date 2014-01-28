@@ -31,7 +31,7 @@ class PrescriptionController
     public function typesListAction(Request $request, Application $app)
     {
         $types = ActionTypeQuery::create()
-            ->filterByFlatCode(array('infusion'))
+            ->filterByFlatCode(array('prescription', 'infusion', 'analgesia', 'chemotherapy'))
             ->select(array('id','title')) 
             ->find()->toArray();
 
