@@ -18,8 +18,6 @@ define(function (require) {
         },
         template: '<%= data.title %>',
         clickHandler: function () {
-            console.log('clickHandler', this);
-            
             var popup = new PrescriptionNewView({
                 actionTypeId: this.model.get('id'),
                 appeal: this.options.appeal,
