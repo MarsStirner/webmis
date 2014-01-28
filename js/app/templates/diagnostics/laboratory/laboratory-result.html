@@ -46,12 +46,18 @@
 <div >
     <h3>Антибиотикограмма</h3>
     <%if(data.bak.table){%>
-    <table class="Grid">
+    <table class="Grid allborders">
+        <colgroup><colgroup>
+        <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
+        <colgroup><colgroup>
+        <%})%> 
         <thead>
             <tr>
             <th>Антибиотик</th> 
             <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
-                <th><%=organism.name %></th> 
+            <th><div class="vertical-text"><div class="vertical-text__inner">
+                        <%=organism.name %>
+            </div></div></th> 
             <%})%> 
             </tr>
         </thead>

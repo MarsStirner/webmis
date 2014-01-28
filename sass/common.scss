@@ -305,3 +305,39 @@ button::-moz-focus-inner {
 	font-size:1.4em;
 	text-align:center;
 }
+/*
+   Vertical text
+   by @kizmarh
+*/
+.vertical-text {
+    display: inline-block;
+    overflow: hidden;
+    width: 1.5em;
+}
+.vertical-text__inner {
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 1.5;
+    transform: translate(0,100%) rotate(-90deg);
+    -webkit-transform: translate(0,100%) rotate(-90deg);
+    transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+}
+/* This element stretches the parent to be square
+   by using the mechanics of vertical margins  */
+.vertical-text__inner:after {
+    content: "";
+    display: block;
+    margin: -1.5em 0 100%;
+}
+table.allborders{
+    td, th{
+        border: 1px solid #d9d9d9; 
+    }
+}
+.hover {
+    background-color: #f5f4f4;
+}
+.mouseover{
+    background-color: #d8d8d8!important;
+}

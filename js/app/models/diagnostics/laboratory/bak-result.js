@@ -1,9 +1,9 @@
 define(["models/model-base"], function (ModelBase) {
-    return ModelBase.extend({
-//    return Backbone.Model.extend({
+//    return ModelBase.extend({
+    return Backbone.Model.extend({
         url: function () {
-            return DATA_PATH + "diagnostics/laboratory/bak/" + this.diagnosticId;
-            //return "/bak-results.json";
+            //return DATA_PATH + "diagnostics/laboratory/bak/" + this.diagnosticId;
+            return "/bak-results.json";
         },
         getTable: function () {
             var organisms = this.get('organismResults');

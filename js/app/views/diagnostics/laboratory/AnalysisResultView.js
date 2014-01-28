@@ -22,9 +22,10 @@ define(function (require) {
 
 
             this.result.fetch().then(function () {
+                self.result.set('mnem', 'BAK_LAB')
                 var mnem = self.result.get('mnem');
                 if (mnem && mnem.toString().toUpperCase() === "BAK_LAB") {
-                    self.bakResult.fetch().then(function(){
+                    self.bakResult.fetch().then(function () {
                         self.render2();
                     });
                 } else {
@@ -541,8 +542,8 @@ define(function (require) {
             //alert(JSON.stringify(this.resultData()));
         },
 
-        render: function(){
-            return this; 
+        render: function () {
+            return this;
         },
 
         render2: function () {
@@ -558,6 +559,17 @@ define(function (require) {
             self.$('.actions button').button();
             self.showPrintBtn(self.printOptions());
 
+            this.$el.find("table").delegate('td', 'mouseover mouseleave', function (e) {
+                if (e.type == 'mouseover') {
+                    $(this).addClass("mouseover");
+                    $(this).parent().addClass("hover");
+                    $("colgroup").eq($(this).index()).addClass("hover");
+                } else {
+                    $(this).removeClass("mouseover");
+                    $(this).parent().removeClass("hover");
+                    $("colgroup").eq($(this).index()).removeClass("hover");
+                }
+            });
             return self;
         }
 
