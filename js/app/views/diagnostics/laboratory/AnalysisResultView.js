@@ -559,7 +559,7 @@ define(function (require) {
             self.$('.actions button').button();
             self.showPrintBtn(self.printOptions());
 
-            this.$el.find("table").delegate('td', 'mouseover mouseleave', function (e) {
+            this.$el.find("table.anti").delegate('td', 'mouseover mouseleave', function (e) {
                 if (e.type == 'mouseover') {
                     $(this).addClass("mouseover");
                     $(this).parent().addClass("hover");
