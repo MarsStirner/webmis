@@ -1,18 +1,38 @@
 //страница просмотра результатов лабораторного исследования
 
-define(function(require) {
+define(function (require) {
     var template = require('text!templates/diagnostics/laboratory/laboratory-result.html');
     var Result = require('models/diagnostics/laboratory/laboratory-diag-form');
-
     var Biomaterials = require('collections/biomaterials/Biomaterials');
+    var BakResult = require('models/diagnostics/laboratory/bak-result');
 
     require('views/print');
 
 
     var LaboratoryResultView = Backbone.View.extend({
         template: template,
-        initialize: function() {
+        initialize: function () {
             var self = this;
+            this.result = new Result();
+            this.result.eventId = this.options.appealId;
+            this.result.id = this.options.modelId ? this.options.modelId : this.options.subId[0];
+
+            this.bakResult = new BakResult();
+            this.bakResult.diagnosticId = this.result.id;
+
+
+            this.result.fetch().then(function () {
+                // self.result.set('mnem', 'BAK_LAB')
+                var mnem = self.result.get('mnem');
+                if (mnem && mnem.toString().toUpperCase() === "BAK_LAB") {
+                    self.bakResult.fetch().then(function () {
+                        self.render2();
+                    });
+                } else {
+                    self.render2();
+                }
+            });
+
         },
         events: {
             "click .first": "first",
@@ -24,8 +44,7 @@ define(function(require) {
             "click .all": "openLabs"
         },
 
-
-        printOptions: function() {
+        printOptions: function () {
             var self = this;
 
             return {
@@ -33,31 +52,30 @@ define(function(require) {
                 scope: self,
                 handler: self.printResultOfLaboratory,
                 dropDownItems: [{
-                        label: "Результат исследования",
-                        handler: self.printResultOfLaboratory
-                    }, {
-                        label: "Направление на исследование",
-                        handler: self.printDirectionForLaboratory
-                    }, {
-                        label: "Направление на исследование (без показателей)",
-                        handler: self.printDirectionForLaboratorySimple
-                    }
-                ]
+                    label: "Результат исследования",
+                    handler: self.printResultOfLaboratory
+                }, {
+                    label: "Направление на исследование",
+                    handler: self.printDirectionForLaboratory
+                }, {
+                    label: "Направление на исследование (без показателей)",
+                    handler: self.printDirectionForLaboratorySimple
+                }]
             }
         },
 
-        getJobTicket: function(){
+        getJobTicket: function () {
             var jobTicketId = this.result.getProperty('Время забора');
             var beginDate = moment(this.result.getProperty('plannedEndDate'), 'YYYY-MM-DD HH:mm:ss').valueOf();
             var departmentId = this.options.appeal.get('currentDepartment').id;
 
             var filter = {
-                    departmentId : departmentId,
-                    beginDate : beginDate,
-                    endDate : beginDate + (60*60*24*1000)
-                };
+                departmentId: departmentId,
+                beginDate: beginDate,
+                endDate: beginDate + (60 * 60 * 24 * 1000)
+            };
 
-            if(jobTicketId){
+            if (jobTicketId) {
                 filter.jobTicketId = jobTicketId;
             }
 
@@ -68,33 +86,33 @@ define(function(require) {
             return this.biomaterials.fetch();
         },
 
-        printResultOfLaboratory: function() {
+        printResultOfLaboratory: function () {
             var self = this;
             var result = this.resultData();
 
-            this.getJobTicket().done(function() {
+            this.getJobTicket().done(function () {
                 var biomaterial = self.biomaterials.first();
-                var actions = biomaterial? biomaterial.get('actions') : [];
-                var action = _.find(actions, function(action) {
+                var actions = biomaterial ? biomaterial.get('actions') : [];
+                var action = _.find(actions, function (action) {
                     return action.id === result.id
                 });
-
 
                 var rbTissueTypeName = '';
                 var rbTestTubeTypeNamе = '';
                 var jobTicketDatetime = '';
                 var takenTissueJournal = '';
-                if(action){
-                    if(action.tubeType && action.tubeType.name){
+
+                if (action) {
+                    if (action.tubeType && action.tubeType.name) {
                         rbTestTubeTypeNamе = action.tubeType.name;
                     }
-                    if(action.biomaterial && action.biomaterial.tissueType && action.biomaterial.tissueType.name){
+                    if (action.biomaterial && action.biomaterial.tissueType && action.biomaterial.tissueType.name) {
                         rbTissueTypeName = action.biomaterial.tissueType.name;
                     }
-                    if(action.jobTicket && action.jobTicket.date){
+                    if (action.jobTicket && action.jobTicket.date) {
                         jobTicketDatetime = moment(action.jobTicket.date).format('DD.MM.YYYY HH:mm:ss');
                     }
-                    if(action.takenTissueJournal){
+                    if (action.takenTissueJournal) {
                         takenTissueJournal = action.takenTissueJournal
                     }
                 }
@@ -115,54 +133,49 @@ define(function(require) {
                         patientName: result.patientName,
                         patientSex: result.patientSex,
                         payments: result.payments,
-                        plannedEndDate : plannedEndDate,
+                        plannedEndDate: plannedEndDate,
                         rbTestTubeTypeNamе: rbTestTubeTypeNamе,
                         rbTissueTypeName: rbTissueTypeName,
                         takenTissueJournal: takenTissueJournal,
-                        tests: result.tests,
+                        tests: result.tests
                     },
                     template: "resultOfLaboratory"
                 });
-
             });
-
-
         },
 
-        printDirectionForLaboratory: function() {
+        printDirectionForLaboratory: function () {
             var self = this;
             var result = this.resultData();
 
-            this.getJobTicket().done(function() {
+            this.getJobTicket().done(function () {
                 var biomaterial = self.biomaterials.first();
-                var actions = biomaterial? biomaterial.get('actions') : [];
-                var action = _.find(actions, function(action) {
+                var actions = biomaterial ? biomaterial.get('actions') : [];
+                var action = _.find(actions, function (action) {
                     return action.id === result.id
                 });
-
 
                 var rbTissueTypeName = '';
                 var rbTestTubeTypeNamе = '';
                 var jobTicketDatetime = '';
                 var takenTissueJournal = '';
-                if(action){
-                    if(action.tubeType && action.tubeType.name){
+
+                if (action) {
+                    if (action.tubeType && action.tubeType.name) {
                         rbTestTubeTypeNamе = action.tubeType.name;
                     }
-                    if(action.biomaterial && action.biomaterial.tissueType && action.biomaterial.tissueType.name){
+                    if (action.biomaterial && action.biomaterial.tissueType && action.biomaterial.tissueType.name) {
                         rbTissueTypeName = action.biomaterial.tissueType.name;
                     }
-                    if(action.jobTicket && action.jobTicket.date){
+                    if (action.jobTicket && action.jobTicket.date) {
                         jobTicketDatetime = moment(action.jobTicket.date).format('DD.MM.YYYY HH:mm:ss');
                     }
-                    if(action.takenTissueJournal){
+                    if (action.takenTissueJournal) {
                         takenTissueJournal = action.takenTissueJournal
                     }
                 }
 
                 var plannedEndDate = moment(self.result.getProperty('plannedEndDate'), 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY HH:mm:ss');
-
-
 
                 new App.Views.Print({
                     data: {
@@ -179,45 +192,43 @@ define(function(require) {
                         patientName: result.patientName,
                         patientSex: result.patientSex,
                         payments: result.payments,
-                        plannedEndDate : plannedEndDate,
+                        plannedEndDate: plannedEndDate,
                         rbTestTubeTypeNamе: rbTestTubeTypeNamе,
                         rbTissueTypeName: rbTissueTypeName,
                         takenTissueJournal: takenTissueJournal,
-                        tests: result.tests,
+                        tests: result.tests
                     },
                     template: "directionForLaboratory"
                 });
-
             });
-
         },
 
-        printDirectionForLaboratorySimple: function() {
+        printDirectionForLaboratorySimple: function () {
             var self = this;
             var result = this.resultData();
 
-            this.getJobTicket().done(function() {
+            this.getJobTicket().done(function () {
                 var biomaterial = self.biomaterials.first();
-                var actions = biomaterial? biomaterial.get('actions') : [];
-                var action = _.find(actions, function(action) {
+                var actions = biomaterial ? biomaterial.get('actions') : [];
+                var action = _.find(actions, function (action) {
                     return action.id === result.id
-                })
+                });
 
                 var rbTissueTypeName = '';
                 var rbTestTubeTypeNamе = '';
                 var jobTicketDatetime = '';
                 var takenTissueJournal = '';
-                if(action){
-                    if(action.tubeType && action.tubeType.name){
+                if (action) {
+                    if (action.tubeType && action.tubeType.name) {
                         rbTestTubeTypeNamе = action.tubeType.name;
                     }
-                    if(action.biomaterial && action.biomaterial.tissueType && action.biomaterial.tissueType.name){
+                    if (action.biomaterial && action.biomaterial.tissueType && action.biomaterial.tissueType.name) {
                         rbTissueTypeName = action.biomaterial.tissueType.name;
                     }
-                    if(action.jobTicket && action.jobTicket.date){
+                    if (action.jobTicket && action.jobTicket.date) {
                         jobTicketDatetime = moment(action.jobTicket.date).format('DD.MM.YYYY HH:mm:ss');
                     }
-                    if(action.takenTissueJournal){
+                    if (action.takenTissueJournal) {
                         takenTissueJournal = action.takenTissueJournal
                     }
                 }
@@ -239,27 +250,25 @@ define(function(require) {
                         patientName: result.patientName,
                         patientSex: result.patientSex,
                         payments: result.payments,
-                        plannedEndDate : plannedEndDate,
+                        plannedEndDate: plannedEndDate,
                         rbTestTubeTypeNamе: rbTestTubeTypeNamе,
                         rbTissueTypeName: rbTissueTypeName,
                         takenTissueJournal: takenTissueJournal,
-                        tests: result.tests,
+                        tests: result.tests
                     },
                     template: "directionForLaboratorySimple"
                 });
-
             });
-
         },
 
-        showPrintBtn: function(options) {
+        showPrintBtn: function (options) {
             if (options) {
                 var $printBtnHolder = $("<div/>");
                 var $printBtn = $('<button class="PrintBtn"/>');
 
                 $printBtn.button({
                     label: options.label
-                }).click(function(event) {
+                }).click(function (event) {
                     event.preventDefault();
                     options.handler.apply(options.scope);
                 });
@@ -274,8 +283,8 @@ define(function(require) {
                         '</div>');
                     var $list = $dropDown.find("ul");
 
-                    _(options.dropDownItems).each(function(ddi) {
-                        $list.append($("<li><a href='#' class='SubPrint'>" + ddi.label + "</a></li>").click(function() {
+                    _(options.dropDownItems).each(function (ddi) {
+                        $list.append($("<li><a href='#' class='SubPrint'>" + ddi.label + "</a></li>").click(function () {
                             event.preventDefault();
                             ddi.handler.apply(options.scope);
                         }));
@@ -287,7 +296,7 @@ define(function(require) {
                         icons: {
                             primary: "ui-icon-triangle-1-s"
                         }
-                    }).click(function() {
+                    }).click(function () {
                         $dropDown.position({
                             my: "right top",
                             at: "left bottom",
@@ -297,43 +306,24 @@ define(function(require) {
                         return false;
                     });
 
-
-
                     $printBtnHolder.append($dropDownTrigger).buttonset();
                     $printBtnHolder.after($dropDown);
                 }
 
                 this.$("#print-button").empty().append($printBtnHolder).show();
-
             } else {
 
             }
         },
 
-        openLabs: function() {
+        openLabs: function () {
             this.trigger("change:viewState", {
                 type: "diagnostics-laboratory"
             });
             App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-laboratory/");
 
         },
-        getResult: function(success, error) {
-            var self = this;
-            this.result = new Result();
-            this.result.eventId = this.options.appealId;
-            this.result.id = this.options.modelId ? this.options.modelId : this.options.subId[0];
-
-            return this.result.fetch({
-                success: function(model, response, options) {
-                    success(model, response, options);
-                },
-                error: function() {
-
-                }
-            });
-        },
-
-        printData: function(){
+        printData: function () {
             var self = this;
             // var result = this.resultData();
 
@@ -383,13 +373,13 @@ define(function(require) {
             // }
         },
 
-        resultData: function() {
+        resultData: function () {
             var appeal = this.options.appeal;
 
             var self = this;
             var json = this.result.toJSON();
 
-            json.mkb = this.result.getProperty('Направительный диагноз')||'';
+            json.mkb = this.result.getProperty('Направительный диагноз') || '';
 
             var executorSpecs = this.result.getProperty('doctorSpecs');
             var executorFirstName = this.result.getProperty('doctorFirstName');
@@ -444,72 +434,83 @@ define(function(require) {
                 }
                 return val;
             }
+
             if (this.result.get('group')) {
                 var group_1 = (this.result.get('group'))[1].attribute;
                 json.tests = [];
-                _.each(group_1, function(item) {
+                _.each(group_1, function (item) {
                     if (item.type == 'String') {
-											
+
                         json.tests.push({
                             name: item.name,
                             value: emptyFalse(self.result.getProperty(item.name, 'value')),
                             unit: emptyFalse(self.result.getProperty(item.name, 'unit')),
                             norm: emptyFalse(self.result.getProperty(item.name, 'norm')),
-														normState: self.checkNorm(self.result.getProperty(item.name, 'value'),self.result.getProperty(item.name, 'norm') )
+                            normState: self.checkNorm(self.result.getProperty(item.name, 'value'), self.result.getProperty(item.name, 'norm'))
                         });
 
                     }
                 });
             }
 
+            var mnem = this.result.get('mnem');
+            json.bak = false;
+            if (mnem && mnem.toString().toUpperCase() === "BAK_LAB") {
+                json.bak = this.bakResult.toJSON();
+                json.bak.table = this.bakResult.getTable();
+            }
+
+
             return json;
         },
 
-				checkNorm: function(value, norm){
-						var  normState;
-					//	console.log('checkNorm', value, norm);
-						value = this.parseValue(value);
-						norm =  this.parseNorm(norm);
-		
-						if(!value || !norm[0] || !norm[1]) normState = false;
+        checkNorm: function (value, norm) {
+            var normState;
+            //	console.log('checkNorm', value, norm);
+            value = this.parseValue(value);
+            norm = this.parseNorm(norm);
 
-						if(value >= norm[0] && value <= norm[1])  normState = 'ok';//в норме
+            if (!value || !norm[0] || !norm[1]) normState = false;
 
-						if(value < norm[0])  normState = 'above';//выше нормы
+            if (value >= norm[0] && value <= norm[1]) normState = 'ok'; //в норме
 
-						if(value > norm[1])  normState = 'below';//ниже нормы
+            if (value < norm[0]) normState = 'above'; //выше нормы
 
-						return normState;
-				},
-				
-				parseValue: function(value){
-                    if(!value){ return false;}
-					var num = parseFloat(value.replace(/,/g, '.'));
-					
-					if(isNaN(num)) num = false;
-					
-					return num;
-				},
+            if (value > norm[1]) normState = 'below'; //ниже нормы
 
-				parseNorm: function(norm){
-					var min, max;
-					var minmax = norm.split('-');
-					
-					if(minmax.length < 2){
-						min = max = false;
-					}else{
-						min = this.parseValue(minmax[0]);
-						max = this.parseValue(minmax[1]);
-					}
+            return normState;
+        },
 
-					return [min,max];
-				},
+        parseValue: function (value) {
+            if (!value) {
+                return false;
+            }
+            var num = parseFloat(value.replace(/,/g, '.'));
 
-        navigate: function(id) {
+            if (isNaN(num)) num = false;
+
+            return num;
+        },
+
+        parseNorm: function (norm) {
+            var min, max;
+            var minmax = norm.split('-');
+
+            if (minmax.length < 2) {
+                min = max = false;
+            } else {
+                min = this.parseValue(minmax[0]);
+                max = this.parseValue(minmax[1]);
+            }
+
+            return [min, max];
+        },
+
+        navigate: function (id) {
 
             this.trigger("change:viewState", {
                 type: "diagnostics-laboratory",
-								mode: "SUB_REVIEW",
+                mode: "SUB_REVIEW",
                 options: {
                     modelId: id,
                     force: true
@@ -519,40 +520,56 @@ define(function(require) {
                 trigger: false
             });
         },
-        first: function() {
+        // (ಥ_ಥ)
+        first: function () {
             this.navigate(335108);
         },
-        prev: function(id) {
+        prev: function (id) {
             this.navigate(335110);
         },
-        next: function() {
+        next: function () {
             this.navigate(335111);
         },
-        last: function() {
+        last: function () {
             this.navigate(335112);
         },
-        extra: function() {
+        extra: function () {
             this.$('.extra-info').toggle();
 
         },
-        print: function() {
+        print: function () {
 
             //alert(JSON.stringify(this.resultData()));
         },
 
+        render: function () {
+            return this;
+        },
 
-        render: function() {
+        render2: function () {
             var self = this;
-            self.getResult(function() {
-                 console.log('render LaboratoryResultView', self, self.resultData());
-                self.$el.html(_.template(self.template, self.resultData(), {
-                    variable: 'data'
-                }));
+            var resultData = self.resultData();
 
-                self.$('.actions button').button();
-                self.showPrintBtn(self.printOptions());
+
+            console.log('render LaboratoryResultView', this.bakResult.toJSON(), resultData);
+            self.$el.html(_.template(self.template, resultData, {
+                variable: 'data'
+            }));
+
+            self.$('.actions button').button();
+            self.showPrintBtn(self.printOptions());
+
+            this.$el.find("table.anti").delegate('td', 'mouseover mouseleave', function (e) {
+                if (e.type == 'mouseover') {
+                    $(this).addClass("mouseover");
+                    $(this).parent().addClass("hover");
+                    $("colgroup").eq($(this).index()).addClass("hover");
+                } else {
+                    $(this).removeClass("mouseover");
+                    $(this).parent().removeClass("hover");
+                    $("colgroup").eq($(this).index()).removeClass("hover");
+                }
             });
-
             return self;
         }
 
