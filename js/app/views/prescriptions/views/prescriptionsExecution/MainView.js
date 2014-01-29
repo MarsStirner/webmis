@@ -24,7 +24,9 @@ define(function (require) {
 
             this.filterView = new FilterView({
                 collection: this.collection,
-                model: new Backbone.Model()
+                model: new Backbone.Model({
+                    'groupBy': 'moa' 
+                })
             });
 
 

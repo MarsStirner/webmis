@@ -52,7 +52,7 @@ define(function (require) {
 
             intervals.execute({
                 success: function () {
-                    pubsub.trigger('intervals:executed', notExecutedIntervals);
+                    pubsub.trigger('intervals:executed', intervals);
                 },
                 error: function () {
                     console.log('error');

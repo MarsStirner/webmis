@@ -67,8 +67,8 @@ define(function (require) {
             var data = {};
 
             data.groups = this.collection.groupBy(function (model) {
-                return model.get('moa');
-            });
+                return model.get(this.collection._filter.groupBy);
+            }, this);
             
             console.log('data', data);
             return data;
