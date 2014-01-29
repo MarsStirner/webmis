@@ -22,7 +22,7 @@ define(function (require) {
 
 
             this.result.fetch().then(function () {
-                self.result.set('mnem', 'BAK_LAB')
+                // self.result.set('mnem', 'BAK_LAB')
                 var mnem = self.result.get('mnem');
                 if (mnem && mnem.toString().toUpperCase() === "BAK_LAB") {
                     self.bakResult.fetch().then(function () {
