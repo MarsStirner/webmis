@@ -16,6 +16,9 @@
 			<th>
 				<a class="Actions SortCol" data-field="cito"><span>Cito</span></a>
 			</th>
+            <th>
+                <span>Лаборатория</span> 
+            </th>
 			<th>
 				<a class="Actions SortCol" data-field="assignPerson"><span>Направивший врач</span></a>
 			</th>
@@ -61,6 +64,9 @@
 			<span class="Privilege">Срочно</span>
 		{{/if}}
 	</td>
+    <td>
+        ${laboratoryTitle} 
+    </td>
 
 	<td>
 		{{if assignPerson && assignPerson.name && assignPerson.name.raw}}
