@@ -72,7 +72,7 @@ define(function (require) {
                     pubsub.trigger('intervals:executed', notExecutedIntervals);
                 },
                 error: function () {
-                    console.log('error');
+                    // console.log('error');
                 }
             });
 

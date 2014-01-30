@@ -28,23 +28,23 @@ define(function (require) {
             this.$el.html('Загружаем...');
         },
 
-        closeChilds: function(){
-			_.invoke(this.childs, 'tearDown');
+        closeChilds: function () {
+            _.invoke(this.childs, 'tearDown');
         },
 
-		tearDown: function() {
+        tearDown: function () {
             this.closeChilds();
             BaseView.prototype.tearDown.call(this);
         },
 
-        renderChilds: function(){
+        renderChilds: function () {
             this.closeChilds();
 
             var data = this.data();
             var groups = data.groups;
             var $groupsEl = this.$el.find('.groups');
-            
-            _.each(groups, function(group, groupName){
+
+            _.each(groups, function (group, groupName) {
                 var groupView = new GroupView({
                     group: group,
                     groupName: groupName,
@@ -54,11 +54,11 @@ define(function (require) {
                 $groupsEl.append(groupView.render().el);
 
             }, this);
-        
+
         },
 
-        render: function(){
-            BaseView.prototype.render.call(this); 
+        render: function () {
+            BaseView.prototype.render.call(this);
             this.renderChilds();
             return this;
         },
@@ -69,8 +69,8 @@ define(function (require) {
             data.groups = this.collection.groupBy(function (model) {
                 return model.get(this.collection._filter.groupBy);
             }, this);
-            
-            console.log('data', data);
+
+            // console.log('data', data);
             return data;
         }
     });

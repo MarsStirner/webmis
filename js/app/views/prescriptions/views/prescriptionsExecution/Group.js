@@ -47,7 +47,7 @@ define(function(require){
         data: function(){
             var data = {};
             data.groupName = this.options.groupName;
-            console.log('group data', data); 
+            // console.log('group data', data); 
             return data;
         }
     });

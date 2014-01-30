@@ -101,10 +101,10 @@ define(function (require) {
             var filter = this.model.toJSON();
             this.collection._filter = filter;
 
-            if(options && options.changes && (_.keys(options.changes)).length === 1 && options.changes.groupBy){
-                console.log('filter', options.changes);
+            if (options && options.changes && (_.keys(options.changes)).length === 1 && options.changes.groupBy) {
+                // console.log('filter', options.changes);
                 this.rerender();
-            }else{
+            } else {
                 if (_.isObject(this.lastXHR)) {
                     // прерываем предыдущий запрос если он не успел выполнится
                     if (this.lastXHR && this.lastXHR.readyState != 4) {
@@ -117,7 +117,7 @@ define(function (require) {
 
         },
 
-        rerender: function(){
+        rerender: function () {
             var filter = this.model.toJSON();
 
             this.collection._filter = filter;
@@ -133,7 +133,7 @@ define(function (require) {
             var $groupBy = this.$el.find('#groupBy');
             $groupBy.select2();
 
-            this.listenTo(this.model,'change:groupBy', function(){
+            this.listenTo(this.model, 'change:groupBy', function () {
                 $groupBy.trigger('change');
             });
 

@@ -289,9 +289,9 @@ define(function (require) {
                 }
             }
 
-            if (errors.length) {
+            // if (errors.length) {
                 return errors;
-            }
+            // }
         },
 
         canBeCanceled: function () {

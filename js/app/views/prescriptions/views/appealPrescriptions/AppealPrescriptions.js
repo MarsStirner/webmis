@@ -19,7 +19,7 @@ define(function (require) {
         template: template,
         initialize: function () {
 
-            console.log('init appeal prescriptions', this);
+            // console.log('init appeal prescriptions', this);
             var self = this;
 
             this.collection = new Prescriptions();
@@ -37,7 +37,7 @@ define(function (require) {
             pubsub.on('prescription:saved', this.fetchCollection, this);
         },
 
-        fetchCollection: function(){
+        fetchCollection: function () {
             this.collection.fetch({
                 data: {
                     eventId: this.options.appealId
@@ -92,7 +92,7 @@ define(function (require) {
 
         openPrescriptionEdit: function (prescriptionId) {
             var prescription = this.collection.get(prescriptionId);
-            console.log('open prescription edit', prescription);
+            // console.log('open prescription edit', prescription);
             // var pep = new PrescriptionEdit({
             //     prescription: prescription
             // });
@@ -138,9 +138,9 @@ define(function (require) {
                             day: 'dddd, d MMM, yyyy'
                         },
                         columnFormat: {
-                            month: 'ddd',    // Mon
+                            month: 'ddd', // Mon
                             week: 'ddd d.M.yyyy', // Mon 9/7
-                            day: 'dddd d.M.yyyy'  // Monday 9/7
+                            day: 'dddd d.M.yyyy' // Monday 9/7
 
                         },
                         axisFormat: 'HH:mm',
@@ -163,7 +163,7 @@ define(function (require) {
                             day: 'день'
                         },
                         eventClick: function (event, jsEvent, view) {
-                           self.openPrescriptionEdit(event.id);
+                            self.openPrescriptionEdit(event.id);
                         },
                         firstDay: 1,
                         slotMinutes: 30,

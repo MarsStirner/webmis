@@ -28,12 +28,13 @@ define(function (require) {
                 intervals: this.collection
             });
 
-            this.collection.on('add remove', function () {
+            this.listenTo(this.collection, 'add remove', function () {
                 this.form.set('hideAddPause', this.hideAddPauseButtonPredicat());
-            }, this);
+            });
 
             this.collection.add(this.model);
-            this.collection.on('change add remove reset', this.validateForm, this);
+            this.listenTo(this.collection, 'change add remove reset', this.validateForm);
+            // console.log('init interval edit', this);
         },
 
         hideAddPauseButtonPredicat: function () {
@@ -87,15 +88,18 @@ define(function (require) {
             if (this.collection.length < 2) {
                 return;
             }
-
-            var pause = this.collection.find(function (model) {
-                return model.get('status') === 3;
-            });
+            var pause = this.getPause();
 
             var pauseStart = moment(pause.get('beginDateTime'));
             var pauseEnd = moment(pause.get('endDateTime'));
             var intervalStart = moment(interval.get('beginDateTime'));
             var intervalEnd = moment(interval.get('endDateTime'));
+            // console.log('diff', pauseStart.diff(intervalStart, 'minutes'),  intervalEnd.diff(pauseEnd,'minutes'));
+
+            if (pauseStart.diff(intervalStart, 'minutes') < 3) {
+                pause.set('beginDateTime', interval.get('beginDateTime'));
+                pauseStart = moment(pause.get('beginDateTime'));
+            }
 
             if (pauseStart.isSame(intervalStart)) {
                 interval.set('beginDateTime', pause.get('endDateTime'));
@@ -129,7 +133,7 @@ define(function (require) {
             var actionId = this.model.get('actionId');
             var masterId = this.model.get('masterId');
             var beginDateTime = this.model.get('beginDateTime');
-            var endDateTime = moment(beginDateTime).add('minutes', 1).valueOf();
+            var endDateTime = moment(beginDateTime).add('minutes', 5).valueOf();
 
             pause.set('actionId', actionId);
             pause.set('status', 3);
@@ -141,6 +145,14 @@ define(function (require) {
             // console.log('addPause', pause.toJSON(), this.collection.toJSON());
         },
 
+        getPause: function () {
+            var pause = this.collection.find(function (model) {
+                return model.get('status') === 3;
+            });
+
+            return pause;
+        },
+
         validateForm: function () {
             var errors = this.isValid();
             this.saveButton(!errors.length);
@@ -149,7 +161,7 @@ define(function (require) {
 
         showErrors: function (errors) {
             this.ui.$errors.html('').hide();
-            console.log('errors', errors)
+            // console.log('errors', errors)
             if (errors) {
                 _.each(errors, function (error) {
                     this.ui.$errors.append(error);
@@ -161,9 +173,35 @@ define(function (require) {
 
         isValid: function () {
             var errors = [];
-            intervalsErrors = this.collection.validateCollection();
-            if (intervalsErrors && intervalsErrors.length) {
-                errors = errors.concat(intervalsErrors);
+            var pause = this.getPause();
+            if (pause) {
+                var intervalStart = this.model.get('beginDateTime');
+                var intervalEnd = this.model.get('endDateTime');
+                var pauseStart = pause.get('beginDateTime');
+                var pauseEnd = pause.get('endDateTime');
+                var pauseErrors = pause.validateModel();
+
+                if (!pauseEnd) {
+                    pauseErrors.push('Не указано окончание интервала.');
+                }
+
+                if (pauseStart && pauseEnd && intervalEnd && intervalStart) {
+                    var pauseRange = moment(pauseStart).twix(pauseEnd);
+                    var intervalRange = moment(intervalStart).twix(intervalEnd);
+                    if (pauseStart < intervalStart) {
+                        pauseErrors.push('Начало паузы раньше начала интервала.');
+                    }
+
+                    if (pauseEnd > intervalEnd) {
+                        pauseErrors.push('Окончание паузы позже окончания интервала.');
+                    }
+
+                    if (intervalRange.equals(pauseRange)) {
+                        pauseErrors.push('Пауза равна интервалу');
+                    }
+                }
+
+                errors = errors.concat(pauseErrors);
             }
 
             return errors;
@@ -224,9 +262,9 @@ define(function (require) {
                 el.style['background-color'] = value;
             };
 
-            this.collection.on('add remove', function () {
+            this.listenTo(this.collection, 'add remove', function () {
                 setTimeout(this.initDateMask, 100);
-            }, this);
+            });
 
 
 
