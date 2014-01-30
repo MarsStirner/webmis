@@ -81,6 +81,57 @@ class ActionProperty extends BaseActionProperty
         return $this->aActionPropertyDate;
     }
 
+    public function updateValue($value)
+    {
+        if(!$value){
+            return $this;
+        }
+
+        $actionPropertyId = $this->getId();
+        $actionPropertyType = $this->getActionPropertyType();
+        $actionPropertyTypeId = $actionPropertyType->getId();
+        $typeName = $actionPropertyType->getTypeName();
+
+        switch ($typeName) {
+            case 'String':
+            case 'Html':
+            case 'Text':
+                $actionPropertyString = $this->getActionPropertyString();
+                $actionPropertyString->fromArray(array(
+                    'value' => $value
+                    ));
+
+                $this->setActionPropertyString($actionPropertyString);
+
+                break;
+            case 'Double':
+                $actionPropertyDouble = $this->getActionPropertyDouble();
+                $actionPropertyDouble->fromArray(array(
+                    'value' => $value
+                    ));
+
+                $this->setActionPropertyDouble($actionPropertyDouble);
+
+                break;
+
+            case 'ReferenceRb':
+                $actionPropertyInteger = $this->getActionPropertyInteger();
+                $actionPropertyInteger->fromArray(array(
+                    'value' => $value
+                    ));
+
+                $this->setActionPropertyInteger($actionPropertyInteger);
+
+                break;
+            default:
+                # code...
+                break;
+        }
+
+
+        return $this;
+    }
+
 
     public function setValue($value)
     {

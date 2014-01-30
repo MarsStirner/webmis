@@ -31,20 +31,21 @@
                     <button class="add-drug" style="float:right;">Добавить препарат</button>
                 </div>
             </div>
-            
+
             <div class="row-fluid" style="margin-bottom:1em;">
                 <div class="span12">
                     <label for="moa">
                         Способ введения
                     </label><br />
                     <select id="moa" name="moa" style="width:250px;margin-bottom:1em;" data-value="prescription.moa">
+                        <option value="">...</option>
                         <%_.each(data.administration, function(opt){%>
                         <option value="<%=opt.id%>"><%=opt.name%></option>
                         <%})%>
                     </select>
                 </div>
             </div>
-            
+
             <div class="row-fluid">
                 <div class="span12">
                     <label for="voa">
@@ -53,7 +54,7 @@
                     <input name="voa" id="voa" type="text" style="width: auto;" data-value="prescription.voa">мл/ч
                 </div>
             </div>
-            
+
             <div class="row-fluid">
                 <div class="span12">
                     <label for="note">
@@ -69,15 +70,25 @@
             <label>Исполнение</label>
 
             <table id="intervals" class="my-grid"> 
-                <tr><th>Начало</th><th>Окончание</th><th></th>&nbsp;</th>
+                <tr><th>Начало</th>
+                    <th>Окончание</th>
+                    <th>Примечание</th>
+                    <th>&nbsp;</th>
+                </tr>
                 <tbody>
                 <tr data-each-interval="prescription.assigmentIntervals">
                     <td>
                         <input class="datetime_entry" type="text" data-value="interval.beginDateTime | datetime"> 
                     </td><td>
                         <input class="datetime_entry" type="text" data-value="interval.endDateTime | datetime">
-                    </td><td>
-                        <span data-on-click="interval:delete" class="icon-remove"></span>
+                    </td>
+                    <td>
+                        <input type="text" data-value="interval.note">
+                    </td>
+
+
+                    <td>
+                        <span data-show="interval:isNew" data-on-click="interval:delete" class="icon-remove"></span>
                     </td>
                 </tr>
                 </tbody>

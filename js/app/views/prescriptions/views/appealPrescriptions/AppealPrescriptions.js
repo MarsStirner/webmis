@@ -91,13 +91,15 @@ define(function (require) {
         },
 
         openPrescriptionEdit: function (prescriptionId) {
+            console.log('open', this);
             var prescription = this.collection.get(prescriptionId);
             // console.log('open prescription edit', prescription);
-            // var pep = new PrescriptionEdit({
-            //     prescription: prescription
-            // });
-            // pep.render();
-            // pep.open();
+            var pep = new PrescriptionEdit({
+                prescription: prescription,
+                appeal: this.options.appeal
+            });
+            pep.render();
+            pep.open();
 
         },
 
