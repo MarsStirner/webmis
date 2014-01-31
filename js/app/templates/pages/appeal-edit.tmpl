@@ -161,11 +161,16 @@
 										{{/each}}
 									</select>
 								</div>
-								<div class="SemiCol">
+								<div class="HalfCol" >
 									<span class="Label">Тип события</span>
-									<input type="text" class="Disabled Mandatory NotEditable" data-tooltip-text="Тип события недоступен" name="event_type[name]" disabled="disabled" value="${appealType.eventType.name}">
-									<input type="hidden" name="event_type[id]" value="${appealType.eventType.id}">
+                                    <select id="event_type" name="event_type[id]"></select>
+                                    <span></span>
 								</div>
+								<div class="HalfCol">
+									<span class="Label">Договор</span>
+                                    <select name="contract"></select>
+								</div>
+
 							</div>
 						</li>
 						<li>

@@ -1,5 +1,6 @@
 define([
     "text!templates/pages/representative-item.tmpl",
+    "collections/contracts",
     "views/widget",
     "permissions",
     "views/CardNav",
@@ -14,7 +15,7 @@ define([
     "views/mkb-directory",
     "views/pages/appeal-representative",
     "views/appeals-history"
-], function (representativeTmpl, Widget, userPermissions, CardNav) {
+], function (representativeTmpl,Contracts, Widget, userPermissions, CardNav) {
 
     var mkbDirView;
 
@@ -97,9 +98,9 @@ define([
                         name: "relationTypes",
                         pathPart: "relationships"
                     }, {
-												name: "departments",
-												collection: App.Collections.Departments
-										}
+                        name: "departments",
+                        collection: App.Collections.Departments
+                    }
                 ];
 
                 this.initWithDictionaries(appealDicts, this.ready, this, true);
@@ -116,6 +117,7 @@ define([
                 });
             }, this);
 
+            this.contracts = new Contracts();
             /*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
 			 this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);*/
         },
@@ -267,8 +269,30 @@ define([
                 .toggleClass("Disabled", !Boolean(enable));
         },
 
+        getContracts: function(){
+            var self = this;
+            var eventType = this.model.get("appealType").get("eventType");
+            this.contracts.eventTypeId = eventType.get('id');
+            this.$("[name='contract']").html('');
+            if(this.contracts.eventTypeId){
+                this.contracts.fetch().done(function(){
+                    self.showContracts();
+                });
+            }
+        },
+
+        showContracts: function(){
+            console.log('contracts', this.contracts.toJSON()); 
+            // this.$("[name='contract']").html().a
+            this.$("[name='contract']").html('').append(this.contracts.map(function (contract) {
+                return $("<option value='" + contract.get("id") + "'>" + contract.get("number") + "</option>");
+            })).prop("disabled", this.contracts.length === 1);
+
+
+        },
+
         ready: function (dicts) {
-					console.log(dicts.departments);
+            console.log(dicts.departments);
             var view = this;
 
             var result = this.model.toJSON();
@@ -277,7 +301,7 @@ define([
             result.dicts = dicts;
             result.isNew = this.model.isNew();
 
-            console.log("data", result, this.model);
+            console.log("appeal-edit data", result, this.model);
 
             result.dicts.requestTypes = _(result.dicts.requestTypes)
                 .filter(function (rType) {
@@ -381,7 +405,7 @@ define([
 
             this.model.get("hospitalizationWith")
                 .on("add remove", function () {
-                    console.log(this.$(".AddRepresentative"));
+                    // console.log(this.$(".AddRepresentative"));
                     this.$(".AddRepresentative")
                         .toggle(!Boolean(this.model.get("hospitalizationWith")
                             .length));
@@ -431,50 +455,35 @@ define([
             this.eventTypes._params = {};
 
             this.eventTypes.on("reset", function () {
-                this.$("[name='event_type[id]'],[name='event_type[name]']")
-                    .val("")
-                    .change();
+                this.$("[name='event_type[id]'],[name='event_type[name]']").val("").change();
                 this.errorToolTip.hide();
 
+                this.$("[name='event_type[id]']").html('');
+
                 if (this.eventTypes.length) {
-                    this.$("[name='event_type[id]']")
-                        .val(this.eventTypes.first()
-                            .get("id")
-                            .toString())
-                        .change();
-                    this.$("[name='event_type[name]']")
-                        .val(this.eventTypes.first()
-                            .get("value")
-                            .toString());
-                    /*.append(this.eventTypes.map(function (eventType) {
-					 return $("<option value='" + eventType.get("id") + "'>" + eventType.get("value") + "</option>");
-					 }))*/
-                    //.prop("disabled", this.eventTypes.length === 1);
+                    // this.$("[name='event_type[id]']").val(this.eventTypes.first().get("id").toString()).change();
+                    // this.$("[name='event_type[name]']").val(this.eventTypes.first().get("value").toString());
+
+                    this.$("[name='event_type[id]']").append(this.eventTypes.map(function (eventType) {
+                        return $("<option value='" + eventType.get("id") + "'>" + eventType.get("value") + "</option>");
+                    })).prop("disabled", this.eventTypes.length === 1);
+
                 } else {
-                    this.errorToolTip.showAt(this.$("[name='event_type[name]']")
-                        .get(0));
+                    // this.errorToolTip.showAt(this.$("#event_type"));
                 }
-                //UI.CustomSelect(this.$("[name='event_type[id]']"));
+
             }, this);
 
             var onAppealTypeChange = function () {
-                var requestTypeId = view.model.get("appealType")
-                    .get("requestType")
-                    .get("id");
-                var financeId = view.model.get("appealType")
-                    .get("finance")
-                    .get("id");
+                var requestTypeId = view.model.get("appealType").get("requestType").get("id");
+                var financeId = view.model.get("appealType").get("finance").get("id");
 
                 if (requestTypeId && financeId) {
                     console.log(requestTypeId, financeId);
                     view.eventTypes.setParams({
                         filter: {
-                            requestType: view.model.get("appealType")
-                                .get("requestType")
-                                .get("id"),
-                            finance: view.model.get("appealType")
-                                .get("finance")
-                                .get("id")
+                            requestType: view.model.get("appealType").get("requestType").get("id"),
+                            finance: view.model.get("appealType").get("finance").get("id")
                         }
                     });
 
@@ -491,6 +500,10 @@ define([
             this.model.get("appealType")
                 .get("finance")
                 .on("change", onAppealTypeChange, this);
+            this.model.get("appealType").get("eventType").on("change", function(){
+                console.log('change eventType'); 
+                this.getContracts();
+            }, this);
 
             this.model.get("rangeAppealDateTime")
                 .connect("start", "appeal[date][start]", this.$el);
@@ -585,11 +598,11 @@ define([
 
             this.model.connect("injury", "injury", this.$el);
 
-						//Приемное отделение по умолчанию
-						if (!this.model.get("orgStructStay")) this.model.set("orgStructStay", 28);
-						this.model.connect("orgStructStay", "org_struct_stay", this.$el);
+            //Приемное отделение по умолчанию
+            if (!this.model.get("orgStructStay")) this.model.set("orgStructStay", 28);
+            this.model.connect("orgStructStay", "org_struct_stay", this.$el);
 
-						this.model.connect("orgStructDirectedFrom", "org_struct_directed_from", this.$el);
+            this.model.connect("orgStructDirectedFrom", "org_struct_directed_from", this.$el);
 
             // Ограничение ввода для полей формата Double
             this.$('.RestrictFloat')
