@@ -273,6 +273,7 @@ define([
             var self = this;
             var eventType = this.model.get("appealType").get("eventType");
             this.contracts.eventTypeId = eventType.get('id');
+            console.log('getContracts', eventType, this.contracts);
             this.$("[name='contract']").html('');
             if(this.contracts.eventTypeId){
                 this.contracts.fetch().done(function(){
@@ -292,7 +293,6 @@ define([
         },
 
         ready: function (dicts) {
-            console.log(dicts.departments);
             var view = this;
 
             var result = this.model.toJSON();
@@ -310,12 +310,11 @@ define([
 
             //console.log("MODEL", dicts);
 
-            this.$el.html($("#appeal-edit-common")
-                .tmpl(result));
+            this.$el.html($("#appeal-edit-common").tmpl(result));
 
-            view.model.on("change:appealWithDeseaseThisYear", function () {
-                console.log("change:appealWithDeseaseThisYear", view.model.get("appealWithDeseaseThisYear"));
-            }, view);
+            // view.model.on("change:appealWithDeseaseThisYear", function () {
+            //     console.log("change:appealWithDeseaseThisYear", view.model.get("appealWithDeseaseThisYear"));
+            // }, view);
 
             /*var Appeals = new App.Collections.PatientAppeals;
 			 Appeals.patient = this.model.get("patient");
@@ -336,21 +335,15 @@ define([
                     appeals: patientAppeals
                 });
                 view.depended(History);
-                view.$el.find(".History")
-                    .html(History.render()
-                        .el);
+                view.$el.find(".History").html(History.render().el);
 
                 if (view.model.isNew()) {
                     view.toggleInputs(true);
-                    view.$(".Save")
-                        .removeAttr("disabled");
+                    view.$(".Save").removeAttr("disabled");
 
                     if (patientAppeals.length > 0) {
                         var thisYearAppeal = patientAppeals.find(function (appeal) {
-                            return ((new Date(appeal.get("rangeAppealDateTime")
-                                    .get("start")))
-                                .getYear() == (new Date())
-                                .getYear());
+                            return ((new Date(appeal.get("rangeAppealDateTime").get("start"))).getYear() == (new Date()).getYear());
                         });
 
                         if (thisYearAppeal) {
@@ -360,9 +353,7 @@ define([
                 } else {
                     var isClosed = patientAppeals.find(function (a) {
                         return a.get("id") === view.model.get("id");
-                    })
-                        .get("rangeAppealDateTime")
-                        .get("end");
+                    }).get("rangeAppealDateTime").get("end");
 
                     if (!isClosed) {
                         view.toggleInputs(true);
@@ -373,9 +364,7 @@ define([
             patientAppeals.fetch();
 
             var Breadcrumbs = new App.Views.Breadcrumbs;
-            this.$("#page-head")
-                .append(Breadcrumbs.render()
-                    .el);
+            this.$("#page-head").append(Breadcrumbs.render().el);
 
             var onBreadcrumbsReady = function () {
                 if (view.model.isNew()) {
@@ -406,15 +395,14 @@ define([
             this.model.get("hospitalizationWith")
                 .on("add remove", function () {
                     // console.log(this.$(".AddRepresentative"));
-                    this.$(".AddRepresentative")
-                        .toggle(!Boolean(this.model.get("hospitalizationWith")
-                            .length));
+                    this.$(".AddRepresentative").toggle(!Boolean(this.model.get("hospitalizationWith").length));
                 }, view);
 
             var representativeList = new RepresentativeList({
                 collection: this.model.get("hospitalizationWith"),
                 relationTypes: dicts.relationTypes
             });
+
             representativeList.on("representative:edit", this.onEditRepresentativeClick, this);
             representativeList.render();
 
@@ -455,12 +443,14 @@ define([
             this.eventTypes._params = {};
 
             this.eventTypes.on("reset", function () {
-                this.$("[name='event_type[id]'],[name='event_type[name]']").val("").change();
+                // this.$("[name='event_type[id]'],[name='event_type[name]']").val("").change();
                 this.errorToolTip.hide();
 
                 this.$("[name='event_type[id]']").html('');
 
                 if (this.eventTypes.length) {
+                    this.model.get("appealType").get("eventType").set(this.eventTypes.first()); 
+
                     // this.$("[name='event_type[id]']").val(this.eventTypes.first().get("id").toString()).change();
                     // this.$("[name='event_type[name]']").val(this.eventTypes.first().get("value").toString());
 
@@ -469,6 +459,11 @@ define([
                     })).prop("disabled", this.eventTypes.length === 1);
 
                 } else {
+
+                    this.model.get("appealType").get("eventType").set({
+                        id: '',
+                        name: ''
+                    }); 
                     // this.errorToolTip.showAt(this.$("#event_type"));
                 }
 
