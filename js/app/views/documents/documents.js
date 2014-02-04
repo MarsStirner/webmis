@@ -2857,13 +2857,24 @@ define(function (require) {
 		},
 
 		onFieldToggleChange: function (event) {
-			this.toggleField($(event.currentTarget).is(":checked"));
+            var checked = this.$(event.currentTarget).is(":checked");
+            this.focusField(checked);
+			this.toggleField(checked);
 		},
 
 		onModelCopy: function () {
 			this.setAttributeValue();
 			this.updateFieldCollapse();
 		},
+
+        focusField: function(focused){
+            if(focused){
+                var $input = this.$(".field input, .field .RichText, .field textarea, .field select");
+                setTimeout(function(){
+                    $input.focus();
+                }, 10);
+            } 
+        },
 
 		toggleField: function (visible) {
 			this.$(".field").toggle(visible);
