@@ -14,7 +14,7 @@ P     H     I     N     G
   XSLT transformation, Smarty template transformations),
   file system operations, interactive build support, SQL execution,
   CVS/SVN/GIT operations, tools for creating PEAR packages, documentation
-  generation (DocBlox, PhpDocumentor) and much, much more. 
+  generation (DocBlox, PhpDocumentor) and much, much more.
 
   If you find yourself writing custom scripts to handle the packaging,
   deploying, or testing of your applications, then we suggest looking at Phing.
@@ -28,7 +28,7 @@ P     H     I     N     G
   * Easily extendable via PHP classes
   * Platform-independent: works on UNIX, Windows, Mac OSX
   * No required external dependencies
-  * Built for PHP5 
+  * Built for PHP5
 
 The Latest Version
 ------------------
@@ -42,7 +42,7 @@ Installation
   The preferred method to install Phing is through PEAR and the Phing PEAR
   channel. You can install Phing by adding the pear.phing.info channel
   to your PEAR environment and then installing Phing using the *phing*
-  channel alias and *phing* package name: 
+  channel alias and *phing* package name:
 
     $> pear channel-discover pear.phing.info
     $> pear install [--alldeps] phing/phing
@@ -50,9 +50,10 @@ Installation
 Documentation
 -------------
 
-  Documentation is available in HTML format in the *docs* directory. In particular,
-  open the *docs/phing_guide/book/index.html* in a browser to see the
-  Phing User Guide.
+  Documentation is available in various formats in the *docs/docbook5/en/output*
+  directory (generated from DocBook sources located in *docs/docbook5/en/source*).
+
+  Additionally, the legacy user guide can be found in *docs/phing_guide*.
 
   For online documentation, you can also visit the Phing website: http://www.phing.info/
 
@@ -63,3 +64,24 @@ Licensing
   named "LICENSE" in this directory.
 
   Thank you for using PHING!
+
+Contact
+-------
+
+  * Twitter: [@phingofficial](http://twitter.com/phingofficial)
+  * Website: [http://www.phing.info](http://www.phing.info)
+  * IRC:     Freenode, #phing
+  * GitHub:  [https://www.github.com/phingofficial/phing](https://www.github.com/phingofficial/phing)
+  * E-mail:  [dev-subscribe@phing.tigris.org](mailto:dev-subscribe@phing.tigris.org) (mailing list)
+
+PhpStorm License
+----------------
+
+  If you are contributing code to the Phing project and want to use PhpStorm for
+  development feel free to ask Ben (bschultz.bb@gmail.com) for our Open Source License.
+
+  Proud to use:
+
+  [![PhpStorm Logo](http://www.jetbrains.com/phpstorm/documentation/phpstorm_banners/phpstorm1/phpstorm468x60_violet.gif "Proud to use")](http://www.jetbrains.com/phpstorm)
+
+  Intelligent PHP IDE for coding, testing and debugging with pleasure

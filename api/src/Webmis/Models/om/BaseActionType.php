@@ -3820,6 +3820,81 @@ abstract class BaseActionType extends BaseObject implements Persistent
         return $this->getActions($query, $con);
     }
 
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this ActionType is new, it will return
+     * an empty collection; or if this ActionType has previously
+     * been saved, it will retrieve related Actions from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in ActionType.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Action[] List of Action objects
+     */
+    public function getActionsJoinCreatePerson($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActionQuery::create(null, $criteria);
+        $query->joinWith('CreatePerson', $join_behavior);
+
+        return $this->getActions($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this ActionType is new, it will return
+     * an empty collection; or if this ActionType has previously
+     * been saved, it will retrieve related Actions from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in ActionType.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Action[] List of Action objects
+     */
+    public function getActionsJoinModifyPerson($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActionQuery::create(null, $criteria);
+        $query->joinWith('ModifyPerson', $join_behavior);
+
+        return $this->getActions($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this ActionType is new, it will return
+     * an empty collection; or if this ActionType has previously
+     * been saved, it will retrieve related Actions from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in ActionType.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Action[] List of Action objects
+     */
+    public function getActionsJoinSetPerson($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActionQuery::create(null, $criteria);
+        $query->joinWith('SetPerson', $join_behavior);
+
+        return $this->getActions($query, $con);
+    }
+
     /**
      * Clears out the collActionPropertyTypesRelatedByactionTypeId collection
      *

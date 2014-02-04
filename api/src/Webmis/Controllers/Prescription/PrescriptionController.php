@@ -13,10 +13,12 @@ use Webmis\Models\ActionPropertyDouble;
 use Webmis\Models\ActionPropertyString;
 use Webmis\Models\ActionPropertyTypeQuery;
 use Webmis\Models\ActionQuery;
+use Webmis\Models\ActionTypeQuery;
 use Webmis\Models\DrugChart;
 use Webmis\Models\DrugChartQuery;
 use Webmis\Models\DrugComponent;
 use Webmis\Models\DrugComponentQuery;
+use \PropelObjectCollection;
 
 class PrescriptionController
 {
@@ -24,6 +26,16 @@ class PrescriptionController
     public function noAction(Request $request, Application $app)
     {
         return $app['jsonp']->jsonp(array('message' => 'тут ничего нет, иди домой' ));
+    }
+
+    public function typesListAction(Request $request, Application $app)
+    {
+        $types = ActionTypeQuery::create()
+            ->filterByFlatCode(array('prescription', 'infusion', 'analgesia', 'chemotherapy'))
+            ->select(array('id','title')) 
+            ->find()->toArray();
+
+        return $app['jsonp']->jsonp(array('data' => $types));
     }
 
 
@@ -34,10 +46,11 @@ class PrescriptionController
         $data = array(
             'actionTypeId' => $actionTypeId,
             'eventId' => null,
+            'note' => '',
             'properties' => array(),
             'drugs' => array(),
             'assigmentIntervals' => array()
-            );
+        );
 
         if(!$actionTypeId){
             return $app['jsonp']->jsonp(array('message' => 'id for ActionPropertyType?' ));
@@ -58,7 +71,7 @@ class PrescriptionController
                 'valueDomain' => $actionPropertyType->getValueDomain(),
                 'type' => $actionPropertyType->getTypeName(),
                 'code' => $actionPropertyType->getCode(),
-                );
+            );
 
         }
 
@@ -72,19 +85,17 @@ class PrescriptionController
     {
 
         $dateRangeMin = (int) $request->get('dateRangeMin');
-        if($dateRangeMin){
-            $dateRangeMin = round($dateRangeMin/1000);
-        }
-
         $dateRangeMax = (int) $request->get('dateRangeMax');
-        if($dateRangeMax){
-            $dateRangeMax = round($dateRangeMax/1000);
-        }
+
 
         $clientId = (int) $request->get('clientId');
+        $pacientName = $request->get('pacientName');
         $drugName = $request->get('drugName');
         $departmentId = (int) $request->get('departmentId');
+        $administrationId = (int) $request->get('administrationId');
         $doctorId = (int) $request->get('doctorId');
+        $doctorName = $request->get('doctorName');
+        $setPersonName = $request->get('setPersonName');
         $eventId = (int) $request->get('eventId');
         $page = (int) $request->get('page') ?: 1;
         $limit = (int) $request->get('limit') ?: 20;
@@ -92,28 +103,58 @@ class PrescriptionController
         $data = array();
 
         $filter = array('eventId' => $eventId,
-                        'clientId' => $clientId,
-                        'drugName' => $drugName,
-                        'departmentId' => $departmentId,
-                        'dateRangeMax' => $dateRangeMax,
-                        'dateRangeMin' => $dateRangeMin);
+            'clientId' => $clientId,
+            'pacientName' => $pacientName,
+            'doctorName' => $doctorName,
+            'setPersonName' => $setPersonName,
+            'drugName' => $drugName,
+            'departmentId' => $departmentId,
+            'administrationId' => $administrationId,
+            'dateRangeMax' => $dateRangeMax,
+            'dateRangeMin' => $dateRangeMin);
 
-        $query = ActionQuery::create()->getPrescriptions($filter);
+        $hidrate = array(
+            'actionType' => true,
+            'properties' => true,
+            'doctor' => true,
+            'setPerson' => true,
+            'createPerson' => true,
+            'modifyPerson' => true,
+            'drugs' => true,
+            'intervals' => true,
+            'client' => true
+        );
 
-        $prescriptions = $query->find();
+        $filterQuery = ActionQuery::create()->filterPrescriptions($filter);
+        $filteredPrescriptions = $filterQuery->find()->toArray();
 
-        if($prescriptions){
-            foreach ($prescriptions as $prescription) {
-                $data[] = $prescription->serializePrescription();
+        $filteredPrescriptionsIds = array_map(function($prescription) { return $prescription['id'];}, $filteredPrescriptions);
+
+        // return $app['jsonp']->jsonp(array(
+        //     'filter' => $filter,
+        //     'filterSql' => $filterQuery->toString(),
+        //     'data' => $filteredPrescriptionsIds
+        //     ));
+
+        if(count($filteredPrescriptionsIds)){
+            $query = ActionQuery::create()->getPrescriptions($filteredPrescriptionsIds, $hidrate);
+
+            $prescriptions = $query->find();
+
+            if($prescriptions){
+                foreach ($prescriptions as $prescription) {
+                    $data[] = $prescription->serializePrescription($hidrate);
+                }
             }
         }
 
 
+
         return $app['jsonp']->jsonp(array(
-            // 'time' => time(),
-            // 'sql' => $query->toString(),
+            //'sql' => $query->toString(),
             'data' => $data
-            ));
+        ));
+
     }
 
 
@@ -146,6 +187,8 @@ class PrescriptionController
 
         $data = $request->get('data');
         $eventId = @$data['eventId'];
+        $note = @$data['note'];
+        $isUrgent = @$data['isUrgent'];
         $actionTypeId = (int) @$data['actionTypeId'];
         $drugs = @$data['drugs'];
         $properties = $data['properties'];
@@ -176,10 +219,13 @@ class PrescriptionController
         $prescription = new Action();
 
         $prescription->setEventId($eventId);
+        $prescription->setNote($note);
+        $prescription->setIsUrgent($isUrgent);
         $prescription->setActionTypeId($actionTypeId);
         $prescription->setDeleted(false);
         $prescription->setCreatePersonId($createPersonId);
         $prescription->setModifyPersonId($createPersonId);
+        $prescription->setSetPersonId($createPersonId);
         $prescription->setStatus(0);
 
 
@@ -200,7 +246,7 @@ class PrescriptionController
         }
 
 
-        $drugAllowedFields = array_flip(array('nomen', 'name', 'dose', 'unit'));
+        $drugAllowedFields = array_flip(array('nomen', 'name', 'dose'));
 
         foreach ($drugs as $drug) {
             $drug = array_intersect_key($drug, $drugAllowedFields);
@@ -213,12 +259,16 @@ class PrescriptionController
         foreach ($assigmentIntervals as $interval) {
             $beginDateTime = round((int) @$interval['beginDateTime']/1000);
             $endDateTime = round((int) @$interval['endDateTime']/1000);
+            $note = @$interval['note'];
 
             $drugChart = new DrugChart();
 
             $drugChart->setBegDateTime($beginDateTime);
             if($endDateTime){
                 $drugChart->setEndDateTime($endDateTime);
+            }
+            if($note){
+                $drugChart->setNote($note); 
             }
 
             $prescription->addDrugChart($drugChart);
@@ -265,6 +315,10 @@ class PrescriptionController
                     if($drugChart->getEndDateTime()){
                         $drugChartCopy->setEndDateTime($drugChart->getEndDateTime());
                     }
+                    if($drugChart->getNote()){
+                        $drugChartCopy->setNote($drugChart->getNote());
+                    }
+
 
                     $prescription->addDrugChart($drugChartCopy);
                 }
@@ -277,8 +331,169 @@ class PrescriptionController
         return $app['jsonp']->jsonp(array(
             'data' => $prescription->serializePrescription(),
             'message' => 'create controller'
-            ));
+        ));
     }
+
+    public function updateAction(Request $request, Application $app){
+        $route_params = $request->get('_route_params') ;
+        $prescriptionId = (int) $route_params['prescriptionId'];
+        $modifyPersonId = (int) $request->cookies->get('userId');//неправильно....
+
+        $data = $request->get('data');
+        $eventId = @$data['eventId'];
+        $note = @$data['note'];
+        $isUrgent = @$data['isUrgent'];
+        $actionTypeId = (int) @$data['actionTypeId'];
+        $drugs = @$data['drugs'];
+        $properties = $data['properties'];
+        $assigmentIntervals = @$data['assigmentIntervals'];
+
+        if(!$prescriptionId){
+            return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора назначения.' ));
+        }
+
+        if(!$modifyPersonId){
+            return $app['jsonp']->jsonp(array('message' => 'You are logged in?' ));
+        }
+
+        if(!$eventId){
+            return $app['jsonp']->jsonp(array('message' => 'Id for event?' ));
+        }
+
+        if(!$actionTypeId){
+            return $app['jsonp']->jsonp(array('message' => 'Where id for actionType?' ));
+        }
+
+        if(!$drugs){
+            return $app['jsonp']->jsonp(array('message' => 'Well and where drugs?' ));
+        }
+        if(!$assigmentIntervals){
+            return $app['jsonp']->jsonp(array('message' => 'Intervals?' ));
+        }
+
+
+        $prescription = ActionQuery::create()
+            ->getPrescriptions(array('id' => $prescriptionId))
+            ->find()->getFirst();
+
+        if($prescription){
+            $prescription->setNote($note);
+            $prescription->setIsUrgent($isUrgent);
+            $prescription->setModifyPersonId($modifyPersonId);
+
+            $actionProperties = $prescription->getActionPropertys();
+            foreach ($properties as $property) {
+                $actionProperty = $this->getById($actionProperties, $property['id']);
+                $actionProperty->updateValue($property['value']);
+            }
+            $actionProperties->save();
+
+            $drugAllowedFields = array_flip(array('nomen', 'name', 'dose', 'id'));
+            $drugComponents = $prescription->getDrugComponents();
+
+            foreach ($drugs as $drug) {
+                $drug = array_intersect_key($drug, $drugAllowedFields);
+
+                if(array_key_exists('id', $drug)){
+                    $drugComponent = $this->getById($drugComponents, $drug['id']);
+                }else{
+                    $drugComponent = new DrugComponent();
+                }
+
+                if($drugComponent){
+                    $drugComponent->fromArray($drug);
+                    $prescription->addDrugComponent($drugComponent);
+                } 
+            }
+
+            //новые интервалы
+            foreach ($assigmentIntervals as $interval) {
+                if(array_key_exists('id', $interval)){
+                    continue;
+                }
+                $beginDateTime = round((int) @$interval['beginDateTime']/1000);
+                $endDateTime = round((int) @$interval['endDateTime']/1000);
+                $note = @$interval['note'];
+
+                $drugChart = new DrugChart();
+
+                $drugChart->setBegDateTime($beginDateTime);
+                if($endDateTime){
+                    $drugChart->setEndDateTime($endDateTime);
+                }
+                if($note){
+                    $drugChart->setNote($note); 
+                }
+
+                $prescription->addDrugChart($drugChart);
+                $prescription->save();
+
+                $drugChartCopy = new DrugChart();
+                $drugChartCopy->setMasterId($drugChart->getId());
+                $drugChartCopy->setBegDateTime($drugChart->getBegDateTime());
+                if($drugChart->getEndDateTime()){
+                    $drugChartCopy->setEndDateTime($drugChart->getEndDateTime());
+                }
+                if($drugChart->getNote()){
+                    $drugChartCopy->setNote($drugChart->getNote());
+                }
+
+
+                $prescription->addDrugChart($drugChartCopy);
+
+            }
+
+            $drugCharts = $prescription->getDrugCharts();
+            //редактирование интервалов
+            foreach ($assigmentIntervals as $interval) {
+                if(!array_key_exists('id', $interval)){
+                    continue;
+                }
+
+                $beginDateTime = round((int) @$interval['beginDateTime']/1000);
+                $endDateTime = round((int) @$interval['endDateTime']/1000);
+                $note = @$interval['note'];
+
+                $drugChart = $this->getById($drugCharts, $interval['id']);
+                $drugChart->setBegDateTime($beginDateTime);
+                if($endDateTime){
+                    $drugChart->setEndDateTime($endDateTime);
+                }
+                if($note){
+                    $drugChart->setNote($note);
+                }
+
+                if(array_key_exists('executionIntervals', $interval)){
+                    $eis = $interval['executionIntervals'];
+                    foreach($eis as $ei){
+                        $beginDateTime = round((int) @$ei['beginDateTime']/1000);
+                        $endDateTime = round((int) @$ei['endDateTime']/1000);
+                        $note = @$ei['note'];
+
+                        $drugChart = $this->getById($drugCharts, $ei['id']);
+                        $drugChart->setBegDateTime($beginDateTime);
+                        if($endDateTime){
+                            $drugChart->setEndDateTime($endDateTime);
+                        }
+                        if($note){
+                            $drugChart->setNote($note);
+                        }
+
+
+                    } 
+                }
+
+            }
+
+            $prescription->save();
+
+
+            $data = $prescription->serializePrescription();
+        }
+
+        return $app['jsonp']->jsonp(array('data' => $data ));
+    }
+
 
 
 
@@ -310,8 +525,8 @@ class PrescriptionController
         }
 
         $intervals = DrugChartQuery::create()
-        ->filterByActionId($prescriptionId)
-        ->find();
+            ->filterByActionId($prescriptionId)
+            ->find();
 
         if($intervals){
             $prescription = new Action();
@@ -327,137 +542,114 @@ class PrescriptionController
 
 
 
-    public function updateAction(Request $request, Application $app){
-        $route_params = $request->get('_route_params') ;
-        $prescriptionId = (int) $route_params['prescriptionId'];
-
-        if(!$prescriptionId){
-            return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора назначения.' ));
-        }
-
-        $prescription = ActionQuery::create()
-            ->getPrescriptions(array('id' => $prescriptionId))
-            ->find()->getFirst();
-
-        if($prescription){
-            $data = $prescription->serializePrescription();
-        }
-
-        return $app['jsonp']->jsonp(array('data' => $data ));
-    }
-
-
     public function updateIntervalsAction(Request $request, Application $app){
-        $route_params = $request->get('_route_params') ;
-        $prescriptionId = (int) $route_params['prescriptionId'];
+        /* $route_params = $request->get('_route_params') ; */
         $data = $request->get('data');
 
-        if(!$prescriptionId){
-            return $app['jsonp']->jsonp(array('message' => 'Нет идентификатора назначения.' ));
-        }
-
-        $prescription = ActionQuery::create()
-            ->leftJoinWithDrugChart()
-            ->findOneById($prescriptionId);
-
-        $intervals = $prescription->getDrugCharts();
-
-
         if(is_array($data)){
-            foreach ($data as $assigmentInterval) {
-                if(array_key_exists('id', $assigmentInterval)){
-                    $interval = $this->getIntervalById($intervals, $assigmentInterval['id']);
+
+            foreach($data as $executionInterval){
+                if(array_key_exists('id', $executionInterval)){
+                    $interval = DrugChartQuery::create()->filterById($executionInterval['id'])->findOne();
                 }else{
-                    $interval = null;
+                    $interval = new DrugChart();
+                    $interval->setStatus(0);
                 }
 
                 if($interval){
-                    if(array_key_exists('status', $assigmentInterval)){
-                        if($interval->getStatus() != $assigmentInterval['status']){
-                            $interval->setStatus($assigmentInterval['status']);
+                    if(array_key_exists('actionId', $executionInterval)){
+                        $interval->setActionId($executionInterval['actionId']);
+                    }
+
+                    if(array_key_exists('masterId', $executionInterval)){
+                        $interval->setMasterId($executionInterval['masterId']);
+                    }
+
+                    if(array_key_exists('status', $executionInterval)){
+                        if($interval->getStatus() != $executionInterval['status']){
+                            $interval->setStatus($executionInterval['status']);
                         }
                     }
 
-                    if(array_key_exists('note', $assigmentInterval)){
-                        $interval->setNote($assigmentInterval['note']);
+                    if(array_key_exists('note', $executionInterval)){
+                        $interval->setNote($executionInterval['note']);
                     }
 
-                    if(array_key_exists('beginDateTime', $assigmentInterval)){
-                        $interval->setBegDateTime(round((int) $assigmentInterval['beginDateTime']/1000));
+                    if(array_key_exists('beginDateTime', $executionInterval)){
+                        $interval->setBegDateTime(round((int) $executionInterval['beginDateTime']/1000));
                     }
 
-                    if(array_key_exists('endDateTime', $assigmentInterval) && !empty($assigmentInterval['endDateTime'])){
-                        $interval->setEndDateTime(round((int) $assigmentInterval['endDateTime']/1000));
+                    if(array_key_exists('endDateTime', $executionInterval)  && !empty($executionInterval['endDateTime'])){
+                        $interval->setEndDateTime(round((int) $executionInterval['endDateTime']/1000));
                     }
 
-                    if(array_key_exists('executionIntervals', $assigmentInterval) && is_array($assigmentInterval['executionIntervals'])){
-
-                        foreach ($assigmentInterval['executionIntervals'] as $executionInterval) {
-
-                            if(array_key_exists('id', $executionInterval)){
-                                $interval2 = $this->getIntervalById($intervals, $executionInterval['id']);
-                            }else{
-                                $interval2 = null;
-                            }
-
-                            if($interval2){
-                                if(array_key_exists('status', $executionInterval)){
-                                    if($interval2->getStatus() != $executionInterval['status']){
-                                        $interval2->setStatus($executionInterval['status']);
-                                    }
-                                }
-
-                                if(array_key_exists('note', $executionInterval)){
-                                    $interval2->setNote($executionInterval['note']);
-                                }
-
-                                if(array_key_exists('beginDateTime', $executionInterval)){
-                                    $interval2->setBegDateTime(round((int) $executionInterval['beginDateTime']/1000));
-                                }
-
-                                if(array_key_exists('endDateTime', $executionInterval)  && !empty($executionInterval['endDateTime'])){
-                                    $interval2->setEndDateTime(round((int) $executionInterval['endDateTime']/1000));
-                                }
-                            }else{
-                                //новый интервал исполнения...
-                            }
-
-
-                        }
-                    }
-
-                }else{
-                    //новый интервал назначения
-
-                    $drugChart = new DrugChart();
-
-                    $drugChart->setStatus(0);
-
-
-                    if(array_key_exists('note', $assigmentInterval)){
-                        $drugChart->setNote($assigmentInterval['note']);
-                    }
-
-                    if(array_key_exists('beginDateTime', $assigmentInterval)){
-                        $drugChart->setBegDateTime(round((int) $assigmentInterval['beginDateTime']/1000));
-                    }
-
-                    if(array_key_exists('endDateTime', $assigmentInterval) && !empty($assigmentInterval['endDateTime'])){
-                        $drugChart->setEndDateTime(round((int) $assigmentInterval['endDateTime']/1000));
-                    }
-
-                    $prescription->addDrugChart($drugChart);
+                    $interval->save();
                 }
-
-
             }
         }
 
-        $prescription->save();
+        return $app['jsonp']->jsonp(array('data' => '' ));
+    }
 
+    public function cancelIntervalsExecutionAction(Request $request, Application $app){
+        $data = $request->get('data');
 
+        $intervals = DrugChartQuery::create()->filterById($data)->find();
+
+        //return $app['jsonp']->jsonp(array('data' => $data ));
+        foreach($intervals as $interval){
+            $interval->setStatus(0);
+        }
+
+        $intervals->save();
 
         return $app['jsonp']->jsonp(array('data' => $intervals->toArray() ));
+    }
+    public function cancelIntervalsAction(Request $request, Application $app){
+        $data = $request->get('data');
+
+        $intervals = DrugChartQuery::create()->filterById($data)->find();
+
+        //return $app['jsonp']->jsonp(array('data' => $data ));
+        foreach($intervals as $interval){
+            $interval->setStatus(2);
+        }
+
+        $intervals->save();
+
+        return $app['jsonp']->jsonp(array('data' => $intervals->toArray() ));
+    }
+
+
+    public function executeIntervalsAction(Request $request, Application $app){
+        $data = $request->get('data');
+
+        $intervals = DrugChartQuery::create()->filterById($data)->find();
+
+        //return $app['jsonp']->jsonp(array('data' => $data ));
+        foreach($intervals as $interval){
+            $interval->setStatus(1);
+        }
+
+        $intervals->save();
+
+        return $app['jsonp']->jsonp(array('data' => $intervals->toArray() ));
+    }
+
+
+    public function getById($collection, $id){
+
+        $item = null;
+
+        foreach ($collection as $i)
+        {
+            if ($id == $i->getId()){
+                $item = $i;
+                break;
+            }
+        }
+
+        return $item;
     }
 
     public function getIntervalById($intervals, $id){
@@ -471,10 +663,10 @@ class PrescriptionController
 
         foreach ($intervals as $inter)
         {
-          if ($id == $inter->getId()){
-            $interval = $inter;
-            break;
-          }
+            if ($id == $inter->getId()){
+                $interval = $inter;
+                break;
+            }
         }
 
         return $interval;

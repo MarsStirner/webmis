@@ -102,6 +102,9 @@ class PersonTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('ActionRelatedBycreatePersonId', 'Webmis\\Models\\Action', RelationMap::ONE_TO_MANY, array('id' => 'createPerson_id', ), null, null, 'ActionsRelatedBycreatePersonId');
+        $this->addRelation('ActionRelatedBymodifyPersonId', 'Webmis\\Models\\Action', RelationMap::ONE_TO_MANY, array('id' => 'modifyPerson_id', ), null, null, 'ActionsRelatedBymodifyPersonId');
+        $this->addRelation('ActionRelatedBysetPersonId', 'Webmis\\Models\\Action', RelationMap::ONE_TO_MANY, array('id' => 'setPerson_id', ), null, null, 'ActionsRelatedBysetPersonId');
         $this->addRelation('EventRelatedBycreatePersonId', 'Webmis\\Models\\Event', RelationMap::ONE_TO_MANY, array('id' => 'createPerson_id', ), null, null, 'EventsRelatedBycreatePersonId');
         $this->addRelation('EventRelatedBymodifyPersonId', 'Webmis\\Models\\Event', RelationMap::ONE_TO_MANY, array('id' => 'modifyPerson_id', ), null, null, 'EventsRelatedBymodifyPersonId');
         $this->addRelation('EventRelatedBysetPersonId', 'Webmis\\Models\\Event', RelationMap::ONE_TO_MANY, array('id' => 'setPerson_id', ), null, null, 'EventsRelatedBysetPersonId');

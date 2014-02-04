@@ -12,6 +12,7 @@ use \PropelCollection;
 use \PropelException;
 use \PropelObjectCollection;
 use \PropelPDO;
+use Webmis\Models\Action;
 use Webmis\Models\Event;
 use Webmis\Models\Person;
 use Webmis\Models\PersonPeer;
@@ -131,6 +132,18 @@ use Webmis\Models\PersonQuery;
  * @method PersonQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method PersonQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method PersonQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
+ * @method PersonQuery leftJoinActionRelatedBycreatePersonId($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionRelatedBycreatePersonId relation
+ * @method PersonQuery rightJoinActionRelatedBycreatePersonId($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionRelatedBycreatePersonId relation
+ * @method PersonQuery innerJoinActionRelatedBycreatePersonId($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionRelatedBycreatePersonId relation
+ *
+ * @method PersonQuery leftJoinActionRelatedBymodifyPersonId($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionRelatedBymodifyPersonId relation
+ * @method PersonQuery rightJoinActionRelatedBymodifyPersonId($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionRelatedBymodifyPersonId relation
+ * @method PersonQuery innerJoinActionRelatedBymodifyPersonId($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionRelatedBymodifyPersonId relation
+ *
+ * @method PersonQuery leftJoinActionRelatedBysetPersonId($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionRelatedBysetPersonId relation
+ * @method PersonQuery rightJoinActionRelatedBysetPersonId($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionRelatedBysetPersonId relation
+ * @method PersonQuery innerJoinActionRelatedBysetPersonId($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionRelatedBysetPersonId relation
  *
  * @method PersonQuery leftJoinEventRelatedBycreatePersonId($relationAlias = null) Adds a LEFT JOIN clause to the query using the EventRelatedBycreatePersonId relation
  * @method PersonQuery rightJoinEventRelatedBycreatePersonId($relationAlias = null) Adds a RIGHT JOIN clause to the query using the EventRelatedBycreatePersonId relation
@@ -2435,6 +2448,228 @@ abstract class BasePersonQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(PersonPeer::UUID_ID, $uuidId, $comparison);
+    }
+
+    /**
+     * Filter the query by a related Action object
+     *
+     * @param   Action|PropelObjectCollection $action  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 PersonQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByActionRelatedBycreatePersonId($action, $comparison = null)
+    {
+        if ($action instanceof Action) {
+            return $this
+                ->addUsingAlias(PersonPeer::ID, $action->getcreatePersonId(), $comparison);
+        } elseif ($action instanceof PropelObjectCollection) {
+            return $this
+                ->useActionRelatedBycreatePersonIdQuery()
+                ->filterByPrimaryKeys($action->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByActionRelatedBycreatePersonId() only accepts arguments of type Action or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ActionRelatedBycreatePersonId relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return PersonQuery The current query, for fluid interface
+     */
+    public function joinActionRelatedBycreatePersonId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ActionRelatedBycreatePersonId');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ActionRelatedBycreatePersonId');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ActionRelatedBycreatePersonId relation Action object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\ActionQuery A secondary query class using the current class as primary query
+     */
+    public function useActionRelatedBycreatePersonIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinActionRelatedBycreatePersonId($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ActionRelatedBycreatePersonId', '\Webmis\Models\ActionQuery');
+    }
+
+    /**
+     * Filter the query by a related Action object
+     *
+     * @param   Action|PropelObjectCollection $action  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 PersonQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByActionRelatedBymodifyPersonId($action, $comparison = null)
+    {
+        if ($action instanceof Action) {
+            return $this
+                ->addUsingAlias(PersonPeer::ID, $action->getmodifyPersonId(), $comparison);
+        } elseif ($action instanceof PropelObjectCollection) {
+            return $this
+                ->useActionRelatedBymodifyPersonIdQuery()
+                ->filterByPrimaryKeys($action->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByActionRelatedBymodifyPersonId() only accepts arguments of type Action or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ActionRelatedBymodifyPersonId relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return PersonQuery The current query, for fluid interface
+     */
+    public function joinActionRelatedBymodifyPersonId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ActionRelatedBymodifyPersonId');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ActionRelatedBymodifyPersonId');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ActionRelatedBymodifyPersonId relation Action object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\ActionQuery A secondary query class using the current class as primary query
+     */
+    public function useActionRelatedBymodifyPersonIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinActionRelatedBymodifyPersonId($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ActionRelatedBymodifyPersonId', '\Webmis\Models\ActionQuery');
+    }
+
+    /**
+     * Filter the query by a related Action object
+     *
+     * @param   Action|PropelObjectCollection $action  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 PersonQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByActionRelatedBysetPersonId($action, $comparison = null)
+    {
+        if ($action instanceof Action) {
+            return $this
+                ->addUsingAlias(PersonPeer::ID, $action->getsetPersonId(), $comparison);
+        } elseif ($action instanceof PropelObjectCollection) {
+            return $this
+                ->useActionRelatedBysetPersonIdQuery()
+                ->filterByPrimaryKeys($action->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByActionRelatedBysetPersonId() only accepts arguments of type Action or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ActionRelatedBysetPersonId relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return PersonQuery The current query, for fluid interface
+     */
+    public function joinActionRelatedBysetPersonId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ActionRelatedBysetPersonId');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ActionRelatedBysetPersonId');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ActionRelatedBysetPersonId relation Action object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\ActionQuery A secondary query class using the current class as primary query
+     */
+    public function useActionRelatedBysetPersonIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinActionRelatedBysetPersonId($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ActionRelatedBysetPersonId', '\Webmis\Models\ActionQuery');
     }
 
     /**

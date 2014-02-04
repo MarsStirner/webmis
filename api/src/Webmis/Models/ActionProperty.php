@@ -31,6 +31,18 @@ class ActionProperty extends BaseActionProperty
         return $this->aActionPropertyString;
     }
 
+    public function getActionPropertyInteger(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aActionPropertyInteger === null && ($this->id !== null) && $doQuery) {
+            $this->aActionPropertyInteger = ActionPropertyIntegerQuery::create()
+                ->filterByActionProperty($this) // here
+                ->findOne($con);
+            // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
+            //$this->aActionPropertyInteger->setActionProperty($this);
+        }
+
+        return $this->aActionPropertyInteger;
+    }
 
     public function getActionPropertyDouble(PropelPDO $con = null, $doQuery = true)
     {
@@ -63,10 +75,61 @@ class ActionProperty extends BaseActionProperty
                 ->filterByActionProperty($this) // here
                 ->findOne($con);
             // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
-//            $this->aActionPropertyDate->setActionProperty($this);
+            $this->aActionPropertyDate->setActionProperty($this);
         }
 
         return $this->aActionPropertyDate;
+    }
+
+    public function updateValue($value)
+    {
+        if(!$value){
+            return $this;
+        }
+
+        $actionPropertyId = $this->getId();
+        $actionPropertyType = $this->getActionPropertyType();
+        $actionPropertyTypeId = $actionPropertyType->getId();
+        $typeName = $actionPropertyType->getTypeName();
+
+        switch ($typeName) {
+            case 'String':
+            case 'Html':
+            case 'Text':
+                $actionPropertyString = $this->getActionPropertyString();
+                $actionPropertyString->fromArray(array(
+                    'value' => $value
+                    ));
+
+                $this->setActionPropertyString($actionPropertyString);
+
+                break;
+            case 'Double':
+                $actionPropertyDouble = $this->getActionPropertyDouble();
+                $actionPropertyDouble->fromArray(array(
+                    'value' => $value
+                    ));
+
+                $this->setActionPropertyDouble($actionPropertyDouble);
+
+                break;
+
+            case 'ReferenceRb':
+                $actionPropertyInteger = $this->getActionPropertyInteger();
+                $actionPropertyInteger->fromArray(array(
+                    'value' => $value
+                    ));
+
+                $this->setActionPropertyInteger($actionPropertyInteger);
+
+                break;
+            default:
+                # code...
+                break;
+        }
+
+
+        return $this;
     }
 
 
@@ -104,6 +167,18 @@ class ActionProperty extends BaseActionProperty
                     ));
 
                 $this->setActionPropertyDouble($actionPropertyDouble);
+
+                break;
+
+            case 'ReferenceRb':
+                $actionPropertyInteger = new ActionPropertyInteger();
+                $actionPropertyInteger->fromArray(array(
+                    'id' => $actionPropertyId,
+                    'index' => 0,
+                    'value' => $value
+                    ));
+
+                $this->setActionPropertyInteger($actionPropertyInteger);
 
                 break;
             default:

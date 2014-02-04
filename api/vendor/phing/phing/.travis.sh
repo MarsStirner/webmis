@@ -8,22 +8,15 @@
 
 installPearTask ()
 {
+    sudo apt-get update -qq
+#    sudo apt-get install -qq php5-xdebug
+    
     echo -e "\nAuto-discover pear channels and upgrade ..."
     pear config-set auto_discover 1
     pear -qq channel-update pear.php.net
     pear -qq upgrade
+    pear -qq channel-discover pear.phing.info
     echo "... OK"
-
-    echo -e "\nInstalling / upgrading phing ... "
-    which phing >/dev/null                      &&
-        pear upgrade pear.phing.info/phing ||
-        pear install --alldeps pear.phing.info/phing
-    # update paths
-    phpenv rehash
-    # re-test for phing:
-    phing -v 2>&1 >/dev/null    &&
-        echo "... OK"           ||
-        return 1
 
     echo -e "\nInstalling / upgrading phpcpd ... "
     which phpcpd >/dev/null                      &&
@@ -35,6 +28,12 @@ installPearTask ()
     which phploc >/dev/null                      &&
         pear upgrade pear.phpunit.de/phploc ||
         pear install pear.phpunit.de/phploc
+    phpenv rehash
+
+    echo -e "\nInstalling / upgrading phpdepend ... "
+    which pdepend >/dev/null                      &&
+        pear upgrade pear.pdepend.org/PHP_Depend-beta ||
+        pear install pear.pdepend.org/PHP_Depend-beta
     phpenv rehash
 
     echo -e "\nInstalling / upgrading phpcs ... "
@@ -72,12 +71,19 @@ installPearTask ()
     	pear install -f phpunit/PHP_Timer-1.0.3
     	pear install -f phpunit/Text_Template-1.1.1
     else
+    	composer selfupdate --quiet
         composer install
     fi
 
 #    echo "=== BUILDING PHING ==="
 #    cd build
 #    phing -Dversion=2.0.0b1
+
+    phpenv config-add .travis.php.ini
+
+    echo "=== SETTING GIT IDENTITY ==="
+    git config --global user.email "travis-ci-build@phing.info"
+    git config --global user.name "Phing Travis Builder"
 
     echo "=== TESTING PHING ==="
     cd test

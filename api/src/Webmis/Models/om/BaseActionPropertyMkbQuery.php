@@ -5,14 +5,11 @@ namespace Webmis\Models\om;
 use \Criteria;
 use \Exception;
 use \ModelCriteria;
-use \ModelJoin;
 use \PDO;
 use \Propel;
-use \PropelCollection;
 use \PropelException;
 use \PropelObjectCollection;
 use \PropelPDO;
-use Webmis\Models\ActionProperty;
 use Webmis\Models\ActionPropertyMkb;
 use Webmis\Models\ActionPropertyMkbPeer;
 use Webmis\Models\ActionPropertyMkbQuery;
@@ -33,10 +30,6 @@ use Webmis\Models\ActionPropertyMkbQuery;
  * @method ActionPropertyMkbQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method ActionPropertyMkbQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method ActionPropertyMkbQuery innerJoin($relation) Adds a INNER JOIN clause to the query
- *
- * @method ActionPropertyMkbQuery leftJoinActionProperty($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionProperty relation
- * @method ActionPropertyMkbQuery rightJoinActionProperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionProperty relation
- * @method ActionPropertyMkbQuery innerJoinActionProperty($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionProperty relation
  *
  * @method ActionPropertyMkb findOne(PropelPDO $con = null) Return the first ActionPropertyMkb matching the query
  * @method ActionPropertyMkb findOneOrCreate(PropelPDO $con = null) Return the first ActionPropertyMkb matching the query, or a new ActionPropertyMkb object populated from the query conditions when no match is found
@@ -250,8 +243,6 @@ abstract class BaseActionPropertyMkbQuery extends ModelCriteria
      * $query->filterByid(array('max' => 12)); // WHERE id <= 12
      * </code>
      *
-     * @see       filterByActionProperty()
-     *
      * @param     mixed $id The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
@@ -365,82 +356,6 @@ abstract class BaseActionPropertyMkbQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ActionPropertyMkbPeer::VALUE, $value, $comparison);
-    }
-
-    /**
-     * Filter the query by a related ActionProperty object
-     *
-     * @param   ActionProperty|PropelObjectCollection $actionProperty The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 ActionPropertyMkbQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByActionProperty($actionProperty, $comparison = null)
-    {
-        if ($actionProperty instanceof ActionProperty) {
-            return $this
-                ->addUsingAlias(ActionPropertyMkbPeer::ID, $actionProperty->getid(), $comparison);
-        } elseif ($actionProperty instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(ActionPropertyMkbPeer::ID, $actionProperty->toKeyValue('PrimaryKey', 'id'), $comparison);
-        } else {
-            throw new PropelException('filterByActionProperty() only accepts arguments of type ActionProperty or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the ActionProperty relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return ActionPropertyMkbQuery The current query, for fluid interface
-     */
-    public function joinActionProperty($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ActionProperty');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'ActionProperty');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the ActionProperty relation ActionProperty object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   \Webmis\Models\ActionPropertyQuery A secondary query class using the current class as primary query
-     */
-    public function useActionPropertyQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinActionProperty($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ActionProperty', '\Webmis\Models\ActionPropertyQuery');
     }
 
     /**

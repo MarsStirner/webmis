@@ -53,6 +53,7 @@ class rbUnitTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('DrugComponent', 'Webmis\\Models\\DrugComponent', RelationMap::ONE_TO_MANY, array('id' => 'unit', ), null, null, 'DrugComponents');
         $this->addRelation('rlsNomenRelatedByunitId', 'Webmis\\Models\\rlsNomen', RelationMap::ONE_TO_MANY, array('id' => 'unit_id', ), null, null, 'rlsNomensRelatedByunitId');
         $this->addRelation('rlsNomenRelatedBydosageUnitId', 'Webmis\\Models\\rlsNomen', RelationMap::ONE_TO_MANY, array('id' => 'dosageUnit_id', ), null, null, 'rlsNomensRelatedBydosageUnitId');
     } // buildRelations()

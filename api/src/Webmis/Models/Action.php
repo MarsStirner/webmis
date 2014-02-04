@@ -3,6 +3,8 @@
 namespace Webmis\Models;
 
 use Webmis\Models\om\BaseAction;
+use Webmis\Models\RbMethodOfAdministrationQuery;
+
 
 
 /**
@@ -21,47 +23,74 @@ class Action extends BaseAction
     public function serializeProperty($property){
 
             $data = array();
-            $type = $property->getActionPropertyType();
             $data['id'] = $property->getId();
-            $data['name'] = $type->getName();
-            $data['type'] = $type->getTypeName();
-            $data['code'] = $type->getCode();
+            $type = $property->getActionPropertyType();
             $value = null;
+            $valueId = null;
 
-            switch ($data['type']) {
-                    case 'String':
-                    case 'Html':
-                    case 'Text':
-                    //case 'Constructor':
-                        if($property->getActionPropertyString()){
-                            $value =  $property->getActionPropertyString()->getValue();
-                        }
-                    break;
-                    case 'Double':
-                        if($property->getActionPropertyDouble()){
-                            $value = $property->getActionPropertyDouble()->getValue();
-                        }
-                    break;
-                    // case 'FlatDirectory':
-                    //     // $p['value'] = $actionProperty->getActionPropertyFDRecord()->getValue();
-                    // break;
-                    case 'Date':
-                        if($property->getActionPropertyDate()){
-                            $date = $property->getActionPropertyDate()->getValue();
-                            $dateArray = explode('-', $date);
-                            $year = $dateArray[0];
-                            if($year > 1000){
-                                $value = strtotime($date)*1000;
+            if($type){
+
+                $data['name'] = $type->getName();
+                $data['type'] = $type->getTypeName();
+                $data['code'] = $type->getCode();
+                $valueDomain = $type->getValueDomain();
+                if($valueDomain){
+                    $data['valueDomain'] = $valueDomain;
+                }
+
+                switch ($data['type']) {
+                        case 'String':
+                        case 'Html':
+                        case 'Text':
+
+                        //case 'Constructor':
+                            if($property->getActionPropertyString()){
+                                $value =  $property->getActionPropertyString()->getValue();
                             }
-                        }
+                        break;
+                        case 'ReferenceRb':
+                            if($property->getActionPropertyInteger()){
+                                $valueId =  $property->getActionPropertyInteger()->getValue();
+                                // $tableName = explode(';', $valueDomain);
+                                // $queryClassName = ucfirst(trim($tableName[0]).'Query');
+                                        //RbMethodOfAdministrationQuery
+                                $query = RbMethodOfAdministrationQuery::create()->findOneById($valueId);
 
-                    break;
-                    default:
-                        $value = 'этот тип экшен проперти пока не поддерживается';
-                    break;
+
+                                $value = $query->getName();
+                            }
+
+                        break;
+                        case 'Double':
+                            if($property->getActionPropertyDouble()){
+                                $value = $property->getActionPropertyDouble()->getValue();
+                            }
+                        break;
+                        // case 'FlatDirectory':
+                        //     // $p['value'] = $actionProperty->getActionPropertyFDRecord()->getValue();
+                        // break;
+                        case 'Date':
+                            if($property->getActionPropertyDate()){
+                                $date = $property->getActionPropertyDate()->getValue();
+                                $dateArray = explode('-', $date);
+                                $year = $dateArray[0];
+                                if($year > 1000){
+                                    $value = strtotime($date)*1000;
+                                }
+                            }
+
+                        break;
+                        default:
+                            $value = 'этот тип экшен проперти пока не поддерживается';
+                        break;
+                }
+
             }
 
             $data['value'] = $value;
+            if($valueId){
+                $data['valueId'] = $valueId;
+            }
 
             return $data;
     }
@@ -75,6 +104,7 @@ class Action extends BaseAction
             foreach ($intervals as $interval) {
                 $i = array();
                 $i['id'] = $interval->getId();
+                $i['actionId'] = $interval->getactionId();
                 $i['masterId'] = $interval->getMasterId();
 
                 $beginDateTimestamp = $interval->getBegDateTime('U');
@@ -115,80 +145,162 @@ class Action extends BaseAction
 
     }
 
-    public function serializePrescription(){
+    public function serializePrescription($hidrate = array(
+            'actionType' => true,
+            'properties' => true,
+            'doctor' => false,
+            'setPerson' => false,
+            'createPerson' => false,
+            'modifyPerson' => false,
+            'drugs' => false,
+            'intervals' => true,
+            'client' => false
+            )){
 
-        $data = array(
-            'assigmentIntervals' => array(),//интервалы назначения
-        );
-
-        $actionType = $this->getActionType();
-        $event = $this->getEvent();
+        $data = array();
 
         $data['id'] = $this->getId();
-        $data['name'] = $actionType->getName();
         $data['eventId'] = $this->getEventId();
+        $data['note'] = $this->getNote();
+        $data['isUrgent'] = $this->getIsUrgent();
 
-        //пациен
-        $client = $event->getClient();
-        $data['client'] = null;
-        if($client){
-            $data['client'] = array(
-                'id' => $client->getId(),
-                'firstName' => $client->getFirstName(),
-                'middleName' => $client->getPatrName(),
-                'lastName' => $client->getLastName()
-            );
-        }
 
-        //лечащий врач
-        $doctor = $event->getDoctor();
-        $data['doctor'] = null;
-        if($doctor){
-            $data['doctor'] = array(
-                'id' => $doctor->getId(),
-                'firstName' => $doctor->getFirstName(),
-                'middleName' => $doctor->getPatrName(),
-                'lastName' => $doctor->getLastName()
-            );
+        if($hidrate['actionType']){
+            $actionType = $this->getActionType();
+            $data['actionTypeId'] = $actionType->getId();
+            $data['name'] = $actionType->getName();
         }
 
 
+        if($hidrate['properties']){
+            $data['properties'] = array();
+            $properties = $this->getActionPropertys();
 
-        $data['properties'] = array();
-
-        //$data['flatCode'] = $actionType->getFlatCode();
-
-        $properties = $this->getActionPropertys();
-
-        if($properties){
-            foreach ($properties  as $property) {
-                $data['properties'][] = $this->serializeProperty($property);
+            if($properties){
+                foreach ($properties  as $property) {
+                    $data['properties'][] = $this->serializeProperty($property);
+                }
             }
         }
 
+        if($hidrate['setPerson']){
+            //назначивший врач
+            $setPerson = $this->getSetPerson(); 
+            $data['setPerson'] = null;
 
+            if($setPerson){
+                $data['setPerson'] = array(
+                    'id' => $setPerson->getId(),
+                    'firstName' => $setPerson->getFirstName(),
+                    'middleName' => $setPerson->getPatrName(),
+                    'lastName' => $setPerson->getLastName()
+                ); 
+            }
+        }
 
-        $data['drugs'] = array();
+        if($hidrate['createPerson']){
+            //создавший назначение пользователь
+            $createPerson = $this->getCreatePerson(); 
+            $data['createPerson'] = null;
 
-        $drugs = $this->getDrugComponents();
+            if($createPerson){
+                $data['createPerson'] = array(
+                    'id' => $createPerson->getId(),
+                    'firstName' => $createPerson->getFirstName(),
+                    'middleName' => $createPerson->getPatrName(),
+                    'lastName' => $createPerson->getLastName()
+                ); 
+            }
+        }
 
-        if($drugs){
-            foreach ($drugs as $drug) {
+        if($hidrate['modifyPerson']){
+            //изменивший назначение пользователь
+            $modifyPerson = $this->getCreatePerson(); 
+            $data['modifyPerson'] = null;
 
-                $data['drugs'][] = array(
-                    'id' => $drug->getId(),
-                    'name' => $drug->getName(),
-                    'dose' => $drug->getDose(),
-                    'unit' => $drug->getUnit()
+            if($modifyPerson){
+                $data['modifyPerson'] = array(
+                    'id' => $modifyPerson->getId(),
+                    'firstName' => $modifyPerson->getFirstName(),
+                    'middleName' => $modifyPerson->getPatrName(),
+                    'lastName' => $modifyPerson->getLastName()
+                ); 
+            }
+        }
+
+        if($hidrate['doctor'] || $hidrate['client']){
+            $event = $this->getEvent();
+
+            if($event && $hidrate['doctor']){
+                //лечащий врач
+                $doctor = $event->getDoctor();
+                $data['doctor'] = null;
+                if($doctor){
+                    $data['doctor'] = array(
+                        'id' => $doctor->getId(),
+                        'firstName' => $doctor->getFirstName(),
+                        'middleName' => $doctor->getPatrName(),
+                        'lastName' => $doctor->getLastName()
                     );
+                }
+            }
+
+            if($event && $hidrate['client']){
+                //пациен
+                $client = $event->getClient();
+                $data['client'] = null;
+                if($client){
+                    $data['client'] = array(
+                        'id' => $client->getId(),
+                        'firstName' => $client->getFirstName(),
+                        'middleName' => $client->getPatrName(),
+                        'lastName' => $client->getLastName()
+                    );
+                }
+            }
+
+        }
+
+
+        if($hidrate['drugs']){
+            $data['drugs'] = array();
+
+            $drugs = $this->getDrugComponents();
+
+            if($drugs){
+                foreach ($drugs as $drug) {
+                    $d = array(
+                        'id' => $drug->getId(),
+                        'name' => $drug->getName(),
+                        'dose' => $drug->getDose(),
+                        //'unitId' => $drug->getUnit(),
+                        'unit' => ''
+                        );
+
+                    $rlsNomen = $drug->getRlsNomen();
+                    $rbUnit = $rlsNomen->getrbUnitRelatedByunitId();
+                    if($rbUnit){
+                        $d['unit'] = $rbUnit->getName();
+                    }
+
+                    $data['drugs'][] = $d;
+
+                }
+            }
+
+        }
+
+        if($hidrate['intervals']){
+            $data['assigmentIntervals'] = array();
+
+            $intervals = $this->getDrugCharts();
+
+            if($intervals){
+                $data['assigmentIntervals'] = $this->serializeIntervals($intervals);
             }
         }
 
-        $intervals = $this->getDrugCharts();
 
-        if($intervals){
-            $data['assigmentIntervals'] = $this->serializeIntervals($intervals);
-        }
 
         ksort($data);
 

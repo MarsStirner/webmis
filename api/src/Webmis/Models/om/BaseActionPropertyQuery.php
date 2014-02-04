@@ -14,13 +14,10 @@ use \PropelObjectCollection;
 use \PropelPDO;
 use Webmis\Models\Action;
 use Webmis\Models\ActionProperty;
-use Webmis\Models\ActionPropertyAction;
 use Webmis\Models\ActionPropertyDate;
 use Webmis\Models\ActionPropertyDouble;
 use Webmis\Models\ActionPropertyFDRecord;
-use Webmis\Models\ActionPropertyHospitalBed;
 use Webmis\Models\ActionPropertyInteger;
-use Webmis\Models\ActionPropertyMkb;
 use Webmis\Models\ActionPropertyOrgStructure;
 use Webmis\Models\ActionPropertyPeer;
 use Webmis\Models\ActionPropertyQuery;
@@ -77,6 +74,10 @@ use Webmis\Models\ActionPropertyType;
  * @method ActionPropertyQuery rightJoinActionPropertyString($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyString relation
  * @method ActionPropertyQuery innerJoinActionPropertyString($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionPropertyString relation
  *
+ * @method ActionPropertyQuery leftJoinActionPropertyInteger($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyInteger relation
+ * @method ActionPropertyQuery rightJoinActionPropertyInteger($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyInteger relation
+ * @method ActionPropertyQuery innerJoinActionPropertyInteger($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionPropertyInteger relation
+ *
  * @method ActionPropertyQuery leftJoinActionPropertyDate($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyDate relation
  * @method ActionPropertyQuery rightJoinActionPropertyDate($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyDate relation
  * @method ActionPropertyQuery innerJoinActionPropertyDate($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionPropertyDate relation
@@ -92,22 +93,6 @@ use Webmis\Models\ActionPropertyType;
  * @method ActionPropertyQuery leftJoinActionPropertyFDRecord($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyFDRecord relation
  * @method ActionPropertyQuery rightJoinActionPropertyFDRecord($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyFDRecord relation
  * @method ActionPropertyQuery innerJoinActionPropertyFDRecord($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionPropertyFDRecord relation
- *
- * @method ActionPropertyQuery leftJoinActionPropertyAction($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyAction relation
- * @method ActionPropertyQuery rightJoinActionPropertyAction($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyAction relation
- * @method ActionPropertyQuery innerJoinActionPropertyAction($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionPropertyAction relation
- *
- * @method ActionPropertyQuery leftJoinActionPropertyHospitalBed($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyHospitalBed relation
- * @method ActionPropertyQuery rightJoinActionPropertyHospitalBed($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyHospitalBed relation
- * @method ActionPropertyQuery innerJoinActionPropertyHospitalBed($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionPropertyHospitalBed relation
- *
- * @method ActionPropertyQuery leftJoinActionPropertyInteger($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyInteger relation
- * @method ActionPropertyQuery rightJoinActionPropertyInteger($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyInteger relation
- * @method ActionPropertyQuery innerJoinActionPropertyInteger($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionPropertyInteger relation
- *
- * @method ActionPropertyQuery leftJoinActionPropertyMkb($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyMkb relation
- * @method ActionPropertyQuery rightJoinActionPropertyMkb($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyMkb relation
- * @method ActionPropertyQuery innerJoinActionPropertyMkb($relationAlias = null) Adds a INNER JOIN clause to the query using the ActionPropertyMkb relation
  *
  * @method ActionPropertyQuery leftJoinActionPropertyTime($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActionPropertyTime relation
  * @method ActionPropertyQuery rightJoinActionPropertyTime($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActionPropertyTime relation
@@ -346,6 +331,8 @@ abstract class BaseActionPropertyQuery extends ModelCriteria
      * </code>
      *
      * @see       filterByActionPropertyString()
+     *
+     * @see       filterByActionPropertyInteger()
      *
      * @see       filterByActionPropertyDate()
      *
@@ -1067,6 +1054,82 @@ abstract class BaseActionPropertyQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related ActionPropertyInteger object
+     *
+     * @param   ActionPropertyInteger|PropelObjectCollection $actionPropertyInteger The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 ActionPropertyQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByActionPropertyInteger($actionPropertyInteger, $comparison = null)
+    {
+        if ($actionPropertyInteger instanceof ActionPropertyInteger) {
+            return $this
+                ->addUsingAlias(ActionPropertyPeer::ID, $actionPropertyInteger->getid(), $comparison);
+        } elseif ($actionPropertyInteger instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ActionPropertyPeer::ID, $actionPropertyInteger->toKeyValue('id', 'id'), $comparison);
+        } else {
+            throw new PropelException('filterByActionPropertyInteger() only accepts arguments of type ActionPropertyInteger or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ActionPropertyInteger relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ActionPropertyQuery The current query, for fluid interface
+     */
+    public function joinActionPropertyInteger($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ActionPropertyInteger');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ActionPropertyInteger');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ActionPropertyInteger relation ActionPropertyInteger object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Webmis\Models\ActionPropertyIntegerQuery A secondary query class using the current class as primary query
+     */
+    public function useActionPropertyIntegerQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinActionPropertyInteger($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ActionPropertyInteger', '\Webmis\Models\ActionPropertyIntegerQuery');
+    }
+
+    /**
      * Filter the query by a related ActionPropertyDate object
      *
      * @param   ActionPropertyDate|PropelObjectCollection $actionPropertyDate The related object(s) to use as filter
@@ -1368,302 +1431,6 @@ abstract class BaseActionPropertyQuery extends ModelCriteria
         return $this
             ->joinActionPropertyFDRecord($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'ActionPropertyFDRecord', '\Webmis\Models\ActionPropertyFDRecordQuery');
-    }
-
-    /**
-     * Filter the query by a related ActionPropertyAction object
-     *
-     * @param   ActionPropertyAction|PropelObjectCollection $actionPropertyAction  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 ActionPropertyQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByActionPropertyAction($actionPropertyAction, $comparison = null)
-    {
-        if ($actionPropertyAction instanceof ActionPropertyAction) {
-            return $this
-                ->addUsingAlias(ActionPropertyPeer::ID, $actionPropertyAction->getid(), $comparison);
-        } elseif ($actionPropertyAction instanceof PropelObjectCollection) {
-            return $this
-                ->useActionPropertyActionQuery()
-                ->filterByPrimaryKeys($actionPropertyAction->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByActionPropertyAction() only accepts arguments of type ActionPropertyAction or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the ActionPropertyAction relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return ActionPropertyQuery The current query, for fluid interface
-     */
-    public function joinActionPropertyAction($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ActionPropertyAction');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'ActionPropertyAction');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the ActionPropertyAction relation ActionPropertyAction object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   \Webmis\Models\ActionPropertyActionQuery A secondary query class using the current class as primary query
-     */
-    public function useActionPropertyActionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinActionPropertyAction($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ActionPropertyAction', '\Webmis\Models\ActionPropertyActionQuery');
-    }
-
-    /**
-     * Filter the query by a related ActionPropertyHospitalBed object
-     *
-     * @param   ActionPropertyHospitalBed|PropelObjectCollection $actionPropertyHospitalBed  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 ActionPropertyQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByActionPropertyHospitalBed($actionPropertyHospitalBed, $comparison = null)
-    {
-        if ($actionPropertyHospitalBed instanceof ActionPropertyHospitalBed) {
-            return $this
-                ->addUsingAlias(ActionPropertyPeer::ID, $actionPropertyHospitalBed->getid(), $comparison);
-        } elseif ($actionPropertyHospitalBed instanceof PropelObjectCollection) {
-            return $this
-                ->useActionPropertyHospitalBedQuery()
-                ->filterByPrimaryKeys($actionPropertyHospitalBed->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByActionPropertyHospitalBed() only accepts arguments of type ActionPropertyHospitalBed or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the ActionPropertyHospitalBed relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return ActionPropertyQuery The current query, for fluid interface
-     */
-    public function joinActionPropertyHospitalBed($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ActionPropertyHospitalBed');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'ActionPropertyHospitalBed');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the ActionPropertyHospitalBed relation ActionPropertyHospitalBed object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   \Webmis\Models\ActionPropertyHospitalBedQuery A secondary query class using the current class as primary query
-     */
-    public function useActionPropertyHospitalBedQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinActionPropertyHospitalBed($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ActionPropertyHospitalBed', '\Webmis\Models\ActionPropertyHospitalBedQuery');
-    }
-
-    /**
-     * Filter the query by a related ActionPropertyInteger object
-     *
-     * @param   ActionPropertyInteger|PropelObjectCollection $actionPropertyInteger  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 ActionPropertyQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByActionPropertyInteger($actionPropertyInteger, $comparison = null)
-    {
-        if ($actionPropertyInteger instanceof ActionPropertyInteger) {
-            return $this
-                ->addUsingAlias(ActionPropertyPeer::ID, $actionPropertyInteger->getid(), $comparison);
-        } elseif ($actionPropertyInteger instanceof PropelObjectCollection) {
-            return $this
-                ->useActionPropertyIntegerQuery()
-                ->filterByPrimaryKeys($actionPropertyInteger->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByActionPropertyInteger() only accepts arguments of type ActionPropertyInteger or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the ActionPropertyInteger relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return ActionPropertyQuery The current query, for fluid interface
-     */
-    public function joinActionPropertyInteger($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ActionPropertyInteger');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'ActionPropertyInteger');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the ActionPropertyInteger relation ActionPropertyInteger object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   \Webmis\Models\ActionPropertyIntegerQuery A secondary query class using the current class as primary query
-     */
-    public function useActionPropertyIntegerQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinActionPropertyInteger($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ActionPropertyInteger', '\Webmis\Models\ActionPropertyIntegerQuery');
-    }
-
-    /**
-     * Filter the query by a related ActionPropertyMkb object
-     *
-     * @param   ActionPropertyMkb|PropelObjectCollection $actionPropertyMkb  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 ActionPropertyQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByActionPropertyMkb($actionPropertyMkb, $comparison = null)
-    {
-        if ($actionPropertyMkb instanceof ActionPropertyMkb) {
-            return $this
-                ->addUsingAlias(ActionPropertyPeer::ID, $actionPropertyMkb->getid(), $comparison);
-        } elseif ($actionPropertyMkb instanceof PropelObjectCollection) {
-            return $this
-                ->useActionPropertyMkbQuery()
-                ->filterByPrimaryKeys($actionPropertyMkb->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByActionPropertyMkb() only accepts arguments of type ActionPropertyMkb or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the ActionPropertyMkb relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return ActionPropertyQuery The current query, for fluid interface
-     */
-    public function joinActionPropertyMkb($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ActionPropertyMkb');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'ActionPropertyMkb');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the ActionPropertyMkb relation ActionPropertyMkb object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   \Webmis\Models\ActionPropertyMkbQuery A secondary query class using the current class as primary query
-     */
-    public function useActionPropertyMkbQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinActionPropertyMkb($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ActionPropertyMkb', '\Webmis\Models\ActionPropertyMkbQuery');
     }
 
     /**

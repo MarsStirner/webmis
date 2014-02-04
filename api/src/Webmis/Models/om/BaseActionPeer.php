@@ -13,6 +13,7 @@ use Webmis\Models\Action;
 use Webmis\Models\ActionPeer;
 use Webmis\Models\ActionTypePeer;
 use Webmis\Models\EventPeer;
+use Webmis\Models\PersonPeer;
 use Webmis\Models\map\ActionTableMap;
 
 /**
@@ -776,6 +777,159 @@ abstract class BaseActionPeer
 
 
     /**
+     * Returns the number of rows matching criteria, joining the related CreatePerson table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinCreatePerson(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ActionPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ActionPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(ActionPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ActionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ActionPeer::CREATEPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related ModifyPerson table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinModifyPerson(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ActionPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ActionPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(ActionPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ActionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ActionPeer::MODIFYPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related SetPerson table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinSetPerson(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ActionPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ActionPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(ActionPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ActionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ActionPeer::SETPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
      * Returns the number of rows matching criteria, joining the related ActionType table
      *
      * @param      Criteria $criteria
@@ -894,6 +1048,207 @@ abstract class BaseActionPeer
 
 
     /**
+     * Selects a collection of Action objects pre-filled with their Person objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Action objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinCreatePerson(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPeer::DATABASE_NAME);
+        }
+
+        ActionPeer::addSelectColumns($criteria);
+        $startcol = ActionPeer::NUM_HYDRATE_COLUMNS;
+        PersonPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(ActionPeer::CREATEPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = ActionPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = PersonPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = PersonPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    PersonPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (Action) to $obj2 (Person)
+                $obj2->addActionRelatedBycreatePersonId($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Action objects pre-filled with their Person objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Action objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinModifyPerson(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPeer::DATABASE_NAME);
+        }
+
+        ActionPeer::addSelectColumns($criteria);
+        $startcol = ActionPeer::NUM_HYDRATE_COLUMNS;
+        PersonPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(ActionPeer::MODIFYPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = ActionPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = PersonPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = PersonPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    PersonPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (Action) to $obj2 (Person)
+                $obj2->addActionRelatedBymodifyPersonId($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Action objects pre-filled with their Person objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Action objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinSetPerson(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPeer::DATABASE_NAME);
+        }
+
+        ActionPeer::addSelectColumns($criteria);
+        $startcol = ActionPeer::NUM_HYDRATE_COLUMNS;
+        PersonPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(ActionPeer::SETPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = ActionPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = PersonPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = PersonPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    PersonPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (Action) to $obj2 (Person)
+                $obj2->addActionRelatedBysetPersonId($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
      * Selects a collection of Action objects pre-filled with their ActionType objects.
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
@@ -998,6 +1353,12 @@ abstract class BaseActionPeer
 
         $criteria->addJoin(ActionPeer::EVENT_ID, EventPeer::ID, $join_behavior);
 
+        $criteria->addJoin(ActionPeer::CREATEPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::MODIFYPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::SETPERSON_ID, PersonPeer::ID, $join_behavior);
+
         $criteria->addJoin(ActionPeer::ACTIONTYPE_ID, ActionTypePeer::ID, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
@@ -1037,10 +1398,25 @@ abstract class BaseActionPeer
         EventPeer::addSelectColumns($criteria);
         $startcol3 = $startcol2 + EventPeer::NUM_HYDRATE_COLUMNS;
 
+        PersonPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + PersonPeer::NUM_HYDRATE_COLUMNS;
+
+        PersonPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + PersonPeer::NUM_HYDRATE_COLUMNS;
+
+        PersonPeer::addSelectColumns($criteria);
+        $startcol6 = $startcol5 + PersonPeer::NUM_HYDRATE_COLUMNS;
+
         ActionTypePeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + ActionTypePeer::NUM_HYDRATE_COLUMNS;
+        $startcol7 = $startcol6 + ActionTypePeer::NUM_HYDRATE_COLUMNS;
 
         $criteria->addJoin(ActionPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::CREATEPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::MODIFYPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::SETPERSON_ID, PersonPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPeer::ACTIONTYPE_ID, ActionTypePeer::ID, $join_behavior);
 
@@ -1079,22 +1455,76 @@ abstract class BaseActionPeer
                 $obj2->addAction($obj1);
             } // if joined row not null
 
-            // Add objects for joined ActionType rows
+            // Add objects for joined Person rows
 
-            $key3 = ActionTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+            $key3 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol3);
             if ($key3 !== null) {
-                $obj3 = ActionTypePeer::getInstanceFromPool($key3);
+                $obj3 = PersonPeer::getInstanceFromPool($key3);
                 if (!$obj3) {
 
-                    $cls = ActionTypePeer::getOMClass();
+                    $cls = PersonPeer::getOMClass();
 
                     $obj3 = new $cls();
                     $obj3->hydrate($row, $startcol3);
-                    ActionTypePeer::addInstanceToPool($obj3, $key3);
+                    PersonPeer::addInstanceToPool($obj3, $key3);
                 } // if obj3 loaded
 
-                // Add the $obj1 (Action) to the collection in $obj3 (ActionType)
-                $obj3->addAction($obj1);
+                // Add the $obj1 (Action) to the collection in $obj3 (Person)
+                $obj3->addActionRelatedBycreatePersonId($obj1);
+            } // if joined row not null
+
+            // Add objects for joined Person rows
+
+            $key4 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+            if ($key4 !== null) {
+                $obj4 = PersonPeer::getInstanceFromPool($key4);
+                if (!$obj4) {
+
+                    $cls = PersonPeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    PersonPeer::addInstanceToPool($obj4, $key4);
+                } // if obj4 loaded
+
+                // Add the $obj1 (Action) to the collection in $obj4 (Person)
+                $obj4->addActionRelatedBymodifyPersonId($obj1);
+            } // if joined row not null
+
+            // Add objects for joined Person rows
+
+            $key5 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol5);
+            if ($key5 !== null) {
+                $obj5 = PersonPeer::getInstanceFromPool($key5);
+                if (!$obj5) {
+
+                    $cls = PersonPeer::getOMClass();
+
+                    $obj5 = new $cls();
+                    $obj5->hydrate($row, $startcol5);
+                    PersonPeer::addInstanceToPool($obj5, $key5);
+                } // if obj5 loaded
+
+                // Add the $obj1 (Action) to the collection in $obj5 (Person)
+                $obj5->addActionRelatedBysetPersonId($obj1);
+            } // if joined row not null
+
+            // Add objects for joined ActionType rows
+
+            $key6 = ActionTypePeer::getPrimaryKeyHashFromRow($row, $startcol6);
+            if ($key6 !== null) {
+                $obj6 = ActionTypePeer::getInstanceFromPool($key6);
+                if (!$obj6) {
+
+                    $cls = ActionTypePeer::getOMClass();
+
+                    $obj6 = new $cls();
+                    $obj6->hydrate($row, $startcol6);
+                    ActionTypePeer::addInstanceToPool($obj6, $key6);
+                } // if obj6 loaded
+
+                // Add the $obj1 (Action) to the collection in $obj6 (ActionType)
+                $obj6->addAction($obj1);
             } // if joined row not null
 
             $results[] = $obj1;
@@ -1140,6 +1570,171 @@ abstract class BaseActionPeer
         if ($con === null) {
             $con = Propel::getConnection(ActionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
+
+        $criteria->addJoin(ActionPeer::CREATEPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::MODIFYPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::SETPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::ACTIONTYPE_ID, ActionTypePeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related CreatePerson table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptCreatePerson(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ActionPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ActionPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(ActionPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ActionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ActionPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::ACTIONTYPE_ID, ActionTypePeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related ModifyPerson table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptModifyPerson(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ActionPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ActionPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(ActionPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ActionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ActionPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::ACTIONTYPE_ID, ActionTypePeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related SetPerson table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptSetPerson(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ActionPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ActionPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(ActionPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ActionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ActionPeer::EVENT_ID, EventPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPeer::ACTIONTYPE_ID, ActionTypePeer::ID, $join_behavior);
 
@@ -1194,6 +1789,12 @@ abstract class BaseActionPeer
 
         $criteria->addJoin(ActionPeer::EVENT_ID, EventPeer::ID, $join_behavior);
 
+        $criteria->addJoin(ActionPeer::CREATEPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::MODIFYPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::SETPERSON_ID, PersonPeer::ID, $join_behavior);
+
         $stmt = BasePeer::doCount($criteria, $con);
 
         if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1231,8 +1832,23 @@ abstract class BaseActionPeer
         ActionPeer::addSelectColumns($criteria);
         $startcol2 = ActionPeer::NUM_HYDRATE_COLUMNS;
 
+        PersonPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + PersonPeer::NUM_HYDRATE_COLUMNS;
+
+        PersonPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + PersonPeer::NUM_HYDRATE_COLUMNS;
+
+        PersonPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + PersonPeer::NUM_HYDRATE_COLUMNS;
+
         ActionTypePeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + ActionTypePeer::NUM_HYDRATE_COLUMNS;
+        $startcol6 = $startcol5 + ActionTypePeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ActionPeer::CREATEPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::MODIFYPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::SETPERSON_ID, PersonPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPeer::ACTIONTYPE_ID, ActionTypePeer::ID, $join_behavior);
 
@@ -1254,22 +1870,373 @@ abstract class BaseActionPeer
                 ActionPeer::addInstanceToPool($obj1, $key1);
             } // if obj1 already loaded
 
-                // Add objects for joined ActionType rows
+                // Add objects for joined Person rows
 
-                $key2 = ActionTypePeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                $key2 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol2);
                 if ($key2 !== null) {
-                    $obj2 = ActionTypePeer::getInstanceFromPool($key2);
+                    $obj2 = PersonPeer::getInstanceFromPool($key2);
                     if (!$obj2) {
 
-                        $cls = ActionTypePeer::getOMClass();
+                        $cls = PersonPeer::getOMClass();
 
                     $obj2 = new $cls();
                     $obj2->hydrate($row, $startcol2);
-                    ActionTypePeer::addInstanceToPool($obj2, $key2);
+                    PersonPeer::addInstanceToPool($obj2, $key2);
                 } // if $obj2 already loaded
 
-                // Add the $obj1 (Action) to the collection in $obj2 (ActionType)
+                // Add the $obj1 (Action) to the collection in $obj2 (Person)
+                $obj2->addActionRelatedBycreatePersonId($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Person rows
+
+                $key3 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = PersonPeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = PersonPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    PersonPeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj3 (Person)
+                $obj3->addActionRelatedBymodifyPersonId($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Person rows
+
+                $key4 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                if ($key4 !== null) {
+                    $obj4 = PersonPeer::getInstanceFromPool($key4);
+                    if (!$obj4) {
+
+                        $cls = PersonPeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    PersonPeer::addInstanceToPool($obj4, $key4);
+                } // if $obj4 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj4 (Person)
+                $obj4->addActionRelatedBysetPersonId($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionType rows
+
+                $key5 = ActionTypePeer::getPrimaryKeyHashFromRow($row, $startcol5);
+                if ($key5 !== null) {
+                    $obj5 = ActionTypePeer::getInstanceFromPool($key5);
+                    if (!$obj5) {
+
+                        $cls = ActionTypePeer::getOMClass();
+
+                    $obj5 = new $cls();
+                    $obj5->hydrate($row, $startcol5);
+                    ActionTypePeer::addInstanceToPool($obj5, $key5);
+                } // if $obj5 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj5 (ActionType)
+                $obj5->addAction($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Action objects pre-filled with all related objects except CreatePerson.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Action objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptCreatePerson(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPeer::DATABASE_NAME);
+        }
+
+        ActionPeer::addSelectColumns($criteria);
+        $startcol2 = ActionPeer::NUM_HYDRATE_COLUMNS;
+
+        EventPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + EventPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionTypePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ActionTypePeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ActionPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::ACTIONTYPE_ID, ActionTypePeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ActionPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Event rows
+
+                $key2 = EventPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = EventPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = EventPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    EventPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj2 (Event)
                 $obj2->addAction($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionType rows
+
+                $key3 = ActionTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ActionTypePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ActionTypePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ActionTypePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj3 (ActionType)
+                $obj3->addAction($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Action objects pre-filled with all related objects except ModifyPerson.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Action objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptModifyPerson(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPeer::DATABASE_NAME);
+        }
+
+        ActionPeer::addSelectColumns($criteria);
+        $startcol2 = ActionPeer::NUM_HYDRATE_COLUMNS;
+
+        EventPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + EventPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionTypePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ActionTypePeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ActionPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::ACTIONTYPE_ID, ActionTypePeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ActionPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Event rows
+
+                $key2 = EventPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = EventPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = EventPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    EventPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj2 (Event)
+                $obj2->addAction($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionType rows
+
+                $key3 = ActionTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ActionTypePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ActionTypePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ActionTypePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj3 (ActionType)
+                $obj3->addAction($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Action objects pre-filled with all related objects except SetPerson.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Action objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptSetPerson(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPeer::DATABASE_NAME);
+        }
+
+        ActionPeer::addSelectColumns($criteria);
+        $startcol2 = ActionPeer::NUM_HYDRATE_COLUMNS;
+
+        EventPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + EventPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionTypePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ActionTypePeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ActionPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::ACTIONTYPE_ID, ActionTypePeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ActionPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Event rows
+
+                $key2 = EventPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = EventPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = EventPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    EventPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj2 (Event)
+                $obj2->addAction($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionType rows
+
+                $key3 = ActionTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ActionTypePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ActionTypePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ActionTypePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj3 (ActionType)
+                $obj3->addAction($obj1);
 
             } // if joined row is not null
 
@@ -1308,7 +2275,22 @@ abstract class BaseActionPeer
         EventPeer::addSelectColumns($criteria);
         $startcol3 = $startcol2 + EventPeer::NUM_HYDRATE_COLUMNS;
 
+        PersonPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + PersonPeer::NUM_HYDRATE_COLUMNS;
+
+        PersonPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + PersonPeer::NUM_HYDRATE_COLUMNS;
+
+        PersonPeer::addSelectColumns($criteria);
+        $startcol6 = $startcol5 + PersonPeer::NUM_HYDRATE_COLUMNS;
+
         $criteria->addJoin(ActionPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::CREATEPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::MODIFYPERSON_ID, PersonPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPeer::SETPERSON_ID, PersonPeer::ID, $join_behavior);
 
 
         $stmt = BasePeer::doSelect($criteria, $con);
@@ -1344,6 +2326,63 @@ abstract class BaseActionPeer
 
                 // Add the $obj1 (Action) to the collection in $obj2 (Event)
                 $obj2->addAction($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Person rows
+
+                $key3 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = PersonPeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = PersonPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    PersonPeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj3 (Person)
+                $obj3->addActionRelatedBycreatePersonId($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Person rows
+
+                $key4 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                if ($key4 !== null) {
+                    $obj4 = PersonPeer::getInstanceFromPool($key4);
+                    if (!$obj4) {
+
+                        $cls = PersonPeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    PersonPeer::addInstanceToPool($obj4, $key4);
+                } // if $obj4 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj4 (Person)
+                $obj4->addActionRelatedBymodifyPersonId($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Person rows
+
+                $key5 = PersonPeer::getPrimaryKeyHashFromRow($row, $startcol5);
+                if ($key5 !== null) {
+                    $obj5 = PersonPeer::getInstanceFromPool($key5);
+                    if (!$obj5) {
+
+                        $cls = PersonPeer::getOMClass();
+
+                    $obj5 = new $cls();
+                    $obj5->hydrate($row, $startcol5);
+                    PersonPeer::addInstanceToPool($obj5, $key5);
+                } // if $obj5 already loaded
+
+                // Add the $obj1 (Action) to the collection in $obj5 (Person)
+                $obj5->addActionRelatedBysetPersonId($obj1);
 
             } // if joined row is not null
 

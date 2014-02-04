@@ -6,6 +6,7 @@ define(function(require) {
 			this.render = _.wrap(this.render, function(render) {
 				render.apply(this);
 				this.afterRender.apply(this);
+                return this;
 			});
 
 			Backbone.View.apply(this, arguments);
@@ -22,14 +23,16 @@ define(function(require) {
 		},
 
 		renderSubViews: function() {
-			// console.log('renderSubViews', this.subViews)
 			_.each(this._subViews, function(view, selector) {
-				view.setElement(this.$(selector)).render();
+				if(view){
+                    view.setElement(this.$(selector)).render();
+				}
 			}, this);
 		},
 
 		render: function() {
-			this.$el.html(this.template(this.data()));
+			//console.log('render', this.cid)
+			this.$el.html(_.template(this.template, this.data(),{variable: 'data'}));
 			this.renderSubViews();
 
 			return this;

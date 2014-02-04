@@ -11,13 +11,10 @@ use \PropelException;
 use \PropelPDO;
 use Webmis\Models\ActionPeer;
 use Webmis\Models\ActionProperty;
-use Webmis\Models\ActionPropertyActionPeer;
 use Webmis\Models\ActionPropertyDatePeer;
 use Webmis\Models\ActionPropertyDoublePeer;
 use Webmis\Models\ActionPropertyFDRecordPeer;
-use Webmis\Models\ActionPropertyHospitalBedPeer;
 use Webmis\Models\ActionPropertyIntegerPeer;
-use Webmis\Models\ActionPropertyMkbPeer;
 use Webmis\Models\ActionPropertyOrgStructurePeer;
 use Webmis\Models\ActionPropertyPeer;
 use Webmis\Models\ActionPropertyStringPeer;
@@ -441,18 +438,6 @@ abstract class BaseActionPropertyPeer
      */
     public static function clearRelatedInstancePool()
     {
-        // Invalidate objects in ActionPropertyActionPeer instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ActionPropertyActionPeer::clearInstancePool();
-        // Invalidate objects in ActionPropertyHospitalBedPeer instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ActionPropertyHospitalBedPeer::clearInstancePool();
-        // Invalidate objects in ActionPropertyIntegerPeer instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ActionPropertyIntegerPeer::clearInstancePool();
-        // Invalidate objects in ActionPropertyMkbPeer instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ActionPropertyMkbPeer::clearInstancePool();
         // Invalidate objects in ActionPropertyTimePeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ActionPropertyTimePeer::clearInstancePool();
@@ -692,6 +677,57 @@ abstract class BaseActionPropertyPeer
         }
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related ActionPropertyInteger table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinActionPropertyInteger(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ActionPropertyPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ActionPropertyPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ActionPropertyPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -1113,6 +1149,74 @@ abstract class BaseActionPropertyPeer
 
 
     /**
+     * Selects a collection of ActionProperty objects pre-filled with their ActionPropertyInteger objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ActionProperty objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinActionPropertyInteger(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
+        }
+
+        ActionPropertyPeer::addSelectColumns($criteria);
+        $startcol = ActionPropertyPeer::NUM_HYDRATE_COLUMNS;
+        ActionPropertyIntegerPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPropertyPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPropertyPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = ActionPropertyPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPropertyPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = ActionPropertyIntegerPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = ActionPropertyIntegerPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = ActionPropertyIntegerPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    ActionPropertyIntegerPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (ActionProperty) to $obj2 (ActionPropertyInteger)
+                // one to one relationship
+                $obj1->setActionPropertyInteger($obj2);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
      * Selects a collection of ActionProperty objects pre-filled with their ActionPropertyDate objects.
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
@@ -1426,6 +1530,8 @@ abstract class BaseActionPropertyPeer
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
 
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
@@ -1477,23 +1583,28 @@ abstract class BaseActionPropertyPeer
         ActionPropertyStringPeer::addSelectColumns($criteria);
         $startcol5 = $startcol4 + ActionPropertyStringPeer::NUM_HYDRATE_COLUMNS;
 
+        ActionPropertyIntegerPeer::addSelectColumns($criteria);
+        $startcol6 = $startcol5 + ActionPropertyIntegerPeer::NUM_HYDRATE_COLUMNS;
+
         ActionPropertyDatePeer::addSelectColumns($criteria);
-        $startcol6 = $startcol5 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
+        $startcol7 = $startcol6 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
 
         ActionPropertyDoublePeer::addSelectColumns($criteria);
-        $startcol7 = $startcol6 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
+        $startcol8 = $startcol7 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
 
         ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
-        $startcol8 = $startcol7 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
+        $startcol9 = $startcol8 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
 
         ActionPropertyFDRecordPeer::addSelectColumns($criteria);
-        $startcol9 = $startcol8 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
+        $startcol10 = $startcol9 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
 
         $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
 
@@ -1574,76 +1685,94 @@ abstract class BaseActionPropertyPeer
                 $obj1->setActionPropertyString($obj4);
             } // if joined row not null
 
-            // Add objects for joined ActionPropertyDate rows
+            // Add objects for joined ActionPropertyInteger rows
 
-            $key5 = ActionPropertyDatePeer::getPrimaryKeyHashFromRow($row, $startcol5);
+            $key5 = ActionPropertyIntegerPeer::getPrimaryKeyHashFromRow($row, $startcol5);
             if ($key5 !== null) {
-                $obj5 = ActionPropertyDatePeer::getInstanceFromPool($key5);
+                $obj5 = ActionPropertyIntegerPeer::getInstanceFromPool($key5);
                 if (!$obj5) {
 
-                    $cls = ActionPropertyDatePeer::getOMClass();
+                    $cls = ActionPropertyIntegerPeer::getOMClass();
 
                     $obj5 = new $cls();
                     $obj5->hydrate($row, $startcol5);
-                    ActionPropertyDatePeer::addInstanceToPool($obj5, $key5);
+                    ActionPropertyIntegerPeer::addInstanceToPool($obj5, $key5);
                 } // if obj5 loaded
 
-                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyDate)
-                $obj1->setActionPropertyDate($obj5);
+                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyInteger)
+                $obj1->setActionPropertyInteger($obj5);
+            } // if joined row not null
+
+            // Add objects for joined ActionPropertyDate rows
+
+            $key6 = ActionPropertyDatePeer::getPrimaryKeyHashFromRow($row, $startcol6);
+            if ($key6 !== null) {
+                $obj6 = ActionPropertyDatePeer::getInstanceFromPool($key6);
+                if (!$obj6) {
+
+                    $cls = ActionPropertyDatePeer::getOMClass();
+
+                    $obj6 = new $cls();
+                    $obj6->hydrate($row, $startcol6);
+                    ActionPropertyDatePeer::addInstanceToPool($obj6, $key6);
+                } // if obj6 loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyDate)
+                $obj1->setActionPropertyDate($obj6);
             } // if joined row not null
 
             // Add objects for joined ActionPropertyDouble rows
 
-            $key6 = ActionPropertyDoublePeer::getPrimaryKeyHashFromRow($row, $startcol6);
-            if ($key6 !== null) {
-                $obj6 = ActionPropertyDoublePeer::getInstanceFromPool($key6);
-                if (!$obj6) {
+            $key7 = ActionPropertyDoublePeer::getPrimaryKeyHashFromRow($row, $startcol7);
+            if ($key7 !== null) {
+                $obj7 = ActionPropertyDoublePeer::getInstanceFromPool($key7);
+                if (!$obj7) {
 
                     $cls = ActionPropertyDoublePeer::getOMClass();
 
-                    $obj6 = new $cls();
-                    $obj6->hydrate($row, $startcol6);
-                    ActionPropertyDoublePeer::addInstanceToPool($obj6, $key6);
-                } // if obj6 loaded
+                    $obj7 = new $cls();
+                    $obj7->hydrate($row, $startcol7);
+                    ActionPropertyDoublePeer::addInstanceToPool($obj7, $key7);
+                } // if obj7 loaded
 
-                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyDouble)
-                $obj1->setActionPropertyDouble($obj6);
+                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyDouble)
+                $obj1->setActionPropertyDouble($obj7);
             } // if joined row not null
 
             // Add objects for joined ActionPropertyOrgStructure rows
 
-            $key7 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol7);
-            if ($key7 !== null) {
-                $obj7 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key7);
-                if (!$obj7) {
+            $key8 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol8);
+            if ($key8 !== null) {
+                $obj8 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key8);
+                if (!$obj8) {
 
                     $cls = ActionPropertyOrgStructurePeer::getOMClass();
 
-                    $obj7 = new $cls();
-                    $obj7->hydrate($row, $startcol7);
-                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj7, $key7);
-                } // if obj7 loaded
+                    $obj8 = new $cls();
+                    $obj8->hydrate($row, $startcol8);
+                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj8, $key8);
+                } // if obj8 loaded
 
-                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyOrgStructure)
-                $obj1->setActionPropertyOrgStructure($obj7);
+                // Add the $obj1 (ActionProperty) to the collection in $obj8 (ActionPropertyOrgStructure)
+                $obj1->setActionPropertyOrgStructure($obj8);
             } // if joined row not null
 
             // Add objects for joined ActionPropertyFDRecord rows
 
-            $key8 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol8);
-            if ($key8 !== null) {
-                $obj8 = ActionPropertyFDRecordPeer::getInstanceFromPool($key8);
-                if (!$obj8) {
+            $key9 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol9);
+            if ($key9 !== null) {
+                $obj9 = ActionPropertyFDRecordPeer::getInstanceFromPool($key9);
+                if (!$obj9) {
 
                     $cls = ActionPropertyFDRecordPeer::getOMClass();
 
-                    $obj8 = new $cls();
-                    $obj8->hydrate($row, $startcol8);
-                    ActionPropertyFDRecordPeer::addInstanceToPool($obj8, $key8);
-                } // if obj8 loaded
+                    $obj9 = new $cls();
+                    $obj9->hydrate($row, $startcol9);
+                    ActionPropertyFDRecordPeer::addInstanceToPool($obj9, $key9);
+                } // if obj9 loaded
 
-                // Add the $obj1 (ActionProperty) to the collection in $obj8 (ActionPropertyFDRecord)
-                $obj1->setActionPropertyFDRecord($obj8);
+                // Add the $obj1 (ActionProperty) to the collection in $obj9 (ActionPropertyFDRecord)
+                $obj1->setActionPropertyFDRecord($obj9);
             } // if joined row not null
 
             $results[] = $obj1;
@@ -1693,6 +1822,8 @@ abstract class BaseActionPropertyPeer
         $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
 
@@ -1755,6 +1886,8 @@ abstract class BaseActionPropertyPeer
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
 
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
@@ -1815,6 +1948,71 @@ abstract class BaseActionPropertyPeer
         $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyOrgStructurePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyFDRecordPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related ActionPropertyInteger table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptActionPropertyInteger(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(ActionPropertyPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            ActionPropertyPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(ActionPropertyPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
 
@@ -1879,6 +2077,8 @@ abstract class BaseActionPropertyPeer
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
 
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyOrgStructurePeer::ID, $join_behavior);
@@ -1939,6 +2139,8 @@ abstract class BaseActionPropertyPeer
         $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
 
@@ -2001,6 +2203,8 @@ abstract class BaseActionPropertyPeer
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
 
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
@@ -2062,6 +2266,8 @@ abstract class BaseActionPropertyPeer
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
 
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
@@ -2111,21 +2317,26 @@ abstract class BaseActionPropertyPeer
         ActionPropertyStringPeer::addSelectColumns($criteria);
         $startcol4 = $startcol3 + ActionPropertyStringPeer::NUM_HYDRATE_COLUMNS;
 
+        ActionPropertyIntegerPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ActionPropertyIntegerPeer::NUM_HYDRATE_COLUMNS;
+
         ActionPropertyDatePeer::addSelectColumns($criteria);
-        $startcol5 = $startcol4 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
+        $startcol6 = $startcol5 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
 
         ActionPropertyDoublePeer::addSelectColumns($criteria);
-        $startcol6 = $startcol5 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
+        $startcol7 = $startcol6 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
 
         ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
-        $startcol7 = $startcol6 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
+        $startcol8 = $startcol7 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
 
         ActionPropertyFDRecordPeer::addSelectColumns($criteria);
-        $startcol8 = $startcol7 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
+        $startcol9 = $startcol8 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
 
         $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
 
@@ -2191,79 +2402,98 @@ abstract class BaseActionPropertyPeer
 
             } // if joined row is not null
 
-                // Add objects for joined ActionPropertyDate rows
+                // Add objects for joined ActionPropertyInteger rows
 
-                $key4 = ActionPropertyDatePeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                $key4 = ActionPropertyIntegerPeer::getPrimaryKeyHashFromRow($row, $startcol4);
                 if ($key4 !== null) {
-                    $obj4 = ActionPropertyDatePeer::getInstanceFromPool($key4);
+                    $obj4 = ActionPropertyIntegerPeer::getInstanceFromPool($key4);
                     if (!$obj4) {
 
-                        $cls = ActionPropertyDatePeer::getOMClass();
+                        $cls = ActionPropertyIntegerPeer::getOMClass();
 
                     $obj4 = new $cls();
                     $obj4->hydrate($row, $startcol4);
-                    ActionPropertyDatePeer::addInstanceToPool($obj4, $key4);
+                    ActionPropertyIntegerPeer::addInstanceToPool($obj4, $key4);
                 } // if $obj4 already loaded
 
-                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyDate)
-                $obj1->setActionPropertyDate($obj4);
+                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyInteger)
+                $obj1->setActionPropertyInteger($obj4);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyDate rows
+
+                $key5 = ActionPropertyDatePeer::getPrimaryKeyHashFromRow($row, $startcol5);
+                if ($key5 !== null) {
+                    $obj5 = ActionPropertyDatePeer::getInstanceFromPool($key5);
+                    if (!$obj5) {
+
+                        $cls = ActionPropertyDatePeer::getOMClass();
+
+                    $obj5 = new $cls();
+                    $obj5->hydrate($row, $startcol5);
+                    ActionPropertyDatePeer::addInstanceToPool($obj5, $key5);
+                } // if $obj5 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyDate)
+                $obj1->setActionPropertyDate($obj5);
 
             } // if joined row is not null
 
                 // Add objects for joined ActionPropertyDouble rows
 
-                $key5 = ActionPropertyDoublePeer::getPrimaryKeyHashFromRow($row, $startcol5);
-                if ($key5 !== null) {
-                    $obj5 = ActionPropertyDoublePeer::getInstanceFromPool($key5);
-                    if (!$obj5) {
+                $key6 = ActionPropertyDoublePeer::getPrimaryKeyHashFromRow($row, $startcol6);
+                if ($key6 !== null) {
+                    $obj6 = ActionPropertyDoublePeer::getInstanceFromPool($key6);
+                    if (!$obj6) {
 
                         $cls = ActionPropertyDoublePeer::getOMClass();
 
-                    $obj5 = new $cls();
-                    $obj5->hydrate($row, $startcol5);
-                    ActionPropertyDoublePeer::addInstanceToPool($obj5, $key5);
-                } // if $obj5 already loaded
+                    $obj6 = new $cls();
+                    $obj6->hydrate($row, $startcol6);
+                    ActionPropertyDoublePeer::addInstanceToPool($obj6, $key6);
+                } // if $obj6 already loaded
 
-                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyDouble)
-                $obj1->setActionPropertyDouble($obj5);
+                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyDouble)
+                $obj1->setActionPropertyDouble($obj6);
 
             } // if joined row is not null
 
                 // Add objects for joined ActionPropertyOrgStructure rows
 
-                $key6 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol6);
-                if ($key6 !== null) {
-                    $obj6 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key6);
-                    if (!$obj6) {
+                $key7 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol7);
+                if ($key7 !== null) {
+                    $obj7 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key7);
+                    if (!$obj7) {
 
                         $cls = ActionPropertyOrgStructurePeer::getOMClass();
 
-                    $obj6 = new $cls();
-                    $obj6->hydrate($row, $startcol6);
-                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj6, $key6);
-                } // if $obj6 already loaded
+                    $obj7 = new $cls();
+                    $obj7->hydrate($row, $startcol7);
+                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj7, $key7);
+                } // if $obj7 already loaded
 
-                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyOrgStructure)
-                $obj1->setActionPropertyOrgStructure($obj6);
+                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyOrgStructure)
+                $obj1->setActionPropertyOrgStructure($obj7);
 
             } // if joined row is not null
 
                 // Add objects for joined ActionPropertyFDRecord rows
 
-                $key7 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol7);
-                if ($key7 !== null) {
-                    $obj7 = ActionPropertyFDRecordPeer::getInstanceFromPool($key7);
-                    if (!$obj7) {
+                $key8 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol8);
+                if ($key8 !== null) {
+                    $obj8 = ActionPropertyFDRecordPeer::getInstanceFromPool($key8);
+                    if (!$obj8) {
 
                         $cls = ActionPropertyFDRecordPeer::getOMClass();
 
-                    $obj7 = new $cls();
-                    $obj7->hydrate($row, $startcol7);
-                    ActionPropertyFDRecordPeer::addInstanceToPool($obj7, $key7);
-                } // if $obj7 already loaded
+                    $obj8 = new $cls();
+                    $obj8->hydrate($row, $startcol8);
+                    ActionPropertyFDRecordPeer::addInstanceToPool($obj8, $key8);
+                } // if $obj8 already loaded
 
-                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyFDRecord)
-                $obj1->setActionPropertyFDRecord($obj7);
+                // Add the $obj1 (ActionProperty) to the collection in $obj8 (ActionPropertyFDRecord)
+                $obj1->setActionPropertyFDRecord($obj8);
 
             } // if joined row is not null
 
@@ -2305,21 +2535,26 @@ abstract class BaseActionPropertyPeer
         ActionPropertyStringPeer::addSelectColumns($criteria);
         $startcol4 = $startcol3 + ActionPropertyStringPeer::NUM_HYDRATE_COLUMNS;
 
+        ActionPropertyIntegerPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ActionPropertyIntegerPeer::NUM_HYDRATE_COLUMNS;
+
         ActionPropertyDatePeer::addSelectColumns($criteria);
-        $startcol5 = $startcol4 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
+        $startcol6 = $startcol5 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
 
         ActionPropertyDoublePeer::addSelectColumns($criteria);
-        $startcol6 = $startcol5 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
+        $startcol7 = $startcol6 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
 
         ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
-        $startcol7 = $startcol6 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
+        $startcol8 = $startcol7 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
 
         ActionPropertyFDRecordPeer::addSelectColumns($criteria);
-        $startcol8 = $startcol7 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
+        $startcol9 = $startcol8 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
 
         $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
 
@@ -2385,798 +2620,22 @@ abstract class BaseActionPropertyPeer
 
             } // if joined row is not null
 
-                // Add objects for joined ActionPropertyDate rows
+                // Add objects for joined ActionPropertyInteger rows
 
-                $key4 = ActionPropertyDatePeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                $key4 = ActionPropertyIntegerPeer::getPrimaryKeyHashFromRow($row, $startcol4);
                 if ($key4 !== null) {
-                    $obj4 = ActionPropertyDatePeer::getInstanceFromPool($key4);
+                    $obj4 = ActionPropertyIntegerPeer::getInstanceFromPool($key4);
                     if (!$obj4) {
 
-                        $cls = ActionPropertyDatePeer::getOMClass();
+                        $cls = ActionPropertyIntegerPeer::getOMClass();
 
                     $obj4 = new $cls();
                     $obj4->hydrate($row, $startcol4);
-                    ActionPropertyDatePeer::addInstanceToPool($obj4, $key4);
+                    ActionPropertyIntegerPeer::addInstanceToPool($obj4, $key4);
                 } // if $obj4 already loaded
 
-                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyDate)
-                $obj1->setActionPropertyDate($obj4);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyDouble rows
-
-                $key5 = ActionPropertyDoublePeer::getPrimaryKeyHashFromRow($row, $startcol5);
-                if ($key5 !== null) {
-                    $obj5 = ActionPropertyDoublePeer::getInstanceFromPool($key5);
-                    if (!$obj5) {
-
-                        $cls = ActionPropertyDoublePeer::getOMClass();
-
-                    $obj5 = new $cls();
-                    $obj5->hydrate($row, $startcol5);
-                    ActionPropertyDoublePeer::addInstanceToPool($obj5, $key5);
-                } // if $obj5 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyDouble)
-                $obj1->setActionPropertyDouble($obj5);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyOrgStructure rows
-
-                $key6 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol6);
-                if ($key6 !== null) {
-                    $obj6 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key6);
-                    if (!$obj6) {
-
-                        $cls = ActionPropertyOrgStructurePeer::getOMClass();
-
-                    $obj6 = new $cls();
-                    $obj6->hydrate($row, $startcol6);
-                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj6, $key6);
-                } // if $obj6 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyOrgStructure)
-                $obj1->setActionPropertyOrgStructure($obj6);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyFDRecord rows
-
-                $key7 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol7);
-                if ($key7 !== null) {
-                    $obj7 = ActionPropertyFDRecordPeer::getInstanceFromPool($key7);
-                    if (!$obj7) {
-
-                        $cls = ActionPropertyFDRecordPeer::getOMClass();
-
-                    $obj7 = new $cls();
-                    $obj7->hydrate($row, $startcol7);
-                    ActionPropertyFDRecordPeer::addInstanceToPool($obj7, $key7);
-                } // if $obj7 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyFDRecord)
-                $obj1->setActionPropertyFDRecord($obj7);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Selects a collection of ActionProperty objects pre-filled with all related objects except ActionPropertyString.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of ActionProperty objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptActionPropertyString(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
-        }
-
-        ActionPropertyPeer::addSelectColumns($criteria);
-        $startcol2 = ActionPropertyPeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + ActionPeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyTypePeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + ActionPropertyTypePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyDatePeer::addSelectColumns($criteria);
-        $startcol5 = $startcol4 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyDoublePeer::addSelectColumns($criteria);
-        $startcol6 = $startcol5 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
-        $startcol7 = $startcol6 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyFDRecordPeer::addSelectColumns($criteria);
-        $startcol8 = $startcol7 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyOrgStructurePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyFDRecordPeer::ID, $join_behavior);
-
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ActionPropertyPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ActionPropertyPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = ActionPropertyPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ActionPropertyPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined Action rows
-
-                $key2 = ActionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = ActionPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = ActionPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    ActionPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj2 (Action)
-                $obj2->addActionProperty($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyType rows
-
-                $key3 = ActionPropertyTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
-                if ($key3 !== null) {
-                    $obj3 = ActionPropertyTypePeer::getInstanceFromPool($key3);
-                    if (!$obj3) {
-
-                        $cls = ActionPropertyTypePeer::getOMClass();
-
-                    $obj3 = new $cls();
-                    $obj3->hydrate($row, $startcol3);
-                    ActionPropertyTypePeer::addInstanceToPool($obj3, $key3);
-                } // if $obj3 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj3 (ActionPropertyType)
-                $obj3->addActionProperty($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyDate rows
-
-                $key4 = ActionPropertyDatePeer::getPrimaryKeyHashFromRow($row, $startcol4);
-                if ($key4 !== null) {
-                    $obj4 = ActionPropertyDatePeer::getInstanceFromPool($key4);
-                    if (!$obj4) {
-
-                        $cls = ActionPropertyDatePeer::getOMClass();
-
-                    $obj4 = new $cls();
-                    $obj4->hydrate($row, $startcol4);
-                    ActionPropertyDatePeer::addInstanceToPool($obj4, $key4);
-                } // if $obj4 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyDate)
-                $obj1->setActionPropertyDate($obj4);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyDouble rows
-
-                $key5 = ActionPropertyDoublePeer::getPrimaryKeyHashFromRow($row, $startcol5);
-                if ($key5 !== null) {
-                    $obj5 = ActionPropertyDoublePeer::getInstanceFromPool($key5);
-                    if (!$obj5) {
-
-                        $cls = ActionPropertyDoublePeer::getOMClass();
-
-                    $obj5 = new $cls();
-                    $obj5->hydrate($row, $startcol5);
-                    ActionPropertyDoublePeer::addInstanceToPool($obj5, $key5);
-                } // if $obj5 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyDouble)
-                $obj1->setActionPropertyDouble($obj5);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyOrgStructure rows
-
-                $key6 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol6);
-                if ($key6 !== null) {
-                    $obj6 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key6);
-                    if (!$obj6) {
-
-                        $cls = ActionPropertyOrgStructurePeer::getOMClass();
-
-                    $obj6 = new $cls();
-                    $obj6->hydrate($row, $startcol6);
-                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj6, $key6);
-                } // if $obj6 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyOrgStructure)
-                $obj1->setActionPropertyOrgStructure($obj6);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyFDRecord rows
-
-                $key7 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol7);
-                if ($key7 !== null) {
-                    $obj7 = ActionPropertyFDRecordPeer::getInstanceFromPool($key7);
-                    if (!$obj7) {
-
-                        $cls = ActionPropertyFDRecordPeer::getOMClass();
-
-                    $obj7 = new $cls();
-                    $obj7->hydrate($row, $startcol7);
-                    ActionPropertyFDRecordPeer::addInstanceToPool($obj7, $key7);
-                } // if $obj7 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyFDRecord)
-                $obj1->setActionPropertyFDRecord($obj7);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Selects a collection of ActionProperty objects pre-filled with all related objects except ActionPropertyDate.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of ActionProperty objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptActionPropertyDate(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
-        }
-
-        ActionPropertyPeer::addSelectColumns($criteria);
-        $startcol2 = ActionPropertyPeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + ActionPeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyTypePeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + ActionPropertyTypePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyStringPeer::addSelectColumns($criteria);
-        $startcol5 = $startcol4 + ActionPropertyStringPeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyDoublePeer::addSelectColumns($criteria);
-        $startcol6 = $startcol5 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
-        $startcol7 = $startcol6 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyFDRecordPeer::addSelectColumns($criteria);
-        $startcol8 = $startcol7 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyOrgStructurePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyFDRecordPeer::ID, $join_behavior);
-
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ActionPropertyPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ActionPropertyPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = ActionPropertyPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ActionPropertyPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined Action rows
-
-                $key2 = ActionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = ActionPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = ActionPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    ActionPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj2 (Action)
-                $obj2->addActionProperty($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyType rows
-
-                $key3 = ActionPropertyTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
-                if ($key3 !== null) {
-                    $obj3 = ActionPropertyTypePeer::getInstanceFromPool($key3);
-                    if (!$obj3) {
-
-                        $cls = ActionPropertyTypePeer::getOMClass();
-
-                    $obj3 = new $cls();
-                    $obj3->hydrate($row, $startcol3);
-                    ActionPropertyTypePeer::addInstanceToPool($obj3, $key3);
-                } // if $obj3 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj3 (ActionPropertyType)
-                $obj3->addActionProperty($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyString rows
-
-                $key4 = ActionPropertyStringPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-                if ($key4 !== null) {
-                    $obj4 = ActionPropertyStringPeer::getInstanceFromPool($key4);
-                    if (!$obj4) {
-
-                        $cls = ActionPropertyStringPeer::getOMClass();
-
-                    $obj4 = new $cls();
-                    $obj4->hydrate($row, $startcol4);
-                    ActionPropertyStringPeer::addInstanceToPool($obj4, $key4);
-                } // if $obj4 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyString)
-                $obj1->setActionPropertyString($obj4);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyDouble rows
-
-                $key5 = ActionPropertyDoublePeer::getPrimaryKeyHashFromRow($row, $startcol5);
-                if ($key5 !== null) {
-                    $obj5 = ActionPropertyDoublePeer::getInstanceFromPool($key5);
-                    if (!$obj5) {
-
-                        $cls = ActionPropertyDoublePeer::getOMClass();
-
-                    $obj5 = new $cls();
-                    $obj5->hydrate($row, $startcol5);
-                    ActionPropertyDoublePeer::addInstanceToPool($obj5, $key5);
-                } // if $obj5 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyDouble)
-                $obj1->setActionPropertyDouble($obj5);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyOrgStructure rows
-
-                $key6 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol6);
-                if ($key6 !== null) {
-                    $obj6 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key6);
-                    if (!$obj6) {
-
-                        $cls = ActionPropertyOrgStructurePeer::getOMClass();
-
-                    $obj6 = new $cls();
-                    $obj6->hydrate($row, $startcol6);
-                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj6, $key6);
-                } // if $obj6 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyOrgStructure)
-                $obj1->setActionPropertyOrgStructure($obj6);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyFDRecord rows
-
-                $key7 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol7);
-                if ($key7 !== null) {
-                    $obj7 = ActionPropertyFDRecordPeer::getInstanceFromPool($key7);
-                    if (!$obj7) {
-
-                        $cls = ActionPropertyFDRecordPeer::getOMClass();
-
-                    $obj7 = new $cls();
-                    $obj7->hydrate($row, $startcol7);
-                    ActionPropertyFDRecordPeer::addInstanceToPool($obj7, $key7);
-                } // if $obj7 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyFDRecord)
-                $obj1->setActionPropertyFDRecord($obj7);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Selects a collection of ActionProperty objects pre-filled with all related objects except ActionPropertyDouble.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of ActionProperty objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptActionPropertyDouble(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
-        }
-
-        ActionPropertyPeer::addSelectColumns($criteria);
-        $startcol2 = ActionPropertyPeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + ActionPeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyTypePeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + ActionPropertyTypePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyStringPeer::addSelectColumns($criteria);
-        $startcol5 = $startcol4 + ActionPropertyStringPeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyDatePeer::addSelectColumns($criteria);
-        $startcol6 = $startcol5 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
-        $startcol7 = $startcol6 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyFDRecordPeer::addSelectColumns($criteria);
-        $startcol8 = $startcol7 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyOrgStructurePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyFDRecordPeer::ID, $join_behavior);
-
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ActionPropertyPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ActionPropertyPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = ActionPropertyPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ActionPropertyPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined Action rows
-
-                $key2 = ActionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = ActionPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = ActionPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    ActionPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj2 (Action)
-                $obj2->addActionProperty($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyType rows
-
-                $key3 = ActionPropertyTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
-                if ($key3 !== null) {
-                    $obj3 = ActionPropertyTypePeer::getInstanceFromPool($key3);
-                    if (!$obj3) {
-
-                        $cls = ActionPropertyTypePeer::getOMClass();
-
-                    $obj3 = new $cls();
-                    $obj3->hydrate($row, $startcol3);
-                    ActionPropertyTypePeer::addInstanceToPool($obj3, $key3);
-                } // if $obj3 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj3 (ActionPropertyType)
-                $obj3->addActionProperty($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyString rows
-
-                $key4 = ActionPropertyStringPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-                if ($key4 !== null) {
-                    $obj4 = ActionPropertyStringPeer::getInstanceFromPool($key4);
-                    if (!$obj4) {
-
-                        $cls = ActionPropertyStringPeer::getOMClass();
-
-                    $obj4 = new $cls();
-                    $obj4->hydrate($row, $startcol4);
-                    ActionPropertyStringPeer::addInstanceToPool($obj4, $key4);
-                } // if $obj4 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyString)
-                $obj1->setActionPropertyString($obj4);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyDate rows
-
-                $key5 = ActionPropertyDatePeer::getPrimaryKeyHashFromRow($row, $startcol5);
-                if ($key5 !== null) {
-                    $obj5 = ActionPropertyDatePeer::getInstanceFromPool($key5);
-                    if (!$obj5) {
-
-                        $cls = ActionPropertyDatePeer::getOMClass();
-
-                    $obj5 = new $cls();
-                    $obj5->hydrate($row, $startcol5);
-                    ActionPropertyDatePeer::addInstanceToPool($obj5, $key5);
-                } // if $obj5 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyDate)
-                $obj1->setActionPropertyDate($obj5);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyOrgStructure rows
-
-                $key6 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol6);
-                if ($key6 !== null) {
-                    $obj6 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key6);
-                    if (!$obj6) {
-
-                        $cls = ActionPropertyOrgStructurePeer::getOMClass();
-
-                    $obj6 = new $cls();
-                    $obj6->hydrate($row, $startcol6);
-                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj6, $key6);
-                } // if $obj6 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyOrgStructure)
-                $obj1->setActionPropertyOrgStructure($obj6);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyFDRecord rows
-
-                $key7 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol7);
-                if ($key7 !== null) {
-                    $obj7 = ActionPropertyFDRecordPeer::getInstanceFromPool($key7);
-                    if (!$obj7) {
-
-                        $cls = ActionPropertyFDRecordPeer::getOMClass();
-
-                    $obj7 = new $cls();
-                    $obj7->hydrate($row, $startcol7);
-                    ActionPropertyFDRecordPeer::addInstanceToPool($obj7, $key7);
-                } // if $obj7 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyFDRecord)
-                $obj1->setActionPropertyFDRecord($obj7);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Selects a collection of ActionProperty objects pre-filled with all related objects except ActionPropertyOrgStructure.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of ActionProperty objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptActionPropertyOrgStructure(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
-        }
-
-        ActionPropertyPeer::addSelectColumns($criteria);
-        $startcol2 = ActionPropertyPeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + ActionPeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyTypePeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + ActionPropertyTypePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyStringPeer::addSelectColumns($criteria);
-        $startcol5 = $startcol4 + ActionPropertyStringPeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyDatePeer::addSelectColumns($criteria);
-        $startcol6 = $startcol5 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyDoublePeer::addSelectColumns($criteria);
-        $startcol7 = $startcol6 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
-
-        ActionPropertyFDRecordPeer::addSelectColumns($criteria);
-        $startcol8 = $startcol7 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
-
-        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyFDRecordPeer::ID, $join_behavior);
-
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ActionPropertyPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ActionPropertyPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = ActionPropertyPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ActionPropertyPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined Action rows
-
-                $key2 = ActionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = ActionPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = ActionPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    ActionPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj2 (Action)
-                $obj2->addActionProperty($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyType rows
-
-                $key3 = ActionPropertyTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
-                if ($key3 !== null) {
-                    $obj3 = ActionPropertyTypePeer::getInstanceFromPool($key3);
-                    if (!$obj3) {
-
-                        $cls = ActionPropertyTypePeer::getOMClass();
-
-                    $obj3 = new $cls();
-                    $obj3->hydrate($row, $startcol3);
-                    ActionPropertyTypePeer::addInstanceToPool($obj3, $key3);
-                } // if $obj3 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj3 (ActionPropertyType)
-                $obj3->addActionProperty($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined ActionPropertyString rows
-
-                $key4 = ActionPropertyStringPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-                if ($key4 !== null) {
-                    $obj4 = ActionPropertyStringPeer::getInstanceFromPool($key4);
-                    if (!$obj4) {
-
-                        $cls = ActionPropertyStringPeer::getOMClass();
-
-                    $obj4 = new $cls();
-                    $obj4->hydrate($row, $startcol4);
-                    ActionPropertyStringPeer::addInstanceToPool($obj4, $key4);
-                } // if $obj4 already loaded
-
-                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyString)
-                $obj1->setActionPropertyString($obj4);
+                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyInteger)
+                $obj1->setActionPropertyInteger($obj4);
 
             } // if joined row is not null
 
@@ -3218,22 +2677,41 @@ abstract class BaseActionPropertyPeer
 
             } // if joined row is not null
 
-                // Add objects for joined ActionPropertyFDRecord rows
+                // Add objects for joined ActionPropertyOrgStructure rows
 
-                $key7 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol7);
+                $key7 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol7);
                 if ($key7 !== null) {
-                    $obj7 = ActionPropertyFDRecordPeer::getInstanceFromPool($key7);
+                    $obj7 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key7);
                     if (!$obj7) {
 
-                        $cls = ActionPropertyFDRecordPeer::getOMClass();
+                        $cls = ActionPropertyOrgStructurePeer::getOMClass();
 
                     $obj7 = new $cls();
                     $obj7->hydrate($row, $startcol7);
-                    ActionPropertyFDRecordPeer::addInstanceToPool($obj7, $key7);
+                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj7, $key7);
                 } // if $obj7 already loaded
 
-                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyFDRecord)
-                $obj1->setActionPropertyFDRecord($obj7);
+                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyOrgStructure)
+                $obj1->setActionPropertyOrgStructure($obj7);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyFDRecord rows
+
+                $key8 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol8);
+                if ($key8 !== null) {
+                    $obj8 = ActionPropertyFDRecordPeer::getInstanceFromPool($key8);
+                    if (!$obj8) {
+
+                        $cls = ActionPropertyFDRecordPeer::getOMClass();
+
+                    $obj8 = new $cls();
+                    $obj8->hydrate($row, $startcol8);
+                    ActionPropertyFDRecordPeer::addInstanceToPool($obj8, $key8);
+                } // if $obj8 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj8 (ActionPropertyFDRecord)
+                $obj1->setActionPropertyFDRecord($obj8);
 
             } // if joined row is not null
 
@@ -3246,7 +2724,7 @@ abstract class BaseActionPropertyPeer
 
 
     /**
-     * Selects a collection of ActionProperty objects pre-filled with all related objects except ActionPropertyFDRecord.
+     * Selects a collection of ActionProperty objects pre-filled with all related objects except ActionPropertyString.
      *
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
@@ -3255,7 +2733,225 @@ abstract class BaseActionPropertyPeer
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoinAllExceptActionPropertyFDRecord(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doSelectJoinAllExceptActionPropertyString(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
+        }
+
+        ActionPropertyPeer::addSelectColumns($criteria);
+        $startcol2 = ActionPropertyPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + ActionPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyTypePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ActionPropertyTypePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyIntegerPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ActionPropertyIntegerPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyDatePeer::addSelectColumns($criteria);
+        $startcol6 = $startcol5 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyDoublePeer::addSelectColumns($criteria);
+        $startcol7 = $startcol6 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
+        $startcol8 = $startcol7 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyFDRecordPeer::addSelectColumns($criteria);
+        $startcol9 = $startcol8 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyOrgStructurePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyFDRecordPeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPropertyPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPropertyPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ActionPropertyPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPropertyPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Action rows
+
+                $key2 = ActionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = ActionPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = ActionPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    ActionPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj2 (Action)
+                $obj2->addActionProperty($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyType rows
+
+                $key3 = ActionPropertyTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ActionPropertyTypePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ActionPropertyTypePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ActionPropertyTypePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj3 (ActionPropertyType)
+                $obj3->addActionProperty($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyInteger rows
+
+                $key4 = ActionPropertyIntegerPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                if ($key4 !== null) {
+                    $obj4 = ActionPropertyIntegerPeer::getInstanceFromPool($key4);
+                    if (!$obj4) {
+
+                        $cls = ActionPropertyIntegerPeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    ActionPropertyIntegerPeer::addInstanceToPool($obj4, $key4);
+                } // if $obj4 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyInteger)
+                $obj1->setActionPropertyInteger($obj4);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyDate rows
+
+                $key5 = ActionPropertyDatePeer::getPrimaryKeyHashFromRow($row, $startcol5);
+                if ($key5 !== null) {
+                    $obj5 = ActionPropertyDatePeer::getInstanceFromPool($key5);
+                    if (!$obj5) {
+
+                        $cls = ActionPropertyDatePeer::getOMClass();
+
+                    $obj5 = new $cls();
+                    $obj5->hydrate($row, $startcol5);
+                    ActionPropertyDatePeer::addInstanceToPool($obj5, $key5);
+                } // if $obj5 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyDate)
+                $obj1->setActionPropertyDate($obj5);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyDouble rows
+
+                $key6 = ActionPropertyDoublePeer::getPrimaryKeyHashFromRow($row, $startcol6);
+                if ($key6 !== null) {
+                    $obj6 = ActionPropertyDoublePeer::getInstanceFromPool($key6);
+                    if (!$obj6) {
+
+                        $cls = ActionPropertyDoublePeer::getOMClass();
+
+                    $obj6 = new $cls();
+                    $obj6->hydrate($row, $startcol6);
+                    ActionPropertyDoublePeer::addInstanceToPool($obj6, $key6);
+                } // if $obj6 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyDouble)
+                $obj1->setActionPropertyDouble($obj6);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyOrgStructure rows
+
+                $key7 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol7);
+                if ($key7 !== null) {
+                    $obj7 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key7);
+                    if (!$obj7) {
+
+                        $cls = ActionPropertyOrgStructurePeer::getOMClass();
+
+                    $obj7 = new $cls();
+                    $obj7->hydrate($row, $startcol7);
+                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj7, $key7);
+                } // if $obj7 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyOrgStructure)
+                $obj1->setActionPropertyOrgStructure($obj7);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyFDRecord rows
+
+                $key8 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol8);
+                if ($key8 !== null) {
+                    $obj8 = ActionPropertyFDRecordPeer::getInstanceFromPool($key8);
+                    if (!$obj8) {
+
+                        $cls = ActionPropertyFDRecordPeer::getOMClass();
+
+                    $obj8 = new $cls();
+                    $obj8->hydrate($row, $startcol8);
+                    ActionPropertyFDRecordPeer::addInstanceToPool($obj8, $key8);
+                } // if $obj8 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj8 (ActionPropertyFDRecord)
+                $obj1->setActionPropertyFDRecord($obj8);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of ActionProperty objects pre-filled with all related objects except ActionPropertyInteger.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ActionProperty objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptActionPropertyInteger(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $criteria = clone $criteria;
 
@@ -3287,6 +2983,9 @@ abstract class BaseActionPropertyPeer
         ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
         $startcol8 = $startcol7 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
 
+        ActionPropertyFDRecordPeer::addSelectColumns($criteria);
+        $startcol9 = $startcol8 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
+
         $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
@@ -3298,6 +2997,8 @@ abstract class BaseActionPropertyPeer
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
 
         $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyOrgStructurePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyFDRecordPeer::ID, $join_behavior);
 
 
         $stmt = BasePeer::doSelect($criteria, $con);
@@ -3428,6 +3129,897 @@ abstract class BaseActionPropertyPeer
 
                 // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyOrgStructure)
                 $obj1->setActionPropertyOrgStructure($obj7);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyFDRecord rows
+
+                $key8 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol8);
+                if ($key8 !== null) {
+                    $obj8 = ActionPropertyFDRecordPeer::getInstanceFromPool($key8);
+                    if (!$obj8) {
+
+                        $cls = ActionPropertyFDRecordPeer::getOMClass();
+
+                    $obj8 = new $cls();
+                    $obj8->hydrate($row, $startcol8);
+                    ActionPropertyFDRecordPeer::addInstanceToPool($obj8, $key8);
+                } // if $obj8 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj8 (ActionPropertyFDRecord)
+                $obj1->setActionPropertyFDRecord($obj8);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of ActionProperty objects pre-filled with all related objects except ActionPropertyDate.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ActionProperty objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptActionPropertyDate(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
+        }
+
+        ActionPropertyPeer::addSelectColumns($criteria);
+        $startcol2 = ActionPropertyPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + ActionPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyTypePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ActionPropertyTypePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyStringPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ActionPropertyStringPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyIntegerPeer::addSelectColumns($criteria);
+        $startcol6 = $startcol5 + ActionPropertyIntegerPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyDoublePeer::addSelectColumns($criteria);
+        $startcol7 = $startcol6 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
+        $startcol8 = $startcol7 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyFDRecordPeer::addSelectColumns($criteria);
+        $startcol9 = $startcol8 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyOrgStructurePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyFDRecordPeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPropertyPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPropertyPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ActionPropertyPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPropertyPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Action rows
+
+                $key2 = ActionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = ActionPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = ActionPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    ActionPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj2 (Action)
+                $obj2->addActionProperty($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyType rows
+
+                $key3 = ActionPropertyTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ActionPropertyTypePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ActionPropertyTypePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ActionPropertyTypePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj3 (ActionPropertyType)
+                $obj3->addActionProperty($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyString rows
+
+                $key4 = ActionPropertyStringPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                if ($key4 !== null) {
+                    $obj4 = ActionPropertyStringPeer::getInstanceFromPool($key4);
+                    if (!$obj4) {
+
+                        $cls = ActionPropertyStringPeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    ActionPropertyStringPeer::addInstanceToPool($obj4, $key4);
+                } // if $obj4 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyString)
+                $obj1->setActionPropertyString($obj4);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyInteger rows
+
+                $key5 = ActionPropertyIntegerPeer::getPrimaryKeyHashFromRow($row, $startcol5);
+                if ($key5 !== null) {
+                    $obj5 = ActionPropertyIntegerPeer::getInstanceFromPool($key5);
+                    if (!$obj5) {
+
+                        $cls = ActionPropertyIntegerPeer::getOMClass();
+
+                    $obj5 = new $cls();
+                    $obj5->hydrate($row, $startcol5);
+                    ActionPropertyIntegerPeer::addInstanceToPool($obj5, $key5);
+                } // if $obj5 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyInteger)
+                $obj1->setActionPropertyInteger($obj5);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyDouble rows
+
+                $key6 = ActionPropertyDoublePeer::getPrimaryKeyHashFromRow($row, $startcol6);
+                if ($key6 !== null) {
+                    $obj6 = ActionPropertyDoublePeer::getInstanceFromPool($key6);
+                    if (!$obj6) {
+
+                        $cls = ActionPropertyDoublePeer::getOMClass();
+
+                    $obj6 = new $cls();
+                    $obj6->hydrate($row, $startcol6);
+                    ActionPropertyDoublePeer::addInstanceToPool($obj6, $key6);
+                } // if $obj6 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyDouble)
+                $obj1->setActionPropertyDouble($obj6);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyOrgStructure rows
+
+                $key7 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol7);
+                if ($key7 !== null) {
+                    $obj7 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key7);
+                    if (!$obj7) {
+
+                        $cls = ActionPropertyOrgStructurePeer::getOMClass();
+
+                    $obj7 = new $cls();
+                    $obj7->hydrate($row, $startcol7);
+                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj7, $key7);
+                } // if $obj7 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyOrgStructure)
+                $obj1->setActionPropertyOrgStructure($obj7);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyFDRecord rows
+
+                $key8 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol8);
+                if ($key8 !== null) {
+                    $obj8 = ActionPropertyFDRecordPeer::getInstanceFromPool($key8);
+                    if (!$obj8) {
+
+                        $cls = ActionPropertyFDRecordPeer::getOMClass();
+
+                    $obj8 = new $cls();
+                    $obj8->hydrate($row, $startcol8);
+                    ActionPropertyFDRecordPeer::addInstanceToPool($obj8, $key8);
+                } // if $obj8 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj8 (ActionPropertyFDRecord)
+                $obj1->setActionPropertyFDRecord($obj8);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of ActionProperty objects pre-filled with all related objects except ActionPropertyDouble.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ActionProperty objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptActionPropertyDouble(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
+        }
+
+        ActionPropertyPeer::addSelectColumns($criteria);
+        $startcol2 = ActionPropertyPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + ActionPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyTypePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ActionPropertyTypePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyStringPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ActionPropertyStringPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyIntegerPeer::addSelectColumns($criteria);
+        $startcol6 = $startcol5 + ActionPropertyIntegerPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyDatePeer::addSelectColumns($criteria);
+        $startcol7 = $startcol6 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
+        $startcol8 = $startcol7 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyFDRecordPeer::addSelectColumns($criteria);
+        $startcol9 = $startcol8 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyOrgStructurePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyFDRecordPeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPropertyPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPropertyPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ActionPropertyPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPropertyPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Action rows
+
+                $key2 = ActionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = ActionPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = ActionPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    ActionPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj2 (Action)
+                $obj2->addActionProperty($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyType rows
+
+                $key3 = ActionPropertyTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ActionPropertyTypePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ActionPropertyTypePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ActionPropertyTypePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj3 (ActionPropertyType)
+                $obj3->addActionProperty($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyString rows
+
+                $key4 = ActionPropertyStringPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                if ($key4 !== null) {
+                    $obj4 = ActionPropertyStringPeer::getInstanceFromPool($key4);
+                    if (!$obj4) {
+
+                        $cls = ActionPropertyStringPeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    ActionPropertyStringPeer::addInstanceToPool($obj4, $key4);
+                } // if $obj4 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyString)
+                $obj1->setActionPropertyString($obj4);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyInteger rows
+
+                $key5 = ActionPropertyIntegerPeer::getPrimaryKeyHashFromRow($row, $startcol5);
+                if ($key5 !== null) {
+                    $obj5 = ActionPropertyIntegerPeer::getInstanceFromPool($key5);
+                    if (!$obj5) {
+
+                        $cls = ActionPropertyIntegerPeer::getOMClass();
+
+                    $obj5 = new $cls();
+                    $obj5->hydrate($row, $startcol5);
+                    ActionPropertyIntegerPeer::addInstanceToPool($obj5, $key5);
+                } // if $obj5 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyInteger)
+                $obj1->setActionPropertyInteger($obj5);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyDate rows
+
+                $key6 = ActionPropertyDatePeer::getPrimaryKeyHashFromRow($row, $startcol6);
+                if ($key6 !== null) {
+                    $obj6 = ActionPropertyDatePeer::getInstanceFromPool($key6);
+                    if (!$obj6) {
+
+                        $cls = ActionPropertyDatePeer::getOMClass();
+
+                    $obj6 = new $cls();
+                    $obj6->hydrate($row, $startcol6);
+                    ActionPropertyDatePeer::addInstanceToPool($obj6, $key6);
+                } // if $obj6 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyDate)
+                $obj1->setActionPropertyDate($obj6);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyOrgStructure rows
+
+                $key7 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol7);
+                if ($key7 !== null) {
+                    $obj7 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key7);
+                    if (!$obj7) {
+
+                        $cls = ActionPropertyOrgStructurePeer::getOMClass();
+
+                    $obj7 = new $cls();
+                    $obj7->hydrate($row, $startcol7);
+                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj7, $key7);
+                } // if $obj7 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyOrgStructure)
+                $obj1->setActionPropertyOrgStructure($obj7);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyFDRecord rows
+
+                $key8 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol8);
+                if ($key8 !== null) {
+                    $obj8 = ActionPropertyFDRecordPeer::getInstanceFromPool($key8);
+                    if (!$obj8) {
+
+                        $cls = ActionPropertyFDRecordPeer::getOMClass();
+
+                    $obj8 = new $cls();
+                    $obj8->hydrate($row, $startcol8);
+                    ActionPropertyFDRecordPeer::addInstanceToPool($obj8, $key8);
+                } // if $obj8 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj8 (ActionPropertyFDRecord)
+                $obj1->setActionPropertyFDRecord($obj8);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of ActionProperty objects pre-filled with all related objects except ActionPropertyOrgStructure.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ActionProperty objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptActionPropertyOrgStructure(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
+        }
+
+        ActionPropertyPeer::addSelectColumns($criteria);
+        $startcol2 = ActionPropertyPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + ActionPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyTypePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ActionPropertyTypePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyStringPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ActionPropertyStringPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyIntegerPeer::addSelectColumns($criteria);
+        $startcol6 = $startcol5 + ActionPropertyIntegerPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyDatePeer::addSelectColumns($criteria);
+        $startcol7 = $startcol6 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyDoublePeer::addSelectColumns($criteria);
+        $startcol8 = $startcol7 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyFDRecordPeer::addSelectColumns($criteria);
+        $startcol9 = $startcol8 + ActionPropertyFDRecordPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyFDRecordPeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPropertyPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPropertyPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ActionPropertyPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPropertyPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Action rows
+
+                $key2 = ActionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = ActionPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = ActionPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    ActionPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj2 (Action)
+                $obj2->addActionProperty($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyType rows
+
+                $key3 = ActionPropertyTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ActionPropertyTypePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ActionPropertyTypePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ActionPropertyTypePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj3 (ActionPropertyType)
+                $obj3->addActionProperty($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyString rows
+
+                $key4 = ActionPropertyStringPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                if ($key4 !== null) {
+                    $obj4 = ActionPropertyStringPeer::getInstanceFromPool($key4);
+                    if (!$obj4) {
+
+                        $cls = ActionPropertyStringPeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    ActionPropertyStringPeer::addInstanceToPool($obj4, $key4);
+                } // if $obj4 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyString)
+                $obj1->setActionPropertyString($obj4);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyInteger rows
+
+                $key5 = ActionPropertyIntegerPeer::getPrimaryKeyHashFromRow($row, $startcol5);
+                if ($key5 !== null) {
+                    $obj5 = ActionPropertyIntegerPeer::getInstanceFromPool($key5);
+                    if (!$obj5) {
+
+                        $cls = ActionPropertyIntegerPeer::getOMClass();
+
+                    $obj5 = new $cls();
+                    $obj5->hydrate($row, $startcol5);
+                    ActionPropertyIntegerPeer::addInstanceToPool($obj5, $key5);
+                } // if $obj5 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyInteger)
+                $obj1->setActionPropertyInteger($obj5);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyDate rows
+
+                $key6 = ActionPropertyDatePeer::getPrimaryKeyHashFromRow($row, $startcol6);
+                if ($key6 !== null) {
+                    $obj6 = ActionPropertyDatePeer::getInstanceFromPool($key6);
+                    if (!$obj6) {
+
+                        $cls = ActionPropertyDatePeer::getOMClass();
+
+                    $obj6 = new $cls();
+                    $obj6->hydrate($row, $startcol6);
+                    ActionPropertyDatePeer::addInstanceToPool($obj6, $key6);
+                } // if $obj6 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyDate)
+                $obj1->setActionPropertyDate($obj6);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyDouble rows
+
+                $key7 = ActionPropertyDoublePeer::getPrimaryKeyHashFromRow($row, $startcol7);
+                if ($key7 !== null) {
+                    $obj7 = ActionPropertyDoublePeer::getInstanceFromPool($key7);
+                    if (!$obj7) {
+
+                        $cls = ActionPropertyDoublePeer::getOMClass();
+
+                    $obj7 = new $cls();
+                    $obj7->hydrate($row, $startcol7);
+                    ActionPropertyDoublePeer::addInstanceToPool($obj7, $key7);
+                } // if $obj7 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyDouble)
+                $obj1->setActionPropertyDouble($obj7);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyFDRecord rows
+
+                $key8 = ActionPropertyFDRecordPeer::getPrimaryKeyHashFromRow($row, $startcol8);
+                if ($key8 !== null) {
+                    $obj8 = ActionPropertyFDRecordPeer::getInstanceFromPool($key8);
+                    if (!$obj8) {
+
+                        $cls = ActionPropertyFDRecordPeer::getOMClass();
+
+                    $obj8 = new $cls();
+                    $obj8->hydrate($row, $startcol8);
+                    ActionPropertyFDRecordPeer::addInstanceToPool($obj8, $key8);
+                } // if $obj8 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj8 (ActionPropertyFDRecord)
+                $obj1->setActionPropertyFDRecord($obj8);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of ActionProperty objects pre-filled with all related objects except ActionPropertyFDRecord.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of ActionProperty objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptActionPropertyFDRecord(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(ActionPropertyPeer::DATABASE_NAME);
+        }
+
+        ActionPropertyPeer::addSelectColumns($criteria);
+        $startcol2 = ActionPropertyPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + ActionPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyTypePeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + ActionPropertyTypePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyStringPeer::addSelectColumns($criteria);
+        $startcol5 = $startcol4 + ActionPropertyStringPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyIntegerPeer::addSelectColumns($criteria);
+        $startcol6 = $startcol5 + ActionPropertyIntegerPeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyDatePeer::addSelectColumns($criteria);
+        $startcol7 = $startcol6 + ActionPropertyDatePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyDoublePeer::addSelectColumns($criteria);
+        $startcol8 = $startcol7 + ActionPropertyDoublePeer::NUM_HYDRATE_COLUMNS;
+
+        ActionPropertyOrgStructurePeer::addSelectColumns($criteria);
+        $startcol9 = $startcol8 + ActionPropertyOrgStructurePeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(ActionPropertyPeer::ACTION_ID, ActionPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::TYPE_ID, ActionPropertyTypePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyStringPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyIntegerPeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDatePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyDoublePeer::ID, $join_behavior);
+
+        $criteria->addJoin(ActionPropertyPeer::ID, ActionPropertyOrgStructurePeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = ActionPropertyPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = ActionPropertyPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = ActionPropertyPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                ActionPropertyPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Action rows
+
+                $key2 = ActionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = ActionPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = ActionPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    ActionPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj2 (Action)
+                $obj2->addActionProperty($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyType rows
+
+                $key3 = ActionPropertyTypePeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = ActionPropertyTypePeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = ActionPropertyTypePeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    ActionPropertyTypePeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj3 (ActionPropertyType)
+                $obj3->addActionProperty($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyString rows
+
+                $key4 = ActionPropertyStringPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+                if ($key4 !== null) {
+                    $obj4 = ActionPropertyStringPeer::getInstanceFromPool($key4);
+                    if (!$obj4) {
+
+                        $cls = ActionPropertyStringPeer::getOMClass();
+
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    ActionPropertyStringPeer::addInstanceToPool($obj4, $key4);
+                } // if $obj4 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj4 (ActionPropertyString)
+                $obj1->setActionPropertyString($obj4);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyInteger rows
+
+                $key5 = ActionPropertyIntegerPeer::getPrimaryKeyHashFromRow($row, $startcol5);
+                if ($key5 !== null) {
+                    $obj5 = ActionPropertyIntegerPeer::getInstanceFromPool($key5);
+                    if (!$obj5) {
+
+                        $cls = ActionPropertyIntegerPeer::getOMClass();
+
+                    $obj5 = new $cls();
+                    $obj5->hydrate($row, $startcol5);
+                    ActionPropertyIntegerPeer::addInstanceToPool($obj5, $key5);
+                } // if $obj5 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj5 (ActionPropertyInteger)
+                $obj1->setActionPropertyInteger($obj5);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyDate rows
+
+                $key6 = ActionPropertyDatePeer::getPrimaryKeyHashFromRow($row, $startcol6);
+                if ($key6 !== null) {
+                    $obj6 = ActionPropertyDatePeer::getInstanceFromPool($key6);
+                    if (!$obj6) {
+
+                        $cls = ActionPropertyDatePeer::getOMClass();
+
+                    $obj6 = new $cls();
+                    $obj6->hydrate($row, $startcol6);
+                    ActionPropertyDatePeer::addInstanceToPool($obj6, $key6);
+                } // if $obj6 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj6 (ActionPropertyDate)
+                $obj1->setActionPropertyDate($obj6);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyDouble rows
+
+                $key7 = ActionPropertyDoublePeer::getPrimaryKeyHashFromRow($row, $startcol7);
+                if ($key7 !== null) {
+                    $obj7 = ActionPropertyDoublePeer::getInstanceFromPool($key7);
+                    if (!$obj7) {
+
+                        $cls = ActionPropertyDoublePeer::getOMClass();
+
+                    $obj7 = new $cls();
+                    $obj7->hydrate($row, $startcol7);
+                    ActionPropertyDoublePeer::addInstanceToPool($obj7, $key7);
+                } // if $obj7 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj7 (ActionPropertyDouble)
+                $obj1->setActionPropertyDouble($obj7);
+
+            } // if joined row is not null
+
+                // Add objects for joined ActionPropertyOrgStructure rows
+
+                $key8 = ActionPropertyOrgStructurePeer::getPrimaryKeyHashFromRow($row, $startcol8);
+                if ($key8 !== null) {
+                    $obj8 = ActionPropertyOrgStructurePeer::getInstanceFromPool($key8);
+                    if (!$obj8) {
+
+                        $cls = ActionPropertyOrgStructurePeer::getOMClass();
+
+                    $obj8 = new $cls();
+                    $obj8->hydrate($row, $startcol8);
+                    ActionPropertyOrgStructurePeer::addInstanceToPool($obj8, $key8);
+                } // if $obj8 already loaded
+
+                // Add the $obj1 (ActionProperty) to the collection in $obj8 (ActionPropertyOrgStructure)
+                $obj1->setActionPropertyOrgStructure($obj8);
 
             } // if joined row is not null
 
@@ -3675,30 +4267,6 @@ abstract class BaseActionPropertyPeer
         $objects = ActionPropertyPeer::doSelect($criteria, $con);
         foreach ($objects as $obj) {
 
-
-            // delete related ActionPropertyAction objects
-            $criteria = new Criteria(ActionPropertyActionPeer::DATABASE_NAME);
-
-            $criteria->add(ActionPropertyActionPeer::ID, $obj->getid());
-            $affectedRows += ActionPropertyActionPeer::doDelete($criteria, $con);
-
-            // delete related ActionPropertyHospitalBed objects
-            $criteria = new Criteria(ActionPropertyHospitalBedPeer::DATABASE_NAME);
-
-            $criteria->add(ActionPropertyHospitalBedPeer::ID, $obj->getid());
-            $affectedRows += ActionPropertyHospitalBedPeer::doDelete($criteria, $con);
-
-            // delete related ActionPropertyInteger objects
-            $criteria = new Criteria(ActionPropertyIntegerPeer::DATABASE_NAME);
-
-            $criteria->add(ActionPropertyIntegerPeer::ID, $obj->getid());
-            $affectedRows += ActionPropertyIntegerPeer::doDelete($criteria, $con);
-
-            // delete related ActionPropertyMkb objects
-            $criteria = new Criteria(ActionPropertyMkbPeer::DATABASE_NAME);
-
-            $criteria->add(ActionPropertyMkbPeer::ID, $obj->getid());
-            $affectedRows += ActionPropertyMkbPeer::doDelete($criteria, $con);
 
             // delete related ActionPropertyTime objects
             $criteria = new Criteria(ActionPropertyTimePeer::DATABASE_NAME);

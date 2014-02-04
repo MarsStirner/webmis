@@ -25,6 +25,10 @@
       <reference local="id" foreign="id"/>
     </foreign-key>
 
+    <foreign-key foreignTable="ActionProperty_Integer" name="ActionProperty_ActionPropertyInteger" >
+      <reference local="id" foreign="id"/>
+    </foreign-key>
+
     <foreign-key foreignTable="ActionProperty_Date" name="ActionProperty_ActionPropertyDate">
       <reference local="id" foreign="id"/>
     </foreign-key>

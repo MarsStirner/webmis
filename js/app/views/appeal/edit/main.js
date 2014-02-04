@@ -17,6 +17,10 @@ define(function(require) {
 	var Documents = require("views/documents/documents");
 	var Moves = require("views/moves/moves");
 	var HospitalBed = require("views/moves/HospitalBedView");
+
+    var AppealPrescriptionsView = require("views/prescriptions/views/appealPrescriptions/AppealPrescriptions");
+    var PrescriptionNewView = require("views/prescriptions/views/appealPrescriptions/PrescriptionNewView");
+    var PrescriptionEditView = require("views/prescriptions/views/appealPrescriptions/PrescriptionEditView");
 	require("models/appeal");
 	require("collections/patient-appeals");
 	require("views/breadcrumbs");
@@ -79,6 +83,11 @@ define(function(require) {
 				"SUB_REVIEW": ConsultationResultView,
 				"SUB_EDIT": Documents.Views.Edit.Consultation.Layout
 			},
+            "prescriptions": {
+                "REVIEW": AppealPrescriptionsView,
+                "SUB_REVIEW": PrescriptionNewView,
+                "SUB_EDIT": PrescriptionEditView
+            },
 			"quotes": {
 				"REVIEW": QuotesView
 			},
@@ -306,7 +315,7 @@ define(function(require) {
 
 		renderPageContent: function() {
 			this.menu.setPage(this.page);
-            this.contentView.render();
+			this.contentView.render();
 			this.$(".ContentSide").html(this.contentView.el);
 		},
 
@@ -391,6 +400,11 @@ define(function(require) {
 							title: "Титульный лист ИБ",
 							uri: "/appeals/:id/"
 						}, appealJSON),
+                        App.Router.compile({
+                            name: "prescriptions",
+                            title: "Назначения",
+                            uri: "/appeals/:id/prescriptions/"
+                        }, appealJSON),
 					]
 				}
 			}, this);

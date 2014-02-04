@@ -240,7 +240,7 @@ class ExecTask extends Task
         }
 
         if ($this->output !== null) {
-            $this->realCommand .= ' 1> ' . $this->output->getPath();
+            $this->realCommand .= ' 1> ' . escapeshellarg($this->output->getPath());
             $this->log(
                 "Writing standard output to: " . $this->output->getPath(),
                 $this->logLevel
@@ -254,7 +254,7 @@ class ExecTask extends Task
         // then we'll redirect error to stdout so that we can dump
         // it to screen below.
 
-        if ($this->output === null && $this->error === null) {
+        if ($this->output === null && $this->error === null && $this->passthru === false) {
             $this->realCommand .= ' 2>&1';
         }
 

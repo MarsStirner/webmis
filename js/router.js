@@ -12,12 +12,16 @@ require.config({
 
 		"inputmask": "../lib/jquery.inputmask/jquery.inputmask",
 		"moment": "../lib/moment/moment-2.0.0.min",
+        "twix": "../lib/moment.twix/twix",
 
 		"md5_crypt": "../lib/md5_crypt/md5_crypt",
 		"select2": "../lib/select2/select2-3.1",
 
 		"rivetsLib": "../lib/rivets/rivets-0.5.0",
-		"rivets": "../lib/rivets/adapter"
+		"rivets": "../lib/rivets/adapter",
+        "datetimeEntry": "../lib/jquery.datetimeEntry/jquery.datetimeentry",
+        "fullCalendar": "../lib/fullcalendar/fullcalendar",
+        "qtip": "../lib/jquery.qtip/jquery.qtip"
 	},
 	shim: {
 		'backbone': {
@@ -30,7 +34,15 @@ require.config({
 		'inputmask': {
 			//deps: ['inputmask/jquery.inputmask.date.extensions'],
 			exports: 'jQuery.fn.inputmask'
-		}
+		},
+        'datetimeEntry': {
+            deps: ['jquery'],
+            exports: 'jQuery.fn.datetimeEntry'
+        },
+        'fullCalendar': {
+            deps: ['jquery'],
+            exports: 'jQuery.fn.fullCalendar'
+        }
 	},
 	map: {
 		'*': { //короткие алиасы
@@ -293,7 +305,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			this.currentPage = "prescriptions";
 			console.log('presc')
 
-			require(["views/app", "views/prescriptions/List"], function(AppView, ListView) {
+			require(["views/app", "views/prescriptions/views/prescriptionsExecution/MainView"], function(AppView, ListView) {
 				var view = new ListView({
 					path: path
 				});

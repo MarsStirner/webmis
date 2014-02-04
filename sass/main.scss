@@ -3,7 +3,7 @@
 // Пока подключай просто к страницам с вёрсткой, чтобы я знал, куда какие модули грузить.
 
 // В SASS, кстати, работают комментарии через двойной слэш.
-
+//
 //@import "base";
 //@import "modules/layout";
 //@import "modules/uiLib";
@@ -19,3 +19,7 @@
 @import "modules/monitoring";
 @import "modules/ui_print_button";
 @import "modules/ui_datepicker";
+@import "modules/datetimeEntry";
+@import "modules/fullcalendar";
+@import "modules/prescription";
+@import "modules/jquery.qtip";

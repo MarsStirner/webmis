@@ -26,13 +26,17 @@ class RlsController
 
         $items = rlsNomenQuery::create()
         ->useRlsTradeNameQuery()
-            ->filterByLocalName($name.'%')
+            ->_if($name)
+                ->filterByLocalName($name.'%')
+            ->_endIf()
             ->orderByLocalName()
         ->endUse()
         ->with('rlsTradeName')
 
         ->useRlsActMattersQuery()
-            // ->filterByName($material.'%')
+            ->_if($material)
+                ->filterByName($material.'%')
+            ->_endIf()
         ->endUse()
         ->with('rlsActMatters')
 
@@ -109,33 +113,75 @@ class RlsController
     public function balanceAction(Request $request, Application $app)
     {
         $route_params = $request->get('_route_params') ;
-        $nomenId = (int) $route_params['nomenId'];
+        $nomenIds = explode(',',$route_params['nomenId']);
         $data = array();
+        $client = $app['prescriptionExchange']->getClient();
+
+        $responce = $client->updateBalanceOfGoods($nomenIds);
+
 
         $balance = RlsBalanceOfGoodsQuery::create()
-        ->filterByRlsNomenId($nomenId)
+        ->leftJoinWithRbStorage('storage')
+        ->filterByRlsNomenId($nomenIds)
         ->useRlsNomenQuery('nomen')
             ->leftJoinRlsTradeName('tradeName')
+            ->leftJoinRlsActMatters('actMatters')
+            ->leftJoinrbUnitRelatedByunitId('rbUnit')
+            ->leftJoinRlsForm('rlsForm')
         ->endUse()
         ->with('nomen')
+        ->with('rbUnit')
         ->with('tradeName')
+        ->with('actMatters')
+        ->with('rlsForm')
 
         ->leftJoinWithRbStorage()
         ->find();
 
         foreach ($balance as $item) {
-            $tradeLocalName = $item->getRlsNomen()->getRlsTradeName()->getLocalName();
+            $rlsNomen = $item->getRlsNomen();
+            $rbUnit = $rlsNomen->getRbUnitRelatedByunitId();
+            if($rbUnit){
+                $unitName = $rbUnit->getName();
+                $unitId = $rbUnit->getId();
+            }else{
+                $unitName = ''; 
+                $unitId = ''; 
+            }
 
-            $data[] = array_merge(
+            $tradeLocalName = $rlsNomen->getRlsTradeName()->getLocalName();
+            $tradeName = $rlsNomen->getRlsTradeName()->getName();
+            $rlsActMatters = $rlsNomen->getRlsActMatters();
+            $actMattersName = $rlsActMatters->getName(); 
+            $actMattersLocalName = $rlsActMatters->getLocalName(); 
+            $drugLifeTime = $rlsNomen->getDrugLifeTime();
+
+            $storage = $item->getRbStorage();
+            $storageName = $storage->getName();
+            $storageOrgstructureId = $storage->getOrgstructureId();
+            $form = $rlsNomen->getRlsForm();
+            $formName = $form->getName();
+            $dosageValue = $rlsNomen->getDosageValue();
+
+            array_push($data, array_merge(
                 $item->toArray(),
-                array('storageName' => $item->getRbStorage()->getName()),
-                array('tradeLocalName' => $tradeLocalName)
-                );
+                array('drugLifeTime' => $drugLifeTime,
+                'storageName' => $storageName,
+                'storageOrgstructureId' => $storageOrgstructureId,
+                'tradeLocalName' => $tradeLocalName,
+                'tradeName' => $tradeName,
+                'actMattersName' => $actMattersName,
+                'actMattersLocalName' => $actMattersLocalName,
+                'formName' => $formName,
+                'dosageValue' => $dosageValue,
+                'unitName' => $unitName,
+                'unitId' => $unitId)
+                ));
         }
 
 
 
-        return $app['jsonp']->jsonp(array('data' => $data ));
+        return $app['jsonp']->jsonp(array('data' => $data, 'trift'=>$responce ));
     }
 
 

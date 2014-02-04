@@ -11,11 +11,9 @@ use \Persistent;
 use \Propel;
 use \PropelException;
 use \PropelPDO;
-use Webmis\Models\ActionProperty;
 use Webmis\Models\ActionPropertyAction;
 use Webmis\Models\ActionPropertyActionPeer;
 use Webmis\Models\ActionPropertyActionQuery;
-use Webmis\Models\ActionPropertyQuery;
 
 /**
  * Base class that represents a row from the 'ActionProperty_Action' table.
@@ -63,11 +61,6 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      * @var        int
      */
     protected $value;
-
-    /**
-     * @var        ActionProperty
-     */
-    protected $aActionProperty;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -155,10 +148,6 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
         if ($this->id !== $v) {
             $this->id = $v;
             $this->modifiedColumns[] = ActionPropertyActionPeer::ID;
-        }
-
-        if ($this->aActionProperty !== null && $this->aActionProperty->getid() !== $v) {
-            $this->aActionProperty = null;
         }
 
 
@@ -277,9 +266,6 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aActionProperty !== null && $this->id !== $this->aActionProperty->getid()) {
-            $this->aActionProperty = null;
-        }
     } // ensureConsistency
 
     /**
@@ -319,7 +305,6 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aActionProperty = null;
         } // if (deep)
     }
 
@@ -432,18 +417,6 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
-
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their coresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aActionProperty !== null) {
-                if ($this->aActionProperty->isModified() || $this->aActionProperty->isNew()) {
-                    $affectedRows += $this->aActionProperty->save($con);
-                }
-                $this->setActionProperty($this->aActionProperty);
-            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -594,18 +567,6 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            // We call the validate method on the following object(s) if they
-            // were passed to this object by their coresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aActionProperty !== null) {
-                if (!$this->aActionProperty->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aActionProperty->getValidationFailures());
-                }
-            }
-
-
             if (($retval = ActionPropertyActionPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
@@ -672,11 +633,10 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
      *                    Defaults to BasePeer::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to true.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
         if (isset($alreadyDumpedObjects['ActionPropertyAction'][serialize($this->getPrimaryKey())])) {
             return '*RECURSION*';
@@ -688,11 +648,6 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
             $keys[1] => $this->getindex(),
             $keys[2] => $this->getvalue(),
         );
-        if ($includeForeignObjects) {
-            if (null !== $this->aActionProperty) {
-                $result['ActionProperty'] = $this->aActionProperty->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-        }
 
         return $result;
     }
@@ -849,18 +804,6 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
         $copyObj->setid($this->getid());
         $copyObj->setindex($this->getindex());
         $copyObj->setvalue($this->getvalue());
-
-        if ($deepCopy && !$this->startCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-            // store object hash to prevent cycle
-            $this->startCopy = true;
-
-            //unflag object copy
-            $this->startCopy = false;
-        } // if ($deepCopy)
-
         if ($makeNew) {
             $copyObj->setNew(true);
         }
@@ -907,58 +850,6 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a ActionProperty object.
-     *
-     * @param             ActionProperty $v
-     * @return ActionPropertyAction The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setActionProperty(ActionProperty $v = null)
-    {
-        if ($v === null) {
-            $this->setid(NULL);
-        } else {
-            $this->setid($v->getid());
-        }
-
-        $this->aActionProperty = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ActionProperty object, it will not be re-added.
-        if ($v !== null) {
-            $v->addActionPropertyAction($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ActionProperty object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return ActionProperty The associated ActionProperty object.
-     * @throws PropelException
-     */
-    public function getActionProperty(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aActionProperty === null && ($this->id !== null) && $doQuery) {
-            $this->aActionProperty = ActionPropertyQuery::create()->findPk($this->id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aActionProperty->addActionPropertyActions($this);
-             */
-        }
-
-        return $this->aActionProperty;
-    }
-
-    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -989,14 +880,10 @@ abstract class BaseActionPropertyAction extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aActionProperty instanceof Persistent) {
-              $this->aActionProperty->clearAllReferences($deep);
-            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aActionProperty = null;
     }
 
     /**

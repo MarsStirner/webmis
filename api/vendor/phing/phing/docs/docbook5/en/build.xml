@@ -13,24 +13,24 @@
  * chunk             Produce chunked HTML output
  * pdf               Produce PDF output
  * epub              Experimental support for EPUB
+ * webhelp           Produce webhelp output (with searchable index)
  * validate          Validate all DocBook5 sources (requires Jing to be installed)
  * clean             Remove all generated files
  * 
  * Public targets that needs Saxon 6.5.5 for transformation
  * ________________________________________________________
- * The following two targets produces versions of the mnual that applies
+ * The following two targets produces versions of the manual that applies
  * syntax highlightning to all source listings (XML and PHP). However, this
  * requres that Saxon 6.5.5 xsl processor is installed as well as the extra
  * jar file xslthl-2.x.x.jar (in the CLASSPATH). 
  *
- * PLEASE NOTE that these to targets uses a utility script "hlsaxon" which
+ * PLEASE NOTE that these two targets uses a utility script "hlsaxon" which
  * needs a full path to the DocBook5 stylesheets in the script. This varies
- * between setups. Mutatis Mutandis.
+ * between setups and needs to be adjusted. Mutatis mutandis.
  *
  * hlhtml	     Create HTML version using syntax highlighting
  * hlpdf         Create PDF version using syntax highlighting
  *   
- * Revision: $Id$
  * Created: 7 feb 2012
  * Author: Johan Persson <johan162@gmail.com>
  * ==============================================================================    
@@ -111,11 +111,18 @@
     <!-- The temporary build directory -->
     <property name="tmp.dir" value="./tmp/"/>
 
+    <!-- 
+	 Temporary locations for admonition figures used in FO build. MUST be absolute path! 
+	 Also note that this path must match the path given in stylesheets/xsl/fo-common.xsl 
+    -->
+    <property name="tmp.xslimg.dir" value="/tmp/_tmpxslimg" />
+
     <!-- All source files needed -->
     <fileset dir="source" id="sources">
         <include name="chapters/*.xml"/>
         <include name="appendixes/*.xml"/>
         <include name="*.xml"/>
+        <exclude name="template_for_tasks.xml"/>
     </fileset>
 
     <!--
@@ -124,7 +131,8 @@
         ================================================================================
     -->
     <target name="clean">
-        <delete dir="output/"/>
+        <delete quiet="yes" dir="output/"/>
+	<phingcall target="_clean_fo_images"/>
     </target>
 
     <!--
@@ -173,6 +181,29 @@
 
     <!--
         ================================================================================
+	For PDF creation FO needs the included admonition images to be available at an
+	absolute path while the PDF is created. For this we use a temporary dir that
+	we clean after usage.
+        ================================================================================
+    -->
+    <target name="_copy_fo_images">
+      <mkdir dir="${tmp.xslimg.dir}" />
+      <mkdir dir="${tmp.xslimg.dir}/images" />
+        <!-- Copy all admonitions used in FO output -->
+	<copy todir="${tmp.xslimg.dir}/images">
+	  <fileset dir="stylesheets/xsl/images">
+	    <include name="*.png"/>
+	    <include name="*.svg"/>
+	  </fileset>
+	</copy>
+    </target>
+
+    <target name="_clean_fo_images">
+      <delete quiet="yes" dir="${tmp.xslimg.dir}" />
+    </target>
+
+    <!--
+        ================================================================================
         Target: _html 
         Help target for the actual HTML and HTMLFANCY targets
         ================================================================================
@@ -211,6 +242,7 @@
             </then>
         </if>
         <copy file="${cssfile}" tofile="output/${outdir}/${css.name}"/>
+        <touch file="output/${outdir}/highlight.css"/>
     </target>
 
     <target name="html">
@@ -262,12 +294,12 @@
                     <property name="dir" value="hlhtml"/>
                 </phingcall>
                 <!-- We first need to flatten the master file since Saxon doesn't handle XInclude -->
-                <exec
-                    command="${xmllint} --xinclude ${master.document} > output/hlhtml/_flatten.xml"/>
+                <exec command="${xmllint} --xinclude ${master.document} > output/hlhtml/_flatten.xml"/>
+
                 <exec dir="output/hlhtml/"
                     command="../../scripts/hlsaxon _flatten.xml ../../${dbxsl.dir}/hl-html.xsl"
                     checkreturn="true"/>
-                <delete file="output/hlhtml/_flatten.xml"/>
+                <delete file="output/hlhtml/_flatten.xml"/> 
             </then>
         </if>
         <copy file="${css.style}" todir="output/hlhtml"/>
@@ -294,6 +326,7 @@
                 <isset property="target.uptodate"/>
             </not>
             <then>
+	       <phingcall target="_copy_fo_images"/>
                 <mkdir dir="output/pdf"/>
                 <exec
                     command="${xsltproc} --xinclude --output output/pdf/manual.fo ${dbxsl.dir}/fo.xsl ${master.document}"
@@ -301,6 +334,7 @@
                 <exec command="${fop} manual.fo -pdf manual.pdf" dir="./output/pdf/"
                     checkreturn="true" passthru="true"/>
                 <delete file="output/pdf/manual.fo"/>
+	       <phingcall target="_clean_fo_images"/>
             </then>
         </if>
     </target>
@@ -320,6 +354,7 @@
                 <isset property="target.uptodate"/>
             </not>
             <then>
+	       <phingcall target="_copy_fo_images"/>
                 <mkdir dir="output/hlpdf"/>
                 <exec command="${xmllint} --xinclude ${master.document} > output/hlpdf/_flatten.xml"/>
                 <exec dir="output/hlpdf/"
@@ -329,6 +364,7 @@
                     checkreturn="true"/>
                 <delete file="output/hlpdf/_flatten.xml"/>
                 <delete file="output/hlpdf/manual.fo"/>
+		<phingcall target="_clean_fo_images"/>
             </then>
         </if>
     </target>
@@ -352,9 +388,32 @@
                 <mkdir dir="output/epub"/>
                 <exec
                     command="${dbtoepub} -o 'output/epub/manual.epub' -s ${dbxsl.dir}/epub.xsl -c ${css.style} ${master.document} "
+                    checkreturn="true"
                 />
             </then>
         </if>
+    </target>
+       
+    <!--
+        ================================================================================
+        Target: WEBHELP  
+        Note: !! This requires 'ant' to be installed !!
+        ================================================================================
+    -->
+    <target name="webhelp">
+        <echo>Running webhelp, please wait ...</echo>
+        <uptodate property="target.uptodate" targetfile="output/webhelp/index.html">
+            <fileset refid="sources"/>
+        </uptodate>
+        <if>
+            <not>
+                <isset property="target.uptodate"/>
+            </not>
+            <then>
+                <exec command="ant -f ant-build-webhelp.xml webhelp" dir="." checkreturn="true" />            
+            </then>
+        </if>        
+
     </target>
 
     <!--
@@ -365,13 +424,14 @@
 
     -->
     <target name="all">
-        <phingcall target="pdf"/>
+<!--        <phingcall target="pdf"/> -->
         <phingcall target="hlpdf"/>
-        <phingcall target="htmlfancy"/>
-        <phingcall target="html"/>
+<!--        <phingcall target="htmlfancy"/>
+        <phingcall target="html"/> -->
         <phingcall target="hlhtml"/>
         <phingcall target="chunk"/>
         <phingcall target="epub"/>
+        <phingcall target="webhelp"/>
     </target>
 
 </project>

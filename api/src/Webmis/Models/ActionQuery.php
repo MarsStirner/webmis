@@ -70,7 +70,7 @@ class ActionQuery extends BaseActionQuery
     }
 
 
-        public function getPrescriptions($filter = array())
+        public function filterPrescriptions($filter = array())
     {
 
         $defaultFilterKeys = array( 'id' => null,
@@ -78,7 +78,11 @@ class ActionQuery extends BaseActionQuery
                                     'clientId' => null,
                                     'drugName' => null,
                                     'doctorId' => null,
+                                    'pacientName' => null,
+                                    'doctorName' => null,
+                                    'setPersonName' => null,
                                     'departmentId' => null,
+                                    'administrationId' => null,
                                     'dateRangeMin' => null,
                                     'dateRangeMax' => null
                                     );
@@ -87,44 +91,35 @@ class ActionQuery extends BaseActionQuery
         $a = array_intersect_key($filter, array_flip(array_keys($defaultFilterKeys)));
 
         extract($a);
-        //var_dump(array_keys($defaultFilterKeys));
 
-        $hidratedFields = array(
-            'properties',
-            'event',
-            'drugs',
-            'intervals',
-            'client'
-            );
-
-
-            return $this->filterByDeleted(false)
-                        ->_if($id)
-                            ->filterById($id)
-                        ->_endIf()
-
-                        ->useActionTypeQuery()
-                            ->filterByFlatCode(array('chemotherapy','prescription','infusion','analgesia'))
-                            ->filterByDeleted(false)
+        return $this->filterByDeleted(false)
+                    ->_if($id)
+                        ->filterById($id)
+                    ->_endIf()
+                    ->_if($setPersonName)//назначивший врач
+                        ->useSetPersonQuery()
+                            ->filterByLastName($setPersonName.'%')
                         ->endUse()
+                    ->_endIf()
 
-                        ->useActionPropertyQuery('ActionProperty', Criteria::LEFT_JOIN)
-                            ->joinActionPropertyType('apType', Criteria::LEFT_JOIN)
-                            ->joinActionPropertyString('apString', Criteria::LEFT_JOIN)
-                            ->joinActionPropertyDouble('apDouble', Criteria::LEFT_JOIN)
-                            ->joinActionPropertyDate('apDate', Criteria::LEFT_JOIN)
-                            ->joinActionPropertyInteger('apInteger', Criteria::LEFT_JOIN)
+                    ->useActionTypeQuery()
+                        ->filterByFlatCode(array('chemotherapy','prescription','infusion','analgesia'))
+                        ->filterByDeleted(false)
+                    ->endUse()
+                    ->_if($administrationId)
+                        //фильтр по способу введения
+                        ->useActionPropertyQuery('ap')
+                            ->useActionPropertyTypeQuery('apt')
+                                ->filterByCode('moa')
+                            ->endUse()
+                            ->useActionPropertyIntegerQuery('api_v')
+                                ->filterByValue($administrationId)
+                            ->endUse()
                         ->endUse()
-                        ->with('ActionProperty')
-                        ->with('apType')
-                        ->with('apString')
-                        ->with('apDouble')
-                        ->with('apDate')
-                        ->with('apInteger')
+                    ->_endIf()
 
-
-
-                        ->useEventQuery()
+                    ->_if($eventId || $clientId || $doctorId || $departmentId || $pacientName || $doctorName)
+                         ->useEventQuery()
                             //фильтр по истории боле
                             ->_if($eventId)
                                 ->filterById($eventId)
@@ -133,13 +128,24 @@ class ActionQuery extends BaseActionQuery
                             ->_if($clientId)
                                 ->filterByClientId($clientId)
                             ->_endIf()
-                            ->leftJoinClient('client')
+                            //
+                            ->_if($pacientName)
+                                ->useClientQuery()
+                                    ->filterByLastName($pacientName.'%')
+                                ->endUse()
+                            ->_endIf()
+
+                            ->_if($doctorName)
+                                ->useDoctorQuery()
+                                    ->filterByLastName($doctorName.'%')
+                                ->endUse()
+                            ->_endIf()
 
                             //фильтр по доктору
                             ->_if($doctorId)
                                 ->filterByExecPersonId($doctorId)
                             ->_endIf()
-                            ->leftJoinDoctor('doctor')
+
                             //фильтр по отделению
                             ->_if($departmentId)
                                 ->useActionQuery('movements')
@@ -159,11 +165,11 @@ class ActionQuery extends BaseActionQuery
                                 ->endUse()
                             ->_endIf()
                         ->endUse()
-                        ->with('Event')
-                        ->with('client')
-                        ->with('doctor')
+                    ->_endIf()
 
+                    ->_if($dateRangeMax || $dateRangeMin)
                         ->useDrugChartQuery()
+                            //фильтр по интервалам назначения
                             ->_if($dateRangeMax)
                                 ->filterByBegDateTime(array('max' => $dateRangeMax))
                             ->_endif()
@@ -171,14 +177,98 @@ class ActionQuery extends BaseActionQuery
                                 ->filterByBegDateTime(array('min' => $dateRangeMin))
                             ->_endif()
                         ->endUse()
-                        ->with('DrugChart')
+                    ->_endif()
 
+                    ->_if($drugName)
                         ->useDrugComponentQuery()
+                            //фильтр по названию лекарства
                             ->_if($drugName)
-                                ->filterByName($drugName)
+                                ->filterByName($drugName.'%')
                             ->_endif()
                         ->endUse()
-                        ->with('DrugComponent');
+                    ->_endif();
+
+    }
+
+
+
+
+        public function getPrescriptions($ids, $hidrate = array(
+            'actionType' => true,
+            'properties' => false,
+            'doctor' => true,
+            'createPerson' => true,
+            'modifyPerson' => true,
+            'setPerson' => true,
+            'drugs' => false,
+            'intervals' => true,
+            'client' => false
+            ))
+    {
+
+            return $this->filterByDeleted(false)
+                        ->_if($ids)
+                            ->filterById($ids)
+                        ->_endIf()
+                        ->_if($hidrate['actionType'])
+                            ->leftJoinWithActionType()
+                        ->_endIf()
+                        ->_if($hidrate['setPerson'])
+                            ->leftJoinSetPerson('setPerson')
+                            ->with('setPerson')
+                        ->_endIf()
+                        ->_if($hidrate['createPerson'])
+                            ->leftJoinCreatePerson('createPerson')
+                            ->with('createPerson')
+                        ->_endIf()
+                        ->_if($hidrate['modifyPerson'])
+                            ->leftJoinModifyPerson('modifyPerson')
+                            ->with('modifyPerson')
+                        ->_endIf()
+
+                        ->_if($hidrate['properties'])
+                            ->useActionPropertyQuery('ActionProperty', Criteria::LEFT_JOIN)
+                                ->joinActionPropertyType('apType', Criteria::LEFT_JOIN)
+                                ->joinActionPropertyString('apString', Criteria::LEFT_JOIN)
+                                ->joinActionPropertyDouble('apDouble', Criteria::LEFT_JOIN)
+                                ->joinActionPropertyDate('apDate', Criteria::LEFT_JOIN)
+                                ->joinActionPropertyInteger('apInteger', Criteria::LEFT_JOIN)
+                            ->endUse()
+                            ->with('ActionProperty')
+                            ->with('apType')
+                            ->with('apString')
+                            ->with('apDouble')
+                            ->with('apDate')
+                            ->with('apInteger')
+                        ->_endIf()
+
+
+                        ->_if($hidrate['client'] || $hidrate['doctor'])
+                            ->useEventQuery()
+                                ->_if($hidrate['client'])->leftJoinClient('client')->_endIf()
+                                ->_if($hidrate['doctor'])->leftJoinDoctor('doctor')->_endIf()
+                            ->endUse()
+                            ->with('Event')
+                            ->_if($hidrate['doctor'])->with('doctor')->_endIf()
+                            ->_if($hidrate['client'])->with('client')->_endIf()
+                        ->_endIf()
+
+
+                        ->_if($hidrate['intervals'])
+                            ->leftJoinWithDrugChart('intervals')
+                        ->_endIf()
+
+
+                        ->_if($hidrate['drugs'])
+                            ->useDrugComponentQuery('drugs')
+                                ->useRlsNomenQuery('nomen')
+                                    ->leftJoinrbUnitRelatedByunitId('unit')
+                                ->endUse()
+                            ->endUse()
+                            ->with('drugs')
+                            ->with('nomen')
+                            ->with('unit')
+                        ->_endIf();
 
     }
 

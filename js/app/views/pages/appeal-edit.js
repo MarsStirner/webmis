@@ -1,5 +1,6 @@
 define([
     "text!templates/pages/representative-item.tmpl",
+    "collections/contracts",
     "views/widget",
     "permissions",
     "views/CardNav",
@@ -14,7 +15,7 @@ define([
     "views/mkb-directory",
     "views/pages/appeal-representative",
     "views/appeals-history"
-], function (representativeTmpl, Widget, userPermissions, CardNav) {
+], function (representativeTmpl, Contracts, Widget, userPermissions, CardNav) {
 
     var mkbDirView;
 
@@ -24,7 +25,8 @@ define([
         events: {
             "click .Actions.Save": "onSave",
             "click .Actions.Cancel": "onCancel",
-            "click .AddRepresentative": "onAddRepresentativeClick"
+            "click .AddRepresentative": "onAddRepresentativeClick",
+            "change [name='contract']": "onChangeContract"
         },
 
         initialize: function () {
@@ -37,8 +39,7 @@ define([
             Cache.Patient.fetch({
                 success: function () {
                     view.loadTemplate("pages/appeal-edit");
-                    mkbDirView = (new App.Views.MkbDirectory())
-                        .render();
+                    mkbDirView = (new App.Views.MkbDirectory()).render();
                 }
             });
 
@@ -97,9 +98,9 @@ define([
                         name: "relationTypes",
                         pathPart: "relationships"
                     }, {
-												name: "departments",
-												collection: App.Collections.Departments
-										}
+                        name: "departments",
+                        collection: App.Collections.Departments
+                    }
                 ];
 
                 this.initWithDictionaries(appealDicts, this.ready, this, true);
@@ -116,13 +117,18 @@ define([
                 });
             }, this);
 
-            /*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
-			 this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);*/
+
+            this.contracts = new Contracts();
+            this.contracts.on('reset', this.showContracts, this);
+        },
+
+        logModel: function () {
+            console.log("appeal-edit model", this.model.toJSON());
         },
 
         onSave: function (event) {
             var self = this;
-
+            this.logModel();
             var readyToSave = this.save(event, {
                 error: function () {
                     self.$(".Save")
@@ -138,10 +144,9 @@ define([
             event.preventDefault();
 
             if (this.model.isNew()) {
-                App.Router.navigate("patients/" + this.model.get("patient")
-                    .get("id") + "/", {
-                        trigger: true
-                    });
+                App.Router.navigate("patients/" + this.model.get("patient").get("id") + "/", {
+                    trigger: true
+                });
             } else {
                 App.Router.navigate("appeals/" + this.model.get("id") + "/", {
                     trigger: true
@@ -159,8 +164,7 @@ define([
         onEditRepresentativeClick: function (model) {
             var self = this;
             var relativePatient = new App.Models.Patient({
-                id: model.get("relative")
-                    .get("id")
+                id: model.get("relative").get("id")
             });
             relativePatient.fetch({
                 success: function () {
@@ -170,8 +174,7 @@ define([
             relativePatient.on("sync", function () {
                 model.set("relative", {
                     id: relativePatient.get("id"),
-                    name: relativePatient.get("name")
-                        .get("raw"),
+                    name: relativePatient.get("name").get("raw"),
                     birthDate: relativePatient.get("birthDate")
                 });
             });
@@ -182,8 +185,7 @@ define([
         },
 
         openRepresentativeWindow: function (model) {
-            this.appealRepresentativeWindow = new App.Views.AppealRepresentative()
-                .render();
+            this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
             this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);
             this.appealRepresentativeWindow.on("close", this.onRepresentativeWindowClose, this);
 
@@ -201,29 +203,24 @@ define([
         addRepresentative: function (patient) {
             this.appealRepresentativeWindow.off(null, null, this);
 
-            var alreadyAdded = this.model.get("hospitalizationWith")
-                .find(function (p) {
-                    return p.get("relative")
-                        .get("id") === patient.get("id");
-                });
+            var alreadyAdded = this.model.get("hospitalizationWith").find(function (p) {
+                return p.get("relative").get("id") === patient.get("id");
+            });
 
             if (!alreadyAdded) {
                 if (Core.Date.getAge(patient.get("birthDate")) < 18) {
                     //alert("Нельзя добавить несовершеннолетнего представителя.");
                     this.$nonAdultAlert.dialog("open");
-                } else if (this.model.get("patient")
-                    .get("id") == patient.get("id")) {
+                } else if (this.model.get("patient").get("id") == patient.get("id")) {
                     this.$samePatinetAlert.dialog("open");
                 } else {
-                    this.model.get("hospitalizationWith")
-                        .add({
-                            relative: {
-                                id: patient.get("id"),
-                                name: patient.get("name")
-                                    .get("raw"),
-                                birthDate: patient.get("birthDate")
-                            }
-                        });
+                    this.model.get("hospitalizationWith").add({
+                        relative: {
+                            id: patient.get("id"),
+                            name: patient.get("name").get("raw"),
+                            birthDate: patient.get("birthDate")
+                        }
+                    });
 
                     /*this.model.get("hospitalizationWith").add({
 					 id: patient.get("id"),
@@ -241,8 +238,7 @@ define([
 
             if (model.get("diagnosisKind") == "diagReceivedMkb") {
                 diagnosisView.on("diagnosis:change", function (event) {
-                    this.$(".Injury .ComboWrapper, .Injury .Combo")
-                        .toggleClass("Mandatory", event.isInjury);
+                    this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
                 }, this);
             }
 
@@ -254,9 +250,7 @@ define([
                 attendantMkb: "#diagnosis-attendants"
             };
 
-            this.$el.find(selectors[model.get("diagnosisKind")])
-                .append(diagnosisView.render()
-                    .el);
+            this.$el.find(selectors[model.get("diagnosisKind")]).append(diagnosisView.render().el);
         },
 
         toggleInputs: function (enable) {
@@ -267,31 +261,68 @@ define([
                 .toggleClass("Disabled", !Boolean(enable));
         },
 
+        getContracts: function () {
+            var self = this;
+
+            this.resetContract();
+            var eventType = this.model.get("appealType").get("eventType");
+            this.contracts.eventTypeId = eventType.get('id');
+
+            this.$("[name='contract']").html('');
+            if (this.contracts.eventTypeId) {
+                this.contracts.fetch();//.done(this.showContracts.bind(this));
+            }
+        },
+
+        showContracts: function () {
+            this.$("[name='contract']").html('').append(this.contracts.map(function (contract) {
+                return $("<option value='" + contract.get("id") + "'>" + contract.get("number") + "</option>");
+            })).trigger('change').prop("disabled", this.contracts.length === 1);
+            
+            UIInitialize(this.$("[name='contract']").parent());
+            if(!this.contracts.length){
+                this.resetContract();
+            }
+
+        },
+
+        resetContract: function(){
+            this.model.set('contract', {}); 
+        },
+
+        onChangeContract: function(e){
+            var $target = this.$(e.target);
+            var contractId = $target.val();
+
+            if(contractId){
+                contract = this.contracts.find(function(model){
+                    return model.get('id') == contractId;
+                }); 
+                this.model.set('contract', contract);
+            }
+
+        },
+
         ready: function (dicts) {
-					console.log(dicts.departments);
             var view = this;
 
             var result = this.model.toJSON();
-            result.patient = this.model.get("patient")
-                .toJSON();
+            result.patient = this.model.get("patient").toJSON();
             result.dicts = dicts;
             result.isNew = this.model.isNew();
 
-            console.log("data", result, this.model);
 
-            result.dicts.requestTypes = _(result.dicts.requestTypes)
-                .filter(function (rType) {
-                    return ["clinic", "hospital", "1", "2"].indexOf(rType.code) !== -1;
-                });
+            result.dicts.requestTypes = _(result.dicts.requestTypes).filter(function (rType) {
+                return ["clinic", "hospital", "1", "2"].indexOf(rType.code) !== -1;
+            });
 
             //console.log("MODEL", dicts);
 
-            this.$el.html($("#appeal-edit-common")
-                .tmpl(result));
+            this.$el.html($("#appeal-edit-common").tmpl(result));
 
-            view.model.on("change:appealWithDeseaseThisYear", function () {
-                console.log("change:appealWithDeseaseThisYear", view.model.get("appealWithDeseaseThisYear"));
-            }, view);
+            // view.model.on("change:appealWithDeseaseThisYear", function () {
+            //     console.log("change:appealWithDeseaseThisYear", view.model.get("appealWithDeseaseThisYear"));
+            // }, view);
 
             /*var Appeals = new App.Collections.PatientAppeals;
 			 Appeals.patient = this.model.get("patient");
@@ -312,21 +343,15 @@ define([
                     appeals: patientAppeals
                 });
                 view.depended(History);
-                view.$el.find(".History")
-                    .html(History.render()
-                        .el);
+                view.$el.find(".History").html(History.render().el);
 
                 if (view.model.isNew()) {
                     view.toggleInputs(true);
-                    view.$(".Save")
-                        .removeAttr("disabled");
+                    view.$(".Save").removeAttr("disabled");
 
                     if (patientAppeals.length > 0) {
                         var thisYearAppeal = patientAppeals.find(function (appeal) {
-                            return ((new Date(appeal.get("rangeAppealDateTime")
-                                    .get("start")))
-                                .getYear() == (new Date())
-                                .getYear());
+                            return ((new Date(appeal.get("rangeAppealDateTime").get("start"))).getYear() == (new Date()).getYear());
                         });
 
                         if (thisYearAppeal) {
@@ -336,9 +361,7 @@ define([
                 } else {
                     var isClosed = patientAppeals.find(function (a) {
                         return a.get("id") === view.model.get("id");
-                    })
-                        .get("rangeAppealDateTime")
-                        .get("end");
+                    }).get("rangeAppealDateTime").get("end");
 
                     if (!isClosed) {
                         view.toggleInputs(true);
@@ -349,9 +372,7 @@ define([
             patientAppeals.fetch();
 
             var Breadcrumbs = new App.Views.Breadcrumbs;
-            this.$("#page-head")
-                .append(Breadcrumbs.render()
-                    .el);
+            this.$("#page-head").append(Breadcrumbs.render().el);
 
             var onBreadcrumbsReady = function () {
                 if (view.model.isNew()) {
@@ -381,16 +402,15 @@ define([
 
             this.model.get("hospitalizationWith")
                 .on("add remove", function () {
-                    console.log(this.$(".AddRepresentative"));
-                    this.$(".AddRepresentative")
-                        .toggle(!Boolean(this.model.get("hospitalizationWith")
-                            .length));
+                    // console.log(this.$(".AddRepresentative"));
+                    this.$(".AddRepresentative").toggle(!Boolean(this.model.get("hospitalizationWith").length));
                 }, view);
 
             var representativeList = new RepresentativeList({
                 collection: this.model.get("hospitalizationWith"),
                 relationTypes: dicts.relationTypes
             });
+
             representativeList.on("representative:edit", this.onEditRepresentativeClick, this);
             representativeList.render();
 
@@ -431,97 +451,70 @@ define([
             this.eventTypes._params = {};
 
             this.eventTypes.on("reset", function () {
-                this.$("[name='event_type[id]'],[name='event_type[name]']")
-                    .val("")
-                    .change();
-                this.errorToolTip.hide();
+                var eventType = {id:'', name:''};
 
                 if (this.eventTypes.length) {
-                    this.$("[name='event_type[id]']")
-                        .val(this.eventTypes.first()
-                            .get("id")
-                            .toString())
-                        .change();
-                    this.$("[name='event_type[name]']")
-                        .val(this.eventTypes.first()
-                            .get("value")
-                            .toString());
-                    /*.append(this.eventTypes.map(function (eventType) {
-					 return $("<option value='" + eventType.get("id") + "'>" + eventType.get("value") + "</option>");
-					 }))*/
-                    //.prop("disabled", this.eventTypes.length === 1);
-                } else {
-                    this.errorToolTip.showAt(this.$("[name='event_type[name]']")
-                        .get(0));
+                    eventType = this.eventTypes.first().toJSON();
                 }
-                //UI.CustomSelect(this.$("[name='event_type[id]']"));
+                this.model.get("appealType").get("eventType").set(eventType);
+
+                this.$("[name='event_type[id]']").html('');
+                this.$("[name='event_type[id]']").append(this.eventTypes.map(function (eventType) {
+                    return $("<option value='" + eventType.get("id") + "'>" + eventType.get("value") + "</option>");
+                })).trigger('change').prop("disabled", this.eventTypes.length === 1);
+
+                UIInitialize(this.$("[name='contract']").parent());
+
             }, this);
 
             var onAppealTypeChange = function () {
-                var requestTypeId = view.model.get("appealType")
-                    .get("requestType")
-                    .get("id");
-                var financeId = view.model.get("appealType")
-                    .get("finance")
-                    .get("id");
+                var requestTypeId = view.model.get("appealType").get("requestType").get("id");
+                var financeId = view.model.get("appealType").get("finance").get("id");
 
                 if (requestTypeId && financeId) {
-                    console.log(requestTypeId, financeId);
+                    // console.log(requestTypeId, financeId);
                     view.eventTypes.setParams({
                         filter: {
-                            requestType: view.model.get("appealType")
-                                .get("requestType")
-                                .get("id"),
-                            finance: view.model.get("appealType")
-                                .get("finance")
-                                .get("id")
+                            requestType: view.model.get("appealType").get("requestType").get("id"),
+                            finance: view.model.get("appealType").get("finance").get("id")
                         }
                     });
 
                     view.eventTypes.fetch();
                 } else {
-
+                    view.eventTypes.reset([]);
                 }
             };
 
-            this.model.get("appealType")
-                .get("requestType")
+            this.model.get("appealType").get("requestType")
                 .on("change", onAppealTypeChange, this);
 
-            this.model.get("appealType")
-                .get("finance")
+            this.model.get("appealType").get("finance")
                 .on("change", onAppealTypeChange, this);
 
-            this.model.get("rangeAppealDateTime")
-                .connect("start", "appeal[date][start]", this.$el);
-            this.model.get("rangeAppealDateTime")
-                .connect("start", "appeal[time][start]", this.$el);
+            this.model.get("appealType").get("eventType")
+                .on("change", function () {
+                    // console.log('change eventType', this.model.get('appealType').get('eventType').toJSON());
+                    this.getContracts();
+                }, this);
 
-            if (!this.model.get("rangeAppealDateTime")
-                .get("start")) {
-                this.model.get("rangeAppealDateTime")
-                    .set("start", new Date()
-                        .getTime());
+            this.model.get("rangeAppealDateTime").connect("start", "appeal[date][start]", this.$el);
+            this.model.get("rangeAppealDateTime").connect("start", "appeal[time][start]", this.$el);
+
+            if (!this.model.get("rangeAppealDateTime").get("start")) {
+                this.model.get("rangeAppealDateTime").set("start", new Date().getTime());
             }
 
-            this.model.get("rangeAppealDateTime")
-                .connect("end", "appeal[date][end]", this.$el);
-            this.model.get("rangeAppealDateTime")
-                .connect("end", "appeal[time][end]", this.$el);
+            this.model.get("rangeAppealDateTime").connect("end", "appeal[date][end]", this.$el);
+            this.model.get("rangeAppealDateTime").connect("end", "appeal[time][end]", this.$el);
 
 
             this.model.connect("number", "number", this.$el);
             //this.model.get("appealType").connect("id", "appeal_type[id]", this.$el );
 
-            this.model.get("appealType")
-                .get("requestType")
-                .connect("id", "request_type[id]", this.$el);
-            this.model.get("appealType")
-                .get("finance")
-                .connect("id", "finance[id]", this.$el);
-            this.model.get("appealType")
-                .get("eventType")
-                .connect("id", "event_type[id]", this.$el);
+            this.model.get("appealType").get("requestType").connect("id", "request_type[id]", this.$el);
+            this.model.get("appealType").get("finance").connect("id", "finance[id]", this.$el);
+            this.model.get("appealType").get("eventType").connect("id", "event_type[id]", this.$el);
 
             this.model.connect("urgent", "urgent", this.$el);
 
@@ -529,24 +522,17 @@ define([
             this.model.connect("refuseAppealReason", "refuse_appeal_reason", this.$el);
 
             this.model.connect("agreedDoctor", "agreed_doctor[name]", this.$el);
-            this.model.get("agreedType")
-                .connect("id", "agreed_type[id]", this.$el);
+            this.model.get("agreedType").connect("id", "agreed_type[id]", this.$el);
             /*this.model.get("agreedDoctor" ).get("name").connect("raw", "agreed_doctor[name]", this.$el );*/
 
-            this.model.get("assignment")
-                .connect("directed", "assignment[directed]", this.$el);
-            this.model.get("assignment")
-                .connect("doctor", "assignment[doctor][name]", this.$el);
+            this.model.get("assignment").connect("directed", "assignment[directed]", this.$el);
+            this.model.get("assignment").connect("doctor", "assignment[doctor][name]", this.$el);
 
-            this.model.get("assignment")
-                .connect("number", "assignment[number]", this.$el);
-            this.model.get("assignment")
-                .connect("assignmentDate", "assignment[assignment_date]", this.$el);
+            this.model.get("assignment").connect("number", "assignment[number]", this.$el);
+            this.model.get("assignment").connect("assignmentDate", "assignment[assignment_date]", this.$el);
 
-            this.model.get("hospitalizationType")
-                .connect("id", "hospitalization_type[id]", this.$el);
-            this.model.get("hospitalizationPointType")
-                .connect("id", "hospitalization_point_type[id]", this.$el);
+            this.model.get("hospitalizationType").connect("id", "hospitalization_type[id]", this.$el);
+            this.model.get("hospitalizationPointType").connect("id", "hospitalization_point_type[id]", this.$el);
             //this.model.get( "hospitalizationChannelType" ).connect("id", "hospitalization_channel_type[id]", this.$el );
 
             this.model.connect("movingType", "moving_type", this.$el);
@@ -585,39 +571,29 @@ define([
 
             this.model.connect("injury", "injury", this.$el);
 
-						//Приемное отделение по умолчанию
-						if (!this.model.get("orgStructStay")) this.model.set("orgStructStay", 28);
-						this.model.connect("orgStructStay", "org_struct_stay", this.$el);
+            //Приемное отделение по умолчанию
+            if (!this.model.get("orgStructStay")) this.model.set("orgStructStay", 28);
+            this.model.connect("orgStructStay", "org_struct_stay", this.$el);
 
-						this.model.connect("orgStructDirectedFrom", "org_struct_directed_from", this.$el);
+            this.model.connect("orgStructDirectedFrom", "org_struct_directed_from", this.$el);
 
             // Ограничение ввода для полей формата Double
-            this.$('.RestrictFloat')
-                .keypress(function (eve) {
-                    if ((eve.which != 46 || $(this)
-                        .val()
-                        .indexOf('.') != -1) && (eve.which < 48 || eve.which > 57) || (eve.which == 46 && $(this)
-                        .caret()
-                        .start == 0)) {
-                        eve.preventDefault();
+            this.$('.RestrictFloat').keypress(function (eve) {
+                if ((eve.which != 46 || $(this).val().indexOf('.') != -1) && (eve.which < 48 || eve.which > 57) || (eve.which == 46 && $(this).caret().start == 0)) {
+                    eve.preventDefault();
+                }
+                // this part is when left part of number is deleted and leaves a . in the leftmost position. For example, 33.25, then 33 is deleted
+                view.$('.RestrictFloat').keyup(function (eve) {
+                    if ($(this).val().indexOf('.') == 0) {
+                        $(this).val($(this).val().substring(1));
                     }
-                    // this part is when left part of number is deleted and leaves a . in the leftmost position. For example, 33.25, then 33 is deleted
-                    view.$('.RestrictFloat')
-                        .keyup(function (eve) {
-                            if ($(this)
-                                .val()
-                                .indexOf('.') == 0) {
-                                $(this)
-                                    .val($(this)
-                                        .val()
-                                        .substring(1));
-                            }
-                        });
                 });
+            });
 
             var Diagnoses = this.model.get("diagnoses");
 
             var DiagnosisModel;
+
             if (Diagnoses.getAssignments() < 1) {
                 DiagnosisModel = new App.Models.Diagnosis;
                 DiagnosisModel.set({
@@ -625,6 +601,7 @@ define([
                 });
                 Diagnoses.add(DiagnosisModel);
             }
+
             if (Diagnoses.getAftereffects() < 1) {
                 DiagnosisModel = new App.Models.Diagnosis;
                 DiagnosisModel.set({
@@ -632,6 +609,7 @@ define([
                 });
                 Diagnoses.add(DiagnosisModel);
             }
+
             if (Diagnoses.getAttendants() < 1) {
                 DiagnosisModel = new App.Models.Diagnosis;
                 DiagnosisModel.set({
@@ -641,29 +619,26 @@ define([
             }
 
 
-            Diagnoses.getAssignments()
-                .forEach(function (model) {
-                    view.createDiagnosis(model);
-                });
-            Diagnoses.getAftereffects()
-                .forEach(function (model) {
-                    view.createDiagnosis(model);
-                });
-            Diagnoses.getAttendants()
-                .forEach(function (model) {
-                    view.createDiagnosis(model);
-                });
+            Diagnoses.getAssignments().forEach(function (model) {
+                view.createDiagnosis(model);
+            });
+
+            Diagnoses.getAftereffects().forEach(function (model) {
+                view.createDiagnosis(model);
+            });
+
+            Diagnoses.getAttendants().forEach(function (model) {
+                view.createDiagnosis(model);
+            });
 
             UIInitialize(this.el);
 
-            this.$(".Save")
-                .button();
-            this.$(".MKBLauncher")
-                .button({
-                    icons: {
-                        primary: "icon-book"
-                    }
-                });
+            this.$(".Save").button();
+            this.$(".MKBLauncher").button({
+                icons: {
+                    primary: "icon-book"
+                }
+            });
             this.$(".AddRepresentative")
                 .button({
                     icons: {
@@ -698,9 +673,7 @@ define([
         },
 
         render: function () {
-            $("body")
-                .append(this.errorToolTip.render()
-                    .el);
+            $("body").append(this.errorToolTip.render().el);
 
             return this;
         }
