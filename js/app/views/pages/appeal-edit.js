@@ -25,7 +25,8 @@ define([
         events: {
             "click .Actions.Save": "onSave",
             "click .Actions.Cancel": "onCancel",
-            "click .AddRepresentative": "onAddRepresentativeClick"
+            "click .AddRepresentative": "onAddRepresentativeClick",
+            "change [name='contract']": "onChangeContract"
         },
 
         initialize: function () {
@@ -118,8 +119,7 @@ define([
 
 
             this.contracts = new Contracts();
-            /*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
-			 this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);*/
+            this.contracts.on('reset', this.showContracts, this);
         },
 
         logModel: function () {
@@ -129,15 +129,15 @@ define([
         onSave: function (event) {
             var self = this;
             this.logModel();
-            // var readyToSave = this.save(event, {
-            //     error: function () {
-            //         self.$(".Save")
-            //             .attr("disabled", false);
-            //     }
-            // });
+            var readyToSave = this.save(event, {
+                error: function () {
+                    self.$(".Save")
+                        .attr("disabled", false);
+                }
+            });
 
-            // this.$(".Save")
-            //     .attr("disabled", readyToSave);
+            this.$(".Save")
+                .attr("disabled", readyToSave);
         },
 
         onCancel: function (event) {
@@ -263,22 +263,43 @@ define([
 
         getContracts: function () {
             var self = this;
+
+            this.resetContract();
             var eventType = this.model.get("appealType").get("eventType");
             this.contracts.eventTypeId = eventType.get('id');
-            // console.log('getContracts', eventType, this.contracts);
+
             this.$("[name='contract']").html('');
             if (this.contracts.eventTypeId) {
-                this.contracts.fetch().done(this.showContracts.bind(this));
+                this.contracts.fetch();//.done(this.showContracts.bind(this));
             }
         },
 
         showContracts: function () {
-            // console.log('contracts', this.contracts.toJSON()); 
-            // this.$("[name='contract']").html().a
             this.$("[name='contract']").html('').append(this.contracts.map(function (contract) {
                 return $("<option value='" + contract.get("id") + "'>" + contract.get("number") + "</option>");
-            })).prop("disabled", this.contracts.length === 1);
+            })).trigger('change').prop("disabled", this.contracts.length === 1);
+            
+            UIInitialize(this.$("[name='contract']").parent());
+            if(!this.contracts.length){
+                this.resetContract();
+            }
 
+        },
+
+        resetContract: function(){
+            this.model.set('contract', {}); 
+        },
+
+        onChangeContract: function(e){
+            var $target = this.$(e.target);
+            var contractId = $target.val();
+
+            if(contractId){
+                contract = this.contracts.find(function(model){
+                    return model.get('id') == contractId;
+                }); 
+                this.model.set('contract', contract);
+            }
 
         },
 
@@ -430,29 +451,19 @@ define([
             this.eventTypes._params = {};
 
             this.eventTypes.on("reset", function () {
-                // this.$("[name='event_type[id]'],[name='event_type[name]']").val("").change();
-                this.errorToolTip.hide();
+                var eventType = {id:'', name:''};
+
+                if (this.eventTypes.length) {
+                    eventType = this.eventTypes.first().toJSON();
+                }
+                this.model.get("appealType").get("eventType").set(eventType);
 
                 this.$("[name='event_type[id]']").html('');
-                if (this.eventTypes.length) {
-                    this.model.get("appealType").get("eventType").set(this.eventTypes.first().toJSON());
+                this.$("[name='event_type[id]']").append(this.eventTypes.map(function (eventType) {
+                    return $("<option value='" + eventType.get("id") + "'>" + eventType.get("value") + "</option>");
+                })).trigger('change').prop("disabled", this.eventTypes.length === 1);
 
-                    console.log('eventTypes', this.eventTypes.first().toJSON(), this.model.toJSON());
-                    // this.$("[name='event_type[id]']").val(this.eventTypes.first().get("id").toString()).change();
-                    // this.$("[name='event_type[name]']").val(this.eventTypes.first().get("value").toString());
-
-                    this.$("[name='event_type[id]']").append(this.eventTypes.map(function (eventType) {
-                        return $("<option value='" + eventType.get("id") + "'>" + eventType.get("value") + "</option>");
-                    })).prop("disabled", this.eventTypes.length === 1);
-
-                } else {
-
-                    this.model.get("appealType").get("eventType").set({
-                        id: '',
-                        name: ''
-                    });
-                    // this.errorToolTip.showAt(this.$("#event_type"));
-                }
+                UIInitialize(this.$("[name='contract']").parent());
 
             }, this);
 
@@ -471,7 +482,7 @@ define([
 
                     view.eventTypes.fetch();
                 } else {
-
+                    view.eventTypes.reset([]);
                 }
             };
 
@@ -483,7 +494,7 @@ define([
 
             this.model.get("appealType").get("eventType")
                 .on("change", function () {
-                    console.log('change eventType', this.model.get('appealType').get('eventType').toJSON());
+                    // console.log('change eventType', this.model.get('appealType').get('eventType').toJSON());
                     this.getContracts();
                 }, this);
 
