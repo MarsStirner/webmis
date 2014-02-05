@@ -160,11 +160,6 @@ define(function (require) {
                         pubsub.trigger('prescription:saved', self.prescription)
                         console.log('saved', arguments);
                         self.close();
-                        // self.collection.fetch({
-                        //     data: {
-                        //         eventId: self.appealId
-                        //     }
-                        // });
                     } else {
                         console.log('error', r.message);
                     }

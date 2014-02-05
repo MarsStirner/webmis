@@ -51,13 +51,12 @@ class Action extends BaseAction
                         case 'ReferenceRb':
                             if($property->getActionPropertyInteger()){
                                 $valueId =  $property->getActionPropertyInteger()->getValue();
-                                // $tableName = explode(';', $valueDomain);
-                                // $queryClassName = ucfirst(trim($tableName[0]).'Query');
-                                        //RbMethodOfAdministrationQuery
-                                $query = RbMethodOfAdministrationQuery::create()->findOneById($valueId);
-
-
-                                $value = $query->getName();
+                                if($valueId){
+                                    $query = RbMethodOfAdministrationQuery::create()->findOneById($valueId);
+                                    if($query){
+                                        $value = $query->getName();
+                                    }
+                                }
                             }
 
                         break;

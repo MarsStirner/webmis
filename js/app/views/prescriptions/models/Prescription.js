@@ -11,10 +11,11 @@ define(function (require) {
             this.actionTypeId = options.actionTypeId || false;
             this.initialized().then(function(){
                 if(self.getPropertyByCode('moa')){
-                    self.set('moa', self.getPropertyByCode('moa').get('value')) 
+                    self.set('moaId', self.getPropertyByCode('moa').get('valueId'));
+                    self.set('moa', self.getPropertyByCode('moa').get('value'));
                 }
                 if(self.getPropertyByCode('voa')){
-                    self.set('voa', self.getPropertyByCode('voa').get('value')) 
+                    self.set('voa', self.getPropertyByCode('voa').get('value'));
                 }
 
 
@@ -133,9 +134,17 @@ define(function (require) {
                 if (attr === 'moa') {
                     var moaModel = this.getPropertyByCode('moa');
                     if (moaModel) {
-                        moaModel.set('value', parseInt(attrs[attr], 10));
+                        moaModel.set('value', attrs[attr]);
                     }
                 }
+
+                if (attr === 'moaId') {
+                    var moaIdModel = this.getPropertyByCode('moa');
+                    if (moaIdModel) {
+                        moaIdModel.set('valueId', parseInt(attrs[attr], 10));
+                    }
+                }
+
 
                 if (attr === 'voa') {
                     var voaModel = this.getPropertyByCode('voa');

@@ -37,10 +37,10 @@
                     <label for="moa">
                         Способ введения
                     </label><br />
-                    <select id="moa" name="moa" style="width:250px;margin-bottom:1em;" data-value="prescription.moa">
+                    <select id="moa" name="moa" style="width:250px;margin-bottom:1em;" data-value="prescription.moaId">
                         <option value="">...</option>
                         <%_.each(data.administration, function(opt){%>
-                        <option value="<%=opt.id%>"><%=opt.name%></option>
+                        <option value="<%=opt.id%>" > <%=opt.name%></option>
                         <%})%>
                     </select>
                 </div>

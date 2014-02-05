@@ -295,7 +295,13 @@ class PrescriptionController
                 $actionPropertyTypeId = $actionPropertyType->getId();
 
                 if(array_key_exists($actionPropertyTypeId,$properties)){
-                    $actionProperty->setValue($properties[$actionPropertyTypeId]['value']);
+                    if($properties[$actionPropertyTypeId]['type'] == 'ReferenceRb'){
+                        if(array_key_exists('valueId', $properties[$actionPropertyTypeId])){
+                            $actionProperty->setValue($properties[$actionPropertyTypeId]['valueId']);
+                        }
+                    }else{
+                        $actionProperty->setValue($properties[$actionPropertyTypeId]['value']);
+                    }
                 }
 
             }
@@ -384,7 +390,8 @@ class PrescriptionController
             $actionProperties = $prescription->getActionPropertys();
             foreach ($properties as $property) {
                 $actionProperty = $this->getById($actionProperties, $property['id']);
-                $actionProperty->updateValue($property['value']);
+                $value = array_key_exists('valueId', $property) ? $property['valueId'] : $property['value'];
+                $actionProperty->updateValue($value);
             }
             $actionProperties->save();
 

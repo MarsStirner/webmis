@@ -165,7 +165,8 @@ define(function (require) {
 
         data: function () {
             return {
-                administration: this.administration.toJSON()
+                administration: this.administration.toJSON(),
+                moa: this.prescription.get('moa')
             };
         },
 
