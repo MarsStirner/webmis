@@ -87,6 +87,8 @@ class ActionProperty extends BaseActionProperty
             return $this;
         }
 
+        $data = array();
+        $data['value'] = $value;
         $actionPropertyId = $this->getId();
         $actionPropertyType = $this->getActionPropertyType();
         $actionPropertyTypeId = $actionPropertyType->getId();
@@ -96,30 +98,38 @@ class ActionProperty extends BaseActionProperty
             case 'String':
             case 'Html':
             case 'Text':
-                $actionPropertyString = $this->getActionPropertyString();
-                $actionPropertyString->fromArray(array(
-                    'value' => $value
-                    ));
+                $actionPropertyString = $this->getActionPropertyString() ? $this->getActionPropertyString() : new ActionPropertyString();
 
+                if($actionPropertyString->isNew()){
+                    $data['id'] = $actionPropertyId;
+                    $data['index'] = 0;
+                }
+
+                $actionPropertyString->fromArray($data);
                 $this->setActionPropertyString($actionPropertyString);
 
                 break;
             case 'Double':
-                $actionPropertyDouble = $this->getActionPropertyDouble();
-                $actionPropertyDouble->fromArray(array(
-                    'value' => $value
-                    ));
+                $actionPropertyDouble = $this->getActionPropertyDouble() ? $this->getActionPropertyDouble() : new ActionPropertyDouble;
 
+                if($actionPropertyDouble->isNew()){
+                    $data['id'] = $actionPropertyId;
+                    $data['index'] = 0;
+                }
+
+                $actionPropertyDouble->fromArray($data);
                 $this->setActionPropertyDouble($actionPropertyDouble);
 
                 break;
-
             case 'ReferenceRb':
-                $actionPropertyInteger = $this->getActionPropertyInteger();
-                $actionPropertyInteger->fromArray(array(
-                    'value' => $value
-                    ));
+                $actionPropertyInteger = $this->getActionPropertyInteger() ? $this->getActionPropertyInteger() : new ActionPropertyInteger();
 
+                if($actionPropertyInteger->isNew()){
+                    $data['id'] = $actionPropertyId;
+                    $data['index'] = 0;
+                }
+
+                $actionPropertyInteger->fromArray($data);
                 $this->setActionPropertyInteger($actionPropertyInteger);
 
                 break;
