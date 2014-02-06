@@ -99,10 +99,10 @@ define(function (require) {
 
         },
 
-        close: function () {
-            this.$el.dialog('close');
-            this.remove();
-        },
+        // close: function () {
+        //     this.$el.dialog('close');
+        //     this.remove();
+        // },
 
         getMoaKeys: function () {
             var moaModel = this.prescription.getPropertyByCode('moa');

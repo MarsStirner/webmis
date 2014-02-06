@@ -15,9 +15,9 @@ define([], function() {
 			},
 
 			close: function() {
-				var self = this;
-				self.$el.dialog("close");
-				self.$el.remove();
+				this.$el.dialog("close");
+                this.$el.dialog("destroy");
+                this.remove();
 			},
 
 			renderNested: function(view, selector) {
