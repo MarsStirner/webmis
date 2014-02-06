@@ -151,7 +151,7 @@ class PrescriptionController
 
 
         return $app['jsonp']->jsonp(array(
-            //'sql' => $query->toString(),
+            /* 'sql' => $filterQuery->toString(), */
             'data' => $data
         ));
 
