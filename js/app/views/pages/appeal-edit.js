@@ -128,16 +128,16 @@ define([
 
         onSave: function (event) {
             var self = this;
-            this.logModel();
+            console.log('onSave')
+            // this.logModel();
             var readyToSave = this.save(event, {
                 error: function () {
-                    self.$(".Save")
-                        .attr("disabled", false);
+                    // self.$(".Save")
+                    //     .attr("disabled", false);
                 }
             });
-
-            this.$(".Save")
-                .attr("disabled", readyToSave);
+            console.log('readyToSave', readyToSave);
+            this.$(".Save").attr("disabled", readyToSave);
         },
 
         onCancel: function (event) {

@@ -587,7 +587,6 @@ Form = View.extend({
 				$input = $this.next();
 			else
 				$input = $this.find(":input").eq(0);
-            console.log()
 			if (!$input.val() || !$input.val().length || $input.hasClass("invalid")) {
 				if ($this.hasClass("Combo")) {
 					$this.closest(".ComboWrapper").addClass("WrongField");

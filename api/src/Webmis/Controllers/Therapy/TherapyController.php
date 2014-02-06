@@ -32,7 +32,8 @@ class TherapyController
                 $error = array('message' => 'Нет кода пациента.');
                 return $app['jsonp']->jsonp($error);
             }
-
+            
+            //фильтруем экшены в которых есть поля "терапии"
             $filterActionsQuery = ActionQuery::create()
             ->filterByDeleted(false)
             ->useEventQuery()
@@ -45,7 +46,8 @@ class TherapyController
             ->orderByCreateDatetime('desc');
 
             $actionsIds = $filterActionsQuery->find()->toArray();
-
+            
+            //получаем экшены и связанные таблицы 
             $actionsQuery = ActionQuery::create()
             ->filterById($actionsIds)
             ->useActionPropertyQuery('ap')
@@ -81,14 +83,14 @@ class TherapyController
             $data = array();
 
 
-            foreach ($actions as $action){
+            foreach ($actions as $action){//обходим все экшены
                 $a = array();
                 $a['docId'] = $action->getId();
                 $a['eventId'] = $action->getEventId();
                 $a['createDate'] = strtotime($action->getCreateDatetime())*1000;//$action->getCreateDatetime();
 
                 $actionProperties = $action->getActionPropertys();
-                foreach ($actionProperties as $actionProperty){
+                foreach ($actionProperties as $actionProperty){//обходим экшенпроперти экшена
                     $actionPropertyType = $actionProperty->getActionPropertyType();
                     $typeName = $actionPropertyType -> getTypeName();
 
@@ -97,7 +99,7 @@ class TherapyController
                     $p['code'] = $actionPropertyType -> getCode();
 
 
-                    switch ($typeName) {
+                    switch ($typeName) {//получаем значение для экшенпроперти
                         case 'String':
                         case 'Html':
                         case 'Text':
@@ -223,6 +225,7 @@ class TherapyController
                 }
 
 
+                //если есть название терапии и фазы
                 if(array_key_exists('therapyPhaseTitle',$a) && $a['therapyPhaseTitle']!=null && array_key_exists('therapyTitle',$a) && $a['therapyTitle']!=null){
                      array_push($data, $a);
                 }
@@ -238,6 +241,7 @@ class TherapyController
             reset($data);
 
             foreach ($data as $action){
+                //обходим массив данных полученных из дневниковых осмотров и создаём терапии 
                 $therapy = array(
                     'id' => $first['docId'],
                     'titleId' => $action['therapyTitleId'],
@@ -248,16 +252,18 @@ class TherapyController
                     'phases' => array());
 
 
-                if(@$therapies[$action['therapyBegDate']]){
-                    if(!@$therapies[$action['therapyBegDate']]['endDate']){//если нет даты окончания
+                //дата начала терапиии используется как индекс для массива терапий
+                if(@$therapies[$action['therapyBegDate']]){//если  в массиве уже есть индекс с датой начала терапии
+                    if(!@$therapies[$action['therapyBegDate']]['endDate']){//если нет даты окончания окончания терапии, то пытаемся её добавить из этого дн.осмотра
                         $therapies[$action['therapyBegDate']]['endDate'] = $action['therapyEndDate'];
                     }
-                }else{
+                }else{//добавляем терапию в массив терапий
                     $therapies[$action['therapyBegDate']] = $therapy;
                 }
             }
+
             //фазы терапий
-            foreach($therapies as $key => $therapy){
+            foreach($therapies as $key => $therapy){//для каждой терапии ищем её фазы
 
                 foreach ($data as $action){
                     if($therapy['beginDate'] == $action['therapyBegDate']){
@@ -272,6 +278,7 @@ class TherapyController
                             'days' => array()
                         );
 
+                       //также как для терапии используем дату начала фазы как индекс массива фаз
                         if(@$therapies[$key]['phases'][$action['therapyPhaseBegDate']]){
                             if(!@$therapies[$key]['phases'][$action['therapyPhaseBegDate']]['endDate']){
                                 $therapies[$key]['phases'][$action['therapyPhaseBegDate']]['endDate'] = $action['therapyPhaseEndDate'];
@@ -285,7 +292,7 @@ class TherapyController
                 }
             }
 
-            //дни
+            //добавляем дни для фаз
             foreach ($data as $action){
                 $therapies[$action['therapyBegDate']]['phases'][$action['therapyPhaseBegDate']]['days'][] = array(
                     'day'=> $action['therapyPhaseDay'],
@@ -295,7 +302,7 @@ class TherapyController
 
             }
 
-            //убирание ключей
+            //убирание ключи массивов которые нам больше не нужны
             foreach ($therapies as $key => $therapy){
                 $therapies[$key]['phases'] = array_values($therapies[$key]['phases']);
             }
