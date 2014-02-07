@@ -905,9 +905,35 @@ define(function (require) {
 		comparator: function (model) {
 			return model.get("name");
 		},
+        deleteParents: function(tree){
+            var list = [];
+            _.each(tree, function(item){
+                if(item.groups.length > 0){
+                   list = list.concat(this.deleteParents(item.groups)); 
+                }else{
+                    list.push(item); 
+                } 
+            }, this);
+
+            return list;
+        },
+        countParents: function(tree){
+            var count = 0;
+            _.each(tree, function(item){
+                if(item.groups.length){
+                    count = count + 1; 
+                } 
+            }, this);
+
+            return count;
+        },
 		//TODO: TEMP!!!
 		parse: function (raw) {
 			raw = Collection.prototype.parse.call(this, raw);
+            if(this.countParents(raw) < 2){//если в дереве только один родительский пункт, тогда убираем его
+                raw = this.deleteParents(raw);
+            }
+
 			return _.filter(raw, function (item) {
 				return !(item.name && item.name.search(/дневник/) !== -1);
 			});
