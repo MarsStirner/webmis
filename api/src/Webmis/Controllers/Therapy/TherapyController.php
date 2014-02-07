@@ -75,7 +75,10 @@ class TherapyController
             $actions = $actionsQuery->find();
 
             $data = $this->therapyMagic($actions);
-            return $app['jsonp']->jsonp(array('sql'=>$rawSql,'data'=>$data));
+            return $app['jsonp']->jsonp(array(
+                /* 'sql'=>$rawSql, */
+                'data'=>$data
+            ));
     }
 
 
@@ -226,7 +229,7 @@ class TherapyController
 
 
                 //если есть название терапии и фазы
-                if(array_key_exists('therapyPhaseTitle',$a) && $a['therapyPhaseTitle']!=null && array_key_exists('therapyTitle',$a) && $a['therapyTitle']!=null){
+                if(array_key_exists('therapyTitle',$a) && $a['therapyTitle']!=null){
                      array_push($data, $a);
                 }
 
@@ -266,8 +269,11 @@ class TherapyController
             foreach($therapies as $key => $therapy){//для каждой терапии ищем её фазы
 
                 foreach ($data as $action){
-                    if($therapy['beginDate'] == $action['therapyBegDate']){
+                    if(!$action['therapyPhaseTitle']){//пропускаем дневниковый осмотр  у которого нет названия фазы... webmis-346
+                        continue; 
+                    }
 
+                    if($therapy['beginDate'] == $action['therapyBegDate']){
                        $phase = array(
                             'eventId' => $action['eventId'],
                             'title' => $action['therapyPhaseTitle'],
@@ -294,6 +300,9 @@ class TherapyController
 
             //добавляем дни для фаз
             foreach ($data as $action){
+                if(!$action['therapyPhaseTitle']){
+                    continue; 
+                }
                 $therapies[$action['therapyBegDate']]['phases'][$action['therapyPhaseBegDate']]['days'][] = array(
                     'day'=> $action['therapyPhaseDay'],
                     'createDate' => $action['createDate'],
