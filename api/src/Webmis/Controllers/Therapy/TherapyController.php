@@ -246,7 +246,7 @@ class TherapyController
             foreach ($data as $action){
                 //обходим массив данных полученных из дневниковых осмотров и создаём терапии 
                 $therapy = array(
-                    'id' => $first['docId'],
+                    /* 'id' => $first['docId'], */
                     'titleId' => $action['therapyTitleId'],
                     'title' => $action['therapyTitle'],
                     'link' => $action['therapyLink'],
