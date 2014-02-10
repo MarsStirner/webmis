@@ -3374,12 +3374,14 @@ define(function (require) {
 			};
 		},
 		initialize: function () {
-			if (!fds[this.model.get("scope")]) {
-				fds[this.model.get("scope")] = new FlatDirectory();
-				fds[this.model.get("scope")].set({id: this.model.get("scope")});
-				$.
-					when(fds[this.model.get("scope")].fetch()).
-					then(_.bind(this.onDirectoryReady, this));
+            var scope = this.model.get("scope");
+
+			if (!fds[scope]) {
+				fds[scope] = new FlatDirectory();
+				fds[scope].set({id: scope});
+                fds.deffered = fds[scope].fetch();
+				$.when(fds[scope].deffered)
+					.then(_.bind(this.onDirectoryReady, this));
 			} else {
 				this.onDirectoryReady();
 			}
@@ -4902,10 +4904,11 @@ define(function (require) {
 
 		onDirectoryReady: function () {
             var self = this;
-
-            fds[self.model.get("scope")].deffered.then(function(){
+            var scope = this.model.get("scope");
+console.log('onDirectoryReady', fds[scope])
+            fds[scope].deffered.then(function(){
             
-                var directoryValue = _(fds[self.model.get("scope")].toBeautyJSON()).find(function (type) {
+                var directoryValue = _(fds[scope].toBeautyJSON()).find(function (type) {
                     return type.id == self.model.get("value");
                 }, self);
 
