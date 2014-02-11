@@ -186,7 +186,7 @@ define(function (require) {
         },
 
         groupByRow: function () {
-            console.log("hasTherapyAttrs", this.hasTherapyAttrs());
+            // console.log("hasTherapyAttrs", this.hasTherapyAttrs());
 
             var attributes = this.getFieldsGroup();
 
@@ -3629,8 +3629,7 @@ define(function (require) {
                     id: scope
                 });
                 fds.deffered = fds[scope].fetch();
-                $.when(fds[scope].deffered)
-                    .then(_.bind(this.onDirectoryReady, this));
+                $.when(fds[scope].deffered).then(_.bind(this.onDirectoryReady, this));
             } else {
                 this.onDirectoryReady();
             }
@@ -4187,7 +4186,6 @@ define(function (require) {
 						resultData: tests
 					});*/
 
-                    console.log(this);
                 }, this));
 
                 return promise;
@@ -4234,7 +4232,6 @@ define(function (require) {
 						resultData: tests
 					});*/
 
-                    console.log(this);
                 }, this));
 
                 return promise;
@@ -4277,7 +4274,6 @@ define(function (require) {
 						resultData: tests
 					});*/
 
-                    console.log(this);
                 }, this));
 
                 return promise;
@@ -4329,7 +4325,6 @@ define(function (require) {
 						resultData: tests
 					});*/
 
-                    console.log(this);
                 }, this));
 
                 return promise;
@@ -4623,7 +4618,7 @@ define(function (require) {
             "click .sb-hdr": "onClick"
         },
         onClick: function (event) {
-            console.log("VGROUP CLICK");
+            // console.log("VGROUP CLICK");
             var $t = $(event.currentTarget);
             $t.next().toggle();
             this.$(".sb-tgl").toggleClass("icon-plus icon-minus");
@@ -5079,7 +5074,6 @@ define(function (require) {
 
         data: function () {
 
-            console.log(this.options);
             var tmplData = {};
             var documentJSON = this.model.toJSON()[0];
 
@@ -5226,7 +5220,7 @@ define(function (require) {
             var self = this;
             var scope = this.model.get("scope");
             console.log('onDirectoryReady', fds[scope])
-            fds[scope].deffered.then(function () {
+            $.when(fds[scope].deffered).then(function () {
 
                 var directoryValue = _(fds[scope].toBeautyJSON()).find(function (type) {
                     return type.id == self.model.get("value");
@@ -5365,7 +5359,7 @@ define(function (require) {
             var event = this.options.events.find(function (event) {
                 return event.get('id') == appealId;
             });
-            console.log('selected event', event);
+            // console.log('selected event', event);
             appeal.get("execPerson").id = event.get('execPerson_id');
             this.collection.pageNumber = 1;
             this.collection.fetch();
@@ -5431,7 +5425,7 @@ define(function (require) {
             return 'Summary.List.Layout';
         },
         toggleReviewState: function () {
-            console.log('summary toggle', this, appealId)
+            // console.log('summary toggle', this, appealId)
             App.Router.navigate(["patients", this.options.patientId, this.getEditPageTypeName(), '?appealId=' + appealId + '&docIds=' + this.selectedDocuments.pluck("id").join(",")].join("/"), {
                 trigger: true
             });
@@ -5504,7 +5498,7 @@ define(function (require) {
             return 'summary'
         },
         render: function (subViews) {
-            console.log('Documents.Summary.Review.Layout', this.options)
+            // console.log('Documents.Summary.Review.Layout', this.options)
             return LayoutBase.prototype.render.call(this, _.extend({
                 ".review-controls": new Documents.Summary.Review.Controls({
                     collection: this.collection,
