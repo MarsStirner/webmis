@@ -3204,7 +3204,8 @@ define(function (require) {
         onRichTextPaste: function (event) {
             setTimeout(_.bind(function () {
                 console.log("paste! ", event);
-                this.$(".attribute-value").html($.htmlClean(this.$(".attribute-value").html(), {
+                var $attrValue = this.$(".attribute-value");
+                $attrValue.html($.htmlClean($attrValue.html(), {
                     format: true,
                     removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
                         "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button"
@@ -3223,7 +3224,8 @@ define(function (require) {
                         ]
                     ]
                 }));
-                this.model.setValue(this.$(".attribute-value").html());
+
+                this.model.setValue($attrValue.html());
             }, this), 0);
         },
 
