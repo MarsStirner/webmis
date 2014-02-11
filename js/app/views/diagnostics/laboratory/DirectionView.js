@@ -335,24 +335,16 @@ define(function(require) {
 			var startTime = view.ui.$assessmentTimepicker.val() + ':00';
 
 			view.analyzesSelected.forEach(function(model) {
-				//console.log('model', model)
 				var id = model.get('id');
 
 				model.setProperty('assessmentDate', 'value', startDate + ' ' + startTime);
 
 				if (view.analyzesSelected.length === 1) {
 					model.setProperty('executorId', 'value', view.executor.id);
-					// model.setProperty('doctorFirstName', 'value', view.executor.name.first);
-					// model.setProperty('doctorLastName', 'value', view.executor.name.last);
-					// model.setProperty('doctorMiddleName', 'value', view.executor.name.middle);
 				}
 
 
 				model.setProperty('assignerId', 'value', view.assigner.id);
-				// model.setProperty('assignerFirstName', 'value', view.assigner.name.first);
-				// model.setProperty('assignerLastName', 'value', view.assigner.name.last);
-				// model.setProperty('assignerMiddleName', 'value', view.assigner.name.middle);
-
 
 				model.setProperty('finance', 'value', view.ui.$finance.val());
 
@@ -432,17 +424,6 @@ define(function(require) {
 			view.ui.$assessmentDatepicker.mask('99.99.9999').datepicker({
 				minDate: now,
 				onSelect: function(dateText, inst) {
-
-					// var day = moment(view.$(this).datepicker('getDate')).startOf('day');
-					// var currentDay = moment().startOf('day');
-					// var currentHour = moment().hour();
-					// var hour = view.ui.$assessmentTimepicker.timepicker('getHour');
-					// //если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
-					// if (day.diff(currentDay, 'days') === 0) {
-					// 	if (hour <= currentHour) {
-					// 		view.ui.$assessmentTimepicker.val('').trigger('change');
-					// 	}
-					// }
 					$(this).change();
 				}
 			}).datepicker('setDate', now);
@@ -454,32 +435,6 @@ define(function(require) {
 
 			view.ui.$assessmentTimepicker.mask('99:99').timepicker({
 				defaultTime: 'now',
-				// onHourShow: function(hour) {
-				// 	var day = moment(view.ui.$assessmentDatepicker.datepicker('getDate')).startOf('day');
-				// 	var currentDay = moment().startOf('day');
-				// 	var currentHour = moment().hour();
-				// 	//если выбран текущий день, то часы меньше текущего нельзя выбрать
-				// 	if (day.diff(currentDay, 'days') === 0) {
-				// 		if (hour < currentHour) {
-				// 			return false;
-				// 		}
-				// 	}
-
-				// 	return true;
-				// },
-				// onMinuteShow: function(hour, minute) {
-				// 	var day = moment(view.ui.$assessmentDatepicker.datepicker('getDate')).startOf('day');
-				// 	var currentDay = moment().startOf('day');
-				// 	var currentHour = moment().hour();
-				// 	var currentMinute = moment().minute();
-				// 	//если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
-				// 	if (day.diff(currentDay, 'days') === 0) {
-				// 		if (hour === currentHour && minute <= currentMinute) {
-				// 			return false;
-				// 		}
-				// 	}
-				// 	return true;
-				// },
 				showPeriodLabels: false,
 				showOn: 'both'
 			}).timepicker('setTime', now);
@@ -493,7 +448,6 @@ define(function(require) {
 		//закрытие попапа
 		close: function() {
 			var view = this;
-			//view.ui.$assessmentDatepicker.datepicker('destroy');
 			view.$el.dialog('close');
 			view.$el.remove();
 			view.remove();

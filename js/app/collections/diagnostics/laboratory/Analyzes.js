@@ -59,7 +59,7 @@ define(function(require) {
 		},
 
 		extractResult: function(groups, result, criteriaRE, testTargetProp) {
-			console.log(groups, result, criteriaRE, testTargetProp)
+			// console.log(groups, result, criteriaRE, testTargetProp)
 
 			_.each(groups, function(model) {
 				if (!model.children) {
@@ -98,7 +98,6 @@ define(function(require) {
 			var tree = [];
 
 			tree = this.convertToTree(raw.data);
-			//var parents = this.onlyParents(tree);
 
 			return tree; //parents;
 		}

@@ -18,7 +18,9 @@ define(function(require) {
 			});
 
 			view.collection.on('reset', function() {
+
 				view.render();
+                $('#tree-search').prop('disabled', false).removeClass('Disabled');
 			});
 
 			view.collection.on('search', function() {
