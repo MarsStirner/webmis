@@ -254,7 +254,7 @@ define(function (require) {
                         }
 
                     }
-                    console.log(shouldSetTherapyFields, shouldSetTherapyPhaseFields, lastTherapy.get("phases")[0].days.length, lastTherapy.get("phases")[0].days[0].docId, this.get('id'))
+                    // console.log(shouldSetTherapyFields, shouldSetTherapyPhaseFields, lastTherapy.get("phases")[0].days.length, lastTherapy.get("phases")[0].days[0].docId, this.get('id'))
                 }
 
                 var therapyAttrs = _(attributes).filter(function (attr) {
@@ -593,6 +593,10 @@ define(function (require) {
 
     Documents.Models.DocumentTemplate = Documents.Models.DocumentBase.extend({
         urlRoot: DATA_PATH + "dir/actionTypes/",
+
+        url: function(){
+            return this.urlRoot + this.id + '?eventId=' + this.appealId; 
+        },
 
         getTypeId: function () {
             return this.id;
