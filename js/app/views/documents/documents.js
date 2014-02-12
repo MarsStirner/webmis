@@ -169,6 +169,10 @@ define(function (require) {
 
         groupedByRow: null,
 
+        isOldType: function () {
+            return _(["EXAM_OLD", "JOUR_OLD"]).contains(this.get("mnem"));
+        },
+
         anyCopiedAttrHasValue: false,
 
         hasTherapyAttrs: function () {
@@ -223,7 +227,7 @@ define(function (require) {
                         }, this);
                     }, this);
 
-                    console.log('docInLastTherapyLastPhase', this.docIsNew(), docInLastTherapyLastPhase, docInLastTherapyPhases);
+                    // console.log('docInLastTherapyLastPhase', this.docIsNew(), docInLastTherapyLastPhase, docInLastTherapyPhases);
 
                     if (!lastTherapy.get("endDate") || lastTherapy.get("endDate") < 0) {
                         shouldSetTherapyFields = true;
@@ -5099,7 +5103,8 @@ define(function (require) {
                     ].join(" "),
                     doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
                     loaded: true,
-                    showIcons: this.options.showIcons
+                    showIcons: this.options.showIcons,
+                    isOldType: this.model.isOldType()
                 };
             } else {
                 tmplData = {

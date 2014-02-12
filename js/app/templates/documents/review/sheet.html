@@ -20,9 +20,13 @@
 						<i class="icon-lock" style="position: absolute;top: 0;right: 1.8em;"></i>
 					</a>
 				<%}%>
+
+                <%if (!document.isOldType) {%>
 				<a href="#" class="duplicate-document" data-template-id="<%=document.typeId%>" style="text-decoration: none;" title="Дублировать">
 					<i class="icon-copy" style="position: absolute;top: 0;right: 0;"></i>
 				</a>
+				<%}%>
+
 			<%}%>
 		</div>
 		<ul class="sheet-rows"></ul>
