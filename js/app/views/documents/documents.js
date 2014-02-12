@@ -1043,7 +1043,7 @@ define(function (require) {
             return 'RepeaterBase';
         },
         initialize: function () {
-            console.log('initialize ' + this, arguments);
+            // console.log('initialize ' + this, arguments);
             this.subViews = [];
         },
 

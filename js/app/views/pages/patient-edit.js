@@ -330,7 +330,7 @@ define(function(require){
 				var wrongFieldsSelector = _(this.validationErrors).map(function(e) {
 					return "[name='" + e.property + "']";
 				}).join(",");
-				console.log(wrongFieldsSelector);
+				//console.log(wrongFieldsSelector);
 				this.$(wrongFieldsSelector).each(function() {
 					//if (!$(this).data("subbind")) {
 					//if ($(this).hasClass("hasDatepicker")) {
@@ -1636,7 +1636,7 @@ define(function(require){
 
 		},
 		data: function(){
-			console.log('data',this)
+			//console.log('data',this)
 			var data = {};
 
 			data.bloodTypes = this.bloodTypes ? this.bloodTypes.toJSON() : [];
@@ -1651,7 +1651,7 @@ define(function(require){
 
 		render: function() {
 			var self = this;
-			console.log('render',this.data());
+			//console.log('render',this.data());
 
 			this.$el.html($.tmpl(this.template, this.data()));
 

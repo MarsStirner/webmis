@@ -248,7 +248,7 @@ define(function(require) {
 			var self = this;
 
 			this.appeal.closed = this.appeal.get('closed') ? this.appeal.get('closed') : false;
-			console.log('appeal', this.appeal);
+			//console.log('appeal', this.appeal);
 			var patient = this.appeal.get("patient");
 			patient.on("change", this.onPatientLoaded, this);
 			patient.fetch();

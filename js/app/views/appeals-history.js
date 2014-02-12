@@ -12,7 +12,7 @@ define(["collections/appeals"], function ()
 		},
 
 		render: function () {
-			console.log('appeals',this.options.appeals)
+			//console.log('appeals',this.options.appeals)
 			this.$el.html($.tmpl(this.template, {
 				quantity: this.options.appeals.requestData.recordsCount,
 				patient: this.options.appeals.patient

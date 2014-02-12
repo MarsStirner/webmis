@@ -40,7 +40,7 @@ define(function(require) {
 			self.appeal = new App.Models.Appeal();
 
 			this.getPatientAppeals(this.options.patientId).done(function() {
-				console.log('appeals', self.appealsList);
+				//console.log('appeals', self.appealsList);
 
 				self.firstAppeal = self.appealsList.first();
 
@@ -50,7 +50,7 @@ define(function(require) {
 
 						var patient = self.appeal.get("patient");
 						patient.fetch().done(function(){
-							console.log('appeal', self.appeal);
+							//console.log('appeal', self.appeal);
 							self.renderPage(self.appeal, self.appealsList, appealId);
 						});
 					});
@@ -85,7 +85,7 @@ define(function(require) {
                 structure: [{
                     link: '/patients/'+patientId+'/',
                     name: 'Карточка пациента',
-                    permissions: ['see_patient_card']  
+                    permissions: ['see_patient_card']
                 },{
                     link: '/patients/'+patientId+'/appeals/',
                     name: 'Госпитализации',
@@ -97,7 +97,7 @@ define(function(require) {
                     active: true
                 }]
             });
-	
+
 			this.listView = new Documents.Summary.List.Layout({
 				appealId: appeal.get('id'),
 				appeal: appeal,

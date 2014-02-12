@@ -5,7 +5,7 @@ define(function(require) {
 	return BaseView.extend({
 		template: list,
 		initialize: function(){
-            console.log('init appeal prescriptions list', this);
+            //console.log('init appeal prescriptions list', this);
 			this.collection.on('reset', function(){
 				if(this.collection.length){
 					this.render();
@@ -19,14 +19,14 @@ define(function(require) {
 			this.$el.html('Ничего не нашли.');
 		},
 		renderOnFetch: function(){
-			console.log('onFetch', this.cid, this.$el.html());
+			//console.log('onFetch', this.cid, this.$el.html());
 
 			this.$el.html('Ищем...');
 		},
 		data: function(){
 			var data = {};
 			data.items = this.collection.toJSON();
-			console.log('data '+this.cid, data)
+			//console.log('data '+this.cid, data)
 			return data;
 		}
 	});

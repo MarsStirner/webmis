@@ -29,7 +29,7 @@ define(function (require) {
             data.structure = _.filter(this.options.structure, function (item) {
                 return this.filterByPermissions(item.permissions, this.options.permissions);
             }, this);
-            console.log('data', data);
+            //console.log('data', data);
 
             return data;
         },

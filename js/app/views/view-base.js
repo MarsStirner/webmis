@@ -3,7 +3,7 @@ define(function () {
 		template: _.template(""),
 
 		initialize: function () {
-			console.log('initialize ' + this + ' ' + this.cid, arguments);
+			//console.log('initialize ' + this + ' ' + this.cid, arguments);
 		},
 
 		toString: function () {
