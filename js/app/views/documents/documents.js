@@ -681,6 +681,10 @@ define(function (require) {
             return valuePropertyIndex;
         },
 
+        isNew: function(){
+            return this.get('id') === this.get('typeId') 
+        },
+
         getValueProperty: function () {
             if (_.isUndefined(this.valuePropertyIndex)) {
                 this.valuePropertyIndex = this.getValuePropertyIndex(this.get("properties"), this.get("type"));
@@ -688,8 +692,36 @@ define(function (require) {
             return this.get("properties")[this.valuePropertyIndex];
         },
 
+        getCalculated: function(name){
+            var calculated = this.get('calculatedValue'); 
+            var calculatedName;
+            var calculatedValue;
+
+            switch(name){
+                case 'value':
+                    calculatedName = 'valueAsString';
+                break;
+                case 'valueId':
+                    calculatedName = 'valueAsId';
+                break;
+            }
+            
+            if(calculated && calculatedName && _.has(calculated, calculatedName)){
+                calculatedValue = calculated[calculatedName];
+            }
+            
+            return calculatedValue;
+        },
+
         getValue: function () {
-            return this.getValueProperty().value;
+            var value = this.getValueProperty().value;
+            var defaultValue = this.getCalculated('value');
+
+            if(this.isNew() && !_.isEmpty(defaultValue)){
+                value = defaultValue; 
+            }
+            console.log('value', value, defaultValue, this.isNew());
+            return value;
         },
 
         setValue: function (value) {
@@ -1180,15 +1212,15 @@ define(function (require) {
         initialize: function () {
             LayoutBase.prototype.initialize.call(this, this.options);
             var self = this;
-            console.log('init ' + this, (function () {
-                for (var name in self) {
-                    if (!this.hasOwnProperty(name)) {
-                        console.log(self + ' inhirited:', name)
-                    } else {
-                        console.log(self + ' own:', name)
-                    }
-                }
-            })());
+            // console.log('init ' + this, (function () {
+            //     for (var name in self) {
+            //         if (!this.hasOwnProperty(name)) {
+            //             console.log(self + ' inhirited:', name)
+            //         } else {
+            //             console.log(self + ' own:', name)
+            //         }
+            //     }
+            // })());
             if (this.options.documents) {
                 this.documents = this.options.documents;
             } else {
@@ -1220,7 +1252,7 @@ define(function (require) {
         },
 
         onEnteredReviewState: function () {
-            console.log('onEnteredReviewState', this.toString())
+            // console.log('onEnteredReviewState', this.toString())
             this.toggleReviewState(true);
         },
 
@@ -1229,7 +1261,7 @@ define(function (require) {
         },
 
         toggleReviewState: function (enabled) {
-            console.log('toggle review state', this)
+            // console.log('toggle review state', this)
             //this.$(".documents-table, .controls-filters, .documents-paging").toggle(!enabled);
             this.$(this.reviewStateToggles.join(",")).toggle(!enabled);
 
@@ -1322,7 +1354,7 @@ define(function (require) {
                     sortingField: sortParams.sortingField,
                     sortingMethod: sortParams.sortingMethod
                 }
-            })
+            });
         },
 
         getUpdatedSortParams: function ($targetTh, sortDirection) {
@@ -1876,7 +1908,7 @@ define(function (require) {
         },
 
         initialize: function () {
-            this.listenTo(this.collection, "reset", this.onCollectionReset)
+            this.listenTo(this.collection, "reset", this.onCollectionReset);
         },
 
         onCollectionReset: function () {
@@ -2718,7 +2750,6 @@ define(function (require) {
         onSaveDocumentError: function (resultId) {
             this.$('button').button('enable');
             alert("При сохранении документа произошла ошибка. Повторите попытку.");
-            console.log(arguments);
         },
 
         onSaveOptionsToggleClick: function () {
@@ -3045,9 +3076,10 @@ define(function (require) {
         },
 
         data: function () {
+            console.log('input model', this.model.toJSON(), this.model.isNew());
             return {
                 model: this.model
-            }
+            };
         },
 
         layoutAttributes: {
