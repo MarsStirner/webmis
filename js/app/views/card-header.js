@@ -40,7 +40,7 @@ define(function (require) {
 		},
 
 		initialize: function (options) {
-			console.log('header options', options)
+			// console.log('header options', options)
 			this.model.on("change", this.render, this);
 		},
 
@@ -155,7 +155,6 @@ define(function (require) {
                         permissions: ['see_patient_summary']
                     }]
                 });
-                console.log('rere',this.el)
                 this.$el.find('.CardNav').append(this.cardNav.render().el)
 
 			return this;
