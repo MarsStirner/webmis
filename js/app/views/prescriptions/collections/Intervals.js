@@ -9,13 +9,37 @@ define(function (require) {
         },
         addInterval: function () {
             var interval = new Interval();
+
+            if (this.length) {
+                console.log('add interval', this.last());
+                var last = this.last();
+                var endDateTime = last.get('endDateTime');
+                if (endDateTime) {
+                    interval.set('beginDateTime', moment(endDateTime).add(1, 'minute').valueOf());
+                }else{
+                    if(last.get('beginDateTime')){
+                        interval.set('beginDateTime', moment(last.get('beginDateTime')).add(1, 'hour').valueOf());
+                    } 
+                }
+            }
+
             this.add(interval);
         },
         validateCollection: function () {
             var collectionErrors = [];
 
             var modelsJSON = this.toJSON();
+
+            var ranges = _.filter(modelsJSON, function(mj){
+                return !!mj.beginDateTime && !!mj.endDateTime; 
+            }); 
+            if((ranges.length > 0) && (ranges.length != modelsJSON.length)){
+                collectionErrors.push('В назначении не могут быть интервалы разных типов. ');
+            }
+
             _.each(modelsJSON, function (mj) {
+                console.log('interval',mj);
+
                 var modelsJSON2 = _.without(modelsJSON, mj);
                 _.each(modelsJSON2, function (mj2) {
 

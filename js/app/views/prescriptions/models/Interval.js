@@ -32,7 +32,7 @@ define(function (require) {
 
     var Interval = Model.extend({
         defaults: {
-            beginDateTime: (new Date()).getTime(),
+            beginDateTime: moment((new Date()).getTime()).add(1,'hour').startOf('hour').valueOf(),
             endDateTime: null,
             status: 0
         },
@@ -282,10 +282,10 @@ define(function (require) {
             if (this.get('endDateTime') && this.get('beginDateTime')) {
                 var diff = moment(this.get('endDateTime')).startOf('minute').diff(moment(this.get('beginDateTime')).startOf('minute'));
                 if (diff < 0) {
-                    errors.push('Время окончания интервала меньше времени начала');
+                    errors.push('Время окончания интервала меньше времени начала. ');
                 }
                 if (diff === 0) {
-                    errors.push('Время окончания интервала равно времени начала');
+                    errors.push('Время окончания интервала равно времени начала. ');
                 }
             }
 
