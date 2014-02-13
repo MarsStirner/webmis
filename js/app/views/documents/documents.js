@@ -654,6 +654,21 @@ define(function (require) {
     });
 
     Documents.Models.TemplateAttribute = Backbone.Model.extend({
+        initialize: function(){
+            var value = this.getPropertyValueFor('value');
+            var valueId = this.getPropertyValueFor('valueId');
+            var defaultValue = this.getCalculated('value');
+            var defaultValueId = this.getCalculated('valueId');
+
+            if(this.isNew() && !!defaultValue && (!value || value === 'нет')){
+                this.setPropertyValueFor('value',defaultValue);
+            }
+
+            if(this.isNew() && !!defaultValueId && (!valueId || valueId === 'нет')){
+                this.setPropertyValueFor('valueId',defaultValueId);
+            }
+            // console.log('value', (this.isNew() && !!defaultValue && (!value || value === 'нет')));
+        },
         getValuePropertyIndex: function (props, type) {
             var propName;
             var valuePropertyIndex;
@@ -715,12 +730,6 @@ define(function (require) {
 
         getValue: function () {
             var value = this.getValueProperty().value;
-            var defaultValue = this.getCalculated('value');
-
-            if(this.isNew() && !_.isEmpty(defaultValue)){
-                value = defaultValue; 
-            }
-            console.log('value', value, defaultValue, this.isNew());
             return value;
         },
 
@@ -832,7 +841,15 @@ define(function (require) {
         },
 
         getPropertyValueFor: function (name) {
-            return this.getPropertyByName(name).value;
+            var value =  this.getPropertyByName(name).value;
+            // var defaultValue = this.getCalculated(name);
+
+            // if(this.isNew() && !_.isEmpty(defaultValue) && (value === '' || value === 'нет')){
+            //     value = defaultValue; 
+            // }
+            // console.log('value', value, defaultValue, this.isNew());
+            
+            return value;
         },
 
         setPropertyValueFor: function (name, value) {
@@ -3076,7 +3093,7 @@ define(function (require) {
         },
 
         data: function () {
-            console.log('input model', this.model.toJSON(), this.model.isNew());
+            // console.log('input model', this.model.toJSON(), this.model.isNew());
             return {
                 model: this.model
             };
