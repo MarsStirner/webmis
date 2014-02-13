@@ -75,7 +75,7 @@ class ActionProperty extends BaseActionProperty
                 ->filterByActionProperty($this) // here
                 ->findOne($con);
             // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
-            $this->aActionPropertyDate->setActionProperty($this);
+            /* $this->aActionPropertyDate->setActionProperty($this); */
         }
 
         return $this->aActionPropertyDate;

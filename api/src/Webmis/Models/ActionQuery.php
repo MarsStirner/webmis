@@ -62,7 +62,8 @@ class ActionQuery extends BaseActionQuery
 
     public function onlyWithTherapyProperties()
     {
-        return $this->useActionPropertyQuery()
+        return $this->useActionTypeQuery()->filterByMnem('JOUR')->endUse()
+                    ->useActionPropertyQuery()
                         ->useActionPropertyTypeQuery()
                             ->filterByCode(array('therapyTitle'))
                         ->endUse()
