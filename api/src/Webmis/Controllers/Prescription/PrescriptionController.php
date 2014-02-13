@@ -246,7 +246,7 @@ class PrescriptionController
         }
 
 
-        $drugAllowedFields = array_flip(array('nomen', 'name', 'dose'));
+        $drugAllowedFields = array_flip(array('nomen', 'name', 'dose', 'unit'));
 
         foreach ($drugs as $drug) {
             $drug = array_intersect_key($drug, $drugAllowedFields);
@@ -395,7 +395,7 @@ class PrescriptionController
             }
             $actionProperties->save();
 
-            $drugAllowedFields = array_flip(array('nomen', 'name', 'dose', 'id'));
+            $drugAllowedFields = array_flip(array('nomen', 'name', 'dose', 'id', 'unit'));
             $drugComponents = $prescription->getDrugComponents();
 
             foreach ($drugs as $drug) {

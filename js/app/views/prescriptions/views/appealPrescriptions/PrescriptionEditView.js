@@ -184,8 +184,19 @@ define(function (require) {
                         }, 100);
 
                     }, this);
+            }
 
+            if(this.prescription.get('drugs')){
+                this.prescription.get('drugs')
+                .on('add remove', function(){
+                    console.log('add drug', arguments)
+                    setTimeout(function () {
+                    self.$el.find('select').select2();
 
+                    
+                    }, 100);
+                });
+            
             }
 
             rivets.formatters.datetime = {
@@ -214,11 +225,13 @@ define(function (require) {
             rivets.bind(self.el, {
                 prescription: self.prescription
             });
+            var drugs = this.prescription.get('drugs');
+            drugs.each(function(drug){
+                drug.trigger('change:unit');
+            });
 
-            this.$el.find('button')
-                .button();
-            this.$el.find('select')
-                .select2();
+            this.$el.find('button').button();
+            this.$el.find('select').select2();
             this.validateForm();
 
         }

@@ -21,7 +21,9 @@
                                 <input type="text" data-value="drug.dose"> 
                             </td>
                             <td>
-                                <span data-text="drug.unitName"></span> 
+                                <select id="units" name="units" data-value="drug.unit" >
+                                    <option data-each-unit="drug.units" data-value="unit:id" data-text="unit:code"></option>
+                                </select>
                             </td>
                             <td>
                                 <span data-on-click="drug:delete" class="icon-remove"></span>

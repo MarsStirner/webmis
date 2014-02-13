@@ -25,11 +25,11 @@ define(function (require) {
             }, this);
             this.balance.on('fetch', function () {
                 this.saveButton(false);
-            }, this)
+            }, this);
         },
 
         validateForm: function () {
-            var found = ((this.balanceView.inHospital()).length || (this.balanceView.inCurrentDepartment()).length || (this.balanceView.inOtherDepartments()).length)
+            var found = ((this.balanceView.inHospital()).length || (this.balanceView.inCurrentDepartment()).length || (this.balanceView.inOtherDepartments()).length);
             this.saveButton(found);
         },
 
@@ -60,23 +60,44 @@ define(function (require) {
 
             this.balance.fetch().done(function () {
                 // console.log('balance', self.balance);
-            })
+            });
 
             //console.log('searchByNomen', item)
 
         },
 
         onSave: function () {
-            //console.log('add drug')
-            var drug = this.balance.first();
+            var first = this.balance.first();
             var drugs = this.prescription.get('drugs');
-            drugs.add({
-                "nomen": drug.get('rlsNomenId'),
-                "name": drug.get('tradeLocalName'),
+            var units = [{
+                id: 327,
+                code: 'мг'
+            }];
+
+            if(first.get('unitId') !== 327){
+                units.push({
+                    id: first.get('unitId'),
+                    code: first.get('unitName')
+                });
+            }
+            
+            // units = _.map(units, function(unit){
+            //     if(unit.id = ) 
+            // });
+
+            var drug = {
+                "nomen": first.get('rlsNomenId'),
+                "name": first.get('tradeLocalName'),
                 "dose": "",
-                "unit": drug.get('unitId'),
-                "unitName": drug.get('unitName')
-            })
+                "unit": 327,
+                "units": units//,
+
+                // "unitName": first.get('unitName')
+            };
+
+            console.log('add drug', drug);
+
+            drugs.add(drug);
             this.close();
         },
 
@@ -117,7 +138,7 @@ define(function (require) {
                     //console.log('ui', event, ui)
 
                 }
-            })
+            });
         }
 
 

@@ -201,6 +201,19 @@ define(function (require) {
 
             }
 
+            if(this.prescription.get('drugs')){
+                this.prescription.get('drugs')
+                .on('add remove', function(){
+
+                    setTimeout(function () {
+                    self.$el.find('select').select2();
+
+                    }, 100);
+                });
+            
+            }
+
+
             rivets.formatters.datetime = {
                 read: function (value) { //вывод в хтмл
                     var v;

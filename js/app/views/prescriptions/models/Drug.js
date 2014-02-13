@@ -14,6 +14,9 @@ define(function (require) {
                 return errors; 
             } 
         },
+        selected: function(a,b){
+            console.log('ss', a,b); 
+        },
         initialize: function(){
 //            console.log('init drug model', this);
         },

@@ -5,6 +5,7 @@ namespace Webmis\Models;
 use Webmis\Models\om\BaseAction;
 use Webmis\Models\RbMethodOfAdministrationQuery;
 
+use Webmis\Models\rbUnitQuery;
 
 
 /**
@@ -265,22 +266,44 @@ class Action extends BaseAction
             $data['drugs'] = array();
 
             $drugs = $this->getDrugComponents();
-
+            $units = array(array('id'=>327, 'code'=>'мг'));
+            $rbUnits = rbUnitQuery::create()->find(); 
             if($drugs){
                 foreach ($drugs as $drug) {
+                    $rlsNomen = $drug->getRlsNomen();
+                    $defaultDrugUnit = $rlsNomen->getrbUnitRelatedByunitId();
+
+                    $drugUnitId = $drug->getUnit();
+                    $drugUnits = $units;
+                    if($drugUnitId != $defaultDrugUnit->getId()){
+                        $drugUnits[] = array('id'=>$defaultDrugUnit->getId(), 'code'=>$defaultDrugUnit->getCode());
+                    }
+
+                    if($drugUnitId != 327 ){
+                        foreach ($rbUnits as $rbUnit)
+                        {
+                          if ($drugUnitId === $rbUnit->getId())
+                          {
+                              break;
+                          }
+                        }
+
+                        if($rbUnit){
+                            $drugUnitName = $rbUnit->getCode();
+                            $drugUnits[] = array('id'=>$drugUnitId, 'code'=>$rbUnit->getCode());
+                        }
+                    }else{
+                        $drugUnitName = 'мг'; 
+                    }
+
                     $d = array(
                         'id' => $drug->getId(),
                         'name' => $drug->getName(),
                         'dose' => $drug->getDose(),
-                        //'unitId' => $drug->getUnit(),
-                        'unit' => ''
+                        'unit' => $drugUnitId,
+                        'unitName' => $drugUnitName,
+                        'units' => $drugUnits
                         );
-
-                    $rlsNomen = $drug->getRlsNomen();
-                    $rbUnit = $rlsNomen->getrbUnitRelatedByunitId();
-                    if($rbUnit){
-                        $d['unit'] = $rbUnit->getName();
-                    }
 
                     $data['drugs'][] = $d;
 
