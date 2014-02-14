@@ -189,9 +189,104 @@ define(function (require) {
             return this.get('id') === this.get('typeId');
         },
 
-        groupByRow: function () {
-            // console.log("hasTherapyAttrs", this.hasTherapyAttrs());
+        therapyBlackMagic: function (attributes) {
 
+            var lastTherapy = therapiesCollection.first();
+            var shouldSetTherapyFields = false;
+            var shouldSetTherapyPhaseFields = false;
+            //TODO Надо разделить установку значений и статуса readOnly
+            var readOnlyTherapyFields;
+            var readOnlyTherapyPhaseFields;
+
+            if (lastTherapy) {
+                //этот документ есть в последней фазе последней терапии
+                var docInLastTherapyLastPhase = !! _.find(lastTherapy.get("phases")[0].days, function (day) {
+                    return day.docId === this.get('id');
+                }, this);
+
+                //этот документ есть в фазах последней терапии
+                var docInLastTherapyPhases = !! _.find(lastTherapy.get("phases"), function (phase) {
+                    return _.find(phase.days, function (day) {
+                        return day.docId === this.get('id');
+                    }, this);
+                }, this);
+
+                //последняя терапия не закрыта, нет даты окончания
+                if (!lastTherapy.get("endDate") || lastTherapy.get("endDate") < 0) {
+                    shouldSetTherapyFields = true;
+                    if (this.docIsNew() && (lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("id") === this.get('id'))) {
+                        shouldSetTherapyFields = false;
+                    }
+                    //последняя фаза не закрыта, нет даты окончания
+                    if (!lastTherapy.get("phases")[0].endDate || lastTherapy.get("phases")[0].endDate < 0) {
+                        shouldSetTherapyPhaseFields = true;
+                        //если мы редактируем первый документ в последней незакрытой фазе
+                        if ((lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("phases")[0].days[0].docId === this.get('id'))) {
+                            shouldSetTherapyPhaseFields = false;
+                        }
+                    } else {
+                        //если у фазы терапии есть дата окончания, и документ входит в документы из которых состоит терапия
+                        if (docInLastTherapyLastPhase || docInLastTherapyPhases) {
+                            shouldSetTherapyPhaseFields = true;
+                        }
+                    }
+
+                } else {
+                    //если у терапии есть дата окончания , и документ входит в документы из которых состоит терапия
+                    if (docInLastTherapyLastPhase || docInLastTherapyPhases) {
+                        shouldSetTherapyFields = true;
+                        shouldSetTherapyPhaseFields = true;
+                    }
+
+                }
+                // console.log(shouldSetTherapyFields, shouldSetTherapyPhaseFields, lastTherapy.get("phases")[0].days.length, lastTherapy.get("phases")[0].days[0].docId, this.get('id'))
+            }
+
+            var therapyAttrs = _(attributes).filter(function (attr) {
+                return _.contains(THERAPY_CODES, attr.code);
+            });
+
+            _(therapyAttrs).each(function (ta, i) {
+                ta.therapyFieldCode = THERAPY_CODES[i];
+                if (shouldSetTherapyFields) {
+                    if (ta.therapyFieldCode == "therapyTitle") {
+                        //ta.properties[0].value = lastTherapy.get("titleId");
+                        if (this.docIsNew()) {
+                            ta.properties[1].value = lastTherapy.get("titleId").toString();
+                        }
+                        ta.readOnly = "true";
+                    }
+                    if (ta.therapyFieldCode == "therapyBegDate") {
+                        //if (lastTherapy.get("beginDate")) {
+                        if (this.docIsNew()) {
+                            ta.properties[0].value = moment(lastTherapy.get("beginDate") || new Date()).format(CD_DATE_FORMAT);
+                        }
+                        //}
+                        ta.readOnly = "true";
+                    }
+
+                    if (shouldSetTherapyPhaseFields) {
+                        if (ta.therapyFieldCode == "therapyPhaseTitle") {
+                            if (this.docIsNew()) {
+                                ta.properties[1].value = lastTherapy.get("phases")[0].titleId.toString();
+                            }
+                            ta.readOnly = "true";
+                        }
+                        if (ta.therapyFieldCode == "therapyPhaseBegDate") {
+                            if (this.docIsNew()) {
+                                ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate || new Date()).format(CD_DATE_FORMAT);
+                            }
+                            ta.readOnly = "true";
+                        }
+                    }
+                }
+            }, this);
+
+
+
+        },
+
+        groupByRow: function () {
             var attributes = this.getFieldsGroup();
 
             attributes = _.reject(attributes, function (attribute) {
@@ -199,101 +294,8 @@ define(function (require) {
             }, this);
 
             if (this.hasTherapyAttrs()) {
-
-                var lastTherapy = therapiesCollection.first();
-                var shouldSetTherapyFields = false;
-                var shouldSetTherapyPhaseFields = false;
-                //TODO Надо разделить установку значений и статуса readOnly
-                var readOnlyTherapyFields;
-                var readOnlyTherapyPhaseFields;
-
-                if (lastTherapy) {
-                    //этот документ есть в последней фазе последней терапии
-                    var docInLastTherapyLastPhase = !! _.find(lastTherapy.get("phases")[0].days, function (day) {
-                        return day.docId === this.get('id');
-                    }, this);
-
-                    //этот документ есть в фазах последней терапии
-                    var docInLastTherapyPhases = !! _.find(lastTherapy.get("phases"), function (phase) {
-                        return _.find(phase.days, function (day) {
-                            return day.docId === this.get('id');
-                        }, this);
-                    }, this);
-
-                    //последняя терапия не закрыта, нет даты окончания
-                    if (!lastTherapy.get("endDate") || lastTherapy.get("endDate") < 0) {
-                        shouldSetTherapyFields = true;
-                        if (this.docIsNew() && (lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("id") === this.get('id'))) {
-                            shouldSetTherapyFields = false;
-                        }
-                        //последняя фаза не закрыта, нет даты окончания
-                        if (!lastTherapy.get("phases")[0].endDate || lastTherapy.get("phases")[0].endDate < 0) {
-                            shouldSetTherapyPhaseFields = true;
-                            //если мы редактируем первый документ в последней незакрытой фазе
-                            if ((lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("phases")[0].days[0].docId === this.get('id'))) {
-                                shouldSetTherapyPhaseFields = false;
-                            }
-                        } else {
-                            //если у фазы терапии есть дата окончания, и документ входит в документы из которых состоит терапия
-                            if (docInLastTherapyLastPhase || docInLastTherapyPhases) {
-                                shouldSetTherapyPhaseFields = true;
-                            }
-                        }
-
-                    } else {
-                        //если у терапии есть дата окончания , и документ входит в документы из которых состоит терапия
-                        if (docInLastTherapyLastPhase || docInLastTherapyPhases) {
-                            shouldSetTherapyFields = true;
-                            shouldSetTherapyPhaseFields = true;
-                        }
-
-                    }
-                    // console.log(shouldSetTherapyFields, shouldSetTherapyPhaseFields, lastTherapy.get("phases")[0].days.length, lastTherapy.get("phases")[0].days[0].docId, this.get('id'))
-                }
-
-                var therapyAttrs = _(attributes).filter(function (attr) {
-                    return _.contains(THERAPY_CODES, attr.code);
-                });
-
-                _(therapyAttrs).each(function (ta, i) {
-                    ta.therapyFieldCode = THERAPY_CODES[i];
-                    if (shouldSetTherapyFields) {
-                        if (ta.therapyFieldCode == "therapyTitle") {
-                            //ta.properties[0].value = lastTherapy.get("titleId");
-                            if (this.docIsNew()) {
-                                ta.properties[1].value = lastTherapy.get("titleId").toString();
-                            }
-                            ta.readOnly = "true";
-                        }
-                        if (ta.therapyFieldCode == "therapyBegDate") {
-                            //if (lastTherapy.get("beginDate")) {
-                            if (this.docIsNew()) {
-                                ta.properties[0].value = moment(lastTherapy.get("beginDate") || new Date()).format(CD_DATE_FORMAT);
-                            }
-                            //}
-                            ta.readOnly = "true";
-                        }
-
-                        if (shouldSetTherapyPhaseFields) {
-                            if (ta.therapyFieldCode == "therapyPhaseTitle") {
-                                if (this.docIsNew()) {
-                                    ta.properties[1].value = lastTherapy.get("phases")[0].titleId.toString();
-                                }
-                                ta.readOnly = "true";
-                            }
-                            if (ta.therapyFieldCode == "therapyPhaseBegDate") {
-                                if (this.docIsNew()) {
-                                    ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate || new Date()).format(CD_DATE_FORMAT);
-                                }
-                                ta.readOnly = "true";
-                            }
-                        }
-                    }
-                }, this);
-
-                //				console.log(therapyAttrs);
+                this.therapyBlackMagic(attributes);
             }
-
             var groupedByRow = _(attributes).groupBy(function (item) {
                 var rowAttr = _(layoutAttributesDir.get(item.type)).find(function (a) {
                     return a.code === "ROW";
@@ -301,44 +303,20 @@ define(function (require) {
                 var rowValue = "UNDEFINED";
 
                 if (rowAttr) {
-                    var rowAttrId = rowAttr["id"];
+                    var rowAttrId = rowAttr.id;
                     var rowValueParams = _(item.layoutAttributeValues).find(function (la) {
                         return la.layoutAttribute_id === rowAttrId;
                     });
-                    if (rowValueParams && rowValueParams["value"]) {
-                        rowValue = rowValueParams["value"];
+                    if (rowValueParams && rowValueParams.value) {
+                        rowValue = rowValueParams.value;
                     }
                 }
 
                 return rowValue;
             }, this);
 
-            /*if (!groupedByRow.UNDEFINED) {
-				groupedByRow.UNDEFINED = [];
-			}*/
-
             var rows = [];
 
-            /*if (groupedByRow.THERAPY) {
-				rows.push(
-					{spans: new Backbone.Collection([
-						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[0]),
-						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[1]),
-						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[2])
-					])},
-					{spans: new Backbone.Collection([
-						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[3])
-					])},
-					{spans: new Backbone.Collection([
-						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[4]),
-						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[5]),
-						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[6]),
-						new Documents.Models.TemplateAttribute(groupedByRow.THERAPY[7])
-					])}
-				);
-			}*/
-
-            //////////////////
             _.forEach(groupedByRow, function (row, rowNumber) {
                 if (rowNumber !== "UNDEFINED") {
                     rows.push({
@@ -360,17 +338,6 @@ define(function (require) {
                     }, this);
                 }
             }, this);
-
-            //			console.log(rows);
-            //////////////////
-
-            /*for (var i = 0; i < groupedByRow.UNDEFINED.length; i++) {
-				if (i == 0 || i % 2 == 0) {
-					rows.push({spans: new Backbone.Collection()});
-				}
-
-				rows[rows.length - 1].spans.add(new Documents.Models.TemplateAttribute(groupedByRow.UNDEFINED[i]));
-			}*/
 
             return rows;
         },
@@ -507,52 +474,12 @@ define(function (require) {
             }
         }
 
-        /*wrapTextValues: function () {
-			if (this.get("group") && this.get("group").length) {
-				var examAttributes = this.getFieldsGroup();
-				if (examAttributes) {
-					_(examAttributes).each(function (a) {
-						if (_.contains(["html", "text", "constructor"], a.type.toString().toLowerCase())) {
-							var valueProp = _(a.properties).find(function (p) {
-								return p.name === "value";
-							});
-
-							if (valueProp && valueProp.value) {
-								var wrapStart = "<pre>";
-								var wrapEnd = "</pre>";
-								if (valueProp.value.substring(0, wrapStart.length) != wrapStart ||
-									valueProp.value.substring(valueProp.value.length - 1, wrapEnd.length) != wrapEnd) {
-									valueProp.value = wrapStart + valueProp.value + wrapEnd;
-								}
-							}
-						}
-					});
-				}
-			}
-		}*/
     });
 
     Documents.Models.Document = Documents.Models.DocumentBase.extend({
         urlRoot: function () {
             return DATA_PATH + "appeals/" + this.appealId + "/documents/";
         },
-
-        /*collectTextNodes: function (element, texts) {
-			for (var child = element.firstChild; child !== null; child = child.nextSibling) {
-				if (child.nodeType === 3)
-					texts.push(child);
-				else if (child.nodeType === 1)
-					this.collectTextNodes(child, texts);
-			}
-		},
-
-		getTextWithSpaces: function (element) {
-			var texts = [];
-			this.collectTextNodes(element, texts);
-			for (var i = texts.length; i-- > 0;)
-				texts[i] = texts[i].data;
-			return texts.join(" ");
-		},*/
 
         getCleanHtmlFilledAttrs: function () {
             var filledAttrs = this.getFilledAttrs(true);
@@ -580,7 +507,6 @@ define(function (require) {
         save: function (attrs, options) {
             this.setCloseDate();
             this.spoofDates();
-            //this.wrapTextValues();
             return Documents.Models.DocumentBase.prototype.save.call(this, attrs, options);
         }
     });
@@ -588,8 +514,8 @@ define(function (require) {
     Documents.Models.DocumentTemplate = Documents.Models.DocumentBase.extend({
         urlRoot: DATA_PATH + "dir/actionTypes/",
 
-        url: function(){
-            return this.urlRoot + this.id + '?eventId=' + this.appealId; 
+        url: function () {
+            return this.urlRoot + this.id + '?eventId=' + this.appealId;
         },
 
         getTypeId: function () {
@@ -648,18 +574,18 @@ define(function (require) {
     });
 
     Documents.Models.TemplateAttribute = Backbone.Model.extend({
-        initialize: function(){
+        initialize: function () {
             var value = this.getPropertyValueFor('value');
             var valueId = this.getPropertyValueFor('valueId');
             var defaultValue = this.getCalculated('value');
             var defaultValueId = this.getCalculated('valueId');
 
-            if(this.isNew() && !!defaultValue && (!value || value === 'нет')){
-                this.setPropertyValueFor('value',defaultValue);
+            if (this.isNew() && !! defaultValue && (!value || value === 'нет')) {
+                this.setPropertyValueFor('value', defaultValue);
             }
 
-            if(this.isNew() && !!defaultValueId && (!valueId || valueId === 'нет')){
-                this.setPropertyValueFor('valueId',defaultValueId);
+            if (this.isNew() && !! defaultValueId && (!valueId || valueId === 'нет')) {
+                this.setPropertyValueFor('valueId', defaultValueId);
             }
             // console.log('value', (this.isNew() && !!defaultValue && (!value || value === 'нет')));
         },
@@ -690,8 +616,8 @@ define(function (require) {
             return valuePropertyIndex;
         },
 
-        isNew: function(){
-            return this.get('id') === this.get('typeId') 
+        isNew: function () {
+            return this.get('id') === this.get('typeId');
         },
 
         getValueProperty: function () {
@@ -701,24 +627,24 @@ define(function (require) {
             return this.get("properties")[this.valuePropertyIndex];
         },
 
-        getCalculated: function(name){
-            var calculated = this.get('calculatedValue'); 
+        getCalculated: function (name) {
+            var calculated = this.get('calculatedValue');
             var calculatedName;
             var calculatedValue;
 
-            switch(name){
-                case 'value':
-                    calculatedName = 'valueAsString';
+            switch (name) {
+            case 'value':
+                calculatedName = 'valueAsString';
                 break;
-                case 'valueId':
-                    calculatedName = 'valueAsId';
+            case 'valueId':
+                calculatedName = 'valueAsId';
                 break;
             }
-            
-            if(calculated && calculatedName && _.has(calculated, calculatedName)){
+
+            if (calculated && calculatedName && _.has(calculated, calculatedName)) {
                 calculatedValue = calculated[calculatedName];
             }
-            
+
             return calculatedValue;
         },
 
@@ -815,15 +741,6 @@ define(function (require) {
             setPropertyValueFor("valueId", "");
         },
 
-        /*convertValueToHtml: function () {
-			return this.setValue(
-				this.getValue().
-					replace(/\r\n/g, '<br>').
-					replace(/\s/g, '&nbsp;')
-
-			);
-		},*/
-
         getPropertyByName: function (name, props) {
             props = props || this.get('properties');
             return _.find(props, function (prop) {
@@ -835,14 +752,7 @@ define(function (require) {
         },
 
         getPropertyValueFor: function (name) {
-            var value =  this.getPropertyByName(name).value;
-            // var defaultValue = this.getCalculated(name);
-
-            // if(this.isNew() && !_.isEmpty(defaultValue) && (value === '' || value === 'нет')){
-            //     value = defaultValue; 
-            // }
-            // console.log('value', value, defaultValue, this.isNew());
-            
+            var value = this.getPropertyByName(name).value;
             return value;
         },
 
@@ -954,12 +864,6 @@ define(function (require) {
             } else {
                 this.reset(this.originalModels);
             }
-
-            /*this.collection.reset(criteria ?
-			 _.filter(this.options.originalModels, function (model) {
-			 return criteriaRE.test(model.get("name"))
-			 }) :
-			 this.options.originalModels);*/
         },
 
         searchByMnem: function (mnems) {
@@ -1004,9 +908,9 @@ define(function (require) {
 
             return count;
         },
-        filterByName: function (tree,name) {
+        filterByName: function (tree, name) {
             return _.filter(tree, function (item) {
-                if(item.groups && item.groups.length > 0){
+                if (item.groups && item.groups.length > 0) {
                     item.groups = this.filterByName(item.groups, name);
                 }
                 return !(item.name && item.name.search(/дневник/) !== -1);
@@ -1222,7 +1126,7 @@ define(function (require) {
         },
         initialize: function () {
             LayoutBase.prototype.initialize.call(this, this.options);
-            var self = this;
+            // var self = this;
             // console.log('init ' + this, (function () {
             //     for (var name in self) {
             //         if (!this.hasOwnProperty(name)) {
@@ -1539,7 +1443,7 @@ define(function (require) {
                 data: {
                     sortingField: sortField
                 }
-            })
+            });
         },
 
         updatedSelectedItems: function (selected, itemId) {
@@ -1598,21 +1502,6 @@ define(function (require) {
             this.options.listItems.doctorId = enabled ? appeal.get("execPerson").id : null;
             this.options.listItems.fetch();
         }
-        ///////
-
-        /*onSelectedDocumentsAdd: function () {
-		 this.render();
-		 //this.toggleReviewSelectedDisabled(this.collection.length > 0);
-		 },
-
-		 onSelectedDocumentsRemove: function () {
-		 this.render();
-		 //this.toggleReviewSelectedDisabled(this.collection.length > 0);
-		 },
-
-		 toggleReviewSelectedDisabled: function (enabled) {
-		 //this.$(".review-selected").button(!!enabled ? "enable" : "disable");
-		 }*/
     });
 
     /**
@@ -1634,7 +1523,7 @@ define(function (require) {
                 return {
                     currentPage: 0,
                     pageCount: 0
-                }
+                };
             }
         },
         events: {
@@ -1864,13 +1753,6 @@ define(function (require) {
         },
         applySearchFilter: function (criteria) {
             this.collection.search(criteria);
-
-            /*var criteriaRE = new RegExp(criteria, "gi");
-			 this.collection.reset(criteria ?
-			 _.filter(this.options.originalModels, function (model) {
-			 return criteriaRE.test(model.get("name"))
-			 }) :
-			 this.options.originalModels);*/
         },
         render: function () {
             ViewBase.prototype.render.call(this, {
@@ -1942,16 +1824,6 @@ define(function (require) {
             this.collection.trigger("document-type:selected", {
                 selectedType: $node.data("document-type-id")
             });
-
-            /*$(event.currentTarget).toggleClass("Opened").siblings().removeClass("Opened");
-			 $(event.currentTarget).find(".icon-plus,icon-minus").toggleClass("icon-plus icon-minus");*/
-            //$(event.currentTarget).addClass("Opened");
-            /*var nodeHasChildren;
-			 if (nodeHasChildren) {
-			 this.toggleNodeCollapse();
-			 } else {
-			 this.markNodeSelected();
-			 }*/
         },
 
         render: function () {
@@ -2017,15 +1889,6 @@ define(function (require) {
                 }
             });
         },
-
-        /*getReviewLayout: function () {
-			return new Documents.Views.Review.Base.NoControlsLayout({
-				collection: this.selectedDocuments,
-				documents: this.documents,
-				included: true,
-				showIcons: !this.options.included
-			});
-		},*/
 
         render: function () {
             return Documents.Views.List.Common.LayoutHistory.prototype.render.call(this, {
@@ -2155,10 +2018,6 @@ define(function (require) {
                     included: !! this.options.included,
                     editPageTypeName: this.getEditPageTypeName()
                 }),
-                /*".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
-					collection: this.documents,
-					included: !!this.options.included
-				}),*/
                 ".documents-filters": new Documents.Views.List.Base.Filters({
                     collection: this.documents
                 })
@@ -2173,7 +2032,6 @@ define(function (require) {
 
         initialize: function () {
             Documents.Views.List.Examination.LayoutHistory.prototype.initialize.call(this, this.options);
-            //this.reviewStateToggles.push(".documents-controls");
         },
 
         toggleReviewState: Documents.Views.List.Common.Layout.prototype.toggleReviewState,
@@ -2285,10 +2143,8 @@ define(function (require) {
                 this.documentTypes = new Documents.Collections.DocumentTypes();
                 this.documentTypes.mnems = ["THER"];
                 this.documentTypes.fetch();
-                //console.log("documentTypes.fetch");
             }
 
-            //this.reviewStateToggles.push(".controls-block");
         },
 
         toggleReviewState: Documents.Views.List.Common.Layout.prototype.toggleReviewState,
@@ -2334,7 +2190,7 @@ define(function (require) {
 
         initialize: function () {
             LayoutBase.prototype.initialize.call(this, this.options);
-
+            console.log('init edit', this);
             if (!this.model) {
                 if (this.options.templateId || this.options.mode === "SUB_NEW" && this.options.subId) {
                     this.model = new Documents.Models.DocumentTemplate({
@@ -3104,27 +2960,8 @@ define(function (require) {
             this.mapLayoutAttributes();
             this.listenTo(this.model, "copy", this.onModelCopy);
             this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
-            //common attrs to fit into grid
-            //TODO: TEMP HELL
-            /*if (this.model.get("therapyFieldCode")) {
-				var therapyFieldCode = this.model.get("therapyFieldCode");
-				switch (therapyFieldCode) {
-					case "therapyTitle":
-					case "therapyBegDate":
-					case "therapyEndDate":
-						this.$el.addClass("span4");
-						break;
-					case "therapyPhaseTitle":
-					case "therapyPhaseBegDate":
-					case "therapyPhaseDay":
-					case "therapyPhaseEndDate":
-						this.$el.addClass("span3");
-						break;
-				}
-				//console.log(this.model.get("therapyFieldCode"));
-			} else {*/
             this.$el.addClass("span" + this.layoutAttributes.width);
-            //}
+            // console.log('init ui el', this);
         },
 
         mapLayoutAttributes: function () {
@@ -3675,27 +3512,26 @@ define(function (require) {
         },
         initialize: function () {
             var scope = this.model.get("scope");
+            var self = this;
 
             if (!fds[scope]) {
                 fds[scope] = new FlatDirectory();
                 fds[scope].set({
                     id: scope
                 });
-                fds.deffered = fds[scope].fetch();
-                $.when(fds[scope].deffered).then(_.bind(this.onDirectoryReady, this));
-            } else {
-                this.onDirectoryReady();
             }
-            /*this.directoryEntries = new FlatDirectory();
-			 this.directoryEntries.set({id: this.model.get("scope")});
-			 $.when(this.directoryEntries.fetch()).then(_.bind(function () {
-			 this.model.setValue(this.directoryEntries.toBeautyJSON()[0].id);
-			 this.render();
-			 }, this));*/
+
+            if(!fds[scope].deffered){
+                fds[scope].deffered = fds[scope].fetch();
+            }
+
+            $.when(fds[scope].deffered).then(function(){
+                    self.onDirectoryReady();
+            });
+
             UIElementBase.prototype.initialize.apply(this);
         },
         onDirectoryReady: function () {
-            //this.model.setValue(fds[this.model.get("scope")].toBeautyJSON()[0].id);
             this.render();
         },
         onAttributeValueChange: function (event) {
