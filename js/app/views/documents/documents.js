@@ -199,43 +199,37 @@ define(function (require) {
             }, this);
 
             if (this.hasTherapyAttrs()) {
-                /*var therCodes = [
-						"therapyTitle",
-						"therapyBegDate",
-						"therapyEndDate",
-						"therapyPhaseSubHeader",
-						"therapyPhaseTitle",
-						"therapyPhaseBegDate",
-						"therapyPhaseDay",
-						"therapyPhaseEndDate"
-					];*/
 
                 var lastTherapy = therapiesCollection.first();
                 var shouldSetTherapyFields = false;
                 var shouldSetTherapyPhaseFields = false;
+                //TODO Надо разделить установку значений и статуса readOnly
                 var readOnlyTherapyFields;
                 var readOnlyTherapyPhaseFields;
 
                 if (lastTherapy) {
+                    //этот документ есть в последней фазе последней терапии
                     var docInLastTherapyLastPhase = !! _.find(lastTherapy.get("phases")[0].days, function (day) {
                         return day.docId === this.get('id');
                     }, this);
 
+                    //этот документ есть в фазах последней терапии
                     var docInLastTherapyPhases = !! _.find(lastTherapy.get("phases"), function (phase) {
                         return _.find(phase.days, function (day) {
                             return day.docId === this.get('id');
                         }, this);
                     }, this);
 
-                    // console.log('docInLastTherapyLastPhase', this.docIsNew(), docInLastTherapyLastPhase, docInLastTherapyPhases);
-
+                    //последняя терапия не закрыта, нет даты окончания
                     if (!lastTherapy.get("endDate") || lastTherapy.get("endDate") < 0) {
                         shouldSetTherapyFields = true;
                         if (this.docIsNew() && (lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("id") === this.get('id'))) {
                             shouldSetTherapyFields = false;
                         }
+                        //последняя фаза не закрыта, нет даты окончания
                         if (!lastTherapy.get("phases")[0].endDate || lastTherapy.get("phases")[0].endDate < 0) {
                             shouldSetTherapyPhaseFields = true;
+                            //если мы редактируем первый документ в последней незакрытой фазе
                             if ((lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("phases")[0].days[0].docId === this.get('id'))) {
                                 shouldSetTherapyPhaseFields = false;
                             }
