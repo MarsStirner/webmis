@@ -768,6 +768,7 @@ define(function (require) {
     Documents.Collections.DocumentList = Collection.extend({
         model: Documents.Models.DocumentListItem,
         mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "EXAM_OLD", "JOUR_OLD"],
+        codes: [],
         dateRange: null,
         typeId: null,
         doctorId: null,
@@ -787,6 +788,11 @@ define(function (require) {
             if (this.mnems.length) {
                 this.mnems.map(function (mnem) {
                     return params.push("filter[mnem]=" + mnem);
+                });
+            }
+            if (this.codes && this.codes.length) {
+                this.codes.map(function (code) {
+                    return params.push("filter[actionTypeCode]=" + code);
                 });
             }
 
@@ -1949,11 +1955,16 @@ define(function (require) {
 
         applyDocumentTypeFilter: function (type) {
             var mnems = [];
+            var codes = [];
 
             switch (type) {
             case "ALL":
                 mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH"];
                 break;
+            case "EVERYDAY":
+                codes = ['1_1_22'];
+                break;
+
             case "EXAM":
                 mnems = ["EXAM", "EXAM_OLD"];
                 break;
@@ -1975,6 +1986,7 @@ define(function (require) {
             }
             this.collection.mnemFilter = type;
             this.collection.mnems = mnems;
+            this.collection.codes = codes;
             this.collection.pageNumber = 1;
             this.collection.fetch();
         },
@@ -5256,10 +5268,15 @@ define(function (require) {
         },
         applyDocumentTypeFilter: function (type) {
             var mnems = [];
+            var codes = [];
 
             switch (type) {
             case "ALL":
                 mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "THER", "EXAM_OLD", "JOUR_OLD"];
+                break;
+            case "EVERYDAY":
+                codes = ['1_1_22','01_1'];
+                mnems = ['LAB'];
                 break;
             case "EXAM":
                 mnems = ["EXAM", "EXAM_OLD"];
@@ -5294,6 +5311,7 @@ define(function (require) {
             }
             this.collection.mnemFilter = type;
             this.collection.mnems = mnems;
+            this.collection.codes = codes;
             this.collection.pageNumber = 1;
             this.collection.fetch();
         },
