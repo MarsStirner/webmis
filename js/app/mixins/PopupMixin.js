@@ -15,6 +15,7 @@ define([], function() {
 			},
 
 			close: function() {
+                console.log('mixin close');
 				this.$el.dialog("close");
                 this.$el.dialog("destroy");
                 this.remove();
@@ -52,14 +53,17 @@ define([], function() {
 				modal: true,
 				dialogClass: "webmis",
 				title: self.options.title ? self.options.title : "Создание направления",
-				onClose: self.close,
+				close: self.close,
 				buttons: [{
 					text: self.options.saveText ? self.options.saveText : "Сохранить",
 					click: self.onSave,
 					"class": "button-color-green save"
 				}, {
 					text: "Отмена",
-					click: self.close
+					click: function(){
+                        $(this).dialog("close");
+                        // self.close()
+                    }
 				}]
 			});
 		});

@@ -102,6 +102,11 @@ define(function(require) {
 				collection: view.analyzes,
 				patientId: view.options.appeal.get('patient').get('id')
 			});
+			view.analyzes.on('reset', function() {
+                console.log('reset tree collection', view.analyzes);
+                $('#tree-search').prop('disabled', false).removeClass('Disabled');
+			});
+
 
 			view.depended(view.analyzesTreeView);
 
@@ -400,7 +405,7 @@ define(function(require) {
 			view.analyzesTreeView.setElement(this.$el.find('.groups'));
 
 			view.analyzesSelectedView.setElement(this.$el.find('.group-tests'));
-
+            console.log('render')
 			pubsub.trigger('lab:click');
 
 
@@ -448,10 +453,11 @@ define(function(require) {
 		//закрытие попапа
 		close: function() {
 			var view = this;
+            console.log('close direction popap', view.$el.dialog())
 			view.$el.dialog('close');
 			view.$el.remove();
 			view.remove();
-
+            view.analyzes.off();
 			view.analyzesTreeView.close();
 			view.analyzesSelectedView.close();
 

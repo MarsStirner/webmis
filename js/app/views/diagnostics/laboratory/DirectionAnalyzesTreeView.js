@@ -18,9 +18,9 @@ define(function(require) {
 			});
 
 			view.collection.on('reset', function() {
-
+                // console.log('reset tree collection', view.collection);
 				view.render();
-                $('#tree-search').prop('disabled', false).removeClass('Disabled');
+                // $('#tree-search').prop('disabled', false).removeClass('Disabled');
 			});
 
 			view.collection.on('search', function() {
@@ -82,6 +82,7 @@ define(function(require) {
 			return this;
 		},
 		close: function() {
+            console.log('close tree view')
 			pubsub.off('lab:click');
 			this.collection.off();
 			this.$el.remove();
