@@ -4,6 +4,8 @@ define(function (require) {
 
     var Intervals = require('views/prescriptions/collections/Intervals');
     var Prescriptions = require('views/prescriptions/collections/Prescriptions');
+    var PrintButton = require('views/prescriptions/views/PrintButton');
+    // var PrintButton = require('views/prescriptions/views/TreeButton');
 
     return BaseView.extend({
         template: template,
@@ -15,6 +17,14 @@ define(function (require) {
         initialize: function () {
             this.listenTo(this.collection, 'change reset', this.updateButtons);
             this.listenTo(this.collection, 'fetch', this.disableButtons);
+
+            this.printButton = new PrintButton({});
+
+            this.addSubViews({
+                '.print-button': this.printButton
+            });
+console.log('init actions', this);
+
         },
 
         updateButtons: function () {

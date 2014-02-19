@@ -1900,3 +1900,28 @@ tr.inHospital:hover td {
   padding: 0.8em;
   border: 1px solid;
 }
+
+/* line 1, ../sass/modules/_context-menu.scss */
+.webmis-menu {
+  border: 1px solid #d4d4d4;
+  min-width: 150px;
+  color: #3F3F40;
+}
+/* line 5, ../sass/modules/_context-menu.scss */
+.webmis-menu li {
+  background-color: #fff;
+  padding: .6em;
+  border-top: 1px solid #d4d4d4;
+}
+/* line 10, ../sass/modules/_context-menu.scss */
+.webmis-menu .context-menu-item.hover {
+  background-color: #d2f0fd;
+}
+/* line 13, ../sass/modules/_context-menu.scss */
+.webmis-menu .context-menu-submenu:after {
+  position: relative;
+  top: 0;
+  right: 0;
+  padding-left: .2em;
+  float: right;
+}
