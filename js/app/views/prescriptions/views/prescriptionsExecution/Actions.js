@@ -18,7 +18,9 @@ define(function (require) {
             this.listenTo(this.collection, 'change reset', this.updateButtons);
             this.listenTo(this.collection, 'fetch', this.disableButtons);
 
-            this.printButton = new PrintButton({});
+            this.printButton = new PrintButton({
+                collection: this.collection
+            });
 
             this.addSubViews({
                 '.print-button': this.printButton
