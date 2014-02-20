@@ -17,7 +17,7 @@ define([], function() {
 			close: function() {
                 console.log('mixin close');
 				this.$el.dialog("close");
-                this.$el.dialog("destroy");
+                // this.$el.dialog("destroy");
                 this.remove();
 			},
 
