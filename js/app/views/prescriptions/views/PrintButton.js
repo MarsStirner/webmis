@@ -32,6 +32,8 @@ define(function (require) {
         printPatientMonitoring: function (id) {
             new App.Views.Print({
                 data: {
+                    patientName: 'ewuyuet rhtekhjh hejehk',
+                    patientBirthDate: 1284321600000
                 },
                 template: "patientMonitoring"
             });
