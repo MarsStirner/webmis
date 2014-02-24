@@ -872,9 +872,9 @@ VersionInfo = {
 		if (DEBUG_MODE) {
 			var html = "Версия GUI: <b>" + GUI_VERSION + "</b>";
 
-			// if (CORE_VERSION) {
-			// 	html += "<br/>Версия ядра: " + "<b>" + CORE_VERSION + "</b>";
-			// }
+			if (CORE_VERSION) {
+				html += "<br/>Версия ядра: " + "<b>" + CORE_VERSION + "</b>";
+			}
 			this._getElement().html(html);
 		}
 	},
