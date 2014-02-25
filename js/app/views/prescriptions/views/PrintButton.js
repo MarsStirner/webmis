@@ -50,7 +50,25 @@ define(function (require) {
 
         printPatientPrescriptions: function (id) {
             new App.Views.Print({
-                data: {},
+                data: {
+                    prescriptions: [
+                        {
+                            drugs: [
+                                {
+                                    name: 'gdgsjgk' 
+                                } 
+                            ],
+                            intervals: [
+                                {value:''}, 
+                                {value:''}, 
+                                {value:'i'}, 
+                                {value:''}, 
+                                {value:''}, 
+                                {value:''}, 
+                            ]
+                        } 
+                    ]
+                },
                 template: "patientPrescriptions"
             });
 
