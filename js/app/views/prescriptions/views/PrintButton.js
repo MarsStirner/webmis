@@ -30,21 +30,27 @@ define(function (require) {
         },
 
         printPatientMonitoring: function (id) {
-            new App.Views.Print({
-                data: {
-                    patientName: 'ewuyuet rhtekhjh hejehk',
-                    patientBirthDate: 1284321600000
-                },
-                template: "patientMonitoring"
-            });
+            var prescriptions = this.getClientPrescriptions(id);
+            if (prescriptions && prescriptions.length) {
+                console.log('prescription', prescriptions[0]);
+                var data = {};
+                var prescription = prescriptions[0];
+                data.patientName = prescription.getPatientFio();
+                data.patientBirthDate = prescription.getPatientBirthDate();
 
-            console.log('печать мониторинга пациента', id);
+                new App.Views.Print({
+                    data: data,
+                    template: "patientMonitoring"
+                });
+
+                console.log('печать мониторинга пациента', id);
+
+            }
         },
 
         printPatientPrescriptions: function (id) {
             new App.Views.Print({
-                data: {
-                },
+                data: {},
                 template: "patientPrescriptions"
             });
 
@@ -53,8 +59,7 @@ define(function (require) {
 
         printAllPrescriptions: function () {
             new App.Views.Print({
-                data: {
-                },
+                data: {},
                 template: "allPrescriptions"
             });
 

@@ -9,12 +9,12 @@ define(function (require) {
         initialize: function (model, options) {
             var self = this;
             this.actionTypeId = options.actionTypeId || false;
-            this.initialized().then(function(){
-                if(self.getPropertyByCode('moa')){
+            this.initialized().then(function () {
+                if (self.getPropertyByCode('moa')) {
                     self.set('moaId', self.getPropertyByCode('moa').get('valueId'));
                     self.set('moa', self.getPropertyByCode('moa').get('value'));
                 }
-                if(self.getPropertyByCode('voa')){
+                if (self.getPropertyByCode('voa')) {
                     self.set('voa', self.getPropertyByCode('voa').get('value'));
                 }
 
@@ -55,17 +55,17 @@ define(function (require) {
             if (this.get('assigmentIntervals')) {
                 var assigmentIntervals = new Intervals(this.get('assigmentIntervals'));
                 assigmentIntervals.on('add remove change', this.triggerChange, this);
-                assigmentIntervals.each(function(interval){
-                    if(interval.get('executionIntervals')){
+                assigmentIntervals.each(function (interval) {
+                    if (interval.get('executionIntervals')) {
                         var executionIntervals = new Intervals(interval.get('executionIntervals'));
                         executionIntervals.on('add remove change', this.triggerChange, this);
                         interval.set('executionIntervals', executionIntervals);
-                    } 
+                    }
                 });
 
                 this.set('assigmentIntervals', assigmentIntervals);
             }
-            
+
             if (this.get('properties')) {
                 var properties = new Collection(this.get('properties'));
                 this.set('properties', properties);
@@ -74,9 +74,22 @@ define(function (require) {
                 callback();
             }
         },
+        getPatientFio: function () {
+            var client = this.get('client');
+            var fio = client.lastName + ' ' + client.firstName + ' ' + client.middleName;
+            return fio;
+        },
+        getPatientBirthDate: function () {
+            var client = this.get('client');
+            var birthDate = client.birthDate;
 
-        triggerChange: function(){
-            this.trigger('change'); 
+            return birthDate;
+        },
+        getDepartment: function(){
+        
+        },
+        triggerChange: function () {
+            this.trigger('change');
         },
 
         toJSON: function () {
