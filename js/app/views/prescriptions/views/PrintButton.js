@@ -51,23 +51,76 @@ define(function (require) {
         printPatientPrescriptions: function (id) {
             new App.Views.Print({
                 data: {
-                    prescriptions: [
-                        {
-                            drugs: [
-                                {
-                                    name: 'gdgsjgk' 
-                                } 
-                            ],
-                            intervals: [
-                                {value:''}, 
-                                {value:''}, 
-                                {value:'i'}, 
-                                {value:''}, 
-                                {value:''}, 
-                                {value:''}, 
-                            ]
-                        } 
-                    ]
+                    groups: [{
+                        name: 'внутрь',
+                        prescriptions: [{
+                            note: 'примечание ',
+                            moa: '24 мл\ч',
+                            drugs: [{
+                                name: 'Пенецелин',
+                                dose: '123'
+                            },{
+                                name: 'Анальгин',
+                                dose:'89'
+                            }],
+                            intervals: [{
+                                value: 'ss'
+                            }, {
+                                value: ''
+                            }, {
+                                value: 'i'
+                            }, {
+                                value: ''
+                            }, {
+                                value: ''
+                            }, {
+                                value: ''
+                            }, ]
+                        }]
+                    }, {
+                        name: 'внутревенно',
+                        prescriptions: [{
+                            note: 'weewew',
+                            moa: '45',
+                            drugs: [{
+                                name: 'Йод',
+                                dose: '12'
+                            }],
+                            intervals: [{
+                                value: 'rrr'
+                            }, {
+                                value: 'qwqw'
+                            }, {
+                                value: 'i'
+                            }, {
+                                value: ''
+                            }, {
+                                value: ''
+                            }, {
+                                value: ''
+                            }, ]
+                        },{
+                            note: 'weewew',
+                            moa: '45',
+                            drugs: [{
+                                name: 'Йод',
+                                dose: '12'
+                            }],
+                            intervals: [{
+                                value: 'rrr'
+                            }, {
+                                value: 'qwqw'
+                            }, {
+                                value: 'i'
+                            }, {
+                                value: ''
+                            }, {
+                                value: ''
+                            }, {
+                                value: ''
+                            }, ]
+                        }]
+                    }]
                 },
                 template: "patientPrescriptions"
             });
