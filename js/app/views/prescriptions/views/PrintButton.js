@@ -48,93 +48,108 @@ define(function (require) {
             }
         },
 
-        getPatientPrescriptionPrintData: function(id){
+        convertPrescriptionForPrint: function (prescription, range) {
+            var data = {};
+            console.log('prescription', prescription);
+            data.note = prescription.get('note');
+            data.voa = prescription.get('voa') ? prescription.get('voa') + ' мл/ч' : '';
+            data.drugs = prescription.get('drugs').map(function (drug) {
+                return {
+                    name: drug.get('name'),
+                    dose: drug.get('dose') + ' ' + drug.get('unitName')
+                };
+            });
+
+            var printRange = moment(range.min).twix(range.max - 1);
+            var iter = printRange.iterate("hours"); //=> duration object with {days: 3}
+            var hourRanges = [];
+            var intervals = [];
+            _(_.range(24)).each(function (i) {
+                var start = iter.next().valueOf();
+                var end = moment(start).add('minutes', 59).valueOf();
+                hourRanges.push(moment(start).twix(end));
+                intervals.push({
+                    val: ''
+                });
+
+            });
+
+            prescription.get('assigmentIntervals').each(function (ai) {
+                ai.get('executionIntervals').each(function (ei) {
+                    var start = ei.get('beginDateTime');
+                    var end = ei.get('endDateTime');
+                    var isRange = end ? true : false;
+
+                    _(hourRanges).each(function (hourRange, index) {
+                        var inRange = false;
+                        if (isRange) {
+                            inRange = hourRange.overlaps(moment(start).twix(end));
+                        } else {
+                            inRange = hourRange.contains(moment(start));
+                        }
+                        if (inRange) {
+                            if (isRange) {
+                                intervals[index].val = '➔';
+                            } else {
+                                intervals[index].val = '✔';
+                            }
+                        }
+                    });
+                });
+            });
+
+            data.intervals = intervals;
+
+            return data;
+        },
+
+        getPatientPrescriptionPrintData: function (id, range) {
+            var data = {
+                groups: []
+            };
             var prescriptions = this.getClientPrescriptions(id);
-            console.log('data', prescriptions); 
+            var prescription = prescriptions[0];
+            data.patientName = prescription.getPatientFio();
+            data.patientBirthDate = prescription.getPatientBirthDate();
+            data.patientAge = Core.Date.getAgeString(data.patientBirthDate);
+
+            var groups = _(prescriptions).groupBy(function (model) {
+                return model.get('moa');
+            });
+
+            _(groups).each(function (groupPrescriptions, groupName) {
+                var convertedPrescriptions = [];
+                _(groupPrescriptions).each(function (prescription) {
+                    convertedPrescriptions.push(this.convertPrescriptionForPrint(prescription, range));
+                }, this);
+
+                if(groupName === 'null'){
+                    groupName = 'Не определён';
+                }
+
+                data.groups.push({
+                    name: groupName,
+                    prescriptions: convertedPrescriptions
+                });
+
+            }, this);
+
+            return data;
         },
 
         printPatientPrescriptions: function (id) {
-            this.getPatientPrescriptionPrintData(id);
-            // new App.Views.Print({
-            //     data: {
-            //         patientName: 'Фамилия Имя Отчество',
-            //         patientBirthDate: 34385797438798,
-            //         patientAge: '2323',
-            //         groups: [{
-            //             name: 'внутрь',
-            //             prescriptions: [{
-            //                 note: 'примечание ',
-            //                 moa: '24 мл\ч',
-            //                 drugs: [{
-            //                     name: 'Пенецелин',
-            //                     dose: '123'
-            //                 },{
-            //                     name: 'Анальгин',
-            //                     dose:'89'
-            //                 }],
-            //                 intervals: [{
-            //                     val: 'ss'
-            //                 }, {
-            //                     val: ''
-            //                 }, {
-            //                     val: 'i'
-            //                 }, {
-            //                     val: ''
-            //                 }, {
-            //                     val: ''
-            //                 }, {
-            //                     val: ''
-            //                 }, ]
-            //             }]
-            //         }, {
-            //             name: 'внутревенно',
-            //             prescriptions: [{
-            //                 note: 'weewe ✔ w',
-            //                 moa: '45',
-            //                 drugs: [{
-            //                     name: 'Йод',
-            //                     dose: '12'
-            //                 }],
-            //                 intervals: [{
-            //                     val: '7'
-            //                 }, {
-            //                     val: '6'
-            //                 }, {
-            //                     val: '5'
-            //                 }, {
-            //                     val: ''
-            //                 }, {
-            //                     val: ''
-            //                 }, {
-            //                     val: ''
-            //                 }, ]
-            //             },{
-            //                 note: 'weewew',
-            //                 moa: '45',
-            //                 drugs: [{
-            //                     name: 'Йод',
-            //                     dose: '12'
-            //                 }],
-            //                 intervals: [{
-            //                     val: 'rrr'
-            //                 }, {
-            //                     val: 'qwqw'
-            //                 }, {
-            //                     val: 'i'
-            //                 }, {
-            //                     val: '✔'
-            //                 }, {
-            //                     val: '7'
-            //                 }, {
-            //                     val: '➔'
-            //                 }, ]
-            //             }]
-            //         }]
-            //     },
-            //     template: "patientPrescriptions"
-            // });
+            var range = {
+                min: this.collection._filter.dateRangeMin * 1000,
+                max: this.collection._filter.dateRangeMax * 1000
+            };
 
-            console.log('печать назначений пациента', id, this.getClientPrescriptions(id));
+            var data = this.getPatientPrescriptionPrintData(id, range);
+            console.log('data', data);
+            new App.Views.Print({
+                data: data,
+                template: "patientPrescriptions"
+            });
+
         },
 
         printAllPrescriptions: function () {
@@ -154,9 +169,9 @@ define(function (require) {
 
         getMenuItems: function () {
             var items = {
-                "ln": {
-                    name: "Лист назначений"
-                }
+                // "ln": {
+                //     name: "Лист назначений"
+                // }
             };
 
 
