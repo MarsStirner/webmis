@@ -252,6 +252,7 @@ class Action extends BaseAction
                 if($client){
                     $data['client'] = array(
                         'id' => $client->getId(),
+                        'birthDate' => $client->getBirthDate('%s')*1000,
                         'firstName' => $client->getFirstName(),
                         'middleName' => $client->getPatrName(),
                         'lastName' => $client->getLastName()
