@@ -774,14 +774,23 @@ define(function (require) {
         doctorId: null,
         pageNumber: 1,
         initialize: function (models, options) {
+            console.log('init doc collection', this, arguments)
             Collection.prototype.initialize.call(this);
             this.appealId = options.appealId || appealId;
+            this.patientId = appeal.get("patient").get("id");
+
             if (options.defaultMnems) {
                 this.mnems = options.defaultMnems;
             }
         },
         url: function () {
-            var url = DATA_PATH + "appeals/" + this.appealId + "/documents/?";
+            var url;
+
+            if(this.appealId != 'all'){
+                url = DATA_PATH + "appeals/" + this.appealId + "/documents/custom1?";
+            }else{
+                url = DATA_PATH + "patients/"+ this.patientId +"/documents/custom1?";
+            }
 
             var params = [];
 
@@ -5262,7 +5271,9 @@ define(function (require) {
                 return event.get('id') == appealId;
             });
             // console.log('selected event', event);
-            appeal.get("execPerson").id = event.get('execPerson_id');
+            if(appealId != 'all' && event){
+                appeal.get("execPerson").id = event.get('execPerson_id');
+            }
             this.collection.pageNumber = 1;
             this.collection.fetch();
         },
@@ -5275,8 +5286,8 @@ define(function (require) {
                 mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "THER", "EXAM_OLD", "JOUR_OLD"];
                 break;
             case "EVERYDAY":
-                codes = ['1_1_22','01_1'];
-                mnems = ['LAB'];
+                codes = ['3_02','01_1'];
+                mnems = ['JOUR','JOUR_OLD','EXAM','EXAM_OLD','CONS'];
                 break;
             case "EXAM":
                 mnems = ["EXAM", "EXAM_OLD"];
