@@ -12,14 +12,14 @@
             <% if(!data.docs.epicrisis){ %>
                 <li>Эпикриз.
                 <a href="/appeals/<%= data.appealId %>/documents/new/427"  target="_blank">Заключительный эпикриз</a> |
-        <a href="/appeals/<%= data.appealId %>/documents/new/2467"  target="_blank">Промежуточная выписка</a> |
-        <a href="/appeals/<%= data.appealId %>/documents/new/567"  target="_blank">Посмертный эпикриз</a></li>
+                <a href="/appeals/<%= data.appealId %>/documents/new/2467"  target="_blank">Промежуточная выписка</a> |
+                <a href="/appeals/<%= data.appealId %>/documents/new/567"  target="_blank">Посмертный эпикриз</a></li>
             <% } %>
 
             <% if(!data.docs.discharge){ %>
                 <li>Выписка. <a href="/appeals/<%= data.appealId %>/documents/new/118"  target="_blank">Создать</a></li>
             <% } else if (!data.lastMoveClosed) { %>
-								<li>Не закрыто последнее <a href="/appeals/<%= data.appealId %>/moves"  target="_blank">движение</a></li>
+                <li>Не закрыто последнее <a href="/appeals/<%= data.appealId %>/moves"  target="_blank">движение</a></li>
             <% } %>
 
             <% if(data.docs.oncology){%>
@@ -59,7 +59,9 @@
         <label>Результат госпитализации</label></br>
         <select id="results" name="results" style="width:50%;">
         <option>...</option>
-
+        <% _.each(data.results, function(result){%>
+        <option value="<%=result.id%>"><%=result.name%></option> 
+        <%})%>
         </select>
     </div>
 

@@ -62,13 +62,44 @@ define(function (require) {
             this.renderChilds();
             return this;
         },
+        group: function (model) {
+            var groupName = this.collection._filter.groupBy;
+            var grouper = '';
 
+            switch (groupName) {
+            case 'name':
+            case 'moa':
+                grouper = model.get(groupName);
+                break;
+            case 'client':
+                var client = model.get('client');
+                grouper = client.lastName + ' ' + client.firstName + ' ' + client.middleName;
+                break;
+            case 'doctor':
+                var doctor = model.get('doctor');
+                grouper = doctor.lastName + ' ' + doctor.firstName + ' ' + doctor.middleName;
+                break;
+            case 'createPerson':
+                var createPerson = model.get('createPerson');
+                grouper = createPerson.lastName + ' ' + createPerson.firstName + ' ' + createPerson.middleName;
+                break;
+            case 'interval':
+                var ais = model.get('assigmentIntervals');
+                var rangeType = ais.first().get('executionIntervals').first().get('endDateTime') ? 'Интервал':'Однократно';
+                grouper = rangeType;
+                break;
+
+
+
+            }
+
+            return grouper;
+
+        },
         data: function () {
             var data = {};
 
-            data.groups = this.collection.groupBy(function (model) {
-                return model.get(this.collection._filter.groupBy);
-            }, this);
+            data.groups = this.collection.groupBy(this.group, this);
 
             // console.log('data', data);
             return data;

@@ -671,7 +671,7 @@ define(function(require) {
             return this;
         },
         close: function() {
-            console.log('popup view close');
+            // console.log('popup view close');
             this.mkbInputView.close();
             this.consultationsGroupsView.close();
             this.consultantsFreeView.close();

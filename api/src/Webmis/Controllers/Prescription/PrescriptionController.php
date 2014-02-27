@@ -184,6 +184,7 @@ class PrescriptionController
 
     public function createAction(Request $request, Application $app){
         $createPersonId = (int) $request->cookies->get('userId');//неправильно....
+        /* $execPersonId = (int) $request->cookies->get('userId');//неправильно.... */
 
         $data = $request->get('data');
         $eventId = @$data['eventId'];
@@ -226,6 +227,7 @@ class PrescriptionController
         $prescription->setCreatePersonId($createPersonId);
         $prescription->setModifyPersonId($createPersonId);
         $prescription->setSetPersonId($createPersonId);
+        /* $prescription->setPersonId($execPersonId); */
         $prescription->setStatus(0);
 
 
