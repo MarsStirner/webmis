@@ -276,7 +276,7 @@ class Action extends BaseAction
 
                     $drugUnitId = $drug->getUnit();
                     $drugUnits = $units;
-                    if($drugUnitId != $defaultDrugUnit->getId()){
+                    if($defaultDrugUnit && $drugUnitId != $defaultDrugUnit->getId()){
                         $drugUnits[] = array('id'=>$defaultDrugUnit->getId(), 'code'=>$defaultDrugUnit->getCode());
                     }
 
