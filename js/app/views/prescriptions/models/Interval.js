@@ -40,7 +40,7 @@ define(function (require) {
         initialize: function () {
             this.setState();
             this.on('change:status change:beginDateTime change:endDateTime', this.setState, this);
-
+            this.set('cid', this.cid);
         },
         setState: function () {
             var state = this.getState();

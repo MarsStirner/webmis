@@ -1,4 +1,3 @@
-
 define(function (require) {
     var template = require('text!views/prescriptions/templates/appeal/prescription-edit.html');
     var BaseView = require('views/prescriptions/views/BaseView');
@@ -15,19 +14,19 @@ define(function (require) {
             var self = this;
             this.options.title = 'Редактирование назначения';
             //console.log('init new prescription view', this);
-            this.prescription = opt.prescription; 
+            this.prescription = opt.prescription;
             this.administration = new AdministrationMethod();
             self.administration.fetch({
                 data: {
                     code: self.getMoaKeys()
                 }
             })
-            .done(function () {
-                // self.debug();
-                self.render();
+                .done(function () {
+                    // self.debug();
+                    self.render();
 
-                self.listenTo(self.prescription, 'change', self.validateForm);
-            });
+                    self.listenTo(self.prescription, 'change', self.validateForm);
+                });
 
         },
         validateForm: function () {
@@ -173,30 +172,43 @@ define(function (require) {
         render: function () {
             var self = this;
             BaseView.prototype.render.call(self);
+
+            function datetimeRange(input) {
+                var id = input.id.split('-');
+                var cid = id[0];
+                var type = id[1];
+
+                return {
+                    minDatetime: (type == 'to' ? moment($('#' + cid + '-from').datetimeEntry('getDatetime')).add('m', 1).toDate() : null),
+                    maxDatetime: (type == 'from' ? moment($('#' + cid + '-to').datetimeEntry('getDatetime')).subtract('m', 1).toDate() : null)
+                };
+            }
+
             if (this.prescription.get('assigmentIntervals')) {
                 this.prescription.get('assigmentIntervals')
                     .on('add remove', function () {
                         setTimeout(function () {
                             $('.datetime_entry')
                                 .datetimeEntry({
-                                    datetimeFormat: 'D.O.Y H:M'
+                                    datetimeFormat: 'D.O.Y H:M',
+                                    beforeShow: datetimeRange
                                 });
                         }, 100);
 
                     }, this);
             }
 
-            if(this.prescription.get('drugs')){
+            if (this.prescription.get('drugs')) {
                 this.prescription.get('drugs')
-                .on('add remove', function(){
-                    console.log('add drug', arguments)
-                    setTimeout(function () {
-                    self.$el.find('select').select2();
+                    .on('add remove', function () {
+                        console.log('add drug', arguments)
+                        setTimeout(function () {
+                            self.$el.find('select').select2();
 
-                    
-                    }, 100);
-                });
-            
+
+                        }, 100);
+                    });
+
             }
 
             rivets.formatters.datetime = {
@@ -222,13 +234,25 @@ define(function (require) {
                 }
             };
 
+            rivets.formatters.add = function (value, string) {
+                return value + string;
+            };
+
             rivets.bind(self.el, {
                 prescription: self.prescription
             });
+
             var drugs = this.prescription.get('drugs');
-            drugs.each(function(drug){
+            drugs.each(function (drug) {
                 drug.trigger('change:unit');
             });
+
+            $('.datetime_entry')
+                .datetimeEntry({
+                    datetimeFormat: 'D.O.Y H:M',
+                    beforeShow: datetimeRange
+                });
+
 
             this.$el.find('button').button();
             this.$el.find('select').select2();

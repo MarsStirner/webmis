@@ -83,10 +83,10 @@
                 <tbody>
                 <tr data-each-interval="prescription.assigmentIntervals">
                     <td>
-                        <input class="datetime_entry" type="text" data-value="interval.beginDateTime | datetime"> 
+                        <input data-id="interval.cid | add -from" class="datetime_entry" type="text" data-value="interval.beginDateTime | datetime"> 
                     </td>
                     <td>
-                        <input class="datetime_entry" type="text" data-value="interval.endDateTime | datetime">
+                        <input  data-id="interval.cid | add -to" class="datetime_entry" type="text" data-value="interval.endDateTime | datetime">
                     </td>
                     <td>
                         <input type="text" data-value="interval.note">

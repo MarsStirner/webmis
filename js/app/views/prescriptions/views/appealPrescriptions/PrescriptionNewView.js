@@ -186,14 +186,28 @@ define(function (require) {
         render: function () {
             var self = this;
             BaseView.prototype.render.call(self);
+
+            function datetimeRange(input) { 
+                var id = input.id.split('-');
+                var cid = id[0];
+                var type = id[1];
+
+                return {minDatetime: (type == 'to' ? moment($('#'+cid+'-from').datetimeEntry('getDatetime')).add('m',1).toDate() : null),  
+                        maxDatetime: (type == 'from' ? moment($('#'+cid+'-to').datetimeEntry('getDatetime')).subtract('m',1).toDate() : null)}; 
+            }
+
             if (this.prescription.get('assigmentIntervals')) {
                 this.prescription.get('assigmentIntervals')
                     .on('add remove', function () {
+
                         setTimeout(function () {
+
                             $('.datetime_entry')
                                 .datetimeEntry({
-                                    datetimeFormat: 'D.O.Y H:M'
+                                    datetimeFormat: 'D.O.Y H:M',
+                                    beforeShow: datetimeRange
                                 });
+
                         }, 100);
 
                     }, this);
@@ -235,6 +249,10 @@ define(function (require) {
                     }
                     return v;
                 }
+            };
+
+            rivets.formatters.add = function(value, string){
+                return value + string;
             };
 
             rivets.bind(self.el, {
