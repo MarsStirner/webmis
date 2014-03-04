@@ -102,7 +102,7 @@
 				{{if appealType && appealType.finance && appealType.finance.name}}
 					${appealType.finance.name}
 					{{if contract && contract.number}}
-						(Договор: ${contract.number + contract.begDate + contract.finance.id})
+						(Договор: ${contract.number} {{formatDate contract.begDate}} ${contract.finance.name})
 					{{else}}
 						(Договор: Не определено)
 					{{/if}}
