@@ -774,10 +774,11 @@ define(function (require) {
         doctorId: null,
         pageNumber: 1,
         initialize: function (models, options) {
-            console.log('init doc collection', this, arguments)
+            // console.log('init doc collection', this, arguments)
+            var patientAppeal = appeal || options.appeal;
             Collection.prototype.initialize.call(this);
             this.appealId = options.appealId || appealId;
-            this.patientId = appeal.get("patient").get("id");
+            this.patientId = patientAppeal.get("patient").get("id");
 
             if (options.defaultMnems) {
                 this.mnems = options.defaultMnems;
