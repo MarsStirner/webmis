@@ -420,6 +420,7 @@ class AppealRouter implements ControllerProviderInterface
                 "modifyPerson_id" => $userId,
                 "master_id"=>$event['client_id'],
                 "identifier"=>$event['externalId'],
+                "status" => 2,
                 "quotaType_id" => $post->data->quotaType_id,
                 "MKB" => $post->data->MKB,
                 "pacientModel_id" => $post->data->pacientModel_id,
