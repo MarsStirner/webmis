@@ -141,6 +141,7 @@ define(function (require) {
 
     var TherapiesCollection = require('collections/therapy/Therapies');
 
+    var ContextPrintButton = require('views/ContextPrintButton');
     /*var FDLoader = {
 		fds: {},
 		get: function (id, cb, context) {
@@ -787,10 +788,10 @@ define(function (require) {
         url: function () {
             var url;
 
-            if(this.appealId != 'all'){
+            if (this.appealId != 'all') {
                 url = DATA_PATH + "appeals/" + this.appealId + "/documents/custom1?";
-            }else{
-                url = DATA_PATH + "patients/"+ this.patientId +"/documents/custom1?";
+            } else {
+                url = DATA_PATH + "patients/" + this.patientId + "/documents/custom1?";
             }
 
             var params = [];
@@ -3543,12 +3544,12 @@ define(function (require) {
                 });
             }
 
-            if(!fds[scope].deffered){
+            if (!fds[scope].deffered) {
                 fds[scope].deffered = fds[scope].fetch();
             }
 
-            $.when(fds[scope].deffered).then(function(){
-                    self.onDirectoryReady();
+            $.when(fds[scope].deffered).then(function () {
+                self.onDirectoryReady();
             });
 
             UIElementBase.prototype.initialize.apply(this);
@@ -4842,6 +4843,14 @@ define(function (require) {
      * @type {*}
      */
     Documents.Views.Review.Base.Controls = ViewBase.extend({
+        initialize: function (options) {
+            console.log('init controls',options, this);
+            this.contextPrintButton = new ContextPrintButton({
+                docCollection: this.collection 
+            });
+
+
+        },
         template: templates._reviewControls,
 
         data: function () {
@@ -4855,6 +4864,7 @@ define(function (require) {
             "click .back-to-document-list": "onBackToDocumentListClick",
             "click .next-document": "onNextDocumentClick",
             "click .prev-document": "onPrevDocumentClick",
+            // "click .print-documents.context-print-button": "onPrintContextClick",
             "click .print-documents.single-page": "onPrintDocumentsSinglePageClick",
             "click .print-documents.multiple-pages": "onPrintDocumentsMultiplePagesClick"
         },
@@ -4882,6 +4892,42 @@ define(function (require) {
 
         onPrevDocumentClick: function () {
             this.collection.trigger("review:prev");
+        },
+
+        onPrintContextClick: function (e) {
+            // e.preventDefault()
+            // var doc = this.collection.first();
+            // var printContext = doc.get('context');
+            // console.log('doc', doc)
+            // // var printTemplates = new PrintTemplates(null, {
+            //     printContext: printContext
+            // });
+
+            // printTemplates.fetch().done(function () {
+
+            //     var template = printTemplates.first().toJSON();
+            //     var data = {};
+            //     data.event_id = appeal.get('id');
+            //     data.id = template.id;
+            //     data.client_id = appeal.get('patient').get('id');
+            //     data.action_id = doc.get('id');
+            //     data.additional_context = {
+            //         currentOrgStructure: '',
+            //         currentOrganisation: 3479,
+            //         currentPerson: Core.Cookies.get('userId')
+            //     };
+
+            //     $.ajax({
+            //         type: 'POST',
+            //         url: DATA_PATH + 'print-by-context/',
+            //         dataType: 'json',
+            //         contentType: 'application/json',
+            //         data: JSON.stringify(data)
+            //     }).done(function (html) {
+            //         console.log('print by context', template.id, template.name, html);
+            //     });
+
+            // });
         },
 
         onPrintDocumentsSinglePageClick: function () {
@@ -4929,25 +4975,15 @@ define(function (require) {
                         execPerson: appeal.get("execPerson")
                     };
 
-
-                    /*var pointType = _(data.attributes).where({id: 96});
-
-					 if (pointType.length) {
-					 var pointTypeId = pointType[0].value;
-					 var directoryValue = _(this.hospitalizationPointTypes.toBeautyJSON()).find(function (type) {
-					 return type.id == pointTypeId;
-					 });
-					 if (directoryValue) {
-					 _(data.attributes).where({id: 96})[0].value = directoryValue['49'];
-					 //pointType.value = directoryValue['49'];
-					 }
-					 }*/
                 }, this)
             };
         },
 
         render: function () {
             ViewBase.prototype.render.call(this);
+            
+            this.contextPrintButton.setElement(this.$el.find('.context-print-button'));
+            this.contextPrintButton.render();
 
             /*this.$(".buttonset").buttonset();
 			 this.$(".print-options").hide().menu();
@@ -5272,7 +5308,7 @@ define(function (require) {
                 return event.get('id') == appealId;
             });
             // console.log('selected event', event);
-            if(appealId != 'all' && event){
+            if (appealId != 'all' && event) {
                 appeal.get("execPerson").id = event.get('execPerson_id');
             }
             this.collection.pageNumber = 1;
@@ -5287,8 +5323,8 @@ define(function (require) {
                 mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "THER", "EXAM_OLD", "JOUR_OLD"];
                 break;
             case "EVERYDAY":
-                codes = ['3_02','01_1'];
-                mnems = ['JOUR','JOUR_OLD','EXAM','EXAM_OLD','CONS'];
+                codes = ['3_02', '01_1'];
+                mnems = ['JOUR', 'JOUR_OLD', 'EXAM', 'EXAM_OLD', 'CONS'];
                 break;
             case "EXAM":
                 mnems = ["EXAM", "EXAM_OLD"];

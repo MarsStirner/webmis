@@ -1,5 +1,5 @@
 define(function (require) {
-    var _ = require('underscore');
+    // var _ = require('underscore');
 
     var Template = Model.extend({});
 
@@ -9,6 +9,8 @@ define(function (require) {
         _printContext: '',
 
         initialize: function (models, options) {
+            options = options || {};
+            console.log('init print templates',options);
             if (options.fields) {
                 this.setFields(options.fields);
             }
@@ -22,11 +24,14 @@ define(function (require) {
                 throw new Error('коллекция Templates: параметр fields должен быть массивом');
             }
             this._fields = fields;
+
             return this;
         },
 
         setPrintContext: function (printContext) {
+            console.log('set print context', printContext)
             this._printContext = printContext;
+
             return this;
         },
 
@@ -44,6 +49,7 @@ define(function (require) {
 
         url: function () {
             var params = [];
+
             if (_.isEmpty(this.getPrintContext())) {
                 throw new Error('коллекция Templates: printContext обязательный параметр');
             } else {
@@ -55,6 +61,10 @@ define(function (require) {
             }
 
             return DATA_PATH + 'printTemplate/byContexts/?' + params.join('&');
+        },
+
+        parse: function(data){
+            return data; 
         }
     });
 

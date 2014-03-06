@@ -1,6 +1,6 @@
 define(function (require) {
     require('views/print');
-    var TreeButton = require('./TreeButton');
+    var TreeButton = require('views/ui/TreeButton');
 
 
     var PrintButton = TreeButton.extend({

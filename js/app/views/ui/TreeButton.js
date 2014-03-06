@@ -1,5 +1,5 @@
 define(function (require) {
-    var BaseView = require('./BaseView');
+    var BaseView = require('views/prescriptions/views/BaseView');
 
     var TreeButton = BaseView.extend({
         events: {
