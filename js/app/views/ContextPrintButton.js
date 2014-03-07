@@ -35,6 +35,7 @@ define(function (require) {
             // console.log('getMenuItems', items);
             return items;
         },
+
         getMenuCallback: function (key, options) {
             this.getRenderedPrintTemplate(key);
             // console.log('menu callback', arguments);
@@ -61,12 +62,12 @@ define(function (require) {
                 contentType: 'application/json',
                 data: JSON.stringify(data),
             }).done(function (html) {
-                // console.log('print by context', id, html);
                 self.showPopup(html);
             }).fail(function () {
-                console.log('errrrrrror', arguments);
+                pubsub.trigger('noty', {text:'Ошибка при получении шаблона',type:'error'});
             });
         },
+
         showPopup: function (html) {
             var $window = $(window);
             var width = Math.min($window.width(), 728),
@@ -76,6 +77,7 @@ define(function (require) {
             this.window.document.charset = "utf-8";
             this.window.document.write(html);
         },
+
         onClick: function () {
             // console.log('click print button', this);
         }
