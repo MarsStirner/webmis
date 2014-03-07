@@ -25,13 +25,14 @@ define(function (require) {
 
         afterRender: function () {
             var self = this;
-
+            // console.log('tree button after render', self.getMenuItems())
+            $.contextMenu( 'destroy' );
             $.contextMenu({
                 className: 'webmis-menu',
                 determinePosition: function () {
                     // position to the lower middle of the trigger element
                     if ($.ui && $.ui.position) {
-                        // console.log('ui')
+                        console.log('ui')
                         // .position() is provided as a jQuery UI utility
                         // (...and it won't work on hidden elements)
                         $menu.css('display', 'block').position({
@@ -42,7 +43,7 @@ define(function (require) {
                             collision: "fit"
                         }).css('display', 'none');
                     } else {
-                        // console.log('no ui')
+                        console.log('no ui')
                         // determine contextMenu position
                         var offset = this.offset();
                         offset.top += this.outerHeight();
@@ -53,7 +54,9 @@ define(function (require) {
                 },
                 selector: '.print-button',
                 trigger: 'left',
-                callback: this.getMenuCallback.bind(this),
+                callback: function(key, options){
+                    self.getMenuCallback(key, options);
+                },
                 build: function(){
                     return {
                         items: self.getMenuItems()

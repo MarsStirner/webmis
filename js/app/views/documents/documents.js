@@ -4846,7 +4846,8 @@ define(function (require) {
         initialize: function (options) {
             console.log('init controls',options, this);
             this.contextPrintButton = new ContextPrintButton({
-                docCollection: this.collection 
+                docCollection: this.collection ,
+                appeal: appeal
             });
 
 
