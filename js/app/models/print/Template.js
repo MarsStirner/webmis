@@ -5,7 +5,7 @@ define(function (require) {
 
     var Templates = Collection.extend({
         model: Template,
-        _fields: ['id', 'name'],
+        _fields: ['id', 'name', 'hasPopApp'],
         _printContext: '',
 
         initialize: function (models, options) {
@@ -60,7 +60,7 @@ define(function (require) {
                 params.push('fields=' + this.getFieldsFilter());
             }
 
-            return DATA_PATH + 'printTemplate/byContexts/?' + params.join('&');
+            return DATA_PATH + 'printTemplate/byContexts/?filter[render]=1&' + params.join('&');
         },
 
         parse: function(data){

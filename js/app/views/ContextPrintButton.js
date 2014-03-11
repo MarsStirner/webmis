@@ -58,6 +58,7 @@ define(function (require) {
             $.ajax({
                 type: 'POST',
                 url: DATA_PATH + 'print-by-context/',
+                cache: false,
                 dataType: 'html',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
