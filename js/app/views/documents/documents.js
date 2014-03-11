@@ -3293,6 +3293,19 @@ define(function (require) {
      */
     Documents.Views.Edit.UIElement.Date = UIElementBase.extend({
         template: templates.uiElements._date,
+        initialize: function(){
+
+            if(this.model.get('code') == 'therapyBegDate'|| this.model.get('code') == 'therapyPhaseBegDate'){
+                this.listenTo(fds, "change-therapyTitle", function () {
+                    this.model.set({
+                        mandatory: (fds.therapyFdrId ? "true" : "false")
+                    });
+                    this.render();
+                });
+            }
+
+            UIElementBase.prototype.initialize.call(this);
+        },
 
         data: function () {
             return {
