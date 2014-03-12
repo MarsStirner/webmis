@@ -787,10 +787,10 @@ define(function (require) {
         url: function () {
             var url;
 
-            if(this.appealId != 'all'){
+            if (this.appealId != 'all') {
                 url = DATA_PATH + "appeals/" + this.appealId + "/documents/custom1?";
-            }else{
-                url = DATA_PATH + "patients/"+ this.patientId +"/documents/custom1?";
+            } else {
+                url = DATA_PATH + "patients/" + this.patientId + "/documents/custom1?";
             }
 
             var params = [];
@@ -1367,9 +1367,20 @@ define(function (require) {
         },
 
         data: function () {
+            var closeDateTime = appeal.get('closeDateTime');
+            var editable = true;
+
+            if (closeDateTime && (moment().diff(moment(closeDateTime), 'days') > 2)) {
+                // console.log('acdt', moment().diff(moment(closeDateTime), 'days'));
+                editable = false;
+
+            }
+
             return {
                 documents: this.collection,
-                showIcons: !this.options.included && !appeal.isClosed()
+                appealIsClosed: appeal.isClosed(),
+                editable: editable,
+                showIcons: !(appeal.isClosed())
             };
         },
 
@@ -3293,9 +3304,9 @@ define(function (require) {
      */
     Documents.Views.Edit.UIElement.Date = UIElementBase.extend({
         template: templates.uiElements._date,
-        initialize: function(){
+        initialize: function () {
 
-            if(this.model.get('code') == 'therapyBegDate'|| this.model.get('code') == 'therapyPhaseBegDate'){
+            if (this.model.get('code') == 'therapyBegDate' || this.model.get('code') == 'therapyPhaseBegDate') {
                 this.listenTo(fds, "change-therapyTitle", function () {
                     this.model.set({
                         mandatory: (fds.therapyFdrId ? "true" : "false")
@@ -3556,12 +3567,12 @@ define(function (require) {
                 });
             }
 
-            if(!fds[scope].deffered){
+            if (!fds[scope].deffered) {
                 fds[scope].deffered = fds[scope].fetch();
             }
 
-            $.when(fds[scope].deffered).then(function(){
-                    self.onDirectoryReady();
+            $.when(fds[scope].deffered).then(function () {
+                self.onDirectoryReady();
             });
 
             UIElementBase.prototype.initialize.apply(this);
@@ -5285,7 +5296,7 @@ define(function (require) {
                 return event.get('id') == appealId;
             });
             // console.log('selected event', event);
-            if(appealId != 'all' && event){
+            if (appealId != 'all' && event) {
                 appeal.get("execPerson").id = event.get('execPerson_id');
             }
             this.collection.pageNumber = 1;
@@ -5300,8 +5311,8 @@ define(function (require) {
                 mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "THER", "EXAM_OLD", "JOUR_OLD"];
                 break;
             case "EVERYDAY":
-                codes = ['3_02','01_1'];
-                mnems = ['JOUR','JOUR_OLD','EXAM','EXAM_OLD','CONS'];
+                codes = ['3_02', '01_1'];
+                mnems = ['JOUR', 'JOUR_OLD', 'EXAM', 'EXAM_OLD', 'CONS'];
                 break;
             case "EXAM":
                 mnems = ["EXAM", "EXAM_OLD"];
