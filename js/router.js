@@ -13,6 +13,7 @@ require.config({
 		"inputmask": "../lib/jquery.inputmask/jquery.inputmask",
 		"moment": "../lib/moment/moment-2.0.0.min",
         "twix": "../lib/moment.twix/twix",
+        "gremlins": "../lib/gremlins/gremlins.min",
 
 		"md5_crypt": "../lib/md5_crypt/md5_crypt",
 		"select2": "../lib/select2/select2-3.1",

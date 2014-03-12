@@ -308,8 +308,19 @@ define(function(require) {
                     view.close();
                     pubsub.trigger('instrumental-diagnostic:added');
                 },
-                error: function() {
+                error: function(response, error) {
 
+                    view.saveButton(true, 'Сохранить');
+                    if(response.responseText ){
+                        var text = $.parseJSON(response.responseText);
+                        if(text.errorMessage){
+                            // console.log('save error', text.errorMessage);
+                            pubsub.trigger('noty', {text:text.errorMessage,type:'error'});
+                        }else{
+                            pubsub.trigger('noty', {text:'Ошибка при создании направления',type:'error'});
+                        }
+                    
+                    }
                 }
             });
 

@@ -20,7 +20,7 @@ define(function(require) {
 		,saveAll: function(opt) {
 			var collection = this;
 			var options = opt || {};
-
+            console.log('save all')
 			options = _.extend(options, {
 				dataType: "jsonp",
 				contentType: 'application/json',
