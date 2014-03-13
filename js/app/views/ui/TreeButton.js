@@ -6,71 +6,59 @@ define(function (require) {
             'click': 'onClick'
         },
 
-        onClick: function (e) {
-        },
+        onClick: function (e) {},
 
         render: function () {
+            this.$el.attr('id', this.cid)
             return this;
         },
-
-        // initialize: function () {
-        // },
 
         getMenuItems: function () {
             return {};
         },
 
-        getMenuCallback: function(key, options){
-        },
+        getMenuCallback: function (key, options) {},
 
-        afterRender: function () {
+        addMenu: function () {
             var self = this;
-            // console.log('tree button after render', self.getMenuItems())
-            $.contextMenu( 'destroy' );
 
-            if(_.isEmpty(this.getMenuItems())){
+            $.contextMenu('destroy');
+
+            if (_.isEmpty(this.getMenuItems())) {
                 this.$el.button().button('disable');
                 return;
-            }else{
+            } else {
                 this.$el.button().button('enable');
             }
 
             $.contextMenu({
                 className: 'webmis-menu',
-                determinePosition: function () {
-                    // position to the lower middle of the trigger element
-                    if ($.ui && $.ui.position) {
-                        // console.log('ui')
-                        // .position() is provided as a jQuery UI utility
-                        // (...and it won't work on hidden elements)
-                        $menu.css('display', 'block').position({
-                            my: "left top",
-                            at: "left bottom",
-                            of: this,
-                            offset: "0 5",
-                            collision: "fit"
-                        }).css('display', 'none');
-                    } else {
-                        // console.log('no ui')
-                        // determine contextMenu position
-                        var offset = this.offset();
-                        offset.top += this.outerHeight();
-                        offset.left += this.outerWidth() / 2 - $menu.outerWidth() / 2;
-                        $menu.css(offset);
-                    }
+                position: function (menu, x, y) {
+                    var $printButton = menu.$trigger;
+                    var left = $printButton.offset().left;
+                    var top = $printButton.offset().top + $printButton.innerHeight();
 
+                    menu.$menu.offset({
+                        left: left,
+                        top: top
+                    });
                 },
-                selector: '.print-button',
+                selector: '#' + self.cid,
                 trigger: 'left',
-                callback: function(key, options){
+                callback: function (key, options) {
                     self.getMenuCallback(key, options);
                 },
-                build: function(){
+                build: function () {
                     return {
                         items: self.getMenuItems()
-                    }; 
+                    };
                 }
             });
+
+        },
+
+        afterRender: function () {
+            this.addMenu();
         }
     });
 
