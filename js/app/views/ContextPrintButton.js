@@ -4,6 +4,7 @@ define(function (require) {
 
     return TreeButton.extend({
         initialize: function (options) {
+            TreeButton.prototype.initialize.call(this, options);
             this.docCollection = options.docCollection;
             this.printTemplates = new PrintTemplates();
 
@@ -24,14 +25,15 @@ define(function (require) {
         },
 
         getMenuItems: function () {
-            var items = {};
+            var items = {
+            };
 
             this.printTemplates.each(function (printTemplate) {
                 items[printTemplate.get('id')] = {
                     name: printTemplate.get('name')
                 };
             });
-            console.log('getMenuItems', items);
+
             return items;
         },
 
@@ -39,34 +41,19 @@ define(function (require) {
             this.getRenderedPrintTemplate(key);
         },
 
-        getPrintTemplateData: function(id){
-            var data = {};
-            data.event_id = this.options.appeal.get('id');
-            data.id = id;
-            data.client_id = this.options.appeal.get('patient').get('id');
-            data.action_id = this.getDoc().get('id');
-            data.additional_context = {
-                currentOrgStructure: '',
-                currentOrganisation: 3479,
-                currentPerson: Core.Cookies.get('userId')
-            };
-
-            return data; 
-        },
-
         getRenderedPrintTemplate: function (id) {
-            var self = this;
-            var data = JSON.stringify(this.getPrintTemplateData(id));
+            var data = this.options.data;
+            data.id = id;
+            data.action_id = this.getDoc().get('id');
 
             $.ajax({
                 type: 'POST',
                 url: DATA_PATH + 'print-by-context/',
                 dataType: 'html',
                 contentType: 'application/json',
-                data: data,
-            }).done(function (html) {
-                self.showPopup(html);
-            }).fail(function () {
+                data: JSON.stringify(data),
+            }).done(this.showPopup)
+            .fail(function () {
                 pubsub.trigger('noty', {
                     text: 'Ошибка при получении шаблона',
                     type: 'error'

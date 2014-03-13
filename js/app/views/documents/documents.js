@@ -3294,9 +3294,9 @@ define(function (require) {
      */
     Documents.Views.Edit.UIElement.Date = UIElementBase.extend({
         template: templates.uiElements._date,
-        initialize: function(){
+        initialize: function () {
 
-            if(this.model.get('code') == 'therapyBegDate'|| this.model.get('code') == 'therapyPhaseBegDate'){
+            if (this.model.get('code') == 'therapyBegDate' || this.model.get('code') == 'therapyPhaseBegDate') {
                 this.listenTo(fds, "change-therapyTitle", function () {
                     this.model.set({
                         mandatory: (fds.therapyFdrId ? "true" : "false")
@@ -4857,14 +4857,26 @@ define(function (require) {
      */
     Documents.Views.Review.Base.Controls = ViewBase.extend({
         initialize: function (options) {
-            // console.log('init controls',options, this);
             this.contextPrintButton = new ContextPrintButton({
-                docCollection: this.collection ,
-                appeal: appeal
+                docCollection: this.collection,
+                data: {
+                    event_id: appeal.get('id'),
+                    context_type: 'action',
+                    client_id: appeal.get('patient').get('id'),
+                    additional_context: {
+                        currentOrgStructure: '',
+                        currentOrganisation: 3479,
+                        currentPerson: Core.Cookies.get('userId')
+                    }
+                }
             });
 
+            this.subViews = {
+                '.context-print-button': this.contextPrintButton
+            };
 
         },
+
         template: templates._reviewControls,
 
         data: function () {
@@ -4908,41 +4920,7 @@ define(function (require) {
             this.collection.trigger("review:prev");
         },
 
-        onPrintContextClick: function (e) {
-            // e.preventDefault()
-            // var doc = this.collection.first();
-            // var printContext = doc.get('context');
-            // console.log('doc', doc)
-            // // var printTemplates = new PrintTemplates(null, {
-            //     printContext: printContext
-            // });
-
-            // printTemplates.fetch().done(function () {
-
-            //     var template = printTemplates.first().toJSON();
-            //     var data = {};
-            //     data.event_id = appeal.get('id');
-            //     data.id = template.id;
-            //     data.client_id = appeal.get('patient').get('id');
-            //     data.action_id = doc.get('id');
-            //     data.additional_context = {
-            //         currentOrgStructure: '',
-            //         currentOrganisation: 3479,
-            //         currentPerson: Core.Cookies.get('userId')
-            //     };
-
-            //     $.ajax({
-            //         type: 'POST',
-            //         url: DATA_PATH + 'print-by-context/',
-            //         dataType: 'json',
-            //         contentType: 'application/json',
-            //         data: JSON.stringify(data)
-            //     }).done(function (html) {
-            //         console.log('print by context', template.id, template.name, html);
-            //     });
-
-            // });
-        },
+        onPrintContextClick: function (e) {},
 
         onPrintDocumentsSinglePageClick: function () {
             new App.Views.Print({
@@ -4995,35 +4973,10 @@ define(function (require) {
 
         render: function () {
             ViewBase.prototype.render.call(this);
-            
-            this.contextPrintButton.setElement(this.$el.find('.context-print-button'));
-            this.contextPrintButton.render();
+            this.contextPrintButton.setElement(this.$('.context-print-button')).render();
 
-            /*this.$(".buttonset").buttonset();
-			 this.$(".print-options").hide().menu();
-			 this.$(".show-print-options").on("click", _.bind(function () {
-			 this.$(".print-options").show().position({
-			 my: "right top",
-			 at: "left bottom",
-			 of: this.$(".show-print-options")
-			 });
-			 }, this));*/
-        }
-
-        /*initialize: function () {
-		 this.listenTo(this.collection, "reset", this.onCollectionReset);
-		 },
-
-		 tearDown: function () {
-		 this.tearDownSubviews();
-		 this.stopListening(this.collection, "reset", this.onCollectionReset);
-		 this.undelegateEvents();
-		 this.remove();
-		 },
-
-		 onCollectionReset: function () {
-
-		 }*/
+            return this;
+        },
     });
 
     /**

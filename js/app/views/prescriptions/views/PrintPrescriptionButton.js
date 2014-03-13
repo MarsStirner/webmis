@@ -144,7 +144,7 @@ define(function (require) {
             };
 
             var data = this.getPatientPrescriptionPrintData(id, range);
-            console.log('data', data);
+            // console.log('data', data);
             new App.Views.Print({
                 data: data,
                 template: "patientPrescriptions"

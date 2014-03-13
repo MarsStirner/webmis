@@ -3,13 +3,10 @@ define(function (require) {
     var BaseView = require('views/prescriptions/views/BaseView');
 
     var TreeButton = BaseView.extend({
-        // events: {
-        //     'click': 'onClick'
-        // },
-
-        // onClick: function (e) {},
-
+        template: '<button type="button" class="" data-icon-primary="icon-print">Печать</button>',
         render: function () {
+            BaseView.prototype.render.call(this);
+
             this.$el.attr('id', this.cid);
             return this;
         },
@@ -21,16 +18,14 @@ define(function (require) {
         getMenuCallback: function (key, options) {},
 
         addMenu: function () {
-            console.log('addMenu', this);
             var self = this;
 
-            $.contextMenu('destroy');
 
             if (_.isEmpty(this.getMenuItems())) {
-                this.$el.button().button('disable');
+                this.$el.find('button').button().button('disable');
                 return;
             } else {
-                this.$el.button().button('enable');
+                this.$el.find('button').button().button('enable');
             }
 
             $.contextMenu({
@@ -45,7 +40,8 @@ define(function (require) {
                         top: top
                     });
                 },
-                selector: '#' + self.cid,
+                appendTo: '#' + self.cid,
+                selector: '#' + self.cid + ' button',
                 trigger: 'left',
                 callback: function (key, options) {
                     self.getMenuCallback(key, options);
