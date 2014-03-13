@@ -1,15 +1,16 @@
 define(function (require) {
+
     var BaseView = require('views/prescriptions/views/BaseView');
 
     var TreeButton = BaseView.extend({
-        events: {
-            'click': 'onClick'
-        },
+        // events: {
+        //     'click': 'onClick'
+        // },
 
-        onClick: function (e) {},
+        // onClick: function (e) {},
 
         render: function () {
-            this.$el.attr('id', this.cid)
+            this.$el.attr('id', this.cid);
             return this;
         },
 
@@ -20,6 +21,7 @@ define(function (require) {
         getMenuCallback: function (key, options) {},
 
         addMenu: function () {
+            console.log('addMenu', this);
             var self = this;
 
             $.contextMenu('destroy');
@@ -33,12 +35,12 @@ define(function (require) {
 
             $.contextMenu({
                 className: 'webmis-menu',
-                position: function (menu, x, y) {
-                    var $printButton = menu.$trigger;
+                position: function (contextMenu, x, y) {
+                    var $printButton = contextMenu.$trigger;
                     var left = $printButton.offset().left;
                     var top = $printButton.offset().top + $printButton.innerHeight();
 
-                    menu.$menu.offset({
+                    contextMenu.$menu.offset({
                         left: left,
                         top: top
                     });
@@ -48,11 +50,7 @@ define(function (require) {
                 callback: function (key, options) {
                     self.getMenuCallback(key, options);
                 },
-                build: function () {
-                    return {
-                        items: self.getMenuItems()
-                    };
-                }
+                items: self.getMenuItems()
             });
 
         },

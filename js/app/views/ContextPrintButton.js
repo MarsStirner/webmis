@@ -3,47 +3,43 @@ define(function (require) {
     var PrintTemplates = require('models/print/Template').Collection;
 
     return TreeButton.extend({
-        events: {
-            'click': 'onClick'
-        },
-
         initialize: function (options) {
             this.docCollection = options.docCollection;
             this.printTemplates = new PrintTemplates();
 
-            this.listenTo(this.docCollection, 'change reset', function () {
-                var doc = this.getDoc();
-                var printContext = doc.get('context');
-                // console.log('get printTemplates for', doc.get('id'), printContext);
-                this.printTemplates.setPrintContext(printContext);
-                this.printTemplates.fetch().then(this.afterRender.bind(this));
-
-            });
+            this.listenTo(this.docCollection, 'change reset', this.getTemplatesForContext);
+            this.listenTo(this.printTemplates, 'reset', this.afterRender);
         },
+
         getDoc: function () {
             return this.docCollection.first();
         },
 
+        getTemplatesForContext: function () {
+            var doc = this.getDoc();
+            var printContext = doc.get('context');
+
+            this.printTemplates.setPrintContext(printContext);
+            this.printTemplates.fetch();
+        },
+
         getMenuItems: function () {
             var items = {};
-            // console.log('print templates', this.printTemplates);
+
             this.printTemplates.each(function (printTemplate) {
                 items[printTemplate.get('id')] = {
                     name: printTemplate.get('name')
                 };
             });
-            // console.log('getMenuItems', items);
+            console.log('getMenuItems', items);
             return items;
         },
 
         getMenuCallback: function (key, options) {
             this.getRenderedPrintTemplate(key);
-            // console.log('menu callback', arguments);
         },
 
-        getRenderedPrintTemplate: function (id) {
-            var self = this;
-
+        getPrintTemplateData: function(id){
             var data = {};
             data.event_id = this.options.appeal.get('id');
             data.id = id;
@@ -55,17 +51,26 @@ define(function (require) {
                 currentPerson: Core.Cookies.get('userId')
             };
 
+            return data; 
+        },
+
+        getRenderedPrintTemplate: function (id) {
+            var self = this;
+            var data = JSON.stringify(this.getPrintTemplateData(id));
+
             $.ajax({
                 type: 'POST',
                 url: DATA_PATH + 'print-by-context/',
-                cache: false,
                 dataType: 'html',
                 contentType: 'application/json',
-                data: JSON.stringify(data),
+                data: data,
             }).done(function (html) {
                 self.showPopup(html);
             }).fail(function () {
-                pubsub.trigger('noty', {text:'Ошибка при получении шаблона',type:'error'});
+                pubsub.trigger('noty', {
+                    text: 'Ошибка при получении шаблона',
+                    type: 'error'
+                });
             });
         },
 
@@ -79,9 +84,6 @@ define(function (require) {
             this.window.document.write(html);
         },
 
-        onClick: function () {
-            // console.log('click print button', this);
-        }
     });
 
 });

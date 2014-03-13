@@ -10,7 +10,7 @@ define(function (require) {
 
         initialize: function (models, options) {
             options = options || {};
-            console.log('init print templates',options);
+
             if (options.fields) {
                 this.setFields(options.fields);
             }
@@ -29,7 +29,6 @@ define(function (require) {
         },
 
         setPrintContext: function (printContext) {
-            console.log('set print context', printContext)
             this._printContext = printContext;
 
             return this;
@@ -56,11 +55,13 @@ define(function (require) {
                 params.push('context=' + this.getPrintContext());
             }
 
-            if (!_.isEmpty(this.getFields())) {
-                params.push('fields=' + this.getFieldsFilter());
-            }
+            // if (!_.isEmpty(this.getFields())) {
+            //     params.push('fields=' + this.getFieldsFilter());
+            // }
 
-            return DATA_PATH + 'printTemplate/byContexts/?filter[render]=1&' + params.join('&');
+            // params.push('filter[render]=1');
+
+            return DATA_PATH + 'printTemplate/byContexts/?' + params.join('&');
         },
 
         parse: function(data){

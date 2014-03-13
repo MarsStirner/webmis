@@ -4857,7 +4857,7 @@ define(function (require) {
      */
     Documents.Views.Review.Base.Controls = ViewBase.extend({
         initialize: function (options) {
-            console.log('init controls',options, this);
+            // console.log('init controls',options, this);
             this.contextPrintButton = new ContextPrintButton({
                 docCollection: this.collection ,
                 appeal: appeal
