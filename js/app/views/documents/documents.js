@@ -433,6 +433,7 @@ define(function (require) {
                     row.spans.each(function (templateAttr) {
                         if (templateAttr.isMandatory() && !templateAttr.hasValue()) {
                             templateAttr.trigger("requiredValidation:fail");
+                            dispatcher.trigger('reguiredValidation:fail')
                             requiredValidationFail = true;
                         }
                     });
@@ -2887,6 +2888,11 @@ define(function (require) {
         initialize: function () {
             this.collection = new Backbone.Collection();
             this.listenTo(this.collection, "reset", this.onCollectionReset);
+
+            dispatcher.on('reguiredValidation:fail', _.debounce(function(){
+                $('html, body').animate({ scrollTop: $('.WrongField:first').offset().top - 30 }, 'fast');
+            }, 300))
+
             this.listenTo(this.model, "change", this.onModelReset);
             RepeaterBase.prototype.initialize.call(this, this.options);
         },
