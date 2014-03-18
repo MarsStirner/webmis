@@ -8,6 +8,9 @@ define(function (require) {
 
             this.printTemplates = new PrintTemplates();
 
+            if(this.options.context){
+                this.getTemplatesForContext(this.options.context); 
+            }
             this.listenTo(this.printTemplates, 'reset', this.afterRender);
         },
 
@@ -27,6 +30,7 @@ define(function (require) {
                 };
             });
 
+            console.log('get menu items', items);
             return items;
         },
 

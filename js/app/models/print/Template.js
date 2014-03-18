@@ -59,7 +59,7 @@ define(function (require) {
                 params.push('fields=' + this.getFieldsFilter());
             }
 
-            params.push('filter[render]=1');
+            // params.push('filter[render]=1');
 
             return DATA_PATH + 'printTemplate/byContexts/?' + params.join('&');
         },

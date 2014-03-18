@@ -4,6 +4,7 @@ define(function (require) {
     var template = require('text!templates/diagnostics/laboratory/laboratory-result.html');
     var Result = require('models/diagnostics/laboratory/laboratory-diag-form');
     var Biomaterials = require('collections/biomaterials/Biomaterials');
+    var ContextPrintButton = require('views/ContextPrintButton');
     var BakResult = require('models/diagnostics/laboratory/bak-result');
 
     require('views/print');
@@ -12,6 +13,8 @@ define(function (require) {
     var LaboratoryResultView = Backbone.View.extend({
         template: template,
         initialize: function () {
+            console.log('init lab results', arguments);
+
             var self = this;
             this.result = new Result();
             this.result.eventId = this.options.appealId;
@@ -32,6 +35,22 @@ define(function (require) {
                     self.render2();
                 }
             });
+
+            this.contextPrintButton = new ContextPrintButton({
+                context: 'action_lab',
+                data: {
+                    action_id:this.result.id, 
+                    event_id: this.options.appeal.get('id'),
+                    context_type: 'action',
+                    client_id: this.options.appeal.get('patient').get('id'),
+                    additional_context: {
+                        currentOrgStructure: '',
+                        currentOrganisation: 3479,
+                        currentPerson: Core.Cookies.get('userId')
+                    }
+                }
+            });
+
 
         },
         events: {
@@ -558,6 +577,9 @@ define(function (require) {
 
             self.$('.actions button').button();
             self.showPrintBtn(self.printOptions());
+
+            this.contextPrintButton.setElement(this.$el.find('.context-print-button'));
+            this.contextPrintButton.render();
 
             this.$el.find("table.anti").delegate('td', 'mouseover mouseleave', function (e) {
                 if (e.type == 'mouseover') {
