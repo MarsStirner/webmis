@@ -5,20 +5,13 @@ define(function (require) {
     return TreeButton.extend({
         initialize: function (options) {
             TreeButton.prototype.initialize.call(this, options);
-            this.docCollection = options.docCollection;
+
             this.printTemplates = new PrintTemplates();
 
-            this.listenTo(this.docCollection, 'change reset', this.getTemplatesForContext);
             this.listenTo(this.printTemplates, 'reset', this.afterRender);
         },
 
-        getDoc: function () {
-            return this.docCollection.first();
-        },
-
-        getTemplatesForContext: function () {
-            var doc = this.getDoc();
-            var printContext = doc.get('context');
+        getTemplatesForContext: function (printContext) {
 
             this.printTemplates.setPrintContext(printContext);
             this.printTemplates.fetch();
@@ -44,7 +37,6 @@ define(function (require) {
         getRenderedPrintTemplate: function (id) {
             var data = this.options.data;
             data.id = id;
-            data.action_id = this.getDoc().get('id');
 
             $.ajax({
                 type: 'POST',

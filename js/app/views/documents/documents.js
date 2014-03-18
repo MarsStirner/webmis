@@ -4857,6 +4857,12 @@ define(function (require) {
      */
     Documents.Views.Review.Base.Controls = ViewBase.extend({
         initialize: function (options) {
+            this.listenTo(this.collection, 'change reset', function(){
+                var firstDoc = this.collection.first();
+                this.contextPrintButton.options.data.action_id = firstDoc.get('id');
+                this.contextPrintButton.getTemplatesForContext(firstDoc.get('context'));
+            });
+
             this.contextPrintButton = new ContextPrintButton({
                 docCollection: this.collection,
                 data: {
