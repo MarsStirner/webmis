@@ -3,12 +3,13 @@ define(function(require) {
 
     var Result = require('models/diagnostics/instrumental/InstrumentalResearch');
     var PrintView = require('views/print');
+    var ContextPrintButton = require('views/ContextPrintButton');
 
     var InstrumentalResultView = Backbone.View.extend({
         template: template,
         events: {
-            "click .buck-to-list": "openInstrumental"
-            ,"click .print": "print"
+            "click .buck-to-list": "openInstrumental",
+            "click .print": "print"
         },
         getResult: function(success, error) {
             var self = this;
@@ -28,6 +29,29 @@ define(function(require) {
                 }
             });
         },
+
+        renderContextPrintButton: function(){
+            this.contextPrintButton = new ContextPrintButton({
+                context: this.result.get('context'),
+                data: {
+                    action_id:this.result.get('id'), 
+                    event_id: this.options.appeal.get('id'),
+                    context_type: 'action',
+                    client_id: this.options.appeal.get('patient').get('id'),
+                    additional_context: {
+                        currentOrgStructure: '',
+                        currentOrganisation: 3479,
+                        currentPerson: Core.Cookies.get('userId')
+                    }
+                }
+            });
+
+            this.contextPrintButton.setElement(this.$el.find('.context-print-button'));
+            this.contextPrintButton.render();
+
+
+        },
+
         openInstrumental: function() {
             this.trigger("change:viewState", {
                 type: "diagnostics-instrumental"
@@ -125,7 +149,7 @@ define(function(require) {
                     variable: 'data'
                 }));
 
-
+                self.renderContextPrintButton();
                 self.$('.actions button').button();
 
             });

@@ -4858,11 +4858,8 @@ define(function (require) {
      */
     Documents.Views.Review.Base.Controls = ViewBase.extend({
         initialize: function (options) {
-            this.listenTo(this.collection, 'change reset', function(){
-                var firstDoc = this.collection.first();
-                this.contextPrintButton.options.data.action_id = firstDoc.get('id');
-                this.contextPrintButton.getTemplatesForContext(firstDoc.get('context'));
-            });
+            console.log('init controls')
+            this.listenTo(this.collection, 'change reset',this.onDocCollectionChange);
 
             this.contextPrintButton = new ContextPrintButton({
                 docCollection: this.collection,
@@ -4882,6 +4879,14 @@ define(function (require) {
                 '.context-print-button': this.contextPrintButton
             };
 
+        },
+
+        onDocCollectionChange: function(){
+                console.log('cr', arguments,(new Date()).getTime())
+                var firstDoc = this.collection.first();
+                this.contextPrintButton.options.data.action_id = firstDoc.get('id');
+                this.contextPrintButton.getTemplatesForContext(firstDoc.get('context'));
+            
         },
 
         template: templates._reviewControls,

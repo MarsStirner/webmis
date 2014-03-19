@@ -38,6 +38,7 @@ define(function (require) {
 
 
         },
+
         renderContextPrintButton: function(){
             this.contextPrintButton = new ContextPrintButton({
                 context: this.result.get('context'),

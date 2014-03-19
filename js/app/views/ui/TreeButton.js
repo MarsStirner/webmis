@@ -27,7 +27,7 @@ define(function (require) {
             } else {
                 this.$el.find('button').button().button('enable');
             }
-            $.contextMenu( 'destroy');
+            // $.contextMenu( 'destroy');
             // $.contextMenu( 'destroy', '#'+this.cid+ 'button');
 
             $.contextMenu({
