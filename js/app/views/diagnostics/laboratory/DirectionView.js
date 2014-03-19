@@ -128,8 +128,7 @@ define(function(require) {
 
 			view.analyzesSelected.on('updateAll:error', function(response) {
 				pubsub.trigger('noty', {
-					text: 'Ошибка при создании направления',
-					// text: 'Ошибка: ' + response.exception + ', errorCode: ' + response.errorCode,
+					text: response.errorMessage ? response.errorMessage : 'Ошибка при создании направления',
 					type: 'error'
 				});
 			});

@@ -7,6 +7,7 @@ define(function (require) {
     var FilterView = require('views/prescriptions/views/prescriptionsExecution/Filter');
     var ActionsView = require('views/prescriptions/views/prescriptionsExecution/Actions');
     var GroupsView = require('views/prescriptions/views/prescriptionsExecution/Groups');
+    // var gremlins = require('gremlins');
 
 
     return BaseView.extend({
@@ -47,6 +48,10 @@ define(function (require) {
 
         refresh: function () {
             this.collection.fetch();
+        },
+
+        afterRender: function(){
+            // gremlins.createHorde().unleash(); 
         }
 
     });

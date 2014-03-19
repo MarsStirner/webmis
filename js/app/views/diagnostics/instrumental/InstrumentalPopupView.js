@@ -3,7 +3,7 @@
  * Date: 25.06.12
  */
 
-define(function(require) {
+define(function (require) {
     'use strict';
 
     var popupMixin = require('mixins/PopupMixin');
@@ -37,7 +37,7 @@ define(function(require) {
             'change input[name="diagnosis[mkb][code]"]': 'onChangeMkbInput'
         },
 
-        initialize: function() {
+        initialize: function () {
             _.bindAll(this);
 
 
@@ -82,11 +82,11 @@ define(function(require) {
 
         },
 
-        openAssignerSelectPopup: function() {
+        openAssignerSelectPopup: function () {
             this.personDialogView = new PersonDialogView({
                 title: 'Направивший врач',
                 appeal: this.options.appeal,
-                callback: function(person) {
+                callback: function (person) {
                     pubsub.trigger('assigner:changed', person);
                 }
             });
@@ -95,11 +95,11 @@ define(function(require) {
 
         },
 
-        openExecutorSelectPopup: function() {
+        openExecutorSelectPopup: function () {
             this.personDialogView = new PersonDialogView({
                 appeal: this.options.appeal,
                 title: 'Исполнитель',
-                callback: function(person) {
+                callback: function (person) {
                     pubsub.trigger('executor:changed', person);
                 }
             });
@@ -108,7 +108,7 @@ define(function(require) {
 
         },
 
-        onSelectResearch: function(researchCode) {
+        onSelectResearch: function (researchCode) {
             var executor,
                 self = this;
 
@@ -119,7 +119,7 @@ define(function(require) {
                 patientId: self.viewModel.get('patientId')
             });
 
-            self.testTemplate.fetch().done(function() {
+            self.testTemplate.fetch().done(function () {
 
                 if (self.testTemplate.getProperty('executorId', 'value') > 0) {
                     executor = {
@@ -137,7 +137,7 @@ define(function(require) {
 
         },
 
-        onDeselectResearch: function() {
+        onDeselectResearch: function () {
             var executor = {
                 id: '',
                 name: {
@@ -156,7 +156,7 @@ define(function(require) {
             pubsub.trigger('executor:changed', executor);
         },
 
-        onChangeAssigner: function(assigner) {
+        onChangeAssigner: function (assigner) {
             this.viewModel.set({
                 'assignerId': assigner.id,
                 'assignerFirstName': assigner.name.first,
@@ -167,7 +167,7 @@ define(function(require) {
             this.ui.$assigner.val(assigner.name.last + ' ' + assigner.name.first + ' ' + assigner.name.middle);
         },
 
-        onChangeExecutor: function(executor) {
+        onChangeExecutor: function (executor) {
             this.viewModel.set({
                 'executorId': executor.id,
                 'executorFirstName': executor.name.first,
@@ -178,42 +178,42 @@ define(function(require) {
             this.ui.$executor.val(executor.name.last + ' ' + executor.name.first + ' ' + executor.name.middle);
         },
 
-        onChangeCreateDatePicker: function() {
+        onChangeCreateDatePicker: function () {
             var createDate = this.ui.$createDate.datepicker('getDate');
             this.viewModel.set('createDay', createDate);
         },
 
-        onChangeCreateTimePicker: function() {
+        onChangeCreateTimePicker: function () {
             var createTime = this.ui.$createTime.val();
             this.viewModel.set('createTime', createTime);
         },
 
-        onChangeUrgentInput: function() {
+        onChangeUrgentInput: function () {
             var urgent = this.ui.$urgent.prop('checked');
             this.viewModel.set('urgent', urgent);
         },
 
-        onChangeFinanceInput: function() {
+        onChangeFinanceInput: function () {
             var financeId = this.$(this.ui.$finance.find('option:selected')[0]).val();
             this.viewModel.set('finance', financeId);
         },
 
 
-        onChangeMkbInput: function() {
+        onChangeMkbInput: function () {
             var mkbId = this.ui.$mbkCode.data('mkb-id');
             this.viewModel.set('mkbId', mkbId);
         },
-        onChangePlannedTimePicker: function() {
+        onChangePlannedTimePicker: function () {
             var plannedTime = this.ui.$plannedTime.val();
             this.viewModel.set('plannedTime', plannedTime);
         },
 
-        onChangePlannedDatePicker: function() {
+        onChangePlannedDatePicker: function () {
             var plannedDate = this.ui.$plannedDate.datepicker('getDate');
             this.viewModel.set('plannedDay', plannedDate);
         },
 
-        validateForm: function() {
+        validateForm: function () {
             var errors = this.viewModel.validateModel(this.viewModel.toJSON());
 
             this.showErrors(errors);
@@ -221,18 +221,18 @@ define(function(require) {
 
         },
 
-        showErrors: function(errors) {
+        showErrors: function (errors) {
             var self = this;
             self.ui.$errors.html('').hide();
             if (errors) {
-                _.each(errors, function(error) {
+                _.each(errors, function (error) {
                     self.ui.$errors.append(error.message);
                 });
                 self.ui.$errors.show();
             }
         },
 
-        saveButton: function(enabled, msg) {
+        saveButton: function (enabled, msg) {
             console.log('saveButton', this.ui);
             var $saveButton = this.ui.$saveButton;
             $saveButton.button();
@@ -250,7 +250,7 @@ define(function(require) {
 
         },
 
-        onSave: function() {
+        onSave: function () {
             var view = this;
 
             view.testTemplate.setProperty('assignerId', 'value', view.viewModel.get('assignerId'));
@@ -304,18 +304,30 @@ define(function(require) {
             this.saveButton(false, 'Сохраняем');
 
             view.tests.saveAll({
-                success: function() {
+                success: function () {
                     view.close();
                     pubsub.trigger('instrumental-diagnostic:added');
                 },
-                error: function() {
+                error: function (response, error) {
 
+                    view.saveButton(true, 'Сохранить');
+                    if (response.responseText) {
+                        var text = $.parseJSON(response.responseText);
+                        var errorMessage = text.errorMessage || 'Ошибка при создании направления';
+                        if (errorMessage) {
+                            pubsub.trigger('noty', {
+                                text: errorMessage,
+                                type: 'error'
+                            });
+                        }
+
+                    }
                 }
             });
 
         },
 
-        render: function() {
+        render: function () {
             var view = this;
             view.renderNested(this.bfView, '.bottom-form');
             view.researchGroupsListView.setElement(this.$el.find('.instrumental-groups'));
@@ -323,7 +335,7 @@ define(function(require) {
 
             return this;
         },
-        afterRender: function() {
+        afterRender: function () {
             var view = this;
             var now = new Date();
 
@@ -345,10 +357,10 @@ define(function(require) {
 
             this.$('.change-assigner,.change-executor').button();
 
-            
+
             view.ui.$createDate.datepicker({
                 minDate: now,
-                onSelect: function() {
+                onSelect: function () {
                     view.ui.$createDate.trigger('change');
                     // var date = view.$(this).datepicker('getDate');
                     // var day = moment(date).startOf('day');
@@ -364,7 +376,7 @@ define(function(require) {
                 }
             }).datepicker('setDate', view.viewModel.get('createDay'));
 
-            view.ui.$createDateIcon.on('click', function() {
+            view.ui.$createDateIcon.on('click', function () {
                 view.ui.$createDate.datepicker('show');
             });
 
@@ -372,7 +384,7 @@ define(function(require) {
                 showPeriodLabels: false,
                 defaultTime: 'now',
                 showOn: 'both',
-                button: '.bottom-form .icon-time'//,
+                button: '.bottom-form .icon-time' //,
                 // onHourShow: function(hour) {
                 //     var date = view.ui.$createDate.datepicker('getDate');
                 //     var day = moment(date).startOf('day');
@@ -406,7 +418,7 @@ define(function(require) {
 
             view.ui.$plannedDate.datepicker({
                 minDate: new Date(),
-                onSelect: function() {
+                onSelect: function () {
                     view.ui.$plannedDate.trigger('change');
                     var date = view.$(this).datepicker('getDate');
                     var day = moment(date).startOf('day');
@@ -427,7 +439,7 @@ define(function(require) {
                 showPeriodLabels: false,
                 showOn: 'both',
                 button: '.icon-time',
-                onHourShow: function(hour) {
+                onHourShow: function (hour) {
                     var date = view.ui.$plannedDate.datepicker('getDate');
                     var day = moment(date).startOf('day');
                     var currentDay = moment().startOf('day');
@@ -441,7 +453,7 @@ define(function(require) {
 
                     return true;
                 },
-                onMinuteShow: function(hour, minute) {
+                onMinuteShow: function (hour, minute) {
                     var date = view.ui.$plannedDate.datepicker('getDate');
                     var day = moment(date).startOf('day');
                     var currentDay = moment().startOf('day');
@@ -457,7 +469,7 @@ define(function(require) {
                 }
             }).val(this.viewModel.get('plannedTime'));
 
-            view.appealDiagnosis.fetch().done(function() {
+            view.appealDiagnosis.fetch().done(function () {
                 //установка диагноза
                 if ((view.appealDiagnosis.length > 0) && view.appealDiagnosis.first()) {
                     var diagnosis = view.appealDiagnosis.first().get('mkb');
@@ -469,10 +481,10 @@ define(function(require) {
             });
 
             this.viewModel.on('change', this.validateForm, this);
-//            this.validateForm();
+            //            this.validateForm();
 
         },
-        close: function() {
+        close: function () {
 
             this.ui.$plannedDate.datepicker('destroy');
             this.ui.$createDate.datepicker('destroy');

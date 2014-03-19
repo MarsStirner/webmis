@@ -469,13 +469,13 @@ define(function(require) {
 					view.close();
 				},
 				error: function(a, b, c) {
-					var errorMessage = (JSON.parse(b.responseText)).errorMessage;
+					var response = JSON.parse(b.responseText);
+					var errorMessage = response.errorMessage ? response.errorMessage : 'Ошибка при попытке сохранить направление';
 
 					pubsub.trigger('noty', {
 						text: errorMessage,
 						type: 'error'
 					});
-					//console.log('save error', (JSON.parse(b.responseText)).errorMessage);
 
 				}
 			});

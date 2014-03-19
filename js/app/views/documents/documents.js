@@ -434,6 +434,7 @@ define(function (require) {
                     row.spans.each(function (templateAttr) {
                         if (templateAttr.isMandatory() && !templateAttr.hasValue()) {
                             templateAttr.trigger("requiredValidation:fail");
+                            dispatcher.trigger('reguiredValidation:fail')
                             requiredValidationFail = true;
                         }
                     });
@@ -1369,9 +1370,20 @@ define(function (require) {
         },
 
         data: function () {
+            var closeDateTime = appeal.get('closeDateTime');
+            var editable = true;
+
+            if (closeDateTime && (moment().diff(moment(closeDateTime), 'days') > 2)) {
+                // console.log('acdt', moment().diff(moment(closeDateTime), 'days'));
+                editable = false;
+
+            }
+
             return {
                 documents: this.collection,
-                showIcons: !this.options.included && !appeal.isClosed()
+                appealIsClosed: appeal.isClosed(),
+                editable: editable,
+                showIcons: !(appeal.isClosed())
             };
         },
 
@@ -2878,6 +2890,11 @@ define(function (require) {
         initialize: function () {
             this.collection = new Backbone.Collection();
             this.listenTo(this.collection, "reset", this.onCollectionReset);
+
+            dispatcher.on('reguiredValidation:fail', _.debounce(function(){
+                $('html, body').animate({ scrollTop: $('.WrongField:first').offset().top - 30 }, 'fast');
+            }, 300))
+
             this.listenTo(this.model, "change", this.onModelReset);
             RepeaterBase.prototype.initialize.call(this, this.options);
         },

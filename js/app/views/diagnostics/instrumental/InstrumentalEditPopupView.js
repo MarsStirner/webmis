@@ -294,7 +294,14 @@ define(function(require) {
 					view.close();
 					pubsub.trigger('instrumental-diagnostic:added');
 				},
-				error: function() {
+				error: function(a, b, c) {
+					var response = JSON.parse(b.responseText);
+					var errorMessage = response.errorMessage ? response.errorMessage : 'Ошибка при попытке сохранить направление';
+
+					pubsub.trigger('noty', {
+						text: errorMessage,
+						type: 'error'
+					});
 
 				}
 			});
