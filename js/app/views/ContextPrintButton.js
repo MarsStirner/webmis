@@ -26,9 +26,16 @@ define(function (require) {
             };
 
             this.printTemplates.each(function (printTemplate) {
-                items[printTemplate.get('id')] = {
-                    name: printTemplate.get('name')
-                };
+                var patt = /---/g;
+                var templateName = printTemplate.get('name');
+                var templateId =printTemplate.get('id');
+
+                if(!patt.test(templateName)){
+                    items[templateId] = {
+                        name: templateName
+                    };
+                }
+
             });
 
             console.log('get menu items', items);
