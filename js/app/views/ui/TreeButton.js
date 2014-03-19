@@ -19,7 +19,7 @@ define(function (require) {
 
         addMenu: function () {
             var self = this;
-
+            console.log('addMenu', this.cid)
 
             if (_.isEmpty(this.getMenuItems())) {
                 this.$el.find('button').button().button('disable');
@@ -27,6 +27,8 @@ define(function (require) {
             } else {
                 this.$el.find('button').button().button('enable');
             }
+            $.contextMenu( 'destroy');
+            // $.contextMenu( 'destroy', '#'+this.cid+ 'button');
 
             $.contextMenu({
                 className: 'webmis-menu',

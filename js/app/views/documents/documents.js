@@ -498,6 +498,7 @@ define(function (require) {
                     attr.value = attr.value.replace(/&quot;/g, '"');
                 }
             }, this);
+            console.log('attr', filledAttrs)
             return filledAttrs;
         },
 
@@ -4979,6 +4980,7 @@ define(function (require) {
 
         render: function () {
             ViewBase.prototype.render.call(this);
+            $.contextMenu('destroy')
             this.contextPrintButton.setElement(this.$('.context-print-button')).render();
 
             return this;

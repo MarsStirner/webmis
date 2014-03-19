@@ -36,10 +36,13 @@ define(function (require) {
                 }
             });
 
+
+        },
+        renderContextPrintButton: function(){
             this.contextPrintButton = new ContextPrintButton({
-                context: 'action_lab',
+                context: this.result.get('context'),
                 data: {
-                    action_id:this.result.id, 
+                    action_id:this.result.get('id'), 
                     event_id: this.options.appeal.get('id'),
                     context_type: 'action',
                     client_id: this.options.appeal.get('patient').get('id'),
@@ -51,15 +54,18 @@ define(function (require) {
                 }
             });
 
+            this.contextPrintButton.setElement(this.$el.find('.context-print-button'));
+            this.contextPrintButton.render();
+
 
         },
         events: {
-            "click .first": "first",
-            "click .prev": "prev",
-            "click .next": "next",
-            "click .last": "last",
+            // "click .first": "first",
+            // "click .prev": "prev",
+            // "click .next": "next",
+            // "click .last": "last",
             "click .extra": "extra",
-            "click .print": "print",
+            // "click .print": "print",
             "click .all": "openLabs"
         },
 
@@ -578,9 +584,7 @@ define(function (require) {
             self.$('.actions button').button();
             self.showPrintBtn(self.printOptions());
 
-            this.contextPrintButton.setElement(this.$el.find('.context-print-button'));
-            this.contextPrintButton.render();
-
+            this.renderContextPrintButton();
             this.$el.find("table.anti").delegate('td', 'mouseover mouseleave', function (e) {
                 if (e.type == 'mouseover') {
                     $(this).addClass("mouseover");
