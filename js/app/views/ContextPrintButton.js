@@ -49,10 +49,12 @@ define(function (require) {
         getRenderedPrintTemplate: function (id) {
             var data = this.options.data;
             data.id = id;
+            var url = DATA_PATH + 'print-by-context/';
+            // var url = 'http://192.168.1.123:5000/print_subsystem/print_template';
 
             $.ajax({
                 type: 'POST',
-                url: DATA_PATH + 'print-by-context/',
+                url: url,
                 dataType: 'html',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
