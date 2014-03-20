@@ -4779,6 +4779,7 @@ define(function (require) {
         },
 
         reviewDocumentAtIndex: function (index) {
+            var self = this;
             if (index >= 0 && index < this.options.documents.length) {
                 var documentListItem = this.options.documents.at(index);
                 var document = new Documents.Models.Document({
@@ -4787,7 +4788,22 @@ define(function (require) {
 
                 this.collection.reset([document]);
             } else {
-                //TODO: fetch next list page
+                var documents = this.options.documents;
+
+                var currentPage = documents.requestData.page;
+                var limit = documents.requestData.limit;
+                var total = documents.requestData.recordsCount;
+
+                var nextPage = (index < 0) ? (currentPage - 1) : (currentPage + 1);
+
+                index = (index < 0) ? (limit - 1) : 0;
+
+                if(nextPage > 0 && nextPage <= Math.ceil(total/limit)){
+                    documents.pageNumber = nextPage;
+                    documents.fetch().done(function(){
+                        self.reviewDocumentAtIndex(index);
+                    });
+                }
             }
         },
 
