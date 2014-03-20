@@ -100,6 +100,7 @@ define(function (require) {
             _base: _.template(require("text!templates/documents/edit/ui-elements/base.html")),
             _constructor: _.template(require("text!templates/documents/edit/ui-elements/constructor.html")),
             _text: _.template(require("text!templates/documents/edit/ui-elements/text.html")),
+            _table: _.template(require("text!templates/documents/edit/ui-elements/table.html")),
             _date: _.template(require("text!templates/documents/edit/ui-elements/date.html")),
             _time: _.template(require("text!templates/documents/edit/ui-elements/time.html")),
             _double: _.template(require("text!templates/documents/edit/ui-elements/double.html")),
@@ -3402,6 +3403,19 @@ define(function (require) {
     });
 
     /**
+     * Поле типа Table
+     * @type {*}
+     */
+    Documents.Views.Edit.UIElement.Table = UIElementBase.extend({
+        template: templates.uiElements._table,
+        data: function(){
+            var data = {};
+            return data; 
+        }
+    });
+
+
+    /**
      * Поле типа Double
      * @type {*}
      */
@@ -4641,6 +4655,9 @@ define(function (require) {
             break;
         case "person":
             this.UIElementClass = Documents.Views.Edit.UIElement.Person;
+            break;
+        case "table":
+            this.UIElementClass = Documents.Views.Edit.UIElement.Table;
             break;
         default:
             this.UIElementClass = Documents.Views.Edit.UIElement.Base;
