@@ -2027,9 +2027,9 @@ define(function (require) {
     Documents.Views.List.Examination.LayoutHistory = ListLayoutBase.extend({
         template: templates._listLayout,
 
-        getDefaultDocumentsMnems: function () {
-            return ["EXAM"];
-        },
+        // getDefaultDocumentsMnems: function () {
+        //     return ["EXAM"];
+        // },
 
         getReviewLayout: function () {
             return new Documents.Views.Review.Examination.NoControlsLayout({
