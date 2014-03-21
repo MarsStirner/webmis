@@ -32,7 +32,7 @@ gulp build
  ;date.timezone
  и заменить её на 
  date.timezone = Europe/Moscow
- ```
+```
 
  2) Установить расширение PDO для php:
 ```
