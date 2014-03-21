@@ -133,13 +133,16 @@ define([
                 
             var readyToSave = this.save(event, {
                 error: function () {
+                    console.log('error', arguments);
                     self.$(".Save").attr("disabled", false);
                 },
                 success: function(){
+                    console.log('success', arguments);
                     // self.$(".Save").attr("disabled", false);
                 }
             });
-            // console.log('readyToSave', readyToSave);
+            console.log('readyToSave', readyToSave);
+            this.$(".Save").attr("disabled", readyToSave);
         },
 
         onCancel: function (event) {
