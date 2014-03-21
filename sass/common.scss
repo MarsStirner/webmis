@@ -341,3 +341,10 @@ table.allborders{
 .mouseover{
     background-color: #d8d8d8!important;
 }
+.table-widget{
+    td,th{
+        border:1px solid #bbb;
+        padding:0.3em;
+        color:#444;
+    }
+}
