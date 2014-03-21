@@ -2154,3 +2154,10 @@ table.allborders td, table.allborders th {
 .mouseover {
   background-color: #d8d8d8!important;
 }
+
+/* line 345, ../sass/common.scss */
+.table-widget td, .table-widget th {
+  border: 1px solid #bbbbbb;
+  padding: 0.3em;
+  color: #444;
+}

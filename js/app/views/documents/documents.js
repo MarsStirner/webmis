@@ -3409,7 +3409,20 @@ define(function (require) {
     Documents.Views.Edit.UIElement.Table = UIElementBase.extend({
         template: templates.uiElements._table,
         data: function(){
-            var data = {};
+            var columns = this.model.get('scope').split(',');
+            var trs = this.model.get('tableValues');
+            // var trs = [
+            //     ["1", "NUUMBBER", "Плазма свежезамороженная, полученная автоматическим аферезом", "0(I)Rh-", "123", "456.0", "789"],
+            //     ["2", "NUUMBBER1", "Плазма свежезамороженная из дозы крови    Карантинизовано 6 месяцев", "B(III)Rh+", "77777", "8888.0", "99999"]
+            // ];
+
+            var data = {
+                name: this.model.get('name'),
+                columns: columns,
+                trs: trs
+            };
+
+            console.log('table',data, this);
             return data; 
         }
     });
