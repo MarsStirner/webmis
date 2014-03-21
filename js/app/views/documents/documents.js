@@ -1982,7 +1982,7 @@ define(function (require) {
 
             switch (type) {
             case "ALL":
-                mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH"];
+                mnems = ["EXAM", "EPI","CONS_POLY", "ORD", "JOUR", "NOT", "OTH"];
                 break;
             case "EVERYDAY":
                 codes = ['1_1_22'];
@@ -1994,6 +1994,10 @@ define(function (require) {
             case "EPI":
                 mnems = ["EPI"];
                 break;
+            case "CONS":
+                mnems = ["CONS_POLY"];
+                break;
+
             case "ORD":
                 mnems = ["ORD"];
                 break;
@@ -5360,7 +5364,7 @@ define(function (require) {
 
             switch (type) {
             case "ALL":
-                mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "THER", "EXAM_OLD", "JOUR_OLD"];
+                mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "CONS_POLY", "THER", "EXAM_OLD", "JOUR_OLD"];
                 break;
             case "EVERYDAY":
                 codes = ['3_02', '01_1'];
@@ -5379,7 +5383,7 @@ define(function (require) {
                 mnems = ["LAB"];
                 break;
             case "CONS":
-                mnems = ["CONS"];
+                mnems = ["CONS", "CONS_POLY"];
                 break;
             case "DIAG":
                 mnems = ["DIAG"];
@@ -5429,7 +5433,7 @@ define(function (require) {
         },
 
         getDefaultDocumentsMnems: function () {
-            return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "LAB", "DIAG", "THER", "EXAM_OLD", "JOUR_OLD"];
+            return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "CONS_POLY", "LAB", "DIAG", "THER", "EXAM_OLD", "JOUR_OLD"];
         },
         getEditPageTypeName: function () {
             return "summary";
