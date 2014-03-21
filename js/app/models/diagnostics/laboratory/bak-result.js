@@ -9,16 +9,25 @@ define(["models/model-base"], function (ModelBase) {
             var organisms = this.get('organismResults');
             var antibiotics = [];
 
+            if(_.isEmpty(organisms)){
+                return false;
+            }
+
             _.each(organisms, function (organism) {
                 var sensValues = organism.sensValues;
-                _.each(sensValues, function (sensValue) {
-                    var antibiotic = {
-                        name: sensValue.antibiotic.name,
-                        code: sensValue.antibiotic.code,
-                        organisms: []
-                    };
-                    antibiotics.push(antibiotic);
-                });
+
+                if(!_.isEmpty(sensValues)){
+
+                    _.each(sensValues, function (sensValue) {
+                        var antibiotic = {
+                            name: sensValue.antibiotic.name,
+                            code: sensValue.antibiotic.code,
+                            organisms: []
+                        };
+                        antibiotics.push(antibiotic);
+                    });
+                
+                }
 
             });
 
@@ -27,7 +36,6 @@ define(["models/model-base"], function (ModelBase) {
             });
 
             _.each(antibiotics, function(antibiotic){
-                console.log(antibiotic);
                 _.each(organisms, function (organism) {
 
                     var sensValues = organism.sensValues;
@@ -42,7 +50,7 @@ define(["models/model-base"], function (ModelBase) {
                 });
             });
 
-            console.log('antibiotics', antibiotics);
+            // console.log('antibiotics', antibiotics);
 
             return {rows: antibiotics};
         }
