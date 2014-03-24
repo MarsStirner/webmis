@@ -71,11 +71,11 @@ define(function(require) {
 
 			"aftereffectMkb": {
 				priority: 6,
-				title: "Сопутствующий к направительному"
+				title: "Осложнения к направительному"
 			},
 			"attendantMkb": {
 				priority: 7,
-				title: "Осложнения к направительному"
+				title: "Сопутствующий к направительному"
 			},
 			"mainDiagMkbPat": {
 				priority: 8,
