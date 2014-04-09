@@ -4,7 +4,7 @@ define(function (require) {
 
     var Intervals = require('views/prescriptions/collections/Intervals');
     var Prescriptions = require('views/prescriptions/collections/Prescriptions');
-    var PrintButton = require('views/prescriptions/views/PrintButton');
+    var PrintButton = require('views/prescriptions/views/PrintPrescriptionButton');
     // var PrintButton = require('views/prescriptions/views/TreeButton');
 
     return BaseView.extend({
@@ -25,7 +25,7 @@ define(function (require) {
             this.addSubViews({
                 '.print-button': this.printButton
             });
-console.log('init actions', this);
+// console.log('init actions', this);
 
         },
 

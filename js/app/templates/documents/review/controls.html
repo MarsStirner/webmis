@@ -9,28 +9,10 @@
 	<div class="pull-right">
 		<%if (selectedDocuments.length == 1) {%>
 			<button type="button" class="print-documents single-page review-nav" data-icon-primary="icon-print">Печать</button>
+            <span class="context-print-button">	
+                <button type="button" class="" data-icon-primary="icon-print">Печать new</button>
+            </span>
 		<%} else {%>
-		<!--<div class="buttonset">
-			<button data-icon-primary="icon-print">Печать</button>
-			<button class="show-print-options" data-icon-primary="icon-caret-down" data-notext="true">Варианты</button>
-		</div>
-		<ul class="print-options" style="position: absolute;">
-			<li>
-				<a href="#" class="Print" data-print-template="consent_to_the_examination" data-print-data="patient">Согласие на обследование ВИЧ</a>
-			</li>
-			<li>
-				<a href="#" class="Print" data-print-template="consent_to_treatment_representative" data-print-data="patient">Согласие на обследование и лечение (представитель)</a>
-			</li>
-			<li>
-				<a href="#" class="Print" data-print-template="consent_to_treatment" data-print-data="patient">Согласие пациента на обследование и лечение пациент</a>
-			</li>
-			<li>
-				<a href="#" class="Print" data-print-template="consent_to_the_processing" data-print-data="patient">Согласие субъекта на обработку персональных данных пациент</a>
-			</li>
-			<li>
-				<a href="#" class="Print" data-print-template="consent_to_the_processing_representative" data-print-data="patient">Согласие субъекта на обработку персональных данных (представитель)</a>
-			</li>
-		</ul>-->
 			<button type="button" class="print-documents single-page review-nav" data-icon-primary="icon-print">Печатать вместе</button>
 			<button type="button" class="print-documents multiple-pages review-nav" data-icon-primary="icon-print">Печатать раздельно</button>
 		<%}%>

@@ -43,6 +43,7 @@ define(function(require) {
 		},
 
 		tearDown: function() {
+            console.log('tearDown')
 			this.tearDownSubviews();
 			this.stopListening();
 			this.undelegateEvents();

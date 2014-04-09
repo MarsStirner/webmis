@@ -142,6 +142,7 @@ define(function (require) {
 
     var TherapiesCollection = require('collections/therapy/Therapies');
 
+    var ContextPrintButton = require('views/ContextPrintButton');
     /*var FDLoader = {
 		fds: {},
 		get: function (id, cb, context) {
@@ -499,6 +500,7 @@ define(function (require) {
                     attr.value = attr.value.replace(/&quot;/g, '"');
                 }
             }, this);
+            console.log('attr', filledAttrs)
             return filledAttrs;
         },
 
@@ -4922,6 +4924,38 @@ define(function (require) {
      * @type {*}
      */
     Documents.Views.Review.Base.Controls = ViewBase.extend({
+        initialize: function (options) {
+            console.log('init controls')
+            this.listenTo(this.collection, 'change reset',this.onDocCollectionChange);
+
+            this.contextPrintButton = new ContextPrintButton({
+                docCollection: this.collection,
+                data: {
+                    event_id: appeal.get('id'),
+                    context_type: 'action',
+                    client_id: appeal.get('patient').get('id'),
+                    additional_context: {
+                        currentOrgStructure: '',
+                        currentOrganisation: 3479,
+                        currentPerson: Core.Cookies.get('userId')
+                    }
+                }
+            });
+
+            this.subViews = {
+                '.context-print-button': this.contextPrintButton
+            };
+
+        },
+
+        onDocCollectionChange: function(){
+                console.log('cr', arguments,(new Date()).getTime())
+                var firstDoc = this.collection.first();
+                this.contextPrintButton.options.data.action_id = firstDoc.get('id');
+                this.contextPrintButton.getTemplatesForContext(firstDoc.get('context'));
+            
+        },
+
         template: templates._reviewControls,
 
         data: function () {
@@ -4935,6 +4969,7 @@ define(function (require) {
             "click .back-to-document-list": "onBackToDocumentListClick",
             "click .next-document": "onNextDocumentClick",
             "click .prev-document": "onPrevDocumentClick",
+            // "click .print-documents.context-print-button": "onPrintContextClick",
             "click .print-documents.single-page": "onPrintDocumentsSinglePageClick",
             "click .print-documents.multiple-pages": "onPrintDocumentsMultiplePagesClick"
         },
@@ -4963,6 +4998,8 @@ define(function (require) {
         onPrevDocumentClick: function () {
             this.collection.trigger("review:prev");
         },
+
+        onPrintContextClick: function (e) {},
 
         onPrintDocumentsSinglePageClick: function () {
             new App.Views.Print({
@@ -5009,51 +5046,17 @@ define(function (require) {
                         execPerson: appeal.get("execPerson")
                     };
 
-
-                    /*var pointType = _(data.attributes).where({id: 96});
-
-					 if (pointType.length) {
-					 var pointTypeId = pointType[0].value;
-					 var directoryValue = _(this.hospitalizationPointTypes.toBeautyJSON()).find(function (type) {
-					 return type.id == pointTypeId;
-					 });
-					 if (directoryValue) {
-					 _(data.attributes).where({id: 96})[0].value = directoryValue['49'];
-					 //pointType.value = directoryValue['49'];
-					 }
-					 }*/
                 }, this)
             };
         },
 
         render: function () {
             ViewBase.prototype.render.call(this);
+            $.contextMenu('destroy')
+            this.contextPrintButton.setElement(this.$('.context-print-button')).render();
 
-            /*this.$(".buttonset").buttonset();
-			 this.$(".print-options").hide().menu();
-			 this.$(".show-print-options").on("click", _.bind(function () {
-			 this.$(".print-options").show().position({
-			 my: "right top",
-			 at: "left bottom",
-			 of: this.$(".show-print-options")
-			 });
-			 }, this));*/
-        }
-
-        /*initialize: function () {
-		 this.listenTo(this.collection, "reset", this.onCollectionReset);
-		 },
-
-		 tearDown: function () {
-		 this.tearDownSubviews();
-		 this.stopListening(this.collection, "reset", this.onCollectionReset);
-		 this.undelegateEvents();
-		 this.remove();
-		 },
-
-		 onCollectionReset: function () {
-
-		 }*/
+            return this;
+        },
     });
 
     /**
