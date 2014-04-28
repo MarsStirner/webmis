@@ -1367,7 +1367,8 @@ define(function (require) {
             "click .duplicate-document": "onDuplicateDocumentClick",
             "click .edit-document": "onEditDocumentClick",
             "click .single-item-select": "onItemClick",
-            "click th.sortable": "onThSortableClick"
+            "click th.sortable": "onThSortableClick",
+            "click .remove-document": "onRemoveDocumentClick"
         },
 
         data: function () {
@@ -1435,6 +1436,24 @@ define(function (require) {
                     mode: "SUB_EDIT",
                     options: {
                         templateId: $(event.currentTarget).data('template-id')
+                    }
+                });
+            }
+        },
+
+        onRemoveDocumentClick: function (event) {
+            var documentsCollection = this.collection;
+            var actionId = $(event.currentTarget).data('document-id');
+            var eventId = documentsCollection.get(actionId).appealId;
+            if (confirm("Удалить документ \""+documentsCollection.get(actionId).get('assessmentName').name+"\"?")){
+                $.ajax({
+                    url: '/data/appeals/'+eventId+'/documents/'+actionId,
+                    type: 'DELETE',
+                    success: function() {
+                       documentsCollection.fetch();
+                    },
+                    error: function(res, type) {
+                        pubsub.trigger('noty', {text: JSON.parse(res.responseText).errorMessage, type: 'error'});
                     }
                 });
             }

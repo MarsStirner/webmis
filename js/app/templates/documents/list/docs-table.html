@@ -20,6 +20,13 @@
                 <a class="duplicate-document" data-template-id="<%=document.get('typeId')%>" style="margin-left: .5em"><i class="icon-copy" title="Дублировать"></i></a>
             <%}%>
         <%}%>
+
+        <%if (document.get('doctor').id == Core.Cookies.get('userId')) {%>
+            <%if (!document.get('closeDate')) {%>
+                <a class="remove-document" data-document-id="<%=document.id%>" style="margin-left: .5em"><i class="icon-remove" title="Удалить"></i></a>
+            <%}%>    
+        <%}%>
+
     </td>
 </tr>
 <%});%>
