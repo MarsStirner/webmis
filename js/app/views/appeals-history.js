@@ -41,7 +41,7 @@ define(["collections/appeals"], function ()
 		tagName: "li",
 
 		template:
-			'<a href="/appeals/${id}/">№ ${number}</a>' +
+			'<a href="/appeals/${id}/">№ ${number}</a><span class="Label" style="float:right">${finance.name}</span>' +
 			'<span class="Label">{{formatDate rangeAppealDateTime.start}}{{if rangeAppealDateTime.end}} — {{formatDate rangeAppealDateTime.end}}{{/if}}</span>' +
 			'{{if department && department.name}}<span>${department.name}</span>{{/if}}' +
 			'{{if execPerson.doctor && execPerson.doctor.name}}' +

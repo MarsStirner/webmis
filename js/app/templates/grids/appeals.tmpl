@@ -296,6 +296,9 @@
 					<a class="Actions SortCol" data-field="number"><span>Номер ИБ</span></a>
 				</th>
 				<th>
+					<a class="Actions SortCol" data-field="finance"><span>Источник финансирования</span></a>
+				</th>
+				<th>
 					<a class="Actions SortCol" data-field="start"><span>Дата начала</span></a>
 				</th>
 				<th>
@@ -323,6 +326,13 @@
 			<a href="/appeals/${id}/"  class="open-appeal"></a>
 			{{if number}}
 				${number}
+			{{else}}
+				-
+			{{/if}}
+		</td>
+		<td>
+			{{if finance}}
+				${finance.name}
 			{{else}}
 				-
 			{{/if}}
