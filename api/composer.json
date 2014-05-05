@@ -8,11 +8,11 @@
         "symfony/console": "~2.3",
         "monolog/monolog": "1.5.*",
         "symfony/stopwatch": "2.3.*",
-        "cubex/thrift": "dev-master"
+        "packaged/thrift": "0.9.0"
     },
     "repositories": [{
             "type":"git",
-            "url":"https://github.com/qbex/thrift"
+            "url":"https://github.com/packaged/thrift"
         }],
     "autoload": {
         "psr-0": {
