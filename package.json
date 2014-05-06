@@ -1,6 +1,6 @@
 {
   "name": "webmis",
-  "version": "1.3.25",
+  "version": "1.3.26",
   "devDependencies": {
     "gulp-replace": "~0.2.0",
     "gulp": "~3.5.2",
