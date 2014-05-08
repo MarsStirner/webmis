@@ -144,17 +144,17 @@ define(function (require) {
 
     var ContextPrintButton = require('views/ContextPrintButton');
     /*var FDLoader = {
-		fds: {},
-		get: function (id, cb, context) {
-			if (!this.fds[id]) {
-				var directoryEntries = new FlatDirectory();
-				directoryEntries.set({id: id});
-				$.when(this.directoryEntries.fetch()).then(cb);
-			}
+        fds: {},
+        get: function (id, cb, context) {
+            if (!this.fds[id]) {
+                var directoryEntries = new FlatDirectory();
+                directoryEntries.set({id: id});
+                $.when(this.directoryEntries.fetch()).then(cb);
+            }
 
-			return this.fds[id] ;
-		}
-	};*/
+            return this.fds[id] ;
+        }
+    };*/
     //endregion
 
 
@@ -2173,9 +2173,9 @@ define(function (require) {
         render: function (subViews) {
             return ListLayoutBase.prototype.render.call(this, _.extend({
                 /*".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
-					collection: this.documents,
-					included: !!this.options.included
-				}),*/
+                    collection: this.documents,
+                    included: !!this.options.included
+                }),*/
                 ".documents-table-body": new Documents.Views.List.Therapy.DocumentsTable({
                     collection: this.documents,
                     selectedDocuments: this.selectedDocuments,
@@ -2250,7 +2250,6 @@ define(function (require) {
 
         initialize: function () {
             LayoutBase.prototype.initialize.call(this, this.options);
-            console.log('init edit', this);
             if (!this.model) {
                 if (this.options.templateId || this.options.mode === "SUB_NEW" && this.options.subId) {
                     this.model = new Documents.Models.DocumentTemplate({
@@ -2263,7 +2262,7 @@ define(function (require) {
                 } else {
                     console.error("Oops! No template or document id!");
                     /*App.Router.updateUrl(["appeals", appealId, this.options.editPageTypeName, "new", 139].join("/"));
-					dispatcher.trigger("change:viewState", {type: "documents", mode: "REVIEW"});*/
+                    dispatcher.trigger("change:viewState", {type: "documents", mode: "REVIEW"});*/
                 }
             }
 
@@ -2274,10 +2273,49 @@ define(function (require) {
 
             //$.when(layoutAttributesDir.fetch(), therapiesCollection.fetch()).then(_.bind(function () {
             $.when(layoutAttributesDir.fetch()).then(_.bind(function () {
-                this.model.fetch();
+                var self = this;
+                this.model.fetch({
+                    success: function() {
+                        self.getAutosavedFields();
+                    }
+                });
             }, this));
 
             this.listenTo(this.model, "toggle:dividedState", this.toggleDividedState);
+        },
+
+        getAutosavedFields: function() {
+            var self = this;
+            $.ajax({
+               type: 'GET',
+                url: '/data/autosave/doc_'+this.model.id,
+                dataType: 'json',
+                accept:'application/json',
+                success: function(data) {
+                    if (data.text) {
+                        if (confirm("Восстановить несохранённые данные документа?")) {
+                            var fields = $.parseJSON(data.text);
+                            self.fillAutosavedFields(fields);
+                        }
+                    }
+                }
+            });
+        },
+
+        fillAutosavedFields: function (fields) {
+            $.each(fields, function(typeid, value) {
+                var attributeValueEl = $('div[data-typeid="'+typeid+'"] .attribute-value');
+                if ($(attributeValueEl).is(".RichText")) {
+                    $(attributeValueEl).html(value);
+                } else {
+                    $(attributeValueEl).val(value);
+                }
+                $('div[data-typeid="'+typeid+'"] .field-toggle:not(:checked)').click();
+            });
+            pubsub.trigger('noty', {
+                text: 'Восстановлены данные несохранённого документа.',
+                type: 'information'
+            });
         },
 
         toggleDividedState: function (enabled) {
@@ -2403,8 +2441,8 @@ define(function (require) {
         render: function (subViews) {
             return ViewBase.prototype.render.call(this, _.extend({
                 /*".new-document-controls": new Documents.Views.Edit.Common.Controls({
-				 editPageTypeName: this.getEditPageTypeName()
-				 }),*/
+                 editPageTypeName: this.getEditPageTypeName()
+                 }),*/
                 ".nav-controls": new Documents.Views.Edit.NavControls({
                     model: this.model
                 }),
@@ -2444,10 +2482,10 @@ define(function (require) {
         onToggleDividedStateClick: function () {
             this.model.trigger("toggle:dividedState");
             /*if (this.$(".toggle-divided-state .ui-button-text").text() == "История") {
-			 this.$(".toggle-divided-state .ui-button-text").text("Скрыть историю");
-			 } else {
-			 this.$(".toggle-divided-state .ui-button-text").text("История");
-			 }*/
+             this.$(".toggle-divided-state .ui-button-text").text("Скрыть историю");
+             } else {
+             this.$(".toggle-divided-state .ui-button-text").text("История");
+             }*/
         },
 
         onCopyFromClick: function () {
@@ -2637,11 +2675,11 @@ define(function (require) {
         //,
 
         /*render: function () {
-		 PopUpBase.prototype.render.call(this);
-		 var documentsTable = new Documents.Views.List.Base.DocumentsTable({collection: this.collection});
-		 this.subViews = [documentsTable];
-		 documentsTable.setElement(this.el).render();
-		 }*/
+         PopUpBase.prototype.render.call(this);
+         var documentsTable = new Documents.Views.List.Base.DocumentsTable({collection: this.collection});
+         this.subViews = [documentsTable];
+         documentsTable.setElement(this.el).render();
+         }*/
     });
 
     //Управление сохранением документа
@@ -2666,11 +2704,13 @@ define(function (require) {
         },
 
         onCancelClick: function (event) {
+            this.deleteAutosavedFields();
             this.returnToList();
         },
 
         onSaveDocumentSuccess: function (result) {
             var resultId = result.id || result.data[0].id;
+            this.deleteAutosavedFields();
             this.goToDocReview(resultId);
         },
 
@@ -2735,6 +2775,13 @@ define(function (require) {
             });
         },
 
+        deleteAutosavedFields: function() {
+            $.ajax({
+               type: 'DELETE',
+                url: '/data/autosave/doc_'+this.model.id
+            });
+        },
+
         render: function (subViews) {
             ViewBase.prototype.render.call(this, subViews);
             this.$(".save-btns-container").buttonset();
@@ -2780,8 +2827,8 @@ define(function (require) {
         render: function () {
             return Documents.Views.Edit.Base.Layout.prototype.render.call(this, {
                 /*".new-document-controls": new Documents.Views.Edit.Examination.Controls({
-					editPageTypeName: this.getEditPageTypeName()
-				}),*/
+                    editPageTypeName: this.getEditPageTypeName()
+                }),*/
                 ".document-controls-top": new Documents.Views.Edit.Examination.DocControls({
                     model: this.model
                 }),
@@ -2822,11 +2869,11 @@ define(function (require) {
     //---------------------
     Documents.Views.Edit.Therapy.Layout = Documents.Views.Edit.Base.Layout.extend({
         /*initialize: function () {
-			Documents.Views.Edit.Common.Layout.prototype.initialize.call(this, this.options);
-			this.documentTypes = new Documents.Collections.DocumentTypes();
-			this.documentTypes.mnems = ["THER"];
-			this.documentTypes.fetch();
-		},*/
+            Documents.Views.Edit.Common.Layout.prototype.initialize.call(this, this.options);
+            this.documentTypes = new Documents.Collections.DocumentTypes();
+            this.documentTypes.mnems = ["THER"];
+            this.documentTypes.fetch();
+        },*/
         getListLayoutHistory: function () {
             return new Documents.Views.List.Therapy.LayoutHistory({
                 included: true
@@ -2836,9 +2883,9 @@ define(function (require) {
         render: function () {
             return Documents.Views.Edit.Base.Layout.prototype.render.call(this, {
                 /*".new-document-controls": new Documents.Views.Edit.Therapy.Controls({
-					documentTypes: this.documentTypes,
-					editPageTypeName: this.getEditPageTypeName()
-				}),*/
+                    documentTypes: this.documentTypes,
+                    editPageTypeName: this.getEditPageTypeName()
+                }),*/
                 ".document-controls-top": new Documents.Views.Edit.Therapy.DocControls({
                     model: this.model
                 }),
@@ -3004,7 +3051,8 @@ define(function (require) {
         events: {
             "change .attribute-value": "onAttributeValueChange",
             "input [contenteditable].attribute-value": "onAttributeValueChange",
-            "change .field-toggle": "onFieldToggleChange"
+            "change .field-toggle": "onFieldToggleChange",
+            "keyup .attribute-value": "onAttributeKeyUp"
         },
 
         data: function () {
@@ -3026,7 +3074,7 @@ define(function (require) {
             this.listenTo(this.model, "copy", this.onModelCopy);
             this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
             this.$el.addClass("span" + this.layoutAttributes.width);
-            // console.log('init ui el', this);
+            this.$el.attr("data-typeid", this.model.get("typeId"));
         },
 
         mapLayoutAttributes: function () {
@@ -3052,6 +3100,17 @@ define(function (require) {
             }
         },
 
+        getDocTypeId: function() {
+            console.log(this.model);
+            var typePath = window.location.pathname.split('/');
+            if (typePath[typePath.length-1] == 'edit') {
+               return typePath[typePath.length-2]; 
+            } else {
+                return typePath[typePath.length-1];
+            }
+            
+        },
+
         setAttributeValue: function () {
             var $attributeValueEl = this.$(".attribute-value");
             var value = this.model.getValue();
@@ -3062,10 +3121,46 @@ define(function (require) {
             }
         },
 
+        setAutosavedFields: function() {
+            var fields = {};
+            $.each($(".document-grid .span6"), function(){
+                var field = $(this).find(".attribute-value")[0];
+                var fieldValue = "";
+                if ($(field).is(".RichText")) {
+                    fieldValue = $(field).html();
+                } else {
+                    fieldValue = $(field).val();
+                }
+                if (fieldValue) {
+                    fields[$(this).data("typeid")] = fieldValue;
+                }
+            });
+            var docTypeId = this.getDocTypeId();
+            var dataToSend = {
+                "id": "doc_"+docTypeId,
+                "text": JSON.stringify(fields)
+            };
+            $.ajax({
+               type: 'POST',
+                url: '/data/autosave/',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(dataToSend)
+            });
+        },
+
         onAttributeValueChange: function (event) {
-            //console.log('onAttributeValueChange',this.getAttributeValue());
             this.model.setValue(this.getAttributeValue());
             this.$(".Mandatory").removeClass("WrongField");
+            if (!$(event.target).is(".RichText")) {
+                this.setAutosavedFields();
+            }
+        },
+
+        onAttributeKeyUp: function (event) {
+            if (event.keyCode == 32) {
+                this.setAutosavedFields();
+            }
         },
 
         onRequiredValidationFail: function () {
@@ -3108,9 +3203,9 @@ define(function (require) {
             var therapyFieldCode = this.model.get("therapyFieldCode");
             switch (therapyFieldCode) {
                 /*case "therapyPhaseTitle":
-					this.$(".wysisyg").remove();
-					this.$(".RichText").css({"min-height": "2.25em"});
-					break;*/
+                    this.$(".wysisyg").remove();
+                    this.$(".RichText").css({"min-height": "2.25em"});
+                    break;*/
                 //case "therapyPhaseBegDate":
             case "therapyPhaseDay":
                 //case "therapyPhaseEndDate":
@@ -3189,13 +3284,13 @@ define(function (require) {
 
         //,
         /*initialize: function () {
-			this.model.convertValueToHtml();
-			UIElementBase.prototype.initialize.call(this, this.options);
-		},*/
+            this.model.convertValueToHtml();
+            UIElementBase.prototype.initialize.call(this, this.options);
+        },*/
         /*onModelCopy: function () {
-			this.model.convertValueToHtml();
-			UIElementBase.prototype.onModelCopy.call(this);
-		}*/
+            this.model.convertValueToHtml();
+            UIElementBase.prototype.onModelCopy.call(this);
+        }*/
     });
 
     /**
@@ -3216,8 +3311,8 @@ define(function (require) {
         },
 
         /*onBlur: function () {
-			wysisyg.hide();
-		},*/
+            wysisyg.hide();
+        },*/
 
         onThesaurusOpenClick: function (event) {
             event.preventDefault();
@@ -3517,8 +3612,8 @@ define(function (require) {
         },
 
         /*initialize: function () {
-			this.model.cleanValue();
-		},*/
+            this.model.cleanValue();
+        },*/
 
         setAttributeValue: function () {
             var data = this.data();
@@ -3795,8 +3890,8 @@ define(function (require) {
                                     plannedEndDate: item.get("plannedEndDate"),
                                     tests: tests
                                     /*.map(function (rdi) {
-										return rdi.toJSON();
-									})*/
+                                        return rdi.toJSON();
+                                    })*/
                                 });
                             }
                         }
@@ -3864,10 +3959,10 @@ define(function (require) {
                 });
             }, this);
             /*this.$(".helper-items-grid .helper-item-checker").each(function () {
-				$(this)
-					.prop("checked", $(event.currentTarget).prop("checked"));
-					//.click();
-			});*/
+                $(this)
+                    .prop("checked", $(event.currentTarget).prop("checked"));
+                    //.click();
+            });*/
         },
         render: function () {
             return ViewBase.prototype.render.call(this, {
@@ -3889,6 +3984,7 @@ define(function (require) {
         initialize: function () {
             ViewBase.prototype.initialize.call(this, this.options);
             if (this.model) {
+                console.log(this.model);
                 this.model.checked = false;
                 this.listenTo(this.model.resultData, "attr:checked", function (event) {
                     if (event.checkedState === "checked") {
@@ -4176,8 +4272,8 @@ define(function (require) {
                     this.resultData.reset(tests);
 
                     /*this.set({
-						resultData: tests
-					});*/
+                        resultData: tests
+                    });*/
 
                 }, this));
 
@@ -4222,8 +4318,8 @@ define(function (require) {
                     this.resultData.reset(tests);
 
                     /*this.set({
-						resultData: tests
-					});*/
+                        resultData: tests
+                    });*/
 
                 }, this));
 
@@ -4264,8 +4360,8 @@ define(function (require) {
                     this.resultData.reset(tests);
 
                     /*this.set({
-						resultData: tests
-					});*/
+                        resultData: tests
+                    });*/
 
                 }, this));
 
@@ -4289,15 +4385,15 @@ define(function (require) {
 
                 promise.done(_.bind(function () {
                     /*var tests = [];
-					if (this.result.get('group')) {
-						var group_1 = (this.result.get('group'))[1].attribute;
-						_.each(group_1, function (item) {
-							tests.push({
-								name: item.name,
-								value: this.result.getPropertyByName(item.name, 'value') || ""
-							});
-						}, this);
-					}*/
+                    if (this.result.get('group')) {
+                        var group_1 = (this.result.get('group'))[1].attribute;
+                        _.each(group_1, function (item) {
+                            tests.push({
+                                name: item.name,
+                                value: this.result.getPropertyByName(item.name, 'value') || ""
+                            });
+                        }, this);
+                    }*/
 
                     //console.log(this.result.getFilledAttrs());
 
@@ -4315,8 +4411,8 @@ define(function (require) {
                     this.resultData.reset(fas);
 
                     /*this.set({
-						resultData: tests
-					});*/
+                        resultData: tests
+                    });*/
 
                 }, this));
 
@@ -4411,9 +4507,9 @@ define(function (require) {
                 defaultMnems: ["THER"]
             });
             /*thers.setParams({
-				sortingField: "plannedEndDate",
-				sortingMethod: "desc"
-			});*/
+                sortingField: "plannedEndDate",
+                sortingMethod: "desc"
+            });*/
 
             return [{
                 title: "Лечение",
@@ -4594,11 +4690,11 @@ define(function (require) {
         },
         mapLayoutAttributes: UIElementBase.prototype.mapLayoutAttributes
         /*,
-		render: function () {
-			ViewBase.prototype.render.call(this);
-			//this.$el.parent().prepend(this.$el.detach());
-			return this;
-		}*/
+        render: function () {
+            ViewBase.prototype.render.call(this);
+            //this.$el.parent().prepend(this.$el.detach());
+            return this;
+        }*/
     });
 
     Documents.Views.Edit.UIElement.SubHeaderVGroup = Documents.Views.Edit.UIElement.SubHeader.extend({
@@ -5418,7 +5514,7 @@ define(function (require) {
                 break;
             case "NOT":
                 mnems = ["NOT"];
-                // 	break;
+                //  break;
             case "OTH":
                 mnems = ["OTH"];
                 break;
