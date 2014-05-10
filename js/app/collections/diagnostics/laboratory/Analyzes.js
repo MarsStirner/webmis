@@ -7,8 +7,18 @@ define(function(require) {
 
 		model: LabTest,
 
+		orgStructFilter: '&filter[orgStruct]=1',
+
+		getOrgStructFilter: function() {
+            if (!Core.Cookies.get('userDepartmentId')) {
+                return "&filter[orgStruct]=0";
+            } else {
+                return this.orgStructFilter;
+            }
+        },
+
 		url: function() {
-			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=LAB&filter[mnem]=BAK_LAB";
+			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=LAB&filter[mnem]=BAK_LAB" + this.getOrgStructFilter();
 
 			return path;
 		},
@@ -92,6 +102,11 @@ define(function(require) {
 				this.reset(this.originalModels);
 			}
 
+		},
+
+		setOrgStructFilter: function(value) {
+			this.orgStructFilter = "&filter[orgStruct]="+value;
+            this.fetch();
 		},
 
 		parse: function(raw) {

@@ -845,6 +845,16 @@ define(function (require) {
 
         lastCriteria: "",
 
+        orgStructFilter: "filter[orgStruct]=1",
+
+        getOrgStructFilter: function() {
+            if (!Core.Cookies.get('userDepartmentId')) {
+                return "filter[orgStruct]=0";
+            } else {
+                return this.orgStructFilter;
+            }
+        },
+
         url: function () {
             //filter[view]=tree
             var url = DATA_PATH + "dir/actionTypes/?filter[view]=tree&";
@@ -856,7 +866,7 @@ define(function (require) {
                 });
             }
 
-            return url + params.join("&");
+            return url + params.join("&") + "&" + this.getOrgStructFilter();
         },
 
         extractResult: function (groups, result, criteriaRE, testTargetProp) {
@@ -901,6 +911,11 @@ define(function (require) {
             var result = [];
             this.extractResult(this.originalModels, result, new RegExp(flatCode, "gi"), "flatCode");
             return result[0];
+        },
+
+        setOrgStructFilter: function(value) {
+            this.orgStructFilter = "filter[orgStruct]="+value;
+            this.fetch();
         },
 
         comparator: function (model) {
@@ -1793,13 +1808,21 @@ define(function (require) {
         },
         events: {
             "keyup .document-type-search": "onDocumentTypeSearchKeyup",
-            "change .document-type-mnem": "onDocumentTypeMnemChange"
+            "change .document-type-mnem": "onDocumentTypeMnemChange",
+            "change .document-type-filter-orgstruct": "onDocumentTypeFilterOrgStructToggle"
         },
         onDocumentTypeSearchKeyup: function (event) {
             this.applySearchFilter($(event.currentTarget).val());
         },
         onDocumentTypeMnemChange: function (event) {
             this.collection.searchByMnem($(event.currentTarget).val().split(","));
+        },
+        onDocumentTypeFilterOrgStructToggle: function(event) {
+            if ($(event.target).attr('checked')){
+                this.collection.setOrgStructFilter('1');
+            } else {
+                this.collection.setOrgStructFilter('0');
+            }
         },
         applySearchFilter: function (criteria) {
             this.collection.search(criteria);
@@ -1810,6 +1833,11 @@ define(function (require) {
                     collection: this.collection
                 })
             });
+
+            if (!Core.Cookies.get('userDepartmentId')) {
+                this.$el.find('.document-type-filter-orgstruct').attr('disabled', 'disabled').removeAttr('checked');
+            }
+
             setTimeout(_.bind(function () {
                 this.$(".document-type-search").focus();
             }, this), 100);

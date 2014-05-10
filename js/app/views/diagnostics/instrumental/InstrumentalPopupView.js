@@ -28,6 +28,7 @@ define(function (require) {
         events: {
             'click #assigner-outer': 'openAssignerSelectPopup',
             'click #executor-outer': 'openExecutorSelectPopup',
+            'click .document-type-filter-orgstruct': 'onDocumentTypeFilterOrgStructToggle',
             'change input[name=urgent]': 'onChangeUrgentInput',
             'change #finance': 'onChangeFinanceInput',
             'change #plannedTime': 'onChangePlannedTimePicker',
@@ -213,6 +214,14 @@ define(function (require) {
             this.viewModel.set('plannedDay', plannedDate);
         },
 
+        onDocumentTypeFilterOrgStructToggle: function(event) {
+            if ($(event.target).attr('checked')){
+                this.viewModel.instrumntalGroups.setOrgStructFilter('1');
+            } else {
+                this.viewModel.instrumntalGroups.setOrgStructFilter('0');
+            }
+        },
+
         validateForm: function () {
             var errors = this.viewModel.validateModel(this.viewModel.toJSON());
 
@@ -332,7 +341,9 @@ define(function (require) {
             view.renderNested(this.bfView, '.bottom-form');
             view.researchGroupsListView.setElement(this.$el.find('.instrumental-groups'));
             view.researchListView.setElement(this.$el.find('.instrumental-researchs'));
-
+            if (!Core.Cookies.get('userDepartmentId')) {
+                this.$el.find('.document-type-filter-orgstruct').attr('disabled', 'disabled').removeAttr('checked');
+            }
             return this;
         },
         afterRender: function () {

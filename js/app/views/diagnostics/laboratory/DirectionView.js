@@ -30,9 +30,10 @@ define(function(require) {
 			'click .ShowHidePopup': 'close',
 			'click #assigner-outer': 'openAssignerSelectPopup',
 			'click #executor-outer': 'openExecutorSelectPopup',
+			'click .document-type-filter-orgstruct': 'onDocumentTypeFilterOrgStructToggle',
 			'change #start-time': 'validateForm',
 			'change #start-date': 'validateForm',
-			'keyup #tree-search': 'onSearchKeyup',
+			'keyup #tree-search': 'onSearchKeyup'
 		},
 		detach_event: function(e_name) {
 			delete this.events[e_name];
@@ -168,6 +169,15 @@ define(function(require) {
 
 			this.analyzes.search($target.val());
 		},
+
+		onDocumentTypeFilterOrgStructToggle: function(event) {
+			if ($(event.target).attr('checked')){
+                this.analyzes.setOrgStructFilter('1');
+            } else {
+                this.analyzes.setOrgStructFilter('0');
+            }
+		},
+
 		validateForm: function() {
 			var errors = this.isValid();
 			this.saveButton(!errors.length);
@@ -408,6 +418,10 @@ define(function(require) {
 			pubsub.trigger('lab:click');
 
 
+			if (!Core.Cookies.get('userDepartmentId')) {
+				this.$el.find('.document-type-filter-orgstruct').attr('disabled', 'disabled').removeAttr('checked');
+			}
+
 			view.appealDiagnosis.fetch().done(function() {
 				//установка диагноза
 				// console.log('view.appealDiagnosis',view.appealDiagnosis.first())
@@ -444,7 +458,6 @@ define(function(require) {
 			}).timepicker('setTime', now);
 
 			this.$el.closest('.ui-dialog').find('.save');
-
 
 			return view;
 		},

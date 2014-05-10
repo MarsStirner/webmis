@@ -7,6 +7,16 @@ define(function(require) {
 
 		model: Group,
 
+		orgStructFilter: '&filter[orgStruct]=1',
+
+		getOrgStructFilter: function() {
+            if (!Core.Cookies.get('userDepartmentId')) {
+                return "&filter[orgStruct]=0";
+            } else {
+                return this.orgStructFilter;
+            }
+        },
+
 		// initialize: function(models, options){
 		//	console.log('init instrumentalgroup', options, arguments);
 		// 	//this.parents = options.parents;
@@ -14,7 +24,7 @@ define(function(require) {
 		// },
 
 		url: function() {
-			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=DIAG";
+			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=DIAG" + this.getOrgStructFilter();
 
 			return path;
 		},
@@ -62,6 +72,11 @@ define(function(require) {
 			});
 
 			return results;
+		},
+
+		setOrgStructFilter: function(value) {
+			this.orgStructFilter = "&filter[orgStruct]="+value;
+            this.fetch();
 		},
 
 		parse: function(raw) {
