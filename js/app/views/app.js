@@ -45,6 +45,59 @@ define(["text!templates/app.tmpl", "views/header-new"], function(tmpl, Header) {
 					]
 				}
 			});
+
+			this.logoutTimer();
+		},
+
+		logoutTimer: function() {
+			var idleTimer = null;
+			var intervalID = null;
+			var idleWait = 900000;
+			var timer;
+			var logoutDialog = $('<div/>', {
+			    html: "Срок ожидания для Вашего сеанса истечёт через <span id='timer'></span> секунд."
+			}).dialog({
+				modal: true,
+				resizable: false,
+				autoOpen: false,
+				width: 500,
+				title: "Сообщение системы",
+				buttons: {
+					"Ok": function() {
+						$.ajax({
+							url: "/data/build",
+							success: function(data) {
+						    	logoutDialog.dialog("close");
+								isDialog = false;
+								clearInterval(intervalID);	       
+						  	},
+						  	error: function() { 
+							    timer = 150;
+						  	}
+						});
+						return false;
+					}
+				}
+			});
+			var isDialog = false;
+			$('*').bind('mousemove keydown scroll', function () {
+				if(!isDialog) {
+	            	clearTimeout(idleTimer);
+		            idleTimer = setTimeout(function () {
+		            	isDialog = true;
+		                logoutDialog.dialog("open");
+		                timer = 150;
+						$('#timer').text(timer);
+		                intervalID = setInterval(function(){
+		                	$('#timer').text(--timer);
+		                	if (timer < 1) {
+		                		window.location.href = "/auth/";
+		                	}
+		                }, 1000);
+		            }, idleWait);
+		        }
+        	});
+        	$("body").trigger("mousemove");
 		},
 
 		keyHandler: function(event) {
