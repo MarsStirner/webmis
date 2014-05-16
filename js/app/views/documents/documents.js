@@ -256,7 +256,7 @@ define(function (require) {
                         if (this.docIsNew()) {
                             ta.properties[1].value = lastTherapy.get("titleId").toString();
                         }
-                        ta.readOnly = "true";
+                        //ta.readOnly = "true";
                     }
                     if (ta.therapyFieldCode == "therapyBegDate") {
                         //if (lastTherapy.get("beginDate")) {
@@ -264,7 +264,7 @@ define(function (require) {
                             ta.properties[0].value = moment(lastTherapy.get("beginDate") || new Date()).format(CD_DATE_FORMAT);
                         }
                         //}
-                        ta.readOnly = "true";
+                        //ta.readOnly = "true";
                     }
 
                     if (shouldSetTherapyPhaseFields) {
@@ -272,13 +272,13 @@ define(function (require) {
                             if (this.docIsNew()) {
                                 ta.properties[1].value = lastTherapy.get("phases")[0].titleId.toString();
                             }
-                            ta.readOnly = "true";
+                            //ta.readOnly = "true";
                         }
                         if (ta.therapyFieldCode == "therapyPhaseBegDate") {
                             if (this.docIsNew()) {
                                 ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate || new Date()).format(CD_DATE_FORMAT);
                             }
-                            ta.readOnly = "true";
+                            //ta.readOnly = "true";
                         }
                     }
                 }
