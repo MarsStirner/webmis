@@ -3901,10 +3901,7 @@ define(function (require) {
             }, this);
 
             $.when.apply($, promises).done(_.bind(function () {
-                console.log("I'm so sorry...");
-
                 var paste = [];
-
                 _(this.options.sections).each(function (section) {
                     section.items.each(function (item) {
                         if (item.checked) {
@@ -3916,6 +3913,7 @@ define(function (require) {
                                     inline: item.inline,
                                     name: item.get("diagnosticName") ? item.get("diagnosticName").name : item.get("assessmentName").name,
                                     plannedEndDate: item.get("plannedEndDate"),
+                                    context: item.result.get('context'),
                                     tests: tests
                                     /*.map(function (rdi) {
                                         return rdi.toJSON();
@@ -4012,7 +4010,6 @@ define(function (require) {
         initialize: function () {
             ViewBase.prototype.initialize.call(this, this.options);
             if (this.model) {
-                console.log(this.model);
                 this.model.checked = false;
                 this.listenTo(this.model.resultData, "attr:checked", function (event) {
                     if (event.checkedState === "checked") {
@@ -4037,7 +4034,6 @@ define(function (require) {
                     this.setItemChecked(event.checked);
                 });
             }
-
         },
         data: function () {
             return {
@@ -4079,7 +4075,6 @@ define(function (require) {
         onModelAttrsToggle: function () {
             this.$el.toggle();
             if (!this.model.result) {
-                console.log(this.model.collection);
                 this.model.fetchResultData();
             }
         },
@@ -4174,10 +4169,13 @@ define(function (require) {
 
             if (this.collection.length) {
                 this.collection.each(function (item) {
-                    var repeatOptions = this.getRepeatOptions(item);
-                    var repeatView = this.getRepeatView(repeatOptions);
-                    this.subViews.push(repeatView.itemRow, repeatView.itemAttrsContainerRow);
-                    this.$el.append(repeatView.itemRow.render().el, repeatView.itemAttrsContainerRow.render().el);
+                    var self = this;
+                    item.fetchResultData(function(){
+                        var repeatOptions = self.getRepeatOptions(item);
+                        var repeatView = self.getRepeatView(repeatOptions);
+                        self.subViews.push(repeatView.itemRow, repeatView.itemAttrsContainerRow);
+                        self.$el.append(repeatView.itemRow.render().el, repeatView.itemAttrsContainerRow.render().el);
+                    }); 
                 }, this);
             } else {
                 this.$el.append((new HtmlHelper.ItemRow()).render().el);
@@ -4273,7 +4271,7 @@ define(function (require) {
                 this.resultData = new Backbone.Collection();
             },
 
-            fetchResultData: function () {
+            fetchResultData: function (callback) {
                 this.result = new LabResult();
                 this.result.eventId = this.collection.appealId;
                 this.result.id = this.id;
@@ -4303,6 +4301,10 @@ define(function (require) {
                         resultData: tests
                     });*/
 
+                    if (callback) {
+                        callback.call()
+                    }
+
                 }, this));
 
                 return promise;
@@ -4319,7 +4321,7 @@ define(function (require) {
                 InstrumentalResearch.prototype.initialize.call(this, attrs, options);
                 this.resultData = new Backbone.Collection();
             },
-            fetchResultData: function () {
+            fetchResultData: function (callback) {
                 this.result = new InstrumentalResearch({}, {
                     appealId: this.collection.appealId
                 });
@@ -4349,6 +4351,10 @@ define(function (require) {
                         resultData: tests
                     });*/
 
+                    if (callback) {
+                        callback.call()
+                    }
+
                 }, this));
 
                 return promise;
@@ -4366,7 +4372,7 @@ define(function (require) {
                 Model.prototype.initialize.call(this, this.options);
                 this.resultData = new Backbone.Collection();
             },
-            fetchResultData: function () {
+            fetchResultData: function (callback) {
                 this.result = new Consultation();
                 this.result.eventId = this.collection.appealId;
                 this.result.id = this.id;
@@ -4391,6 +4397,10 @@ define(function (require) {
                         resultData: tests
                     });*/
 
+                    if (callback) {
+                        callback.call()
+                    }
+
                 }, this));
 
                 return promise;
@@ -4404,7 +4414,7 @@ define(function (require) {
                 Documents.Models.DocumentListItem.prototype.initialize.call(this, this.options);
                 this.resultData = new Backbone.Collection();
             },
-            fetchResultData: function () {
+            fetchResultData: function (callback) {
                 this.result = new Documents.Models.Document({
                     id: this.id
                 });
@@ -4441,6 +4451,10 @@ define(function (require) {
                     /*this.set({
                         resultData: tests
                     });*/
+
+                    if (callback) {
+                        callback.call()
+                    }
 
                 }, this));
 

@@ -38,7 +38,6 @@ define(function (require) {
 
             });
 
-            console.log('get menu items', items);
             return items;
         },
 

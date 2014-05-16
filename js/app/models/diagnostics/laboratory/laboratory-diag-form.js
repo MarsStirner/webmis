@@ -4,7 +4,7 @@ define(function (require) {
 	return  Model.extend({
 		//idAttribute: "id",
 		initialize: function () {
-			console.log(this);
+			
 		},
 
 

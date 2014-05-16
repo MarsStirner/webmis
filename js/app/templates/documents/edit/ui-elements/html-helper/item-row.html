@@ -1,11 +1,25 @@
 <%if (model) {%>
-	<%console.log("ITEM ROW", model)%>
 	<td class="helper-item-checker-col">
 		<input type="checkbox" class="helper-item-checker" data-id="<%=model.get('id')%>">
 	</td>
 	<td class="helper-item-info">
 		<div class="helper-item-name">
-			<div><span class="helper-item-date"><%=moment(model.get("plannedEndDate")).format('DD.MM.YYYY')%></span></div>
+			<div>
+				<span class="helper-item-date"><%=moment(model.get("plannedEndDate")).format('DD.MM.YYYY')%></span>
+				<%if (model.result.attributes.mnem == "LAB") {%>
+					<% _.each(model.result.attributes.group[1].attribute, function(i) { %>
+						<%if (i.code == "TAKINGTIME") {%>
+							<% _.each(i.properties, function(j) { %>
+								<%if (j.name == "value") {%>
+									<!--
+									<span class="helper-item-takingtime">&nbsp;&nbsp;Время забора: <%=j.value%></span>
+									-->
+								<%}%>
+							<% }); %>
+						<%}%>	
+					<% }); %>
+				<%}%>
+			</div>
 			<%if (model.get("diagnosticName")) {%>
 				<div><span><%=model.get("diagnosticName").name%></span></div>
 			<%} else if (model.get("assessmentName")) {%>
