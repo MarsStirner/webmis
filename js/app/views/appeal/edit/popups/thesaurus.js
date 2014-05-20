@@ -12,7 +12,10 @@ define([
 		tagName: "li",
 
 		events: {
-			"click": "onClick"
+			"click span": "onClick",
+			"click": "toggleNode",
+			"mouseover": "onMouseOver",
+			"mouseout": "onMouseOut"
 		},
 
 		isLeafNode: false,
@@ -21,20 +24,34 @@ define([
 			this.parent = this.options.parent;
 		},
 
-		onClick: function (event) {
+		toggleNode: function (event) {
 			if (event) event.stopPropagation();
-
-			// Node clicked for the first time, we don't know if it's leaf or node
 			if (!this.$el.hasClass("Opened") && !this.isLeafNode && this.model.get("childrenTerms").isEmpty()) {
 				this.model.get("childrenTerms").on("reset", this.onChildrenTermsReset, this).fetch();
-			// Already know that dealing with leaf
 			} else if (this.isLeafNode) {
 				this.$el.removeClass("Opened");
-				this.termSelected();
-			// Dealing with node that has children already fetched
 			} else {
 				this.$el.toggleClass("Opened");
 			}
+		},
+
+		onClick: function (event) {
+			if (event) event.stopPropagation();
+			if (!this.isLeafNode) {
+				this.termSelected();
+			}
+		},
+
+		onMouseOver: function (event) {
+			$(event.target).css({
+				"background-color": "#f0f3fc",
+				"cursor": "pointer"
+			});
+
+		},
+
+		onMouseOut: function (event) {
+			$(event.target).css("background-color", "");
 		},
 
 		onChildrenTermsReset: function () {
@@ -56,9 +73,12 @@ define([
 			var parentNode = this.options.parent;
 			var termsChain = [this.model.get("name")];
 
-			while (parentNode) {
-				termsChain.push(parentNode.model.get("name"));
-				parentNode = parentNode.parent;
+			if ((this.model.get("template").split("%s:").length) > 1) {
+				while (parentNode) {
+					termsChain.push(parentNode.model.get("name"));
+					parentNode = parentNode.parent;
+				}
+
 			}
 
 			termsChain = termsChain.reverse().join(" ");
