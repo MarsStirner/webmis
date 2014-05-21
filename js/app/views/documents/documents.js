@@ -1737,6 +1737,8 @@ define(function (require) {
 
             this.collection = new Documents.Collections.DocumentTypes(this.collection.models);
 
+            this.collection.mnems = this.origCollection.mnems;
+
             //this.collection.originalModels = this.collection.models;
 
             this.listenTo(this.collection, "document-type:selected", this.onDocumentTypeSelected);
@@ -4040,6 +4042,21 @@ define(function (require) {
                 model: this.model
             };
         },
+
+        // getTakingTime: function() {
+        //     var jobTicketId = this.model.result.getProperty('Время забора');
+        //     var timeEl = this.$el.find('.helper-item-takingtime');
+        //     $.ajax({
+        //        type: 'GET',
+        //         url: "/data/job/jobTicket/"+jobTicketId,
+        //         dataType: 'json',
+        //         accept:'application/json',
+        //         success: function(data) {
+        //             $(timeEl).text(moment(data.datetime).format('H:mm')); 
+        //         }
+        //     });
+        // },
+
         onHelperItemInfoClick: function () {
             if (this.model) {
                 this.$(".helper-item-attrs-toggler").toggleClass("open");
