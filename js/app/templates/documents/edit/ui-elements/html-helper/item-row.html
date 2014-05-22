@@ -6,18 +6,8 @@
 		<div class="helper-item-name">
 			<div>
 				<span class="helper-item-date"><%=moment(model.get("plannedEndDate")).format('DD.MM.YYYY')%></span>
-				<%if (model.result.attributes.mnem == "LAB") {%>
-					<% _.each(model.result.attributes.group[1].attribute, function(i) { %>
-						<%if (i.code == "TAKINGTIME") {%>
-							<% _.each(i.properties, function(j) { %>
-								<%if (j.name == "value") {%>
-									<!--
-									<span class="helper-item-takingtime">&nbsp;&nbsp;Время забора: <%=j.value%></span>
-									-->
-								<%}%>
-							<% }); %>
-						<%}%>	
-					<% }); %>
+				<%if (model.get('takingTime')) {%>
+					<span class="helper-item-takingtime">&nbsp;&nbsp;Время забора: <%=moment(model.get("takingTime").datetime).format('H:mm')%></span>
 				<%}%>
 			</div>
 			<%if (model.get("diagnosticName")) {%>

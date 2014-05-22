@@ -4044,20 +4044,6 @@ define(function (require) {
             };
         },
 
-        // getTakingTime: function() {
-        //     var jobTicketId = this.model.result.getProperty('Время забора');
-        //     var timeEl = this.$el.find('.helper-item-takingtime');
-        //     $.ajax({
-        //        type: 'GET',
-        //         url: "/data/job/jobTicket/"+jobTicketId,
-        //         dataType: 'json',
-        //         accept:'application/json',
-        //         success: function(data) {
-        //             $(timeEl).text(moment(data.datetime).format('H:mm')); 
-        //         }
-        //     });
-        // },
-
         onHelperItemInfoClick: function () {
             if (this.model) {
                 this.$(".helper-item-attrs-toggler").toggleClass("open");
@@ -4315,18 +4301,40 @@ define(function (require) {
 
                     this.resultData.reset(tests);
 
+                    var takingTimeId = this.result.getProperty('Время забора');
+
+                    if (takingTimeId) {
+                        var self = this;
+                        $.ajax({
+                           type: 'GET',
+                            url: "/data/job/jobTicket/"+takingTimeId,
+                            dataType: 'json',
+                            accept:'application/json',
+                            async: false,
+                            success: function(data) {
+                                self.set('takingTime', data);
+                                if (callback) {
+                                    callback.call();
+                                }
+                            }
+                        });
+                    } else {
+                        if (callback) {
+                            callback.call();
+                        }
+                    }
+
+                    
                     /*this.set({
                         resultData: tests
                     });*/
-
-                    if (callback) {
-                        callback.call()
-                    }
 
                 }, this));
 
                 return promise;
             },
+
+                
 
             sync: App.Models.LaboratoryDiag.prototype.sync,
             parse: App.Models.LaboratoryDiag.prototype.parse
