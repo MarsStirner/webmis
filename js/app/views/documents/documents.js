@@ -771,7 +771,7 @@ define(function (require) {
     //region COLLECTIONS
     Documents.Collections.DocumentList = Collection.extend({
         model: Documents.Models.DocumentListItem,
-        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "EXAM_OLD", "JOUR_OLD"],
+        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "EXAM_OLD", "JOUR_OLD", "CONS_POLY"],
         codes: [],
         dateRange: null,
         typeId: null,
@@ -841,7 +841,7 @@ define(function (require) {
     Documents.Collections.DocumentTypes = Collection.extend({
         model: Documents.Models.DocumentType,
         // don't let create "JOUR_OLD", "EXAM_OLD"
-        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH"],
+        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS_POLY"],
 
         lastCriteria: "",
 
@@ -1737,6 +1737,7 @@ define(function (require) {
 
             this.collection = new Documents.Collections.DocumentTypes(this.collection.models);
 
+
             this.collection.mnems = this.origCollection.mnems;
 
             //this.collection.originalModels = this.collection.models;
@@ -2033,7 +2034,7 @@ define(function (require) {
 
             switch (type) {
             case "ALL":
-                mnems = ["EXAM", "EPI","CONS_POLY", "ORD", "JOUR", "NOT", "OTH"];
+                mnems = ["EXAM", "EPI", "CONS_POLY", "ORD", "JOUR", "NOT", "OTH"];
                 break;
             case "EVERYDAY":
                 codes = ['1_1_22'];
