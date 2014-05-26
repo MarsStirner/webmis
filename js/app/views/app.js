@@ -46,7 +46,7 @@ define(["text!templates/app.tmpl", "views/header-new"], function(tmpl, Header) {
 				}
 			});
 
-			this.logoutTimer();
+			//this.logoutTimer();
 		},
 
 		logoutTimer: function() {
