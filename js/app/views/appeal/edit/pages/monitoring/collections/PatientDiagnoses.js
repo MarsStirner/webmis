@@ -218,7 +218,6 @@ define(function(require) {
 				return diagnoses;
 				$.ajaxSetup({async: true});	
 			} else {
-				console.log(data);
 				return data;
 			}
 		}

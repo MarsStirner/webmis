@@ -190,11 +190,12 @@ define([
 			var selectedTerms = this.model.get("selectedTerms");
 
 			if (selectedTerms.length) {
-				if (!Core.Strings.endsWithPunctuationChar(selectedTerms)) {
-					selectedTerms += ", ";
-				} else {
-					selectedTerms += " ";
-				}
+				// if (!Core.Strings.endsWithPunctuationChar(selectedTerms)) {
+				// 	selectedTerms += ", ";
+				// } else {
+				// 	selectedTerms += " ";
+				// }
+				selectedTerms += " ";
 				selectedTerms += term;
 			} else {
 				selectedTerms = term;
