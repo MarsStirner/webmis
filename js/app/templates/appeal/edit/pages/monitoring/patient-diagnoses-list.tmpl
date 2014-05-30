@@ -1,9 +1,9 @@
 <h4 class="diagnosis-title">Диагнозы</h4>
 <div class="Diagnosis">
-<% if (diagnoses.length && _(diagnoses.toJSON()).chain().pluck("mkb").pluck("code").any().value()) { %>
+<% if (diagnoses.length && _(diagnoses.toJSON()).chain().pluck("mkb").pluck("diagnosis").any().value()) { %>
 
 		<% diagnoses.each(function (diagnosis) { %>
-			<% if (diagnosis.get("mkb").code) { %>
+			<% if (diagnosis.get("mkb").diagnosis) { %>
 				<h3><%= diagnosis.get("diagnosisKindLabel") %></h3>
 				<p  >
 					<% if(!_.isEmpty(diagnosis.get("doctor"))){%>
