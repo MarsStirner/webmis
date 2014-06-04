@@ -3,7 +3,7 @@ define(function (require) {
     var PrintTemplates = require('models/print/Template').Collection;
 
     return TreeButton.extend({
-        template: '<button type="button" class="" data-icon-primary="icon-print">Печать new</button>',
+        template: '<button type="button" class="" data-icon-primary="icon-print">Печать</button>',
         initialize: function (options) {
             TreeButton.prototype.initialize.call(this, options);
 

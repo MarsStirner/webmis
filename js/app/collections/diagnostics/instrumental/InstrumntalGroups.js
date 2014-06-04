@@ -9,12 +9,22 @@ define(function(require) {
 
 		orgStructFilter: '&filter[orgStruct]=1',
 
+		patientId: 0,
+
 		getOrgStructFilter: function() {
             if (!Core.Cookies.get('userDepartmentId')) {
                 return "&filter[orgStruct]=0";
             } else {
                 return this.orgStructFilter;
             }
+        },
+
+        getPatientId: function() {
+        	if (this.patientId > 0) {
+        		return "&patientId="+this.patientId;
+        	} else {
+        		return "";
+        	}
         },
 
 		// initialize: function(models, options){
@@ -24,8 +34,7 @@ define(function(require) {
 		// },
 
 		url: function() {
-			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=DIAG" + this.getOrgStructFilter();
-
+			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=DIAG" + this.getPatientId() + this.getOrgStructFilter();
 			return path;
 		},
 

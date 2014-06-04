@@ -55,6 +55,7 @@ define(function (require) {
 
             //список групп исследований
             this.instrumntalResearchs = new InstrumntalGroups();
+            this.instrumntalResearchs.patientId  = this.options.appeal.get('patient').get('id');
 
             this.researchGroupsListView = new ResearchGroupsListView({
                 collection: this.viewModel.instrumntalGroups
