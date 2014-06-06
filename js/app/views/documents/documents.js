@@ -5158,7 +5158,6 @@ define(function (require) {
         },
 
         onBackToDocumentListClick: function () {
-            console.log(this.options);
             if (this.options.included) {
                 this.collection.trigger("review:quit");
             } else {
@@ -5171,6 +5170,10 @@ define(function (require) {
                         documents: this.options.documents
                     }
                 });
+            }
+            if (!appeal.isClosed()) {
+                $(".panic").button("enable");
+                $(".new-document,.new-duty-doc-exam").button("enable");
             }
         },
 
