@@ -147,7 +147,6 @@ define(function(require) {
 						var moveDate = $.grep(response.data[0].group[0].attribute, function(e){ return e.name == 'assessmentBeginDate'; })[0].properties[0].value;
 						moveDate = new Date(moveDate).valueOf();
 						//getting diagnoses from first move attributes
-						console.log(firstMoveAttrs);
 						$.each(firstMoveAttrs, function(i, attr){
 							if (attr.code === 'diagReceivedMkb') {
 								var diagReceivedAttr = $.grep(attr.properties, function(e){ return e.name == 'value'; });
