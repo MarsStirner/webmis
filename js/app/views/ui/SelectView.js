@@ -6,32 +6,24 @@ define([], function() {
 			view.collection = view.options.collection;
 			view.collection.on("reset", view.render, view);
 			view.collection.fetch();
-
-			view.selectText = view.options.selectText ? view.options.selectText : 'value';
-
-
 		},
 
 		val: function(value) {
 			var view = this;
-			//console.log('value',value,view.$el.select2('val'))
-
 			if (value) {
 				view.$el.select2('val', value);
 			} else {
 				return view.$el.select2('val');
 			}
-
 		},
 		onChange: function() {
 			var view = this;
-
 			//pubsub.trigger('select:change', view.select2.val())
 		},
 		render: function() {
 			var view = this;
+			view.selectText = view.options.selectText ? view.options.selectText : 'value';
 			var id = view.$el.prop('id');
-
 			/**
 			 * byString(someObj, 'part.name');
 			 * возвращает свойство объекта по пути указонному в строке
