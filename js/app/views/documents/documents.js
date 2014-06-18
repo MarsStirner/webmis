@@ -1076,7 +1076,8 @@ define(function (require) {
 
         data: function () {
             return {
-                btnsDisabled: !this.documentTypes.length || appeal.isClosed()
+                //btnsDisabled: !this.documentTypes.length || appeal.isClosed() //it was allways false %)
+                btnsDisabled: appeal.isClosed()
             };
         },
 
@@ -1673,7 +1674,8 @@ define(function (require) {
 
         data: function () {
             return {
-                btnsDisabled: !this.documentTypes.length || appeal.isClosed()
+                //btnsDisabled: !this.documentTypes.length || appeal.isClosed() //it was allways false %)
+                btnsDisabled: appeal.isClosed()
             };
         },
 
