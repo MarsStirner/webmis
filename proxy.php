@@ -3,7 +3,7 @@
 $core_host = 'localhost:8080';
 $print_system_host = '192.168.1.121:5000';
 
-function proxy_url ($url) {
+function proxy_url ($url, $header_host=null) {
     set_time_limit(240);
 
     $ch = curl_init( $url );
@@ -35,8 +35,8 @@ function proxy_url ($url) {
 
     $headers = array();
     foreach ( getallheaders() as $key => $value ) {
-        if ($value == 'HOST') {
-            $headers[] = $key . ': ' . $url;
+        if ($key == 'Host' && $header_host) {
+            $headers[] = $key . ': ' . $header_host;
         } else {
             $headers[] = $key . ': ' . $value;
         }
@@ -93,7 +93,7 @@ if ( preg_match("/^\\/api\\/v1\\//", $_SERVER["REQUEST_URI"]) ) {
 }else if( preg_match("/^\\/data\\/(auth|roles|changeRole)\\//", $_SERVER["REQUEST_URI"]) ) {
     proxy_url("http://".$core_host."/tmis-ws-medipad/rest/tms-auth/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
 }else if( preg_match("/^\\/data\\/(print-by-context)\\//", $_SERVER["REQUEST_URI"]) ){
-    proxy_url("http://".$print_system_host."/print_subsystem/print_template");    
+    proxy_url("http://".$print_system_host."/print_subsystem/print_template", $print_system_host);    
 }else {
     proxy_url("http://".$core_host."/tmis-ws-medipad/rest/tms-registry/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
 }
