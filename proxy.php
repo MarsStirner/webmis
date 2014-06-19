@@ -1,7 +1,7 @@
 <?php
 
 $core_host = 'localhost:8080';
-$print_system_host = '192.168.1.123:5000';
+$print_system_host = '192.168.1.121:5000';
 
 function proxy_url ($url) {
     set_time_limit(240);
@@ -35,7 +35,12 @@ function proxy_url ($url) {
 
     $headers = array();
     foreach ( getallheaders() as $key => $value ) {
-        $headers[] = $key . ': ' . $value;
+        if ($value == 'HOST') {
+            $headers[] = $key . ': ' . $url;
+        } else {
+            $headers[] = $key . ': ' . $value;
+        }
+        
     }
 
     curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
