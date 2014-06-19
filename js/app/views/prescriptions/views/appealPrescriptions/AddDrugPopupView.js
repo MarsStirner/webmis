@@ -110,22 +110,14 @@ define(function (require) {
             self.saveButton(false);
             self.ui.$drugName.autocomplete({
                 source: function (request, response) {
-                    $.ajax({
-                        url: '/api/v1/rls/',
-                        dataType: 'jsonp',
-                        data: {
-                            name: request.term
-                        },
-                        success: function (raw) {
-                            // console.log('success', raw);
-                            response($.map(raw.data, function (item) {
-                                return {
-                                    label: item.tradeLocalName + '(' + item.tradeName + ') ' + item.formName + ' ' + item.dosageValue + ' ' + item.unitName,
-                                    value: item.tradeLocalName,
-                                    id: item.id
-                                };
-                            }));
-                        }
+                    $.getJSON(DATA_PATH + "rls/?text="+request.term, function (raw) {
+                        response($.map(raw, function (item) {
+                            return {
+                                label: item.tradeLocalName + ' (' + item.tradeName + ') ' + item.form + ' ' + item.dosageValue + ' ' + item.dosageUnitCode,
+                                value: item.tradeLocalName,
+                                id: item.id
+                            };
+                        }));
                     });
                 },
                 minLength: 2,
@@ -133,10 +125,7 @@ define(function (require) {
                     var item = ui.item;
                     if (item && item.id) {
                         self.searchByNomen(item);
-
                     }
-                    //console.log('ui', event, ui)
-
                 }
             });
         }

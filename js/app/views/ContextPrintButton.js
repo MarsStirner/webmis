@@ -10,7 +10,7 @@ define(function (require) {
             this.printTemplates = new PrintTemplates();
 
             if(this.options.context){
-                this.getTemplatesForContext(this.options.context); 
+                this.getTemplatesForContext(this.options.context);
             }
             this.listenTo(this.printTemplates, 'reset', this.afterRender);
         },
@@ -49,7 +49,7 @@ define(function (require) {
             var data = this.options.data;
             data.id = id;
             var url = DATA_PATH + 'print-by-context/';
-            // var url = 'http://192.168.1.123:5000/print_subsystem/print_template';
+            // var url = 'http://192.168.1.121:5550/print_subsystem/print_template';
 
             $.ajax({
                 type: 'POST',
@@ -67,13 +67,17 @@ define(function (require) {
         },
 
         showPopup: function (html) {
+            var templateContent = $('<html/>').html(html);
+            $(templateContent).prepend('<style media="print">.tmpl-print-btn{display:none}</style>');
+            $(templateContent).prepend('<button class="tmpl-print-btn" style="float:right" media="screen" onclick="window.print();">Печать</button>');
+            
             var $window = $(window);
             var width = Math.min($window.width(), 728),
                 height = Math.min($window.height(), 967);
 
             this.window = window.open("", "Печать", "width=" + width + ",height=" + height + ",menubar=0,toolbar=0,status=0,location=0,left=" + Math.max(($window.width() - width) / 2, 0) + ",top=" + Math.max(($window.height() - height) / 2, 0));
             this.window.document.charset = "utf-8";
-            this.window.document.write(html);
+            this.window.document.write($(templateContent).html());
         },
 
     });
