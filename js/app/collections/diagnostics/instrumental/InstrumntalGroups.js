@@ -34,8 +34,8 @@ define(function(require) {
 		// },
 
 		url: function() {
-			var path = DATA_PATH + "dir/actionTypes?filter[mnem]=DIAG" + this.getPatientId() + this.getOrgStructFilter();
-			return path;
+			var orgStruct = this.getPatientId() ? '' : this.getOrgStructFilter();
+			return DATA_PATH + "dir/actionTypes?filter[mnem]=DIAG" + this.getPatientId() + orgStruct;
 		},
 
 		/**
