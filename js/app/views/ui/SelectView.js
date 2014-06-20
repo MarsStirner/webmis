@@ -1,11 +1,17 @@
 define([], function() {
 
 	var SelectView = View.extend({
+
+		selectText: 'value',
+
 		initialize: function() {
 			var view = this;
 			view.collection = view.options.collection;
 			view.collection.on("reset", view.render, view);
 			view.collection.fetch();
+			if (this.options.selectText) {
+				this.selectText = this.options.selectText;
+			}
 		},
 
 		val: function(value) {
@@ -22,7 +28,6 @@ define([], function() {
 		},
 		render: function() {
 			var view = this;
-			view.selectText = view.options.selectText ? view.options.selectText : 'value';
 			var id = view.$el.prop('id');
 			/**
 			 * byString(someObj, 'part.name');
