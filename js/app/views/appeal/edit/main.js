@@ -439,11 +439,11 @@ define(function(require) {
 							uri: "/appeals/:id/diagnostics-instrumental/"
 						}, appealJSON),
 
-						App.Router.compile({
-							name: "diagnostics-consultations",
-							title: "Консультации",
-							uri: "/appeals/:id/diagnostics-consultations/"
-						}, appealJSON),
+						// App.Router.compile({
+						// 	name: "diagnostics-consultations",
+						// 	title: "Консультации",
+						// 	uri: "/appeals/:id/diagnostics-consultations/"
+						// }, appealJSON),
 
 						App.Router.compile({
 							name: "therapy",
@@ -525,11 +525,11 @@ define(function(require) {
 							title: "Инструментальные исследования",
 							uri: "/appeals/:id/diagnostics-instrumental/"
 						}, appealJSON),
-						App.Router.compile({
-							name: "diagnostics-consultations",
-							title: "Консультации",
-							uri: "/appeals/:id/diagnostics-consultations/"
-						}, appealJSON),
+						// App.Router.compile({
+						// 	name: "diagnostics-consultations",
+						// 	title: "Консультации",
+						// 	uri: "/appeals/:id/diagnostics-consultations/"
+						// }, appealJSON),
 						App.Router.compile({
 							name: "moves",
 							title: "Движение пациента",
