@@ -159,7 +159,7 @@ define(function(require) {
 									diagReceived.datetime = moveDate;
 									diagnosesAttrs.push(diagReceived);
 								}
-							} else if (attr.typeId == 1600006 || attr.name == "Диагноз направившего учреждения (сопутствующий)") {
+							} else if (attr.code === 'diagAttendantMkb') {
 								var attendantAttr  = $.grep(attr.properties, function(e){ return e.name == 'value'; });
 								var attendantId = $.grep(attr.properties, function(e){ return e.name == 'valueId'; });
 								if (attendantAttr.length > 0) {
@@ -170,17 +170,17 @@ define(function(require) {
 									attendant.datetime = moveDate;
 									diagnosesAttrs.push(attendant);
 								}
-							} else if (attr.typeId == 1600007 || attr.name == "Клиническое описание диагноза (сопутствующий)") {
+							} else if (attr.code === 'diagAttendantDescriptionMkb') {
 								var attendantDescriptionAttr  = $.grep(attr.properties, function(e){ return e.name == 'value'; });
 								if (attendantDescriptionAttr.length > 0) {
 									attendant.description = $(attendantDescriptionAttr[0].value).text();
 								}
-							} else if (attr.typeId == 1600043 || attr.name == "Клиническое описание диагноза") {
+							} else if (attr.code === 'diagReceivedDescriptionMkb') {
 								var diagReceivedDescriptionAttr  = $.grep(attr.properties, function(e){ return e.name == 'value'; });
 								if (diagReceivedDescriptionAttr.length > 0) {
 									diagReceived.description = $(diagReceivedDescriptionAttr[0].value).text();
 								}
-							} else if (attr.typeId == 1600044 || attr.name == "Диагноз направившего учреждения (осложнения)") {
+							} else if (attr.code === 'diagAftereffectMkb') {
 								var aftereffectAttr  = $.grep(attr.properties, function(e){ return e.name == 'value'; });
 								var aftereffectId = $.grep(attr.properties, function(e){ return e.name == 'valueId'; });
 								if (aftereffectAttr.length > 0) {
@@ -191,7 +191,7 @@ define(function(require) {
 									aftereffect.datetime = moveDate;
 									diagnosesAttrs.push(aftereffect);
 								}
-							} else if (attr.typeId == 1600045 || attr.name == "Клиническое описание диагноза (осложнения)") {
+							} else if (attr.code === 'diagAftereffectDescriptionMkb') {
 								var aftereffectDescriptionAttr  = $.grep(attr.properties, function(e){ return e.name == 'value'; });
 								if (aftereffectDescriptionAttr.length > 0) {
 									aftereffect.description = $(aftereffectDescriptionAttr[0].value).text();
