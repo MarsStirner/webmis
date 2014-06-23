@@ -215,8 +215,8 @@ define(function(require) {
 						});	
 					});
 				};
-				return diagnoses;
 				$.ajaxSetup({async: true});	
+				return diagnoses;
 			} else {
 				return data;
 			}

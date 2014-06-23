@@ -82,9 +82,6 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				//App.Router.navigate( path );
 			}
 			App.Router.navigate(path);
-			if ((path.indexOf("documents") > -1) || (path.indexOf("therapy") > -1)) {
-				location.reload();
-			}
 		},
 		initialize: function() {
 
