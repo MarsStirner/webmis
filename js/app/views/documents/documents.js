@@ -1082,10 +1082,8 @@ define(function (require) {
         },
 
         initialize: function () {
-            if (this.options.documentTypes) {
-                this.documentTypes = this.options.documentTypes;
-            } else {
                 this.documentTypes = new Documents.Collections.DocumentTypes();
+                this.documentTypes.setOrgStructFilter('0');
                 this.documentTypes.fetch({
                     data: {
                         filter: {
@@ -1093,8 +1091,6 @@ define(function (require) {
                         }
                     }
                 });
-                //console.log("documentTypes.fetch");
-            }
 
             this.listenTo(this.documentTypes, "reset", function () {
                 if (!appeal.isClosed()) {
