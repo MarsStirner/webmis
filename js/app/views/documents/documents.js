@@ -715,6 +715,22 @@ define(function (require) {
             return result;
         },
 
+        isNonTogglable: function () {
+            var result = false;
+            var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {
+                return a.code === "NONTOGGLABLE";
+            });
+            if (la) {
+                var lav = _(this.get("layoutAttributeValues")).find(function (lav) {
+                    return lav.layoutAttribute_id === la.id;
+                });
+                if (lav) {
+                    result = lav.value === "true";
+                }
+            }
+            return result;
+        },
+
         getVGroupRowsNumber: function () {
             var result = 0;
             var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {
@@ -1021,6 +1037,10 @@ define(function (require) {
     });
 
     var RepeaterBase = Documents.Views.RepeaterBase = ViewBase.extend({
+        isInfect: false,
+        localInfect: false,
+        infectTherapy: false,
+
         toString: function () {
             return 'RepeaterBase';
         },
@@ -1058,13 +1078,272 @@ define(function (require) {
 
                 var repeatView = this.getRepeatView(repeatOptions);
 
+                var elCode = '';
+                if (repeatView.model.get('code')) {
+                    elCode = repeatView.model.get('code');
+                }
+
                 this.subViews.push(repeatView);
 
-                return repeatView.render().el;
+                var renderedEl = repeatView.render().el;
+
+                if (elCode.toLowerCase().indexOf('infect') > -1) {
+                    this.setInfectHardcodeAttributes(renderedEl, elCode, this);
+                }
+
+                return renderedEl;
             }, this));
 
             return this;
+        },
+
+        setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow) {
+            var mode = (document.location.href.split('/')[document.location.href.split('/').length-1]);
+            switch (elCode) {
+            case 'isInfect':
+                $(renderedEl).find('.attribute-value').on('change', function(e){
+                    if (e.target.value === 'Да') {
+                        $('.depends-isInfect-display').show();
+                        $('.depends-isInfect-display-row').show();
+                        $('.depends-isInfect-active').find('.field').show();
+                        $('.depends-isInfect-active').find('.field-toggle').attr('checked', 'checked');
+                        $('.depends-isInfect-mandatory').find('.field').addClass('Mandatory');
+                        
+                    } else {
+                        $('.depends-isInfect-display').hide();
+                        $('.depends-isInfect-display-row').hide();
+                        $('.depends-isInfect-active').find('.field').hide();
+                        $('.depends-isInfect-active').find('.field-toggle').removeAttr('checked');
+                        $('.depends-isInfect-mandatory').find('.field').removeClass('Mandatory');
+                    }
+                });
+                break;
+            case 'infectBeginDate':
+                $(renderedEl).addClass('depends-isInfect-active depends-isInfect-mandatory').show();
+                if (mode == 'edit') {
+                    if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
+                        isInfect = true;
+                        $(renderedEl).find('.field').show();
+                        $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                        $(renderedEl).find('.field').addClass('Mandatory');
+                    } 
+                    
+                }
+                break;
+            case 'infectEndDate':
+                $(renderedEl).addClass('depends-isInfect-active').show();
+                if (mode == 'edit') {
+                    if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
+                        isInfect = true;
+                        $(renderedEl).find('.field').show();
+                        $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                    } 
+                }
+                break;    
+            case 'infectEtiology':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-isInfect-display-row');
+                $(renderedEl).addClass('Mandatory');
+                if (mode == 'edit') {
+                    if (isInfect) {
+                        gridRow.$el.show();
+                    }  
+                }
+                break;    
+            case 'infectType':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-isInfect-display-row');
+                $(renderedEl).addClass('Mandatory');
+                if (mode == 'edit') {
+                    if (isInfect) {
+                        gridRow.$el.show();
+                    }  
+                }
+                break;    
+            case 'infectDocumental':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-isInfect-display-row');
+                if (mode == 'edit') {
+                    if (isInfect) {
+                        gridRow.$el.show();
+                    }  
+                }
+                break;   
+            case 'infectLocal':
+                $(renderedEl).find('ul').on('click', function(e){
+                    if ($(e.target).text() === "Да") {
+                        $('.depends-local-display-row').show();
+                    } else {
+                        $('.depends-local-display-row').hide();
+                    }
+                });
+                if (mode == 'edit') {
+                    if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
+                        localInfect = true;
+                    }
+                }
+                break;  
+            case 'infectLocalisation':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (mode == 'edit') {
+                    if (localInfect) {
+                        gridRow.$el.show();
+                    }
+                }
+                break; 
+            case 'infectCNS':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (mode == 'edit') {
+                    if (localInfect) {
+                        gridRow.$el.show();
+                    }
+                }
+                break;  
+            case 'infectEye':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (mode == 'edit') {
+                    if (localInfect) {
+                        gridRow.$el.show();
+                    }
+                }
+                break;   
+            case 'infectSkin':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (mode == 'edit') {
+                    if (localInfect) {
+                        gridRow.$el.show();
+                    }
+                }
+                break; 
+            case 'infectMucous':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (mode == 'edit') {
+                    if (localInfect) {
+                        gridRow.$el.show();
+                    }
+                }
+                break;  
+            case 'infectLOR':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (mode == 'edit') {
+                    if (localInfect) {
+                        gridRow.$el.show();
+                    }
+                }
+                break;
+            case 'infectLungs':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (mode == 'edit') {
+                    if (localInfect) {
+                        gridRow.$el.show();
+                    }
+                }
+                break;  
+            case 'infectHeart':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (mode == 'edit') {
+                    if (localInfect) {
+                        gridRow.$el.show();
+                    }
+                }
+                break;  
+            case 'infectAbdomen':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (mode == 'edit') {
+                    if (localInfect) {
+                        gridRow.$el.show();
+                    }
+                }
+                break; 
+            case 'infectUrogenital':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (mode == 'edit') {
+                    if (localInfect) {
+                        gridRow.$el.show();
+                    }
+                }
+                break;  
+            case 'infectMusculoskeletal':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (mode == 'edit') {
+                    if (localInfect) {
+                        gridRow.$el.show();
+                    }
+                }
+                break; 
+            case 'infectDrugName':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-therapy-display-row');
+                $(renderedEl).addClass('depends-therapy-active');
+                // $(renderedEl).append("<span class='icon-plus' style='position:absolute; margin-top: -23px; margin-left: 290px; cursor: pointer;'></span>");
+                // $(renderedEl).find('.icon-plus').click(function(){
+                //     $('<div/>', {html: renderedEl.outerHTML}).appendTo(gridRow.$el);
+                // });
+                if (mode == 'edit') {
+                    if (infectTherapy) {
+                        gridRow.$el.show();
+                        $(renderedEl).find('.field').show();
+                        $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                    }
+                }
+                break;    
+            case 'infectDrugBeginDate':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-therapy-display-row');
+                $(renderedEl).addClass('depends-therapy-active');
+                //$(renderedEl).append("<span class='icon-plus' style='position:absolute; margin-top: -23px; margin-left: 213px; cursor: pointer;'></span>");
+                if (mode == 'edit') {
+                    if (infectTherapy) {
+                        gridRow.$el.show();
+                        $(renderedEl).find('.field').show();
+                        $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                    }
+                }
+                break;  
+            case 'infectDrugEndDate':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-therapy-display-row');
+                $(renderedEl).addClass('depends-therapy-active');
+                //$(renderedEl).append("<span class='icon-plus' style='position:absolute; margin-top: -23px; margin-left: 213px; cursor: pointer;'></span>");
+                if (mode == 'edit') {
+                    if (infectTherapy) {
+                        gridRow.$el.show();
+                        $(renderedEl).find('.field').show();
+                        $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                    }
+                }
+                break;         
+            case 'infectTherapyType':
+                $(renderedEl).find('.attribute-value').on('change', function(e){
+                    if (e.target.value) {
+                        $('.depends-therapy-display-row').show();
+                        $('.depends-therapy-active').find('.field').show();
+                        $('.depends-therapy-active').find('.field-toggle').attr('checked', 'checked');
+                    }
+                });
+                if (mode == 'edit') {
+                    if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
+                        infectTherapy = true;
+                    }
+                }
+                break;                                        
+            default:
+                gridRow.$el.hide();
+                break;
+            }
         }
+
     });
 
     var PanicBtn = Documents.Views.PanicBtn = ViewBase.extend({
@@ -3057,7 +3336,9 @@ define(function (require) {
                     .detach()
                     .appendTo($vgroupContent);
                 $(this).append($vgroupContent.toggle());
-                $vgroupContent.toggle();
+                if ($(this).find('.sb-tgl').length > 0) {
+                    $vgroupContent.toggle();
+                }
             });
 
             this.$(".row-fluid:empty").hide();
@@ -4768,16 +5049,18 @@ define(function (require) {
         attributes: {
             style: "border: 1px solid #D9D9D9;padding: 1em;border-radius:5px;"
         },
-        template: _.template("<h3 class='sb-hdr' style='line-height: 1em;cursor: pointer;'><%=model.get('name')%><span class='sb-tgl icon-plus' style='float: right'></span></h3>"),
+        template: _.template("<h3 class='sb-hdr' style='line-height: 1em;cursor: pointer;'><%=model.get('name')%>"+
+                                "<% if (!model.isNonTogglable()) {%> <span class='sb-tgl icon-plus' style='float: right'></span> <%} %>"+
+                            "</h3>"),
         events: {
             "click .sb-hdr": "onClick"
         },
         onClick: function (event) {
-            // console.log("VGROUP CLICK");
-            var $t = $(event.currentTarget);
-            $t.next().toggle();
-            this.$(".sb-tgl").toggleClass("icon-plus icon-minus");
-            //this.$el.parent().nextAll("*:lt("+this.model.getVGroupRowsNumber()+")").find(".span4:eq("+this.$el.index()+") *").toggle();
+            if (!this.model.isNonTogglable()) {
+                var $t = $(event.currentTarget);
+                $t.next().toggle();
+                this.$(".sb-tgl").toggleClass("icon-plus icon-minus");
+            }
         },
         render: function () {
             Documents.Views.Edit.UIElement.SubHeader.prototype.render.call(this);
@@ -4795,6 +5078,7 @@ define(function (require) {
     UIElementFactory.prototype.UIElementClass = Documents.Views.Edit.UIElement.Base;
     UIElementFactory.prototype.make = function (options) {
         //Регистрация типов
+
         switch (options.model.get('type').toLowerCase()) {
         case "constructor":
             this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
@@ -4858,7 +5142,7 @@ define(function (require) {
             break;
         case "table":
             this.UIElementClass = Documents.Views.Edit.UIElement.Table;
-            break;
+            break;   
         default:
             this.UIElementClass = Documents.Views.Edit.UIElement.Base;
             break;
