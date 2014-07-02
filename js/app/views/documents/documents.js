@@ -161,6 +161,10 @@ define(function (require) {
     //region MODELS
     //---------------------
 
+    var IsInfect = false;
+    var LocalInfect = false;
+    var InfectTherapy = false;
+
     Documents.Models.FetchableModelBase = ModelBase;
 
     Documents.Models.DocumentBase = Documents.Models.FetchableModelBase.extend({
@@ -1037,10 +1041,6 @@ define(function (require) {
     });
 
     var RepeaterBase = Documents.Views.RepeaterBase = ViewBase.extend({
-        isInfect: false,
-        localInfect: false,
-        infectTherapy: false,
-
         toString: function () {
             return 'RepeaterBase';
         },
@@ -1122,7 +1122,7 @@ define(function (require) {
                 $(renderedEl).addClass('depends-isInfect-active depends-isInfect-mandatory').show();
                 if (mode == 'edit') {
                     if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
-                        isInfect = true;
+                        IsInfect = true;
                         $(renderedEl).find('.field').show();
                         $(renderedEl).find('.field-toggle').attr('checked', 'checked');
                         $(renderedEl).find('.field').addClass('Mandatory');
@@ -1134,7 +1134,7 @@ define(function (require) {
                 $(renderedEl).addClass('depends-isInfect-active').show();
                 if (mode == 'edit') {
                     if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
-                        isInfect = true;
+                        IsInfect = true;
                         $(renderedEl).find('.field').show();
                         $(renderedEl).find('.field-toggle').attr('checked', 'checked');
                     } 
@@ -1145,7 +1145,7 @@ define(function (require) {
                 gridRow.$el.addClass('depends-isInfect-display-row');
                 $(renderedEl).addClass('Mandatory');
                 if (mode == 'edit') {
-                    if (isInfect) {
+                    if (IsInfect) {
                         gridRow.$el.show();
                     }  
                 }
@@ -1155,7 +1155,7 @@ define(function (require) {
                 gridRow.$el.addClass('depends-isInfect-display-row');
                 $(renderedEl).addClass('Mandatory');
                 if (mode == 'edit') {
-                    if (isInfect) {
+                    if (IsInfect) {
                         gridRow.$el.show();
                     }  
                 }
@@ -1164,7 +1164,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-isInfect-display-row');
                 if (mode == 'edit') {
-                    if (isInfect) {
+                    if (IsInfect) {
                         gridRow.$el.show();
                     }  
                 }
@@ -1179,7 +1179,7 @@ define(function (require) {
                 });
                 if (mode == 'edit') {
                     if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
-                        localInfect = true;
+                        LocalInfect = true;
                     }
                 }
                 break;  
@@ -1187,7 +1187,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (mode == 'edit') {
-                    if (localInfect) {
+                    if (LocalInfect) {
                         gridRow.$el.show();
                     }
                 }
@@ -1196,7 +1196,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (mode == 'edit') {
-                    if (localInfect) {
+                    if (LocalInfect) {
                         gridRow.$el.show();
                     }
                 }
@@ -1205,7 +1205,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (mode == 'edit') {
-                    if (localInfect) {
+                    if (LocalInfect) {
                         gridRow.$el.show();
                     }
                 }
@@ -1214,7 +1214,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (mode == 'edit') {
-                    if (localInfect) {
+                    if (LocalInfect) {
                         gridRow.$el.show();
                     }
                 }
@@ -1223,7 +1223,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (mode == 'edit') {
-                    if (localInfect) {
+                    if (LocalInfect) {
                         gridRow.$el.show();
                     }
                 }
@@ -1232,7 +1232,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (mode == 'edit') {
-                    if (localInfect) {
+                    if (LocalInfect) {
                         gridRow.$el.show();
                     }
                 }
@@ -1241,7 +1241,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (mode == 'edit') {
-                    if (localInfect) {
+                    if (LocalInfect) {
                         gridRow.$el.show();
                     }
                 }
@@ -1250,7 +1250,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (mode == 'edit') {
-                    if (localInfect) {
+                    if (LocalInfect) {
                         gridRow.$el.show();
                     }
                 }
@@ -1259,7 +1259,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (mode == 'edit') {
-                    if (localInfect) {
+                    if (LocalInfect) {
                         gridRow.$el.show();
                     }
                 }
@@ -1268,7 +1268,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (mode == 'edit') {
-                    if (localInfect) {
+                    if (LocalInfect) {
                         gridRow.$el.show();
                     }
                 }
@@ -1277,7 +1277,7 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (mode == 'edit') {
-                    if (localInfect) {
+                    if (LocalInfect) {
                         gridRow.$el.show();
                     }
                 }
@@ -1291,7 +1291,7 @@ define(function (require) {
                 //     $('<div/>', {html: renderedEl.outerHTML}).appendTo(gridRow.$el);
                 // });
                 if (mode == 'edit') {
-                    if (infectTherapy) {
+                    if (InfectTherapy) {
                         gridRow.$el.show();
                         $(renderedEl).find('.field').show();
                         $(renderedEl).find('.field-toggle').attr('checked', 'checked');
@@ -1303,9 +1303,9 @@ define(function (require) {
                 gridRow.$el.addClass('depends-therapy-display-row');
                 $(renderedEl).addClass('depends-therapy-active');
                 //$(renderedEl).append("<span class='icon-plus' style='position:absolute; margin-top: -23px; margin-left: 213px; cursor: pointer;'></span>");
-                
+
                 if (mode == 'edit') {
-                    if (infectTherapy) {
+                    if (InfectTherapy) {
                         gridRow.$el.show();
                         $(renderedEl).find('.field').show();
                         $(renderedEl).find('.field-toggle').attr('checked', 'checked');
@@ -1318,7 +1318,7 @@ define(function (require) {
                 $(renderedEl).addClass('depends-therapy-active');
                 //$(renderedEl).append("<span class='icon-plus' style='position:absolute; margin-top: -23px; margin-left: 213px; cursor: pointer;'></span>");
                 if (mode == 'edit') {
-                    if (infectTherapy) {
+                    if (InfectTherapy) {
                         gridRow.$el.show();
                         $(renderedEl).find('.field').show();
                         $(renderedEl).find('.field-toggle').attr('checked', 'checked');
@@ -1335,7 +1335,7 @@ define(function (require) {
                 });
                 if (mode == 'edit') {
                     if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
-                        infectTherapy = true;
+                        InfectTherapy = true;
                     }
                 }
                 break;                                        
