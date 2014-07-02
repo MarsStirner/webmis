@@ -1303,6 +1303,7 @@ define(function (require) {
                 gridRow.$el.addClass('depends-therapy-display-row');
                 $(renderedEl).addClass('depends-therapy-active');
                 //$(renderedEl).append("<span class='icon-plus' style='position:absolute; margin-top: -23px; margin-left: 213px; cursor: pointer;'></span>");
+                
                 if (mode == 'edit') {
                     if (infectTherapy) {
                         gridRow.$el.show();
