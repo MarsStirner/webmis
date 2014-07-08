@@ -1074,6 +1074,7 @@ define(function (require) {
 
         render: function () {
             this.$el.html(this.collection.map(function (item) {
+
                 var repeatOptions = this.getRepeatOptions(item);
 
                 var repeatView = this.getRepeatView(repeatOptions);
@@ -1088,7 +1089,7 @@ define(function (require) {
                 var renderedEl = repeatView.render().el;
 
                 if (elCode.toLowerCase().indexOf('infect') > -1) {
-                    this.setInfectHardcodeAttributes(renderedEl, elCode, this);
+                    this.setInfectHardcodeAttributes(renderedEl, elCode, this, item);
                 }
 
                 return renderedEl;
@@ -1097,7 +1098,7 @@ define(function (require) {
             return this;
         },
 
-        setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow) {
+        setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow, el) {
             var mode = (document.location.href.split('/')[document.location.href.split('/').length-1]);
             switch (elCode) {
             case 'isInfect':
@@ -1286,9 +1287,13 @@ define(function (require) {
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-therapy-display-row');
                 $(renderedEl).addClass('depends-therapy-active');
-                // $(renderedEl).append("<span class='icon-plus' style='position:absolute; margin-top: -23px; margin-left: 290px; cursor: pointer;'></span>");
+                // $(renderedEl).append("<span class='icon-plus' style='position:absolute; margin-top: -23px; margin-left: 390px; cursor: pointer;'></span>");
                 // $(renderedEl).find('.icon-plus').click(function(){
-                //     $('<div/>', {html: renderedEl.outerHTML}).appendTo(gridRow.$el);
+                // 	el.setPropertyValueFor('value', '');
+                //     var repeatOptions = gridRow.getRepeatOptions(el);
+                //     var repeatView = gridRow.getRepeatView(repeatOptions);
+                //     gridRow.subViews.push(repeatView);
+                //     $(renderedEl).append($(repeatView.render().el).find('.field').css('margin-top', '10px').show());
                 // });
                 if (mode == 'edit') {
                     if (InfectTherapy) {
@@ -1297,6 +1302,12 @@ define(function (require) {
                         $(renderedEl).find('.field-toggle').attr('checked', 'checked');
                     }
                 }
+
+                $(renderedEl).find('.attribute-value').on('change', function(e){
+                    if (!e.target.value) {
+                       $('.depends-therapy-active').find('.attribute-value').val('');
+                    }
+                });
                 break;    
             case 'infectDrugBeginDate':
                 gridRow.$el.hide();
