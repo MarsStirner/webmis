@@ -112,6 +112,7 @@ define(function (require) {
             _select: _.template(require("text!templates/documents/edit/ui-elements/select.html")),
             _person: _.template(require("text!templates/documents/edit/ui-elements/person.html")),
             _htmlHelper: _.template(require("text!templates/documents/edit/ui-elements/html-helper.html")),
+            _drugchart: _.template(require("text!templates/documents/edit/ui-elements/drugchart.html")),
             htmlHelperPopUp: {
                 dialog: _.template(require("text!templates/documents/edit/ui-elements/html-helper/dialog.html")),
                 section: _.template(require("text!templates/documents/edit/ui-elements/html-helper/section.html")),
@@ -163,7 +164,7 @@ define(function (require) {
 
     var IsInfect = false;
     var LocalInfect = false;
-    var InfectTherapy = false;
+    var infectDrugRows = [];
 
     Documents.Models.FetchableModelBase = ModelBase;
 
@@ -437,7 +438,17 @@ define(function (require) {
 
                 _(this.getGroupedByRow()).each(function (row) {
                     row.spans.each(function (templateAttr) {
-                        if (templateAttr.isMandatory() && !templateAttr.hasValue()) {
+                        if (templateAttr.get('code') == 'infectType' || templateAttr.get('code') == 'infectEtiology') {
+                            $('.'+templateAttr.get('code')).removeClass('WrongField');
+                            if ($('.isInfect').find('.attribute-value').val() == 'Да') {
+                                if (!$('.'+templateAttr.get('code')).find('input:checked').length) {
+                                    $('.'+templateAttr.get('code')).addClass('WrongField');
+                                    templateAttr.trigger("requiredValidation:fail");
+                                    dispatcher.trigger('reguiredValidation:fail')
+                                    requiredValidationFail = true;
+                                }
+                            }
+                        } else if (templateAttr.isMandatory() && !templateAttr.hasValue()) {
                             templateAttr.trigger("requiredValidation:fail");
                             dispatcher.trigger('reguiredValidation:fail')
                             requiredValidationFail = true;
@@ -1089,6 +1100,7 @@ define(function (require) {
                 var renderedEl = repeatView.render().el;
 
                 if (elCode.toLowerCase().indexOf('infect') > -1) {
+
                     this.setInfectHardcodeAttributes(renderedEl, elCode, this, item);
                 }
 
@@ -1100,258 +1112,233 @@ define(function (require) {
 
         setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow, el) {
             var mode = (document.location.href.split('/')[document.location.href.split('/').length-1]);
+            if (el.get('scope') === 'Да') {
+                $(renderedEl).find('.field').hide();
+                $(renderedEl).find('.field-toggle').on('click', function() {
+                    $(renderedEl).find('.field').hide();
+                    if ($(this).attr('checked')) {
+                        el.setPropertyValueFor('value', 'Да');
+                    } else {
+                        el.setPropertyValueFor('value', '');
+                    }
+                });
+            }
+            if (elCode.split('_').length > 1) {
+                var drugId = elCode.split('_')[1];
+                gridRow.$el.attr('data-drugid', drugId);
+                if (drugId > 1) {
+                    if (elCode.split('_')[0] == 'infectDrugEndDate') {
+                    infectDrugRows.push(gridRow);    
+                    gridRow.$el.hide();
+                         $(renderedEl).on('click', '.icon-remove', function(){
+                            $.each(gridRow.collection.models, function(i, item){
+                                item.setPropertyValueFor('value', '');
+                                gridRow.subViews[i].render();
+                                if (gridRow.subViews[i].model.get('code').split('_')[0] == 'infectDrugEndDate') {
+                                    gridRow.subViews[i].$el.find('.icon-remove').on('click', function(){
+                                        $.each(gridRow.collection.models, function(i, item){
+                                            item.setPropertyValueFor('value', '');
+                                            gridRow.subViews[i].render();
+                                        });
+                                        gridRow.$el.hide();
+                                    });
+                                }   
+                            });
+                            gridRow.$el.hide();
+                        });
+                        if (gridRow.subViews[0].model.getPropertyValueFor('value')) {
+                            var exchange = false;
+                            for (var i = 0; i < drugId ; i++) {
+                                if (!infectDrugRows[i].subViews[0].model.getPropertyValueFor('value')) {
+                                    $.each(gridRow.subViews, function(j, item){
+                                        infectDrugRows[i].subViews[j].model.setPropertyValueFor('value', item.model.getPropertyValueFor('value'));
+                                        infectDrugRows[i].subViews[j].render();
+                                        infectDrugRows[i].$el.show();
+                                        item.model.setPropertyValueFor('value', '');
+                                        item.render();
+                                    });
+                                    exchange = true;
+                                    break;
+                                }
+                            }
+                            if (!exchange) {
+                                gridRow.$el.show();
+                            }
+                        }
+                    } 
+                } else {
+                    if (elCode.split('_')[0] == 'infectDrugEndDate') {
+                    infectDrugRows.push(gridRow);     
+                        $(renderedEl).on('click', '.icon-plus', function(){
+                            for (var i = 2; i < 9; i++) {
+                                var drugRow = $('.document-grid div[data-drugid="'+i+'"]');
+                                if (drugRow.css('display') == 'none') {
+                                    drugRow.show();
+                                    break;
+                                }
+                            }
+                        });
+                    }
+                }
+            }
             switch (elCode) {
             case 'isInfect':
+                $(renderedEl).addClass('isInfect');
                 $(renderedEl).find('.attribute-value').on('change', function(e){
                     if (e.target.value === 'Да') {
                         $('.depends-isInfect-display').show();
                         $('.depends-isInfect-display-row').show();
                         $('.depends-isInfect-active').find('.field').show();
                         $('.depends-isInfect-active').find('.field-toggle').attr('checked', 'checked');
-                        $('.depends-isInfect-mandatory').find('.field').addClass('Mandatory');
+                        $('.depends-isInfect-mandatory').find('.field').addClass('Mandatory').trigger('classChange');
                         
                     } else {
                         $('.depends-isInfect-display').hide();
                         $('.depends-isInfect-display-row').hide();
                         $('.depends-isInfect-active').find('.field').hide();
                         $('.depends-isInfect-active').find('.field-toggle').removeAttr('checked');
-                        $('.depends-isInfect-mandatory').find('.field').removeClass('Mandatory');
+                        $('.depends-isInfect-mandatory').find('.field').removeClass('Mandatory').trigger('classChange');
                     }
                 });
                 break;
             case 'infectBeginDate':
                 $(renderedEl).addClass('depends-isInfect-active depends-isInfect-mandatory').show();
-                if (mode == 'edit') {
-                    if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
-                        IsInfect = true;
-                        $(renderedEl).find('.field').show();
-                        $(renderedEl).find('.field-toggle').attr('checked', 'checked');
-                        $(renderedEl).find('.field').addClass('Mandatory');
-                    } 
-                    
-                }
+                $(renderedEl).on('classChange', function(){
+                    el.set('mandatory', ''+$(renderedEl).find('.field').hasClass('Mandatory'));
+                });
+                if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
+                    IsInfect = true;
+                    $(renderedEl).find('.field').show();
+                    $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                    $(renderedEl).find('.field').addClass('Mandatory');
+                    el.set('mandatory', 'true');
+                } 
                 break;
             case 'infectEndDate':
                 $(renderedEl).addClass('depends-isInfect-active').show();
-                if (mode == 'edit') {
-                    if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
-                        IsInfect = true;
-                        $(renderedEl).find('.field').show();
-                        $(renderedEl).find('.field-toggle').attr('checked', 'checked');
-                    } 
-                }
+                if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
+                    IsInfect = true;
+                    $(renderedEl).find('.field').show();
+                    $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                } 
                 break;    
             case 'infectEtiology':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-isInfect-display-row');
-                $(renderedEl).addClass('Mandatory');
-                if (mode == 'edit') {
-                    if (IsInfect) {
-                        gridRow.$el.show();
-                    }  
-                }
+                $(renderedEl).addClass('infectEtiology Mandatory');
+                el.set('mandatory', 'true');
+                if (IsInfect) {
+                    gridRow.$el.show();
+                }  
                 break;    
             case 'infectType':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-isInfect-display-row');
-                $(renderedEl).addClass('Mandatory');
-                if (mode == 'edit') {
-                    if (IsInfect) {
-                        gridRow.$el.show();
-                    }  
+                $(renderedEl).addClass('Mandatory infectType');
+                if (IsInfect) {
+                    gridRow.$el.show();
                 }
                 break;    
             case 'infectDocumental':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-isInfect-display-row');
-                if (mode == 'edit') {
-                    if (IsInfect) {
-                        gridRow.$el.show();
-                    }  
-                }
+                if (IsInfect) {
+                    gridRow.$el.show();
+                } 
                 break;   
             case 'infectLocal':
-                $(renderedEl).find('ul').on('click', function(e){
-                    if ($(e.target).text() === "Да") {
+                $(renderedEl).find('.field-toggle').on('click', function(e){
+                    if ($(this).attr('checked')) {
                         $('.depends-local-display-row').show();
                     } else {
                         $('.depends-local-display-row').hide();
                     }
                 });
-                if (mode == 'edit') {
-                    if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
-                        LocalInfect = true;
-                    }
+                if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
+                    LocalInfect = true;
                 }
                 break;  
             case 'infectLocalisation':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
-                if (mode == 'edit') {
-                    if (LocalInfect) {
-                        gridRow.$el.show();
-                    }
+                if (LocalInfect) {
+                    gridRow.$el.show();
                 }
                 break; 
             case 'infectCNS':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
-                if (mode == 'edit') {
-                    if (LocalInfect) {
-                        gridRow.$el.show();
-                    }
+                if (LocalInfect) {
+                    gridRow.$el.show();
                 }
                 break;  
             case 'infectEye':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
-                if (mode == 'edit') {
-                    if (LocalInfect) {
-                        gridRow.$el.show();
-                    }
+                if (LocalInfect) {
+                    gridRow.$el.show();
                 }
                 break;   
             case 'infectSkin':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
-                if (mode == 'edit') {
-                    if (LocalInfect) {
-                        gridRow.$el.show();
-                    }
+                if (LocalInfect) {
+                    gridRow.$el.show();
                 }
                 break; 
             case 'infectMucous':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
-                if (mode == 'edit') {
-                    if (LocalInfect) {
-                        gridRow.$el.show();
-                    }
+                if (LocalInfect) {
+                    gridRow.$el.show();
                 }
                 break;  
             case 'infectLOR':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
-                if (mode == 'edit') {
-                    if (LocalInfect) {
-                        gridRow.$el.show();
-                    }
+                if (LocalInfect) {
+                    gridRow.$el.show();
                 }
                 break;
             case 'infectLungs':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
-                if (mode == 'edit') {
-                    if (LocalInfect) {
-                        gridRow.$el.show();
-                    }
+                if (LocalInfect) {
+                    gridRow.$el.show();
                 }
                 break;  
             case 'infectHeart':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
-                if (mode == 'edit') {
-                    if (LocalInfect) {
-                        gridRow.$el.show();
-                    }
+                if (LocalInfect) {
+                    gridRow.$el.show();
                 }
                 break;  
             case 'infectAbdomen':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
-                if (mode == 'edit') {
-                    if (LocalInfect) {
-                        gridRow.$el.show();
-                    }
+                if (LocalInfect) {
+                    gridRow.$el.show();
                 }
                 break; 
             case 'infectUrogenital':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
-                if (mode == 'edit') {
-                    if (LocalInfect) {
-                        gridRow.$el.show();
-                    }
+                if (LocalInfect) {
+                    gridRow.$el.show();
                 }
                 break;  
             case 'infectMusculoskeletal':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
-                if (mode == 'edit') {
-                    if (LocalInfect) {
-                        gridRow.$el.show();
-                    }
-                }
-                break; 
-            case 'infectDrugName':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-therapy-display-row');
-                $(renderedEl).addClass('depends-therapy-active');
-                // $(renderedEl).append("<span class='icon-plus' style='position:absolute; margin-top: -23px; margin-left: 390px; cursor: pointer;'></span>");
-                // $(renderedEl).find('.icon-plus').click(function(){
-                // 	el.setPropertyValueFor('value', '');
-                //     var repeatOptions = gridRow.getRepeatOptions(el);
-                //     var repeatView = gridRow.getRepeatView(repeatOptions);
-                //     gridRow.subViews.push(repeatView);
-                //     $(renderedEl).append($(repeatView.render().el).find('.field').css('margin-top', '10px').show());
-                // });
-                if (mode == 'edit') {
-                    if (InfectTherapy) {
-                        gridRow.$el.show();
-                        $(renderedEl).find('.field').show();
-                        $(renderedEl).find('.field-toggle').attr('checked', 'checked');
-                    }
-                }
-
-                $(renderedEl).find('.attribute-value').on('change', function(e){
-                    if (!e.target.value) {
-                       $('.depends-therapy-active').find('.attribute-value').val('');
-                    }
-                });
-                break;    
-            case 'infectDrugBeginDate':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-therapy-display-row');
-                $(renderedEl).addClass('depends-therapy-active');
-                //$(renderedEl).append("<span class='icon-plus' style='position:absolute; margin-top: -23px; margin-left: 213px; cursor: pointer;'></span>");
-
-                if (mode == 'edit') {
-                    if (InfectTherapy) {
-                        gridRow.$el.show();
-                        $(renderedEl).find('.field').show();
-                        $(renderedEl).find('.field-toggle').attr('checked', 'checked');
-                    }
-                }
-                break;  
-            case 'infectDrugEndDate':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-therapy-display-row');
-                $(renderedEl).addClass('depends-therapy-active');
-                //$(renderedEl).append("<span class='icon-plus' style='position:absolute; margin-top: -23px; margin-left: 213px; cursor: pointer;'></span>");
-                if (mode == 'edit') {
-                    if (InfectTherapy) {
-                        gridRow.$el.show();
-                        $(renderedEl).find('.field').show();
-                        $(renderedEl).find('.field-toggle').attr('checked', 'checked');
-                    }
+                if (LocalInfect) {
+                    gridRow.$el.show();
                 }
                 break;         
             case 'infectTherapyType':
-                $(renderedEl).find('.attribute-value').on('change', function(e){
-                    if (e.target.value) {
-                        $('.depends-therapy-display-row').show();
-                        $('.depends-therapy-active').find('.field').show();
-                        $('.depends-therapy-active').find('.field-toggle').attr('checked', 'checked');
-                    }
-                });
-                if (mode == 'edit') {
-                    if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
-                        InfectTherapy = true;
-                    }
-                }
+
                 break;                                        
             default:
-                gridRow.$el.hide();
                 break;
             }
         }
@@ -3346,10 +3333,15 @@ define(function (require) {
                     .wrap("<div class='row-fluid vgroup-row' style='padding-top: 1em;'></div>")
                     .parent()
                     .detach()
-                    .appendTo($vgroupContent);
+                    .appendTo($vgroupContent); 
                 $(this).append($vgroupContent.toggle());
                 if ($(this).find('.sb-tgl').length > 0) {
                     $vgroupContent.toggle();
+                }
+                if ($(this).find('.icon-plus').length > 0) {
+                    if ($(this).find('input:checked').length > 0) {
+                        $vgroupContent.toggle();
+                    }
                 }
             });
 
@@ -3703,6 +3695,27 @@ define(function (require) {
             return this;
         }
     });
+
+
+    /**
+     * Поле типа DrugChart
+     * @type {*}
+     */
+    Documents.Views.Edit.UIElement.DrugChart = UIElementBase.extend({
+        template: templates.uiElements._drugchart,
+
+        render: function () {
+
+            console.log(this);
+
+            UIElementBase.prototype.render.call(this);
+
+            return this;
+        }
+    });
+
+
+
 
     /**
      * Поле типа Time
@@ -5154,7 +5167,10 @@ define(function (require) {
             break;
         case "table":
             this.UIElementClass = Documents.Views.Edit.UIElement.Table;
-            break;   
+            break;  
+        case "drugchart":
+            this.UIElementClass = Documents.Views.Edit.UIElement.DrugChart;
+            break;      
         default:
             this.UIElementClass = Documents.Views.Edit.UIElement.Base;
             break;
