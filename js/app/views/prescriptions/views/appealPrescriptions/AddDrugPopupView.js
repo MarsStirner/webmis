@@ -58,7 +58,10 @@ define(function (require) {
 
             this.balance.nomenId = item.id;
 
-            this.balance.fetch().done(function () {
+            this.balance.fetch({
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+            }).done(function () {
                 // console.log('balance', self.balance);
             });
 

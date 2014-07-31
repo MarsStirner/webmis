@@ -101,7 +101,6 @@ define(function (require) {
                 });
                 data.item = items[0];
             }
-            console.log('balance ' + this.cid, data, this.options.appeal)
             return data;
         }
     });

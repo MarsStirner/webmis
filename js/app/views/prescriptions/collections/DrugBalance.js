@@ -58,7 +58,11 @@ define(function (require) {
         },
 
         url: function () {
-            return "/api/v1/rls/balance/" + this.nomenId;
+            return DATA_PATH + "rls/" + this.nomenId;
+        },
+
+        parse: function(response) {
+            return response;
         }
     });
 
