@@ -62,7 +62,7 @@ define(function (require) {
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
             }).done(function () {
-                // console.log('balance', self.balance);
+                 console.log('balance', self.balance);
             });
 
             //console.log('searchByNomen', item)
@@ -89,11 +89,11 @@ define(function (require) {
             // });
 
             var drug = {
-                "nomen": first.get('rlsNomenId'),
+                "nomen": first.get('id'),
                 "name": first.get('tradeLocalName'),
                 "dose": "",
                 "unit": 327,
-                "units": units//,
+                "units": units//,\
 
                 // "unitName": first.get('unitName')
             };
