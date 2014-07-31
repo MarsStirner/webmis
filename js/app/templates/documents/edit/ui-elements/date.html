@@ -3,11 +3,16 @@
 		<input type="checkbox" class="field-toggle">
 		<%=model.get('name')%>
 	</label>
-	<div class="field">
+	
+	<div class="field" style="float:left">
 		<input type="text"
 			class="Combo attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
 			<%=model.isReadOnly()?'disabled':''%>
 			placeholder="ДД.ММ.ГГГГ"
-			value="<%=date%>">
+			value="<%=date%>">		
 	</div>
+	<% if (model.get('code').split('_')[0] == 'infectDrugEndDate') {%>
+			<span style="float:right; cursor:pointer" class="<%=(model.get('code').split('_')[1] > 1) ? 'icon-remove' : 'icon-plus'%>"></span>
+			<% }
+		%>
 <!--</div>-->

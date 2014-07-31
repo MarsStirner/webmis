@@ -112,6 +112,7 @@ define(function (require) {
             _select: _.template(require("text!templates/documents/edit/ui-elements/select.html")),
             _person: _.template(require("text!templates/documents/edit/ui-elements/person.html")),
             _htmlHelper: _.template(require("text!templates/documents/edit/ui-elements/html-helper.html")),
+            _drugchart: _.template(require("text!templates/documents/edit/ui-elements/drugchart.html")),
             htmlHelperPopUp: {
                 dialog: _.template(require("text!templates/documents/edit/ui-elements/html-helper/dialog.html")),
                 section: _.template(require("text!templates/documents/edit/ui-elements/html-helper/section.html")),
@@ -161,6 +162,10 @@ define(function (require) {
     //region MODELS
     //---------------------
 
+    var IsInfect = false;
+    var LocalInfect = false;
+    var infectDrugRows = [];
+
     Documents.Models.FetchableModelBase = ModelBase;
 
     Documents.Models.DocumentBase = Documents.Models.FetchableModelBase.extend({
@@ -201,38 +206,48 @@ define(function (require) {
             var readOnlyTherapyPhaseFields;
 
             if (lastTherapy) {
-                //этот документ есть в последней фазе последней терапии
-                var docInLastTherapyLastPhase = !! _.find(lastTherapy.get("phases")[0].days, function (day) {
+                
+                if (lastTherapy.get("phases").length > 0) {
+                    //этот документ есть в последней фазе последней терапии
+                    var docInLastTherapyLastPhase = !! _.find(lastTherapy.get("phases")[0].days, function (day) {
                     return day.docId === this.get('id');
-                }, this);
-
-                //этот документ есть в фазах последней терапии
-                var docInLastTherapyPhases = !! _.find(lastTherapy.get("phases"), function (phase) {
-                    return _.find(phase.days, function (day) {
-                        return day.docId === this.get('id');
                     }, this);
-                }, this);
+
+                    //этот документ есть в фазах последней терапии
+                    var docInLastTherapyPhases = !! _.find(lastTherapy.get("phases"), function (phase) {
+                        return _.find(phase.days, function (day) {
+                            return day.docId === this.get('id');
+                        }, this);
+                    }, this);
+                }
+
+                    
 
                 //последняя терапия не закрыта, нет даты окончания
                 if (!lastTherapy.get("endDate") || lastTherapy.get("endDate") < 0) {
                     shouldSetTherapyFields = true;
-                    if (this.docIsNew() && (lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("id") === this.get('id'))) {
-                        shouldSetTherapyFields = false;
-                    }
-                    //последняя фаза не закрыта, нет даты окончания
-                    if (!lastTherapy.get("phases")[0].endDate || lastTherapy.get("phases")[0].endDate < 0) {
-                        shouldSetTherapyPhaseFields = true;
-                        //если мы редактируем первый документ в последней незакрытой фазе
-                        if ((lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("phases")[0].days[0].docId === this.get('id'))) {
-                            shouldSetTherapyPhaseFields = false;
-                        }
-                    } else {
-                        //если у фазы терапии есть дата окончания, и документ входит в документы из которых состоит терапия
-                        if (docInLastTherapyLastPhase || docInLastTherapyPhases) {
-                            shouldSetTherapyPhaseFields = true;
-                        }
-                    }
 
+                    if (lastTherapy.get("phases").length > 0) {
+
+                        if (this.docIsNew() && (lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("id") === this.get('id'))) {
+                            shouldSetTherapyFields = false;
+                        }
+
+                        //последняя фаза не закрыта, нет даты окончания
+                        if (!lastTherapy.get("phases")[0].endDate || lastTherapy.get("phases")[0].endDate < 0) {
+                            shouldSetTherapyPhaseFields = true;
+                            //если мы редактируем первый документ в последней незакрытой фазе
+                            if ((lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("phases")[0].days[0].docId === this.get('id'))) {
+                                shouldSetTherapyPhaseFields = false;
+                            }
+                        } else {
+                            //если у фазы терапии есть дата окончания, и документ входит в документы из которых состоит терапия
+                            if (docInLastTherapyLastPhase || docInLastTherapyPhases) {
+                                shouldSetTherapyPhaseFields = true;
+                            }
+                        }
+
+                    }      
                 } else {
                     //если у терапии есть дата окончания , и документ входит в документы из которых состоит терапия
                     if (docInLastTherapyLastPhase || docInLastTherapyPhases) {
@@ -433,7 +448,17 @@ define(function (require) {
 
                 _(this.getGroupedByRow()).each(function (row) {
                     row.spans.each(function (templateAttr) {
-                        if (templateAttr.isMandatory() && !templateAttr.hasValue()) {
+                        if (templateAttr.get('code') == 'infectType' || templateAttr.get('code') == 'infectEtiology') {
+                            $('.'+templateAttr.get('code')).removeClass('WrongField');
+                            if ($('.isInfect').find('.attribute-value').val() == 'Да') {
+                                if (!$('.'+templateAttr.get('code')).find('input:checked').length) {
+                                    $('.'+templateAttr.get('code')).addClass('WrongField');
+                                    templateAttr.trigger("requiredValidation:fail");
+                                    dispatcher.trigger('reguiredValidation:fail')
+                                    requiredValidationFail = true;
+                                }
+                            }
+                        } else if (templateAttr.isMandatory() && !templateAttr.hasValue()) {
                             templateAttr.trigger("requiredValidation:fail");
                             dispatcher.trigger('reguiredValidation:fail')
                             requiredValidationFail = true;
@@ -703,6 +728,22 @@ define(function (require) {
             var result = false;
             var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {
                 return a.code === "VGROUP";
+            });
+            if (la) {
+                var lav = _(this.get("layoutAttributeValues")).find(function (lav) {
+                    return lav.layoutAttribute_id === la.id;
+                });
+                if (lav) {
+                    result = lav.value === "true";
+                }
+            }
+            return result;
+        },
+
+        isNonTogglable: function () {
+            var result = false;
+            var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {
+                return a.code === "NONTOGGLABLE";
             });
             if (la) {
                 var lav = _(this.get("layoutAttributeValues")).find(function (lav) {
@@ -1054,17 +1095,264 @@ define(function (require) {
 
         render: function () {
             this.$el.html(this.collection.map(function (item) {
+
                 var repeatOptions = this.getRepeatOptions(item);
 
                 var repeatView = this.getRepeatView(repeatOptions);
 
+                var elCode = '';
+                if (repeatView.model.get('code')) {
+                    elCode = repeatView.model.get('code');
+                }
+
                 this.subViews.push(repeatView);
 
-                return repeatView.render().el;
+                var renderedEl = repeatView.render().el;
+
+                if (elCode.toLowerCase().indexOf('infect') > -1) {
+
+                    this.setInfectHardcodeAttributes(renderedEl, elCode, this, item);
+                }
+
+                return renderedEl;
             }, this));
 
             return this;
+        },
+
+        setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow, el) {
+            var mode = (document.location.href.split('/')[document.location.href.split('/').length-1]);
+            if (el.get('scope') === 'Да') {
+                $(renderedEl).find('.field').hide();
+                $(renderedEl).find('.field-toggle').on('click', function() {
+                    $(renderedEl).find('.field').hide();
+                    if ($(this).attr('checked')) {
+                        el.setPropertyValueFor('value', 'Да');
+                    } else {
+                        el.setPropertyValueFor('value', '');
+                    }
+                });
+            }
+            if (elCode.split('_').length > 1) {
+                var drugId = elCode.split('_')[1];
+                gridRow.$el.attr('data-drugid', drugId);
+                if (drugId > 1) {
+                    if (elCode.split('_')[0] == 'infectDrugEndDate') {
+                    infectDrugRows.push(gridRow);    
+                    gridRow.$el.hide();
+                         $(renderedEl).on('click', '.icon-remove', function(){
+                            $.each(gridRow.collection.models, function(i, item){
+                                item.setPropertyValueFor('value', '');
+                                gridRow.subViews[i].render();
+                                if (gridRow.subViews[i].model.get('code').split('_')[0] == 'infectDrugEndDate') {
+                                    gridRow.subViews[i].$el.find('.icon-remove').on('click', function(){
+                                        $.each(gridRow.collection.models, function(i, item){
+                                            item.setPropertyValueFor('value', '');
+                                            gridRow.subViews[i].render();
+                                        });
+                                        gridRow.$el.hide();
+                                    });
+                                }   
+                            });
+                            gridRow.$el.hide();
+                        });
+                        if (gridRow.subViews[0].model.getPropertyValueFor('value')) {
+                            var exchange = false;
+                            for (var i = 0; i < drugId ; i++) {
+                                if (!infectDrugRows[i].subViews[0].model.getPropertyValueFor('value')) {
+                                    $.each(gridRow.subViews, function(j, item){
+                                        infectDrugRows[i].subViews[j].model.setPropertyValueFor('value', item.model.getPropertyValueFor('value'));
+                                        infectDrugRows[i].subViews[j].render();
+                                        infectDrugRows[i].$el.show();
+                                        item.model.setPropertyValueFor('value', '');
+                                        item.render();
+                                    });
+                                    exchange = true;
+                                    break;
+                                }
+                            }
+                            if (!exchange) {
+                                gridRow.$el.show();
+                            }
+                        }
+                    } 
+                } else {
+                    if (elCode.split('_')[0] == 'infectDrugEndDate') {
+                    infectDrugRows.push(gridRow);     
+                        $(renderedEl).on('click', '.icon-plus', function(){
+                            for (var i = 2; i < 9; i++) {
+                                var drugRow = $('.document-grid div[data-drugid="'+i+'"]');
+                                if (drugRow.css('display') == 'none') {
+                                    drugRow.show();
+                                    break;
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+            switch (elCode) {
+            case 'isInfect':
+                $(renderedEl).addClass('isInfect');
+                $(renderedEl).find('.attribute-value').on('change', function(e){
+                    if (e.target.value === 'Да') {
+                        $('.depends-isInfect-display').show();
+                        $('.depends-isInfect-display-row').show();
+                        $('.depends-isInfect-active').find('.field').show();
+                        $('.depends-isInfect-active').find('.field-toggle').attr('checked', 'checked');
+                        $('.depends-isInfect-mandatory').find('.field').addClass('Mandatory').trigger('classChange');
+                        
+                    } else {
+                        $('.depends-isInfect-display').hide();
+                        $('.depends-isInfect-display-row').hide();
+                        $('.depends-isInfect-active').find('.field').hide();
+                        $('.depends-isInfect-active').find('.field-toggle').removeAttr('checked');
+                        $('.depends-isInfect-mandatory').find('.field').removeClass('Mandatory').trigger('classChange');
+                    }
+                });
+                break;
+            case 'infectBeginDate':
+                $(renderedEl).addClass('depends-isInfect-active depends-isInfect-mandatory').show();
+                $(renderedEl).on('classChange', function(){
+                    el.set('mandatory', ''+$(renderedEl).find('.field').hasClass('Mandatory'));
+                });
+                if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
+                    IsInfect = true;
+                    $(renderedEl).find('.field').show();
+                    $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                    $(renderedEl).find('.field').addClass('Mandatory');
+                    el.set('mandatory', 'true');
+                } 
+                break;
+            case 'infectEndDate':
+                $(renderedEl).addClass('depends-isInfect-active').show();
+                if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
+                    IsInfect = true;
+                    $(renderedEl).find('.field').show();
+                    $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                } 
+                break;    
+            case 'infectEtiology':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-isInfect-display-row');
+                $(renderedEl).addClass('infectEtiology Mandatory');
+                el.set('mandatory', 'true');
+                if (IsInfect) {
+                    gridRow.$el.show();
+                }  
+                break;    
+            case 'infectType':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-isInfect-display-row');
+                $(renderedEl).addClass('Mandatory infectType');
+                if (IsInfect) {
+                    gridRow.$el.show();
+                }
+                break;    
+            case 'infectDocumental':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-isInfect-display-row');
+                if (IsInfect) {
+                    gridRow.$el.show();
+                } 
+                break;   
+            case 'infectLocal':
+                $(renderedEl).find('.field-toggle').on('click', function(e){
+                    if ($(this).attr('checked')) {
+                        $('.depends-local-display-row').show();
+                    } else {
+                        $('.depends-local-display-row').hide();
+                    }
+                });
+                if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
+                    LocalInfect = true;
+                }
+                break;  
+            case 'infectLocalisation':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break; 
+            case 'infectCNS':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break;  
+            case 'infectEye':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break;   
+            case 'infectSkin':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break; 
+            case 'infectMucous':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break;  
+            case 'infectLOR':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break;
+            case 'infectLungs':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break;  
+            case 'infectHeart':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break;  
+            case 'infectAbdomen':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break; 
+            case 'infectUrogenital':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break;  
+            case 'infectMusculoskeletal':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break;         
+            case 'infectTherapyType':
+
+                break;                                        
+            default:
+                break;
+            }
         }
+
     });
 
     var PanicBtn = Documents.Views.PanicBtn = ViewBase.extend({
@@ -1082,10 +1370,8 @@ define(function (require) {
         },
 
         initialize: function () {
-            if (this.options.documentTypes) {
-                this.documentTypes = this.options.documentTypes;
-            } else {
                 this.documentTypes = new Documents.Collections.DocumentTypes();
+                this.documentTypes.setOrgStructFilter('0');
                 this.documentTypes.fetch({
                     data: {
                         filter: {
@@ -1093,8 +1379,6 @@ define(function (require) {
                         }
                     }
                 });
-                //console.log("documentTypes.fetch");
-            }
 
             this.listenTo(this.documentTypes, "reset", function () {
                 if (!appeal.isClosed()) {
@@ -3059,9 +3343,16 @@ define(function (require) {
                     .wrap("<div class='row-fluid vgroup-row' style='padding-top: 1em;'></div>")
                     .parent()
                     .detach()
-                    .appendTo($vgroupContent);
+                    .appendTo($vgroupContent); 
                 $(this).append($vgroupContent.toggle());
-                $vgroupContent.toggle();
+                if ($(this).find('.sb-tgl').length > 0) {
+                    $vgroupContent.toggle();
+                }
+                if ($(this).find('.icon-plus').length > 0) {
+                    if ($(this).find('input:checked').length > 0) {
+                        $vgroupContent.toggle();
+                    }
+                }
             });
 
             this.$(".row-fluid:empty").hide();
@@ -3414,6 +3705,27 @@ define(function (require) {
             return this;
         }
     });
+
+
+    /**
+     * Поле типа DrugChart
+     * @type {*}
+     */
+    Documents.Views.Edit.UIElement.DrugChart = UIElementBase.extend({
+        template: templates.uiElements._drugchart,
+
+        render: function () {
+
+            console.log(this);
+
+            UIElementBase.prototype.render.call(this);
+
+            return this;
+        }
+    });
+
+
+
 
     /**
      * Поле типа Time
@@ -4772,16 +5084,18 @@ define(function (require) {
         attributes: {
             style: "border: 1px solid #D9D9D9;padding: 1em;border-radius:5px;"
         },
-        template: _.template("<h3 class='sb-hdr' style='line-height: 1em;cursor: pointer;'><%=model.get('name')%><span class='sb-tgl icon-plus' style='float: right'></span></h3>"),
+        template: _.template("<h3 class='sb-hdr' style='line-height: 1em;cursor: pointer;'><%=model.get('name')%>"+
+                                "<% if (!model.isNonTogglable()) {%> <span class='sb-tgl icon-plus' style='float: right'></span> <%} %>"+
+                            "</h3>"),
         events: {
             "click .sb-hdr": "onClick"
         },
         onClick: function (event) {
-            // console.log("VGROUP CLICK");
-            var $t = $(event.currentTarget);
-            $t.next().toggle();
-            this.$(".sb-tgl").toggleClass("icon-plus icon-minus");
-            //this.$el.parent().nextAll("*:lt("+this.model.getVGroupRowsNumber()+")").find(".span4:eq("+this.$el.index()+") *").toggle();
+            if (!this.model.isNonTogglable()) {
+                var $t = $(event.currentTarget);
+                $t.next().toggle();
+                this.$(".sb-tgl").toggleClass("icon-plus icon-minus");
+            }
         },
         render: function () {
             Documents.Views.Edit.UIElement.SubHeader.prototype.render.call(this);
@@ -4799,6 +5113,7 @@ define(function (require) {
     UIElementFactory.prototype.UIElementClass = Documents.Views.Edit.UIElement.Base;
     UIElementFactory.prototype.make = function (options) {
         //Регистрация типов
+
         switch (options.model.get('type').toLowerCase()) {
         case "constructor":
             this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
@@ -4862,7 +5177,10 @@ define(function (require) {
             break;
         case "table":
             this.UIElementClass = Documents.Views.Edit.UIElement.Table;
-            break;
+            break;  
+        case "drugchart":
+            this.UIElementClass = Documents.Views.Edit.UIElement.DrugChart;
+            break;      
         default:
             this.UIElementClass = Documents.Views.Edit.UIElement.Base;
             break;

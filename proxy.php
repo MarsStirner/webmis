@@ -31,7 +31,9 @@ function proxy_url ($url, $header_host=null) {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
     }
 
-    curl_setopt( $ch, CURLOPT_COOKIE, $cookie );
+    if(!empty($cookie)) {
+        curl_setopt( $ch, CURLOPT_COOKIE, $cookie );
+    }
 
     $headers = array();
     foreach ( getallheaders() as $key => $value ) {
