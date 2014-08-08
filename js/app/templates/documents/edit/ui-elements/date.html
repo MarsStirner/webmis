@@ -4,7 +4,7 @@
 		<%=model.get('name')%>
 	</label>
 	
-	<div class="field" style="float:left">
+	<div class="field" style="<%=(model.get('code').split('_')[0] == 'infectDrugEndDate') ? 'float:left' : ''%>">
 		<input type="text"
 			class="Combo attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
 			<%=model.isReadOnly()?'disabled':''%>

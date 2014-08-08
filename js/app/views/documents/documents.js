@@ -162,7 +162,6 @@ define(function (require) {
     //region MODELS
     //---------------------
 
-    var IsInfect = false;
     var LocalInfect = false;
     var infectDrugRows = [];
 
@@ -448,17 +447,7 @@ define(function (require) {
 
                 _(this.getGroupedByRow()).each(function (row) {
                     row.spans.each(function (templateAttr) {
-                        if (templateAttr.get('code') == 'infectType' || templateAttr.get('code') == 'infectEtiology') {
-                            $('.'+templateAttr.get('code')).removeClass('WrongField');
-                            if ($('.isInfect').find('.attribute-value').val() == 'Да') {
-                                if (!$('.'+templateAttr.get('code')).find('input:checked').length) {
-                                    $('.'+templateAttr.get('code')).addClass('WrongField');
-                                    templateAttr.trigger("requiredValidation:fail");
-                                    dispatcher.trigger('reguiredValidation:fail')
-                                    requiredValidationFail = true;
-                                }
-                            }
-                        } else if (templateAttr.isMandatory() && !templateAttr.hasValue()) {
+                        if (templateAttr.isMandatory() && !templateAttr.hasValue()) {
                             templateAttr.trigger("requiredValidation:fail");
                             dispatcher.trigger('reguiredValidation:fail')
                             requiredValidationFail = true;
@@ -751,6 +740,22 @@ define(function (require) {
                 });
                 if (lav) {
                     result = lav.value === "true";
+                }
+            }
+            return result;
+        },
+
+        isVGroupRow: function () {
+            var result = false;
+            var la = _(layoutAttributesDir.get(this.get("type"))).find(function (a) {
+                return a.code === "VGROUPROW";
+            });
+            if (la) {
+                var lav = _(this.get("layoutAttributeValues")).find(function (lav) {
+                    return lav.layoutAttribute_id === la.id;
+                });
+                if (lav) {
+                    result = lav.value;
                 }
             }
             return result;
@@ -1133,6 +1138,12 @@ define(function (require) {
                     }
                 });
             }
+
+            if (elCode.split('-').length > 1) {
+                $(renderedEl).hide();
+                $(renderedEl).addClass(elCode);
+            }
+
             if (elCode.split('_').length > 1) {
                 var drugId = elCode.split('_')[1];
                 gridRow.$el.attr('data-drugid', drugId);
@@ -1191,71 +1202,11 @@ define(function (require) {
                     }
                 }
             }
-            switch (elCode) {
-            case 'isInfect':
-                $(renderedEl).addClass('isInfect');
-                $(renderedEl).find('.attribute-value').on('change', function(e){
-                    if (e.target.value === 'Да') {
-                        $('.depends-isInfect-display').show();
-                        $('.depends-isInfect-display-row').show();
-                        $('.depends-isInfect-active').find('.field').show();
-                        $('.depends-isInfect-active').find('.field-toggle').attr('checked', 'checked');
-                        $('.depends-isInfect-mandatory').find('.field').addClass('Mandatory').trigger('classChange');
-                        
-                    } else {
-                        $('.depends-isInfect-display').hide();
-                        $('.depends-isInfect-display-row').hide();
-                        $('.depends-isInfect-active').find('.field').hide();
-                        $('.depends-isInfect-active').find('.field-toggle').removeAttr('checked');
-                        $('.depends-isInfect-mandatory').find('.field').removeClass('Mandatory').trigger('classChange');
-                    }
-                });
-                break;
-            case 'infectBeginDate':
-                $(renderedEl).addClass('depends-isInfect-active depends-isInfect-mandatory').show();
-                $(renderedEl).on('classChange', function(){
-                    el.set('mandatory', ''+$(renderedEl).find('.field').hasClass('Mandatory'));
-                });
-                if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
-                    IsInfect = true;
-                    $(renderedEl).find('.field').show();
-                    $(renderedEl).find('.field-toggle').attr('checked', 'checked');
-                    $(renderedEl).find('.field').addClass('Mandatory');
-                    el.set('mandatory', 'true');
-                } 
-                break;
-            case 'infectEndDate':
-                $(renderedEl).addClass('depends-isInfect-active').show();
-                if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
-                    IsInfect = true;
-                    $(renderedEl).find('.field').show();
-                    $(renderedEl).find('.field-toggle').attr('checked', 'checked');
-                } 
-                break;    
-            case 'infectEtiology':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-isInfect-display-row');
-                $(renderedEl).addClass('infectEtiology Mandatory');
-                el.set('mandatory', 'true');
-                if (IsInfect) {
-                    gridRow.$el.show();
-                }  
-                break;    
+            switch (elCode) {   
+   
             case 'infectType':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-isInfect-display-row');
-                $(renderedEl).addClass('Mandatory infectType');
-                if (IsInfect) {
-                    gridRow.$el.show();
-                }
-                break;    
-            case 'infectDocumental':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-isInfect-display-row');
-                if (IsInfect) {
-                    gridRow.$el.show();
-                } 
-                break;   
+
+                break;       
             case 'infectLocal':
                 $(renderedEl).find('.field-toggle').on('click', function(e){
                     if ($(this).attr('checked')) {
@@ -1344,10 +1295,7 @@ define(function (require) {
                 if (LocalInfect) {
                     gridRow.$el.show();
                 }
-                break;         
-            case 'infectTherapyType':
-
-                break;                                        
+                break;                                                
             default:
                 break;
             }
@@ -3327,12 +3275,12 @@ define(function (require) {
                 var $this = $(this);
                 $this.addClass("vgroup-" + i);
 
-
-                $this
+                var vgroupSpan = $this
                     .parent()
                     .nextAll("*:lt(" + $this.data("vgroup-rows-number") + ")")
-                    .find(".span" + $this.data("span-width") + ":eq(" + $this.index() + ")")
-                    .addClass("vgroup-" + i + "-span");
+                    .find(".span" + $this.data("span-width") + ":eq(" + $this.index() + ")");     
+
+                vgroupSpan.addClass("vgroup-" + i + "-span");
             });
 
             this.$(".vgroup").each(function (i) {
@@ -3353,7 +3301,24 @@ define(function (require) {
                         $vgroupContent.toggle();
                     }
                 }
+
+                var firstRowElement = null;
+                var row = 0;
+
+                if($(this).find('.in-vgroup-row').length > 0) {
+                    $.each($(this).find('.in-vgroup-row'), function(i){
+                        $(this).removeClass("span12").addClass("span4");
+                        if ($(this).data('vgrouprow') > row) {
+                            row = $(this).data('vgrouprow');
+                            firstRowElement = this;
+                        } else {
+                            $(firstRowElement).parent().append(this);
+                        }
+                        
+                    })
+                }
             });
+
 
             this.$(".row-fluid:empty").hide();
 
@@ -3399,6 +3364,10 @@ define(function (require) {
             this.listenTo(this.model, "requiredValidation:fail", this.onRequiredValidationFail);
             this.$el.addClass("span" + this.layoutAttributes.width);
             this.$el.attr("data-typeid", this.model.get("typeId"));
+            if (this.model.isVGroupRow()) {
+                this.$el.addClass('in-vgroup-row');
+                this.$el.attr('data-vgrouprow', this.model.isVGroupRow());
+            };
         },
 
         mapLayoutAttributes: function () {
