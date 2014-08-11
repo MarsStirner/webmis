@@ -1133,15 +1133,33 @@ define(function (require) {
                     $(renderedEl).find('.field').hide();
                     if ($(this).attr('checked')) {
                         el.setPropertyValueFor('value', 'Да');
+                        $('.'+elCode+'-BeginDate').find('.field').addClass('Mandatory');
+                        $('.'+elCode+'-BeginDate').trigger('addMandatory');
+                        $('.'+elCode+'-BeginDate').show();
+                        $('.'+elCode+'-EndDate').show();
+                        $('.'+elCode+'-Etiology').find('.field').addClass('Mandatory');
+                        $('.'+elCode+'-Etiology').trigger('addMandatory');
+                        $('.'+elCode+'-Etiology').show();
                     } else {
                         el.setPropertyValueFor('value', '');
+                        $('.'+elCode+'-BeginDate').find('.field').removeClass('Mandatory');
+                        $('.'+elCode+'-BeginDate').trigger('removeMandatory');
+                        $('.'+elCode+'-BeginDate').hide();
+                        $('.'+elCode+'-EndDate').hide();
+                        $('.'+elCode+'-Etiology').find('.field').removeClass('Mandatory');
+                        $('.'+elCode+'-Etiology').trigger('removeMandatory');
+                        $('.'+elCode+'-Etiology').hide();
                     }
                 });
             }
 
             if (elCode.split('-').length > 1) {
                 $(renderedEl).hide();
-                $(renderedEl).addClass(elCode);
+                $(renderedEl).addClass(elCode).on('addMandatory', function(){
+                    el.set('mandatory', 'true');
+                }).on('removeMandatory', function(){
+                    el.set('mandatory', 'false');
+                });
             }
 
             if (elCode.split('_').length > 1) {
