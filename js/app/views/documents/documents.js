@@ -164,6 +164,7 @@ define(function (require) {
 
     var LocalInfect = false;
     var infectDrugRows = [];
+    var infectChecked = [];
 
     Documents.Models.FetchableModelBase = ModelBase;
 
@@ -1128,25 +1129,37 @@ define(function (require) {
         setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow, el) {
             var mode = (document.location.href.split('/')[document.location.href.split('/').length-1]);
             if (el.get('scope') === 'Да') {
+                $(renderedEl).addClass(elCode);
                 $(renderedEl).find('.field').hide();
+                if ($(renderedEl).find('.field-toggle').attr('checked')) {
+                    infectChecked.push(elCode);
+                }
                 $(renderedEl).find('.field-toggle').on('click', function() {
                     $(renderedEl).find('.field').hide();
                     if ($(this).attr('checked')) {
                         el.setPropertyValueFor('value', 'Да');
-                        $('.'+elCode+'-BeginDate').find('.field').addClass('Mandatory');
+                        $('.'+elCode+'-BeginDate').find('.field').addClass('Mandatory').show();
+                        $('.'+elCode+'-BeginDate').find('.field-toggle').attr('checked', 'checked');
                         $('.'+elCode+'-BeginDate').trigger('addMandatory');
                         $('.'+elCode+'-BeginDate').show();
                         $('.'+elCode+'-EndDate').show();
-                        $('.'+elCode+'-Etiology').find('.field').addClass('Mandatory');
+                        $('.'+elCode+'-EndDate').find('.field').show();
+                        $('.'+elCode+'-EndDate').find('.field-toggle').attr('checked', 'checked');
+                        $('.'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
+                        $('.'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
                         $('.'+elCode+'-Etiology').trigger('addMandatory');
                         $('.'+elCode+'-Etiology').show();
                     } else {
                         el.setPropertyValueFor('value', '');
-                        $('.'+elCode+'-BeginDate').find('.field').removeClass('Mandatory');
+                        $('.'+elCode+'-BeginDate').find('.field').removeClass('Mandatory').hide();
+                        $('.'+elCode+'-BeginDate').find('.field-toggle').removeAttr('checked');
                         $('.'+elCode+'-BeginDate').trigger('removeMandatory');
                         $('.'+elCode+'-BeginDate').hide();
                         $('.'+elCode+'-EndDate').hide();
-                        $('.'+elCode+'-Etiology').find('.field').removeClass('Mandatory');
+                        $('.'+elCode+'-EndDate').find('.field').hide();
+                        $('.'+elCode+'-EndDate').find('.field-toggle').removeAttr('checked');
+                        $('.'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
+                        $('.'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
                         $('.'+elCode+'-Etiology').trigger('removeMandatory');
                         $('.'+elCode+'-Etiology').hide();
                     }
@@ -1160,6 +1173,12 @@ define(function (require) {
                 }).on('removeMandatory', function(){
                     el.set('mandatory', 'false');
                 });
+
+                if ($.inArray(elCode.split('-')[0], infectChecked) > -1) {
+                    $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                    $(renderedEl).find('.field').show();
+                    $(renderedEl).show();
+                }
             }
 
             if (elCode.split('_').length > 1) {
@@ -1218,6 +1237,19 @@ define(function (require) {
                             }
                         });
                     }
+                }
+                if (elCode.split('_')[0] == 'infectDrugBeginDate') {
+                    $(renderedEl).addClass(elCode).on('addMandatory', function(){
+                        el.set('mandatory', 'true');
+                    }).on('removeMandatory', function(){
+                        el.set('mandatory', 'false');
+                    });
+                }
+                if (elCode.split('_')[0] == 'infectDrugName') {
+                    $(renderedEl).find('.attribute-value').on('change', function(){
+                        $('.infectDrugBeginDate_'+elCode.split('_')[1]).trigger('addMandatory').find('.field').addClass('Mandatory').show();
+                        $('.infectDrugBeginDate_'+elCode.split('_')[1]).find('.field-toggle').attr('checked', 'checked');
+                    });
                 }
             }
             switch (elCode) {   
@@ -3242,6 +3274,7 @@ define(function (require) {
      */
     Documents.Views.Edit.Grid = RepeaterBase.extend({
         initialize: function () {
+            infectChecked = [];
             this.collection = new Backbone.Collection();
             this.listenTo(this.collection, "reset", this.onCollectionReset);
 
@@ -5309,6 +5342,7 @@ define(function (require) {
             if (index >= 0 && index < this.options.documents.length) {
                 var documentListItem = this.options.documents.at(index);
                 var document = new Documents.Models.Document({
+                    //нехватает context
                     id: documentListItem.id
                 });
 
@@ -5442,7 +5476,9 @@ define(function (require) {
                 console.log('cr', arguments,(new Date()).getTime())
                 var firstDoc = this.collection.first();
                 this.contextPrintButton.options.data.action_id = firstDoc.get('id');
-                this.contextPrintButton.getTemplatesForContext(firstDoc.get('context'));
+                if (firstDoc.get('context')) {
+                    this.contextPrintButton.getTemplatesForContext(firstDoc.get('context'));
+                }
             
         },
 
