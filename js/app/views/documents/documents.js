@@ -96,6 +96,7 @@ define(function (require) {
         _reviewControls: _.template(require("text!templates/documents/review/controls.html")),
         _reviewSheet: _.template(require("text!templates/documents/review/sheet.html")),
         _reviewSheetRow: _.template(require("text!templates/documents/review/sheet-row.html")),
+        _reviewSheetRowInfect: _.template(require("text!templates/documents/review/sheet-row-infect.html")),
         uiElements: {
             _base: _.template(require("text!templates/documents/edit/ui-elements/base.html")),
             _constructor: _.template(require("text!templates/documents/edit/ui-elements/constructor.html")),
@@ -448,7 +449,7 @@ define(function (require) {
 
                 _(this.getGroupedByRow()).each(function (row) {
                     row.spans.each(function (templateAttr) {
-                        if (templateAttr.isMandatory() && !templateAttr.hasValue()) {
+                        if (templateAttr.isMandatory() && (!templateAttr.hasValue() || templateAttr.getValue() == '0000-00-00 00:00:00')) {
                             templateAttr.trigger("requiredValidation:fail");
                             dispatcher.trigger('reguiredValidation:fail')
                             requiredValidationFail = true;
@@ -481,7 +482,8 @@ define(function (require) {
                                 value: valueProp.value,
                                 type: a.type,
                                 scope: a.scope,
-                                unit: unitProp ? unitProp.value : ""
+                                unit: unitProp ? unitProp.value : "",
+                                code: a.code
                             });
                         }
                     });
@@ -1166,6 +1168,40 @@ define(function (require) {
                 });
             }
 
+            if (elCode.toLowerCase().indexOf('comment') > -1) {
+                if (elCode.split('-').length > 1) {
+                    $(renderedEl).addClass(elCode);
+                }
+                $(renderedEl).find('.field-toggle').on('click', function() {
+                    if ($(this).attr('checked')) {
+                        $('.'+elCode+'-BeginDate').find('.field').addClass('Mandatory').show();
+                        $('.'+elCode+'-BeginDate').find('.field-toggle').attr('checked', 'checked');
+                        $('.'+elCode+'-BeginDate').trigger('addMandatory');
+                        $('.'+elCode+'-BeginDate').show();
+                        $('.'+elCode+'-EndDate').show();
+                        $('.'+elCode+'-EndDate').find('.field').show();
+                        $('.'+elCode+'-EndDate').find('.field-toggle').attr('checked', 'checked');
+                        $('.'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
+                        $('.'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
+                        $('.'+elCode+'-Etiology').trigger('addMandatory');
+                        $('.'+elCode+'-Etiology').show();
+                    } else {
+                        $(renderedEl).find('.attribute-value').val('');
+                        $('.'+elCode+'-BeginDate').find('.field').removeClass('Mandatory').hide();
+                        $('.'+elCode+'-BeginDate').find('.field-toggle').removeAttr('checked');
+                        $('.'+elCode+'-BeginDate').trigger('removeMandatory');
+                        $('.'+elCode+'-BeginDate').hide();
+                        $('.'+elCode+'-EndDate').hide();
+                        $('.'+elCode+'-EndDate').find('.field').hide();
+                        $('.'+elCode+'-EndDate').find('.field-toggle').removeAttr('checked');
+                        $('.'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
+                        $('.'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
+                        $('.'+elCode+'-Etiology').trigger('removeMandatory');
+                        $('.'+elCode+'-Etiology').hide();
+                    }
+                });
+            }
+
             if (elCode.split('-').length > 1) {
                 $(renderedEl).hide();
                 $(renderedEl).addClass(elCode).on('addMandatory', function(){
@@ -1252,11 +1288,7 @@ define(function (require) {
                     });
                 }
             }
-            switch (elCode) {   
-   
-            case 'infectType':
-
-                break;       
+            switch (elCode) {      
             case 'infectLocal':
                 $(renderedEl).find('.field-toggle').on('click', function(e){
                     if ($(this).attr('checked')) {
@@ -5677,9 +5709,25 @@ define(function (require) {
         },
 
         render: function () {
+            var sheetRows = [];
+            var sheetRowsInfect = [];
+            $.each(this.model.getFilledAttrs(), function(i, item){
+                if(item.code) {
+                    if (item.code.toLowerCase().indexOf('infect') > -1) {
+                        sheetRowsInfect.push(item);
+                    } else {
+                        sheetRows.push(item);
+                    }
+                } else {
+                    sheetRows.push(item);
+                }
+            });
             return ViewBase.prototype.render.call(this, {
                 ".sheet-rows": new Documents.Views.Review.Base.SheetRows({
-                    collection: new Backbone.Collection(this.model.getFilledAttrs())
+                    collection: new Backbone.Collection(sheetRows)
+                }),
+                ".sheet-rows-infect": new Documents.Views.Review.Base.SheetRowsInfect({
+                    collection: new Backbone.Collection(sheetRowsInfect)
                 })
             });
         }
@@ -5688,6 +5736,45 @@ define(function (require) {
     Documents.Views.Review.Base.SheetRows = RepeaterBase.extend({
         getRepeatView: function (repeatOptions) {
             return new Documents.Views.Review.Base.SheetRow(repeatOptions);
+        }
+    });
+
+    Documents.Views.Review.Base.SheetRowsInfect = ViewBase.extend({
+        template: templates._reviewSheetRowInfect,
+        data: function () {
+            var infections = {};
+            var therapies = [];
+            $.each(this.collection.models, function(i, item){
+                if (item.get('code') != 'infectLocal' ) {
+                    if (item.get('code').toLowerCase().indexOf('_') > -1) {
+                        if (!therapies[item.get('code').split('_')[1] - 1]) {
+                            therapies[item.get('code').split('_')[1] - 1] = {};
+                        }
+                        therapies[item.get('code').split('_')[1] - 1][item.get('code').split('_')[0]] = item.get('value');
+                    } else {
+                        if (item.get('code').indexOf('-') > -1) {
+                            if (!infections[item.get('code').split('-')[0]]) {
+                               infections[item.get('code').split('-')[0]] = {}; 
+                            }
+                            infections[item.get('code').split('-')[0]][item.get('code').split('-')[1]] = item.get('value');
+                        } else {
+                            if (!infections[item.get('code').split('-')[0]]) {
+                               infections[item.get('code').split('-')[0]] = {}; 
+                            }
+                            if (item.get('code').toLowerCase().indexOf('comment') > -1) {
+                                infections[item.get('code').split('-')[0]]['Name'] = item.get('value');
+                            } else {
+                                infections[item.get('code').split('-')[0]]['Name'] = item.get('name');
+                                infections[item.get('code').split('-')[0]]['Value'] = item.get('value');
+                            }
+                        }
+                    }
+                }    
+            });
+            return {
+                infections: infections,
+                therapies: therapies
+            };
         }
     });
 
