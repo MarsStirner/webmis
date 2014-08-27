@@ -1,4 +1,5 @@
-<h4><strong>Данные об инфекционных осложнениях:</strong></h4>
+<% if (!$.isEmptyObject(infections)) { %>
+	<h4><strong>Данные об инфекционных осложнениях:</strong></h4>
 	<% for(var i in infections) { %>
 		<% if(infections[i].BeginDate) {%>
 	    	<div>
@@ -15,8 +16,9 @@
 	    	</div>
 	    <% } %>
     <% } %>
-
-<h4><strong>Противоинфекционная терапия:</strong></h4>
+<% } %>    
+<% if(therapies.length) {%>
+	<h4><strong>Противоинфекционная терапия:</strong></h4>
 	<% for(var i in therapies) { %>
 		<div>
 			<span><strong>Тип терапии: </strong><%= therapies[i].infectTherapyType %></span>
@@ -27,3 +29,4 @@
 			<% } %>
 		</div>
 	<% } %>	
+<% } %>	
