@@ -59,11 +59,13 @@
         <%})%> 
         <thead>
             <tr>
-            <th>Антибиотик</th> 
+            <th width="100%">Антибиотик</th> 
             <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
-            <th><div class="vertical-text"><div class="vertical-text__inner">
-                        <%=organism.name %>
-            </div></div></th> 
+                <% if (organism.name.split('|').length > 1) {%>
+                    <th><%=organism.name.split('|')[0] %></br><%=organism.name.split('|')[1] %></th>
+                <%} else {%>
+                    <th><%=organism.name %></th> 
+                <%}%>    
             <%})%> 
             </tr>
         </thead>
