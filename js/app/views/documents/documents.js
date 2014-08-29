@@ -2192,7 +2192,8 @@ define(function (require) {
 
         data: function () {
             return {
-                documentTypes: this.collection.toJSON(),
+                //documentTypes: this.collection.toJSON(),
+                documentTypes: this.getSortedDocumentTypeCollection(),
                 template: this.template
             };
         },
@@ -2223,9 +2224,78 @@ define(function (require) {
             });
         },
 
+        onTypeTreeSort: function () {
+            var documentTypeNodes = [];
+            _.each($(this).find('ul:first').context.children, function(node){
+                documentTypeNodes.push($(node).data('documentTypeId'));
+            });
+
+            var dataToSend = {
+                "id": "doctypesort_"+Core.Cookies.get('userId'),
+                "text": documentTypeNodes.toString()
+            };
+
+            $.ajax({
+               type: 'POST',
+                url: '/data/autosave/',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(dataToSend)
+            });
+
+        },
+
+        getSortedDocumentTypeCollection: function(){
+            var self = this;
+            var sortedCollection = [];
+            $.ajax({
+               type: 'GET',
+                url: '/data/autosave/doctypesort_'+Core.Cookies.get('userId'),
+                dataType: 'json',
+                accept:'application/json',
+                async: false,
+                success: function(data) {
+                    if (data.text) {
+                        var documentTypeOrder = data.text.split(',');
+                        var documentTypeCollection = self.collection.toJSON();
+                        _.each(documentTypeOrder, function(id, i){
+                            var type = $.grep(documentTypeCollection, function(e){
+                                return e.id == id;
+                            });
+                            if (type.length > 0) {
+                                _.each(type, function(t){
+                                    sortedCollection.push(t);
+                                    for(var j=0; j<documentTypeCollection.length; j++){
+                                        if(documentTypeCollection[j].id == id){
+                                            documentTypeCollection.splice(j, 1);
+                                            break;
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        if (documentTypeCollection.length > 0) {
+                            _.each(documentTypeCollection, function(type){
+                                sortedCollection.push(type);
+                            });
+                        }
+                    }
+                }
+            });
+            if (sortedCollection.length > 0){
+                return sortedCollection;
+            } else {
+                return this.collection.toJSON();
+            }
+        },
+
         render: function () {
             ViewBase.prototype.render.call(this);
             this.$("ul").first().show();
+            $(this.$el.find('ul')[0]).sortable({
+                placeholder: "ui-state-highlight",
+                update: this.onTypeTreeSort
+            }).disableSelection();
         }
     });
     //endregion
