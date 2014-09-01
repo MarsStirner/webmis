@@ -1170,6 +1170,11 @@ define(function (require) {
             }
 
             if (elCode.toLowerCase().indexOf('comment') > -1) {
+
+                if ($(renderedEl).find('.field-toggle').attr('checked')) {
+                    infectChecked.push(elCode);
+                }
+
                 if (elCode.split('-').length > 1) {
                     $(renderedEl).addClass(elCode);
                 }
