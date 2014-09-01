@@ -1130,6 +1130,7 @@ define(function (require) {
 
         setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow, el) {
             var mode = (document.location.href.split('/')[document.location.href.split('/').length-1]);
+
             if (el.get('scope') === 'Да') {
                 $(renderedEl).addClass(elCode);
                 $(renderedEl).find('.field').hide();
@@ -3947,7 +3948,7 @@ define(function (require) {
             if (inputValue) {
                 return moment(value, this.inputFormat).format(CD_DATE_FORMAT);
             } else {
-                return '0000-00-00 00:00:00';
+                return null;
             }
 
             // console.log('inputValue',inputValue, moment(value, this.inputFormat).format(CD_DATE_FORMAT));
