@@ -1248,19 +1248,19 @@ define(function (require) {
                         });
                         if (gridRow.subViews[0].model.getPropertyValueFor('value')) {
                             var exchange = false;
-                            for (var i = 0; i < drugId ; i++) {
-                                if (!infectDrugRows[i].subViews[0].model.getPropertyValueFor('value')) {
-                                    $.each(gridRow.subViews, function(j, item){
-                                        infectDrugRows[i].subViews[j].model.setPropertyValueFor('value', item.model.getPropertyValueFor('value'));
-                                        infectDrugRows[i].subViews[j].render();
-                                        infectDrugRows[i].$el.show();
-                                        item.model.setPropertyValueFor('value', '');
-                                        item.render();
-                                    });
-                                    exchange = true;
-                                    break;
-                                }
-                            }
+                            // for (var i = 0; i < drugId ; i++) {
+                            //     if (!infectDrugRows[i].subViews[0].model.getPropertyValueFor('value')) {
+                            //         $.each(gridRow.subViews, function(j, item){
+                            //             infectDrugRows[i].subViews[j].model.setPropertyValueFor('value', item.model.getPropertyValueFor('value'));
+                            //             infectDrugRows[i].subViews[j].render();
+                            //             infectDrugRows[i].$el.show();
+                            //             item.model.setPropertyValueFor('value', '');
+                            //             item.render();
+                            //         });
+                            //         exchange = true;
+                            //         break;
+                            //     }
+                            // }
                             if (!exchange) {
                                 gridRow.$el.show();
                             }
