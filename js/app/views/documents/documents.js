@@ -207,7 +207,7 @@ define(function (require) {
             var readOnlyTherapyPhaseFields;
 
             if (lastTherapy) {
-                
+
                 if (lastTherapy.get("phases").length > 0) {
                     //этот документ есть в последней фазе последней терапии
                     var docInLastTherapyLastPhase = !! _.find(lastTherapy.get("phases")[0].days, function (day) {
@@ -222,7 +222,7 @@ define(function (require) {
                     }, this);
                 }
 
-                    
+
 
                 //последняя терапия не закрыта, нет даты окончания
                 if (!lastTherapy.get("endDate") || lastTherapy.get("endDate") < 0) {
@@ -248,7 +248,7 @@ define(function (require) {
                             }
                         }
 
-                    }      
+                    }
                 } else {
                     //если у терапии есть дата окончания , и документ входит в документы из которых состоит терапия
                     if (docInLastTherapyLastPhase || docInLastTherapyPhases) {
@@ -894,7 +894,7 @@ define(function (require) {
 
         lastCriteria: "",
 
-        orgStructFilter: "filter[orgStruct]=1",
+        orgStructFilter: "filter[orgStruct]=0",
 
         getOrgStructFilter: function() {
             if (!Core.Cookies.get('userDepartmentId')) {
@@ -1228,7 +1228,7 @@ define(function (require) {
                 gridRow.$el.attr('data-drugid', drugId);
                 if (drugId > 1) {
                     if (elCode.split('_')[0] == 'infectDrugEndDate') {
-                    infectDrugRows.push(gridRow);    
+                    infectDrugRows.push(gridRow);
                     gridRow.$el.hide();
                          $(renderedEl).on('click', '.icon-remove', function(){
                             $.each(gridRow.collection.models, function(i, item){
@@ -1242,7 +1242,7 @@ define(function (require) {
                                         });
                                         gridRow.$el.hide();
                                     });
-                                }   
+                                }
                             });
                             gridRow.$el.hide();
                         });
@@ -1265,10 +1265,10 @@ define(function (require) {
                                 gridRow.$el.show();
                             }
                         }
-                    } 
+                    }
                 } else {
                     if (elCode.split('_')[0] == 'infectDrugEndDate') {
-                    infectDrugRows.push(gridRow);     
+                    infectDrugRows.push(gridRow);
                         $(renderedEl).on('click', '.icon-plus', function(){
                             for (var i = 2; i < 9; i++) {
                                 var drugRow = $('.document-grid div[data-drugid="'+i+'"]');
@@ -1294,7 +1294,7 @@ define(function (require) {
                     });
                 }
             }
-            switch (elCode) {      
+            switch (elCode) {
             case 'infectLocal':
                 $(renderedEl).find('.field-toggle').on('click', function(e){
                     if ($(this).attr('checked')) {
@@ -1306,42 +1306,42 @@ define(function (require) {
                 if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
                     LocalInfect = true;
                 }
-                break;  
+                break;
             case 'infectLocalisation':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (LocalInfect) {
                     gridRow.$el.show();
                 }
-                break; 
+                break;
             case 'infectCNS':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (LocalInfect) {
                     gridRow.$el.show();
                 }
-                break;  
+                break;
             case 'infectEye':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (LocalInfect) {
                     gridRow.$el.show();
                 }
-                break;   
+                break;
             case 'infectSkin':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (LocalInfect) {
                     gridRow.$el.show();
                 }
-                break; 
+                break;
             case 'infectMucous':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (LocalInfect) {
                     gridRow.$el.show();
                 }
-                break;  
+                break;
             case 'infectLOR':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
@@ -1355,35 +1355,35 @@ define(function (require) {
                 if (LocalInfect) {
                     gridRow.$el.show();
                 }
-                break;  
+                break;
             case 'infectHeart':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (LocalInfect) {
                     gridRow.$el.show();
                 }
-                break;  
+                break;
             case 'infectAbdomen':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (LocalInfect) {
                     gridRow.$el.show();
                 }
-                break; 
+                break;
             case 'infectUrogenital':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (LocalInfect) {
                     gridRow.$el.show();
                 }
-                break;  
+                break;
             case 'infectMusculoskeletal':
                 gridRow.$el.hide();
                 gridRow.$el.addClass('depends-local-display-row');
                 if (LocalInfect) {
                     gridRow.$el.show();
                 }
-                break;                                                
+                break;
             default:
                 break;
             }
@@ -3437,7 +3437,7 @@ define(function (require) {
                 var vgroupSpan = $this
                     .parent()
                     .nextAll("*:lt(" + $this.data("vgroup-rows-number") + ")")
-                    .find(".span" + $this.data("span-width") + ":eq(" + $this.index() + ")");     
+                    .find(".span" + $this.data("span-width") + ":eq(" + $this.index() + ")");
 
                 vgroupSpan.addClass("vgroup-" + i + "-span");
             });
@@ -3450,7 +3450,7 @@ define(function (require) {
                     .wrap("<div class='row-fluid vgroup-row' style='padding-top: 1em;'></div>")
                     .parent()
                     .detach()
-                    .appendTo($vgroupContent); 
+                    .appendTo($vgroupContent);
                 $(this).append($vgroupContent.toggle());
                 if ($(this).find('.sb-tgl').length > 0) {
                     $vgroupContent.toggle();
@@ -3473,7 +3473,7 @@ define(function (require) {
                         } else {
                             $(firstRowElement).parent().append(this);
                         }
-                        
+
                     })
                 }
             });
@@ -3556,11 +3556,11 @@ define(function (require) {
             console.log(this.model);
             var typePath = window.location.pathname.split('/');
             if (typePath[typePath.length-1] == 'edit') {
-               return typePath[typePath.length-2]; 
+               return typePath[typePath.length-2];
             } else {
                 return typePath[typePath.length-1];
             }
-            
+
         },
 
         setAttributeValue: function () {
@@ -4016,7 +4016,7 @@ define(function (require) {
             };
 
             console.log('table',data, this);
-            return data; 
+            return data;
         }
     });
 
@@ -4621,7 +4621,7 @@ define(function (require) {
                         var repeatView = self.getRepeatView(repeatOptions);
                         self.subViews.push(repeatView.itemRow, repeatView.itemAttrsContainerRow);
                         self.$el.append(repeatView.itemRow.render().el, repeatView.itemAttrsContainerRow.render().el);
-                    }); 
+                    });
                 }, this);
             } else {
                 this.$el.append((new HtmlHelper.ItemRow()).render().el);
@@ -4766,7 +4766,7 @@ define(function (require) {
                         }
                     }
 
-                    
+
                     /*this.set({
                         resultData: tests
                     });*/
@@ -4776,7 +4776,7 @@ define(function (require) {
                 return promise;
             },
 
-                
+
 
             sync: App.Models.LaboratoryDiag.prototype.sync,
             parse: App.Models.LaboratoryDiag.prototype.parse
@@ -5305,10 +5305,10 @@ define(function (require) {
             break;
         case "table":
             this.UIElementClass = Documents.Views.Edit.UIElement.Table;
-            break;  
+            break;
         case "drugchart":
             this.UIElementClass = Documents.Views.Edit.UIElement.DrugChart;
-            break;      
+            break;
         default:
             this.UIElementClass = Documents.Views.Edit.UIElement.Base;
             break;
@@ -5589,7 +5589,7 @@ define(function (require) {
                         this.contextPrintButton.getTemplatesForContext(firstDoc.get('context'));
                     }
                 }
-            
+
         },
 
         template: templates._reviewControls,
@@ -5832,12 +5832,12 @@ define(function (require) {
                     } else {
                         if (item.get('code').indexOf('-') > -1) {
                             if (!infections[item.get('code').split('-')[0]]) {
-                               infections[item.get('code').split('-')[0]] = {}; 
+                               infections[item.get('code').split('-')[0]] = {};
                             }
                             infections[item.get('code').split('-')[0]][item.get('code').split('-')[1]] = item.get('value');
                         } else {
                             if (!infections[item.get('code').split('-')[0]]) {
-                               infections[item.get('code').split('-')[0]] = {}; 
+                               infections[item.get('code').split('-')[0]] = {};
                             }
                             if (item.get('code').toLowerCase().indexOf('comment') > -1) {
                                 infections[item.get('code').split('-')[0]]['Name'] = item.get('value');
@@ -5847,7 +5847,7 @@ define(function (require) {
                             }
                         }
                     }
-                }    
+                }
             });
             return {
                 infections: infections,
