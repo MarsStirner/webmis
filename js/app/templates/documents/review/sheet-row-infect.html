@@ -1,5 +1,6 @@
 <% if (!$.isEmptyObject(infections)) { %>
-	<h4><strong>Данные об инфекционных осложнениях:</strong></h4>
+<div>
+	<h4 style="text-decoration:underline;"><strong>Данные об инфекционных осложнениях:</strong></h4>
 	<% for(var i in infections) { %>
 		<% if(infections[i].BeginDate) {%>
 	    	<div style="font-size:19px; line-height:35px;">
@@ -16,9 +17,11 @@
 	    	</div>
 	    <% } %>
     <% } %>
+</div>    
 <% } %>    
 <% if(therapies.length) {%>
-	<h4><strong>Противоинфекционная терапия:</strong></h4>
+<div style="margin-top:20px;">
+	<h4 style="text-decoration:underline;"><strong>Противоинфекционная терапия:</strong></h4>
 	<% for(var i in therapies) { %>
 		<div style="font-size:19px; line-height:35px;">
 			<span><strong>Тип терапии: </strong><%= therapies[i].infectTherapyType %></span>
@@ -29,4 +32,5 @@
 			<% } %>
 		</div>
 	<% } %>	
+</div>	
 <% } %>	
