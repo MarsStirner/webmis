@@ -191,9 +191,22 @@ define(function (require) {
                 var id = input.id.split('-');
                 var cid = id[0];
                 var type = id[1];
+                var res = {
+                    minDatetime: null,
+                    maxDatetime: null
+                };
 
-                return {minDatetime: (type == 'to' ? moment($('#'+cid+'-from').datetimeEntry('getDatetime')).add('m',1).toDate() : null),  
-                        maxDatetime: (type == 'from' ? moment($('#'+cid+'-to').datetimeEntry('getDatetime')).subtract('m',1).toDate() : null)}; 
+                if (type == 'to') {
+                    res.minDatetime = moment($('#'+cid+'-from').datetimeEntry('getDatetime')).add('m',1).toDate();
+                }
+
+                if (type == 'from') {
+                    if ($('#'+cid+'-to').datetimeEntry('getDatetime')){
+                        res.maxDatetime = moment($('#'+cid+'-to').datetimeEntry('getDatetime')).subtract('m',1).toDate();
+                    }
+                }
+
+                return res;
             }
 
             if (this.prescription.get('assigmentIntervals')) {
