@@ -10,13 +10,13 @@
         <%if(editable){%>
             <%if (document.get('closeDate')) {%>
                 <a><i class="icon-lock" title="Документ закрыт"></i></a>
-            <%} else {%>
+            <%} else if (!(App.Router.currentPage == 'patientSummaryList')) {%>
                 <a class="edit-document" data-document-id="<%=document.id%>"><i class="icon-pencil" title="Редактировать"></i></a>
             <%}%>
         <%}%>
 
         <%if (!appealIsClosed) {%>
-            <%if (!document.isOldType()) {%>
+            <%if (!document.isOldType() && !(App.Router.currentPage == 'patientSummaryList')) {%>
                 <a class="duplicate-document" data-template-id="<%=document.get('typeId')%>" style="margin-left: .5em"><i class="icon-copy" title="Дублировать"></i></a>
             <%}%>
         <%}%>
