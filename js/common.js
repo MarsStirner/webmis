@@ -17,6 +17,10 @@ DEFAULT_ANIMATION_TIME = 300;
 //DATA_PATH = "http://10.1.2.106:8080/tmis-ws-medipad/rest/tms-registry/";
 DATA_PATH = "/data/";
 
+
+APPOINTMENTS_HOST = "10.1.2.11:5000";
+APPOINTMENTS_PATH = "http://" + APPOINTMENTS_HOST + "/schedule/appointment/";
+
 App = {};
 App.Models = {};
 App.Dynamic = {};

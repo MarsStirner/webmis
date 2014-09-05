@@ -45,6 +45,19 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 					App.Router.navigate("reports/", {
 						trigger: false
 					});
+				} else if (href == "/appointments/") {
+					var patientId = null;
+					if (Cache.Patient) {
+						patientId = Cache.Patient.id
+					} else {
+						var currentPath = Backbone.history.fragment.split('/')
+						if (currentPath.length > 2 && currentPath[0] == 'patients') {
+							patientId = currentPath[1]
+						}
+					}
+					App.Router.navigate(href + (patientId ? patientId : ''), {
+						trigger: true
+					});
 				} else {
 					App.Router.navigate(href, {
 						trigger: true
@@ -141,6 +154,10 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 						title: "Пациенты",
 						name: "patients",
 						uri: "/patients/"
+					}, {
+						title: "Запись на приём",
+						name: "appointments",
+						uri: "/appointments/"
 					});
 					break;
 				case ROLES.NURSE_DEPARTMENT:

@@ -108,6 +108,10 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			"appeals/": "appeals",
 			"appeals/:query": "appeals",
 
+
+			"appointments/": "appointmentsPatient",
+			"appointments/:id": "appointments",
+
 			/*"appeals/:id/": "appeal",
 			"appeals/:query": "appeals",
 			"appeals/:id/examinations/": "examinations",
@@ -327,6 +331,16 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				}
 			});
 
+		},
+
+		appointments: function(id) {
+			window.location.href = APPOINTMENTS_PATH + '?client_id='+id;
+		},
+
+		appointmentsPatient: function() {
+			this.patients();
+			window.document.title = "Запись на приём";
+			this.currentPage = "appointments";
 		},
 
 		patients: function() {

@@ -60,10 +60,14 @@ define(["collections/patients", "views/grid", "views/filter", "views/paginator"]
             //     this.trigger("patient:selected", patient);
             // }, this);
             PatientsGrid.on('grid:rowClick', function (model, event) {
-                console.log('dddddd',model,event)
                 if (event.target.localName != 'a') {
-                    var url = '/patients/' + model.get('id') + '/';
-                    window.open(url);
+                    var url = '';
+                    if (App.Router.currentPage == "appointments") {
+                        window.location.href = '/appointments/' + model.get('id');
+                    } else {
+                        url = '/patients/' + model.get('id') + '/';
+                        window.open(url);
+                    }
                 } else {
                     view.newSendToDepartment(model);
                 }
