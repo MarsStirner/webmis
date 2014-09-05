@@ -69,7 +69,8 @@ define(function (require) {
         showPopup: function (html) {
             var templateContent = $('<html/>').html(html);
             $(templateContent).prepend('<style media="print">.tmpl-print-btn{display:none}</style>');
-            $(templateContent).prepend('<button class="tmpl-print-btn" style="float:right" media="screen" onclick="window.print();">Печать</button>');
+            var printButtonStyle = 'float:right; font-size:16px; border-radius:4px; border:1px solid #c2c2c2; padding:6px 10px; background:-webkit-gradient( linear, left top, left bottom, color-stop(5%, #ffffff), color-stop(100%, #e8e8e8) ); background-color:#ffffff; color:#575757;';
+            $(templateContent).prepend('<button class="tmpl-print-btn review-nav" style="'+printButtonStyle+'" media="screen" onclick="window.print();">Печать</button>');
             
             var $window = $(window);
             var width = Math.min($window.width(), 728),
