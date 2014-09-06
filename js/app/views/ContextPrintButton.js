@@ -46,29 +46,28 @@ define(function (require) {
         },
 
         getRenderedPrintTemplate: function (id) {
-            var documents = [];
+            // var documents = [];
+            //
+            // documents.push({
+            //     id: id,
+            //     context_type: this.options.data.context_type,
+            //     context: {
+            //         event_id: this.options.data.event_id,
+            //         client_id: this.options.data.client_id,
+            //         currentOrgStructure: this.options.data.additional_context.currentOrgStructure,
+            //         currentOrganisation: this.options.data.additional_context.currentOrganisation,
+            //         currentPerson: this.options.data.additional_context.currentPerson,
+            //         action_id: this.options.data.action_id
+            //     }
+            // });
 
-            documents.push({
-                id: id,
-                context_type: this.options.data.context_type,
-                context: {
-                    event_id: this.options.data.event_id,
-                    client_id: this.options.data.client_id,
-                    currentOrgStructure: this.options.data.additional_context.currentOrgStructure,
-                    currentOrganisation: this.options.data.additional_context.currentOrganisation,
-                    currentPerson: this.options.data.additional_context.currentPerson,
-                    action_id: this.options.data.action_id
-                }
-            });
+            // var data = {
+            //     separate: true,
+            //     documents: documents
+            // };
 
-            var data = {
-                separate: true,
-                documents: documents
-            };
-
-            // var data = this.options.data;
-            // data.id = id;
-            // var url = 'http://192.168.1.121:5550/print_subsystem/print_template';
+            var data = this.options.data;
+            data.id = id;
 
             var url = DATA_PATH + 'print-by-context/';
 
