@@ -103,7 +103,7 @@ define(function(require) {
 
 
 			_.each(items, function(item) {
-				if (item.datetime >= endTime) {
+				if (item.datetime >= endTime && !item.temperature) {
 					items4combine.push(item);
 				} else {
 					nextItems.push(item);

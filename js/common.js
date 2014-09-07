@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "1.3.43";
+var GUI_VERSION = "1.3.44";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
@@ -18,7 +18,7 @@ DEFAULT_ANIMATION_TIME = 300;
 DATA_PATH = "/data/";
 
 
-APPOINTMENTS_HOST = "10.1.2.11:5000";
+APPOINTMENTS_HOST = "10.128.225.200:5000";
 APPOINTMENTS_PATH = "http://" + APPOINTMENTS_HOST + "/schedule/appointment/";
 
 App = {};
