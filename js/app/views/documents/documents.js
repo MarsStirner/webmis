@@ -3708,7 +3708,7 @@ define(function (require) {
                 $attrValue.html($.htmlClean($attrValue.html(), {
                     format: true,
                     removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
-                        "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button"
+                        "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button", "ul", "li"
                         //, "table","tbody", "thead", "tr", "th", "td"
                     ],
                     removeAttrs: ["style", "class"],
