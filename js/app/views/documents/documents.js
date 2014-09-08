@@ -3421,6 +3421,28 @@ define(function (require) {
         },
 
         render: function () {
+            var infectLocal = null;
+            isInfectLocal = false;
+            $.each(this.collection.models, function(i, item){
+                var propertyAttrs = item.get('spans').models[0];
+                if (propertyAttrs.get('code')) {
+                    if (propertyAttrs.get('code') == 'infectLocal') {
+                        infectLocal = propertyAttrs;
+                        if(!infectLocal.getPropertyValueFor('value')) {
+                            return false;
+                        }
+                    } else if (propertyAttrs.get('code').split('-').length > 1) {
+                        if(propertyAttrs.getPropertyValueFor('value')) {
+                            isInfectLocal = true;
+                        }
+                    }
+                }
+            });
+            if (!isInfectLocal && infectLocal) {
+                if (infectLocal.getPropertyValueFor('value')) {
+                    infectLocal.setPropertyValueFor('value', '');
+                }
+            }
             RepeaterBase.prototype.render.call(this);
 
             var i = 0;
