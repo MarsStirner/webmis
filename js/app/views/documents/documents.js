@@ -5822,8 +5822,12 @@ define(function (require) {
         data: function () {
             var infections = {};
             var therapies = [];
+            var documental = null;
             $.each(this.collection.models, function(i, item){
-                if (item.get('code') != 'infectLocal' ) {
+                if (item.get('code') == 'infectDocumental') {
+                    documental = item;
+                }
+                if (item.get('code') != 'infectLocal' && item.get('code') != 'infectDocumental' ) {
                     if (item.get('code').toLowerCase().indexOf('_') > -1) {
                         if (!therapies[item.get('code').split('_')[1] - 1]) {
                             therapies[item.get('code').split('_')[1] - 1] = {};
@@ -5849,6 +5853,12 @@ define(function (require) {
                     }
                 }
             });
+            if (documental) {
+                infections[documental.get('code')] = {
+                    Name: documental.get('name'),
+                    Value: documental.get('value')
+                };
+            }
             return {
                 infections: infections,
                 therapies: therapies

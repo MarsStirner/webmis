@@ -8,17 +8,17 @@
 	    		<span style="margin-left:10px;"><strong>Дата начала: </strong><%= moment(infections[i].BeginDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
 	    		<% if(infections[i].EndDate) {%>
 	    			<span style="margin-left:10px;"><strong>Дата окончания: </strong><%= moment(infections[i].EndDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
-	    		<% } %>	
+	    		<% } %>
 	    		<span style="margin-left:10px;"><strong>Этиология: </strong><%= infections[i].Etiology %></span>
 	    	</div>
 	    <% } else  {%>
-	    	<div>
+	    	<div style="font-size:19px; line-height:35px;">
 	    		<strong><%= infections[i].Name %>: </strong><%=infections[i].Value%>
 	    	</div>
 	    <% } %>
     <% } %>
-</div>    
-<% } %>    
+</div>
+<% } %>
 <% if(therapies.length) {%>
 <div style="margin-top:20px;">
 	<h4 style="text-decoration:underline;"><strong>Противоинфекционная терапия:</strong></h4>
@@ -31,6 +31,6 @@
 				<span style="margin-left:10px;"><strong>Дата отмены: </strong><%= moment(therapies[i].infectDrugEndDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
 			<% } %>
 		</div>
-	<% } %>	
-</div>	
-<% } %>	
+	<% } %>
+</div>
+<% } %>
