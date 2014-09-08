@@ -1543,7 +1543,7 @@ define(function (require) {
                     ".review-area": this.reviewLayout
                 });
             } else {
-                this.reviewLayout.tearDown();
+                //this.reviewLayout.tearDown();
                 this.$(".review-area-row").remove();
             }
         },
@@ -5583,9 +5583,11 @@ define(function (require) {
         onDocCollectionChange: function(){
                 console.log('cr', arguments,(new Date()).getTime())
                 var firstDoc = this.collection.first();
-                this.contextPrintButton.options.data.action_id = firstDoc.get('id');
-                if (firstDoc.get('context')) {
-                    this.contextPrintButton.getTemplatesForContext(firstDoc.get('context'));
+                if (firstDoc) {
+                    this.contextPrintButton.options.data.action_id = firstDoc.get('id');
+                    if (firstDoc.get('context')) {
+                        this.contextPrintButton.getTemplatesForContext(firstDoc.get('context'));
+                    }
                 }
             
         },
