@@ -3626,6 +3626,15 @@ define(function (require) {
         onAttributeValueChange: function (event) {
             this.model.setValue(this.getAttributeValue());
             this.$(".Mandatory").removeClass("WrongField");
+            if (this.getAttributeValue() == '') {
+                var code = this.model.get('code');
+                if (code) {
+                    if (code.split('_').length > 1) {
+                        $('.infectDrugBeginDate_'+code.split('_')[1]).trigger('removeMandatory');
+                        $('.infectDrugBeginDate_'+code.split('_')[1]).find('.field').removeClass('Mandatory');
+                    }
+                }
+            }
             if (!$(event.target).is(".RichText")) {
                 this.setAutosavedFields();
             }
