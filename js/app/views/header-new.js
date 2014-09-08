@@ -155,7 +155,7 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 						name: "patients",
 						uri: "/patients/"
 					}, {
-						title: "Запись на приём",
+						title: "Запись на консультацию",
 						name: "appointments",
 						uri: "/appointments/"
 					});

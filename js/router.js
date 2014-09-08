@@ -339,7 +339,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 		appointmentsPatient: function() {
 			this.patients();
-			window.document.title = "Запись на приём";
+			window.document.title = "Запись на консультацию";
 			this.currentPage = "appointments";
 		},
 
@@ -446,7 +446,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			require(["views/app","views/summary/ItemView"], function(AppView, ItemView) {
                 var params = Core.Url.extractUrlParameters();
                 console.log('patientSummaryItem', params);
-            
+
 
 				var view = new ItemView({
 					path: Backbone.history.fragment,

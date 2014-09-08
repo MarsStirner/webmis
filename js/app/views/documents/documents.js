@@ -1230,12 +1230,12 @@ define(function (require) {
                     if (elCode.split('_')[0] == 'infectDrugEndDate') {
                     infectDrugRows.push(gridRow);
                     gridRow.$el.hide();
-                         $(renderedEl).on('click', '.icon-remove', function(){
+                         $(renderedEl).on('click', '.RemoveIcon', function(){
                             $.each(gridRow.collection.models, function(i, item){
                                 item.setPropertyValueFor('value', '');
                                 gridRow.subViews[i].render();
                                 if (gridRow.subViews[i].model.get('code').split('_')[0] == 'infectDrugEndDate') {
-                                    gridRow.subViews[i].$el.find('.icon-remove').on('click', function(){
+                                    gridRow.subViews[i].$el.find('.RemoveIcon').on('click', function(){
                                         $.each(gridRow.collection.models, function(i, item){
                                             item.setPropertyValueFor('value', '');
                                             gridRow.subViews[i].render();
@@ -1268,18 +1268,18 @@ define(function (require) {
                     }
                 } else {
                     if (elCode.split('_')[0] == 'infectDrugEndDate') {
-                    infectDrugRows.push(gridRow);
-                        $(renderedEl).on('click', '.icon-plus', function(){
-                            for (var i = 2; i < 9; i++) {
-                                var drugRow = $('.document-grid div[data-drugid="'+i+'"]');
-                                if (drugRow.css('display') == 'none') {
-                                    drugRow.show();
-                                    break;
-                                }
-                            }
-                        });
+                        infectDrugRows.push(gridRow);
                     }
                 }
+                $(renderedEl).on('click', '.icon-plus', function(){
+                    for (var i = 2; i < 9; i++) {
+                        var drugRow = $('.document-grid div[data-drugid="'+i+'"]');
+                        if (drugRow.css('display') == 'none') {
+                            drugRow.show();
+                            break;
+                        }
+                    }
+                });
                 if (elCode.split('_')[0] == 'infectDrugBeginDate') {
                     $(renderedEl).addClass(elCode).on('addMandatory', function(){
                         el.set('mandatory', 'true');
@@ -3441,6 +3441,7 @@ define(function (require) {
             if (!isInfectLocal && infectLocal) {
                 if (infectLocal.getPropertyValueFor('value')) {
                     infectLocal.setPropertyValueFor('value', '');
+                    LocalInfect = false;
                 }
             }
             RepeaterBase.prototype.render.call(this);

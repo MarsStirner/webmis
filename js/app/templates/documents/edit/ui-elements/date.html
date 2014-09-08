@@ -14,13 +14,18 @@
 			class="Combo attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
 			<%=model.isReadOnly()?'disabled':''%>
 			placeholder="ДД.ММ.ГГГГ"
-			value="<%=date%>">		
+			value="<%=date%>">
 	</div>
 	<% if (model.get('code')) {%>
 		<% if (model.get('code').split('_')[0] == 'infectDrugEndDate') {%>
-				<span style="float:right; cursor:pointer" class="<%=(model.get('code').split('_')[1] > 1) ? 'icon-remove' : 'icon-plus'%>"></span>
-				<% }
-			%>
-		<% }
-	%>		
+			<% if (model.get('code').split('_')[1] > 1) {%>
+				<div style="float:right;">
+					<span style="cursor:pointer;" class="icon-plus icon-color-green"></span>
+					<span style="cursor:pointer; position:absolute; margin-left: 30px; margin-top: -20px;" class="RemoveIcon"></span>
+				</div>
+			<% } else {%>
+				<span style="float:right; cursor:pointer" class="icon-plus icon-color-green"></span>
+			<% } %>
+		<% } %>
+	<% } %>
 <!--</div>-->
