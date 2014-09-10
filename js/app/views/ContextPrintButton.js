@@ -46,10 +46,31 @@ define(function (require) {
         },
 
         getRenderedPrintTemplate: function (id) {
-            var data = this.options.data;
-            data.id = id;
-            var url = DATA_PATH + 'print-by-context/';
+            var documents = [];
+
+            documents.push({
+                id: id,
+                context_type: this.options.data.context_type,
+                context: {
+                    event_id: this.options.data.event_id,
+                    client_id: this.options.data.client_id,
+                    currentOrgStructure: this.options.data.additional_context.currentOrgStructure,
+                    currentOrganisation: this.options.data.additional_context.currentOrganisation,
+                    currentPerson: this.options.data.additional_context.currentPerson,
+                    action_id: this.options.data.action_id
+                }
+            });
+
+            var data = {
+                separate: true,
+                documents: documents
+            };
+
+            // var data = this.options.data;
+            // data.id = id;
             // var url = 'http://192.168.1.121:5550/print_subsystem/print_template';
+
+            var url = DATA_PATH + 'print-by-context/';
 
             $.ajax({
                 type: 'POST',
@@ -71,7 +92,7 @@ define(function (require) {
             $(templateContent).prepend('<style media="print">.tmpl-print-btn{display:none}</style>');
             var printButtonStyle = 'float:right; font-size:16px; border-radius:4px; border:1px solid #c2c2c2; padding:6px 10px; background:-webkit-gradient( linear, left top, left bottom, color-stop(5%, #ffffff), color-stop(100%, #e8e8e8) ); background-color:#ffffff; color:#575757;';
             $(templateContent).prepend('<button class="tmpl-print-btn review-nav" style="'+printButtonStyle+'" media="screen" onclick="window.print();">Печать</button>');
-            
+
             var $window = $(window);
             var width = Math.min($window.width(), 728),
                 height = Math.min($window.height(), 967);
