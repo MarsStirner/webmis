@@ -28,9 +28,14 @@ define(function (require) {
                 // self.result.set('mnem', 'BAK_LAB')
                 var mnem = self.result.get('mnem');
                 if (mnem && mnem.toString().toUpperCase() === "BAK_LAB") {
-                    self.bakResult.fetch().then(function () {
-                        self.render2();
-                    });
+                    self.bakResult.fetch({
+                        success: function(){
+                            self.render2();
+                        },
+                        error: function(){
+                            self.render2();
+                        }
+                    })
                 } else {
                     self.render2();
                 }
@@ -43,7 +48,7 @@ define(function (require) {
             this.contextPrintButton = new ContextPrintButton({
                 context: this.result.get('context'),
                 data: {
-                    action_id:this.result.get('id'), 
+                    action_id:this.result.get('id'),
                     event_id: this.options.appeal.get('id'),
                     context_type: 'action',
                     client_id: this.options.appeal.get('patient').get('id'),
