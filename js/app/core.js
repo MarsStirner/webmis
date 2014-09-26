@@ -7,7 +7,7 @@ Core = {
 
 			for (var i = 0; i < pairs.length; i++) {
 				pair = pairs[i].split("=");
-				cookies[pair[0]] = pair[1];
+				cookies[pair[0]] = unescape(pair[1]);
 			}
 			return cookies;
 		},
@@ -34,7 +34,7 @@ Core = {
 			var expire = new Date();
 			time = time ? time : 360000024;
 			expire.setTime(( new Date() ).getTime() + time);
-			document.cookie = name + "=" + value + ";expires=" + expire.toGMTString() + "; path=/";
+			document.cookie = name + "=" +  escape(value) + ";expires=" + expire.toGMTString() + "; path=/";
 		}
 	},
 
