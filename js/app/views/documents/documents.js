@@ -5589,36 +5589,52 @@ define(function (require) {
      */
     Documents.Views.Review.Base.Controls = ViewBase.extend({
         initialize: function (options) {
-            console.log('init controls')
             this.listenTo(this.collection, 'change reset',this.onDocCollectionChange);
 
-            this.contextPrintButton = new ContextPrintButton({
-                docCollection: this.collection,
-                data: {
-                    event_id: appeal.get('id'),
-                    context_type: 'action',
-                    client_id: appeal.get('patient').get('id'),
-                    additional_context: {
-                        currentOrgStructure: '',
-                        currentOrganisation: 3479,
-                        currentPerson: Core.Cookies.get('userId')
-                    }
-                }
+            this.documentPrintButton = new ContextPrintButton({
+                separate: false,
+                documents: this.getPrintDocumentCollection(),
+                title: 'Печать'
+            });
+
+            this.documentPrintButtonSeparated = new ContextPrintButton({
+                separate: true,
+                documents: this.getPrintDocumentCollection(),
+                title: 'Печать раздельно'
             });
 
             this.subViews = {
-                '.context-print-button': this.contextPrintButton
+                '.document-print-button': this.documentPrintButton,
+                '.document-print-button-separated': this.documentPrintButtonSeparated
             };
 
         },
 
+        getPrintDocumentCollection: function(){
+            var documents = [];
+            _.each(this.collection.models, function(doc){
+                documents.push({
+                    context_type: 'action',
+                    context: {
+                        event_id: doc.get('appealId'), //appeal.get('id')
+                        action_id: doc.get('id'),
+                        client_id: appeal.get('patient').get('id'),
+                        currentOrgStructure: '',
+                        currentOrganisation: 3479,
+                        currentPerson: Core.Cookies.get('userId'),
+                    }
+                });
+            });
+            return documents;
+        },
+
         onDocCollectionChange: function(){
-                console.log('cr', arguments,(new Date()).getTime())
                 var firstDoc = this.collection.first();
                 if (firstDoc) {
-                    this.contextPrintButton.options.data.action_id = firstDoc.get('id');
+                    this.documentPrintButton.documents = this.documentPrintButtonSeparated.documents = this.getPrintDocumentCollection();
                     if (firstDoc.get('context')) {
-                        this.contextPrintButton.getTemplatesForContext(firstDoc.get('context'));
+                        this.documentPrintButton.getTemplatesForContext(firstDoc.get('context'));
+                        this.documentPrintButtonSeparated.getTemplatesForContext(firstDoc.get('context'));
                     }
                 }
 
@@ -5723,9 +5739,10 @@ define(function (require) {
 
         render: function () {
             ViewBase.prototype.render.call(this);
-            $.contextMenu('destroy')
-            this.contextPrintButton.setElement(this.$('.context-print-button')).render();
-
+            $.contextMenu('destroy', $('.document-print-button'));
+            $.contextMenu('destroy', $('.document-print-button-separated'));
+            this.documentPrintButton.setElement(this.$('.document-print-button')).render();
+            this.documentPrintButtonSeparated.setElement(this.$('.document-print-button-separated')).render();
             return this;
         },
     });

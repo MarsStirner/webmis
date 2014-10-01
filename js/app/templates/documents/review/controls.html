@@ -8,15 +8,10 @@
 	</div>
 	<div class="pull-right">
 		<%if (selectedDocuments.length == 1) {%>
-			<!-- Old Print button
-			<button type="button" class="print-documents single-page review-nav" data-icon-primary="icon-print">Печать</button>
-			-->
-            <span class="context-print-button">	
-                <button type="button" class="" data-icon-primary="icon-print">Печать</button>
-            </span>
+            <span class="document-print-button"></span>
 		<%} else {%>
-			<button type="button" class="print-documents single-page review-nav" data-icon-primary="icon-print">Печатать вместе</button>
-			<button type="button" class="print-documents multiple-pages review-nav" data-icon-primary="icon-print">Печатать раздельно</button>
+			<span class="document-print-button"></span>	
+			<span class="document-print-button-separated"></span>
 		<%}%>
 	</div>
 </div>

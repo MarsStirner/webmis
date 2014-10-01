@@ -1,5 +1,6 @@
 define(function(require){
     var SendToDepartment = require("views/moves/send-to-department");
+    var ContextPrintButton = require('views/ContextPrintButton');
 	require("collections/appeals");
 	require("collections/doctors");
 	require("collections/departments");
@@ -299,7 +300,24 @@ define(function(require){
 				});
 				Collection.reset();
 
-				this.printButton = $('<button style="float: right;">Печать</button>').button().click(this.printForm007);
+				//this.printButton = $('<button style="float: right;">Печать</button>').button().click(this.printForm007);
+
+				this.printButton = new ContextPrintButton({
+					context: 'patients_list',
+	                separate: false,
+	                documents: [{
+	                	context_type: 'patients_list',
+	                	context: {
+	                        //event_id: ,
+	                        //action_id: ,
+	                        //client_id: ,
+	                        currentOrgStructure: '',
+	                        currentOrganisation: 3479,
+	                        currentPerson: Core.Cookies.get('userId'),
+	                    }
+	                }],
+	                title: 'Печать'
+	            });
 
 				Filter = new App.Views.Filter({
 					collection: Collection,
@@ -455,7 +473,10 @@ define(function(require){
 			this.$el.find(".Container").html(AppealsGrid.render().el);
 
 			if (this.printButton) {
-				this.$el.find(".EditForm").append(this.printButton);
+				//old print button
+				//this.$el.find(".EditForm").append(this.printButton);
+
+				this.printButton.setElement(this.$('.print-button')).render();
 			}
 
 
