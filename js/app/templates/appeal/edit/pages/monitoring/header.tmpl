@@ -1,5 +1,13 @@
 <div class="span12">
-	<h3 class="pull-left">История болезни № <%=appealNumber%></h3>
+	<h3 class="pull-left">
+		История болезни № <%=appealNumber%>
+		<strong id="appealFinance">(<%=finance%>)</strong>
+	</h3>
+	<%if (isExecPerson) {%>
+		<span id="appealFinanceEdit" class="ui-button-text" style="padding-right:30px; cursor:pointer;">
+			<i style="position:absolute; margin:5px;" class="icon-pencil"></i>
+		</span>
+	<%}%>
 	<%if (appealIsUrgent) {%><span class="label Privilege">Срочно</span><%}%>
 	<%if (appealIsClosed) {%>
 		<span class="label Primary">Закрыта</span>

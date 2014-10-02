@@ -1,0 +1,33 @@
+<script id="appeal-edit-common" type="text/x-jquery-tmpl">
+
+<div style="width: 400px; margin-bottom: 10px;">
+	<span class="Label">Тип обращения</span>
+	<select class="Styled Mandatory" name="request_type[id]">
+		<option value="" selected="selected">...</option>
+		{{each(i, type) dicts.requestTypes}}
+		<option value="${type['id']}">${type['value']}</option>
+		{{/each}}
+	</select>
+</div>
+<div style="width: 400px; margin-bottom: 10px;">
+	<span class="Label">Тип финансирования</span>
+	<select class="Styled Mandatory" name="finance[id]">
+		<option value="" selected="selected">...</option>
+		{{each(i, type) dicts.financeTypes}}
+			{{if type['id'] && type['value']}}
+		<option value="${type['id']}">${type['value']}</option>
+			{{/if}}
+		{{/each}}
+	</select>
+</div>
+<div style="width: 400px; margin-bottom: 10px;">
+	<span class="Label">Тип события</span>
+    <select class="Styled Mandatory" id="event_type" name="event_type[id]"></select>
+    <span></span>
+</div>
+<div style="width: 400px; margin-bottom: 10px;">
+	<span class="Label">Договор</span>
+    <select class="Styled Mandatory" name="contract"></select>
+</div>
+
+</script>

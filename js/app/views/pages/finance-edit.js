@@ -19,27 +19,17 @@ define([
 
     var mkbDirView;
 
-    App.Views.AppealEdit = Form.extend({
+    App.Views.FinanceEdit = Form.extend({
         model: App.Models.Appeal,
-
-        events: {
-            "click .Actions.Save": "onSave",
-            "click .Actions.Cancel": "onCancel",
-            "click .AddRepresentative": "onAddRepresentativeClick",
-            "change [name='contract']": "onChangeContract"
-        },
 
         initialize: function () {
             this.clearAll();
 
-            pubsub.trigger('noty_clear');
-
             var view = this;
-            console.log(view.options);
             Cache.Patient = this.model.get("patient");
             Cache.Patient.fetch({
                 success: function () {
-                    view.loadTemplate("pages/appeal-edit");
+                    view.loadTemplate("pages/finance-edit");
                     mkbDirView = (new App.Views.MkbDirectory()).render();
                 }
             });
@@ -109,27 +99,13 @@ define([
 
             }, this);
 
-            this.model.on("sync", function () {
-                pubsub.trigger('noty', {
-                    text: 'Обращение ' + (view.modelIsNew ? 'создано' : 'изменено')
-                });
-                App.Router.navigate("/appeals/" + this.model.id + "/", {
-                    trigger: true
-                });
-            }, this);
-
 
             this.contracts = new Contracts();
             this.contracts.on('reset', this.showContracts, this);
         },
 
-        logModel: function () {
-            console.log("appeal-edit model", this.model.toJSON());
-        },
-
         onSave: function (event) {
             var self = this;
-            // this.logModel();
             self.$(".Save").attr("disabled", true);
                 
             var readyToSave = this.save(event, {
@@ -144,27 +120,6 @@ define([
             });
             console.log('readyToSave', readyToSave);
             this.$(".Save").attr("disabled", readyToSave);
-        },
-
-        onCancel: function (event) {
-            event.preventDefault();
-
-            if (this.model.isNew()) {
-                App.Router.navigate("patients/" + this.model.get("patient").get("id") + "/", {
-                    trigger: true
-                });
-            } else {
-                App.Router.navigate("appeals/" + this.model.get("id") + "/", {
-                    trigger: true
-                });
-            }
-        },
-
-        onAddRepresentativeClick: function () {
-            this.openRepresentativeWindow();
-            /*this.appealRepresentativeWindow = new App.Views.AppealRepresentative().render();
-			 this.appealRepresentativeWindow.on("representative:selected", this.addRepresentative, this);
-			 this.appealRepresentativeWindow.open();*/
         },
 
         onEditRepresentativeClick: function (model) {
@@ -322,17 +277,7 @@ define([
                 return ["clinic", "hospital", "1", "2"].indexOf(rType.code) !== -1;
             });
 
-            //console.log("MODEL", dicts);
-
             this.$el.html($("#appeal-edit-common").tmpl(result));
-
-            // view.model.on("change:appealWithDeseaseThisYear", function () {
-            //     console.log("change:appealWithDeseaseThisYear", view.model.get("appealWithDeseaseThisYear"));
-            // }, view);
-
-            /*var Appeals = new App.Collections.PatientAppeals;
-			 Appeals.patient = this.model.get("patient");
-			 Appeals.fetch();*/
 
             var Patient = this.model.get("patient");
 
