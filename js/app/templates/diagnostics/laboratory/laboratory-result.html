@@ -51,7 +51,7 @@
 <%if(data.bak){%>
 <div >
     <h3>Антибиотикограмма</h3>
-    <%if(data.bak.table){%>
+    <%if(data.bak.table.rows.length){%>
     <table class="Grid allborders anti">
         <colgroup><colgroup>
         <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
