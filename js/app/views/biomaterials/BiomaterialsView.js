@@ -314,12 +314,10 @@ define(function(require) {
 			view.departments = new App.Collections.Departments();
 
 			view.departments.setParams({
-				filter: {
-					hasBeds: true
-				},
 				limit: 0,
 				sortingField: 'name',
-				sortingMethod: 'asc'
+				sortingMethod: 'asc',
+				withoutChildren: true
 			});
 
 
