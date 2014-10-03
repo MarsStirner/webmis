@@ -1,0 +1,31 @@
+<%if(rows.length){%>
+<table class="Grid allborders anti" style="font-size: 12px; width:70%; float:left;">
+    <colgroup><colgroup>
+    <% _.each(rows[0].organisms,function(organism){%>
+    <colgroup><colgroup>
+    <%})%> 
+    <thead>
+        <tr>
+        <th width="100%">Антибиотик</th> 
+        <% _.each(rows[0].organisms,function(organism){%>
+            <% if (organism.name.split('|').length > 1) {%>
+                <th><%=organism.name.split('|')[0] %></br><%=organism.name.split('|')[1] %></th>
+            <%} else {%>
+                <th><%=organism.name %></th> 
+            <%}%>    
+        <%})%> 
+        </tr>
+    </thead>
+    <tbody>
+        <% _.each(rows, function(antibiotic){ %>
+            <tr>
+                <td><%=antibiotic.name %> </td>
+                <%_.each(antibiotic.organisms, function(organism){%>
+                    <td><%=organism.activity %></td> 
+                <%})%>
+            </tr>
+        <% }) %> 
+    </tbody>
+</table> 
+<p style="font-size:20px"> </p>
+<%}%>

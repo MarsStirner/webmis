@@ -120,7 +120,8 @@ define(function (require) {
                 itemRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-row.html")),
                 itemAttrsContainerRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attrs-container-row.html")),
                 itemAttrRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attr-row.html")),
-                paste: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste.html"))
+                paste: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste.html")),
+                pasteBak: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste-bak.html"))
             }
         }
     };
@@ -145,6 +146,8 @@ define(function (require) {
     var TherapiesCollection = require('collections/therapy/Therapies');
 
     var ContextPrintButton = require('views/ContextPrintButton');
+
+    var BakResult = require('models/diagnostics/laboratory/bak-result');
     /*var FDLoader = {
         fds: {},
         get: function (id, cb, context) {
@@ -4382,20 +4385,26 @@ define(function (require) {
                 _(this.options.sections).each(function (section) {
                     section.items.each(function (item) {
                         if (item.checked) {
-                            var tests = item.resultData.filter(function (rdi) {
-                                return rdi.checked;
-                            });
-                            if (tests.length) {
+                            if (item.result.get('context') === 'action_bak_lab') {
+                                var tests = new BakResult();
+                                tests.diagnosticId = item.id;
                                 paste.push({
-                                    inline: item.inline,
-                                    name: item.get("diagnosticName") ? item.get("diagnosticName").name : item.get("assessmentName").name,
-                                    plannedEndDate: item.get("plannedEndDate"),
                                     context: item.result.get('context'),
                                     tests: tests
-                                    /*.map(function (rdi) {
-                                        return rdi.toJSON();
-                                    })*/
                                 });
+                            } else {
+                                var tests = item.resultData.filter(function (rdi) {
+                                    return rdi.checked;
+                                });
+                                if (tests.length) {
+                                    paste.push({
+                                        inline: item.inline,
+                                        name: item.get("diagnosticName") ? item.get("diagnosticName").name : item.get("assessmentName").name,
+                                        plannedEndDate: item.get("plannedEndDate"),
+                                        context: item.result.get('context'),
+                                        tests: tests
+                                    });
+                                }
                             }
                         }
                     }, this);
@@ -4727,10 +4736,37 @@ define(function (require) {
         },
 
         itemsCallback: function (selectedItems) {
-            console.log("itemsCallback");
+            var bakItems = [];
+            $.each(selectedItems, function(i, item){
+                if (item.context === 'action_bak_lab') {
+                    bakItems.push(item);
+                    selectedItems.splice(i, 1);
+                }
+            });
+
             var sisRendered = templates.uiElements.htmlHelperPopUp.paste({
                 selectedItems: _(selectedItems)
             });
+
+            var bakRendered = [];
+
+            if (bakItems.length) {
+                $.ajaxSetup({async: false});
+                $.each(bakItems, function(i, item) {
+                    item.tests.fetch({
+                        success: function(){
+                            var bakTable = item.tests.getTable();
+                            bakRendered.push(templates.uiElements.htmlHelperPopUp.pasteBak({
+                                rows: bakTable.rows
+                            }));
+                        }
+                    })
+                });
+                $.ajaxSetup({async: true});
+            }
+
+            sisRendered += bakRendered;
+            
             this.model.setValue(sisRendered);
             this.$(".attribute-value").append(sisRendered);
         }
