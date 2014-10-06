@@ -33,17 +33,17 @@ define(function(require) {
         renderContextPrintButton: function(){
             this.contextPrintButton = new ContextPrintButton({
                 context: this.result.get('context'),
-                data: {
-                    action_id:this.result.get('id'), 
-                    event_id: this.options.appeal.get('id'),
-                    context_type: 'action',
-                    client_id: this.options.appeal.get('patient').get('id'),
-                    additional_context: {
+                documents: [{
+                     context_type: 'action',
+                     context: {
+                        event_id: this.options.appeal.get('id'),
+                        action_id: this.result.get('id'),
+                        client_id: this.options.appeal.get('patient').get('id'),
                         currentOrgStructure: '',
                         currentOrganisation: 3479,
-                        currentPerson: Core.Cookies.get('userId')
+                        currentPerson: Core.Cookies.get('userId'),
                     }
-                }
+                }]
             });
 
             this.contextPrintButton.setElement(this.$el.find('.context-print-button'));
