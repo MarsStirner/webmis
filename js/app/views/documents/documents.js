@@ -4390,6 +4390,8 @@ define(function (require) {
                                 tests.diagnosticId = item.id;
                                 paste.push({
                                     context: item.result.get('context'),
+                                    name: item.get("diagnosticName") ? item.get("diagnosticName").name : item.get("assessmentName").name,
+                                    plannedEndDate: item.get("plannedEndDate"),
                                     tests: tests
                                 });
                             } else {
@@ -4738,9 +4740,11 @@ define(function (require) {
         itemsCallback: function (selectedItems) {
             var bakItems = [];
             $.each(selectedItems, function(i, item){
-                if (item.context === 'action_bak_lab') {
-                    bakItems.push(item);
-                    selectedItems.splice(i, 1);
+                if (item) {
+                    if (item.context === 'action_bak_lab') {
+                        bakItems.push(item);
+                        selectedItems.splice(i, 1);
+                    }
                 }
             });
 
@@ -4756,6 +4760,7 @@ define(function (require) {
                     item.tests.fetch({
                         success: function(){
                             var bakTable = item.tests.getTable();
+                            bakRendered.push("<strong>" + moment(item.plannedEndDate).format('DD.MM.YYYY') + "</strong> " + item.name);
                             bakRendered.push(templates.uiElements.htmlHelperPopUp.pasteBak({
                                 rows: bakTable.rows
                             }));
@@ -4764,9 +4769,10 @@ define(function (require) {
                 });
                 $.ajaxSetup({async: true});
             }
+            $.each(bakRendered, function(b, bak) {
+                sisRendered += bak;
+            });
 
-            sisRendered += bakRendered;
-            
             this.model.setValue(sisRendered);
             this.$(".attribute-value").append(sisRendered);
         }
