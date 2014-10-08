@@ -26,13 +26,19 @@ define(["models/model-base"], function (ModelBase) {
                         };
                         antibiotics.push(antibiotic);
                     });
-                
+
+                } else {
+                    antibiotics.push({
+                        name: '',
+                        code: '',
+                        organisms: []
+                    });
                 }
 
             });
 
             antibiotics = _.uniq(antibiotics, false, function(item){
-                return item.name; 
+                return item.name;
             });
 
             _.each(antibiotics, function(antibiotic){
