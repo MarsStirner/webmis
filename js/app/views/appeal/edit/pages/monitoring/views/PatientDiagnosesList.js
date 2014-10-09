@@ -61,12 +61,14 @@ define(function(require) {
 		},
 
 		showWarning: function() {
-			pubsub.trigger("noty", {
-				text: "Не установлен  клинический диагноз! ",
-				type: "warning"
-			});
+			if (this.options && !this.options.appeal.get('disableNoty')){
+				pubsub.trigger("noty", {
+					text: "Не установлен  клинический диагноз! ",
+					type: "warning"
+				});
 
-			this.$('.diagnosis-title').append(' <span id="warnings" style="color: red;"><i class="icon-warning-sign"></i> <span class="msg">Не установлен  клинический диагноз!</span> </span>')
+				this.$('.diagnosis-title').append(' <span id="warnings" style="color: red;"><i class="icon-warning-sign"></i> <span class="msg">Не установлен  клинический диагноз!</span> </span>')
+			}
 		},
 
 		render: function() {
