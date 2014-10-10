@@ -4760,10 +4760,13 @@ define(function (require) {
                     item.tests.fetch({
                         success: function(){
                             var bakTable = item.tests.getTable();
-                            bakRendered.push("<strong>" + moment(item.plannedEndDate).format('DD.MM.YYYY') + "</strong> " + item.name);
+                            var comments = item.tests.toJSON().textResults;
+                            bakRendered.push("<div><strong>" + moment(item.plannedEndDate).format('DD.MM.YYYY') + "</strong>  " + item.name + "</div><div>");
                             bakRendered.push(templates.uiElements.htmlHelperPopUp.pasteBak({
-                                rows: bakTable.rows
+                                rows: bakTable.rows,
+                                comments: comments
                             }));
+                            bakRendered.push("</div>");
                         }
                     })
                 });
@@ -4772,8 +4775,8 @@ define(function (require) {
             $.each(bakRendered, function(b, bak) {
                 sisRendered += bak;
             });
-
-            this.model.setValue(sisRendered);
+            var existVal = this.model.getPropertyByName('value').value;
+            this.model.setValue(existVal + sisRendered);
             this.$(".attribute-value").append(sisRendered);
         }
     });
@@ -5634,12 +5637,14 @@ define(function (require) {
             this.listenTo(this.collection, 'change reset',this.onDocCollectionChange);
 
             this.documentPrintButton = new ContextPrintButton({
+                differentDocs: true,
                 separate: false,
                 documents: this.getPrintDocumentCollection(),
                 title: 'Печать'
             });
 
             this.documentPrintButtonSeparated = new ContextPrintButton({
+                differentDocs: true,
                 separate: true,
                 documents: this.getPrintDocumentCollection(),
                 title: 'Печать раздельно'
