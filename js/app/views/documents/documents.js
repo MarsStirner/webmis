@@ -5643,6 +5643,11 @@ define(function (require) {
                 title: 'Печать'
             });
 
+            this.documentPrintButtonSingle = new ContextPrintButton({
+                documents: this.getPrintDocumentCollection(),
+                title: 'Печать'
+            });
+
             this.documentPrintButtonSeparated = new ContextPrintButton({
                 differentDocs: true,
                 separate: true,
@@ -5651,6 +5656,7 @@ define(function (require) {
             });
 
             this.subViews = {
+                '.document-print-button-single': this.documentPrintButtonSingle,
                 '.document-print-button': this.documentPrintButton,
                 '.document-print-button-separated': this.documentPrintButtonSeparated
             };
@@ -5658,9 +5664,11 @@ define(function (require) {
         },
 
         getPrintDocumentCollection: function(){
+            var self = this;
             var documents = [];
             _.each(this.collection.models, function(doc){
                 documents.push({
+                    doc_context: doc.get('context'),
                     context_type: 'action',
                     context: {
                         event_id: doc.get('appealId'), //appeal.get('id')
@@ -5678,9 +5686,11 @@ define(function (require) {
         onDocCollectionChange: function(){
                 var firstDoc = this.collection.first();
                 if (firstDoc) {
+                    this.documentPrintButtonSingle.documents = this.getPrintDocumentCollection();
                     this.documentPrintButton.documents = this.documentPrintButtonSeparated.documents = this.getPrintDocumentCollection();
                     if (firstDoc.get('context')) {
                         this.documentPrintButton.getTemplatesForContext(firstDoc.get('context'));
+                        this.documentPrintButtonSingle.getTemplatesForContext(firstDoc.get('context'));
                         this.documentPrintButtonSeparated.getTemplatesForContext(firstDoc.get('context'));
                     }
                 }
@@ -5692,7 +5702,7 @@ define(function (require) {
         data: function () {
             return {
                 selectedDocuments: this.collection,
-                showStepper: (this.collection.length == 1) && (this.options.documents && this.options.documents.length > 1)
+                showStepper: (this.collection.length == 1) && (this.options.documents && this.options.documents.length > 1);
             };
         },
 
@@ -5789,6 +5799,7 @@ define(function (require) {
             $.contextMenu('destroy', $('.document-print-button'));
             $.contextMenu('destroy', $('.document-print-button-separated'));
             this.documentPrintButton.setElement(this.$('.document-print-button')).render();
+            this.documentPrintButtonSingle.setElement(this.$('.document-print-button-single')).render();
             this.documentPrintButtonSeparated.setElement(this.$('.document-print-button-separated')).render();
             return this;
         },

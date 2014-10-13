@@ -6,6 +6,7 @@ define(function (require) {
 
         initialize: function (options) {
             this.title          = options.title     || 'Печать',
+            this.differentDocs  = options.differentDocs || false,
             this.template       = '<button type="button" class="" data-icon-primary="icon-print">'+(this.title || 'Печать')+'</button>',
             this.separate       = options.separate  || false;
             this.documents      = options.documents || {};
@@ -22,27 +23,60 @@ define(function (require) {
 
         getMenuItems: function () {
             var items = {};
-            this.printTemplates.each(function (printTemplate) {
-                var patt = /---/g;
-                var templateName = printTemplate.get('name');
-                var templateId = printTemplate.get('id');
-                if (!patt.test(templateName)) {
-                    items[templateId] = {
-                        name: templateName
-                    };
+            if (this.differentDocs) {
+                var self = this;
+                items[0] = {
+                    name: ''
                 }
-            });
+                this.$el.unbind('click').on('click', function(){
+                    self.getMenuCallback();
+                });
+            } else {
+                this.printTemplates.each(function (printTemplate) {
+                    var patt = /---/g;
+                    var templateName = printTemplate.get('name');
+                    var templateId = printTemplate.get('id');
+                    if (!patt.test(templateName)) {
+                        items[templateId] = {
+                            name: templateName
+                        };
+                    }
+                });
+            }
             return items;
         },
 
+        fetchDocumentsTemplateIds: function() {
+            var self = this;
+            _.each(this.documents, function(doc){
+                if (doc.doc_context) {
+                    self.printTemplates.setPrintContext(doc.doc_context);
+                    self.printTemplates.fetch().done(function(){
+                        doc.id = ''+self.printTemplates.first().get('id');
+                    });
+                }
+            });
+        },
+
         getMenuCallback: function (key, options) {
-            this.getRenderedPrintTemplate(key);
+            if (this.differentDocs) {
+                $.ajaxSetup({async: false});
+                this.fetchDocumentsTemplateIds();
+                $.ajaxSetup({async: true});
+                this.getRenderedPrintTemplate();
+            } else {
+                this.getRenderedPrintTemplate(key);
+            }
         },
 
         getRenderedPrintTemplate: function (id) {
 
+            var self = this;
+
             _.each(this.documents, function(doc){
-                doc.id = id;
+                if (!doc.id && id) {
+                    doc.id = id;
+                }
             });
 
             var data = {
