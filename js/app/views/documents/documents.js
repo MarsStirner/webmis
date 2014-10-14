@@ -5702,7 +5702,7 @@ define(function (require) {
         data: function () {
             return {
                 selectedDocuments: this.collection,
-                showStepper: (this.collection.length == 1) && (this.options.documents && this.options.documents.length > 1);
+                showStepper: (this.collection.length == 1) && (this.options.documents && this.options.documents.length > 1)
             };
         },
 
