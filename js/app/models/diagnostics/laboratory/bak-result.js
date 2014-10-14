@@ -6,6 +6,7 @@ define(["models/model-base"], function (ModelBase) {
             //return "/bak-results.json";
         },
         getTable: function () {
+            var isActivity = false;
             var organisms = this.get('organismResults');
             var antibiotics = [];
 
@@ -17,6 +18,8 @@ define(["models/model-base"], function (ModelBase) {
                 var sensValues = organism.sensValues;
 
                 if(!_.isEmpty(sensValues)){
+
+                    isActivity = true;
 
                     _.each(sensValues, function (sensValue) {
                         var antibiotic = {
@@ -58,7 +61,10 @@ define(["models/model-base"], function (ModelBase) {
 
             // console.log('antibiotics', antibiotics);
 
-            return {rows: antibiotics};
+            return {
+                rows: antibiotics,
+                isActivity: isActivity
+                };
         }
     });
 });

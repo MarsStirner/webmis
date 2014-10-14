@@ -50,39 +50,52 @@
 
 <%if(data.bak && data.bak.table){%>
 <div >
-    <h3>Антибиотикограмма</h3>
-    <%if(data.bak.table.rows.length){%>
-    <table class="Grid allborders anti">
-        <colgroup><colgroup>
-        <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
-        <colgroup><colgroup>
-        <%})%>
-        <thead>
-            <tr>
-            <th width="100%">Антибиотик</th>
+    <%if(data.bak.table.isActivity){%>
+        <h3>Антибиотикограмма</h3>
+        <%if(data.bak.table.rows.length){%>
+        <table class="Grid allborders anti">
+            <colgroup><colgroup>
             <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
-                <% if (organism.name.split('|').length > 1) {%>
-                    <th><%=organism.name.split('|')[0] %></br><%=organism.name.split('|')[1] %></th>
-                <%} else {%>
-                    <th><%=organism.name %></th>
-                <%}%>
+            <colgroup><colgroup>
             <%})%>
-            </tr>
-        </thead>
-        <tbody>
-            <% _.each(data.bak.table.rows, function(antibiotic){ %>
-                <% if (antibiotic.name) {%>
+            <thead>
                 <tr>
-                    <td><%=antibiotic.name %> </td>
-                    <%_.each(antibiotic.organisms, function(organism){%>
-                        <td><%=organism.activity %></td>
-                    <%})%>
+                <th width="100%">Антибиотик</th>
+                <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
+                    <% if (organism.name.split('|').length > 1) {%>
+                        <th><%=organism.name.split('|')[0] %></br><%=organism.name.split('|')[1] %></th>
+                    <%} else {%>
+                        <th><%=organism.name %></th>
+                    <%}%>
+                <%})%>
                 </tr>
+            </thead>
+            <tbody>
+                <% _.each(data.bak.table.rows, function(antibiotic){ %>
+                    <% if (antibiotic.name) {%>
+                    <tr>
+                        <td><%=antibiotic.name %> </td>
+                        <%_.each(antibiotic.organisms, function(organism){%>
+                            <td><%=organism.activity %></td>
+                        <%})%>
+                    </tr>
+                    <%}%>
+                <% }) %>
+            </tbody>
+        </table>
+        <p>S - чувствителен, I - умеренно устойчив, R - устойчив</p>
+        <%}%>
+    <%} else {%>
+        <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
+            <strong>
+                <% if (organism.name.split('|').length > 1) {%>
+                    <h4><%=organism.name.split('|')[0] %></h4>
+                    <p><%=organism.name.split('|')[1] %></p>
+                <%} else {%>
+                    <h4><%=organism.name %></h4>
                 <%}%>
-            <% }) %>
-        </tbody>
-    </table>
-    <p>S - чувствителен, I - умеренно устойчив, R - устойчив</p>
+            </strong>
+        <%})%>
     <%}%>
 
     <%if(data.bak.textResults && data.bak.textResults.length){%>
