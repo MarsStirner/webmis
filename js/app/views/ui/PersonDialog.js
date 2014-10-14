@@ -61,6 +61,7 @@ define(function (require) {
 			this.$(".all-persons").append(this.allPersons.map(function (person) {
 				return "<option value='" + person.get('id') + "'>" + person.get("name").raw + "</option>";
 			})).select2("enable");
+			this.$(".all-persons").find('option').hide();
 		},
 
 		loadDepartmentPersons: function () {
@@ -80,6 +81,7 @@ define(function (require) {
 			this.$(".department-persons").append(this.departmentPersons.map(function (person) {
 				return "<option value='" + person.get('id') + "'>" + person.get("name").raw + "</option>";
 			})).select2("enable");
+			this.$(".department-persons").find('option').hide();
 		},
 
 		onFilterPersonsChange: function (event) {
