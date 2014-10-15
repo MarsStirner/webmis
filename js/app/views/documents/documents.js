@@ -120,8 +120,7 @@ define(function (require) {
                 itemRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-row.html")),
                 itemAttrsContainerRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attrs-container-row.html")),
                 itemAttrRow: _.template(require("text!templates/documents/edit/ui-elements/html-helper/item-attr-row.html")),
-                paste: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste.html")),
-                pasteBak: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste-bak.html"))
+                paste: _.template(require("text!templates/documents/edit/ui-elements/html-helper/paste.html"))
             }
         }
     };
@@ -4738,12 +4737,20 @@ define(function (require) {
         },
 
         itemsCallback: function (selectedItems) {
-            var bakItems = [];
             $.each(selectedItems, function(i, item){
                 if (item) {
                     if (item.context === 'action_bak_lab') {
-                        bakItems.push(item);
-                        selectedItems.splice(i, 1);
+                        $.ajaxSetup({async: false});
+                            item.tests.fetch({
+                                success: function(){
+                                    var bakTable = item.tests.getTable();
+                                    var comments = item.tests.toJSON().textResults;
+                                    item.tests.rows = bakTable.rows;
+                                    item.tests.isActivity = bakTable.isActivity;
+                                    item.tests.comments = comments;
+                                }
+                            });
+                        $.ajaxSetup({async: true});
                     }
                 }
             });
@@ -4752,29 +4759,6 @@ define(function (require) {
                 selectedItems: _(selectedItems)
             });
 
-            var bakRendered = [];
-
-            if (bakItems.length) {
-                $.ajaxSetup({async: false});
-                $.each(bakItems, function(i, item) {
-                    item.tests.fetch({
-                        success: function(){
-                            var bakTable = item.tests.getTable();
-                            var comments = item.tests.toJSON().textResults;
-                            bakRendered.push("<div><strong>" + moment(item.plannedEndDate).format('DD.MM.YYYY') + "</strong>  " + item.name + "</div><div>");
-                            bakRendered.push(templates.uiElements.htmlHelperPopUp.pasteBak({
-                                rows: bakTable.rows,
-                                comments: comments
-                            }));
-                            bakRendered.push("</div>");
-                        }
-                    })
-                });
-                $.ajaxSetup({async: true});
-            }
-            $.each(bakRendered, function(b, bak) {
-                sisRendered += bak;
-            });
             var existVal = this.model.getPropertyByName('value').value;
             this.model.setValue(existVal + sisRendered);
             this.$(".attribute-value").append(sisRendered);
