@@ -12,8 +12,6 @@ define(function (require) {
                 appeal: this.options.appeal
             });
 
-            console.log('this.options.collection', this.options.collection);
-
             var printButton = new PrintButton({
                 collection: this.options.collection
             });

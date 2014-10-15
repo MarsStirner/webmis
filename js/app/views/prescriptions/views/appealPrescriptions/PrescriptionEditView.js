@@ -13,7 +13,6 @@ define(function (require) {
         initialize: function (opt) {
             var self = this;
             this.options.title = 'Редактирование назначения';
-            //console.log('init new prescription view', this);
             this.prescription = opt.prescription;
             this.administration = new AdministrationMethod();
             self.administration.fetch({
@@ -177,11 +176,22 @@ define(function (require) {
                 var id = input.id.split('-');
                 var cid = id[0];
                 var type = id[1];
-
-                return {
-                    minDatetime: (type == 'to' ? moment($('#' + cid + '-from').datetimeEntry('getDatetime')).add('m', 1).toDate() : null),
-                    maxDatetime: (type == 'from' ? moment($('#' + cid + '-to').datetimeEntry('getDatetime')).subtract('m', 1).toDate() : null)
+                var res = {
+                    minDatetime: null,
+                    maxDatetime: null
                 };
+
+                if (type == 'to') {
+                    res.minDatetime = moment($('#'+cid+'-from').datetimeEntry('getDatetime')).add('m',1).toDate();
+                }
+
+                if (type == 'from') {
+                    if ($('#'+cid+'-to').datetimeEntry('getDatetime')){
+                        res.maxDatetime = moment($('#'+cid+'-to').datetimeEntry('getDatetime')).subtract('m',1).toDate();
+                    }
+                }
+
+                return res;
             }
 
             if (this.prescription.get('assigmentIntervals')) {
@@ -192,7 +202,7 @@ define(function (require) {
                                 .datetimeEntry({
                                     datetimeFormat: 'D.O.Y H:M',
                                     beforeShow: datetimeRange
-                                });
+                                }).datepicker();
                         }, 100);
 
                     }, this);
@@ -251,7 +261,7 @@ define(function (require) {
                 .datetimeEntry({
                     datetimeFormat: 'D.O.Y H:M',
                     beforeShow: datetimeRange
-                });
+                }).datepicker();
 
 
             this.$el.find('button').button();

@@ -138,10 +138,22 @@ define(function (require) {
         },
 
         printPatientPrescriptions: function (id) {
-            var range = {
-                min: this.collection._filter.dateRangeMin * 1000,
-                max: this.collection._filter.dateRangeMax * 1000
-            };
+
+            var range = {};
+
+            if (this.collection._filter) {
+                range = {
+                    min: this.collection._filter.dateRangeMin * 1000,
+                    max: this.collection._filter.dateRangeMax * 1000
+                };
+            } else {
+                var today = new Date();
+                today.setHours(8,0,0,0);
+                range = {
+                    min: moment(today).format('X') * 1000,
+                    max: (parseInt(moment(today).format('X')) + 86400 ) * 1000
+                };
+            }
 
             var data = this.getPatientPrescriptionPrintData(id, range);
             // console.log('data', data);
