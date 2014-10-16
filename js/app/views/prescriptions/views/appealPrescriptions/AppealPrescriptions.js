@@ -9,6 +9,7 @@ define(function (require) {
     var PrescriptionEdit = require('views/prescriptions/views/appealPrescriptions/PrescriptionEditView');
     var ListView = require('views/prescriptions/views/appealPrescriptions/ListView');
     var ActionsView = require('views/prescriptions/views/appealPrescriptions/ListActionsView');
+    var IntervalEdit = require('views/prescriptions/views/prescriptionsExecution/IntervalEdit');
     require('qtip');
     require('fullCalendar');
 
@@ -187,15 +188,34 @@ define(function (require) {
                                 },
                                 //                        hide: false,
                                 prerender: true
-                            })
-                        }
-                        // eventDurationEditable: true,
-                        // editable: true,
-                        // selectable: true,
-                        // selectHelper: true
+                            });
+
+                            $.contextMenu({
+                                autoHide: true,
+                                selector: '[data-hasqtip="' + $(element).attr('data-hasqtip') + '"]',
+                                callback: function () {
+                                    self.collection.each(function(prescription){
+                                        if (prescription.get('id') == event.id) {
+                                            var intervalEdit = new IntervalEdit({
+                                                model: prescription.get('assigmentIntervals').first()
+                                            });
+
+                                            intervalEdit.render().open();
+                                        }
+                                    });
+                                },
+                                items: {
+                                    edit: {
+                                        name : "Редактировать"
+                                    }
+                                }
+                            });
+                        },
                     });
             }, this);
-        }
+        },
+
+
 
     });
 

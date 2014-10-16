@@ -1,5 +1,7 @@
 define(function (require) {
     require('views/print');
+    require("models/patient");
+    require("models/appeal");
     var TreeButton = require('views/ui/TreeButton');
 
 
@@ -54,6 +56,7 @@ define(function (require) {
             data.note = prescription.get('note');
             data.voa = prescription.get('voa') ? prescription.get('voa') + ' мл/ч' : '';
             data.drugs = prescription.get('drugs').map(function (drug) {
+                console.log('drug', drug);
                 return {
                     name: drug.get('name'),
                     dose: drug.get('dose') + ' ' + drug.get('unitName')
@@ -107,11 +110,31 @@ define(function (require) {
             var data = {
                 groups: []
             };
+
             var prescriptions = this.getClientPrescriptions(id);
             var prescription = prescriptions[0];
+
+            // $.getJSON(DATA_PATH + 'patients/' + prescription.get('client').id + '/appeals/?callback=?', function (res) {
+            //     var appeal = new App.Models.Appeal({
+            //         id: res.data[0].id
+            //     });
+            //     appeal.fetch().done(function(){
+            //         console.log('appeal', appeal);
+            //     });
+            // });
+
+            // var patient = new App.Models.Patient({
+            //     id: prescription.get('client').id
+            // });
+            //
+            // patient.fetch().done(function(){
+            //     console.log(patient);
+            // });
+
             data.patientName = prescription.getPatientFio();
             data.patientBirthDate = prescription.getPatientBirthDate();
             data.patientAge = Core.Date.getAgeString(data.patientBirthDate);
+            data.listDate = moment(range.min).format('DD.MM.YYYY');
 
             var groups = _(prescriptions).groupBy(function (model) {
                 return model.get('moa');
@@ -156,7 +179,7 @@ define(function (require) {
             }
 
             var data = this.getPatientPrescriptionPrintData(id, range);
-            // console.log('data', data);
+            console.log('data', data);
             new App.Views.Print({
                 data: data,
                 template: "patientPrescriptions"

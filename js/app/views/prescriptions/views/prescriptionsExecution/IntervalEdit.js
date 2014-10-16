@@ -17,6 +17,7 @@ define(function (require) {
         },
 
         initialize: function () {
+            console.log('this.model', this.model);
             this.options.title = 'Редактирование интервала';
             this.options.width = '66em';
 
