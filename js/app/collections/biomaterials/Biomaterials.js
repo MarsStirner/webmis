@@ -39,6 +39,7 @@ define(function(require) {
 				status_0: countByStatus(0),
 				status_1: countByStatus(1),
 				status_2: countByStatus(2),
+				status_3: countByStatus(3),
 				all: collection.length
 			};
 
@@ -59,7 +60,8 @@ define(function(require) {
 			collection.selected = {
 				status_0: filterSelectedByStatus(0),
 				status_1: filterSelectedByStatus(1),
-				status_2: filterSelectedByStatus(2)
+				status_2: filterSelectedByStatus(2),
+				status_3: filterSelectedByStatus(3)
 			};
 
 
@@ -245,6 +247,9 @@ define(function(require) {
 				}
 				if (model.status == 2) {
 					model.statusName = 'закончено';
+				}
+				if (model.status == 3) {
+					model.statusName = 'отправка';
 				}
 
 				model.selected = false;

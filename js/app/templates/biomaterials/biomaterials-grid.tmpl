@@ -44,7 +44,7 @@
 
 <script id="biomaterials-grid-row" type="text/x-jquery-tmpl">
 	<td class="status-code-${status} ${highlight}">
-		{{if status<=2}}
+		{{if status<=3}}
 		<input type="checkbox" class="id" name="id" value="${id}"/>
 		{{/if}}
 		<!-- ${id} -->
@@ -139,4 +139,3 @@
 <script id="biomaterials-grid-row-on-fetch" type="text/x-jquery-tmpl">
 	<td colspan="7"><i class="icon-spinner icon-spin"></i> Выполняем запрос...</td>
 </script>
-

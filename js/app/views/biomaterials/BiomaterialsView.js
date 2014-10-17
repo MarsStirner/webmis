@@ -167,7 +167,7 @@ define(function(require) {
 			var disabled = true;
 			var jtc = view.collection.selected;
 
-			if (jtc.status_0.length > 0 && jtc.status_1.length === 0 && jtc.status_2.length === 0) {
+			if (jtc.status_0.length > 0 && jtc.status_1.length === 0 && jtc.status_2.length === 0 && jtc.status_3.length === 0) {
 				disabled = false;
 			}
 
@@ -181,7 +181,7 @@ define(function(require) {
 			var disabled = true;
 			var jtc = view.collection.selected;
 
-			if (jtc.status_0.length === 0 && jtc.status_1.length > 0 && jtc.status_2.length === 0) {
+			if (jtc.status_0.length === 0 && (jtc.status_1.length > 0 || jtc.status_3.length > 0) && jtc.status_2.length === 0) {
 				disabled = false;
 			}
 
@@ -364,15 +364,17 @@ define(function(require) {
 				var status_0 = view.collection.count.status_0;
 				var status_1 = view.collection.count.status_1;
 				var status_2 = view.collection.count.status_2;
+				var status_3 = view.collection.count.status_3;
 
 				// view.$('#status-all-count').html(all ? '(' + all + ')' : '');
 				view.$('#status-0-count').html(status_0 ? '(' + status_0 + ')' : '');
 				view.$('#status-1-count').html(status_1 ? '(' + status_1 + ')' : '');
 				view.$('#status-2-count').html(status_2 ? '(' + status_2 + ')' : '');
+				view.$('#status-3-count').html(status_3 ? '(' + status_3 + ')' : '');
 			});
 
 			view.collection.on('fetch', function(e) {
-				view.$('#status-all-count, #status-0-count,#status-1-count,#status-2-count').html('');
+				view.$('#status-all-count, #status-0-count,#status-1-count,#status-2-count,#status-3-count').html('');
 			});
 		},
 		initExecuteButton: function() {
