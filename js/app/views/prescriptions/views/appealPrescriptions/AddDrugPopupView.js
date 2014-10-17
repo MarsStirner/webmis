@@ -79,13 +79,13 @@ define(function (require) {
 
             if(first.get('unitId') !== 327){
                 units.push({
-                    id: first.get('unitId'),
+                    id: first.get('unit_id'),
                     code: first.get('unitName')
                 });
             }
-            
+
             // units = _.map(units, function(unit){
-            //     if(unit.id = ) 
+            //     if(unit.id = )
             // });
 
             var drug = {
