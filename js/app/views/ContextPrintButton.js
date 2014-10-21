@@ -70,11 +70,14 @@ define(function (require) {
         },
 
         getRenderedPrintTemplate: function (id) {
-
             var self = this;
 
             _.each(this.documents, function(doc){
-                if (!doc.id && id) {
+                if (self.differentDocs) {
+                    if (!doc.id) {
+                        doc.id = id;
+                    }
+                } else {
                     doc.id = id;
                 }
             });
