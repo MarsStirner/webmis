@@ -3,7 +3,14 @@ define(function (require) {
     require("models/patient");
     require("models/appeal");
     var TreeButton = require('views/ui/TreeButton');
-
+    var MonitoringInfos = require('views/appeal/edit/pages/monitoring/collections/MonitoringInfos');
+    var DictionaryValues = require('collections/dictionary-values');
+    var PatientBloodTypes = require('views/appeal/edit/pages/monitoring/collections/PatientBloodTypes');
+    var PatientInfo = require('views/appeal/edit/pages/monitoring/views/PatientInfo');
+    var PatientBloodTypeHistoryRow = require('views/appeal/edit/pages/monitoring/views/PatientBloodTypeHistoryRow');
+    var PatientBloodTypeRow = require('views/appeal/edit/pages/monitoring/views/PatientBloodTypeRow');
+    var PatientBsaRow = require('views/appeal/edit/pages/monitoring/views/PatientBsaRow');
+    var Moves = require('collections/moves/moves');
 
     var PrintButton = TreeButton.extend({
         initialize: function () {
@@ -52,11 +59,9 @@ define(function (require) {
 
         convertPrescriptionForPrint: function (prescription, range) {
             var data = {};
-            console.log('prescription', prescription);
             data.note = prescription.get('note');
             data.voa = prescription.get('voa') ? prescription.get('voa') + ' мл/ч' : '';
             data.drugs = prescription.get('drugs').map(function (drug) {
-                console.log('drug', drug);
                 return {
                     name: drug.get('name'),
                     dose: drug.get('dose') + ' ' + drug.get('unitName')
@@ -110,54 +115,89 @@ define(function (require) {
             var data = {
                 groups: []
             };
-
+            var self = this;
             var prescriptions = this.getClientPrescriptions(id);
             var prescription = prescriptions[0];
 
-            // $.getJSON(DATA_PATH + 'patients/' + prescription.get('client').id + '/appeals/?callback=?', function (res) {
-            //     var appeal = new App.Models.Appeal({
-            //         id: res.data[0].id
-            //     });
-            //     appeal.fetch().done(function(){
-            //         console.log('appeal', appeal);
-            //     });
-            // });
+            $.getJSON(DATA_PATH + 'patients/' + prescription.get('client').id + '/appeals/?callback=?', function (res) {
+                var appealId = res.data[0].id
 
-            // var patient = new App.Models.Patient({
-            //     id: prescription.get('client').id
-            // });
-            //
-            // patient.fetch().done(function(){
-            //     console.log(patient);
-            // });
-
-            data.patientName = prescription.getPatientFio();
-            data.patientBirthDate = prescription.getPatientBirthDate();
-            data.patientAge = Core.Date.getAgeString(data.patientBirthDate);
-            data.listDate = moment(range.min).format('DD.MM.YYYY');
-
-            var groups = _(prescriptions).groupBy(function (model) {
-                return model.get('moa');
-            });
-
-            _(groups).each(function (groupPrescriptions, groupName) {
-                var convertedPrescriptions = [];
-                _(groupPrescriptions).each(function (prescription) {
-                    convertedPrescriptions.push(this.convertPrescriptionForPrint(prescription, range));
-                }, this);
-
-                if(groupName === 'null'){
-                    groupName = 'Не определён';
-                }
-
-                data.groups.push({
-                    name: groupName,
-                    prescriptions: convertedPrescriptions
+                var monitoringInfos = new MonitoringInfos(null, {
+                    appealId: appealId
                 });
 
-            }, this);
+                var patientBsaRow = new PatientBsaRow({
+                    collection: monitoringInfos
+                });
 
-            return data;
+                var patientBloodTypes = new PatientBloodTypes([], {
+                    patientId: prescription.get('client').id
+                });
+
+                var moves = new Moves();
+                moves.appealId = appealId;
+
+                var bloodType = null;
+                var bloodDate = null;
+
+                patientBsaRow.collection.fetch().done(function(){
+                    moves.fetch().done(function(){
+                        patientBloodTypes.fetch().done(function(){
+                            _.each(patientBloodTypes.models, function(blood){
+                                if (blood.get('bloodDate') > bloodDate) {
+                                    bloodDate = blood.get('bloodDate');
+                                    bloodType = blood.get('bloodType').name;
+                                }
+                            });
+                            data.patientName = prescription.getPatientFio();
+                            data.patientBirthDate = prescription.getPatientBirthDate();
+                            data.patientAge = Core.Date.getAgeString(data.patientBirthDate);
+                            data.patientHeight = patientBsaRow.data().height;
+                            data.patientWeight = patientBsaRow.data().weight;
+                            data.patientBlood = bloodType;
+                            data.patientBSA = patientBsaRow.data().bsa;
+                            data.patientBed = moves.last().get('bed');
+                            data.listDate = moment(range.min).format('DD.MM.YYYY');
+
+                            var groups = _(prescriptions).groupBy(function (model) {
+                                return model.get('moa');
+                            });
+
+                            _(groups).each(function (groupPrescriptions, groupName) {
+                                var convertedPrescriptions = [];
+                                _(groupPrescriptions).each(function (prescription) {
+                                    var inRange = false;
+                                    var converted = self.convertPrescriptionForPrint(prescription, range);
+                                    _.each(converted.intervals, function(interval){
+                                        if (interval.val) {
+                                            inRange = true;
+                                        }
+                                    });
+                                    if (inRange) {
+                                        convertedPrescriptions.push(self.convertPrescriptionForPrint(prescription, range));
+                                    }
+                                }, this);
+
+                                if(groupName === 'null'){
+                                    groupName = 'Не определён';
+                                }
+
+                                if (convertedPrescriptions.length) {
+                                    data.groups.push({
+                                        name: groupName,
+                                        prescriptions: convertedPrescriptions
+                                    });
+                                }
+
+                            }, this);
+                            new App.Views.Print({
+                                data: data,
+                                template: "patientPrescriptions"
+                            });
+                        });
+                    });
+                });
+            });
         },
 
         printPatientPrescriptions: function (id) {
@@ -178,12 +218,7 @@ define(function (require) {
                 };
             }
 
-            var data = this.getPatientPrescriptionPrintData(id, range);
-            console.log('data', data);
-            new App.Views.Print({
-                data: data,
-                template: "patientPrescriptions"
-            });
+            this.getPatientPrescriptionPrintData(id, range);
 
         },
 
