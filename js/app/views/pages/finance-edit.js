@@ -6,9 +6,10 @@ define([
         model: App.Models.Appeal,
 
         initialize: function () {
+            this.options.model.set('disableNoty', true);
             var view = this;
             Cache.Patient = this.model.get("patient");
-            Cache.Patient.fetch({
+            this.model.fetch({
                 success: function () {
                     view.loadTemplate("pages/finance-edit");
                 }
@@ -92,7 +93,6 @@ define([
         },
 
         ready: function (dicts) {
-            this.options.model.set('disableNoty', true);
             var view = this;
 
             var result = this.model.toJSON();
