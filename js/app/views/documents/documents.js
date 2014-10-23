@@ -6144,8 +6144,13 @@ define(function (require) {
         }, Documents.Views.List.Common.Filters.prototype.events),
         onChangeEvent: function (e) {
             var $target = $(e.target);
+            if ($target.val() === 'all') {
+                appealId = this.options.events.first().id;
+            } else{
+                appealId = $target.val();
+            }
             this.collection.appealId = $target.val();
-            appealId = $target.val();
+
             var event = this.options.events.find(function (event) {
                 return event.get('id') == appealId;
             });
