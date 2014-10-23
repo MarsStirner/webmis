@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "1.3.50";
+var GUI_VERSION = "1.3.51";
 var CORE_VERSION;
 
 DEBUG_MODE = true;

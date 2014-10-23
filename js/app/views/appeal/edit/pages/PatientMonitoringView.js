@@ -7,6 +7,8 @@ define(function(require) {
 	var MonitoringInfoGrid3 = require('views/appeal/edit/pages/monitoring/views/MonitoringInfoGrid3');
 	var ExpressAnalyses = require('views/appeal/edit/pages/monitoring/views/ExpressAnalysesView');
 	var ExpressAnalyses2 = require('views/appeal/edit/pages/monitoring/views/ExpressAnalysesView2');
+	var InfectionMonitoring = require('views/appeal/edit/pages/monitoring/views/InfectionMonitoring');
+	var InfectionDrugMonitoring = require('views/appeal/edit/pages/monitoring/views/InfectionDrugMonitoring');
 
 	return Backbone.View.extend({
 		ui: {},
@@ -26,7 +28,9 @@ define(function(require) {
 				".monitoring-info2": new MonitoringInfoGrid2(),
 				//".monitoring-info3": new MonitoringInfoGrid3(),
 				//".express-analyses": new ExpressAnalyses(),
-				".express-analyses2": new ExpressAnalyses2()
+				".express-analyses2": new ExpressAnalyses2(),
+				".infection-monitoring": new InfectionMonitoring(),
+				".infection-drug-monitoring": new InfectionDrugMonitoring()
 			});
 
 			return this;
