@@ -5035,7 +5035,7 @@ define(function (require) {
             //-----------------------
             var cons = new Cons();
             cons.appealId = appealId;
-
+            cons.mnemFilter = ["CONS", "CONS_POLY", "CONS_SPEC", "CONS_PHD"]
 
             cons.setParams({
                 sortingField: "plannedEndDate",
