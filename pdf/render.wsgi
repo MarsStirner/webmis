@@ -105,10 +105,10 @@ def application(environ, start_response):
         data = data if len(data) > 0 else dataJSON
 
         name = getData( path_string, data )
-        
+
         result_name = ''
         if (name.has_key('first') and name.has_key('last') and name.has_key('middle')):
-            result_name += name['last']
+            result_name += (name['last'][:10] + '.') if len(name['last']) > 11 else name['last']
             result_name += ' ' + name['first'][0] + '.'
             result_name += (' ' + name['middle'][0] + '.') if len(name['middle']) > 0 else ''
         else:
@@ -310,7 +310,7 @@ def application(environ, start_response):
         delta = second_date - first_date
 
         return str(delta.days)
-    
+
     def findDiagnosis( path_string, diagnosis, data=dataJSON ):
         data = data if len(data) > 0 else dataJSON
 
@@ -349,7 +349,7 @@ def application(environ, start_response):
         if not (100000 <= barcode <= 999999):
         # Этого не должно случиться.
             return ''
-        
+
         # Стартовый и стоповый символы в нашей таблице символов имеют иные коды (+64)
         start = 0xcd
         stop = 0xce
@@ -357,11 +357,11 @@ def application(environ, start_response):
         c, c2 = divmod(c, 100)
         c, c1 = divmod(c, 100)
         cs = reduce(lambda x, (y, c): (x + y*c) % 103, [(c1, 1), (c2, 2), (c3, 3)], 2)
-        
+
         # Транслируем коды символов
         c1, c2, c3, cs = tuple(map(lambda w: w + 100 if w > 94 else w + 32, (c1, c2, c3, cs)))
         barcode_char = b_struct.pack(start, c1, c2, c3, cs, stop)
-       
+
         return barcode_char.decode('windows-1252')
 
 
@@ -381,7 +381,7 @@ def application(environ, start_response):
         elif financeCode == 9:
             return '6'
         else:
-            return ''      
+            return ''
 
     def getAttributeValue(attr):
         value = attr['value']
@@ -398,7 +398,7 @@ def application(environ, start_response):
     def getData( path_string, data=dataJSON ):
         data = data if len(data) > 0 else dataJSON
         path = path_string.split('.')
-        
+
         current_object = data
         returning_data = ''
 
@@ -464,10 +464,10 @@ def application(environ, start_response):
 
     renderer.run()
 
-    
+
     # soffice --invisible --headless --nofirststartwizard '-accept=socket,host=localhost,port=2002;urp;'
     # retcode = subprocess.call(['soffice', '--invisible', '--headless', '--nofirststartwizard', '--accept=socket,host=localhost,port=2002;urp;'])
-    
+
 
     pdf_file_name = rendered_file_name.replace('.odt', '.pdf')
 
