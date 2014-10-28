@@ -1706,7 +1706,11 @@ define(function (require) {
             "click .edit-document": "onEditDocumentClick",
             "click .single-item-select": "onItemClick",
             "click th.sortable": "onThSortableClick",
-            "click .remove-document": "onRemoveDocumentClick"
+            "click .remove-document": "onRemoveDocumentClick",
+            "mouseenter .docLock": "showLockInfo",
+            "mouseleave .docLock": "hideLockInfo",
+            "mouseenter .document-item-row": "rowMouseenter",
+            "mouseleave .document-item-row": "rowMouseleave"
         },
 
         data: function () {
@@ -1718,6 +1722,8 @@ define(function (require) {
                 editable = false;
 
             }
+
+            console.log('documents', this.collection);
 
             return {
                 documents: this.collection,
@@ -1732,6 +1738,22 @@ define(function (require) {
             this.listenTo(this.collection, "reset", this.onCollectionReset);
             this.listenTo(this.collection, "mark-all", this.onCollectionMarkAll);
             this.listenTo(this.options.selectedDocuments, "review:quit", this.onCollectionReset);
+        },
+
+        showLockInfo: function (e) {
+            $(e.target.parentNode).parent().find(".lockToolTip").show();
+        },
+
+        hideLockInfo: function (e) {
+            $(e.target.parentNode).parent().find(".lockToolTip").hide();
+        },
+
+        rowMouseenter: function (e) {
+            $(e.currentTarget).find('.docLock').css('background', 'rgba(245, 245, 245, 0.7)');
+        },
+
+        rowMouseleave: function (e) {
+            $(e.currentTarget).find('.docLock').css('background', 'rgba(255, 255, 255, 0.7)');
         },
 
         onCollectionReset: function () {
@@ -2706,7 +2728,21 @@ define(function (require) {
                 });
             }, this));
 
+            this.lockDocument();
+
             this.listenTo(this.model, "toggle:dividedState", this.toggleDividedState);
+        },
+
+        lockDocument: function() {
+            var self = this;
+            $.get(DATA_PATH + "appeals/" + this.model.appealId + "/documents/" + this.model.id + "/lock", function() {
+                var lockInterval = setInterval(function(){
+                    $.ajax({
+                        url: DATA_PATH + "appeals/" + self.model.appealId + "/documents/" + self.model.id + "/lock",
+                        type: 'PUT'
+                    });
+                }, 60000);
+            });
         },
 
         getAutosavedFields: function() {
@@ -3130,12 +3166,14 @@ define(function (require) {
 
         onCancelClick: function (event) {
             this.deleteAutosavedFields();
+            this.unlockDocument();
             this.returnToList();
         },
 
         onSaveDocumentSuccess: function (result) {
             var resultId = result.id || result.data[0].id;
             this.deleteAutosavedFields();
+            this.unlockDocument();
             this.goToDocReview(resultId);
         },
 
@@ -3204,6 +3242,13 @@ define(function (require) {
             $.ajax({
                type: 'DELETE',
                 url: '/data/autosave/doc_'+this.model.id
+            });
+        },
+
+        unlockDocument: function() {
+            $.ajax({
+               type: "DELETE",
+                url: DATA_PATH + "appeals/" + this.model.appealId + "/documents/" + this.model.id + "/lock"
             });
         },
 
@@ -5548,6 +5593,7 @@ define(function (require) {
         },
 
         render: function (subViews) {
+            console.log(this.collection);
             return LayoutBase.prototype.render.call(this, _.extend({
                 ".review-controls": new Documents.Views.Review.Base.Controls({
                     collection: this.collection,

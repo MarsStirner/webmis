@@ -11,7 +11,12 @@
             <%if (document.get('closeDate')) {%>
                 <a><i class="icon-lock" title="Документ закрыт"></i></a>
             <%} else if (!(App.Router.currentPage == 'patientSummaryList')) {%>
-                <a class="edit-document" data-document-id="<%=document.id%>"><i class="icon-pencil" title="Редактировать"></i></a>
+                <div style="display:inline;">
+                    <%if (document.get('readOnly')) {%>
+                        <div class="docLock" style="width:17px; height: 25px; background:rgba(255, 255, 255, 0.8); position:abcolute; z-index:100; position:absolute; border-radius:15px 0px 14px 0px;"></div>
+                    <%}%>
+                    <a class="edit-document" data-document-id="<%=document.id%>"><i class="icon-pencil" title="Редактировать"></i></a>
+                </div>
             <%}%>
         <%}%>
 
@@ -24,9 +29,13 @@
         <%if (document.get('doctor').id == Core.Cookies.get('userId')) {%>
             <%if (!document.get('closeDate')) {%>
                 <a class="remove-document" data-document-id="<%=document.id%>" style="margin-left: .5em"><i class="icon-remove" title="Удалить"></i></a>
-            <%}%>    
+            <%}%>
         <%}%>
-
+        <%if (document.get('readOnly')) {%>
+            <div style="position:absolute; z-index:200; right: 120px; margin-top: 20px; display :none;" class="ToolTip lockToolTip">
+                <span class="Error">Документ редактирует пользователь</br><%=document.get('lockInfo').personInfo%></span>
+            </div>
+        <%}%>
     </td>
 </tr>
 <%});%>
