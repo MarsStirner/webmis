@@ -12,9 +12,16 @@
 			</div>
 			<%if (document.showIcons) {%>
 				<%if (!document.endDate) {%>
-					<a href="#" class="edit-document" data-document-id="<%=document.id%>" style="text-decoration: none;" title="Редактировать">
-						<i class="icon-pencil" style="position: absolute;top: 0;right: 1.8em;"></i>
-					</a>
+					<%if (document.lockInfo) {%>
+						<i class="icon-pencil edit-locked" style="position: absolute;top: 0;right: 1.8em; opacity: 0.3"></i>
+						<div style="position:absolute; z-index:200; right: 0px; top: 25px; display:none;" class="ToolTip lockToolTip">
+							<span class="Error">Документ редактирует пользователь</br><%=document.lockInfo.personInfo%></span>
+						</div>
+					<%} else {%>
+						<a href="#" class="edit-document" data-document-id="<%=document.id%>" style="text-decoration: none;" title="Редактировать">
+							<i class="icon-pencil" style="position: absolute;top: 0;right: 1.8em;"></i>
+						</a>
+					<%}%>
 				<%} else {%>
 					<a style="text-decoration: none;" title="Документ закрыт">
 						<i class="icon-lock" style="position: absolute;top: 0;right: 1.8em;"></i>

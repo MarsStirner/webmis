@@ -2735,13 +2735,25 @@ define(function (require) {
 
         lockDocument: function() {
             var self = this;
-            $.get(DATA_PATH + "appeals/" + this.model.appealId + "/documents/" + this.model.id + "/lock", function() {
+                $.getJSON(DATA_PATH + "appeals/" + this.model.appealId + "/documents/" + this.model.id + "/lock?callback=?", function() {
                 var lockInterval = setInterval(function(){
                     $.ajax({
                         url: DATA_PATH + "appeals/" + self.model.appealId + "/documents/" + self.model.id + "/lock",
-                        type: 'PUT'
+                        type: 'PUT',
+                        statusCode: {
+                            500: function() {
+                                clearInterval(lockInterval);
+                            }
+                        }
                     });
                 }, 60000);
+            });
+        },
+
+        unlockDocument: function() {
+            $.ajax({
+               type: "DELETE",
+                url: DATA_PATH + "appeals/" + this.model.appealId + "/documents/" + this.model.id + "/lock"
             });
         },
 
@@ -2833,6 +2845,7 @@ define(function (require) {
         //getEditPageTypeName: Documents.Views.List.Common.Layout.prototype.getEditPageTypeName,
 
         persistenceCheck: function (callback) {
+            var self = this;
             var checkPopUp = new PopUpBase();
             checkPopUp.template = _.template("При переходе на другую страницу введённые данные будут утеряны.<br>Сохранить редактируемый документ?");
             checkPopUp.dialogOptions = {
@@ -2846,6 +2859,7 @@ define(function (require) {
                     text: "Сохранить",
                     "class": "button-color-green",
                     click: _.bind(function () {
+                        self.unlockDocument();
                         var persisted = this.persistDoc();
                         checkPopUp.tearDown();
                         callback(persisted);
@@ -2853,6 +2867,7 @@ define(function (require) {
                 }, {
                     text: "Не сохранять",
                     click: function () {
+                        self.unlockDocument()
                         checkPopUp.tearDown();
                         callback(true);
                     }
@@ -3623,7 +3638,6 @@ define(function (require) {
         },
 
         getDocTypeId: function() {
-            console.log(this.model);
             var typePath = window.location.pathname.split('/');
             if (typePath[typePath.length-1] == 'edit') {
                return typePath[typePath.length-2];
@@ -5593,7 +5607,6 @@ define(function (require) {
         },
 
         render: function (subViews) {
-            console.log(this.collection);
             return LayoutBase.prototype.render.call(this, _.extend({
                 ".review-controls": new Documents.Views.Review.Base.Controls({
                     collection: this.collection,
@@ -5868,7 +5881,8 @@ define(function (require) {
                     doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
                     loaded: true,
                     showIcons: this.options.showIcons,
-                    isOldType: this.model.isOldType()
+                    isOldType: this.model.isOldType(),
+                    lockInfo: documentJSON.lockInfo
                 };
             } else {
                 tmplData = {
@@ -5883,7 +5897,9 @@ define(function (require) {
 
         events: {
             "click .edit-document": "onEditDocumentClick",
-            "click .duplicate-document": "onDuplicateDocumentClick"
+            "click .duplicate-document": "onDuplicateDocumentClick",
+            "mouseenter .edit-locked": "showLockInfo",
+            "mouseleave .edit-locked": "hideLockInfo"
         },
 
         initialize: function () {
@@ -5921,6 +5937,14 @@ define(function (require) {
                     }
                 });
             }
+        },
+
+        showLockInfo: function (e) {
+            $(e.target.parentNode).find(".lockToolTip").show();
+        },
+
+        hideLockInfo: function (e) {
+            $(e.target.parentNode).find(".lockToolTip").hide();
         },
 
         render: function () {
