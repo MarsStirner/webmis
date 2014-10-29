@@ -12,7 +12,7 @@
 			</div>
 			<%if (document.showIcons) {%>
 				<%if (!document.endDate) {%>
-					<%if (document.lockInfo) {%>
+					<%if (document.lockInfo && document.lockInfo.personId != Core.Cookies.get('userId')) {%>
 						<i class="icon-pencil edit-locked" style="position: absolute;top: 0;right: 1.8em; opacity: 0.3"></i>
 						<div style="position:absolute; z-index:200; right: 0px; top: 25px; display:none;" class="ToolTip lockToolTip">
 							<span class="Error">Документ редактирует пользователь</br><%=document.lockInfo.personInfo%></span>

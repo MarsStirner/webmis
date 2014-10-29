@@ -2735,7 +2735,7 @@ define(function (require) {
 
         lockDocument: function() {
             var self = this;
-                $.getJSON(DATA_PATH + "appeals/" + this.model.appealId + "/documents/" + this.model.id + "/lock?callback=?", function() {
+            $.getJSON(DATA_PATH + "appeals/" + this.model.appealId + "/documents/" + this.model.id + "/lock?callback=?", function() {
                 var lockInterval = setInterval(function(){
                     $.ajax({
                         url: DATA_PATH + "appeals/" + self.model.appealId + "/documents/" + self.model.id + "/lock",
