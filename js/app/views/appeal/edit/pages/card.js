@@ -56,6 +56,7 @@ define(function (require) {
         },
 
         initialize: function () {
+            console.log(this.options);
             this.model = this.options.appeal;
             this.model.on("change", this.render, this);
         },
@@ -189,6 +190,20 @@ define(function (require) {
                 });
         },
 
+        onSickLeaveEdit: function(item) {
+            if ($(item).hasClass( "sick-leave-data-date" )) {
+                var itemValue = $(item).val();
+            } else {
+                var itemValue = !!$(item).attr('checked');
+            }
+            this.model.get('tempInvalid')[$(item).attr('id').split('-')[1]] = itemValue;
+        },
+
+        sickLeaveSave: function() {
+            console.log(this.model);
+            this.model.save();
+        },
+
         /*showPrint: function (options) {
 			var printModel;
 			if (options.data === "appeal") {
@@ -213,6 +228,7 @@ define(function (require) {
 		},*/
 
         render: function () {
+            var self = this;
             this.initWithDictionaries([{
                 name: "hospitalizationPointTypes",
                 id: 19,
@@ -241,8 +257,19 @@ define(function (require) {
                     closeDate: closeDate,
                     isClosed: this.model.get('closed'),
                     allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
-                    dicts: dicts
+                    dicts: dicts,
+                    sickLeave: this.model.get('closed'),
+                    isExecPerson: this.model.get('execPerson').id == Core.Cookies.get('userId')
                 }, this.model.toJSON())));
+
+                this.$(".sick-leave-data-date").datepicker();
+                this.$(".sick-leave-data").on('change', function(){
+                    self.onSickLeaveEdit(this);
+                    $("#sickLeaveSave").show();
+                });
+                this.$("#sickLeaveSave").on('click', function(){
+                    self.sickLeaveSave();
+                });
                 //}
 
                 /*this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
