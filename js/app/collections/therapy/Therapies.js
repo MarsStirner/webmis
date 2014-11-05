@@ -23,7 +23,7 @@ define(function(require) {
 		},
 
 		url: function() {
-			return '/api/v1/patients/' + this.patientId + '/therapies';
+			return DATA_PATH + 'patients/' + this.patientId + '/documents/therapies';
 		},
 
 		parse: function (raw) {

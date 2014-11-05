@@ -14,7 +14,7 @@
 					<%if(therapy.get('endDate')){%>
 						(<%= Core.Date.format(therapy.get('beginDate')) %> - <%= Core.Date.format(therapy.get('endDate')) %>)
 					<%}else{%>
-						(Дата начала: <%= Core.Date.format(therapy.get('beginDate')) %>)
+						(Дата начала: <%= moment(therapy.get('beginDate'), 'YYYY-MM.DD').format('DD.MM.YYYY') %>)
 					<%}%>
 				</span>
 				<i class="therapy-body-toggle <%if(therapy.get('endDate')){%>icon-plus<%}else{%>icon-minus<%}%> pull-right" title="Показать этапы"></i>
@@ -25,7 +25,7 @@
 				<h3>Текущий этап</h3>
 
 				<% _.each(therapy.getCurrentPhases(), function(phase){ %>
-					<p><%if(phase.link){%><a href="<%= phase.link %>" target="_blank"><%= phase.title %></a><%}else{%><%= phase.title %><%}%> (Дата начала: <%= Core.Date.format(phase.beginDate) %>)</p>
+					<p><%if(phase.link){%><a href="<%= phase.link %>" target="_blank"><%= phase.title %></a><%}else{%><%= phase.title %><%}%> (Дата начала: <%= moment(phase.beginDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %>)</p>
 					<ul>
 						<% _.each([phase.days[0]], function(day){ %>
 							<li><p>День терапии: <a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>" target="_blank"><%= day.day %></a></p></li>
@@ -55,8 +55,3 @@
 	<h3 style="padding: 1em 0 0 0; margin-bottom: .3em;">Нет данных</h3>
 </div>
 <%}%>
-
-
-
-
-
