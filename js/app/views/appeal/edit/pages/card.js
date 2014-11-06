@@ -192,7 +192,7 @@ define(function (require) {
 
         onSickLeaveEdit: function(item) {
             if ($(item).hasClass( "sick-leave-data-date" )) {
-                var itemValue = $(item).val();
+                var itemValue = moment($(item).val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
             } else {
                 var itemValue = !!$(item).attr('checked');
             }
