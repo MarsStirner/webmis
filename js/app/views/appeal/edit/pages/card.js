@@ -258,7 +258,7 @@ define(function (require) {
                     isClosed: this.model.get('closed'),
                     allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
                     dicts: dicts,
-                    sickLeave: this.model.get('closed'),
+                    sickLeave: this.model.get('tempInvalid'),
                     isExecPerson: this.model.get('execPerson').id == Core.Cookies.get('userId')
                 }, this.model.toJSON())));
 
