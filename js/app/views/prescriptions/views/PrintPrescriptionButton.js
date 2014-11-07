@@ -64,7 +64,8 @@ define(function (require) {
             data.drugs = prescription.get('drugs').map(function (drug) {
                 return {
                     name: drug.get('name'),
-                    dose: drug.get('dose') + ' ' + drug.get('unitName')
+                    dose: drug.get('dose') + ' ' + drug.get('unitName'),
+                    dosageValue: drug.get('dosageValue') + drug.get('dosageValueUnit').code
                 };
             });
 
@@ -211,7 +212,7 @@ define(function (require) {
                 };
             } else {
                 var today = new Date();
-                today.setHours(8,0,0,0);
+                today.setHours(12,0,0,0);
                 range = {
                     min: moment(today).format('X') * 1000,
                     max: (parseInt(moment(today).format('X')) + 86400 ) * 1000
