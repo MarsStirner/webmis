@@ -2766,10 +2766,15 @@ define(function (require) {
                 accept:'application/json',
                 success: function(data) {
                     if (data.text) {
-                        if (confirm("Восстановить несохранённые данные документа?")) {
-                            var fields = $.parseJSON(data.text);
-                            self.fillAutosavedFields(fields);
-                        }
+                        chk = setInterval(function(){
+                            if ($('.Throbber').css('display') != 'block') {
+                                clearInterval(chk);
+                                if (confirm("Восстановить несохранённые данные документа?")) {
+                                    var fields = $.parseJSON(data.text);
+                                    self.fillAutosavedFields(fields);
+                                }
+                            }
+                        }, 1000);
                     }
                 }
             });
