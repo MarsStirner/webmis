@@ -12,9 +12,11 @@
 				<%}%>
 				<span class="therapy-header-dates">
 					<%if(therapy.get('endDate')){%>
-						(<%= Core.Date.format(therapy.get('beginDate')) %> - <%= Core.Date.format(therapy.get('endDate')) %>)
+						(<%= moment(therapy.get('beginDate'), 'YYYY-MM-DD').format('DD.MM.YYYY') %> - <%= moment(therapy.get('endDate'), 'YYYY-MM-DD').format('DD.MM.YYYY') %>)
 					<%}else{%>
-						(Дата начала: <%= moment(therapy.get('beginDate'), 'YYYY-MM.DD').format('DD.MM.YYYY') %>)
+						<%if(therapy.get('beginDate')){%>
+							(Дата начала: <%= moment(therapy.get('beginDate'), 'YYYY-MM-DD').format('DD.MM.YYYY') %>)
+						<%}%>
 					<%}%>
 				</span>
 				<i class="therapy-body-toggle <%if(therapy.get('endDate')){%>icon-plus<%}else{%>icon-minus<%}%> pull-right" title="Показать этапы"></i>
@@ -25,7 +27,11 @@
 				<h3>Текущий этап</h3>
 
 				<% _.each(therapy.getCurrentPhases(), function(phase){ %>
-					<p><%if(phase.link){%><a href="<%= phase.link %>" target="_blank"><%= phase.title %></a><%}else{%><%= phase.title %><%}%> (Дата начала: <%= moment(phase.beginDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %>)</p>
+					<p><%if(phase.link){%><a href="<%= phase.link %>" target="_blank"><%= phase.title %></a><%}else{%><%= phase.title %><%}%>
+						<%if(phase.beginDate){%>
+							(Дата начала: <%= moment(phase.beginDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %>)
+						<%}%>
+					</p>
 					<ul>
 						<% _.each([phase.days[0]], function(day){ %>
 							<li><p>День терапии: <a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>" target="_blank"><%= day.day %></a></p></li>
@@ -41,7 +47,7 @@
 				<% _.each(therapy.getClosedPhases(), function(phase){ %>
 					<p><%if(phase.link){%><a href="<%= phase.link %>" target="_blank"><%= phase.title %></a><%}else{%><%= phase.title %><%}%>
 						<a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>">
-						(<%= Core.Date.format(phase.beginDate) %> - <%= Core.Date.format(phase.endDate) %>)
+						(<%= moment(phase.beginDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %> - <%= moment(phase.endDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %>)
 						</a>
 					</p>
 				<%});%>
