@@ -267,7 +267,7 @@
 				class="sick-leave-data sick-leave-data-date" id="sickLeave-begDate" type="text" style="height: 35px; width:100px; font-size: 15px; border:1px solid #d0d0d0;">
 				закрыт
 				<input {{if !isExecPerson}} disabled {{/if}}
-				{{if sickLeave.begDate != null }} value="${moment(sickLeave.endDate, 'YYYY-MM-DD').format('DD.MM.YYYY')}" {{else}} value="" {{/if}}
+				{{if sickLeave.endDate != null }} value="${moment(sickLeave.endDate, 'YYYY-MM-DD').format('DD.MM.YYYY')}" {{else}} value="" {{/if}}
 				class="sick-leave-data sick-leave-data-date" id="sickLeave-endDate" type="text" style="height: 35px; width:100px; font-size: 15px; border:1px solid #d0d0d0;">
 				<label style="color: #414141; font-size: 16px;">
 					<input {{if !isExecPerson}} disabled {{/if}} {{if sickLeave.isByService}} checked {{/if}} class="sick-leave-data" type="checkbox" id="sickLeave-isByService">
