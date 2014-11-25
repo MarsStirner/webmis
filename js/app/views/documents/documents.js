@@ -3586,8 +3586,11 @@ define(function (require) {
     var UIElementBase = Documents.Views.Edit.UIElement.Base = ViewBase.extend({
         template: templates.uiElements._base,
 
+        fieldModiffed: false,
+
         events: {
             "change .attribute-value": "onAttributeValueChange",
+            "focusout .RichText": "onAttributeValueBlur",
             "input [contenteditable].attribute-value": "onAttributeValueChange",
             "change .field-toggle": "onFieldToggleChange",
             "keyup .attribute-value": "onAttributeKeyUp"
@@ -3664,7 +3667,7 @@ define(function (require) {
 
         setAutosavedFields: function() {
             var fields = {};
-            $.each($(".document-grid .span6"), function(){
+            $.each($(".document-grid .span2, .document-grid .span3, .document-grid .span4, .document-grid .span5, .document-grid .span6"), function(){
                 var field = $(this).find(".attribute-value")[0];
                 var fieldValue = "";
                 if ($(field).is(".RichText")) {
@@ -3707,9 +3710,18 @@ define(function (require) {
             }
         },
 
+        onAttributeValueBlur: function (event) {
+            if (this.fieldModiffed) {
+                this.setAutosavedFields();
+            }
+            this.fieldModiffed = false;
+        },
+
         onAttributeKeyUp: function (event) {
             if (event.keyCode == 32) {
                 this.setAutosavedFields();
+            } else {
+                this.fieldModiffed = true;
             }
         },
 
@@ -3881,6 +3893,7 @@ define(function (require) {
         onThesaurusConfirmed: function (event) {
             this.model.setValue(event.selectedTerms);
             this.$(".attribute-value").html(event.selectedTerms);
+            this.setAutosavedFields();
         }
     });
 
