@@ -1248,7 +1248,7 @@ define(function (require) {
                             });
                             gridRow.$el.hide();
                         });
-                        if (gridRow.subViews[0].model.getPropertyValueFor('value')) {
+                        if (gridRow.subViews[1].model.getPropertyValueFor('value')) {
                             var exchange = false;
                             // for (var i = 0; i < drugId ; i++) {
                             //     if (!infectDrugRows[i].subViews[0].model.getPropertyValueFor('value')) {
