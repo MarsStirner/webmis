@@ -192,7 +192,11 @@ define(function (require) {
 
         onSickLeaveEdit: function(item) {
             if ($(item).hasClass( "sick-leave-data-date" )) {
-                var itemValue = moment($(item).val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+                if ($(item).val()){
+                    var itemValue = moment($(item).val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+                } else {
+                    itemValue = null;
+                }
             } else {
                 var itemValue = !!$(item).attr('checked');
             }
@@ -200,7 +204,6 @@ define(function (require) {
         },
 
         sickLeaveSave: function() {
-            console.log(this.model);
             this.model.save();
         },
 
@@ -270,6 +273,14 @@ define(function (require) {
                 this.$("#sickLeaveSave").on('click', function(){
                     self.sickLeaveSave();
                 });
+
+                this.$(".clearSickLeaveDate").on('click', function(){
+                    var field = $("#sickLeave-"+$(this).data('clear'));
+                    field.val('');
+                    self.onSickLeaveEdit(field);
+                    $("#sickLeaveSave").show();
+                });
+
                 //}
 
                 /*this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {
