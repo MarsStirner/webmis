@@ -4018,15 +4018,20 @@ define(function (require) {
         initialize: function () {
 
             if (this.model.get('code') == 'therapyBegDate' || this.model.get('code') == 'therapyPhaseBegDate') {
+                this.setTherapyMandatory();
                 this.listenTo(fds, "change-therapyTitle", function () {
-                    this.model.set({
-                        mandatory: (fds.therapyFdrId ? "true" : "false")
-                    });
-                    this.render();
+                    this.setTherapyMandatory();
                 });
             }
 
             UIElementBase.prototype.initialize.call(this);
+        },
+
+        setTherapyMandatory: function(){
+            this.model.set({
+                mandatory: (fds.therapyFdrId ? "true" : "false")
+            });
+            this.render();
         },
 
         data: function () {
@@ -4370,14 +4375,17 @@ define(function (require) {
         },
         initialize: function () {
             Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.initialize.call(this, this.options);
-
+            this.setTherapyMandatory();
             this.listenTo(fds, "change-therapyTitle", function () {
-                //this.$(".attribute-value").val("").change();
-                this.model.set({
-                    mandatory: (fds.therapyFdrId ? "true" : "false")
-                });
-                this.render();
+                this.setTherapyMandatory();
             });
+        },
+
+        setTherapyMandatory: function(){
+            this.model.set({
+                mandatory: (fds.therapyFdrId ? "true" : "false")
+            });
+            this.render();
         }
     });
 
