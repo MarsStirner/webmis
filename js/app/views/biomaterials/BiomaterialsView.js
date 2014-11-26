@@ -489,7 +489,13 @@ define(function(require) {
 			var filter2 = Core.Forms.serializeToObject($('#biomaterials-head-filter'));
 
 			var filter = _.extend(filter1, filter2);
-			//console.log(filter)
+
+			//convert dates to ISO8601
+			var d = new Date(moment.unix(filter.beginDate/1000));
+			d.setHours(0, -d.getTimezoneOffset(), 0, 0);
+			filter.beginDate = d.toISOString().slice(0, -1);
+			filter.endDate = new Date(moment(d).add(1, 'days')).toISOString().slice(0, -1);
+
 
 			view.collection.setParams({
 				filter: filter
