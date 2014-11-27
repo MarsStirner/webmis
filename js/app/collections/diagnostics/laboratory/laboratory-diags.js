@@ -5,9 +5,15 @@
 define(["models/diagnostics/laboratory/laboratory-diag"], function (LabDiagnostic) {
 	App.Collections.LaboratoryDiags = Collection.extend({
 		model: App.Models.LaboratoryDiag,
-
+		pageFilter: function(){
+			if (App.Router.paginatorPage && App.Router.paginatorPage > 1) {
+				return '?page='+App.Router.paginatorPage;
+			} else {
+				return '';
+			}
+		},
 		url: function () {
-			return DATA_PATH + "appeals/" + this.appealId + "/diagnostics/laboratory/";
+			return DATA_PATH + "appeals/" + this.appealId + "/diagnostics/laboratory/" + this.pageFilter();
 		}
 
 	});
