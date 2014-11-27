@@ -870,9 +870,15 @@ define(function (require) {
                 params.push("filter[actionTypeId]=" + this.typeId);
             }
 
-            if (this.pageNumber) {
-                params.push("page=" + this.pageNumber);
+            if (App.Router.paginatorPage && App.Router.paginatorPage > 1) {
+                params.push("page=" + App.Router.paginatorPage);
+            } else {
+                if (this.pageNumber) {
+                    params.push("page=" + this.pageNumber);
+                }
             }
+
+
 
             if (this.doctorId) {
                 params.push("filter[doctorId]=" + this.doctorId);
@@ -1949,6 +1955,7 @@ define(function (require) {
         onPageNumberClick: function (event) {
             event.preventDefault();
             this.collection.pageNumber = $(event.currentTarget).data("page-number");
+            App.Router.paginatorPage = this.collection.pageNumber;
             this.collection.fetch();
         }
     });
