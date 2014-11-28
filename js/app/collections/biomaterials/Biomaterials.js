@@ -152,7 +152,10 @@ define(function(require) {
 					'tubeTypeName': tubeTypeName,
 					'jobTicketLabel': labTest.jobTicket.label,
 					'jobTicketNote': labTest.jobTicket.note,
-					'takenTissueJournalId': labTest.takenTissueJournal
+					'takenTissueJournalId': labTest.takenTissueJournal,
+					'appealNumber': labTest.appealNumber,
+					'clientId': labTest.patient.id,
+					'labName': labTest.labs[0]
 				});
 			});
 
