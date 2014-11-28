@@ -125,9 +125,9 @@ define(function(require) {
 				if (labTest.department && labTest.department.name) {
 					orgStructure = labTest.department.name;
 				}
-				if (labTest.bed && labTest.bed.code) {
-					orgStructure = orgStructure + '/' + labTest.bed.code;
-				}
+				// if (labTest.bed && labTest.bed.code) {
+				// 	orgStructure = orgStructure + '/' + labTest.bed.code;
+				// }
 
 				var tissueTypeName = '';
 				if (labTest.biomaterial && labTest.biomaterial.tissueType && labTest.biomaterial.tissueType.name) {
