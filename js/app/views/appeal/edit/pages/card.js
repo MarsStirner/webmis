@@ -204,7 +204,8 @@ define(function (require) {
         },
 
         sickLeaveSave: function() {
-            this.model.save();
+            this.model.sync('update', this.model, {});
+            $("#sickLeaveSave").hide();
         },
 
         /*showPrint: function (options) {
