@@ -2790,7 +2790,14 @@ define(function (require) {
         fillAutosavedFields: function (fields) {
             $.each(fields, function(typeid, value) {
                 var attributeValueEl = $('div[data-typeid="'+typeid+'"] .attribute-value');
-                if ($(attributeValueEl).is(".RichText")) {
+                if (attributeValueEl.prop('tagName').toUpperCase() === "SELECT") {
+                    _.each(attributeValueEl.find('option'), function(o){
+                        if ($(o).val() == value) {
+                            $(o).attr('selected', 'selected');
+                            attributeValueEl.trigger('change');
+                        }
+                    });
+                } else if ($(attributeValueEl).is(".RichText")) {
                     $(attributeValueEl).html(value);
                 } else {
                     $(attributeValueEl).val(value);
@@ -3674,7 +3681,7 @@ define(function (require) {
 
         setAutosavedFields: function() {
             var fields = {};
-            $.each($(".document-grid .span2, .document-grid .span3, .document-grid .span4, .document-grid .span5, .document-grid .span6"), function(){
+            $.each($(".document-grid .span2, .document-grid .span3, .document-grid .span4, .document-grid .span5, .document-grid .span6:not(.vgroup), .document-grid .span12"), function(){
                 var field = $(this).find(".attribute-value")[0];
                 var fieldValue = "";
                 if ($(field).is(".RichText")) {
@@ -3682,7 +3689,7 @@ define(function (require) {
                 } else {
                     fieldValue = $(field).val();
                 }
-                if (fieldValue) {
+                if (fieldValue && $(this).data("typeid")) {
                     fields[$(this).data("typeid")] = fieldValue;
                 }
             });
