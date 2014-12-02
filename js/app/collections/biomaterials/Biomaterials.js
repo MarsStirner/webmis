@@ -121,6 +121,8 @@ define(function(require) {
 
 			_.each(labTests, function(labTest, index) {
 
+				console.log(labTest);
+
 				var orgStructure = '';
 				if (labTest.department && labTest.department.name) {
 					orgStructure = labTest.department.name;
@@ -142,7 +144,7 @@ define(function(require) {
 
 				workList.push({
 					'index': index + 1,
-					'jobTicketDate': labTest.jobTicket.date,
+					'jobTicketDate': moment(labTest.jobTicket.date).format('DD.MM.YYYY H:mm'),
 					'orgStructure': orgStructure,
 					'patientName': labTest.patient.name,
 					'patientSex': labTest.patient.sexShortName,
@@ -155,7 +157,8 @@ define(function(require) {
 					'takenTissueJournalId': labTest.takenTissueJournal,
 					'appealNumber': labTest.appealNumber,
 					'clientId': labTest.patient.id,
-					'labName': labTest.labs[0]
+					'labName': labTest.labs[0],
+					'assigner': labTest.assigner.name.raw
 				});
 			});
 
@@ -222,6 +225,7 @@ define(function(require) {
 					action.appealNumber = model.appealNumber;
 					action.bed = model.bed;
 					action.department = model.department;
+					action.assigner = model.assigner;
 					action.jobTicket = {
 						'id': model.id,
 						'date': model.date,
