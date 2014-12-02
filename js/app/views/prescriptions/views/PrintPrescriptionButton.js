@@ -15,6 +15,7 @@ define(function (require) {
     var PrintButton = TreeButton.extend({
         initialize: function () {
             this.listenTo(this.collection, 'change reset', this.afterRender);
+            this.getMoaList();
         },
 
         print: function (key) {
@@ -61,11 +62,12 @@ define(function (require) {
             var data = {};
             data.note = prescription.get('note');
             data.voa = prescription.get('voa') ? prescription.get('voa') + ' мл/ч' : '';
+            data.duration = 0;
             data.drugs = prescription.get('drugs').map(function (drug) {
                 return {
                     name: drug.get('name'),
                     dose: drug.get('dose') + ' ' + drug.get('unitName'),
-                    dosageValue: drug.get('dosageValue') + drug.get('dosageValueUnit').code
+                    dosageValue: drug.get('dosageValue') ? drug.get('dosageValue') + (drug.get('dosageValueUnit') ? drug.get('dosageValueUnit').code : '') : ''
                 };
             });
 
@@ -97,6 +99,7 @@ define(function (require) {
                             inRange = hourRange.contains(moment(start));
                         }
                         if (inRange) {
+                            data.duration++;
                             if (isRange) {
                                 intervals[index].val = '➔';
                             } else {
@@ -167,30 +170,52 @@ define(function (require) {
                             _(groups).each(function (groupPrescriptions, groupName) {
                                 var convertedPrescriptions = [];
                                 _(groupPrescriptions).each(function (prescription) {
-                                    var inRange = false;
                                     var converted = self.convertPrescriptionForPrint(prescription, range);
-                                    _.each(converted.intervals, function(interval){
-                                        if (interval.val) {
-                                            inRange = true;
-                                        }
-                                    });
-                                    if (inRange) {
-                                        convertedPrescriptions.push(self.convertPrescriptionForPrint(prescription, range));
+                                    if (converted.duration > 0) {
+                                        convertedPrescriptions.push(converted);
                                     }
                                 }, this);
 
-                                if(groupName === 'null'){
+                                convertedPrescriptions = _(convertedPrescriptions).sortBy(function(prescription) {
+                                    return prescription.duration;
+                                });
+                                convertedPrescriptions.reverse();
+
+                                var groupId;
+                                switch(groupName) {
+                                    case '2':
+                                        groupId = '4';
+                                        break;
+                                    case '3':
+                                        groupId = '2';
+                                        break;
+                                    case '4':
+                                        groupId = '3';
+                                        break;
+                                    default:
+                                        groupId = groupName;
+                                    }
+
+                                if (self.getMoaById(groupName)) {
+                                    groupName = self.getMoaById(groupName).name;
+                                } else {
                                     groupName = 'Не определён';
                                 }
 
                                 if (convertedPrescriptions.length) {
                                     data.groups.push({
+                                        id: groupId,
                                         name: groupName,
                                         prescriptions: convertedPrescriptions
                                     });
                                 }
 
                             }, this);
+
+                            data.groups = _(data.groups).sortBy(function(group) {
+                                return group.id;
+                            });
+
                             new App.Views.Print({
                                 data: data,
                                 template: "patientPrescriptions"
@@ -238,6 +263,17 @@ define(function (require) {
             });
         },
 
+        getMoaList: function() {
+            var self = this;
+            $.getJSON('/api/v1/dir/administration?callback=?', function (res) {
+                self.moaList = res.data;
+            });
+        },
+
+        getMoaById: function(id) {
+            return _.where(this.moaList, {id: id})[0];
+        },
+
         getMenuItems: function () {
             var items = {
                 // "ln": {
@@ -269,8 +305,6 @@ define(function (require) {
                 };
 
             });
-
-            // console.log('items', items);
 
             return items;
         },
