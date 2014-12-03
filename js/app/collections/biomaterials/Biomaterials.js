@@ -121,8 +121,6 @@ define(function(require) {
 
 			_.each(labTests, function(labTest, index) {
 
-				console.log(labTest);
-
 				var orgStructure = '';
 				if (labTest.department && labTest.department.name) {
 					orgStructure = labTest.department.name;
@@ -158,7 +156,7 @@ define(function(require) {
 					'appealNumber': labTest.appealNumber,
 					'clientId': labTest.patient.id,
 					'labName': labTest.labs[0],
-					'assigner': labTest.assigner.name.raw
+					'assigner': labTest.assigner.name.last + ' ' + labTest.assigner.name.first[0] + '.' + labTest.assigner.name.middle[0] + '.'
 				});
 			});
 
