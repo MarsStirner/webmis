@@ -195,8 +195,18 @@ define(function (require) {
                                 callback: function () {
                                     self.collection.each(function(prescription){
                                         if (prescription.get('id') == event.id) {
+                                            var eStart  = event.start ? moment(event.start).valueOf() : event.start;
+                                            var eEnd    = event.end ? moment(event.end).valueOf() : event.end;
+                                            var intervalToEdit = prescription.get('assigmentIntervals').find(function(model) {
+                                                return ( model.get('beginDateTime') == eStart && model.get('endDateTime') == eEnd);
+                                            });
+                                            if (!intervalToEdit) {
+                                                var intervalToEdit = prescription.get('assigmentIntervals').find(function(model) {
+                                                    return ( model.get('beginDateTime') == eStart);
+                                                });
+                                            }
                                             var intervalEdit = new IntervalEdit({
-                                                model: prescription.get('assigmentIntervals').first(),
+                                                model: intervalToEdit
                                             });
                                             intervalEdit.render().open();
                                         }
