@@ -80,6 +80,7 @@ define(function (require) {
 
         onUpdate: function () {
             pubsub.trigger('intervals:updated', this.model);
+            pubsub.trigger('prescription:saved', this.model);
             this.close();
         },
 

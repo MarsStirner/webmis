@@ -63,7 +63,6 @@ define(function (require) {
             prescriptions.each(function (prescription) {
                 var assigmentIntervals = prescription.get('assigmentIntervals');
                 assigmentIntervals.each(function (assigmentInterval) {
-
                     var executionIntervals = assigmentInterval.get('executionIntervals');
                     executionIntervals.each(function (interval) {
 
@@ -73,8 +72,8 @@ define(function (require) {
                             name: prescription.get('name'),
                             title: self.getDrugsNames(prescription.get('drugs')),
                             allDay: false,
-                            backgroundColor: interval.backgroundColor,
-                            borderColor: interval.backgroundColor,
+                            backgroundColor: assigmentInterval.get('backgroundColor'),
+                            borderColor: assigmentInterval.get('backgroundColor'),
                             start: moment(interval.beginDateTime)
                                 .format('YYYY-MM-DD HH:mm'),
                         };
@@ -197,9 +196,8 @@ define(function (require) {
                                     self.collection.each(function(prescription){
                                         if (prescription.get('id') == event.id) {
                                             var intervalEdit = new IntervalEdit({
-                                                model: prescription.get('assigmentIntervals').first()
+                                                model: prescription.get('assigmentIntervals').first(),
                                             });
-
                                             intervalEdit.render().open();
                                         }
                                     });

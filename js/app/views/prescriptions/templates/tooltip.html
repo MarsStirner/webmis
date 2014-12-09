@@ -11,7 +11,7 @@
     </p>
 <%}%>
 <% if(data.note){%>
-    <p>   
+    <p>
         Примечание: <%= data.note %>
     </p>
 <%}%>
@@ -44,16 +44,16 @@
         <td>Состояние</td>
         <td>Время</td>
     </tr>
-    <% _.each(data.assigmentIntervals, function(interval){%>
-        <% _.each(interval.executionIntervals,function(interval){%>
+    <% _.each(data.assigmentIntervals, function(assigmentInterval){%>
+        <% _.each(assigmentInterval.executionIntervals,function(interval){%>
         <tr>
-            <td style="background-color:<%=interval.backgroundColor %>;">
-                <%= interval.stateName %>            
+            <td style="background-color:<%=assigmentInterval.backgroundColor %>;">
+                <%= assigmentInterval.stateName %>
             </td>
             <td>
-                <%= interval.intervalString %> 
-            </td> 
-        </tr> 
+                <%= interval.intervalString %>
+            </td>
+        </tr>
         <%})%>
     <%})%>
 
