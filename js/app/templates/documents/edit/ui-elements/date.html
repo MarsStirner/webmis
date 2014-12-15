@@ -5,7 +5,7 @@
 	</label>
 
 	<% if (model.get('code')) {%>
-		<div class="field" style="<%=(model.get('code').split('_')[0] == 'infectDrugEndDate') ? 'float:left' : ''%>">
+		<div class="field" style="<%=(model.get('code').split('_')[0].toLowerCase().indexOf('enddate')) ? 'width:80%; float:left;' : ''%>">
 		<% } else {%>
 		<div class="field">
 		<% }
@@ -17,14 +17,14 @@
 			value="<%=date%>">
 	</div>
 	<% if (model.get('code')) {%>
-		<% if (model.get('code').split('_')[0] == 'infectDrugEndDate') {%>
+		<% if ((model.get('code').split('_').length > 1) && (model.get('code').split('_')[0].toLowerCase().indexOf('enddate') > -1 )) {%>
 			<% if (model.get('code').split('_')[1] > 1) {%>
 				<div style="float:right;">
-					<span style="cursor:pointer;" class="icon-plus icon-color-green"></span>
-					<span style="cursor:pointer; position:absolute; margin-left: 30px; margin-top: -20px;" class="RemoveIcon"></span>
+					<span style="cursor:pointer; margin-left: -30px;" class="icon-plus icon-color-green"></span>
+					<span style="cursor:pointer; position:absolute; margin-left: 10px;" class="RemoveIcon"></span>
 				</div>
 			<% } else {%>
-				<span style="float:right; cursor:pointer" class="icon-plus icon-color-green"></span>
+				<span style="float:right; cursor:pointer;" class="icon-plus icon-color-green"></span>
 			<% } %>
 		<% } %>
 	<% } %>

@@ -1127,7 +1127,7 @@ define(function (require) {
 
                 if (elCode.toLowerCase().indexOf('infect') > -1) {
 
-                    this.setInfectHardcodeAttributes(renderedEl, elCode, this, item);
+                    this.setInfectHardcodeAttributes(renderedEl, elCode, this, item, repeatView);
                 }
 
                 return renderedEl;
@@ -1136,7 +1136,7 @@ define(function (require) {
             return this;
         },
 
-        setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow, el) {
+        setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow, el, repeatView) {
             var mode = (document.location.href.split('/')[document.location.href.split('/').length-1]);
 
             if (el.get('scope') === 'Да') {
@@ -1160,6 +1160,7 @@ define(function (require) {
                         $('.'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
                         $('.'+elCode+'-Etiology').trigger('addMandatory');
                         $('.'+elCode+'-Etiology').show();
+                        $('.'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').show();
                     } else {
                         el.setPropertyValueFor('value', '');
                         $('.'+elCode+'-BeginDate').find('.field').removeClass('Mandatory').hide();
@@ -1173,6 +1174,7 @@ define(function (require) {
                         $('.'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
                         $('.'+elCode+'-Etiology').trigger('removeMandatory');
                         $('.'+elCode+'-Etiology').hide();
+                        $('.'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').hide();
                     }
                 });
             }
@@ -1232,75 +1234,102 @@ define(function (require) {
             }
 
             if (elCode.split('_').length > 1) {
-                var drugId = elCode.split('_')[1];
-                gridRow.$el.attr('data-drugid', drugId);
-                if (drugId > 1) {
-                    if (elCode.split('_')[0] == 'infectDrugEndDate') {
-                    infectDrugRows.push(gridRow);
-                    gridRow.$el.hide();
-                         $(renderedEl).on('click', '.RemoveIcon', function(){
-                            $.each(gridRow.collection.models, function(i, item){
-                                item.setPropertyValueFor('value', '');
-                                gridRow.subViews[i].render();
-                                if (gridRow.subViews[i].model.get('code').split('_')[0] == 'infectDrugEndDate') {
-                                    gridRow.subViews[i].$el.find('.RemoveIcon').on('click', function(){
-                                        $.each(gridRow.collection.models, function(i, item){
-                                            item.setPropertyValueFor('value', '');
-                                            gridRow.subViews[i].render();
-                                        });
-                                        gridRow.$el.hide();
-                                    });
-                                }
-                            });
-                            gridRow.$el.hide();
-                        });
-                        if (gridRow.subViews[1].model.getPropertyValueFor('value') || gridRow.subViews[0].model.getPropertyValueFor('value')) {
-                            var exchange = false;
-                            // for (var i = 0; i < drugId ; i++) {
-                            //     if (!infectDrugRows[i].subViews[0].model.getPropertyValueFor('value')) {
-                            //         $.each(gridRow.subViews, function(j, item){
-                            //             infectDrugRows[i].subViews[j].model.setPropertyValueFor('value', item.model.getPropertyValueFor('value'));
-                            //             infectDrugRows[i].subViews[j].render();
-                            //             infectDrugRows[i].$el.show();
-                            //             item.model.setPropertyValueFor('value', '');
-                            //             item.render();
-                            //         });
-                            //         exchange = true;
-                            //         break;
-                            //     }
-                            // }
-                            if (!exchange) {
-                                gridRow.$el.show();
-                            }
-                        }
-                    }
-                } else {
-                    if (elCode.split('_')[0] == 'infectDrugEndDate') {
-                        infectDrugRows.push(gridRow);
-                    }
+
+                $(renderedEl).hide();
+
+                if (elCode.split('_')[1] == 1) {
+                    $(renderedEl).addClass(elCode.split('_')[0]);
                 }
-                $(renderedEl).on('click', '.icon-plus', function(){
-                    for (var i = 2; i < 9; i++) {
-                        var drugRow = $('.document-grid div[data-drugid="'+i+'"]');
-                        if (drugRow.css('display') == 'none') {
-                            drugRow.show();
-                            break;
-                        }
+
+                $(renderedEl).on('showRow', function(e, rowId){
+                    $(renderedEl).data('vgrouprow') == rowId && $(this).show();
+                });
+
+                $(renderedEl).on('hideRow', function(e, rowId){
+                    if ($(renderedEl).data('vgrouprow') == rowId) {
+                        el.setPropertyValueFor('value', '');
+                        repeatView.render();
+                        $(this).hide();
                     }
                 });
-                if (elCode.split('_')[0] == 'infectDrugBeginDate') {
-                    $(renderedEl).addClass(elCode).on('addMandatory', function(){
-                        el.set('mandatory', 'true');
-                    }).on('removeMandatory', function(){
-                        el.set('mandatory', 'false');
-                    });
-                }
-                if (elCode.split('_')[0] == 'infectDrugName') {
-                    $(renderedEl).find('.attribute-value').on('change', function(){
-                        $('.infectDrugBeginDate_'+elCode.split('_')[1]).trigger('addMandatory').find('.field').addClass('Mandatory').show();
-                        $('.infectDrugBeginDate_'+elCode.split('_')[1]).find('.field-toggle').attr('checked', 'checked');
-                    });
-                }
+
+                $(renderedEl).on('click', '.icon-plus', function(){
+                    $('.in-vgroup-row').trigger('showRow', $(renderedEl).data('vgrouprow') + 1);
+                });
+
+                $(renderedEl).on('click', '.RemoveIcon', function(){
+                    $('.in-vgroup-row').trigger('hideRow', $(renderedEl).data('vgrouprow'));
+                });
+
+                // var drugId = elCode.split('_')[1];
+                // gridRow.$el.attr('data-drugid', drugId);
+                // if (drugId > 1) {
+                //     if (elCode.split('_')[0] == 'infectDrugEndDate') {
+                //     infectDrugRows.push(gridRow);
+                //     gridRow.$el.hide();
+                //          $(renderedEl).on('click', '.RemoveIcon', function(){
+                //             $.each(gridRow.collection.models, function(i, item){
+                //                 item.setPropertyValueFor('value', '');
+                //                 gridRow.subViews[i].render();
+                //                 if (gridRow.subViews[i].model.get('code').split('_')[0] == 'infectDrugEndDate') {
+                //                     gridRow.subViews[i].$el.find('.RemoveIcon').on('click', function(){
+                //                         $.each(gridRow.collection.models, function(i, item){
+                //                             item.setPropertyValueFor('value', '');
+                //                             gridRow.subViews[i].render();
+                //                         });
+                //                         gridRow.$el.hide();
+                //                     });
+                //                 }
+                //             });
+                //             gridRow.$el.hide();
+                //         });
+                //         if (gridRow.subViews[1].model.getPropertyValueFor('value') || gridRow.subViews[0].model.getPropertyValueFor('value')) {
+                //             var exchange = false;
+                //             // for (var i = 0; i < drugId ; i++) {
+                //             //     if (!infectDrugRows[i].subViews[0].model.getPropertyValueFor('value')) {
+                //             //         $.each(gridRow.subViews, function(j, item){
+                //             //             infectDrugRows[i].subViews[j].model.setPropertyValueFor('value', item.model.getPropertyValueFor('value'));
+                //             //             infectDrugRows[i].subViews[j].render();
+                //             //             infectDrugRows[i].$el.show();
+                //             //             item.model.setPropertyValueFor('value', '');
+                //             //             item.render();
+                //             //         });
+                //             //         exchange = true;
+                //             //         break;
+                //             //     }
+                //             // }
+                //             if (!exchange) {
+                //                 gridRow.$el.show();
+                //             }
+                //         }
+                //     }
+                // } else {
+                //     if (elCode.split('_')[0] == 'infectDrugEndDate') {
+                //         infectDrugRows.push(gridRow);
+                //     }
+                // }
+                // $(renderedEl).on('click', '.icon-plus', function(){
+                //     for (var i = 2; i < 9; i++) {
+                //         var drugRow = $('.document-grid div[data-drugid="'+i+'"]');
+                //         if (drugRow.css('display') == 'none') {
+                //             drugRow.show();
+                //             break;
+                //         }
+                //     }
+                // });
+                // if (elCode.split('_')[0] == 'infectDrugBeginDate') {
+                //     $(renderedEl).addClass(elCode).on('addMandatory', function(){
+                //         el.set('mandatory', 'true');
+                //     }).on('removeMandatory', function(){
+                //         el.set('mandatory', 'false');
+                //     });
+                // }
+                // if (elCode.split('_')[0] == 'infectDrugName') {
+                //     $(renderedEl).find('.attribute-value').on('change', function(){
+                //         $('.infectDrugBeginDate_'+elCode.split('_')[1]).trigger('addMandatory').find('.field').addClass('Mandatory').show();
+                //         $('.infectDrugBeginDate_'+elCode.split('_')[1]).find('.field-toggle').attr('checked', 'checked');
+                //     });
+                // }
             }
             switch (elCode) {
             case 'infectLocal':
