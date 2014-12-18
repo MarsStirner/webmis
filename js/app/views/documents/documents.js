@@ -3580,7 +3580,7 @@ define(function (require) {
                 self.$(".vgroup-" + i + "-span")
                     .removeClass("span" + $(this).data("span-width"))
                     .addClass("span12")
-                    .wrap("<div class='row-fluid vgroup-row' style='padding-top: 1em;'></div>")
+                    .wrap("<div class='row-fluid vgroup-row'></div>")
                     .parent()
                     .detach()
                     .appendTo($vgroupContent);
@@ -3600,6 +3600,10 @@ define(function (require) {
                 if($(this).find('.in-vgroup-row').length > 0) {
                     $.each($(this).find('.in-vgroup-row'), function(i){
                         $(this).removeClass("span12").addClass("span4");
+                        $(this).css({
+                            'padding-top': '.2em',
+                            'padding-bottom': '1em'
+                        });
                         if ($(this).data('vgrouprow') > row) {
                             row = $(this).data('vgrouprow');
                             firstRowElement = this;
@@ -3608,6 +3612,8 @@ define(function (require) {
                         }
 
                     })
+                } else {
+                    $(this).find('.vgroup-row').css('padding-top', '1em');
                 }
             });
 
