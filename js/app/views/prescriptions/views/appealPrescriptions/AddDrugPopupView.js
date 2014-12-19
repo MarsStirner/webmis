@@ -88,12 +88,16 @@ define(function (require) {
             //     if(unit.id = )
             // });
 
+            console.log(first);
+
             var drug = {
                 "nomen": first.get('id'),
                 "name": first.get('tradeLocalName'),
                 "dose": "",
                 "unit": 327,
-                "units": units//,\
+                "units": units,
+                "dosage": first.get('dosageValue') ? first.get('dosageValue') + first.get('dosageUnitCode') : '',
+                "form": first.get('form') + ', ' + first.get('filling')
 
                 // "unitName": first.get('unitName')
             };

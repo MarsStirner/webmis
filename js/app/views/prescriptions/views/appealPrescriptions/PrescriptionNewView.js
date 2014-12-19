@@ -179,7 +179,8 @@ define(function (require) {
 
         data: function () {
             return {
-                administration: this.administration.toJSON()
+                administration: this.administration.toJSON(),
+                actionTypeId: this.prescription.get('actionTypeId')
             };
         },
 
@@ -187,7 +188,7 @@ define(function (require) {
             var self = this;
             BaseView.prototype.render.call(self);
 
-            function datetimeRange(input) { 
+            function datetimeRange(input) {
                 var id = input.id.split('-');
                 var cid = id[0];
                 var type = id[1];
@@ -237,7 +238,7 @@ define(function (require) {
 
                     }, 100);
                 });
-            
+
             }
 
 

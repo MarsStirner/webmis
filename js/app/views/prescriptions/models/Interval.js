@@ -34,7 +34,8 @@ define(function (require) {
         defaults: {
             beginDateTime: moment((new Date()).getTime()).add(1,'hour').startOf('hour').valueOf(),
             endDateTime: null,
-            status: 0
+            status: 0,
+            dose: 0
         },
 
         initialize: function () {
