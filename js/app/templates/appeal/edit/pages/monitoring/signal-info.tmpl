@@ -10,7 +10,7 @@
 	<td>
 		<% if (appeal.closed) { %>
 			<% if (appeal.closeDateTime){ %>
-				<%= Core.Date.format(appeal.closeDateTime) %>
+				<%= Core.Date.format(appeal.closeDateTime) %> (<%= days %>)
 			<%}%>
 		<% } else { %>
 			<%= days %>
