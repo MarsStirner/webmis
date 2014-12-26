@@ -1194,7 +1194,7 @@ define(function (require) {
 
             if (elCode.split('_').length > 1) {
 
-                if (!(elCode.split('_')[1] == 1 && _.find(infectChecked, function(checked){return elCode.split('_')[0].indexOf(checked) > -1}))) {
+                if (!el.getPropertyValueFor('value') && !(elCode.split('_')[1] == 1 && _.find(infectChecked, function(checked){return elCode.split('_')[0].indexOf(checked) > -1}))) {
                     $(renderedEl).hide();
                 }
 

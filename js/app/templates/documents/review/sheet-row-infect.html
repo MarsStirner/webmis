@@ -24,9 +24,15 @@
 	<h4 style="text-decoration:underline;"><strong>Противоинфекционная терапия:</strong></h4>
 	<% for(var i in therapies) { %>
 		<div style="font-size:19px; line-height:35px;">
+			<% if(therapies[i].infectTherapyType) {%>
 			<span><strong>Тип терапии: </strong><%= therapies[i].infectTherapyType %></span>
+			<% } %>
+			<% if(therapies[i].infectDrugName) {%>
 			<span style="margin-left:10px;"><strong>Наименование препарата: </strong><%= therapies[i].infectDrugName %></span>
+			<% } %>
+			<% if(therapies[i].infectDrugBeginDate) {%>
 			<span style="margin-left:10px;"><strong>Дата назначения: </strong><%= moment(therapies[i].infectDrugBeginDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
+			<% } %>
 			<% if(therapies[i].infectDrugEndDate) {%>
 				<span style="margin-left:10px;"><strong>Дата отмены: </strong><%= moment(therapies[i].infectDrugEndDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
 			<% } %>
