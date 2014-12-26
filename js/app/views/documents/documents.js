@@ -1138,84 +1138,43 @@ define(function (require) {
 
         setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow, el, repeatView) {
             var mode = (document.location.href.split('/')[document.location.href.split('/').length-1]);
+            var isCheckbox = (el.get('scope') === 'Да');
+            var isOther = (elCode.toLowerCase().indexOf('comment') > -1);
 
-            if (el.get('scope') === 'Да') {
-                $(renderedEl).addClass(elCode);
-                $(renderedEl).find('.field').hide();
-                if ($(renderedEl).find('.field-toggle').attr('checked')) {
-                    infectChecked.push(elCode);
+            if (isCheckbox || isOther) {
+
+                if (isOther) {
+                    if (elCode.split('-').length > 1) {
+                        $(renderedEl).addClass(elCode);
+                    }
+                } else {
+                    $(renderedEl).addClass(elCode);
+                    $(renderedEl).find('.field').hide();
                 }
+
                 $(renderedEl).find('.field-toggle').on('click', function() {
                     $(renderedEl).find('.field').hide();
                     if ($(this).attr('checked')) {
                         el.setPropertyValueFor('value', 'Да');
-                        $('.'+elCode+'-BeginDate').find('.field').addClass('Mandatory').show();
-                        $('.'+elCode+'-BeginDate').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-BeginDate').trigger('addMandatory');
-                        $('.'+elCode+'-BeginDate').show();
-                        $('.'+elCode+'-EndDate').show();
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').trigger('addMandatory');
                         $('.'+elCode+'-EndDate').find('.field').show();
-                        $('.'+elCode+'-EndDate').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
-                        $('.'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-Etiology').trigger('addMandatory');
-                        $('.'+elCode+'-Etiology').show();
-                        $('.'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').show();
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology, .'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').show();
                     } else {
                         el.setPropertyValueFor('value', '');
-                        $('.'+elCode+'-BeginDate').find('.field').removeClass('Mandatory').hide();
-                        $('.'+elCode+'-BeginDate').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-BeginDate').trigger('removeMandatory');
-                        $('.'+elCode+'-BeginDate').hide();
-                        $('.'+elCode+'-EndDate').hide();
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').trigger('removeMandatory');
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology, .'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').hide();
                         $('.'+elCode+'-EndDate').find('.field').hide();
-                        $('.'+elCode+'-EndDate').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
-                        $('.'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-Etiology').trigger('removeMandatory');
-                        $('.'+elCode+'-Etiology').hide();
-                        $('.'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').hide();
                     }
                 });
-            }
-
-            if (elCode.toLowerCase().indexOf('comment') > -1) {
 
                 if ($(renderedEl).find('.field-toggle').attr('checked')) {
                     infectChecked.push(elCode);
                 }
 
-                if (elCode.split('-').length > 1) {
-                    $(renderedEl).addClass(elCode);
-                }
-                $(renderedEl).find('.field-toggle').on('click', function() {
-                    if ($(this).attr('checked')) {
-                        $('.'+elCode+'-BeginDate').find('.field').addClass('Mandatory').show();
-                        $('.'+elCode+'-BeginDate').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-BeginDate').trigger('addMandatory');
-                        $('.'+elCode+'-BeginDate').show();
-                        $('.'+elCode+'-EndDate').show();
-                        $('.'+elCode+'-EndDate').find('.field').show();
-                        $('.'+elCode+'-EndDate').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
-                        $('.'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-Etiology').trigger('addMandatory');
-                        $('.'+elCode+'-Etiology').show();
-                    } else {
-                        $(renderedEl).find('.attribute-value').val('');
-                        $('.'+elCode+'-BeginDate').find('.field').removeClass('Mandatory').hide();
-                        $('.'+elCode+'-BeginDate').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-BeginDate').trigger('removeMandatory');
-                        $('.'+elCode+'-BeginDate').hide();
-                        $('.'+elCode+'-EndDate').hide();
-                        $('.'+elCode+'-EndDate').find('.field').hide();
-                        $('.'+elCode+'-EndDate').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
-                        $('.'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-Etiology').trigger('removeMandatory');
-                        $('.'+elCode+'-Etiology').hide();
-                    }
-                });
             }
 
             if (elCode.split('-').length > 1) {
@@ -1235,7 +1194,9 @@ define(function (require) {
 
             if (elCode.split('_').length > 1) {
 
-                $(renderedEl).hide();
+                if (!(elCode.split('_')[1] == 1 && _.find(infectChecked, function(checked){return elCode.split('_')[0].indexOf(checked) > -1}))) {
+                    $(renderedEl).hide();
+                }
 
                 if (elCode.split('_')[1] == 1) {
                     $(renderedEl).addClass(elCode.split('_')[0]);
@@ -1261,77 +1222,26 @@ define(function (require) {
                     $('.in-vgroup-row').trigger('hideRow', $(renderedEl).data('vgrouprow'));
                 });
 
-                // var drugId = elCode.split('_')[1];
-                // gridRow.$el.attr('data-drugid', drugId);
-                // if (drugId > 1) {
-                //     if (elCode.split('_')[0] == 'infectDrugEndDate') {
-                //     infectDrugRows.push(gridRow);
-                //     gridRow.$el.hide();
-                //          $(renderedEl).on('click', '.RemoveIcon', function(){
-                //             $.each(gridRow.collection.models, function(i, item){
-                //                 item.setPropertyValueFor('value', '');
-                //                 gridRow.subViews[i].render();
-                //                 if (gridRow.subViews[i].model.get('code').split('_')[0] == 'infectDrugEndDate') {
-                //                     gridRow.subViews[i].$el.find('.RemoveIcon').on('click', function(){
-                //                         $.each(gridRow.collection.models, function(i, item){
-                //                             item.setPropertyValueFor('value', '');
-                //                             gridRow.subViews[i].render();
-                //                         });
-                //                         gridRow.$el.hide();
-                //                     });
-                //                 }
-                //             });
-                //             gridRow.$el.hide();
-                //         });
-                //         if (gridRow.subViews[1].model.getPropertyValueFor('value') || gridRow.subViews[0].model.getPropertyValueFor('value')) {
-                //             var exchange = false;
-                //             // for (var i = 0; i < drugId ; i++) {
-                //             //     if (!infectDrugRows[i].subViews[0].model.getPropertyValueFor('value')) {
-                //             //         $.each(gridRow.subViews, function(j, item){
-                //             //             infectDrugRows[i].subViews[j].model.setPropertyValueFor('value', item.model.getPropertyValueFor('value'));
-                //             //             infectDrugRows[i].subViews[j].render();
-                //             //             infectDrugRows[i].$el.show();
-                //             //             item.model.setPropertyValueFor('value', '');
-                //             //             item.render();
-                //             //         });
-                //             //         exchange = true;
-                //             //         break;
-                //             //     }
-                //             // }
-                //             if (!exchange) {
-                //                 gridRow.$el.show();
-                //             }
-                //         }
-                //     }
-                // } else {
-                //     if (elCode.split('_')[0] == 'infectDrugEndDate') {
-                //         infectDrugRows.push(gridRow);
-                //     }
-                // }
-                // $(renderedEl).on('click', '.icon-plus', function(){
-                //     for (var i = 2; i < 9; i++) {
-                //         var drugRow = $('.document-grid div[data-drugid="'+i+'"]');
-                //         if (drugRow.css('display') == 'none') {
-                //             drugRow.show();
-                //             break;
-                //         }
-                //     }
-                // });
-                // if (elCode.split('_')[0] == 'infectDrugBeginDate') {
-                //     $(renderedEl).addClass(elCode).on('addMandatory', function(){
-                //         el.set('mandatory', 'true');
-                //     }).on('removeMandatory', function(){
-                //         el.set('mandatory', 'false');
-                //     });
-                // }
-                // if (elCode.split('_')[0] == 'infectDrugName') {
-                //     $(renderedEl).find('.attribute-value').on('change', function(){
-                //         $('.infectDrugBeginDate_'+elCode.split('_')[1]).trigger('addMandatory').find('.field').addClass('Mandatory').show();
-                //         $('.infectDrugBeginDate_'+elCode.split('_')[1]).find('.field-toggle').attr('checked', 'checked');
-                //     });
-                // }
             }
+
             switch (elCode) {
+            case 'infectLocalisation':
+            case 'infectCNS':
+            case 'infectEye':
+            case 'infectSkin':
+            case 'infectMucous':
+            case 'infectLOR':
+            case 'infectLungs':
+            case 'infectHeart':
+            case 'infectAbdomen':
+            case 'infectUrogenital':
+            case 'infectMusculoskeletal':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break;
             case 'infectLocal':
                 $(renderedEl).find('.field-toggle').on('click', function(e){
                     if ($(this).attr('checked')) {
@@ -1342,83 +1252,6 @@ define(function (require) {
                 });
                 if (gridRow.subViews[0].$el.find('.field-toggle').attr('checked') == 'checked') {
                     LocalInfect = true;
-                }
-                break;
-            case 'infectLocalisation':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectCNS':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectEye':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectSkin':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectMucous':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectLOR':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectLungs':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectHeart':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectAbdomen':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectUrogenital':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectMusculoskeletal':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
                 }
                 break;
             default:
@@ -6065,10 +5898,16 @@ define(function (require) {
                 }
                 if (item.get('code') != 'infectLocal' && item.get('code') != 'infectDocumental' ) {
                     if (item.get('code').toLowerCase().indexOf('_') > -1) {
+
+                        console.log(item.get('code'));
+
+
                         if (!therapies[item.get('code').split('_')[1] - 1]) {
                             therapies[item.get('code').split('_')[1] - 1] = {};
                         }
                         therapies[item.get('code').split('_')[1] - 1][item.get('code').split('_')[0]] = item.get('value');
+
+
                     } else {
                         if (item.get('code').indexOf('-') > -1) {
                             if (!infections[item.get('code').split('-')[0]]) {
