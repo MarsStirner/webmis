@@ -5890,33 +5890,35 @@ define(function (require) {
         template: templates._reviewSheetRowInfect,
         data: function () {
             var infections = {};
-            var therapies = [];
+            var therapies = {
+                infectProphylaxis: [],
+                infectEmpiric: [],
+                infectTelic: []
+            };
             var documental = null;
             $.each(this.collection.models, function(i, item){
                 if (item.get('code') == 'infectDocumental') {
                     documental = item;
-                }
-                if (item.get('code') != 'infectLocal' && item.get('code') != 'infectDocumental' ) {
+                } else if (!_.contains(['infectlocal', 'infectempiric', 'infectprophylaxis', 'infecttelic'], item.get('code').toLowerCase())) {
                     if (item.get('code').toLowerCase().indexOf('_') > -1) {
-
-                        console.log(item.get('code'));
-
-
-                        if (!therapies[item.get('code').split('_')[1] - 1]) {
-                            therapies[item.get('code').split('_')[1] - 1] = {};
+                        var terType = '';
+                        var ter = _.find(therapies, function(t, type) { return item.get('code').indexOf(type) > -1 });
+                        if (ter) {
+                            var splitedCode = item.get('code').split('_');
+                            var terIndex = splitedCode[1] - 1;
+                            var terAttr = splitedCode[0];
+                            if (!ter[terIndex]) ter[terIndex] = {};
+                            ter[terIndex][terAttr] = item.get('value');
                         }
-                        therapies[item.get('code').split('_')[1] - 1][item.get('code').split('_')[0]] = item.get('value');
-
-
                     } else {
                         if (item.get('code').indexOf('-') > -1) {
                             if (!infections[item.get('code').split('-')[0]]) {
-                               infections[item.get('code').split('-')[0]] = {};
+                                infections[item.get('code').split('-')[0]] = {};
                             }
                             infections[item.get('code').split('-')[0]][item.get('code').split('-')[1]] = item.get('value');
                         } else {
                             if (!infections[item.get('code').split('-')[0]]) {
-                               infections[item.get('code').split('-')[0]] = {};
+                                infections[item.get('code').split('-')[0]] = {};
                             }
                             if (item.get('code').toLowerCase().indexOf('comment') > -1) {
                                 infections[item.get('code').split('-')[0]]['Name'] = item.get('value');

@@ -19,22 +19,48 @@
     <% } %>
 </div>
 <% } %>
-<% if(therapies.length) {%>
+<% if(therapies.infectEmpiric.length || therapies.infectProphylaxis.length || therapies.infectTelic.length) {%>
 <div style="margin-top:20px;">
 	<h4 style="text-decoration:underline;"><strong>Противоинфекционная терапия:</strong></h4>
-	<% for(var i in therapies) { %>
-		<div style="font-size:19px; line-height:35px;">
-			<% if(therapies[i].infectTherapyType) {%>
-			<span><strong>Тип терапии: </strong><%= therapies[i].infectTherapyType %></span>
+	<% if(therapies.infectProphylaxis.length) {%>
+		<div style="font-size:18px; line-height:35px; margin-top:16px; ">
+			<h5 style="margin-left:10px;font-size:20px; margin-bottom: 6px;"><strong>Профилактика</strong></h5>
+			<% for(var p in therapies.infectProphylaxis) { %>
+			<div>
+				<span style="margin-left:10px;"><strong>Наименование препарата: </strong><%= therapies.infectProphylaxis[p].infectProphylaxisName %></span>
+				<span style="margin-left:10px;"><strong>Дата назначения: </strong><%= moment(therapies.infectProphylaxis[p].infectProphylaxisBeginDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
+				<% if(therapies.infectProphylaxis[p].infectProphylaxisEndDate) {%>
+				<span style="margin-left:10px;"><strong>Дата отмены: </strong><%= moment(therapies.infectProphylaxis[p].infectProphylaxisEndDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
+				<% } %>
+			</div>
 			<% } %>
-			<% if(therapies[i].infectDrugName) {%>
-			<span style="margin-left:10px;"><strong>Наименование препарата: </strong><%= therapies[i].infectDrugName %></span>
+		</div>
+	<% } %>
+	<% if(therapies.infectEmpiric.length) {%>
+		<div style="font-size:18px; line-height:35px; margin-top:16px; ">
+			<h5 style="margin-left:10px;font-size:20px; margin-bottom: 6px;"><strong>Эмпирическая</strong></h5>
+			<% for(var p in therapies.infectEmpiric) { %>
+			<div>
+				<span style="margin-left:10px;"><strong>Наименование препарата: </strong><%= therapies.infectEmpiric[p].infectEmpiricName %></span>
+				<span style="margin-left:10px;"><strong>Дата назначения: </strong><%= moment(therapies.infectEmpiric[p].infectEmpiricBeginDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
+				<% if(therapies.infectEmpiric[p].infectEmpiricEndDate) {%>
+					<span style="margin-left:10px;"><strong>Дата отмены: </strong><%= moment(therapies.infectEmpiric[p].infectEmpiricEndDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
+				<% } %>
+			</div>
 			<% } %>
-			<% if(therapies[i].infectDrugBeginDate) {%>
-			<span style="margin-left:10px;"><strong>Дата назначения: </strong><%= moment(therapies[i].infectDrugBeginDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
-			<% } %>
-			<% if(therapies[i].infectDrugEndDate) {%>
-				<span style="margin-left:10px;"><strong>Дата отмены: </strong><%= moment(therapies[i].infectDrugEndDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
+		</div>
+	<% } %>
+	<% if(therapies.infectTelic.length) {%>
+		<div style="font-size:18px; line-height:35px; margin-top:16px; ">
+			<h5 style="margin-left:10px;font-size:20px; margin-bottom: 6px;"><strong>Целенаправленная</strong></h5>
+			<% for(var p in therapies.infectTelic) { %>
+			<div>
+				<span style="margin-left:10px;"><strong>Наименование препарата: </strong><%= therapies.infectTelic[p].infectTelicName %></span>
+				<span style="margin-left:10px;"><strong>Дата назначения: </strong><%= moment(therapies.infectTelic[p].infectTelicBeginDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
+				<% if(therapies.infectTelic[p].infectTelicEndDate) {%>
+					<span style="margin-left:10px;"><strong>Дата отмены: </strong><%= moment(therapies.infectTelic[p].infectTelicEndDate, 'YYYY-MM-DD HH:mm:ss').format('DD.MM.YYYY') %></span>
+				<% } %>
+			</div>
 			<% } %>
 		</div>
 	<% } %>
