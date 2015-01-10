@@ -477,6 +477,7 @@ define(function (require) {
                             var unitProp = _(a.properties).find(function (p) {
                                 return p.name === "unit";
                             });
+                            console.log(a);
 
                             examFlatJSON.push({
                                 id: a.typeId,
@@ -485,7 +486,8 @@ define(function (require) {
                                 type: a.type,
                                 scope: a.scope,
                                 unit: unitProp ? unitProp.value : "",
-                                code: a.code
+                                code: a.code,
+                                tableValues: a.tableValues ? a.tableValues : null
                             });
                         }
                     });
@@ -5969,6 +5971,12 @@ define(function (require) {
             case 'FLATDIRECTORY':
                 displayValue = this.model.get("fdValue") ? this.model.get("fdValue") : value;
                 break;
+            case 'TABLE':
+                displayValue = {
+                    scope: this.model.get('scope').split(','),
+                    values: this.model.get('tableValues')
+                };
+                break;
             default:
                 displayValue = value;
                 break;
@@ -5976,6 +5984,7 @@ define(function (require) {
 
             return {
                 attr: {
+                    type: this.model.get("type").toUpperCase(),
                     name: this.model.get("name"),
                     value: displayValue,
                     unit: this.model.get("unit")

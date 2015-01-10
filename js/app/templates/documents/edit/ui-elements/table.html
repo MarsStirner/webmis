@@ -8,17 +8,19 @@
             <% _.each(columns, function(columnName){%>
                 <th><%= columnName %></th>
             <%})%>
-        </tr> 
+        </tr>
     </thead>
     <tbody>
     <% _.each(trs, function(tr){%>
     <tr>
         <% _.each(tr, function(td){%>
-            <td><%= td%></td> 
+			<% if(td.indexOf('.png') > -1 || td.indexOf('.pdf') > -1 || td.indexOf('.jpg') > -1 || td.indexOf('.gif') > -1) { %>
+            	<td><a href="<%= td%>"><%= td%></a></td>
+			<% } else { %>
+				<td><%= td%></td>
+			<% } %>
         <%})%>
-    </tr> 
+    </tr>
     <%})%>
     </tbody>
 </table>
-
-

@@ -1,1 +1,27 @@
-<strong><%= attr.name %>:</strong> <%= attr.value %> <%= attr.unit %>
+<%if (attr.type === 'TABLE') {%>
+    <strong><%= attr.name %>:</strong>
+    <table class="table-widget">
+        <thead>
+            <tr>
+                <% _.each(attr.value.scope, function(columnName){%>
+                    <th><%= columnName %></th>
+                <%})%>
+            </tr>
+        </thead>
+        <tbody>
+            <% _.each(attr.value.values, function(tr){%>
+                <tr>
+                    <% _.each(tr, function(td){%>
+                        <% if(td.indexOf('.png') > -1 || td.indexOf('.pdf') > -1 || td.indexOf('.jpg') > -1 || td.indexOf('.gif') > -1) { %>
+                            <td><a href="<%= td%>"><%= td%></a></td>
+                        <% } else { %>
+                            <td><%= td%></td>
+                        <% } %>
+                    <%})%>
+                </tr>
+            <%})%>
+        </tbody>
+    </table>
+<%} else {%>
+    <strong><%= attr.name %>:</strong> <%= attr.value %> <%= attr.unit %>
+<%}%>
