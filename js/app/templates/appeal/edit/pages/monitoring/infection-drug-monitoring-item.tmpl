@@ -2,9 +2,9 @@
 	<% console.log (collection)%>
 	<%_.each(collection,function (item, index) {%>
 		<tr <% if(false){%>style="display:none;"<%}//index > 0%>>
-			<td style="text-align: left;"><%=item.get("therapy") || '-'%></td>
-			<td style="text-align: left;"><%=item.get("drug") || '-'%></td>
-			<td><%= item.get("beginDate") ? moment(item.get("beginDate")).format('DD.MM.YYYY') : '-'%></td>
+			<td style="text-align: left;"><%=item.get("therapyName") || '-'%></td>
+			<td style="text-align: left;"><%=item.get("drugName") || '-'%></td>
+			<td><%= item.get("begDate") ? moment(item.get("begDate")).format('DD.MM.YYYY') : '-'%></td>
 			<td><%= item.get("endDate") ?  moment(item.get("endDate")).format('DD.MM.YYYY') : '-'%></td>
 		</tr>
 	<%});%>

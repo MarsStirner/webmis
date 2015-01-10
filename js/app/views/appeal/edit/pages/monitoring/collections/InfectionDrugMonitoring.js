@@ -12,13 +12,7 @@ define(function(require) {
 		parse: function(raw) {
 			var parsed = []
 			_.each(raw, function(infection){
-				parsed.push({
-					'drug': infection[0],
-					'beginDate': infection[1],
-					'endDate': infection[2],
-					'therapy': infection[3],
-					'documents': infection[4]
-				});
+				parsed.push(infection);
 			});
 			return parsed;
 		}
