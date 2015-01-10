@@ -1148,6 +1148,13 @@ define(function (require) {
                         $(renderedEl).addClass(elCode);
                     }
                 } else {
+                    pubsub.on('showVgroupRow', function(code){
+                        if (code.indexOf(elCode) > -1 && !$(renderedEl).find('.field-toggle').attr('checked')) {
+                            $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                            infectChecked.push(elCode);
+                        }
+                    });
+
                     $(renderedEl).addClass(elCode);
                     $(renderedEl).find('.field').hide();
                 }
@@ -1193,6 +1200,10 @@ define(function (require) {
             }
 
             if (elCode.split('_').length > 1) {
+
+                if (el.getPropertyValueFor('value')) {
+                    pubsub.trigger('showVgroupRow', elCode);
+                }
 
                 if (!el.getPropertyValueFor('value') && !(elCode.split('_')[1] == 1 && _.find(infectChecked, function(checked){return elCode.split('_')[0].indexOf(checked) > -1}))) {
                     $(renderedEl).hide();
@@ -1258,7 +1269,6 @@ define(function (require) {
                 break;
             }
         }
-
     });
 
     var PanicBtn = Documents.Views.PanicBtn = ViewBase.extend({
