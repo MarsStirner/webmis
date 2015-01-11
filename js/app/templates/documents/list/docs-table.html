@@ -10,7 +10,7 @@
         <%if(editable){%>
             <%if (document.get('closeDate')) {%>
                 <a><i class="icon-lock" title="Документ закрыт"></i></a>
-            <%} else if (!(App.Router.currentPage == 'patientSummaryList')) {%>
+            <%} else if (!(App.Router.currentPage == 'patientSummaryList') && document.get('doctor').id == Core.Cookies.get('userId')) {%>
                 <div style="display:inline;">
                     <%if (document.get('readOnly') && document.get('lockInfo').personId != Core.Cookies.get('userId')) {%>
                         <div class="docLock" style="width:17px; height: 25px; background:rgba(255, 255, 255, 0.8); position:abcolute; z-index:100; position:absolute; border-radius:15px 0px 14px 0px;"></div>

@@ -477,7 +477,6 @@ define(function (require) {
                             var unitProp = _(a.properties).find(function (p) {
                                 return p.name === "unit";
                             });
-                            console.log(a);
 
                             examFlatJSON.push({
                                 id: a.typeId,
