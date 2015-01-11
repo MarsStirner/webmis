@@ -112,9 +112,10 @@ define([
 
         onEditAppealClick: function (event) {
             //if (!this.model.isClosed())
-            App.Router.navigate("/patients/" + this.model.get("id") + "/edit/", {
-                trigger: true
-            });
+            // App.Router.navigate("/patients/" + this.model.get("id") + "/edit/", {
+            //     trigger: true
+            // });
+            window.location.href = 'http://' + POLICLINIC_HOST + '/patients/patient?client_id='+this.model.get("id");
         },
 
         // Загрузился шаблон карточки пациента

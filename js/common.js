@@ -18,8 +18,8 @@ DEFAULT_ANIMATION_TIME = 300;
 DATA_PATH = "/data/";
 
 
-APPOINTMENTS_HOST = "10.128.225.200:5000";
-APPOINTMENTS_PATH = "http://" + APPOINTMENTS_HOST + "/schedule/appointment/";
+POLICLINIC_HOST = "10.128.225.200:5000";
+APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
 
 App = {};
 App.Models = {};
