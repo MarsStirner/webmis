@@ -171,6 +171,7 @@ define(function(require) {
 		},
 
 		onDocumentTypeFilterOrgStructToggle: function(event) {
+			$('#tree-search').prop('disabled', true).addClass('Disabled');
 			if ($(event.target).attr('checked')){
                 this.analyzes.setOrgStructFilter('1');
             } else {
