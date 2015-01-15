@@ -6,27 +6,31 @@
                 <label>
                     Лекарственные  препараты
                 </label>
-                <table id="drugs" class="my-grid"> 
+                <table id="drugs" class="my-grid">
                     <tr>
-                        <th style="width: 70%;">Наименование</th>
+                        <th style="width: 35%;">Наименование</th>
+                        <th style="width: 20%;">Форма выпуска</th>
+                        <th style="width: 15%;">Концентрация</th>
                         <th style="width: 15%;">Доза</th>
                         <th style="width: 15%;">Ед.из</th>
-                        <th style="width: 10%;"></th>
                     </tr>
                     <tr data-each-drug="prescription.drugs">
                         <td>
                             <div data-text="drug.name"/>
-                            </td> 
+                            </td>
                             <td>
-                                <input type="text" data-value="drug.dose"> 
+                                <div data-text="drug.form"/>
+                            </td>
+                            <td>
+                                <div data-text="drug.dosage"/>
+                            </td>
+                            <td>
+                                <input type="text" data-value="drug.dose">
                             </td>
                             <td>
                                 <select id="units" name="units" data-value="drug.unit" >
                                     <option data-each-unit="drug.units"  data-value="unit:id" data-text="unit:code"></option>
                                 </select>
-                            </td>
-                            <td>
-                                <span data-on-click="drug:delete" class="icon-remove"></span>
                             </td>
                         </tr>
                     </table>
@@ -71,31 +75,35 @@
         <div class="span5">
             <label>Исполнение</label>
 
-            <table id="intervals" class="my-grid"> 
-                <tr><th>Начало</th>
-                    <th>Окончание</th>
-                    <th>Примечание</th>
-                    <th>&nbsp;</th>
-                </tr>
-                <tbody>
-                <tr data-each-interval="prescription.assigmentIntervals">
-                    <td>
-                        <input data-id="interval.cid | add -from" class="datetime_entry" type="text" data-value="interval.beginDateTime | datetime"> 
-                    </td><td>
-                        <input  data-id="interval.cid | add -to" class="datetime_entry" type="text" data-value="interval.endDateTime | datetime">
-                    </td>
-                    <td>
-                        <input type="text" data-value="interval.note">
-                    </td>
+            <table id="intervals" class="my-grid">
+                <% if (data.actionTypeId != 753) { %>
+                    <tr><th>Начало</th>
+                        <th>Окончание</th>
+                        <th>Примечание</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                    <tbody>
+                        <tr data-each-interval="prescription.assigmentIntervals">
+                            <td>
+                                <input data-id="interval.cid | add -from" class="datetime_entry" type="text" data-value="interval.beginDateTime | datetime">
+                            </td><td>
+                                <input  data-id="interval.cid | add -to" class="datetime_entry" type="text" data-value="interval.endDateTime | datetime">
+                            </td>
+                            <td>
+                                <input type="text" data-value="interval.note">
+                            </td>
+                            <td>
+                                <span data-show="interval:isNew" data-on-click="interval:delete" class="icon-remove"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                <% } else { %>
 
+                <% } %>
 
-                    <td>
-                        <span data-show="interval:isNew" data-on-click="interval:delete" class="icon-remove"></span>
-                    </td>
-                </tr>
-                </tbody>
             </table>
             <button data-on-click="prescription:addInterval" style="float:right;">Добавить время приёма</button>
+            <button data-on-click="prescription:cancelIntervals" class="ui-state-active" style="float:right; margin-right:10px;">Отменить все</button>
         </div>
     </div>
 

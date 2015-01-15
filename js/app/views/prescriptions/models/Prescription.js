@@ -86,7 +86,7 @@ define(function (require) {
             return birthDate;
         },
         getDepartment: function(){
-        
+
         },
         triggerChange: function () {
             this.trigger('change');

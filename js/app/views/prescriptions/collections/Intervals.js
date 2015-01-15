@@ -19,20 +19,36 @@ define(function (require) {
                 }else{
                     if(last.get('beginDateTime')){
                         interval.set('beginDateTime', moment(last.get('beginDateTime')).add(1, 'hour').valueOf());
-                    } 
+                    }
                 }
             }
-
+            interval.set('dose', this.getDoseBalance());
+            console.log(interval);
             this.add(interval);
         },
+
+        getDoseBalance: function() {
+            var drugsDoseSumm = this.getDoseSumm('drugs');
+            var intervalsDoseSumm = this.getDoseSumm('intervals');
+            return (drugsDoseSumm - intervalsDoseSumm);
+        },
+
+        getDoseSumm: function(tab) {
+            var summ = 0;
+            $.each($('#'+tab).find("[data-value='"+tab.substring(0, tab.length - 1)+".dose']"), function(d, dose) {
+                summ += $(dose).val() ? parseInt($(dose).val()) : 0;
+            });
+            return summ;
+        },
+
         validateCollection: function () {
             var collectionErrors = [];
 
             var modelsJSON = this.toJSON();
 
             var ranges = _.filter(modelsJSON, function(mj){
-                return !!mj.beginDateTime && !!mj.endDateTime; 
-            }); 
+                return !!mj.beginDateTime && !!mj.endDateTime;
+            });
             if((ranges.length > 0) && (ranges.length != modelsJSON.length)){
                 collectionErrors.push('В назначении не могут быть интервалы разных типов. ');
             }
@@ -69,7 +85,7 @@ define(function (require) {
                             var range1 = moment(mj.beginDateTime).startOf('minutes').twix(moment(mj.endDateTime).startOf('minutes'));
                             var range2 = moment(mj2.beginDateTime).startOf('minutes').twix(moment(mj2.endDateTime).startOf('minutes'));
                             if (range1.overlaps(range2)) {
-                                // console.log('пересекаются') 
+                                // console.log('пересекаются')
                                 collectionErrors.push('Пересечение интервалов. ')
                             }
 
