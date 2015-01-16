@@ -1161,16 +1161,16 @@ define(function (require) {
                 }
 
                 $(renderedEl).find('.field-toggle').on('click', function() {
-                    $(renderedEl).find('.field').hide();
+                    !isOther && $(renderedEl).find('.field').hide();
                     if ($(this).attr('checked')) {
-                        el.setPropertyValueFor('value', 'Да');
+                        !isOther && el.setPropertyValueFor('value', 'Да');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').trigger('addMandatory');
                         $('.'+elCode+'-EndDate').find('.field').show();
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology, .'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').show();
                     } else {
-                        el.setPropertyValueFor('value', '');
+                        !isOther && el.setPropertyValueFor('value', '');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').trigger('removeMandatory');
