@@ -1204,11 +1204,23 @@ define(function (require) {
 
                 if (el.getPropertyValueFor('value')) {
                     pubsub.trigger('showVgroupRow', elCode);
+                    infectTherapies.push(elCode);
                 }
 
-                if (!el.getPropertyValueFor('value') && !(elCode.split('_')[1] == 1 && _.find(infectChecked, function(checked){return elCode.split('_')[0].indexOf(checked) > -1}))) {
-                    $(renderedEl).hide();
-                }
+                // if (!el.getPropertyValueFor('value') && !(elCode.split('_')[1] == 1 && _.find(infectChecked, function(checked){return elCode.split('_')[0].indexOf(checked) > -1}))) {
+                //     $(renderedEl).hide();
+                // }
+
+                var isHidden = true;
+                _.each(infectTherapies, function(therapy){
+                    _.each(infectChecked, function(checked){
+                        if (elCode.split('_')[1] == therapy.split('_')[1]  &&  therapy.indexOf(checked) > -1) {
+                            isHidden = false;
+                        }
+                    })
+                });
+
+                isHidden && $(renderedEl).hide();
 
                 if (elCode.split('_')[1] == 1) {
                     $(renderedEl).addClass(elCode.split('_')[0]);
@@ -3337,6 +3349,7 @@ define(function (require) {
     Documents.Views.Edit.Grid = RepeaterBase.extend({
         initialize: function () {
             infectChecked = [];
+            infectTherapies = [];
             this.collection = new Backbone.Collection();
             this.listenTo(this.collection, "reset", this.onCollectionReset);
 
