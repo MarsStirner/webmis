@@ -1194,24 +1194,24 @@ define(function (require) {
             }
 
             if (elCode.toLowerCase().indexOf('name') > -1 || elCode.toLowerCase().indexOf('etiology') > -1) {
-                console.log($(renderedEl).find('.attribute-value'));
                 $(renderedEl).find('.attribute-value').attr('disabled', 'disabled');
             }
 
             if (elCode.split('-').length > 1) {
                 $(renderedEl).hide();
-                $(renderedEl).addClass(elCode).on('addMandatory', function(){
-                    el.set('mandatory', 'true');
-                }).on('removeMandatory', function(){
-                    el.set('mandatory', 'false');
-                });
-
+                $(renderedEl).addClass(elCode);
                 if ($.inArray(elCode.split('-')[0], infectChecked) > -1) {
                     $(renderedEl).find('.field-toggle').attr('checked', 'checked');
                     $(renderedEl).find('.field').show();
                     $(renderedEl).show();
                 }
             }
+
+            $(renderedEl).on('addMandatory', function(){
+                elCode != 'infectTherapy' && el.set('mandatory', 'true');
+            }).on('removeMandatory', function(){
+                el.set('mandatory', 'false');
+            });
 
             if (elCode.split('_').length > 1) {
 
@@ -1227,12 +1227,11 @@ define(function (require) {
                 var isHidden = true;
                 _.each(infectTherapies, function(therapy){
                     _.each(infectChecked, function(checked){
-                        if (elCode.split('_')[1] == therapy.split('_')[1]  &&  therapy.indexOf(checked) > -1) {
+                        if (elCode.split('_')[1] == therapy.split('_')[1]  &&  elCode.indexOf(checked) > -1) {
                             isHidden = false;
                         }
                     })
                 });
-
                 isHidden && $(renderedEl).hide();
 
                 if (elCode.split('_')[1] == 1) {
@@ -1258,6 +1257,15 @@ define(function (require) {
                 $(renderedEl).on('click', '.RemoveIcon', function(){
                     $('.in-vgroup-row').trigger('hideRow', $(renderedEl).data('vgrouprow'));
                 });
+
+                if (elCode.toLowerCase().indexOf('name') > -1 ) {
+                    $(renderedEl).find('.field').on('change', function() {
+                        var begDateEl = $($(renderedEl).parent().find('.in-vgroup-row')[1])
+                        begDateEl.find('.field-toggle').attr('checked', 'checked');
+                        begDateEl.find('.field').addClass('Mandatory').show();
+                        begDateEl.trigger('addMandatory');
+                    });
+                }
 
             }
 
