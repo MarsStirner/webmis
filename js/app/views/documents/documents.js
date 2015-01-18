@@ -1140,7 +1140,7 @@ define(function (require) {
         setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow, el, repeatView) {
             var mode = (document.location.href.split('/')[document.location.href.split('/').length-1]);
             var isCheckbox = (el.get('scope') === 'Да');
-            var isOther = (elCode.toLowerCase().indexOf('comment') > -1);
+            var isOther = (elCode.toLowerCase().indexOf('comment') > -1 && elCode.toLowerCase().indexOf('-') == -1);
 
             if (isCheckbox || isOther) {
 
@@ -1159,6 +1159,14 @@ define(function (require) {
                     $(renderedEl).addClass(elCode);
                     $(renderedEl).find('.field').hide();
                 }
+
+                $(renderedEl).find('label').css({
+                    'font-size': '15px',
+                    'text-transform': 'uppercase',
+                    'color': '#000000',
+                    'margin-bottom': '10px',
+                    'font-weight': 'bold'
+                });
 
                 $(renderedEl).find('.field-toggle').on('click', function() {
                     !isOther && $(renderedEl).find('.field').hide();
@@ -1183,6 +1191,11 @@ define(function (require) {
                     infectChecked.push(elCode);
                 }
 
+            }
+
+            if (elCode.toLowerCase().indexOf('name') > -1 || elCode.toLowerCase().indexOf('etiology') > -1) {
+                console.log($(renderedEl).find('.attribute-value'));
+                $(renderedEl).find('.attribute-value').attr('disabled', 'disabled');
             }
 
             if (elCode.split('-').length > 1) {
@@ -2674,7 +2687,7 @@ define(function (require) {
 
         fillAutosavedFields: function (fields) {
             $.each(fields, function(typeid, value) {
-                var attributeValueEl = $('div[data-typeid="'+typeid+'"] .attribute-value');
+                var attributeValueEl = $('div[data-typeid="'+typeid+'"] .attribute-value, div[data-typeid="'+typeid+'"] .mkb-code');
                 if (attributeValueEl.prop('tagName').toUpperCase() === "SELECT") {
                     _.each(attributeValueEl.find('option'), function(o){
                         if ($(o).val() == value) {
@@ -2687,6 +2700,7 @@ define(function (require) {
                 } else {
                     $(attributeValueEl).val(value);
                 }
+                $(attributeValueEl).trigger('restoreField');
                 $('div[data-typeid="'+typeid+'"] .field-toggle:not(:checked)').click();
             });
             pubsub.trigger('noty', {
@@ -3576,11 +3590,17 @@ define(function (require) {
             $.each($(".document-grid .span2, .document-grid .span3, .document-grid .span4, .document-grid .span5, .document-grid .span6:not(.vgroup), .document-grid .span12"), function(){
                 var field = $(this).find(".attribute-value")[0];
                 var fieldValue = "";
-                if ($(field).is(".RichText")) {
-                    fieldValue = $(field).html();
-                } else {
-                    fieldValue = $(field).val();
+
+                if (field) {
+                    if ($(field).is(".RichText")) {
+                        fieldValue = $(field).html();
+                    } else {
+                        fieldValue = $(field).val();
+                    }
+                } else if ($(this).find(".mkb-code").length) {
+                    fieldValue = $(this).find(".mkb-code").val();
                 }
+
                 if (fieldValue && $(this).data("typeid")) {
                     fields[$(this).data("typeid")] = fieldValue;
                 }
@@ -4084,7 +4104,8 @@ define(function (require) {
         events: _.extend({
             "click .MKBLauncher": "onMKBLauncherClick",
             "keyup .mkb-code": "onMKBCodeKeyUp",
-            "change .mkb-code": "onMKBCodeChange"
+            "change .mkb-code": "onMKBCodeChange",
+            "restoreField .mkb-code": "onMKBCodeRestored"
         }, UIElementBase.prototype.events),
 
         data: function () {
@@ -4137,6 +4158,11 @@ define(function (require) {
         onMKBCodeChange: function () {
             var mkbId = this.ui.$code.data('mkb-id');
             this.model.setPropertyValueFor('valueId', mkbId);
+            this.setAutosavedFields();
+        },
+
+        onMKBCodeRestored: function () {
+
         },
 
         render: function () {
