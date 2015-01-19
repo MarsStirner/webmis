@@ -1207,8 +1207,8 @@ define(function (require) {
                 }
             }
 
-            $(renderedEl).on('addMandatory', function(){
-                elCode != 'infectTherapy' && el.set('mandatory', 'true');
+            $(renderedEl).not('.doc-sub-header').on('addMandatory', function(){
+                el.set('mandatory', 'true');
             }).on('removeMandatory', function(){
                 el.set('mandatory', 'false');
             });
