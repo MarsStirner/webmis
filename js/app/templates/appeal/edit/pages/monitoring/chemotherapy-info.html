@@ -33,10 +33,7 @@
 						<%}%>
 					</p>
 					<ul>
-						<% _.each([phase.days[0]], function(day){ %>
-							<li><p>День терапии: <a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>" target="_blank"><%= day.day %></a></p></li>
-
-						<%});%>
+						<li><p>День терапии: <a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>" target="_blank"><%= phase.days[phase.days.length-1].day %></a></p></li>
 					</ul>
 				<%});%>
 
