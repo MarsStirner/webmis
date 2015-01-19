@@ -47,10 +47,18 @@ define(function (require) {
         initCollections: function (callback) {
             if (this.get('drugs')) {
                 var drugs = new Drugs(this.get('drugs'));
-
-                drugs.on('add remove change', this.triggerChange, this);
-                this.set('drugs', drugs);
+            } else {
+                var drugs = new Drugs();
             }
+
+
+
+            if (drugs.first() && !drugs.first().id) {
+                drugs.reset();
+            }
+
+            drugs.on('add remove change', this.triggerChange, this);
+            this.set('drugs', drugs);
 
             if (this.get('assigmentIntervals')) {
                 var assigmentIntervals = new Intervals(this.get('assigmentIntervals'));
