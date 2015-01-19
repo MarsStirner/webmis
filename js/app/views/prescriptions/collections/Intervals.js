@@ -23,14 +23,25 @@ define(function (require) {
                 }
             }
             interval.set('dose', this.getDoseBalance());
+            interval.set('voa', this.calculateVoa());
             console.log(interval);
             this.add(interval);
+        },
+
+        cancelIntervals: function() {
+            this.each(function(interval){
+                interval.cancel();
+            });
         },
 
         getDoseBalance: function() {
             var drugsDoseSumm = this.getDoseSumm('drugs');
             var intervalsDoseSumm = this.getDoseSumm('intervals');
             return (drugsDoseSumm - intervalsDoseSumm);
+        },
+
+        calculateVoa: function() {
+            return 0;
         },
 
         getDoseSumm: function(tab) {

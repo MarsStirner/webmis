@@ -1,6 +1,6 @@
 <div class="row-fluid"><div class="span12 errors" style="color: red;"></div></div>
 <div class="row-fluid">
-    <div class="span7">
+    <div class="<%= data.actionTypeId != 753 ? 'span7' : 'span6'  %>">
         <div class="row-fluid">
             <div class="span12">
                 <label>
@@ -38,6 +38,8 @@
                 </div>
             </div>
 
+            <% if (data.actionTypeId != 753) { %>
+
             <div class="row-fluid" style="margin-bottom:1em;">
                 <div class="span12">
                     <label for="moa">
@@ -61,6 +63,8 @@
                 </div>
             </div>
 
+            <% } %>
+
             <div class="row-fluid">
                 <div class="span12">
                     <label for="note">
@@ -72,7 +76,7 @@
 
 
         </div>
-        <div class="span5">
+        <div class="<%= data.actionTypeId == 753 ? 'span6' : 'span5'  %>">
             <label>Исполнение</label>
 
             <table id="intervals" class="my-grid">
@@ -97,13 +101,48 @@
                             </td>
                         </tr>
                     </tbody>
-                <% } else { %>
-
-                <% } %>
-
+                    <% } else { %>
+                        <thead>
+                            <tr>
+                                <th width='24%'>Начало</th>
+                                <th width='24%'>Окончание</th>
+                                <th width='8%'>Доза</th>
+                                <th width='8%'>Скорость</th>
+                                <th width='40%'>Способ введения</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-each-interval="prescription.assigmentIntervals">
+                                <td>
+                                    <input data-id="interval.cid | add -from" class="datetime_entry" type="text" data-value="interval.beginDateTime | datetime">
+                                </td>
+                                <td>
+                                    <input  data-id="interval.cid | add -to" class="datetime_entry" type="text" data-value="interval.endDateTime | datetime">
+                                </td>
+                                <td>
+                                    <input type="text" data-value="interval.dose">
+                                </td>
+                                <td>
+                                    <input type="text" data-value="interval.voa">
+                                </td>
+                                <td>
+                                    <select data-value="interval.moaId" style="width:100%">
+                                        <option value="">...</option>
+                                        <%_.each(data.administration, function(opt){%>
+                                            <option value="<%=opt.id%>"><%=opt.name%></option>
+                                            <%})%>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <span data-on-click="interval:delete" class="icon-remove"></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                    <% } %>
             </table>
             <button data-on-click="prescription:addInterval" style="float:right;">Добавить время приёма</button>
-            <button data-on-click="prescription:cancelIntervals" class="ui-state-active" style="float:right; margin-right:10px;">Отменить все</button>
+            <button data-on-click="prescription:cancelIntervals" style="float:right; margin-right:10px;" id="cancelIntervals">Отменить назначение</button>
         </div>
     </div>
 

@@ -112,11 +112,11 @@
                 <% } else { %>
                     <thead>
                         <tr>
-                            <th width='22%'>Начало</th>
-                            <th width='22%'>Окончание</th>
-                            <th>Доза</th>
-                            <th>Скорость (мл/ч)</th>
-                            <th>Способ введения</th>
+                            <th width='24%'>Начало</th>
+                            <th width='24%'>Окончание</th>
+                            <th width='8%'>Доза</th>
+                            <th width='8%'>Скорость</th>
+                            <th width='40%'>Способ введения</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
@@ -135,13 +135,13 @@
                                 <input type="text" data-value="prescription.voa">
                             </td>
                             <td>
-                                <select data-value="prescription.moaId">
+                                <select data-value="interval.moaId" style="width:100%">
                                     <option value="">...</option>
                                     <%_.each(data.administration, function(opt){%>
                                         <option value="<%=opt.id%>"><%=opt.name%></option>
-                                    <%})%>
-                                </select>
-                            </td>
+                                        <%})%>
+                                    </select>
+                                </td>
                             <td>
                                 <span data-on-click="interval:delete" class="icon-remove"></span>
                             </td>

@@ -126,7 +126,8 @@ define(function (require) {
                 .html(JSON.stringify(this.prescription.toJSON(), null, 4));
         },
         events: {
-            'click .add-drug': 'onClickAddDrug'
+            'click .add-drug': 'onClickAddDrug',
+            'click #cancelIntervals': 'onCancelIntervalsClick'
         },
         onSave: function () {
             //console.log('onClickSave');
@@ -161,10 +162,16 @@ define(function (require) {
             popup.open();
         },
 
+        onCancelIntervalsClick: function () {
+            this.close();
+            pubsub.trigger('prescription:saved', self.prescription);
+        },
+
         data: function () {
             return {
                 administration: this.administration.toJSON(),
-                moa: this.prescription.get('moa')
+                moa: this.prescription.get('moa'),
+                actionTypeId: this.prescription.get('actionTypeId')
             };
         },
 

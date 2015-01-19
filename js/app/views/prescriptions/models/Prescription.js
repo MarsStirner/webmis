@@ -135,6 +135,12 @@ define(function (require) {
                 .addInterval();
         },
 
+        cancelIntervals: function () {
+            //$('#cancelIntervals').addClass('ui-state-active');
+            this.get('assigmentIntervals')
+            .cancelIntervals();
+        },
+
         set: function (key, value, options) {
             var attr;
             // Normalize the key-value into an object
