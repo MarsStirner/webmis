@@ -1220,10 +1220,6 @@ define(function (require) {
                     infectTherapies.push(elCode);
                 }
 
-                // if (!el.getPropertyValueFor('value') && !(elCode.split('_')[1] == 1 && _.find(infectChecked, function(checked){return elCode.split('_')[0].indexOf(checked) > -1}))) {
-                //     $(renderedEl).hide();
-                // }
-
                 var isHidden = true;
                 _.each(infectTherapies, function(therapy){
                     _.each(infectChecked, function(checked){
@@ -1268,6 +1264,16 @@ define(function (require) {
                 }
 
             }
+
+            $(renderedEl).not('.doc-sub-header').on('restoreField', function(){
+                var elRow = $(renderedEl).parent();
+                var elHeader = $(renderedEl).closest('.doc-sub-header');
+                $(elRow).find('.in-vgroup-row').show();
+                if ($(elHeader).find('.icon-plus').length > 0) {
+                    $(elHeader).find('.sb-hdr').click();
+                }
+                $(renderedEl).parent().prevAll().last().find('.field-toggle').attr('checked', 'checked');
+            });
 
             switch (elCode) {
             case 'infectLocalisation':
