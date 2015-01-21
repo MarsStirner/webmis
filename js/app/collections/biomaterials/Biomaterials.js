@@ -175,7 +175,7 @@ define(function(require) {
 			_.each(labTests, function(labTest) {
 
 				barcodes.push({
-					datetime: moment(labTest.jobTicket.date).subtract(1, 'hour').valueOf(),
+					datetime: moment(labTest.jobTicket.date).valueOf(),
 					barcode: labTest.takenTissueJournal,
 					name: labTest.patient.name,
 					appealNumber: labTest.appealNumber
