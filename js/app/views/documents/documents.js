@@ -1142,6 +1142,8 @@ define(function (require) {
             var isCheckbox = (el.get('scope') === 'Да');
             var isOther = (elCode.toLowerCase().indexOf('comment') > -1 && elCode.toLowerCase().indexOf('-') == -1);
 
+
+
             if (isCheckbox || isOther) {
 
                 if (isOther) {
@@ -1195,6 +1197,13 @@ define(function (require) {
 
             if (elCode.toLowerCase().indexOf('name') > -1 || elCode.toLowerCase().indexOf('etiology') > -1) {
                 $(renderedEl).find('.attribute-value').attr('disabled', 'disabled');
+                $(renderedEl).find('.field-toggle').on('click', function(){
+                    if (!$(this).attr('checked')) {
+                        el.setPropertyValueFor('value', '');
+                        $(renderedEl).find('.attribute-value').val('');
+                        $(renderedEl).find('.field').trigger('change');
+                    }
+                });
             }
 
             if (elCode.split('-').length > 1) {
@@ -1257,9 +1266,15 @@ define(function (require) {
                 if (elCode.toLowerCase().indexOf('name') > -1 ) {
                     $(renderedEl).find('.field').on('change', function() {
                         var begDateEl = $($(renderedEl).parent().find('.in-vgroup-row')[1])
-                        begDateEl.find('.field-toggle').attr('checked', 'checked');
-                        begDateEl.find('.field').addClass('Mandatory').show();
-                        begDateEl.trigger('addMandatory');
+                        if ($(renderedEl).find('.attribute-value').val()) {
+                            begDateEl.find('.field-toggle').attr('checked', 'checked');
+                            begDateEl.find('.field').addClass('Mandatory').show();
+                            begDateEl.trigger('addMandatory');
+                        } else {
+                            begDateEl.find('.field-toggle').removeAttr('checked');
+                            begDateEl.find('.field').removeClass('Mandatory').hide();
+                            begDateEl.trigger('removeMandatory');
+                        }
                     });
                 }
 
