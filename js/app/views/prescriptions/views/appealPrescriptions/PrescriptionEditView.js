@@ -218,11 +218,13 @@ define(function (require) {
             if (this.prescription.get('drugs')) {
                 this.prescription.get('drugs')
                     .on('add remove', function () {
+                        self.prescription.get('assigmentIntervals').each(function(interval){
+                            console.log(interval);
+                            interval.set('drugs', self.prescription.get('drugs'));
+                        });
                         console.log('add drug', arguments)
                         setTimeout(function () {
                             self.$el.find('select').select2();
-
-
                         }, 100);
                     });
 

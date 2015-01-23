@@ -64,6 +64,7 @@ define(function (require) {
                 var assigmentIntervals = new Intervals(this.get('assigmentIntervals'));
                 assigmentIntervals.on('add remove change', this.triggerChange, this);
                 assigmentIntervals.each(function (interval) {
+                    interval.set('drugs', drugs);
                     if (interval.get('executionIntervals')) {
                         var executionIntervals = new Intervals(interval.get('executionIntervals'));
                         executionIntervals.on('add remove change', this.triggerChange, this);
