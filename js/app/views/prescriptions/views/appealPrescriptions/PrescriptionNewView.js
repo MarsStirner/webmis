@@ -220,7 +220,12 @@ define(function (require) {
                                 .datetimeEntry({
                                     datetimeFormat: 'D.O.Y H:M',
                                     beforeShow: datetimeRange
-                                });
+                                }).datepicker();
+
+                            self.prescription.get('assigmentIntervals').each(function(interval){
+                                console.log(interval);
+                                interval.set('drugs', self.prescription.get('drugs'));
+                            });
 
                         }, 100);
 
@@ -232,9 +237,13 @@ define(function (require) {
             if(this.prescription.get('drugs')){
                 this.prescription.get('drugs')
                 .on('add remove', function(){
-
                     setTimeout(function () {
                     self.$el.find('select').select2();
+
+                    self.prescription.get('assigmentIntervals').each(function(interval){
+                        console.log(interval);
+                        interval.set('drugs', self.prescription.get('drugs'));
+                    });
 
                     }, 100);
                 });
