@@ -3547,7 +3547,8 @@ define(function (require) {
             "focusout .RichText": "onAttributeValueBlur",
             "input [contenteditable].attribute-value": "onAttributeValueChange",
             "change .field-toggle": "onFieldToggleChange",
-            "keyup .attribute-value": "onAttributeKeyUp"
+            "keyup .attribute-value": "onAttributeKeyUp",
+            "restoreField .attribute-value": "onAttributeValueRestored"
         },
 
         data: function () {
@@ -3574,6 +3575,10 @@ define(function (require) {
                 this.$el.addClass('in-vgroup-row');
                 this.$el.attr('data-vgrouprow', this.model.isVGroupRow());
             };
+        },
+
+        onAttributeValueRestored: function(){
+            this.model.setValue(this.getAttributeValue());
         },
 
         mapLayoutAttributes: function () {
