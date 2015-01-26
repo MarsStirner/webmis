@@ -2726,6 +2726,11 @@ define(function (require) {
                     });
                 } else if ($(attributeValueEl).is(".RichText")) {
                     $(attributeValueEl).html(value);
+                } else if ($(attributeValueEl).is(".mkb-code")) {
+                    var mkbField = $(attributeValueEl).closest('.field');
+                    $(mkbField).find('.mkb-code').val(value.mkbCode);
+                    $(mkbField).find('.mkb-code').data('mkb-id', value.mkbId);
+                    $(mkbField).find('.mkb-diagnosis').val(value.mkbDiagnosis);
                 } else {
                     $(attributeValueEl).val(value);
                 }
@@ -3626,8 +3631,13 @@ define(function (require) {
                     } else {
                         fieldValue = $(field).val();
                     }
-                } else if ($(this).find(".mkb-code").length) {
-                    fieldValue = $(this).find(".mkb-code").val();
+                } else if ($(this).find(".mkb-code").length && $(this).data("typeid")) {
+                    fieldValue = {
+                        code: 'mkb',
+                        mkbCode: $(this).find(".mkb-code").val(),
+                        mkbDiagnosis: $(this).find(".mkb-diagnosis").val(),
+                        mkbId: $(this).find(".mkb-code").data('mkb-id')
+                    }
                 }
 
                 if (fieldValue && $(this).data("typeid")) {
@@ -4191,7 +4201,7 @@ define(function (require) {
         },
 
         onMKBCodeRestored: function () {
-
+            this.onMKBCodeChange();
         },
 
         render: function () {
