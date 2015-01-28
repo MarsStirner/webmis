@@ -7,7 +7,11 @@ define(function(require){
         template: template,
 
         initialize: function(){
-            this.childs = []; 
+            this.childs = [];
+        },
+
+        setMoaName: function(name){
+            this.moaName = name;
         },
 
         closeChilds: function(){
@@ -24,7 +28,7 @@ define(function(require){
 
             var prescriptions = this.options.group;
             var $prescriptionsEl = this.$el.find('.prescriptions');
-            
+
             _.each(prescriptions, function(prescription){
                 var prescriptionView = new PrescriptionView({
                     model: prescription,
@@ -34,20 +38,21 @@ define(function(require){
                 $prescriptionsEl.append(prescriptionView.render().el);
 
             }, this);
-        
+
         },
 
         render: function(){
-            BaseView.prototype.render.call(this); 
+            BaseView.prototype.render.call(this);
             this.renderChilds();
             return this;
         },
 
- 
+
         data: function(){
             var data = {};
             data.groupName = this.options.groupName;
-            // console.log('group data', data); 
+            data.moaName = this.moaName;
+            // console.log('group data', data);
             return data;
         }
     });
