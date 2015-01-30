@@ -4059,7 +4059,7 @@ define(function (require) {
             this.ui = {};
             this.ui.$input = this.$el.find(".attribute-value");
             this.ui.$input.mask(this.inputMaskFormat);
-            this.ui.$input.datepicker();
+            !this.ui.$input.is('.Disabled') && this.ui.$input.datepicker();
 
             return this;
         }
