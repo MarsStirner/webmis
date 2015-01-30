@@ -1276,6 +1276,13 @@ define(function (require) {
                             begDateEl.trigger('removeMandatory');
                         }
                     });
+                } else {
+                    $(renderedEl).find('.field-toggle').on('click', function() {
+                        if (!$(this).attr('checked')) {
+                            el.setPropertyValueFor('value', '');
+                            $(renderedEl).find('.attribute-value').val('');
+                        }
+                    });
                 }
 
             }
