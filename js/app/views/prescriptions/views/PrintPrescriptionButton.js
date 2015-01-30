@@ -42,7 +42,6 @@ define(function (require) {
         printPatientMonitoring: function (id) {
             var prescriptions = this.getClientPrescriptions(id);
             if (prescriptions && prescriptions.length) {
-                console.log('prescription', prescriptions[0]);
                 var data = {};
                 var prescription = prescriptions[0];
                 data.patientName = prescription.getPatientFio();
