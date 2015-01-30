@@ -124,10 +124,13 @@ define(function (require) {
             var prescription = prescriptions[0];
 
             $.getJSON(DATA_PATH + 'patients/' + prescription.get('client').id + '/appeals/?callback=?', function (res) {
-                var appealId = res.data[0].id
+
+                var currentAppeal = _.find(res.data, function (appeal) {
+                    return appeal.rangeAppealDateTime.start <= range.min && ( range.max <= appeal.rangeAppealDateTime.end || !appeal.rangeAppealDateTime.end);
+                });
 
                 var monitoringInfos = new MonitoringInfos(null, {
-                    appealId: appealId
+                    appealId: currentAppeal.id
                 });
 
                 var patientBsaRow = new PatientBsaRow({
@@ -139,7 +142,7 @@ define(function (require) {
                 });
 
                 var moves = new Moves();
-                moves.appealId = appealId;
+                moves.appealId = currentAppeal.id;
 
                 var bloodType = null;
                 var bloodDate = null;
@@ -153,6 +156,9 @@ define(function (require) {
                                     bloodType = blood.get('bloodType').name;
                                 }
                             });
+                            mainDiag = _.find(currentAppeal.diagnoses, function(diagnosis){
+                                return diagnosis.diagnosisKind === 'mainDiagMkb';
+                            });
                             data.patientName = prescription.getPatientFio();
                             data.patientBirthDate = prescription.getPatientBirthDate();
                             data.patientAge = Core.Date.getAgeString(data.patientBirthDate);
@@ -162,6 +168,7 @@ define(function (require) {
                             data.patientBSA = patientBsaRow.data().bsa;
                             data.patientBed = moves.last().get('bed');
                             data.listDate = moment(range.min).format('DD.MM.YYYY');
+                            data.mainDiag = mainDiag.mkb.diagnosis ? mainDiag.mkb.diagnosis : 'не установлен';
 
                             var groups = _(prescriptions).groupBy(function (model) {
                                 return model.get('moa');
@@ -232,12 +239,12 @@ define(function (require) {
 
             if (this.collection._filter) {
                 range = {
-                    min: this.collection._filter.dateRangeMin * 1000,
+                    min: (moment(this.collection._filter.dateRangeMin * 1000).hours(9).format('X')) * 1000,
                     max: this.collection._filter.dateRangeMax * 1000
                 };
             } else {
                 var today = new Date();
-                today.setHours(12,0,0,0);
+                today.setHours(9,0,0,0);
                 range = {
                     min: moment(today).format('X') * 1000,
                     max: (parseInt(moment(today).format('X')) + 86400 ) * 1000
