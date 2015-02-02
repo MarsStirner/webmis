@@ -3899,7 +3899,7 @@ define(function (require) {
                     if ($comboInput.hasClass("Mandatory")) $wrapper.addClass("Mandatory");
 
                     $wrapper.find("ul").append($comboInput.data("options").split("|").map(function (opt) {
-                        return $('<li>' + opt + '</li>');
+                        return $('<li>' + opt.trim() + '</li>');
                     }));
 
                     $wrapper.on("click", function (event) {
