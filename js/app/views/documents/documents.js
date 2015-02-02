@@ -1249,6 +1249,7 @@ define(function (require) {
 
                 $(renderedEl).on('hideRow', function(e, rowId){
                     if ($(renderedEl).data('vgrouprow') == rowId) {
+                        $(renderedEl).trigger('removeMandatory').find('.field').removeClass('Mandatory').hide();
                         el.setPropertyValueFor('value', '');
                         repeatView.render();
                         $(this).hide();
