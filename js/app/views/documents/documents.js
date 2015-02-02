@@ -1262,29 +1262,28 @@ define(function (require) {
                 $(renderedEl).on('click', '.RemoveIcon', function(){
                     $('.in-vgroup-row').trigger('hideRow', $(renderedEl).data('vgrouprow'));
                 });
+            }
 
-                if (elCode.toLowerCase().indexOf('name') > -1 ) {
-                    $(renderedEl).find('.field').on('change', function() {
-                        var begDateEl = $($(renderedEl).parent().find('.in-vgroup-row')[1])
-                        if ($(renderedEl).find('.attribute-value').val()) {
-                            begDateEl.find('.field-toggle').attr('checked', 'checked');
-                            begDateEl.find('.field').addClass('Mandatory').show();
-                            begDateEl.trigger('addMandatory');
-                        } else {
-                            begDateEl.find('.field-toggle').removeAttr('checked');
-                            begDateEl.find('.field').removeClass('Mandatory').hide();
-                            begDateEl.trigger('removeMandatory');
-                        }
-                    });
-                } else {
-                    $(renderedEl).find('.field-toggle').on('click', function() {
-                        if (!$(this).attr('checked')) {
-                            el.setPropertyValueFor('value', '');
-                            $(renderedEl).find('.attribute-value').val('');
-                        }
-                    });
-                }
-
+            if (elCode.toLowerCase().indexOf('name') > -1 ) {
+                $(renderedEl).find('.field').on('change', function() {
+                    var begDateEl = $($(renderedEl).parent().find('.in-vgroup-row')[1])
+                    if ($(renderedEl).find('.attribute-value').val()) {
+                        begDateEl.find('.field-toggle').attr('checked', 'checked');
+                        begDateEl.find('.field').addClass('Mandatory').show();
+                        begDateEl.trigger('addMandatory');
+                    } else {
+                        begDateEl.find('.field-toggle').removeAttr('checked');
+                        begDateEl.find('.field').removeClass('Mandatory').hide();
+                        begDateEl.trigger('removeMandatory');
+                    }
+                });
+            } else {
+                $(renderedEl).find('.field-toggle').on('click', function() {
+                    if (!$(this).attr('checked')) {
+                        el.setPropertyValueFor('value', '');
+                        $(renderedEl).find('.attribute-value').val('');
+                    }
+                });
             }
 
             $(renderedEl).not('.doc-sub-header').on('restoreField', function(){
