@@ -129,7 +129,7 @@ define(function (require) {
                 });
 
                 var monitoringInfos = new MonitoringInfos(null, {
-                    appealId: currentAppeal.id
+                    appealId: currentAppeal ? currentAppeal.id : res.data[0].id
                 });
 
                 var patientBsaRow = new PatientBsaRow({
@@ -141,10 +141,11 @@ define(function (require) {
                 });
 
                 var moves = new Moves();
-                moves.appealId = currentAppeal.id;
+                moves.appealId = currentAppeal ? currentAppeal.id : res.data[0].id;
 
                 var bloodType = null;
                 var bloodDate = null;
+                var mainDiag = null;
 
                 patientBsaRow.collection.fetch().done(function(){
                     moves.fetch().done(function(){
@@ -155,9 +156,11 @@ define(function (require) {
                                     bloodType = blood.get('bloodType').name;
                                 }
                             });
-                            mainDiag = _.find(currentAppeal.diagnoses, function(diagnosis){
-                                return diagnosis.diagnosisKind === 'mainDiagMkb';
-                            });
+                            if (currentAppeal) {
+                                mainDiag = _.find(currentAppeal.diagnoses, function(diagnosis){
+                                    return diagnosis.diagnosisKind === 'mainDiagMkb';
+                                });
+                            }
                             data.patientName = prescription.getPatientFio();
                             data.patientBirthDate = prescription.getPatientBirthDate();
                             data.patientAge = Core.Date.getAgeString(data.patientBirthDate);
@@ -167,7 +170,7 @@ define(function (require) {
                             data.patientBSA = patientBsaRow.data().bsa;
                             data.patientBed = moves.last().get('bed');
                             data.listDate = moment(range.min).format('DD.MM.YYYY');
-                            data.mainDiag = mainDiag.mkb.diagnosis ? mainDiag.mkb.diagnosis : 'не установлен';
+                            data.mainDiag = (mainDiag && mainDiag.mkb.diagnosis) ? mainDiag.mkb.diagnosis : 'не установлен';
 
                             var groups = _(prescriptions).groupBy(function (model) {
                                 return model.get('moa');
