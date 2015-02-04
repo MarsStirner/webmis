@@ -182,10 +182,10 @@
 							<div class="LineBlock">
 								<span class="Label">Плательщик</span>
 								<div class="HalfCol WithoutName">
-									<input type="text" name="payer[firstName]" placeholder="Фамилия"/>
+									<input type="text" name="payer[lastName]" placeholder="Фамилия"/>
 								</div>
 								<div class="HalfCol WithoutName">
-									<input type="text" name="payer[lastName]" placeholder="Имя"/>
+									<input type="text" name="payer[firstName]" placeholder="Имя"/>
 								</div>
 								<div class="HalfCol WithoutName">
 									<input type="text" name="payer[middleName]" placeholder="Отчество"/>
@@ -202,6 +202,7 @@
 								<div class="HalfCol" >
 									<span class="Label">Документ</span>
 									<select class="Styled" id="event_type" name="payer[documentType]">
+										<option value="" selected="selected">...</option>
 										{{each(i, type) dicts.docTypes}}
 											<option value="${type['id']}">${type['value']}</option>
 										{{/each}}
