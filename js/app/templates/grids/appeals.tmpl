@@ -323,7 +323,11 @@
 
 <script id="patient-appeals-grid-row" type="text/x-jquery-tmpl">
 		<td>
-			<a href="/appeals/${id}/"  class="open-appeal"></a>
+			{{if requestType === 'policlinic'}}
+				<a href="/appealpoly/${id}/"></a>
+			{{else}}
+				<a href="/appeals/${id}/"  class="open-appeal"></a>
+			{{/if}}
 			{{if number}}
 				${number}
 			{{else}}

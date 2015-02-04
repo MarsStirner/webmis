@@ -126,6 +126,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			//"appeals/:id/examinations/new/initial/": "newInitialExamination",
 
 			//appeal
+			"appealpoly/:id": "appealPolyReview",
 			"appeals/:id": "appealReview",
 			"appeals/:id/": "appealReview",
 			"appeals/:id/edit": "appealEdit",
@@ -717,6 +718,10 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				page = "card";
 			}
 			this.appeal("REVIEW", appealId, page);
+		},
+
+		appealPolyReview: function(appealId) {
+			window.location.href = "http://" + POLICLINIC_HOST + "/event/event.html?event_id=" + appealId
 		},
 
 		appealReviewPage: function(appealId, page) {
