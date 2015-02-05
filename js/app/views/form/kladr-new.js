@@ -115,7 +115,7 @@ define([
 				code: selectedCode,
 				socr: socr || "",
 				name: name || "",
-				index: $selectedOption.data("index").toString()
+				index: $selectedOption.data("index") ? $selectedOption.data("index").toString() : ''
 			});
 
 
@@ -251,7 +251,7 @@ define([
 
 				//_(entries).each(function (entry) {
 				collection.each(function (entry) {
-					options += "<option value='" + entry.get("code") + "' data-index='" + entry.get("index") + "'>" + entry.get("sock") + " " + entry.get("value") + "</option>";
+					options += "<option value='" + entry.get("code") + "' data-index='" + entry.get("index") + "'>" + (entry.get("sock") ? entry.get("sock") + " " : '') + entry.get("value") + "</option>";
 				});
 
 				$sel.append(options);
