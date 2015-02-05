@@ -5,7 +5,12 @@
 	<td class="helper-item-info">
 		<div class="helper-item-name">
 			<div>
-				<span class="helper-item-date"><%=moment(model.get("plannedEndDate")).format('DD.MM.YYYY')%></span>
+				<% console.log(model.result.get("mnem")) %>
+				<%if (model.result.get("mnem").toUpperCase == 'LAB') {%>
+					<span class="helper-item-date"><%=moment(model.get("plannedEndDate")).format('DD.MM.YYYY')%></span>
+				<%} else  {%>
+					<span class="helper-item-date"><%=moment(model.result.getProperty('assessmentBeginDate')).format('DD.MM.YYYY')%></span>
+				<%}%>
 				<%if (model.get('takingTime')) {%>
 					<span class="helper-item-takingtime">&nbsp;&nbsp;Время забора: <%=moment(model.get("takingTime").datetime).format('H:mm')%></span>
 				<%}%>
