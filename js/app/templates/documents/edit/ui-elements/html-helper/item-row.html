@@ -5,7 +5,7 @@
 	<td class="helper-item-info">
 		<div class="helper-item-name">
 			<div>
-				<%if (model.result.get("mnem").toUpperCase == 'LAB') {%>
+				<%if (model.result.get("mnem").toUpperCase() == 'LAB') {%>
 					<span class="helper-item-date"><%=moment(model.get("plannedEndDate")).format('DD.MM.YYYY')%></span>
 				<%} else  {%>
 					<span class="helper-item-date"><%=moment(model.result.getProperty('assessmentBeginDate')).format('DD.MM.YYYY')%></span>
