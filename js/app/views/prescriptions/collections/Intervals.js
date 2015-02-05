@@ -7,11 +7,11 @@ define(function (require) {
         initialize: function () {
             // console.log('init intervals collection', this);
         },
-        addInterval: function () {
+        addInterval: function (drugs) {
+
             var interval = new Interval();
 
             if (this.length) {
-                console.log('add interval', this.last());
                 var last = this.last();
                 var endDateTime = last.get('endDateTime');
                 if (endDateTime) {
@@ -22,9 +22,7 @@ define(function (require) {
                     }
                 }
             }
-            interval.set('dose', this.getDoseBalance());
-            interval.set('voa', this.calculateVoa());
-            console.log(interval);
+            interval.set('drugs', drugs);
             this.add(interval);
         },
 
@@ -65,7 +63,6 @@ define(function (require) {
             }
 
             _.each(modelsJSON, function (mj) {
-                console.log('interval',mj);
 
                 var modelsJSON2 = _.without(modelsJSON, mj);
                 _.each(modelsJSON2, function (mj2) {

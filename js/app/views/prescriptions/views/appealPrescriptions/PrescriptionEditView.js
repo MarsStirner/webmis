@@ -169,9 +169,8 @@ define(function (require) {
 
         data: function () {
             return {
-                administration: this.administration.toJSON(),
-                moa: this.prescription.get('moa'),
-                actionTypeId: this.prescription.get('actionTypeId')
+                prescription: this.prescription.toJSON(),
+                administration: this.administration.toJSON()
             };
         },
 
@@ -205,12 +204,24 @@ define(function (require) {
                 this.prescription.get('assigmentIntervals')
                     .on('add remove', function () {
                         setTimeout(function () {
-                            $('.datetime_entry')
-                                .datetimeEntry({
-                                    datetimeFormat: 'D.O.Y H:M',
-                                    beforeShow: datetimeRange
-                                }).datepicker();
+                            $('.date_entry').datepicker();
+                            $('.time_entry').timepicker();
                         }, 100);
+
+                        self.render();
+
+                        _.each(self.$el.find('.prescriptionInterval'), function(interval){
+                            var intervalId = $(interval).attr('id');
+                            $(interval).on('change', 'input, select', function(e){
+                                var changedInterval = self.prescription.get('assigmentIntervals').models[intervalId];
+                                var changedIntervalRow = $('.prescriptionInterval[id="'+intervalId+'"]');
+                                changedInterval.set({
+                                    'beginDateTime': moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val()).unix(),
+                                    'endDateTime': moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val()).unix(),
+                                });
+                                console.log(changedInterval);
+                            })
+                        })
 
                     }, this);
             }
@@ -219,7 +230,6 @@ define(function (require) {
                 this.prescription.get('drugs')
                     .on('add remove', function () {
                         self.prescription.get('assigmentIntervals').each(function(interval){
-                            console.log(interval);
                             interval.set('drugs', self.prescription.get('drugs'));
                         });
                         console.log('add drug', arguments)
@@ -266,11 +276,8 @@ define(function (require) {
                 drug.trigger('change:unit');
             });
 
-            $('.datetime_entry')
-                .datetimeEntry({
-                    datetimeFormat: 'D.O.Y H:M',
-                    beforeShow: datetimeRange
-                }).datepicker();
+            $('.date_entry').datepicker();
+            $('.time_entry').timepicker();
 
 
             this.$el.find('button').button();

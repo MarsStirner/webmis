@@ -180,7 +180,7 @@ define(function (require) {
         data: function () {
             return {
                 administration: this.administration.toJSON(),
-                actionTypeId: this.prescription.get('actionTypeId')
+                prescription: this.prescription.toJSON()
             };
         },
 
@@ -215,19 +215,25 @@ define(function (require) {
                     .on('add remove', function () {
 
                         setTimeout(function () {
-
-                            $('.datetime_entry')
-                                .datetimeEntry({
-                                    datetimeFormat: 'D.O.Y H:M',
-                                    beforeShow: datetimeRange
-                                }).datepicker();
-
-                            self.prescription.get('assigmentIntervals').each(function(interval){
-                                console.log(interval);
-                                interval.set('drugs', self.prescription.get('drugs'));
-                            });
-
+                            $('.date_entry').datepicker();
+                            $('.time_entry').timepicker();
                         }, 100);
+
+                        self.render();
+
+                        _.each(self.$el.find('.prescriptionInterval'), function(interval){
+                            var intervalId = $(interval).attr('id');
+                            $(interval).on('change', 'input, select', function(e){
+                                var changedInterval = self.prescription.get('assigmentIntervals').models[intervalId];
+                                var changedIntervalRow = $('.prescriptionInterval[id="'+intervalId+'"]');
+                                console.log(moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val()).unix());
+                                changedInterval.set({
+                                    'beginDateTime': moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val()).unix(),
+                                    'endDateTime': moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val()).unix(),
+                                });
+                                console.log(changedInterval);
+                            })
+                        })
 
                     }, this);
 
@@ -241,7 +247,6 @@ define(function (require) {
                     self.$el.find('select').select2();
 
                     self.prescription.get('assigmentIntervals').each(function(interval){
-                        console.log(interval);
                         interval.set('drugs', self.prescription.get('drugs'));
                     });
 
@@ -249,34 +254,6 @@ define(function (require) {
                 });
 
             }
-
-
-            rivets.formatters.datetime = {
-                read: function (value) { //вывод в хтмл
-                    var v;
-                    if (value) {
-                        v = moment(value)
-                            .format('DD.MM.YYYY HH:mm');
-                    } else {
-                        v = '';
-                    }
-                    return v;
-                },
-                publish: function (value) { //в модель
-                    var v;
-                    if (value) {
-                        v = moment(value, 'DD.MM.YYYY HH:mm')
-                            .valueOf();
-                    } else {
-                        v = null;
-                    }
-                    return v;
-                }
-            };
-
-            rivets.formatters.add = function(value, string){
-                return value + string;
-            };
 
             rivets.bind(self.el, {
                 prescription: self.prescription

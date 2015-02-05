@@ -132,7 +132,7 @@ define(function (require) {
 
         addInterval: function () {
             this.get('assigmentIntervals')
-                .addInterval();
+                .addInterval(this.get('drugs'));
         },
 
         cancelIntervals: function () {
