@@ -188,27 +188,7 @@ define(function (require) {
             var self = this;
             BaseView.prototype.render.call(self);
 
-            function datetimeRange(input) {
-                var id = input.id.split('-');
-                var cid = id[0];
-                var type = id[1];
-                var res = {
-                    minDatetime: null,
-                    maxDatetime: null
-                };
 
-                if (type == 'to') {
-                    res.minDatetime = moment($('#'+cid+'-from').datetimeEntry('getDatetime')).add('m',1).toDate();
-                }
-
-                if (type == 'from') {
-                    if ($('#'+cid+'-to').datetimeEntry('getDatetime')){
-                        res.maxDatetime = moment($('#'+cid+'-to').datetimeEntry('getDatetime')).subtract('m',1).toDate();
-                    }
-                }
-
-                return res;
-            }
 
             if (this.prescription.get('assigmentIntervals')) {
                 this.prescription.get('assigmentIntervals')
@@ -230,7 +210,6 @@ define(function (require) {
                                     'beginDateTime': moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val(), 'MM.DD.YYYY HH:mm').unix(),
                                     'endDateTime': moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val(), 'MM.DD.YYYY HH:mm').unix(),
                                 });
-                                console.log(changedInterval);
                                 changedInterval.get('drugs').first().set({
                                     'dose': $(changedIntervalRow).find('.intervalDose').val(),
                                     'moa': $(changedIntervalRow).find('.intervalMoa').val(),
@@ -250,9 +229,9 @@ define(function (require) {
                     setTimeout(function () {
                     self.$el.find('select').select2();
 
-                    self.prescription.get('assigmentIntervals').each(function(interval){
-                        interval.set('drugs', self.prescription.get('drugs'));
-                    });
+                    // self.prescription.get('assigmentIntervals').each(function(interval){
+                    //     interval.set('drugs', self.prescription.get('drugs'));
+                    // });
 
                     }, 100);
                 });

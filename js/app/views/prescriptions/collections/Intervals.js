@@ -8,22 +8,21 @@ define(function (require) {
             // console.log('init intervals collection', this);
         },
         addInterval: function (drugs) {
-
             var self = this;
             var interval = new Interval();
 
-            if (this.length) {
-                var last = this.last();
-                var endDateTime = last.get('endDateTime');
-                if (endDateTime) {
-                    interval.set('beginDateTime', moment(endDateTime).add(1, 'minute').valueOf());
-                }else{
-                    if(last.get('beginDateTime')){
-                        interval.set('beginDateTime', moment(last.get('beginDateTime')).add(1, 'hour').valueOf());
-                    }
-                }
-            }
-            interval.set('drugs', drugs);
+            // if (this.length) {
+            //     var last = this.last();
+            //     var endDateTime = last.get('endDateTime');
+            //     if (endDateTime) {
+            //         interval.set('beginDateTime', moment(endDateTime).add(1, 'minute').valueOf());
+            //     }else{
+            //         if(last.get('beginDateTime')){
+            //             interval.set('beginDateTime', moment(last.get('beginDateTime')).add(1, 'hour').valueOf());
+            //         }
+            //     }
+            // }
+            interval.set('drugs', new Backbone.Collection(drugs));
             interval.get('drugs').first().set('dose', self.getDoseSumm());
             this.add(interval);
         },
@@ -41,13 +40,16 @@ define(function (require) {
         },
 
         calculateVoa: function() {
-            return 0;
+            var intSumm = this.getDoseSumm();
+            $('.intervalDose').each(function(d, dose){
+                intSumm = intSumm - $(dose).val() ? parseInt($(dose).val()) : 0;
+            });
+            return intSumm;
         },
 
         getDoseSumm: function(tab) {
             var summ = 0;
             $('.dose').each(function(d, dose){
-                console.log(dose);
                 summ += $(dose).val() ? parseInt($(dose).val()) : 0;
             });
             console.log(summ);
