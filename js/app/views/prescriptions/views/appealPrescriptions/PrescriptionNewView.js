@@ -226,14 +226,17 @@ define(function (require) {
                             $(interval).on('change', 'input, select', function(e){
                                 var changedInterval = self.prescription.get('assigmentIntervals').models[intervalId];
                                 var changedIntervalRow = $('.prescriptionInterval[id="'+intervalId+'"]');
-                                console.log(moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val()).unix());
                                 changedInterval.set({
                                     'beginDateTime': moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val()).unix(),
                                     'endDateTime': moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val()).unix(),
                                 });
-                                console.log(changedInterval);
+                                changedInterval.get('drugs').first().set({
+                                    'dose': $(changedIntervalRow).find('.intervalDose').val(),
+                                    'moa': $(changedIntervalRow).find('.intervalMoa').val(),
+                                    'voa': $(changedIntervalRow).find('.intervalVoa').val()
+                                });
                             })
-                        })
+                        });
 
                     }, this);
 

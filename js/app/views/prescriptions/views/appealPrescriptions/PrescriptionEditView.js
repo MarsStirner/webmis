@@ -219,9 +219,13 @@ define(function (require) {
                                     'beginDateTime': moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val()).unix(),
                                     'endDateTime': moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val()).unix(),
                                 });
-                                console.log(changedInterval);
+                                changedInterval.get('drugs').first().set({
+                                    'dose': $(changedIntervalRow).find('.intervalDose').val(),
+                                    'moa': $(changedIntervalRow).find('.intervalMoa').val(),
+                                    'voa': $(changedIntervalRow).find('.intervalVoa').val()
+                                });
                             })
-                        })
+                        });
 
                     }, this);
             }
@@ -229,10 +233,6 @@ define(function (require) {
             if (this.prescription.get('drugs')) {
                 this.prescription.get('drugs')
                     .on('add remove', function () {
-                        self.prescription.get('assigmentIntervals').each(function(interval){
-                            interval.set('drugs', self.prescription.get('drugs'));
-                        });
-                        console.log('add drug', arguments)
                         setTimeout(function () {
                             self.$el.find('select').select2();
                         }, 100);
