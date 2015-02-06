@@ -201,14 +201,20 @@ define(function (require) {
 
                         self.render();
 
+                        if(this.prescription.get('assigmentIntervals').length > 0) {
+                            $('.add-drug').addClass('ui-state-disabled');
+                        }
+
                         _.each(self.$el.find('.prescriptionInterval'), function(interval){
                             var intervalId = $(interval).attr('id');
                             $(interval).on('change', 'input, select', function(e){
                                 var changedInterval = self.prescription.get('assigmentIntervals').models[intervalId];
                                 var changedIntervalRow = $('.prescriptionInterval[id="'+intervalId+'"]');
+                                var beginDateTime = moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val(), 'DD.MM.YYYY HH:mm').valueOf();
+                                var endDateTime = moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val(), 'DD.MM.YYYY HH:mm').valueOf();
                                 changedInterval.set({
-                                    'beginDateTime': moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val(), 'MM.DD.YYYY HH:mm').unix(),
-                                    'endDateTime': moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val(), 'MM.DD.YYYY HH:mm').unix(),
+                                    'beginDateTime': beginDateTime ? beginDateTime : null,
+                                    'endDateTime': endDateTime ? endDateTime : null,
                                 });
                                 changedInterval.get('drugs').first().set({
                                     'dose': $(changedIntervalRow).find('.intervalDose').val(),
@@ -216,7 +222,11 @@ define(function (require) {
                                     'voa': $(changedIntervalRow).find('.intervalVoa').val()
                                 });
                             })
+                            $(interval).on('click', '.icon-remove', function(e){
+                                self.prescription.get('assigmentIntervals').remove(self.prescription.get('assigmentIntervals').models[intervalId]);
+                            });
                         });
+
 
                     }, this);
 

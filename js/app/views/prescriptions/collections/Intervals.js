@@ -8,23 +8,12 @@ define(function (require) {
             // console.log('init intervals collection', this);
         },
         addInterval: function (drugs) {
-            var self = this;
             var interval = new Interval();
 
-            // if (this.length) {
-            //     var last = this.last();
-            //     var endDateTime = last.get('endDateTime');
-            //     if (endDateTime) {
-            //         interval.set('beginDateTime', moment(endDateTime).add(1, 'minute').valueOf());
-            //     }else{
-            //         if(last.get('beginDateTime')){
-            //             interval.set('beginDateTime', moment(last.get('beginDateTime')).add(1, 'hour').valueOf());
-            //         }
-            //     }
-            // }
-            interval.set('drugs', new Backbone.Collection(drugs));
-            interval.get('drugs').first().set('dose', self.getDoseSumm());
+            interval.set('drugs', new Backbone.Collection(drugs.toJSON()));
+            interval.get('drugs').first().set('dose', this.getDoseBalance(drugs));
             this.add(interval);
+            $('.add-drug').addClass('ui-state-disabled');
         },
 
         cancelIntervals: function() {
@@ -33,26 +22,28 @@ define(function (require) {
             });
         },
 
-        getDoseBalance: function() {
-            var drugsDoseSumm = this.getDoseSumm('drugs');
-            var intervalsDoseSumm = this.getDoseSumm('intervals');
-            return (drugsDoseSumm - intervalsDoseSumm);
+        getDoseBalance: function(drugs) {
+            var intervalDoseSumm = 0;
+            this.each(function(interval){
+                console.log(interval);
+                if (Array.isArray(interval.get('drugs'))) {
+                    intervalDoseSumm += parseInt(interval.get('drugs')[0].dose);
+                } else {
+                    intervalDoseSumm += parseInt(interval.get('drugs').first().get('dose'));
+                }
+            });
+            return (this.getDoseSumm(drugs) - intervalDoseSumm) > 0 ? this.getDoseSumm(drugs) - intervalDoseSumm : 0;
         },
 
         calculateVoa: function() {
-            var intSumm = this.getDoseSumm();
-            $('.intervalDose').each(function(d, dose){
-                intSumm = intSumm - $(dose).val() ? parseInt($(dose).val()) : 0;
-            });
-            return intSumm;
+            return 0;
         },
 
-        getDoseSumm: function(tab) {
+        getDoseSumm: function(drugs) {
             var summ = 0;
-            $('.dose').each(function(d, dose){
-                summ += $(dose).val() ? parseInt($(dose).val()) : 0;
+            drugs.each(function(drug){
+                summ += parseInt(drug.get('dose'));
             });
-            console.log(summ);
             return summ;
         },
 
