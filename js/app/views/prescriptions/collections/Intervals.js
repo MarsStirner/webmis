@@ -9,6 +9,7 @@ define(function (require) {
         },
         addInterval: function (drugs) {
 
+            var self = this;
             var interval = new Interval();
 
             if (this.length) {
@@ -23,6 +24,7 @@ define(function (require) {
                 }
             }
             interval.set('drugs', drugs);
+            interval.get('drugs').first().set('dose', self.getDoseSumm());
             this.add(interval);
         },
 
@@ -44,9 +46,11 @@ define(function (require) {
 
         getDoseSumm: function(tab) {
             var summ = 0;
-            $.each($('#'+tab).find("[data-value='"+tab.substring(0, tab.length - 1)+".dose']"), function(d, dose) {
+            $('.dose').each(function(d, dose){
+                console.log(dose);
                 summ += $(dose).val() ? parseInt($(dose).val()) : 0;
             });
+            console.log(summ);
             return summ;
         },
 

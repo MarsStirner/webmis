@@ -227,9 +227,10 @@ define(function (require) {
                                 var changedInterval = self.prescription.get('assigmentIntervals').models[intervalId];
                                 var changedIntervalRow = $('.prescriptionInterval[id="'+intervalId+'"]');
                                 changedInterval.set({
-                                    'beginDateTime': moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val()).unix(),
-                                    'endDateTime': moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val()).unix(),
+                                    'beginDateTime': moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val(), 'MM.DD.YYYY HH:mm').unix(),
+                                    'endDateTime': moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val(), 'MM.DD.YYYY HH:mm').unix(),
                                 });
+                                console.log(changedInterval);
                                 changedInterval.get('drugs').first().set({
                                     'dose': $(changedIntervalRow).find('.intervalDose').val(),
                                     'moa': $(changedIntervalRow).find('.intervalMoa').val(),
