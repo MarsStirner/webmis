@@ -5,7 +5,7 @@ define(function (require) {
     var Intervals = Collection.extend({
         model: Interval,
         initialize: function () {
-            // console.log('init intervals collection', this);
+
         },
         addInterval: function (drugs) {
             var interval = new Interval();
@@ -24,11 +24,10 @@ define(function (require) {
         getDoseBalance: function(drugs) {
             var intervalDoseSumm = 0;
             this.each(function(interval){
-                console.log(interval);
                 if (Array.isArray(interval.get('drugs'))) {
-                    intervalDoseSumm += parseInt(interval.get('drugs')[0].dose);
+                    intervalDoseSumm += interval.get('drugs')[0].dose ? parseInt(interval.get('drugs')[0].dose) : 0;
                 } else {
-                    intervalDoseSumm += parseInt(interval.get('drugs').first().get('dose'));
+                    intervalDoseSumm += interval.get('drugs').first().get('dose') ? parseInt(interval.get('drugs').first().get('dose')) : 0;
                 }
             });
             return (this.getDoseSumm(drugs) - intervalDoseSumm) > 0 ? this.getDoseSumm(drugs) - intervalDoseSumm : 0;
@@ -80,7 +79,6 @@ define(function (require) {
                             if (diff === 0) {
                                 collectionErrors.push('Совпадают начала интервалов. ');
                             }
-                            // console.log('begin diff', diff)
                         }
                     }
 
@@ -89,11 +87,8 @@ define(function (require) {
                             var range1 = moment(mj.beginDateTime).startOf('minutes').twix(moment(mj.endDateTime).startOf('minutes'));
                             var range2 = moment(mj2.beginDateTime).startOf('minutes').twix(moment(mj2.endDateTime).startOf('minutes'));
                             if (range1.overlaps(range2)) {
-                                // console.log('пересекаются')
                                 collectionErrors.push('Пересечение интервалов. ')
                             }
-
-
                         }
                     }
 

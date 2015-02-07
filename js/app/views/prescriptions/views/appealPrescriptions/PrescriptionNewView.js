@@ -19,7 +19,6 @@ define(function (require) {
 
             this.appealId = this.options.appeal.get('id');
 
-            //console.log('init new prescription view', this);
             this.prescription = new Prescription({}, {
                 actionTypeId: this.options.actionTypeId //754
             });
@@ -29,7 +28,6 @@ define(function (require) {
             $.when(this.prescription.initialized())
                 .then(function () {
                     self.prescription.set('eventId', self.appealId);
-                    //console.log('prescription initialized', self.prescription);
                     //в экшенпроперти "Спооб введения" в valueDomain хранятся коды
                     //по которым надо отфильтровать справочник способов введения
                     self.administration.fetch({
@@ -38,21 +36,14 @@ define(function (require) {
                         }
                     })
                         .done(function () {
-
                             self.prescription.set('eventId', self.appealId);
-                            // self.debug();
                             self.render();
                             self.listenTo(self.prescription, 'change', self.validateForm);
                         });
-
                 });
-
-
         },
         validateForm: function () {
-
             var errors = this.validate();
-
             this.saveButton(!errors.length);
             this.showErrors(errors);
         },
@@ -66,7 +57,6 @@ define(function (require) {
                 _.each(errors, function (error) {
                     $errors.append(error);
                 }, this);
-                //	$errors.append(errors[0]);
                 $errors.show();
             }
         },
@@ -75,6 +65,7 @@ define(function (require) {
             var errors = [];
 
             var drugs = this.prescription.get('drugs');
+
             if (drugs && drugs instanceof Backbone.Collection) {
                 if (!drugs.length) {
                     errors.push('Список лекарственных препаратов пуст. ');
@@ -83,10 +74,10 @@ define(function (require) {
                 if (drugsErrors && drugsErrors.length) {
                     errors = errors.concat(drugsErrors);
                 }
-
             }
 
             var intervals = this.prescription.get('assigmentIntervals');
+
             if (intervals && intervals instanceof Backbone.Collection) {
                 if (!intervals.length) {
                     errors.push('Список интервалов приёма препаратов пуст. ');
@@ -96,7 +87,7 @@ define(function (require) {
                     errors = errors.concat(intervalsErrors);
                 }
             }
-            console.log('validate', errors);
+
             return errors;
         },
 
@@ -130,12 +121,6 @@ define(function (require) {
             return moaKeys;
         },
         debug: function () {
-            /*
-             *            this.prescription.on('change', function () {
-             *                console.log('prescription change', this.prescription);
-             *            }, this);
-             *
-             */
             this.prescription.on('change', this.showJSON, this);
             this.prescription.get('drugs')
                 .on('add remove change', this.showJSON, this);
@@ -150,9 +135,7 @@ define(function (require) {
             'click .add-drug': 'onClickAddDrug'
         },
         onSave: function () {
-            //console.log('onClickSave');
             var self = this;
-
             this.saveButton(false, 'Сохраняем...');
             this.prescription.save({}, {
                 success: function (m, r) {
@@ -172,7 +155,6 @@ define(function (require) {
                 prescription: this.prescription,
                 appeal: this.options.appeal
             });
-
             popup.render();
             popup.open();
         },
@@ -187,8 +169,6 @@ define(function (require) {
         render: function () {
             var self = this;
             BaseView.prototype.render.call(self);
-
-
 
             if (this.prescription.get('assigmentIntervals')) {
                 this.prescription.get('assigmentIntervals')
@@ -242,10 +222,10 @@ define(function (require) {
                                 }
                                 changedInterval.get('drugs').first().set({
                                     'dose': $(changedIntervalRow).find('.intervalDose').val(),
-                                    'moa': $(changedIntervalRow).find('.intervalMoa').val(),
+                                    'moa': $($(changedIntervalRow).find('.intervalMoa').find('.intervalMoa').prevObject[1]).val(),
                                     'voa': $(changedIntervalRow).find('.intervalVoa').val()
                                 });
-
+                                console.log(changedInterval);
                             })
                             $(interval).on('click', '.icon-remove', function(e){
                                 self.prescription.get('assigmentIntervals').remove(self.prescription.get('assigmentIntervals').models[intervalId]);
@@ -256,14 +236,10 @@ define(function (require) {
                                         'moa': parseInt($(e.target).val())
                                     });
                                 }
-                                console.log(changedInterval);
                             });
                         });
 
-
                     }, this);
-
-
             }
 
             if(this.prescription.get('drugs')){
@@ -271,11 +247,6 @@ define(function (require) {
                 .on('add remove', function(){
                     setTimeout(function () {
                     self.$el.find('select').select2();
-
-                    // self.prescription.get('assigmentIntervals').each(function(interval){
-                    //     interval.set('drugs', self.prescription.get('drugs'));
-                    // });
-
                     }, 100);
                 });
 
@@ -294,6 +265,5 @@ define(function (require) {
         }
     })
         .mixin([popupMixin]);
-
 
 });

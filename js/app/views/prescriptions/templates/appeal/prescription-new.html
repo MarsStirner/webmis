@@ -96,7 +96,7 @@
                 </thead>
                 <tbody>
                 <%_.each(data.prescription.assigmentIntervals, function(interval, id){%>
-                <tr>
+                <tr class="prescriptionInterval" id="<%=id%>">
                     <td>
                         <input class="date_entry intervalBeginDate" type="text" value="<%= moment(interval.beginDateTime).format('DD.MM.YYYY') %>">
                     </td>

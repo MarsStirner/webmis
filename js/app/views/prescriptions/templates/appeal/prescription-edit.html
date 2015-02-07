@@ -87,7 +87,7 @@
                         <th>&nbsp;</th>
                     </tr>
                     <tbody>
-                        <tr data-each-interval="prescription.assigmentIntervals">
+                        <tr class="prescriptionInterval" data-each-interval="prescription.assigmentIntervals" id="<%=id%>">
                             <td>
                                 <input data-id="interval.cid | add -from" class="datetime_entry" type="text" data-value="interval.beginDateTime | datetime">
                             </td><td>
