@@ -13,7 +13,6 @@ define(function (require) {
             interval.set('drugs', new Backbone.Collection(drugs.toJSON()));
             interval.get('drugs').first().set('dose', this.getDoseBalance(drugs));
             this.add(interval);
-            $('.add-drug').addClass('ui-state-disabled');
         },
 
         cancelIntervals: function() {

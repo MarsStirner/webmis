@@ -199,31 +199,64 @@ define(function (require) {
                             $('.time_entry').timepicker();
                         }, 100);
 
+                        var drugTab = $('#drugs').html();
+
                         self.render();
 
                         if(this.prescription.get('assigmentIntervals').length > 0) {
                             $('.add-drug').addClass('ui-state-disabled');
+                            var doses = [];
+                            var units = [];
+                            $.each($('#drugs').find('.dose'), function(d, dose){
+                                doses.push($(dose).val());
+                            });
+                            $('#drugs').html(drugTab).find('.dose').attr('disabled', 'disabled');
+                            $.each($('#drugs').find('.select2-container.units span'), function(u, unit){
+                                units.push(unit.innerHTML);
+                            });
+                            $.each($('#drugs').find('.dose'), function(d, dose){
+                                $(dose).parent().text(doses[d]);
+                            });
+                            $.each($('#drugs').find('.units'), function(u, unit){
+                                $(unit).parent().text(units[u]);
+                            });
+                            $('#drugs').find('.icon-remove').hide();
                         }
 
                         _.each(self.$el.find('.prescriptionInterval'), function(interval){
                             var intervalId = $(interval).attr('id');
+                            var changedInterval = self.prescription.get('assigmentIntervals').models[intervalId];
                             $(interval).on('change', 'input, select', function(e){
-                                var changedInterval = self.prescription.get('assigmentIntervals').models[intervalId];
                                 var changedIntervalRow = $('.prescriptionInterval[id="'+intervalId+'"]');
                                 var beginDateTime = moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val(), 'DD.MM.YYYY HH:mm').valueOf();
                                 var endDateTime = moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val(), 'DD.MM.YYYY HH:mm').valueOf();
-                                changedInterval.set({
-                                    'beginDateTime': beginDateTime ? beginDateTime : null,
-                                    'endDateTime': endDateTime ? endDateTime : null,
-                                });
+                                if (beginDateTime > 0) {
+                                    changedInterval.set({
+                                        'beginDateTime': beginDateTime
+                                    });
+                                }
+                                if (endDateTime > 0) {
+                                    changedInterval.set({
+                                        'endDateTime': endDateTime ? endDateTime : null
+                                    });
+                                }
                                 changedInterval.get('drugs').first().set({
                                     'dose': $(changedIntervalRow).find('.intervalDose').val(),
                                     'moa': $(changedIntervalRow).find('.intervalMoa').val(),
                                     'voa': $(changedIntervalRow).find('.intervalVoa').val()
                                 });
+
                             })
                             $(interval).on('click', '.icon-remove', function(e){
                                 self.prescription.get('assigmentIntervals').remove(self.prescription.get('assigmentIntervals').models[intervalId]);
+                            });
+                            $(interval).on('click', '.intervalMoa', function(e){
+                                if ($(e.target).val()) {
+                                    changedInterval.get('drugs').first().set({
+                                        'moa': parseInt($(e.target).val())
+                                    });
+                                }
+                                console.log(changedInterval);
                             });
                         });
 
