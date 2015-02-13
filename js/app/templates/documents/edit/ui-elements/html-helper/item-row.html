@@ -8,7 +8,9 @@
 				<%if (model.result.get("mnem").toUpperCase() == 'LAB') {%>
 					<span class="helper-item-date"><%=moment(model.get("plannedEndDate")).format('DD.MM.YYYY')%></span>
 				<%} else  {%>
-					<span class="helper-item-date"><%=moment(model.result.getProperty('assessmentBeginDate')).format('DD.MM.YYYY')%></span>
+					<span class="helper-item-date">
+					<%=moment(_.find(model.result.get('group')[0].attribute, function(attr){return attr.name === 'assessmentBeginDate'}).properties[0].value).format('DD.MM.YYYY')%>
+					</span>
 				<%}%>
 				<%if (model.get('takingTime')) {%>
 					<span class="helper-item-takingtime">&nbsp;&nbsp;Время забора: <%=moment(model.get("takingTime").datetime).format('H:mm')%></span>
