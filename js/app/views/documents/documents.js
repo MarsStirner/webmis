@@ -4469,7 +4469,7 @@ define(function (require) {
                                     paste.push({
                                         inline: item.inline,
                                         name: item.get("diagnosticName") ? item.get("diagnosticName").name : item.get("assessmentName").name,
-                                        plannedEndDate: item.result.get("mnem").toUpperCase() === 'LAB' ? item.get("plannedEndDate") : moment(item.result.getProperty('assessmentBeginDate')),
+                                        plannedEndDate: item.result.get("mnem").toUpperCase() === 'LAB' ? item.get("plannedEndDate") : moment(_.find(item.result.get('group')[0].attribute, function(attr){return attr.name === 'assessmentBeginDate'}).properties[0].value),
                                         context: item.result.get('context'),
                                         tests: tests
                                     });
