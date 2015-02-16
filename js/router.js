@@ -344,7 +344,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		anareports: function() {
-			window.location.href = ANAREPORTS_PATH;
+			window.open(ANAREPORTS_PATH,'_blank');
 		},
 
 		patients: function() {
