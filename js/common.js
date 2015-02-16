@@ -20,7 +20,7 @@ DATA_PATH = "/data/";
 
 POLICLINIC_HOST = "10.128.225.200:5000";
 APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
-ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/index.html";
+ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/";
 
 App = {};
 App.Models = {};
