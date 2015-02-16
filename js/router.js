@@ -112,6 +112,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			"appointments/": "appointmentsPatient",
 			"appointments/:id": "appointments",
 
+			"anareports/": "anareports",
+
 			/*"appeals/:id/": "appeal",
 			"appeals/:query": "appeals",
 			"appeals/:id/examinations/": "examinations",
@@ -339,6 +341,10 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			this.patients();
 			window.document.title = "Запись на консультацию";
 			this.currentPage = "appointments";
+		},
+
+		anareports: function() {
+			window.location.href = ANAREPORTS_PATH;
 		},
 
 		patients: function() {

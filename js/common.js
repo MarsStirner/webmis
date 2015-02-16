@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "1.3.66";
+var GUI_VERSION = "1.3.67";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
@@ -20,6 +20,7 @@ DATA_PATH = "/data/";
 
 POLICLINIC_HOST = "10.128.225.200:5000";
 APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
+ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/index.html";
 
 App = {};
 App.Models = {};

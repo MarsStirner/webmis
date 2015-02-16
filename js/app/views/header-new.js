@@ -160,6 +160,10 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 						title: "Запись на консультацию",
 						name: "appointments",
 						uri: "/appointments/"
+					}, {
+						title: "Отчёты",
+						name: "anareports",
+						uri: "/anareports/"
 					});
 					break;
 				case ROLES.NURSE_DEPARTMENT:
