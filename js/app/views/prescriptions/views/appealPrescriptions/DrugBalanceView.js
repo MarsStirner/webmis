@@ -1,4 +1,5 @@
 define(function (require) {
+    require('collections/departments');
     var template = require('text!views/prescriptions/templates/appeal/drug-ballance.html');
     var BaseView = require('views/prescriptions/views/BaseView');
 
@@ -20,6 +21,10 @@ define(function (require) {
                     this.renderNoResults();
                 }
             }, this);
+
+            this.departments = new App.Collections.Departments();
+            this.departments.setParams({limit: 0});
+            this.departments.fetch();
             this.collection.on('fetch', this.renderOnFetch, this);
         },
         renderNoResults: function () {
@@ -38,24 +43,30 @@ define(function (require) {
             var data = {};
             var currentDepartment = this.options.appeal.get('currentDepartment').id;
             var items = [];
-
+            var self = this;
             this.collection.each(function(item){
                 _.each(item.get('balanceOfGoodDataList'), function(data){
                     var itemJSON = item.toJSON();
                     itemJSON.balanceOfGoodData = data;
-                    if (!data.disabled && data.value) {
-                        if (data.orgStructureId == currentDepartment) {
-                            itemJSON.balanceOfGoodData.where = 'inCurrentDepartment';
-                        } else if (data.orgStructureId == 1) {
-                            itemJSON.balanceOfGoodData.where = 'inHospital';
-                        } else {
-                            itemJSON.balanceOfGoodData.where = 'inOtherDepartments';
-                        }
-                    }
-                    if (itemJSON.balanceOfGoodData.where === 'inCurrentDepartment') {
-                        items.unshift(itemJSON);
-                    } else {
-                        items.push(itemJSON);
+                    if (itemJSON.balanceOfGoodData.orgStructureId) {
+                        if (!data.disabled && data.value) {
+                            if (data.orgStructureId == currentDepartment) {
+                                itemJSON.balanceOfGoodData.where = 'inCurrentDepartment';
+                                items.unshift(itemJSON);
+                            } else if (data.orgStructureId == 1) {
+                                itemJSON.balanceOfGoodData.where = 'inHospital';
+                                items.push(itemJSON);
+                            } else {
+                                itemJSON.balanceOfGoodData.where = 'inOtherDepartments';
+                                var whereDepartment = _.find(self.departments.models, function(department){
+                                    return itemJSON.balanceOfGoodData.orgStructureId == department.get('id');
+                                });
+                                if (whereDepartment) {
+                                    itemJSON.balanceOfGoodData.whereDepartmentName = whereDepartment.get('name');
+                                }
+                                items.push(itemJSON);
+                            }
+                        }  
                     }
                 })
             });

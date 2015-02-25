@@ -40,7 +40,7 @@
                     На складе отделения
                     <%}%>
                     <% if(item.balanceOfGoodData.where === 'inOtherDepartments'){%>
-                    На складах других отделений
+                    На складе</br>(<%= item.balanceOfGoodData.whereDepartmentName %>)
                     <%}%>
                     <% if(item.balanceOfGoodData.where === 'inHospital'){%>
                     На складе ЛПУ
