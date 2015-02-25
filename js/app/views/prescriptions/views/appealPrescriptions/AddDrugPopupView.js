@@ -29,7 +29,7 @@ define(function (require) {
         },
 
         validateForm: function () {
-            var found = ((this.balanceView.inHospital()).length || (this.balanceView.inCurrentDepartment()).length || (this.balanceView.inOtherDepartments()).length);
+            var found = (this.balanceView.data() && this.balanceView.data().items.length);
             this.saveButton(found);
         },
 
@@ -120,7 +120,7 @@ define(function (require) {
                     $.getJSON(DATA_PATH + "rls/?text="+request.term, function (raw) {
                         response($.map(raw, function (item) {
                             return {
-                                label: item.tradeLocalName + ' (' + item.tradeName + ') ' + item.form + ' ' + item.dosageValue + ' ' + item.dosageUnitCode,
+                                label: item.tradeLocalName+' ('+item.tradeName+') '+item.form+' '+item.dosageValue+' '+item.dosageUnitCode+' '+item.filling,
                                 value: item.tradeLocalName,
                                 id: item.id
                             };
