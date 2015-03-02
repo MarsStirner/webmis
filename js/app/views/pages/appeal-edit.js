@@ -101,6 +101,14 @@ define([
                     }, {
                         name: "departments",
                         collection: App.Collections.Departments
+                    },
+                    {
+                        name: "insuranceCompanies",
+                        pathPart: "insurance"
+                    },
+                    {
+                        name: "docTypes",
+                        pathPart: "clientDocument&filter[groupId]=1"
                     }
                 ];
 
@@ -131,7 +139,7 @@ define([
             var self = this;
             // this.logModel();
             self.$(".Save").attr("disabled", true);
-                
+
             var readyToSave = this.save(event, {
                 error: function () {
                     console.log('error', arguments);
@@ -284,7 +292,7 @@ define([
             this.$("[name='contract']").html('').append(this.contracts.map(function (contract) {
                 return $("<option value='" + contract.get("id") + "'>" + contract.get("number") + "</option>");
             })).trigger('change').prop("disabled", this.contracts.length === 1);
-            
+
             UIInitialize(this.$("[name='contract']").parent());
             if(!this.contracts.length){
                 this.resetContract();
@@ -293,7 +301,7 @@ define([
         },
 
         resetContract: function(){
-            this.model.set('contract', {}); 
+            this.model.set('contract', {});
         },
 
         onChangeContract: function(e){
@@ -303,7 +311,7 @@ define([
             if(contractId){
                 contract = this.contracts.find(function(model){
                     return model.get('id') == contractId;
-                }); 
+                });
                 this.model.set('contract', contract);
             }
 
@@ -503,6 +511,16 @@ define([
                     // console.log('change eventType', this.model.get('appealType').get('eventType').toJSON());
                     this.getContracts();
                 }, this);
+
+            this.model.get("payer").connect("firstName", "payer[firstName]", this.$el);
+            this.model.get("payer").connect("lastName", "payer[lastName]", this.$el);
+            this.model.get("payer").connect("middleName", "payer[middleName]", this.$el);
+            this.model.get("payer").connect("birthDate", "payer[birthDate]", this.$el);
+            this.model.get("payer").connect("documentType", "payer[documentType]", this.$el);
+            this.model.get("payer").connect("documentSeries", "payer[documentSeries]", this.$el);
+            this.model.get("payer").connect("documentNumber", "payer[documentNumber]", this.$el);
+            this.model.get("payer").connect("address", "payer[address]", this.$el);
+            this.model.get("payer").connect("company", "payer[company]", this.$el);
 
             this.model.get("rangeAppealDateTime").connect("start", "appeal[date][start]", this.$el);
             this.model.get("rangeAppealDateTime").connect("start", "appeal[time][start]", this.$el);

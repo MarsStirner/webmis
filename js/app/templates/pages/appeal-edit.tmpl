@@ -168,11 +168,72 @@
                                     <select class="Styled Mandatory" id="event_type" name="event_type[id]"></select>
                                     <span></span>
 								</div>
+
+								<!--
 								<div class="HalfCol">
 									<span class="Label">Договор</span>
                                     <select class="Styled Mandatory" name="contract"></select>
 								</div>
+								-->
 
+							</div>
+						</li>
+						<li>
+							<div class="LineBlock">
+								<span class="Label">Плательщик</span>
+								<div class="HalfCol WithoutName">
+									<input type="text" name="payer[firstName]" placeholder="Фамилия"/>
+								</div>
+								<div class="HalfCol WithoutName">
+									<input type="text" name="payer[lastName]" placeholder="Имя"/>
+								</div>
+								<div class="HalfCol WithoutName">
+									<input type="text" name="payer[middleName]" placeholder="Отчество"/>
+								</div>
+							</div>
+							<div class="LineBlock">
+								<div class="QuartCol">
+									<span class="Label">Дата рождения</span>
+									<div class="date">
+										<input type="text" name="payer[birthDate]" placeholder="дд.мм.гггг" class="date-input SelectDate" />
+										<i class="icon-calendar date-icon"></i>
+									</div>
+								</div>
+								<div class="HalfCol" >
+									<span class="Label">Документ</span>
+									<select class="Styled" id="event_type" name="payer[documentType]">
+										{{each(i, type) dicts.docTypes}}
+											<option value="${type['id']}">${type['value']}</option>
+										{{/each}}
+									</select>
+								</div>
+								<div class="QuartCol WithoutName">
+									<div class="date">
+										<input type="text" name="payer[documentSeries]" placeholder="серия"/>
+									</div>
+								</div>
+								<div class="QuartCol WithoutName">
+									<div class="date">
+										<input type="text" name="payer[documentNumber]" placeholder="номер"/>
+									</div>
+								</div>
+							</div>
+							<div class="LineBlock">
+								<div class="WideCol">
+									<label> Адрес </label>
+									<input name="payer[address]" class="RichText" type="text" placeholder=""/>
+								</div>
+							</div>
+							<div class="LineBlock">
+								<div class="WideCol">
+									<label> Юр. лицо </label>
+									<select class="Styled" id="event_type" name="payer[company]">
+									<option value="" selected="selected">...</option>
+										{{each(i, type) dicts.insuranceCompanies}}
+											<option value="${type['id']}">${type['value']}</option>
+										{{/each}}
+									</select>
+								</div>
 							</div>
 						</li>
 						<li>
