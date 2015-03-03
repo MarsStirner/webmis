@@ -517,7 +517,8 @@ define([
             this.model.get("payer").connect("middleName", "payer[middleName]", this.$el);
             this.model.get("payer").connect("birthDate", "payer[birthDate]", this.$el);
             this.model.get("payer").connect("documentType", "payer[documentType]", this.$el);
-            this.model.get("payer").connect("documentSeries", "payer[documentSeries]", this.$el);
+            this.model.get("payer").connect("documentSeriesLeft", "payer[documentSeriesLeft]", this.$el);
+            this.model.get("payer").connect("documentSeriesRight", "payer[documentSeriesRigth]", this.$el);
             this.model.get("payer").connect("documentNumber", "payer[documentNumber]", this.$el);
             this.model.get("payer").connect("address", "payer[address]", this.$el);
             this.model.get("payer").connect("company", "payer[company]", this.$el);
