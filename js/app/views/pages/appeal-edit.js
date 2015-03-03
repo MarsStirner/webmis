@@ -522,6 +522,9 @@ define([
             this.model.get("payer").connect("address", "payer[address]", this.$el);
             this.model.get("payer").connect("company", "payer[company]", this.$el);
 
+            this.model.get("paymentContract").connect("date", "payment_contract[date]", this.$el);
+            this.model.get("paymentContract").connect("number", "payment_contract[number]", this.$el);
+
             this.model.get("rangeAppealDateTime").connect("start", "appeal[date][start]", this.$el);
             this.model.get("rangeAppealDateTime").connect("start", "appeal[time][start]", this.$el);
 
