@@ -1176,7 +1176,7 @@ define(function(require){
 			} else {
 				if (!this.collection.getDms().length) {
 					var payment = new App.Models.Payment();
-					payment.get("policyType").set("id", 3);
+					payment.get("policyType").set("code", 3);
 					this.collection.add(payment);
 				}
 			}
@@ -1186,7 +1186,7 @@ define(function(require){
 			this.triggerView = view;
 			var NewModel = new App.Models.Payment();
 			if (this.options.type === "dms") {
-				NewModel.get("policyType").set("id", 3);
+				NewModel.get("policyType").set("code", 3);
 			}
 			this.collection.add(NewModel, {
 				at: this.collection.indexOf(this.triggerView.model) + 1
@@ -1194,8 +1194,8 @@ define(function(require){
 		},
 
 		addOne: function(model) {
-			if (this.options.type == "dms" && model.get("policyType").get("id") == 3 ||
-				this.options.type == "oms" && model.get("policyType").get("id") != 3) {
+			if (this.options.type == "dms" && model.get("policyType").get("code") == 3 ||
+				this.options.type == "oms" && model.get("policyType").get("code") != 3) {
 				var view = new PolicyView({
 					model: model,
 					type: this.options.type,
