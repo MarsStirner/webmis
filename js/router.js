@@ -200,7 +200,9 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		index: function() {
-			if (Core.Data.currentRole() === ROLES.CHIEF) {
+			if (Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST) {
+				this.patients();
+			} else if (Core.Data.currentRole() === ROLES.CHIEF) {
 				this.chiefIndex();
 			} else {
 				this.appeals();

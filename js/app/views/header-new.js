@@ -123,11 +123,11 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 			switch (Core.Data.currentRole()) {
 				case ROLES.NURSE_RECEPTIONIST:
 					sections.push(
-					// {
-					// 	title: "Пациенты",
-					// 	name: "patients",
-					// 	uri: "/patients/"
-					// },
+					{
+						title: "Пациенты",
+						name: "patients",
+						uri: "/patients/"
+					},
 					{
 						title: "Госпитализации",
 						name: "appeals",
