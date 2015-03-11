@@ -118,11 +118,48 @@ define(function (require) {
             self.ui.$drugName.autocomplete({
                 source: function (request, response) {
                     $.getJSON(DATA_PATH + "rls/?text="+request.term, function (raw) {
+                        _.each(raw, function(item){
+                            item.getStore = function() {
+                                var store = {};
+                                if (this.balanceOfGoodDataList.length) {
+                                    _.each(this.balanceOfGoodDataList, function(goodStore){
+                                        if (goodStore.orgStructureId == Core.Cookies.get("userDepartmentId")) {
+                                            store = {
+                                                id: goodStore.orgStructureId,
+                                                label: 'на складе отделения',
+                                                color: '#c5e4ff'
+                                            }
+                                        } else if (goodStore.orgStructureId > 1 && (!store.id || store.id == 1)) {
+                                            store = {
+                                                id: goodStore.orgStructureId,
+                                                label: 'на складах других отделений',
+                                                color: '#cdffd7'
+                                            }
+                                        } else if (!store.id && goodStore.orgStructureId == 1) {
+                                            store = {
+                                                id: goodStore.orgStructureId,
+                                                label: 'на складе ЛПУ',
+                                                color: '#fdffb7'
+                                            }
+                                        }
+                                    });
+                                }
+                                if (!store.id) {
+                                    store = {
+                                        id: null,
+                                        label: 'отсутствует',
+                                        color: '#ffc7c7'
+                                    }
+                                }
+                                return store
+                            };
+                        });
                         response($.map(raw, function (item) {
                             return {
                                 label: item.tradeLocalName+' ('+item.tradeName+') '+item.form+' '+item.dosageValue+' '+item.dosageUnitCode+' '+item.filling,
                                 value: item.tradeLocalName,
-                                id: item.id
+                                id: item.id,
+                                store: item.getStore()
                             };
                         }));
                     });
@@ -135,6 +172,14 @@ define(function (require) {
                     }
                 }
             });
+            if (self.ui.$drugName) {
+                self.ui.$drugName.data('uiAutocomplete')._renderItem = function (ul, item) {
+                    return $( "<li>" )
+                     .css('background-color', item.store.color)
+                     .append( $( "<a>" ).text( item.label ).append( $("<span>").text(item.store.label).css({'float': 'right'}) ) )
+                     .appendTo( ul );
+               }
+            };
         }
 
 
