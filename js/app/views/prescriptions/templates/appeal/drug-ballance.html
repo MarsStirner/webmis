@@ -1,34 +1,39 @@
 <% if(data.items.length){ %>
     <table class="my-grid sklad">
         <tr>
-            <td style="width:18%;">Торговое название</td>
-            <td style="width:18%;">Латинское название</td>
-            <td style="width:12%;">Активные вещества</td>
-            <td style="width:8%;">Дозировка/Ед.изм</td>
-            <td style="width:8%;">Форма выпуска</td>
-            <td style="width:8%;">Годен до</td>
-            <td style="width: 16%;">Наличие</td>
+            <td style="font-weight: bold;">Торговое название</td>
+            <td style="font-weight: bold;">Латинское название</td>
+            <td style="font-weight: bold;">Активные вещества</td>
+            <td style="font-weight: bold;">Дозировка/Ед.изм</td>
+            <td style="font-weight: bold;">Форма выпуска</td>
+        </tr>
+        <tr>
+            <td>
+                <%= data.items[0].tradeLocalName%>
+                <% if(data.items[0].isExpirationDateComesToEnd){%>*<%}%>
+            </td>
+            <td>
+                <%= data.items[0].tradeName %>
+            </td>
+            <td>
+                <%= data.items[0].actMattersName %>
+            </td>
+            <td>
+                <%= data.items[0].dosageValue %> <%= data.items[0].dosageUnitCode %>
+            </td>
+            <td>
+                <%= data.items[0].form + ', ' + data.items[0].filling %>
+            </td>
+        </tr>
+    </table>
+<div style="height: 10em; overflow: auto; margin-top: -1em;">
+    <table>
+        <tr>
+            <td width="6%">Годен до</td>
+            <td>Наличие</td>
         </tr>
         <% _.each(data.items, function(item) { %>
             <tr <% if(item.balanceOfGoodData.where){%>  class="<%= item.balanceOfGoodData.where%>"<%}%>>
-                <td>
-                    <!-- <%= item.rlsNomenId %> -->
-
-                    <%= item.tradeLocalName%>
-                    <% if(item.isExpirationDateComesToEnd){%>*<%}%>
-                </td>
-                <td>
-                    <%= item.tradeName %>
-                </td>
-                <td>
-                    <%= item.actMattersName %>
-                </td>
-                <td>
-                    <%= item.dosageValue %> <%= item.dosageUnitCode %>
-                </td>
-                <td>
-                    <%= item.form + ', ' + item.filling %>
-                </td>
                 <td >
                     <span <% if(item.isExpirationDateComesToEnd){%>style="color:red;"<%}%>>
                         <%= moment(item.balanceOfGoodData.bestBefore).format('DD.MM.YYYY') %>
@@ -40,7 +45,7 @@
                     На складе отделения
                     <%}%>
                     <% if(item.balanceOfGoodData.where === 'inOtherDepartments'){%>
-                    На складе</br>(<%= item.balanceOfGoodData.whereDepartmentName %>)
+                    На складе (<%= item.balanceOfGoodData.whereDepartmentName %>)
                     <%}%>
                     <% if(item.balanceOfGoodData.where === 'inHospital'){%>
                     На складе ЛПУ
@@ -50,4 +55,5 @@
             </tr>
         <% }); %>
     </table>
+</div>
 <% } %>

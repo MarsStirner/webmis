@@ -46,7 +46,7 @@ define(function (require) {
             if (msg) {
                 $saveButton.button('option', 'label', msg);
             } else {
-                $saveButton.button('option', 'label', 'Сохранить');
+                $saveButton.button('option', 'label', 'Добавить');
             }
 
         },
@@ -157,7 +157,7 @@ define(function (require) {
                         response($.map(raw, function (item) {
                             return {
                                 label: item.tradeLocalName+' ('+item.tradeName+') '+item.form+' '+item.dosageValue+' '+item.dosageUnitCode+' '+item.filling,
-                                value: item.tradeLocalName,
+                                value: item.tradeLocalName+' ('+item.tradeName+') '+item.form+' '+item.dosageValue+' '+item.dosageUnitCode+' '+item.filling,
                                 id: item.id,
                                 store: item.getStore()
                             };
