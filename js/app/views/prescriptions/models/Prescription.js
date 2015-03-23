@@ -45,7 +45,15 @@ define(function (require) {
             return dfd.promise();
         },
         initCollections: function (callback) {
+            var self = this;
+
             if (this.get('drugs')) {
+                _.each(this.get('assigmentIntervals'), function(interval){
+                    _.each(interval.drugs, function(drug){
+                        var dr = _.find(self.get('drugs'), function(d){ return d.nomen == drug.nomen; });
+                        drug.id = dr.id;
+                    });
+                });
                 var drugs = new Drugs(this.get('drugs'));
             } else {
                 var drugs = new Drugs();

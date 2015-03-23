@@ -107,6 +107,10 @@ define(function (require) {
                         }
                     });
                 });
+                console.log(ai.get('note'));
+                if (ai.get('note')) {
+                    data.note = ai.get('note');
+                }
             });
 
             data.intervals = intervals;
@@ -176,6 +180,21 @@ define(function (require) {
                                 return model.get('moa');
                             });
 
+                            var infuzPrescriptions = [];
+
+                            _(groups).each(function (group, groupName) {
+                                if (groupName == 'null') {
+                                    _(group).each(function (prescription) {
+                                        if (prescription.get('actionTypeId') == 753) {
+                                            _(prescription.get('assigmentIntervals')).each(function (interval) {
+                                                var infuzPrescription = new Backbone.Model(prescription.toJSON);
+                                            });
+                                        }
+                                    });
+
+                                }
+                            });
+
                             _(groups).each(function (groupPrescriptions, groupName) {
                                 var convertedPrescriptions = [];
                                 _(groupPrescriptions).each(function (prescription) {
@@ -202,7 +221,11 @@ define(function (require) {
                                         groupId = '3';
                                         break;
                                     default:
-                                        groupId = groupName;
+                                        if (groupName == 'null') {
+                                            groupId = '0';
+                                        } else {
+                                            groupId = groupName;
+                                        }
                                     }
 
                                 if (self.getMoaById(groupName)) {

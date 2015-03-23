@@ -187,7 +187,8 @@ define(function (require) {
                     var endDateTime = moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val(), 'DD.MM.YYYY HH:mm').valueOf();
                     if (beginDateTime > 0) {
                         changedInterval.set({
-                            'beginDateTime': beginDateTime
+                            'beginDateTime': beginDateTime,
+                            'note': $(changedIntervalRow).find('.intervalNote').val()
                         });
                     }
                     if (endDateTime > 0) {
@@ -195,11 +196,18 @@ define(function (require) {
                             'endDateTime': endDateTime ? endDateTime : null
                         });
                     }
-                    changedInterval.get('drugs').first().set({
-                        'dose': $(changedIntervalRow).find('.intervalDose').val(),
-                        'moa': $(changedIntervalRow).find('.intervalMoa').val(),
-                        'voa': $(changedIntervalRow).find('.intervalVoa').val()
-                    });
+                    if ($.isArray(changedInterval.get('drugs'))) {
+                        changedInterval.get('drugs')[0].dose = $(changedIntervalRow).find('.intervalDose').val();
+                        changedInterval.get('drugs')[0].moa = $(changedIntervalRow).find('.intervalMoa').val();
+                        changedInterval.get('drugs')[0].voa = $(changedIntervalRow).find('.intervalVoa').val();
+                    } else {
+                        changedInterval.get('drugs').first().set({
+                            'dose': $(changedIntervalRow).find('.intervalDose').val(),
+                            'moa': $(changedIntervalRow).find('.intervalMoa').val(),
+                            'voa': $(changedIntervalRow).find('.intervalVoa').val()
+                        });
+                    }
+
 
                 })
                 $(interval).on('click', '.icon-remove', function(e){
@@ -207,9 +215,13 @@ define(function (require) {
                 });
                 $(interval).on('click', '.intervalMoa', function(e){
                     if ($(e.target).val()) {
-                        changedInterval.get('drugs').first().set({
-                            'moa': parseInt($(e.target).val())
-                        });
+                        if ($.isArray(changedInterval.get('drugs'))) {
+                            changedInterval.get('drugs')[0].moa = parseInt($(e.target).val());
+                        } else {
+                            changedInterval.get('drugs').first().set({
+                                'moa': parseInt($(e.target).val())
+                            });
+                        }
                     }
                 });
             });
@@ -326,6 +338,19 @@ define(function (require) {
             this.$el.find('button').button();
             this.$el.find('select').select2();
             this.validateForm();
+
+            _.each(self.$el.find('option'), function(option){
+                var val = $(option).text();
+                if (val.length > 14) {
+                    $(option).text(val.substring(0, 14)+'...');
+                }
+            });
+            _.each(self.$el.find('span'), function(span){
+                var val = $(span).text();
+                if (val.length > 14) {
+                    $(span).text(val.substring(0, 14)+'...');
+                }
+            });
 
         }
 

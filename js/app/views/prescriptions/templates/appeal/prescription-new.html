@@ -101,16 +101,16 @@
                         <input class="date_entry intervalBeginDate" type="text" value="<%= moment(interval.beginDateTime).format('DD.MM.YYYY') %>">
                     </td>
                     <td>
-                        <input class="time_entry intervalBeginTime" type="text" value="<%= moment(interval.beginDateTime).format('HH:MM') %>">
+                        <input class="time_entry intervalBeginTime" type="text" value="<%= moment(interval.beginDateTime).format('HH:mm') %>">
                     </td>
                     <td>
                         <input  class="date_entry intervalEndDate" type="text" value="<%= interval.endDateTime ? moment(interval.endDateTime).format('DD.MM.YYYY') : '' %>">
                     </td>
                     <td>
-                        <input class="time_entry intervalEndTime" type="text" value="<%= interval.endDateTime ? moment(interval.beginDateTime).format('HH:MM') : '' %>">
+                        <input class="time_entry intervalEndTime" type="text" value="<%= interval.endDateTime ? moment(interval.endDateTime).format('HH:mm') : '' %>">
                     </td>
                     <td>
-                        <input type="text" data-value="interval.note">
+                        <input class="intervalNote" type="text" value="<%= interval.note %>">
                     </td>
 
                     <td>
@@ -139,13 +139,13 @@
                                 <input class="date_entry intervalBeginDate" type="text" value="<%= moment(interval.beginDateTime).format('DD.MM.YYYY') %>">
                             </td>
                             <td>
-                                <input class="time_entry intervalBeginTime" type="text" value="<%= moment(interval.beginDateTime).format('HH:MM') %>">
+                                <input class="time_entry intervalBeginTime" type="text" value="<%= moment(interval.beginDateTime).format('HH:mm') %>">
                             </td>
                             <td>
                                 <input  class="date_entry intervalEndDate" type="text" value="<%= interval.endDateTime ? moment(interval.endDateTime).format('DD.MM.YYYY') : '' %>">
                             </td>
                             <td>
-                                <input class="time_entry intervalEndTime" type="text" value="<%= interval.endDateTime ? moment(interval.beginDateTime).format('HH:MM') : '' %>">
+                                <input class="time_entry intervalEndTime" type="text" value="<%= interval.endDateTime ? moment(interval.endDateTime).format('HH:mm') : '' %>">
                             </td>
                             <td>
                                 <input class="intervalDose" type="text" value="<%= interval.drugs[0].dose %>">

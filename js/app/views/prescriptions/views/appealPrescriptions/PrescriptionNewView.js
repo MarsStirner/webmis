@@ -220,11 +220,15 @@ define(function (require) {
                                         'endDateTime': endDateTime ? endDateTime : null
                                     });
                                 }
+                                changedInterval.set({
+                                    'note': $(changedIntervalRow).find('.intervalNote').val()
+                                });
                                 changedInterval.get('drugs').first().set({
                                     'dose': $(changedIntervalRow).find('.intervalDose').val(),
                                     'moa': $($(changedIntervalRow).find('.intervalMoa').find('.intervalMoa').prevObject[1]).val(),
                                     'voa': $(changedIntervalRow).find('.intervalVoa').val()
                                 });
+                                console.log(changedInterval);
                             })
                             $(interval).on('click', '.icon-remove', function(e){
                                 self.prescription.get('assigmentIntervals').remove(self.prescription.get('assigmentIntervals').models[intervalId]);
@@ -247,9 +251,9 @@ define(function (require) {
                     setTimeout(function () {
                         _.each(self.$el.find('option'), function(option){
                             var val = $(option).text();
-                            if (val.length > 10) {
-                                $(option).text(val.substring(0, 10)+'...');
-                            }    
+                            if (val.length > 14) {
+                                $(option).text(val.substring(0, 14)+'...');
+                            }
                         });
                         self.$el.find('select').select2();
                     }, 100);
