@@ -225,7 +225,6 @@ define(function (require) {
                                     'moa': $($(changedIntervalRow).find('.intervalMoa').find('.intervalMoa').prevObject[1]).val(),
                                     'voa': $(changedIntervalRow).find('.intervalVoa').val()
                                 });
-                                console.log(changedInterval);
                             })
                             $(interval).on('click', '.icon-remove', function(e){
                                 self.prescription.get('assigmentIntervals').remove(self.prescription.get('assigmentIntervals').models[intervalId]);
@@ -246,7 +245,13 @@ define(function (require) {
                 this.prescription.get('drugs')
                 .on('add remove', function(){
                     setTimeout(function () {
-                    self.$el.find('select').select2();
+                        _.each(self.$el.find('option'), function(option){
+                            var val = $(option).text();
+                            if (val.length > 10) {
+                                $(option).text(val.substring(0, 10)+'...');
+                            }    
+                        });
+                        self.$el.find('select').select2();
                     }, 100);
                 });
 

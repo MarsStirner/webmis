@@ -178,6 +178,42 @@ define(function (require) {
             var self = this;
             BaseView.prototype.render.call(self);
 
+            _.each(self.$el.find('.prescriptionInterval'), function(interval){
+                var intervalId = $(interval).attr('id');
+                var changedInterval = self.prescription.get('assigmentIntervals').models[intervalId];
+                $(interval).on('change', 'input, select', function(e){
+                    var changedIntervalRow = $('.prescriptionInterval[id="'+intervalId+'"]');
+                    var beginDateTime = moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val(), 'DD.MM.YYYY HH:mm').valueOf();
+                    var endDateTime = moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val(), 'DD.MM.YYYY HH:mm').valueOf();
+                    if (beginDateTime > 0) {
+                        changedInterval.set({
+                            'beginDateTime': beginDateTime
+                        });
+                    }
+                    if (endDateTime > 0) {
+                        changedInterval.set({
+                            'endDateTime': endDateTime ? endDateTime : null
+                        });
+                    }
+                    changedInterval.get('drugs').first().set({
+                        'dose': $(changedIntervalRow).find('.intervalDose').val(),
+                        'moa': $(changedIntervalRow).find('.intervalMoa').val(),
+                        'voa': $(changedIntervalRow).find('.intervalVoa').val()
+                    });
+
+                })
+                $(interval).on('click', '.icon-remove', function(e){
+                    self.prescription.get('assigmentIntervals').remove(self.prescription.get('assigmentIntervals').models[intervalId]);
+                });
+                $(interval).on('click', '.intervalMoa', function(e){
+                    if ($(e.target).val()) {
+                        changedInterval.get('drugs').first().set({
+                            'moa': parseInt($(e.target).val())
+                        });
+                    }
+                });
+            });
+
             function datetimeRange(input) {
                 var id = input.id.split('-');
                 var cid = id[0];
@@ -213,9 +249,11 @@ define(function (require) {
                         self.render();
 
                         if(this.prescription.get('assigmentIntervals').length > 0) {
-                            $('.add-drug').addClass('ui-state-disabled');
                             var doses = [];
                             var units = [];
+
+                            $('.add-drug').addClass('ui-state-disabled');
+
                             $.each($('#drugs').find('.dose'), function(d, dose){
                                 doses.push($(dose).val());
                             });
@@ -231,43 +269,6 @@ define(function (require) {
                             });
                             $('#drugs').find('.icon-remove').hide();
                         }
-
-                        _.each(self.$el.find('.prescriptionInterval'), function(interval){
-                            var intervalId = $(interval).attr('id');
-                            var changedInterval = self.prescription.get('assigmentIntervals').models[intervalId];
-                            $(interval).on('change', 'input, select', function(e){
-                                var changedIntervalRow = $('.prescriptionInterval[id="'+intervalId+'"]');
-                                var beginDateTime = moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val(), 'DD.MM.YYYY HH:mm').valueOf();
-                                var endDateTime = moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val(), 'DD.MM.YYYY HH:mm').valueOf();
-                                if (beginDateTime > 0) {
-                                    changedInterval.set({
-                                        'beginDateTime': beginDateTime
-                                    });
-                                }
-                                if (endDateTime > 0) {
-                                    changedInterval.set({
-                                        'endDateTime': endDateTime ? endDateTime : null
-                                    });
-                                }
-                                changedInterval.get('drugs').first().set({
-                                    'dose': $(changedIntervalRow).find('.intervalDose').val(),
-                                    'moa': $(changedIntervalRow).find('.intervalMoa').val(),
-                                    'voa': $(changedIntervalRow).find('.intervalVoa').val()
-                                });
-
-                            })
-                            $(interval).on('click', '.icon-remove', function(e){
-                                self.prescription.get('assigmentIntervals').remove(self.prescription.get('assigmentIntervals').models[intervalId]);
-                            });
-                            $(interval).on('click', '.intervalMoa', function(e){
-                                if ($(e.target).val()) {
-                                    changedInterval.get('drugs').first().set({
-                                        'moa': parseInt($(e.target).val())
-                                    });
-                                }
-                                console.log(changedInterval);
-                            });
-                        });
 
                     }, this);
             }

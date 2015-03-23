@@ -139,7 +139,7 @@
                                     <select class="intervalMoa" style="width:100%" value="<%= interval.drugs[0].moa %>">
                                         <option value="">...</option>
                                         <%_.each(data.administration, function(opt){%>
-                                            <option value="<%=opt.id%>"><%=opt.name%></option>
+                                            <option value="<%=opt.id%>" <% if (interval.drugs[0].moa == opt.id) { %> selected="selected"<% } %>><%=opt.name%></option>
                                             <%})%>
                                         </select>
                                     </td>

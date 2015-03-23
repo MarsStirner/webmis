@@ -154,10 +154,10 @@
                                 <input class="intervalVoa" type="text" value="<%= interval.drugs[0].voa %>">
                             </td>
                             <td>
-                                <select class="intervalMoa" style="width:100%" value="<%= interval.drugs[0].moa %>">
+                                <select class="intervalMoa Styled ValueId" style="width:100%" value="<%= interval.drugs[0].moa %>">
                                     <option value="">...</option>
                                     <%_.each(data.administration, function(opt){%>
-                                        <option class="moaItem" value="<%=opt.id%>"><%=opt.name%></option>
+                                        <option class="moaItem" value="<%=opt.id%>" <% if (interval.drugs[0].moa == opt.id) { %> selected="selected"<% } %>><%=opt.name%></option>
                                         <%})%>
                                     </select>
                                 </td>
