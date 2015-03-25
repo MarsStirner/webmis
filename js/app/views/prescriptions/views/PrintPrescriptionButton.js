@@ -59,7 +59,6 @@ define(function (require) {
 
         convertPrescriptionForPrint: function (prescription, range) {
             var data = {};
-            data.note = prescription.get('note');
             data.voa = prescription.get('voa') ? prescription.get('voa') + ' мл/ч' : '';
             data.duration = 0;
             data.drugs = prescription.get('drugs').map(function (drug) {
@@ -83,8 +82,6 @@ define(function (require) {
                 });
 
             });
-
-            console.log(prescription.get('assigmentIntervals'));
 
             prescription.get('assigmentIntervals').each(function (ai) {
                 ai.get('executionIntervals').each(function (ei) {
@@ -289,9 +286,9 @@ define(function (require) {
                                 }
 
                                 if (convertedPrescriptions.length) {
-                                    data.infuzGroups.push({
+                                    data.groups.push({
                                         id: groupId,
-                                        name: groupName,
+                                        name: 'Инфузионная терапия',
                                         prescriptions: convertedPrescriptions
                                     });
                                 }
@@ -309,7 +306,6 @@ define(function (require) {
                             console.log();
 
                             new App.Views.Print({
-                                infuzz: data.infuzGroups.length ? 'Инфузионная терапия' : '',
                                 data: data,
                                 template: "patientPrescriptions"
                             });
@@ -360,6 +356,11 @@ define(function (require) {
             var self = this;
             $.getJSON('/api/v1/dir/administration?callback=?', function (res) {
                 self.moaList = res.data;
+                self.moaList.push({
+                    id: 'infuzz',
+                    code: '',
+                    name: 'Инфузионная терапия'
+                });
             });
         },
 
