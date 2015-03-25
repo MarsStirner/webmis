@@ -23,6 +23,8 @@ define(function (require) {
             // console.log('init appeal prescriptions', this);
             var self = this;
 
+            this.getMoaList();
+
             this.collection = new Prescriptions();
 
             this.actionsView = new ActionsView({
@@ -36,6 +38,17 @@ define(function (require) {
 
             this.fetchCollection();
             pubsub.on('prescription:saved', this.fetchCollection, this);
+        },
+
+        getMoaList: function() {
+            var self = this;
+            $.getJSON('/api/v1/dir/administration?callback=?', function (res) {
+                self.moaList = res.data;
+            });
+        },
+
+        getMoaById: function(id) {
+            return _.where(this.moaList, {id: id})[0];
         },
 
         fetchCollection: function () {
@@ -106,6 +119,10 @@ define(function (require) {
         getTooltipText: function (id) {
             var prescription = this.collection.get(id);
             // console.log('tt data', prescription.toJSON())
+            if (prescription.get('moa')) {
+                var moaName = this.getMoaById(prescription.get('moa')).name;
+                prescription.set('moaName', moaName);
+            }
             var html = tooltipTemplate(prescription.toJSON());
             return html;
         },

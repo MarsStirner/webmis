@@ -84,6 +84,8 @@ define(function (require) {
 
             });
 
+            console.log(prescription.get('assigmentIntervals'));
+
             prescription.get('assigmentIntervals').each(function (ai) {
                 ai.get('executionIntervals').each(function (ei) {
                     var start = ei.get('beginDateTime');
@@ -107,10 +109,8 @@ define(function (require) {
                         }
                     });
                 });
-                console.log(ai.get('note'));
-                if (ai.get('note')) {
-                    data.note = ai.get('note');
-                }
+                data.note = ai.get('note') ? ai.get('note') : '';
+                data.voa = prescription.get('voa') ? prescription.get('voa') : '';
             });
 
             data.intervals = intervals;
@@ -172,7 +172,7 @@ define(function (require) {
                             data.patientWeight = patientBsaRow.data().weight;
                             data.patientBlood = bloodType;
                             data.patientBSA = patientBsaRow.data().bsa;
-                            data.patientBed = moves.last().get('bed');
+                            data.patientBed = moves.last() ? moves.last().get('bed') : '';
                             data.listDate = moment(range.min).format('DD.MM.YYYY');
                             data.mainDiag = (mainDiag && mainDiag.mkb.diagnosis) ? mainDiag.mkb.diagnosis : 'не установлен';
 
@@ -182,17 +182,26 @@ define(function (require) {
 
                             var infuzPrescriptions = [];
 
-                            _(groups).each(function (group, groupName) {
-                                if (groupName == 'null') {
-                                    _(group).each(function (prescription) {
-                                        if (prescription.get('actionTypeId') == 753) {
-                                            _(prescription.get('assigmentIntervals')).each(function (interval) {
-                                                var infuzPrescription = new Backbone.Model(prescription.toJSON);
-                                            });
-                                        }
-                                    });
-
+                            _(groups['null']).each(function (prescription) {
+                                if (prescription.get('actionTypeId') == 753) {
+                                    infuzPrescriptions.push(prescription);
                                 }
+                            });
+
+                            var infuzGroups = []
+
+                            _(infuzPrescriptions).each(function (prescription) {
+                                groups['null'].splice(groups['null'].indexOf(prescription), 1);
+                                prescription.get('assigmentIntervals').each(function(interval){
+                                    if (interval.get('drugs')[0]) {
+                                        if (!infuzGroups[interval.get('drugs')[0].moa]) {
+                                            infuzGroups[interval.get('drugs')[0].moa] = [];
+                                        }
+                                        var newPrescription = new Backbone.Model(prescription);
+                                        newPrescription.set('assigmentIntervals', new Backbone.Collection(interval));
+                                        infuzGroups[interval.get('drugs')[0].moa].push(newPrescription);
+                                    }
+                                });
                             });
 
                             _(groups).each(function (groupPrescriptions, groupName) {
@@ -221,12 +230,8 @@ define(function (require) {
                                         groupId = '3';
                                         break;
                                     default:
-                                        if (groupName == 'null') {
-                                            groupId = '0';
-                                        } else {
-                                            groupId = groupName;
-                                        }
-                                    }
+                                        groupId = groupName;
+                                }
 
                                 if (self.getMoaById(groupName)) {
                                     groupName = self.getMoaById(groupName).name;
@@ -244,11 +249,66 @@ define(function (require) {
 
                             }, this);
 
+                            data.infuzGroups = [];
+
+                            _(infuzGroups).each(function (groupPrescriptions, groupName) {
+                                var convertedPrescriptions = [];
+                                _(groupPrescriptions).each(function (prescription) {
+                                    console.log(prescription);
+                                    var converted = self.convertPrescriptionForPrint(prescription, range);
+                                    if (converted.duration > 0) {
+                                        convertedPrescriptions.push(converted);
+                                    }
+                                }, this);
+
+                                convertedPrescriptions = _(convertedPrescriptions).sortBy(function(prescription) {
+                                    return prescription.duration;
+                                });
+                                convertedPrescriptions.reverse();
+
+                                var groupId;
+                                switch(groupName) {
+                                    case '2':
+                                        groupId = '4';
+                                        break;
+                                    case '3':
+                                        groupId = '2';
+                                        break;
+                                    case '4':
+                                        groupId = '3';
+                                        break;
+                                    default:
+                                        groupId = groupName;
+                                }
+
+                                if (self.getMoaById(groupName)) {
+                                    groupName = self.getMoaById(groupName).name;
+                                } else {
+                                    groupName = 'Не определён';
+                                }
+
+                                if (convertedPrescriptions.length) {
+                                    data.infuzGroups.push({
+                                        id: groupId,
+                                        name: groupName,
+                                        prescriptions: convertedPrescriptions
+                                    });
+                                }
+
+                            }, this);
+
                             data.groups = _(data.groups).sortBy(function(group) {
                                 return group.id;
                             });
 
+                            data.infuzGroups = _(data.infuzGroups).sortBy(function(group) {
+                                return group.id;
+                            });
+
+                            console.log();
+
                             new App.Views.Print({
+                                infuzz: data.infuzGroups.length ? 'Инфузионная терапия' : '',
                                 data: data,
                                 template: "patientPrescriptions"
                             });
