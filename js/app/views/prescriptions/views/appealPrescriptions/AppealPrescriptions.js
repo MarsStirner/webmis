@@ -120,7 +120,7 @@ define(function (require) {
             var prescription = this.collection.get(id);
             // console.log('tt data', prescription.toJSON())
             if (prescription.get('moa')) {
-                var moaName = this.getMoaById(prescription.get('moa')).name;
+                var moaName = this.getMoaById(prescription.get('moa')) ? this.getMoaById(prescription.get('moa')).name : '';
                 prescription.set('moaName', moaName);
             }
             var html = tooltipTemplate(prescription.toJSON());
