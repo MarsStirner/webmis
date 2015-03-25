@@ -169,6 +169,9 @@ define(function (require) {
         render: function () {
             var self = this;
             BaseView.prototype.render.call(self);
+            if (!this.prescription.get('note')) {
+                this.prescription.set('note', '');
+            }
 
             if (this.prescription.get('assigmentIntervals')) {
                 this.prescription.get('assigmentIntervals')

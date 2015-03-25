@@ -111,6 +111,7 @@ define(function (require) {
                 });
                 data.note = ai.get('note') ? ai.get('note') : '';
                 data.voa = prescription.get('voa') ? prescription.get('voa') : '';
+                data.prescriptionNote = prescription.get('note') ? prescription.get('note') : '';
             });
 
             data.intervals = intervals;
