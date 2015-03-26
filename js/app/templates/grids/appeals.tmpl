@@ -324,7 +324,7 @@
 <script id="patient-appeals-grid-row" type="text/x-jquery-tmpl">
 		<td>
 			{{if requestType === 'policlinic'}}
-				<a href="/appealpoly/${id}/"></a>
+				<a href="/appealpoly/${id}/" class="open-appeal-poly" id="appeal-${id}"></a>
 			{{else}}
 				<a href="/appeals/${id}/"  class="open-appeal"></a>
 			{{/if}}

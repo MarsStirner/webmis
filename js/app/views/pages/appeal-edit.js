@@ -232,7 +232,8 @@ define([
                         relative: {
                             id: patient.get("id"),
                             name: patient.get("name").get("raw"),
-                            birthDate: patient.get("birthDate")
+                            birthDate: patient.get("birthDate"),
+                            sex: patient.get("sex")
                         }
                     });
 
@@ -745,9 +746,18 @@ define([
 
         render: function () {
             if (this.model.get("relative")) {
+                var patientSexCode = Cache.Patient.get('sex') == 'male' ? 1 : 2;
+                var relativeSexCode = this.model.toJSON().relative.sex == 'male' ? 1 : 2;
+                var relationTypes = [];
+                _.each(this.options.relationTypes, function(type){
+                    if ( (type.leftSex == 0 || type.leftSex == relativeSexCode) && (type.rightSex == 0 || type.rightSex == patientSexCode) ) {
+                        var exist = _.find($('.representative-list').find('span'), function(span){ return $(span).text() == type.value; });
+                        !exist && relationTypes.push(type);
+                    }
+                });
                 this.$el.html($.tmpl(this.template, {
                     model: this.model.toJSON(),
-                    relationTypes: this.options.relationTypes
+                    relationTypes: relationTypes
                 }));
                 this.delegateEvents();
 

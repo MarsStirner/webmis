@@ -1295,6 +1295,8 @@ define(function(require){
 			} else {
 				$smo.select2("val", this.model.get("smo").get("id")).change();
 			}
+
+			$smo.find('option').hide();
 		},
 
 		toggleRemoveIcon: function(event) {
