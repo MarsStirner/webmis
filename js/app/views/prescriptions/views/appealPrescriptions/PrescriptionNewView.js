@@ -226,12 +226,13 @@ define(function (require) {
                                 changedInterval.set({
                                     'note': $(changedIntervalRow).find('.intervalNote').val()
                                 });
-                                changedInterval.get('drugs').first().set({
-                                    'dose': $(changedIntervalRow).find('.intervalDose').val(),
-                                    'moa': $($(changedIntervalRow).find('.intervalMoa').find('.intervalMoa').prevObject[1]).val(),
-                                    'voa': $(changedIntervalRow).find('.intervalVoa').val()
-                                });
-                                console.log(changedInterval);
+                                if (self.prescription.actionTypeId == 753) {
+                                    changedInterval.get('drugs').first().set({
+                                        'dose': $(changedIntervalRow).find('.intervalDose').val(),
+                                        'moa': $($(changedIntervalRow).find('.intervalMoa').find('.intervalMoa').prevObject[1]).val(),
+                                        'voa': $(changedIntervalRow).find('.intervalVoa').val()
+                                    });
+                                }
                             })
                             $(interval).on('click', '.icon-remove', function(e){
                                 self.prescription.get('assigmentIntervals').remove(self.prescription.get('assigmentIntervals').models[intervalId]);
