@@ -114,9 +114,10 @@ define(["collections/patients", "views/grid", "views/filter", "views/paginator"]
                 event.preventDefault();
                 this.trigger("patient:newClick");
             } else {
-                App.Router.navigate("/patients/new/", {
-                    trigger: true
-                });
+                // App.Router.navigate("/patients/new/", {
+                //     trigger: true
+                // });
+                window.open('http://'+POLICLINIC_HOST+'/patients/patient?client_id=new','_blank');
             }
         },
 
