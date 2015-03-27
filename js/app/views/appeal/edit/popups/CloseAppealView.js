@@ -194,7 +194,6 @@ define(function (require) {
             var datetime = new Date();
 
             this.ui.$appealCloseDate.datepicker({
-                minDate: 0,
                 onSelect: function (dateText, inst) {
                     var day = moment(self.$(this).datepicker('getDate')).startOf('day');
                     var currentDay = moment().startOf('day');
