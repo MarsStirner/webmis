@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "1.3.74";
+var GUI_VERSION = "1.3.75";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
@@ -18,7 +18,7 @@ DEFAULT_ANIMATION_TIME = 300;
 DATA_PATH = "/data/";
 
 
-POLICLINIC_HOST = "10.128.225.200:5000";
+POLICLINIC_HOST = "10.128.225.200:5555";
 APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
 ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/";
 
