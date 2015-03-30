@@ -746,15 +746,29 @@ define([
 
         render: function () {
             if (this.model.get("relative")) {
-                var patientSexCode = Cache.Patient.get('sex') == 'male' ? 1 : 2;
-                var relativeSexCode = this.model.toJSON().relative.sex == 'male' ? 1 : 2;
-                var relationTypes = [];
-                _.each(this.options.relationTypes, function(type){
-                    if ( (type.leftSex == 0 || type.leftSex == relativeSexCode) && (type.rightSex == 0 || type.rightSex == patientSexCode) ) {
-                        var exist = _.find($('.representative-list').find('span'), function(span){ return $(span).text() == type.value; });
-                        !exist && relationTypes.push(type);
-                    }
-                });
+                var patientSexCode = 0;
+                if (Cache.Patient.get('sex') == 'male' || Cache.Patient.get('sex') == 1) {
+                    patientSexCode = 1;
+                } else if (Cache.Patient.get('sex') == 'female' || Cache.Patient.get('sex') == 2) {
+                    patientSexCode = 2;
+                }
+                var relativeSexCode = 0;
+                if (this.model.toJSON().relative.sex == 'male' || this.model.toJSON().relative.sex == 1) {
+                    relativeSexCode = 1;
+                } else if (this.model.toJSON().relative.sex == 'female' || this.model.toJSON().relative.sex == 2) {
+                    relativeSexCode = 2;
+                }
+                if (relativeSexCode != 0) {
+                    var relationTypes = [];
+                    _.each(this.options.relationTypes, function(type){
+                        if ( (type.leftSex == 0 || type.leftSex == relativeSexCode) && (type.rightSex == 0 || type.rightSex == patientSexCode) ) {
+                            var exist = _.find($('.representative-list').find('span'), function(span){ return $(span).text() == type.value; });
+                            !exist && relationTypes.push(type);
+                        }
+                    });
+                } else {
+                    var relationTypes = this.options.relationTypes;
+                }
                 this.$el.html($.tmpl(this.template, {
                     model: this.model.toJSON(),
                     relationTypes: relationTypes

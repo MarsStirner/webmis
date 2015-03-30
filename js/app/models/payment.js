@@ -4,7 +4,7 @@ define(["models/smo", "models/date"], function () {
 			id: null
 		}
 	});
-	
+
 	App.Models.Payment = Model.extend ({
 		defaults: {
 			policyType: {},
@@ -48,14 +48,14 @@ define(["models/smo", "models/date"], function () {
 				];
 
 				if (_(conditionallyRequired).any()) {
-					var policyTypeId = self.get("policyType").get("id");
-					var policyTypeName = ((policyTypeId != 3) ? "ОМС" : "ДМС");
+					var policyTypeId = self.get("policyType").get("code");
+					var policyTypeName = ((policyTypeId != 'vmi') ? "ОМС" : "ДМС");
 					var startDate = self.get("rangePolicyDate").get("start");
 					var endDate = self.get("rangePolicyDate").get("end");
 
 
 
-					if (policyTypeId != 3 && !policyTypeId) {
+					if (policyTypeId != 'vmi' && !policyTypeId) {
 						errors.push({property: "payments-"+self.cid+"-policyType-id", msg: "Тип полиса " + policyTypeName});
 					}
 					/*if (!self.get("series")) {
