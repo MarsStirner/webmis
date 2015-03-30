@@ -722,7 +722,7 @@ define([
         template: representativeTmpl,
 
         initialize: function () {
-            //this.model.on("change", this.onRepresentativeChange, this);
+            this.model.on("change", this.onRepresentativeChange, this);
             //this.model.on("sync", this.onRepresentativeSync, this);
         },
 

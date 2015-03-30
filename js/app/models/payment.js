@@ -49,13 +49,16 @@ define(["models/smo", "models/date"], function () {
 
 				if (_(conditionallyRequired).any()) {
 					var policyTypeId = self.get("policyType").get("code");
+					if (!policyTypeId) {
+						policyTypeId = self.get("policyType").get("id");
+					}
 					var policyTypeName = ((policyTypeId != 'vmi') ? "ОМС" : "ДМС");
 					var startDate = self.get("rangePolicyDate").get("start");
 					var endDate = self.get("rangePolicyDate").get("end");
 
 
 
-					if (policyTypeId != 'vmi' && !policyTypeId) {
+					if (policyTypeId != 'vmi' && policyTypeId != 3 && !policyTypeId) {
 						errors.push({property: "payments-"+self.cid+"-policyType-id", msg: "Тип полиса " + policyTypeName});
 					}
 					/*if (!self.get("series")) {
