@@ -726,13 +726,15 @@ define([
             //this.model.on("sync", this.onRepresentativeSync, this);
         },
 
-        onRepresentativeChange: function (event) {
-            if (Core.Date.getAge(this.model.get("birthDate")) < 18) {
-                //alert("Нельзя добавить несовершеннолетнего представителя.");
-                this.$nonAdultAlert.dialog("open");
-                this.removeModel();
-            } else {
-                this.render();
+        onRepresentativeChange: function (event, e) {
+            if (e.changes.relative) {
+                if (Core.Date.getAge(this.model.get("birthDate")) < 18) {
+                    //alert("Нельзя добавить несовершеннолетнего представителя.");
+                    this.$nonAdultAlert.dialog("open");
+                    this.removeModel();
+                } else {
+                    this.render();
+                }
             }
         },
 
