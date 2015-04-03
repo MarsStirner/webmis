@@ -58,7 +58,9 @@ define(function (require) {
         initialize: function () {
             console.log(this.options);
             this.model = this.options.appeal;
-            this.model.on("change", this.render, this);
+            var self = this;
+            this.relative = new App.Models.Patient({id: this.model.get('hospitalizationWith').first().get('relative').get('id')});
+            self.model.on("change", this.render, this);
         },
 
         printAppeal: function () {
@@ -257,14 +259,21 @@ define(function (require) {
                     closeDate = this.model.get('closeDateTime');
                 }
 
-                this.$el.html($.tmpl(cardTemplate, _.extend({
-                    closeDate: closeDate,
-                    isClosed: this.model.get('closed'),
-                    allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
-                    dicts: dicts,
-                    sickLeave: this.model.get('tempInvalid'),
-                    isExecPerson: this.model.get('execPerson').id == Core.Cookies.get('userId')
-                }, this.model.toJSON())));
+                this.relative.fetch().done(function(){
+                    console.log(self.relative);
+                    self.$el.html($.tmpl(cardTemplate, _.extend({
+                        closeDate: closeDate,
+                        isClosed: self.model.get('closed'),
+                        allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
+                        dicts: dicts,
+                        sickLeave: self.model.get('tempInvalid'),
+                        isExecPerson: self.model.get('execPerson').id == Core.Cookies.get('userId'),
+                        phone: self.relative.get('phones').first(),
+                        documentNumber: self.relative.get('idCards').models[0]
+                    }, self.model.toJSON())));
+                });
+
+
 
                 this.$(".sick-leave-data-date").datepicker();
                 this.$(".sick-leave-data").on('change', function(){

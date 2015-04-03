@@ -112,6 +112,65 @@
 			</td>
 		</tr>
 		<tr>
+			<td> Плательщик </td>
+			<td>
+				{{if payer}}
+					{{if (payer.company)}}
+						${payer.company}
+					{{else}}
+						{{if payer.lastName}}
+							${payer.lastName} ${payer.firstName} ${payer.middleName}
+						{{/if}}
+					{{/if}}
+				{{else}}
+					-
+				{{/if}}
+			</td>
+		</tr>
+		<tr>
+			<td> Номер и дата договора </td>
+			<td>
+				{{if paymentContract}}
+					{{if paymentContract.number.length}}
+						${paymentContract.number},
+					{{/if}}
+					${moment(paymentContract.date).format('DD.MM.YYYY')}
+				{{else}}
+					-
+				{{/if}}
+			</td>
+		</tr>
+		<tr>
+			<td> Представитель </td>
+			<td>
+				{{if hospitalizationWith && hospitalizationWith[0]}}
+					${hospitalizationWith[0].relative.name}
+				{{else}}
+					-
+				{{/if}}
+			</td>
+		</tr>
+		<tr>
+			<td> Удостоверение личности представителя </td>
+			<td>
+				{{if documentNumber}}
+					${documentNumber.get('series')}  ${documentNumber.get('number')} 
+				{{else}}
+					-
+				{{/if}}
+			</td>
+		</tr>
+		<tr>
+			<td> Контактные данные представителя </td>
+			<td>
+				{{if phone}}
+					${phone.get('typeName')} ${phone.get('number')}
+				{{else}}
+					-
+				{{/if}}
+			</td>
+		</tr>
+		<tr>
 			<td> Исполнитель </td>
 			<td>
 				{{if setPerson.doctor && setPerson.doctor.name}}
@@ -222,19 +281,6 @@
 				{{if deliveredAfterType && deliveredAfterType != "-1"}}${deliveredAfterType}{{else}}-{{/if}}
 			</td>
 		</tr>
-		{{if hospitalizationWith && hospitalizationWith.length}}
-			{{each(i, hw) hospitalizationWith}}
-				<tr>
-					<td>Законный представитель</td>
-					<td>
-						<a href="/patients/${hw.relative.id}/">
-							<span>${hw.relative.name}</span>
-						</a>
-						, {{getYear hw.relative.birthDate}} г.р.{{if hw.note}} (${hw.note}){{/if}}
-					</td>
-				</tr>
-			{{/each}}
-		{{/if}}
 		{{if leaved.nextHospDate || leaved.nextHospDepartment || leaved.nextHospFinanceType}}
 			<tr>
 				<td colspan="2" style="padding-top: 2em;"><b style="color: black;">Информация о следующей госпитализации</b></td>
