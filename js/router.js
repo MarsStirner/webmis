@@ -933,11 +933,11 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 		INSTRUMENTAL: {
 			title: "Инструментальные исследования",
-			uri: "/appeals/:id/instrumental/"
+			uri: "/appeals/:id/diagnostics-instrumental/"
 		},
 		INSTRUMENTAL_RESULT: {
 			title: "Результаты инструментального исследования",
-			uri: "/appeals/:id/diagnostics/instrumental/result/:test"
+			uri: "/appeals/:id/diagnostics-instrumental/:test"
 		},
 		CONSULTATION: {
 			title: "Консультации",

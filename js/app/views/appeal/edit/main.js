@@ -73,9 +73,9 @@ define(function(require) {
 			},
 
 			"diagnostics-instrumental": {
-				"REVIEW": InstrumentalView,
-				"SUB_REVIEW": InstrumentalResultView,
-				"SUB_EDIT": InstrumentalResultView //TODO: impl edit mode
+				"REVIEW": Documents.Views.List.Instrumental.Layout,
+				"SUB_REVIEW": Documents.Views.Review.Instrumental.Layout,
+				"SUB_EDIT": Documents.Views.Edit.Instrumental.Layout,
 			},
 
 			"diagnostics-consultations": {

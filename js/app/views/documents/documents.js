@@ -11,13 +11,15 @@ define(function (require) {
                 Base: {},
                 Common: {},
                 Examination: {},
-                Therapy: {}
+                Therapy: {},
+                Instrumental: {}
             },
             Review: {
                 Base: {},
                 Common: {},
                 Examination: {},
-                Therapy: {}
+                Therapy: {},
+                Instrumental: {}
             },
             Edit: {
                 UIElement: {},
@@ -25,7 +27,8 @@ define(function (require) {
                 Common: {},
                 Examination: {},
                 Therapy: {},
-                Consultation: {}
+                Consultation: {},
+                Instrumental: {}
             }
         },
         Collections: {},
@@ -70,6 +73,7 @@ define(function (require) {
     var templates = {
         _panicBtn: _.template(require("text!templates/documents/panic-btn.html")),
         _listLayout: _.template(require("text!templates/documents/list/layout.html")),
+        _instrumentalListLayout: _.template(require("text!templates/documents/list/instrumental-layout.html")),
         _listControlsBase: _.template(require("text!templates/documents/list/controls.html")),
         _listControlsCommon: _.template(require("text!templates/documents/list/controls-common.html")),
         _listExaminationControls: _.template(require("text!templates/documents/list/examination-controls.html")),
@@ -80,6 +84,7 @@ define(function (require) {
         _documentTypeSearch: _.template(require("text!templates/documents/list/doc-type-search.html")),
         _documentTypesTree: _.template(require("text!templates/documents/list/doc-types-tree.html")),
         _documentsTableHead: _.template(require("text!templates/documents/list/docs-table-head.html")),
+        _instrumentalTableHead: _.template(require("text!templates/documents/list/instrumental-table-head.html")),
         _documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
         _summaryTypeDateFilters: _.template(require("text!templates/documents/list/summary-filter.html")),
         _summaryTable: _.template(require("text!template/documents/list/summary-table.html")),
@@ -147,6 +152,8 @@ define(function (require) {
     var ContextPrintButton = require('views/ContextPrintButton');
 
     var BakResult = require('models/diagnostics/laboratory/bak-result');
+
+    var InstrumentalPopupView = require('views/diagnostics/instrumental/InstrumentalPopupView');
     /*var FDLoader = {
         fds: {},
         get: function (id, cb, context) {
@@ -2626,6 +2633,114 @@ define(function (require) {
             });
         }
     });
+
+
+    //region VIEWS LIST INSTRUMENTAL
+    //---------------------
+    Documents.Views.List.Instrumental.LayoutHistory = ListLayoutBase.extend({
+        template: templates._instrumentalListLayout,
+
+        events: {
+			"click #assign-inst-diag": "onNewDiagnosticClick"
+		},
+
+        onNewDiagnosticClick: function() {
+			this.newAssignPopup = new InstrumentalPopupView({
+				appeal: this.options.appeal
+			});
+			this.newAssignPopup.render().open();
+		},
+
+        getDefaultDocumentsMnems: function () {
+            return ["DIAG"];
+        },
+
+        getReviewLayout: function () {
+            return new Documents.Views.Review.Instrumental.NoControlsLayout({
+                collection: this.selectedDocuments,
+                documents: this.documents,
+                included: true,
+                showIcons: !this.options.included
+            });
+        },
+
+        getEditPageTypeName: function () {
+            return "diagnostics-instrumental";
+        },
+
+        render: function (subViews) {
+            return ListLayoutBase.prototype.render.call(this, _.extend({
+                ".documents-table-body": new Documents.Views.List.Instrumental.DocumentsTable({
+                    collection: this.documents,
+                    selectedDocuments: this.selectedDocuments,
+                    included: !! this.options.included,
+                    editPageTypeName: this.getEditPageTypeName()
+                }),
+                ".documents-filters": new Documents.Views.List.Base.Filters({
+                    collection: this.documents
+                }),
+                ".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
+                    collection: this.documents,
+                    selectedDocuments: this.selectedDocuments,
+                    included: !! this.options.included,
+                    template: templates._instrumentalTableHead,
+                }),
+            }, subViews));
+        }
+    });
+
+    Documents.Views.List.Instrumental.Layout = Documents.Views.List.Instrumental.LayoutHistory.extend({
+        attributes: {
+            style: "display: table; width: 100%;"
+        },
+
+        initialize: function () {
+            Documents.Views.List.Instrumental.LayoutHistory.prototype.initialize.call(this, this.options);
+
+            if (this.options.documentTypes) {
+                this.documentTypes = this.options.documentTypes;
+            } else {
+                this.documentTypes = new Documents.Collections.DocumentTypes();
+                this.documentTypes.mnems = ["DIAG"];
+                this.documentTypes.fetch();
+            }
+
+        },
+
+        toggleReviewState: Documents.Views.List.Common.Layout.prototype.toggleReviewState,
+
+        render: function () {
+            return Documents.Views.List.Instrumental.LayoutHistory.prototype.render.call(this, {
+                ".documents-controls": new Documents.Views.List.Instrumental.Controls({
+                    collection: this.documents,
+                    documentTypes: this.documentTypes,
+                    editPageTypeName: this.getEditPageTypeName()
+                })
+            });
+        }
+    });
+
+    Documents.Views.List.Instrumental.Controls = Documents.Views.List.Base.Controls.extend({
+        showDocumentTypeSelector: function () {
+            new Documents.Views.List.Instrumental.DocumentTypeSelector({
+                collection: this.documentTypes
+            }).render();
+        }
+    });
+
+    Documents.Views.List.Instrumental.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({});
+
+    Documents.Views.List.Instrumental.DocumentTypeSelector = Documents.Views.List.Base.DocumentTypeSelector.extend({
+        getSearchView: function () {
+            return new Documents.Views.List.Base.DocumentTypeSearch({
+                collection: this.collection,
+                showTypeMnem: false
+            });
+        }
+    });
+
+
+
     //endregion
 
 
@@ -3364,6 +3479,57 @@ define(function (require) {
 
     //Documents.Views.Edit.Therapy.Controls = Documents.Views.List.Therapy.Controls.extend({});
     //endregion
+
+
+    //region VIEWS EDIT INSTRUMENTAL
+    //---------------------
+    Documents.Views.Edit.Instrumental.Layout = Documents.Views.Edit.Base.Layout.extend({
+        /*initialize: function () {
+            Documents.Views.Edit.Common.Layout.prototype.initialize.call(this, this.options);
+            this.documentTypes = new Documents.Collections.DocumentTypes();
+            this.documentTypes.mnems = ["THER"];
+            this.documentTypes.fetch();
+        },*/
+        getListLayoutHistory: function () {
+            return new Documents.Views.List.Instrumental.LayoutHistory({
+                included: true
+            });
+        },
+        render: function () {
+            return Documents.Views.Edit.Base.Layout.prototype.render.call(this, {
+                ".document-controls-top": new Documents.Views.Edit.Instrumental.DocControls({
+                    model: this.model
+                }),
+                ".document-controls-bottom": new Documents.Views.Edit.Instrumental.DocControls({
+                    model: this.model
+                })
+            });
+        }
+    });
+
+    Documents.Views.Edit.Instrumental.DocControls = Documents.Views.Edit.DocControls.extend({
+        goToDocReview: function (resultId) {
+            this.model.trigger("toggle:dividedState", false);
+            App.Router.updateUrl(["appeals", appealId, "instrumental", resultId].join("/"));
+            dispatcher.trigger("change:viewState", {
+                mode: "SUB_REVIEW",
+                type: "diagnostics-instrumental",
+                options: {
+                    subId: resultId
+                }
+            });
+        },
+        returnToList: function () {
+            this.model.trigger("toggle:dividedState", false);
+            App.Router.updateUrl(["appeals", appealId, "instrumental"].join("/"));
+            dispatcher.trigger("change:viewState", {
+                mode: "REVIEW",
+                type: "diagnostics-instrumental"
+            });
+        }
+    });
+
+
 
 
     //region VIEWS EDIT GRID BASE
