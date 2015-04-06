@@ -131,7 +131,7 @@
 			<td> Номер и дата договора </td>
 			<td>
 				{{if paymentContract}}
-					{{if paymentContract.number.length}}
+					{{if paymentContract.number && paymentContract.number.length}}
 						${paymentContract.number},
 					{{/if}}
 					${moment(paymentContract.date).format('DD.MM.YYYY')}
