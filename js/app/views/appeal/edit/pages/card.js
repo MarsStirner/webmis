@@ -59,7 +59,10 @@ define(function (require) {
             console.log(this.options);
             this.model = this.options.appeal;
             var self = this;
-            this.relative = new App.Models.Patient({id: this.model.get('hospitalizationWith').first().get('relative').get('id')});
+            if (this.model.get('hospitalizationWith').first()) {
+              var relId =  this.model.get('hospitalizationWith').first().get('relative').get('id')
+            }
+            this.relative = new App.Models.Patient({id: relId});
             self.model.on("change", this.render, this);
         },
 

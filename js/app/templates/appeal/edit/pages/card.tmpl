@@ -153,7 +153,7 @@
 		<tr>
 			<td> Удостоверение личности представителя </td>
 			<td>
-				{{if documentNumber}}
+				{{if documentNumber && documentNumber.get('number')}}
 					${documentNumber.get('series')}  ${documentNumber.get('number')} 
 				{{else}}
 					-
