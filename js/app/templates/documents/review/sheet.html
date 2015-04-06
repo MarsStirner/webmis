@@ -28,6 +28,18 @@
 							<i class="icon-lock" style="position: absolute;top: 0;right: 1.8em;"></i>
 						</a>
 					<%}%>
+				<%} else {%>
+					<% if (document.mnem == 'DIAG') {%>
+						<%if (!document.endDate) {%>
+							<a href="#" class="edit-document" data-document-id="<%=document.id%>" style="text-decoration: none;" title="Редактировать">
+								<i class="icon-pencil" style="position: absolute;top: 0;right: 1.8em;"></i>
+							</a>
+						<%} else {%>
+						<a style="text-decoration: none;" title="Документ закрыт">
+							<i class="icon-lock" style="position: absolute;top: 0;right: 1.8em;"></i>
+						</a>
+					<%}%>	
+					<%}%>	
 				<%}%>
 
                 <%if (!document.isOldType) {%>

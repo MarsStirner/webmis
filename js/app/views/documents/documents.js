@@ -72,6 +72,7 @@ define(function (require) {
     //region DEPENDENCIES
     var templates = {
         _panicBtn: _.template(require("text!templates/documents/panic-btn.html")),
+        _instrumentalTableHead: _.template(require("text!templates/documents/list/instrumental-table-head.html")),
         _listLayout: _.template(require("text!templates/documents/list/layout.html")),
         _instrumentalListLayout: _.template(require("text!templates/documents/list/instrumental-layout.html")),
         _listControlsBase: _.template(require("text!templates/documents/list/controls.html")),
@@ -84,8 +85,8 @@ define(function (require) {
         _documentTypeSearch: _.template(require("text!templates/documents/list/doc-type-search.html")),
         _documentTypesTree: _.template(require("text!templates/documents/list/doc-types-tree.html")),
         _documentsTableHead: _.template(require("text!templates/documents/list/docs-table-head.html")),
-        _instrumentalTableHead: _.template(require("text!templates/documents/list/instrumental-table-head.html")),
         _documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
+        _instrumentalDocumentsTable: _.template(require("text!templates/documents/list/instrumental-table.html")),
         _summaryTypeDateFilters: _.template(require("text!templates/documents/list/summary-filter.html")),
         _summaryTable: _.template(require("text!template/documents/list/summary-table.html")),
         _documentsTablePaging: _.template(require("text!templates/documents/list/paging.html")),
@@ -1637,6 +1638,105 @@ define(function (require) {
         }
     });
 
+    Documents.Views.List.Base.InstrumentalTableHead = ViewBase.extend({
+        toString: function () {
+            return 'List.Base.DocumentsTableHead';
+        },
+        template: templates._instrumentalTableHead,
+
+        events: {
+            "click th.sortable": "onThSortableClick",
+            "change .select-all-flag": "onSelectAllFlagChange"
+        },
+
+        data: function () {
+            return {
+                documents: this.collection,
+                showIcons: !this.options.included && !appeal.isClosed(),
+                isSortedBy: this.isSortedBy
+            };
+        },
+
+        initialize: function () {
+            _.bindAll(this, 'data');
+            this.listenTo(this.options.selectedDocuments, "reset", this.onSelectedDocumentsReset);
+        },
+
+        onSelectedDocumentsReset: function () {
+            this.$(".select-all-flag").prop("checked", false);
+        },
+
+        onThSortableClick: function (event) {
+            var sortParams = this.getUpdatedSortParams($(event.currentTarget));
+
+            this.collection.fetch({
+                data: {
+                    sortingField: sortParams.sortingField,
+                    sortingMethod: sortParams.sortingMethod
+                }
+            });
+        },
+
+        getUpdatedSortParams: function ($targetTh, sortDirection) {
+            if (!this.$caret) {
+                this.$caret = $('<i style="color: black;margin-left: .3em;"/>');
+            }
+
+            this.$caret.detach().removeClass();
+
+            if ($targetTh.hasClass("sorted")) {
+                if ($targetTh.hasClass("asc")) {
+                    $targetTh.removeClass("asc").addClass("desc");
+                    this.$caret.addClass("icon-caret-down");
+                } else if ($targetTh.hasClass("desc")) {
+                    $targetTh.removeClass("desc").addClass("asc");
+                    this.$caret.addClass("icon-caret-up");
+                }
+            } else {
+                this.$("th").removeClass("sorted asc desc");
+                $targetTh.addClass("sorted asc");
+                this.$caret.addClass("icon-caret-up");
+            }
+
+            this.$caret.appendTo($targetTh);
+
+            return {
+                sortingField: $targetTh.data('sort-field'),
+                sortingMethod: $targetTh.hasClass("desc") ? "desc" : "asc"
+            };
+        },
+
+        onSelectAllFlagChange: function (event) {
+            this.markAllItems($(event.currentTarget).is(":checked"));
+        },
+
+        markAllItems: function (selected) {
+            if (selected) {
+                this.collection.each(function (document) {
+                    this.options.selectedDocuments.add(new Documents.Models.Document({
+                        id: document.get("id")
+                    }));
+                }, this);
+            } else {
+                this.options.selectedDocuments.reset();
+            }
+            this.collection.trigger("mark-all", {
+                selected: selected
+            });
+        },
+
+        render: function () {
+            ViewBase.prototype.render.call(this);
+            if (this.collection.requestData && this.collection.requestData.sortingField) {
+                this.getUpdatedSortParams(
+                    this.$("[data-sort-field=" + this.collection.requestData.sortingField + "]")
+                    .addClass("sorted " + (this.collection.requestData.sortingMethod == "asc" ? "desc" : "asc"))
+                );
+            }
+            return this;
+        }
+    });
+
     /**
      * Таблица со списком созданных документов
      * @type {*}
@@ -2679,11 +2779,10 @@ define(function (require) {
                 ".documents-filters": new Documents.Views.List.Base.Filters({
                     collection: this.documents
                 }),
-                ".documents-table-head": new Documents.Views.List.Base.DocumentsTableHead({
+                ".documents-table-head": new Documents.Views.List.Base.InstrumentalTableHead({
                     collection: this.documents,
                     selectedDocuments: this.selectedDocuments,
                     included: !! this.options.included,
-                    template: templates._instrumentalTableHead,
                 }),
             }, subViews));
         }
@@ -2728,7 +2827,9 @@ define(function (require) {
         }
     });
 
-    Documents.Views.List.Instrumental.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({});
+    Documents.Views.List.Instrumental.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
+        template: templates._instrumentalDocumentsTable
+    });
 
     Documents.Views.List.Instrumental.DocumentTypeSelector = Documents.Views.List.Base.DocumentTypeSelector.extend({
         getSearchView: function () {
@@ -3510,7 +3611,7 @@ define(function (require) {
     Documents.Views.Edit.Instrumental.DocControls = Documents.Views.Edit.DocControls.extend({
         goToDocReview: function (resultId) {
             this.model.trigger("toggle:dividedState", false);
-            App.Router.updateUrl(["appeals", appealId, "instrumental", resultId].join("/"));
+            App.Router.updateUrl(["appeals", appealId, "diagnostics-instrumental"].join("/"));
             dispatcher.trigger("change:viewState", {
                 mode: "SUB_REVIEW",
                 type: "diagnostics-instrumental",
@@ -3521,7 +3622,7 @@ define(function (require) {
         },
         returnToList: function () {
             this.model.trigger("toggle:dividedState", false);
-            App.Router.updateUrl(["appeals", appealId, "instrumental"].join("/"));
+            App.Router.updateUrl(["appeals", appealId, "diagnostics-instrumental"].join("/"));
             dispatcher.trigger("change:viewState", {
                 mode: "REVIEW",
                 type: "diagnostics-instrumental"
@@ -6038,6 +6139,8 @@ define(function (require) {
             if (!_.isUndefined(documentJSON.version)) {
                 var summaryAttrs = documentJSON["group"][0]["attribute"];
 
+                console.log(this.model);
+
                 tmplData = {
                     id: documentJSON.id,
                     typeId: documentJSON.typeId,
@@ -6057,7 +6160,8 @@ define(function (require) {
                     loaded: true,
                     showIcons: this.options.showIcons,
                     isOldType: this.model.isOldType(),
-                    lockInfo: documentJSON.lockInfo
+                    lockInfo: documentJSON.lockInfo,
+                    mnem: this.model.get('mnem')
                 };
             } else {
                 tmplData = {
@@ -6384,6 +6488,21 @@ define(function (require) {
         getEditPageTypeName: Documents.Views.Review.Therapy.NoControlsLayout.prototype.getEditPageTypeName,
         getDefaultDocumentsMnems: function () {
             return ["THER"];
+        }
+    });
+
+
+    //region REVIEW INSTRUMENTAL
+    Documents.Views.Review.Instrumental.NoControlsLayout = Documents.Views.Review.Base.NoControlsLayout.extend({
+        getEditPageTypeName: function () {
+            return "diagnostics-instrumental";
+        }
+    });
+
+    Documents.Views.Review.Instrumental.Layout = Documents.Views.Review.Base.Layout.extend({
+        getEditPageTypeName: Documents.Views.Review.Instrumental.NoControlsLayout.prototype.getEditPageTypeName,
+        getDefaultDocumentsMnems: function () {
+            return ["DIAG"];
         }
     });
     //endregion
