@@ -270,8 +270,8 @@ define(function (require) {
                     dicts: dicts,
                     sickLeave: self.model.get('tempInvalid'),
                     isExecPerson: self.model.get('execPerson').id == Core.Cookies.get('userId'),
-                    phone: self.relative.get('phones').first(),
-                    documentNumber: self.relative.get('idCards').models[0]
+                    phone: self.relative ? self.relative.get('phones').first() : '',
+                    documentNumber: self.relative ? self.relative.get('idCards').models[0] : ''
                 }, self.model.toJSON())));
 
 
