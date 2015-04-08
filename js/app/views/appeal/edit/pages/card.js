@@ -60,9 +60,10 @@ define(function (require) {
             this.model = this.options.appeal;
             var self = this;
             if (this.model.get('hospitalizationWith').first()) {
-              var relId =  this.model.get('hospitalizationWith').first().get('relative').get('id')
+              var relId =  this.model.get('hospitalizationWith').first().get('relative').get('id');
+              this.relative = new App.Models.Patient({id: relId});
+              this.relative.fetch()
             }
-            this.relative = new App.Models.Patient({id: relId});
             self.model.on("change", this.render, this);
         },
 
@@ -262,19 +263,16 @@ define(function (require) {
                     closeDate = this.model.get('closeDateTime');
                 }
 
-                this.relative.fetch().done(function(){
-                    console.log(self.relative);
-                    self.$el.html($.tmpl(cardTemplate, _.extend({
-                        closeDate: closeDate,
-                        isClosed: self.model.get('closed'),
-                        allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
-                        dicts: dicts,
-                        sickLeave: self.model.get('tempInvalid'),
-                        isExecPerson: self.model.get('execPerson').id == Core.Cookies.get('userId'),
-                        phone: self.relative.get('phones').first(),
-                        documentNumber: self.relative.get('idCards').models[0]
-                    }, self.model.toJSON())));
-                });
+                self.$el.html($.tmpl(cardTemplate, _.extend({
+                    closeDate: closeDate,
+                    isClosed: self.model.get('closed'),
+                    allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
+                    dicts: dicts,
+                    sickLeave: self.model.get('tempInvalid'),
+                    isExecPerson: self.model.get('execPerson').id == Core.Cookies.get('userId'),
+                    phone: self.relative.get('phones').first(),
+                    documentNumber: self.relative.get('idCards').models[0]
+                }, self.model.toJSON())));
 
 
 

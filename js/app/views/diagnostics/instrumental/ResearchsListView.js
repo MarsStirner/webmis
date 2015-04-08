@@ -72,7 +72,7 @@ define(function(require) {
             //view.$researchsList.append(_.template(listTemplate , {}));
             view.closeChildViews();
             this.collection.each(function(model) {
-                //console.log('collection item', model);
+                console.log('collection item', model);
                 var itemView = new ItemView({
                     model: model,
                     collection: view.collection,

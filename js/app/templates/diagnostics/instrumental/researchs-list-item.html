@@ -1,1 +1,28 @@
-<label "><input type="checkbox" value="<%= data.code%>"><%= data.title %></label>
+<table>
+  <thead>
+    <tr>
+      <td>&nbsp;</td>
+      <td style="width:3em;">Cito</td>
+      <td style="width:8em;">&nbsp;</td>
+      <td style="width:5.5em;">&nbsp;</td>
+    </tr>
+  </thead>
+  <tbody>
+  	<td><input type="checkbox" value="<%= data.code%>"><%= data.title %></td>
+  	<td style="width:3em;">
+    <label><input type="checkbox" <% if(data.urgent){%>checked="checked"<%}%> class="cito"></label>
+  </td>
+  <td style="width:8.5em;">
+	    <div class="date">
+	      <input type="text" id="plannedDate" placeholder="дд.мм.гггг">
+	      <i class="icon-calendar date-icon" style="right:0.3em;"></i>
+	    </div>
+	  </td>
+	  <td style="width:5.5em;">
+	    <div class="time">
+	      <input type="text" id="plannedTime" placeholder="чч:мм"> <i class="icon-time time-icon"  style="right:0.3em;"></i>
+	    </div>
+	  </td>
+  </tbody>
+</table>
+

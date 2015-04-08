@@ -93,9 +93,9 @@ define(function(require) {
 
 			tree = this.convertToTree(raw.data);
 //			console.log('this.parents', this.parents);
-			if (this.parents) {
-				tree = this.onlyParents(tree);
-			}
+			// if (this.parents) {
+			// 	tree = this.onlyParents(tree);
+			// }
 
 
 			return tree;

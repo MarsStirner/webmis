@@ -94,6 +94,7 @@ define(function (require) {
         _editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
         _editHeading: _.template(require("text!templates/documents/edit/heading.html")),
         _editDates: _.template(require("text!templates/documents/edit/dates.html")),
+        _editInstrumentalDates: _.template(require("text!templates/documents/edit/instrumental-dates.html")),
         _editDocumentControls: _.template(require("text!templates/documents/edit/document-controls.html")),
         _editCopySourceSelector: _.template(require("text!templates/documents/edit/copy-source-selector.html")),
         //_editGrid: _.template(require("text!templates/documents/edit/grid.html")),
@@ -154,7 +155,9 @@ define(function (require) {
 
     var BakResult = require('models/diagnostics/laboratory/bak-result');
 
+    var PersonDialogView = require('views/ui/PersonDialog');
     var InstrumentalPopupView = require('views/diagnostics/instrumental/InstrumentalPopupView');
+    var ViewModel = require('views/diagnostics/instrumental/InstrumentalPopupViewModel');
     /*var FDLoader = {
         fds: {},
         get: function (id, cb, context) {
@@ -2827,9 +2830,7 @@ define(function (require) {
         }
     });
 
-    Documents.Views.List.Instrumental.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({
-        template: templates._instrumentalDocumentsTable
-    });
+    Documents.Views.List.Instrumental.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({});
 
     Documents.Views.List.Instrumental.DocumentTypeSelector = Documents.Views.List.Base.DocumentTypeSelector.extend({
         getSearchView: function () {
@@ -3259,6 +3260,77 @@ define(function (require) {
         }
     });
 
+    Documents.Views.Edit.Instrumental.Dates = ViewBase.extend({
+        template: templates._editInstrumentalDates,
+        events: {
+            'click #executor-outer': 'openExecutorSelectPopup',
+            'change #createDate' : 'onChangeDate',
+            'change #createTime' : 'onChangeTime'
+        },
+
+        initialize: function () {
+            pubsub.on('executor:changed', this.onChangeExecutor, this);
+            this.listenTo(this.model, "change", this.onModelReset);
+        },
+
+        openExecutorSelectPopup: function () {
+            this.personDialogView = new PersonDialogView({
+                appeal: appeal,
+                title: 'Исполнитель',
+                callback: function (person) {
+                    pubsub.trigger('executor:changed', person);
+                }
+            });
+
+            this.personDialogView.render().open();
+
+        },
+
+        onChangeExecutor: function (executor) {
+            this.setModelProperty('doctorLastName', executor.name.last);
+            this.setModelProperty('doctorFirstName', executor.name.first);
+            this.setModelProperty('doctorMiddleName', executor.name.middle);
+
+            $('#executor').val(executor.name.last + ' ' + executor.name.first + ' ' + executor.name.middle);
+        },
+
+        onChangeDate: function(){
+
+        },
+
+        onChangeTime: function(){
+            
+        },
+
+        data: function () {
+            return {
+                    dates: this.model.getDates()
+                };
+        },
+        getModelProperty: function(name) {
+            var property = _(this.model.get("group")[0].attribute).find(function (attr) {
+                    return attr.name == name;
+                });
+            return property.properties[0].value;
+        },
+        setModelProperty: function(name, value) {
+            var property = _(this.model.get("group")[0].attribute).find(function (attr) {
+                    return attr.name == name;
+                });
+            property.properties[0].value = value;
+        },
+        render: function () {
+            var self = this;
+            ViewBase.prototype.render.call(this);
+            this.model.fetch().done(function(){
+                console.log(self.model.get("group")[0]);
+                self.$el.find('#executor').val(self.getModelProperty('doctorLastName')+' '+self.getModelProperty('doctorFirstName')+' '+self.getModelProperty('doctorMiddleName'));
+                self.$el.find('#createDate').val(moment(self.getModelProperty('assessmentBeginDate')).format('DD.MM.YYYY')).datepicker();
+                self.$el.find('#createTime').val(moment(self.getModelProperty('assessmentBeginDate')).format('HH.mm')).timepicker();
+            });
+        }
+    });
+
     Documents.Views.Edit.CopySourceSelector = PopUpBase.extend({
         template: templates._editCopySourceSelector,
 
@@ -3598,6 +3670,9 @@ define(function (require) {
         },
         render: function () {
             return Documents.Views.Edit.Base.Layout.prototype.render.call(this, {
+                ".dates": new Documents.Views.Edit.Instrumental.Dates({
+                    model: this.model
+                }),
                 ".document-controls-top": new Documents.Views.Edit.Instrumental.DocControls({
                     model: this.model
                 }),
@@ -3798,6 +3873,12 @@ define(function (require) {
 
 
             this.$(".row-fluid:empty").hide();
+
+            console.log(this.model);
+
+            if (this.model.get('mnem') == 'DIAG') {
+                console.log(this.$el);
+            }
 
             return this;
         }
