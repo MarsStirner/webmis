@@ -317,6 +317,7 @@ define(function (require) {
                 success: function () {
                     view.close();
                     pubsub.trigger('instrumental-diagnostic:added');
+                    view.options.documents.fetch();
                 },
                 error: function (response, error) {
 

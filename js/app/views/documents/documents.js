@@ -2749,7 +2749,8 @@ define(function (require) {
 
         onNewDiagnosticClick: function() {
 			this.newAssignPopup = new InstrumentalPopupView({
-				appeal: this.options.appeal
+				appeal: this.options.appeal,
+                documents: this.documents
 			});
 			this.newAssignPopup.render().open();
 		},
@@ -2772,6 +2773,7 @@ define(function (require) {
         },
 
         render: function (subViews) {
+            var self = this;
             return ListLayoutBase.prototype.render.call(this, _.extend({
                 ".documents-table-body": new Documents.Views.List.Instrumental.DocumentsTable({
                     collection: this.documents,
