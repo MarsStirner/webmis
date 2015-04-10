@@ -206,12 +206,12 @@ define(function (require) {
             this.viewModel.set('mkbId', mkbId);
         },
         onChangePlannedTimePicker: function () {
-            var plannedTime = this.ui.$plannedTime.val();
+            var plannedTime = $('#plannedTime').val();
             this.viewModel.set('plannedTime', plannedTime);
         },
 
         onChangePlannedDatePicker: function () {
-            var plannedDate = this.ui.$plannedDate.datepicker('getDate');
+            var plannedDate = $('#plannedDate').val();
             this.viewModel.set('plannedDay', plannedDate);
         },
 
@@ -356,8 +356,6 @@ define(function (require) {
             view.ui.$createDate = view.$('#createDate');
             view.ui.$createDateIcon = view.bfView.$el.find('.icon-calendar');
             view.ui.$createTime = view.$('#createTime');
-            view.ui.$plannedDate = view.$('#plannedDate');
-            view.ui.$plannedTime = view.$('#plannedTime');
             view.ui.$saveButton = view.$el.closest('.ui-dialog').find('.save');
             view.ui.$assigner = view.$('#assigner');
             view.ui.$executor = view.$('#executor');
@@ -428,59 +426,6 @@ define(function (require) {
             }).mask('99:99').val(view.viewModel.get('createTime'));
 
 
-            view.ui.$plannedDate.datepicker({
-                minDate: new Date(),
-                onSelect: function () {
-                    view.ui.$plannedDate.trigger('change');
-                    var date = view.$(this).datepicker('getDate');
-                    var day = moment(date).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    var hour = view.ui.$plannedTime.timepicker('getHour');
-                    //если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour <= currentHour) {
-                            view.ui.$plannedTime.val('').trigger('change');
-                        }
-                    }
-                }
-            }).datepicker('setDate', this.viewModel.get('plannedDay'));
-
-            view.ui.$plannedTime.timepicker({
-                defaultTime: 'now',
-                showPeriodLabels: false,
-                showOn: 'both',
-                button: '.icon-time',
-                onHourShow: function (hour) {
-                    var date = view.ui.$plannedDate.datepicker('getDate');
-                    var day = moment(date).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    //если выбран текущий день, то часы меньше текущего нельзя выбрать
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour < currentHour) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                },
-                onMinuteShow: function (hour, minute) {
-                    var date = view.ui.$plannedDate.datepicker('getDate');
-                    var day = moment(date).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    var currentMinute = moment().minute();
-                    //если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour === currentHour && minute <= currentMinute) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            }).val(this.viewModel.get('plannedTime'));
-
             view.appealDiagnosis.fetch().done(function () {
                 //установка диагноза
                 if ((view.appealDiagnosis.length > 0) && view.appealDiagnosis.first()) {
@@ -497,9 +442,6 @@ define(function (require) {
 
         },
         close: function () {
-
-            this.ui.$plannedDate.datepicker('destroy');
-            this.ui.$createDate.datepicker('destroy');
             this.$el.dialog('close');
             this.bfView.close();
             this.researchGroupsListView.close();

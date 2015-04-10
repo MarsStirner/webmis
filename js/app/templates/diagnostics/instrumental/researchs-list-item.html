@@ -2,15 +2,15 @@
   <thead>
     <tr>
       <td>&nbsp;</td>
-      <td style="width:3em;">Cito</td>
+      <td style="width:5em;">&nbsp;</td>
       <td style="width:8em;">&nbsp;</td>
       <td style="width:5.5em;">&nbsp;</td>
     </tr>
   </thead>
   <tbody>
-  	<td><input type="checkbox" value="<%= data.code%>"><%= data.title %></td>
-  	<td style="width:3em;">
-    <label><input type="checkbox" <% if(data.urgent){%>checked="checked"<%}%> class="cito"></label>
+  	<td><%= data.title %></td>
+  	<td style="width:5em;">
+    <label><input type="checkbox" <% if(data.urgent){%>checked="checked"<%}%> class="cito">Cito</label>
   </td>
   <td style="width:8.5em;">
 	    <div class="date">
@@ -25,4 +25,3 @@
 	  </td>
   </tbody>
 </table>
-

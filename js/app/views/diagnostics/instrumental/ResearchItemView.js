@@ -5,22 +5,10 @@ define(function(require) {
     var ItemView = Backbone.View.extend({
         className: 'item',
 
-        events: {
-            'change input': 'toggleSelect'
-        },
-        toggleSelect: function(e) {
-            var $target = this.$(e.target);
-
-            if ($target.prop('checked')) {
-                pubsub.trigger('research:selected', this.model.get('code'));
-            } else {
-                pubsub.trigger('research:deselected', this.model.get('code'));
-            }
-            //console.log('toggleSelect');
-        },
         initialize: function() {
             this.$el.attr('data-code', this.model.get('code'));
             this.$el.attr('data-cid', this.model.cid);
+            pubsub.trigger('research:selected', this.model.get('code'));
         },
 
         modelData: function() {

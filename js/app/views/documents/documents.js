@@ -3220,16 +3220,69 @@ define(function (require) {
     Documents.Views.Edit.Dates = ViewBase.extend({
         template: templates._editDates,
         events: {
+            'click #executor-outer': 'openExecutorSelectPopup',
             "change .document-create-date,.document-create-time": "onDocumentCreateDateChange",
-            "change .document-set-close-date": "onDocumentSetCloseDateChange"
+            "change .document-set-close-date": "onDocumentSetCloseDateChange",
+            'change #createDate, #createTime' : 'onChangeDateTime'
         },
         data: function () {
             return {
-                dates: this.model.getDates()
+                dates: this.model.getDates(),
+                mnem: this.model.get('mnem')
             };
         },
         initialize: function () {
+            pubsub.on('executor:changed', this.onChangeExecutor, this);
             this.listenTo(this.model, "change", this.onModelReset);
+        },
+        openExecutorSelectPopup: function () {
+            this.personDialogView = new PersonDialogView({
+                appeal: appeal,
+                title: 'Исполнитель',
+                callback: function (person) {
+                    pubsub.trigger('executor:changed', person);
+                }
+            });
+
+            this.personDialogView.render().open();
+
+        },
+        onChangeExecutor: function (executor) {
+            // this.setModelProperty('doctorLastName', executor.name.last);
+            // this.setModelProperty('doctorFirstName', executor.name.first);
+            // this.setModelProperty('doctorMiddleName', executor.name.middle);
+            this.setModelProperty('executorId', executor.id);
+            $('#executor').val(executor.name.last + ' ' + executor.name.first + ' ' + executor.name.middle);
+        },
+
+        onChangeDateTime: function(){
+            var newDate = moment($('#createDate').val()+' '+$('#createTime').val(), 'DD.MM.YYYY HH.mm').format('YYYY-MM-DD HH:mm:ss');
+            this.setModelProperty('assessmentBeginDate', newDate);
+        },
+        getModelProperty: function(name) {
+            if (this.model.get("group")) {
+                var property = _(this.model.get("group")[0].attribute).find(function (attr) {
+                        return attr.name == name;
+                    });
+                return property.properties[0].value;
+            }
+
+        },
+        setModelProperty: function(name, value) {
+            var property = _(this.model.get("group")[0].attribute).find(function (attr) {
+                    return attr.name == name;
+                });
+            if (property) {
+                property.properties[0].value = value+'';
+            } else {
+                this.model.get("group")[0].attribute.push({
+                    name: name,
+                    properties: [{
+                        name: 'value',
+                        value: value + ''
+                    }]
+                });
+            }
         },
         onModelReset: function () {
             this.stopListening(this.model, "change", this.onModelReset);
@@ -3251,83 +3304,11 @@ define(function (require) {
             this.model.shouldBeClosed = this.$(".document-set-close-date").is(":checked");
         },
         render: function () {
-            ViewBase.prototype.render.call(this);
-            this.$(".date-input").datepicker();
-            this.$(".time-input").timepicker({
-                showPeriodLabels: false,
-                defaultTime: 'now'
-            });
-        }
-    });
-
-    Documents.Views.Edit.Instrumental.Dates = ViewBase.extend({
-        template: templates._editInstrumentalDates,
-        events: {
-            'click #executor-outer': 'openExecutorSelectPopup',
-            'change #createDate' : 'onChangeDate',
-            'change #createTime' : 'onChangeTime'
-        },
-
-        initialize: function () {
-            pubsub.on('executor:changed', this.onChangeExecutor, this);
-            this.listenTo(this.model, "change", this.onModelReset);
-        },
-
-        openExecutorSelectPopup: function () {
-            this.personDialogView = new PersonDialogView({
-                appeal: appeal,
-                title: 'Исполнитель',
-                callback: function (person) {
-                    pubsub.trigger('executor:changed', person);
-                }
-            });
-
-            this.personDialogView.render().open();
-
-        },
-
-        onChangeExecutor: function (executor) {
-            this.setModelProperty('doctorLastName', executor.name.last);
-            this.setModelProperty('doctorFirstName', executor.name.first);
-            this.setModelProperty('doctorMiddleName', executor.name.middle);
-
-            $('#executor').val(executor.name.last + ' ' + executor.name.first + ' ' + executor.name.middle);
-        },
-
-        onChangeDate: function(){
-
-        },
-
-        onChangeTime: function(){
-            
-        },
-
-        data: function () {
-            return {
-                    dates: this.model.getDates()
-                };
-        },
-        getModelProperty: function(name) {
-            var property = _(this.model.get("group")[0].attribute).find(function (attr) {
-                    return attr.name == name;
-                });
-            return property.properties[0].value;
-        },
-        setModelProperty: function(name, value) {
-            var property = _(this.model.get("group")[0].attribute).find(function (attr) {
-                    return attr.name == name;
-                });
-            property.properties[0].value = value;
-        },
-        render: function () {
             var self = this;
             ViewBase.prototype.render.call(this);
-            this.model.fetch().done(function(){
-                console.log(self.model.get("group")[0]);
-                self.$el.find('#executor').val(self.getModelProperty('doctorLastName')+' '+self.getModelProperty('doctorFirstName')+' '+self.getModelProperty('doctorMiddleName'));
-                self.$el.find('#createDate').val(moment(self.getModelProperty('assessmentBeginDate')).format('DD.MM.YYYY')).datepicker();
-                self.$el.find('#createTime').val(moment(self.getModelProperty('assessmentBeginDate')).format('HH.mm')).timepicker();
-            });
+            self.$el.find('#executor').val(self.getModelProperty('doctorLastName')+' '+self.getModelProperty('doctorFirstName')+' '+self.getModelProperty('doctorMiddleName'));
+            self.$el.find('#createDate').val(moment(self.getModelProperty('assessmentBeginDate')).format('DD.MM.YYYY')).datepicker();
+            self.$el.find('#createTime').val(moment(self.getModelProperty('assessmentBeginDate')).format('HH.mm')).timepicker();
         }
     });
 
@@ -3670,7 +3651,7 @@ define(function (require) {
         },
         render: function () {
             return Documents.Views.Edit.Base.Layout.prototype.render.call(this, {
-                ".dates": new Documents.Views.Edit.Instrumental.Dates({
+                ".dates": new Documents.Views.Edit.Dates({
                     model: this.model
                 }),
                 ".document-controls-top": new Documents.Views.Edit.Instrumental.DocControls({
