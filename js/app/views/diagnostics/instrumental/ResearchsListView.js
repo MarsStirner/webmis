@@ -12,7 +12,7 @@ define(function(require) {
             $target = this.$(e.target);
             this.$el.find('input').not($target).prop('checked', false);
             this.$el.find('.selected').removeClass('selected');
-            $target.parents('.item').addClass('selected');
+            //$target.parents('.item').addClass('selected');
         },
         initialize: function() {
             var view = this;
