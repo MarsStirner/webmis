@@ -1,5 +1,4 @@
 <ul>
-<!--    <input type="text" id="tree-search" disabled="disabled" class="Disabled" placeholder="Поиск" style="margin-bottom:0.5em;"/> -->
  <% _(items).each(function(item){ %>
  <li class="<% if(item.children && item.children.length){ %>parent <%}%>closed" data-code="<%= item.code %>">
   <span class="icon icon-closed icon-caret-right"></span>

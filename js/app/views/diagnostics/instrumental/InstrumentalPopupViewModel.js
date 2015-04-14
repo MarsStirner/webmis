@@ -88,12 +88,12 @@ define(function(require) {
 			var errors = [];
 			console.log('attrs', attrs);
 
-			if (!attrs.code) {
-				errors.push({
-					name: 'code',
-					message: 'Не выбрано исследование. '
-				});
-			}
+			// if (!attrs.code) {
+			// 	errors.push({
+			// 		name: 'code',
+			// 		message: 'Не выбрано исследование. '
+			// 	});
+			// }
 			if (!attrs.plannedTime) {
 				errors.push({
 					name: 'plannedTime',

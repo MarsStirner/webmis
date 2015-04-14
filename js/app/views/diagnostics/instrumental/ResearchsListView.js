@@ -25,6 +25,7 @@ define(function(require) {
             view.collection.on('fetch', function() {
                 console.log('view.collection', view.collection)
                 view.renderOnFetch();
+                view.render();
             });
 
             view.collection.on('change', function() {
@@ -41,7 +42,8 @@ define(function(require) {
                     data: {
                         'patientId': view.options.patientId,
                         'filter[code]': code
-                    }
+                    },
+                    add: true
                 });
             });
 

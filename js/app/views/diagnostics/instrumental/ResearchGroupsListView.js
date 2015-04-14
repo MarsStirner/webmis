@@ -7,7 +7,7 @@ define(function(require) {
 
             view.collection.on('reset', function() {
                 view.render();
-                $('#tree-search').prop('disabled', false).removeClass('Disabled');
+                //$('#tree-search').prop('disabled', false).removeClass('Disabled');
             });
 
             view.collection.on('fetch', function() {
@@ -45,6 +45,7 @@ define(function(require) {
                 var code = $(this).data('code');
                 console.log('code', code, treeData);
             });
+            view.$el.prepend('<input type="text" id="tree-search" disabled="disabled" class="Disabled" placeholder="Поиск"/>');
         },
         renderNoResult: function() {
             var view = this;
