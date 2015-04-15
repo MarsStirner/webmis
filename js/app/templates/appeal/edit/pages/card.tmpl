@@ -130,11 +130,13 @@
 		<tr>
 			<td> Номер и дата договора </td>
 			<td>
-				{{if paymentContract}}
+				{{if paymentContract && (paymentContract.number || paymentContract.date)}}
 					{{if paymentContract.number && paymentContract.number.length}}
 						${paymentContract.number},
 					{{/if}}
-					${moment(paymentContract.date).format('DD.MM.YYYY')}
+					{{if paymentContract.date}}
+						${moment(paymentContract.date).format('DD.MM.YYYY')}
+					{{/if}}
 				{{else}}
 					-
 				{{/if}}
@@ -154,7 +156,7 @@
 			<td> Удостоверение личности представителя </td>
 			<td>
 				{{if documentNumber && documentNumber.get('number')}}
-					Паспорт гражданина Российской Федерации, серия ${documentNumber.get('series')}  № ${documentNumber.get('number')} 
+					${documentNumber.get('docType').get('name')}, серия ${documentNumber.get('series')}  № ${documentNumber.get('number')}
 				{{else}}
 					-
 				{{/if}}

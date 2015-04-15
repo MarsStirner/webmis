@@ -35,7 +35,8 @@ define(function (require) {
             'change #plannedDate': 'onChangePlannedDatePicker',
             'change #createDate': 'onChangeCreateDatePicker',
             'change #createTime': 'onChangeCreateTimePicker',
-            'change input[name="diagnosis[mkb][code]"]': 'onChangeMkbInput'
+            'change input[name="diagnosis[mkb][code]"]': 'onChangeMkbInput',
+            'keyup #tree-search': 'onSearchKeyup'
         },
 
         initialize: function () {
@@ -76,6 +77,7 @@ define(function (require) {
 
 
             pubsub.on('research:selected', this.onSelectResearch, this);
+            pubsub.on('research:deleted', this.onDeleteResearch, this);
             pubsub.on('research:deselected', this.onDeselectResearch, this);
             pubsub.on('assigner:changed', this.onChangeAssigner, this);
             pubsub.on('executor:changed', this.onChangeExecutor, this);
@@ -83,6 +85,12 @@ define(function (require) {
 
 
         },
+
+        onSearchKeyup: function(event) {
+			var $target = $(event.currentTarget);
+
+            this.instrumntalResearchs.search($target.val());
+		},
 
         openAssignerSelectPopup: function () {
             this.personDialogView = new PersonDialogView({
@@ -116,25 +124,29 @@ define(function (require) {
 
             self.viewModel.set('code', researchCode);
             //шаблон данных в формате commonData
-            self.testTemplate = new InstrumentalResearchTemplate({}, {
+
+            self.testTemplate = [];
+
+            var newTest = new InstrumentalResearchTemplate({}, {
                 code: researchCode,
                 patientId: self.viewModel.get('patientId')
             });
 
-            self.testTemplate.fetch().done(function () {
-
-                if (self.testTemplate.getProperty('executorId', 'value') > 0) {
+            newTest.fetch().done(function () {
+                if (newTest.getProperty('executorId', 'value') > 0 ) {
                     executor = {
-                        id: self.testTemplate.getProperty('executorId', 'value'),
+                        id: newTest.getProperty('executorId', 'value'),
                         name: {
-                            first: self.testTemplate.getProperty('doctorFirstName', 'value'),
-                            middle: self.testTemplate.getProperty('doctorMiddleName', 'value'),
-                            last: self.testTemplate.getProperty('doctorLastName', 'value')
+                            first: newTest.getProperty('doctorFirstName', 'value'),
+                            middle: newTest.getProperty('doctorMiddleName', 'value'),
+                            last: newTest.getProperty('doctorLastName', 'value')
                         }
                     };
 
                     pubsub.trigger('executor:changed', executor);
                 }
+
+                self.testTemplate.push(newTest);
             });
 
         },
@@ -151,9 +163,9 @@ define(function (require) {
 
             this.viewModel.set('code', '');
 
-            if (this.testTemplate) {
-                this.testTemplate.clear();
-            }
+            // if (this.testTemplate) {
+            //     this.testTemplate.clear();
+            // }
 
             pubsub.trigger('executor:changed', executor);
         },
@@ -263,45 +275,6 @@ define(function (require) {
         onSave: function () {
             var view = this;
 
-            view.testTemplate.setProperty('assignerId', 'value', view.viewModel.get('assignerId'));
-            //assignerFirstName - имя врача назначившего исследование
-            view.testTemplate.setProperty('assignerFirstName', 'value', view.viewModel.get('assignerFirstName'));
-            //assignerMiddleName - отчество врача назначившего исследование
-            view.testTemplate.setProperty('assignerMiddleName', 'value', view.viewModel.get('assignerMiddleName'));
-            //assignerLastName - фамилия врача назначившего исследование
-            view.testTemplate.setProperty('assignerLastName', 'value', view.viewModel.get('assignerLastName'));
-
-
-            view.testTemplate.setProperty('executorId', 'value', view.viewModel.get('executorId'));
-            //doctorFirstName - имя врача исполнителя исследование
-            view.testTemplate.setProperty('doctorFirstName', 'value', view.viewModel.get('executorFirstName'));
-            //doctorMiddleName - отчество врача исполнителя исследование
-            view.testTemplate.setProperty('doctorMiddleName', 'value', view.viewModel.get('executorMiddleName'));
-            // doctorLastName - фамилия врача исполнителя исследование
-            view.testTemplate.setProperty('doctorLastName', 'value', view.viewModel.get('executorLastName'));
-
-
-            //assessmentDate - дата создания направления на исследование
-            view.testTemplate.setProperty('assessmentDate', 'value', view.viewModel.get('createDatetime'));
-
-            //plannedEndDate - планируемая дата выполнения иследования
-            view.testTemplate.setProperty('plannedEndDate', 'value', view.viewModel.get('plannedDatetime'));
-
-            //finance - идентификатор типа оплаты
-            view.testTemplate.setProperty('finance', 'value', view.viewModel.get('finance'));
-
-            //urgent - срочность
-            view.testTemplate.setProperty('urgent', 'value', view.viewModel.get('urgent'));
-
-            //идентификатор направительного диагноза
-            var mkbId = view.viewModel.get('mkbId');
-
-            view.testTemplate.setProperty('Направительный диагноз', 'valueId', mkbId);
-
-            if (!mkbId) {
-                view.testTemplate.setProperty('Направительный диагноз', 'value', '');
-            }
-
 
             //создание направления сейчас реализованно только для группы тестов....
             //поэтому создаём коллекцию и добавляем в неё модель...
@@ -309,7 +282,50 @@ define(function (require) {
                 appealId: view.viewModel.get('appealId')
             });
 
-            view.tests.add(view.testTemplate);
+            _.each(view.testTemplate, function(test){
+                test.setProperty('assignerId', 'value', view.viewModel.get('assignerId'));
+                //assignerFirstName - имя врача назначившего исследование
+                test.setProperty('assignerFirstName', 'value', view.viewModel.get('assignerFirstName'));
+                //assignerMiddleName - отчество врача назначившего исследование
+                test.setProperty('assignerMiddleName', 'value', view.viewModel.get('assignerMiddleName'));
+                //assignerLastName - фамилия врача назначившего исследование
+                test.setProperty('assignerLastName', 'value', view.viewModel.get('assignerLastName'));
+
+
+                test.setProperty('executorId', 'value', view.viewModel.get('executorId'));
+                //doctorFirstName - имя врача исполнителя исследование
+                test.setProperty('doctorFirstName', 'value', view.viewModel.get('executorFirstName'));
+                //doctorMiddleName - отчество врача исполнителя исследование
+                test.setProperty('doctorMiddleName', 'value', view.viewModel.get('executorMiddleName'));
+                // doctorLastName - фамилия врача исполнителя исследование
+                test.setProperty('doctorLastName', 'value', view.viewModel.get('executorLastName'));
+
+
+                //assessmentDate - дата создания направления на исследование
+                test.setProperty('assessmentDate', 'value', view.viewModel.get('createDatetime'));
+
+                //plannedEndDate - планируемая дата выполнения иследования
+                test.setProperty('plannedEndDate', 'value', view.viewModel.get('plannedDatetime'));
+
+                //finance - идентификатор типа оплаты
+                test.setProperty('finance', 'value', view.viewModel.get('finance'));
+
+                //urgent - срочность
+                test.setProperty('urgent', 'value', view.viewModel.get('urgent'));
+
+                //идентификатор направительного диагноза
+                var mkbId = view.viewModel.get('mkbId');
+
+                test.setProperty('Направительный диагноз', 'valueId', mkbId);
+
+                if (!mkbId) {
+                    test.setProperty('Направительный диагноз', 'value', '');
+                }
+
+                view.tests.add(test);
+            });
+
+
 
             this.saveButton(false, 'Сохраняем');
 

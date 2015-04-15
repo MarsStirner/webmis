@@ -5,10 +5,19 @@ define(function(require) {
     var ItemView = Backbone.View.extend({
         className: 'item',
 
+        events: {
+            'click .icon-remove' : 'onTestRemove'
+        },
+
         initialize: function() {
             this.$el.attr('data-code', this.model.get('code'));
             this.$el.attr('data-cid', this.model.cid);
             pubsub.trigger('research:selected', this.model.get('code'));
+        },
+
+        onTestRemove: function(){
+            pubsub.trigger('research:deleted', this.model.get('code'));
+            this.options.collection.remove(this.model).trigger('reset');
         },
 
         modelData: function() {

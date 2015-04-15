@@ -25,12 +25,15 @@ define(function(require) {
             view.collection.on('fetch', function() {
                 console.log('view.collection', view.collection)
                 view.renderOnFetch();
-                view.render();
             });
 
             view.collection.on('change', function() {
                 console.log('view.collection', view.collection);
 
+            });
+
+            view.collection.on('add', function() {
+                view.render();
             });
 
             pubsub.on('group:parent:click', function() {
@@ -114,11 +117,11 @@ define(function(require) {
                 view.renderNoData();
             }
 
-            $('#plannedDate').datepicker({
+            $('.plannedDate').datepicker({
                 minDate: new Date()
             }).datepicker('setDate', new Date());
 
-            $('#plannedTime').timepicker({
+            $('.plannedTime').timepicker({
                 defaultTime: 'now',
                 showPeriodLabels: false,
                 showOn: 'both',
