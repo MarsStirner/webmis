@@ -4085,6 +4085,10 @@ define(function (require) {
                 });
                 break;
             }
+
+            if (this.model.get('mandatory') == 'true') {
+                this.$('.field-toggle').attr('disabled', 'disabled');
+            }
             return this;
         }
     });
