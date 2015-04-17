@@ -49,10 +49,7 @@ define(function(require) {
 				'createTime': moment().format('HH:mm'),
 				'createDatetime': moment().format('YYYY-MM-DD HH:mm:ss'),
 				'finance': options.appeal.get('appealType').get('finance').get('id'),
-				'patientId': options.appeal.get('patient').get('id'),
-				'plannedDay': moment().add('day', 1).toDate(),
-				'plannedTime': '07:00',
-				'plannedDatetime': moment().add('day', 1).hour(7).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss')
+				'patientId': options.appeal.get('patient').get('id')
 			}, {
 				validate: false
 			});
@@ -67,21 +64,12 @@ define(function(require) {
 
 			this.instrumntalResearchs = new InstrumntalGroups();
 
-			this.on('change:createDay change:createTime', this.calculateCreateDatetime, this);
-			this.on('change:plannedDay change:plannedTime', this.calculatePlannedDatetime, this);
-
 		},
 
 		calculateCreateDatetime: function() {
 			var createDay = moment(this.get('createDay')).format('YYYY-MM-DD');
 			var createTime = this.get('createTime') + ':00';
 			this.set('createDatetime', createDay + ' ' + createTime);
-		},
-
-		calculatePlannedDatetime: function() {
-			var plannedDay = moment(this.get('plannedDay')).format('YYYY-MM-DD');
-			var plannedTime = this.get('plannedTime') + ':00';
-			this.set('plannedDatetime', plannedDay + ' ' + plannedTime);
 		},
 
 		validateModel: function(attrs) {
@@ -92,12 +80,6 @@ define(function(require) {
 				errors.push({
 					name: 'code',
 					message: 'Не выбрано исследование. '
-				});
-			}
-			if (!attrs.plannedTime) {
-				errors.push({
-					name: 'plannedTime',
-					message: 'Не задано планируемое время исследования. '
 				});
 			}
 			if (!attrs.createTime) {
@@ -127,19 +109,6 @@ define(function(require) {
 				}
 			}
 
-			if (!attrs.plannedDatetime || !moment(attrs.plannedDatetime, 'YYYY-MM-DD HH:mm:ss').isValid()) {
-				// errors.push({
-				// 	name: 'plannedDatetime',
-				// 	message: 'Некорректные планируемые дата или время выполнения исследования'
-				// });
-			} else {
-				if (!(moment(attrs.plannedDatetime, 'YYYY-MM-DD HH:mm:ss').diff(moment()) > -(60 * 1000))) {
-					errors.push({
-						name: 'plannedDatetime',
-						message: 'Планируемая дата выполнения не может быть меньше текущей. '
-					});
-				}
-			}
 
 			return errors.length > 0 ? errors : false;
 		}

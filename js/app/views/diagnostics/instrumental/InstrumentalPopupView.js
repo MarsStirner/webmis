@@ -31,8 +31,6 @@ define(function (require) {
             'click .document-type-filter-orgstruct': 'onDocumentTypeFilterOrgStructToggle',
             'change input[name=urgent]': 'onChangeUrgentInput',
             'change #finance': 'onChangeFinanceInput',
-            'change #plannedTime': 'onChangePlannedTimePicker',
-            'change #plannedDate': 'onChangePlannedDatePicker',
             'change #createDate': 'onChangeCreateDatePicker',
             'change #createTime': 'onChangeCreateTimePicker',
             'change input[name="diagnosis[mkb][code]"]': 'onChangeMkbInput',
@@ -118,7 +116,7 @@ define(function (require) {
 
         },
 
-        onSelectResearch: function (researchCode) {
+        onSelectResearch: function (researchCode, date, time) {
             var executor,
                 self = this;
 
@@ -145,6 +143,8 @@ define(function (require) {
 
                     pubsub.trigger('executor:changed', executor);
                 }
+
+                newTest.plannedDatetime = date + ' ' + time;
 
                 self.testTemplate.push(newTest);
             });
@@ -216,15 +216,6 @@ define(function (require) {
         onChangeMkbInput: function () {
             var mkbId = this.ui.$mbkCode.data('mkb-id');
             this.viewModel.set('mkbId', mkbId);
-        },
-        onChangePlannedTimePicker: function () {
-            var plannedTime = $('#plannedTime').val();
-            this.viewModel.set('plannedTime', plannedTime);
-        },
-
-        onChangePlannedDatePicker: function () {
-            var plannedDate = $('#plannedDate').val();
-            this.viewModel.set('plannedDay', plannedDate);
         },
 
         onDocumentTypeFilterOrgStructToggle: function(event) {
@@ -305,7 +296,7 @@ define(function (require) {
                 test.setProperty('assessmentDate', 'value', view.viewModel.get('createDatetime'));
 
                 //plannedEndDate - планируемая дата выполнения иследования
-                test.setProperty('plannedEndDate', 'value', view.viewModel.get('plannedDatetime'));
+                test.setProperty('plannedEndDate', 'value', moment(test.plannedDatetime, 'DD.MM.YYYY HH:mm').format('YYYY-MM-DD HH:mm:ss'));
 
                 //finance - идентификатор типа оплаты
                 test.setProperty('finance', 'value', view.viewModel.get('finance'));

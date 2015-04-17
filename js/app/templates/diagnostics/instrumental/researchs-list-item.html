@@ -15,13 +15,14 @@
   </td>
   <td style="width:8.5em;">
 	    <div class="date">
-	      <input type="text" id="plannedDate" class="plannedDate" placeholder="дд.мм.гггг">
+            <% console.log(data) %>
+	      <input id="date-<%= data.code %>" type="text" class="plannedDate" placeholder="дд.мм.гггг">
 	      <i class="icon-calendar date-icon" style="right:0.3em;"></i>
 	    </div>
 	  </td>
 	  <td style="width:5.5em;">
 	    <div class="time">
-	      <input type="text" id="plannedTime" class="plannedTime" placeholder="чч:мм"> <i class="icon-time time-icon"  style="right:0.3em;"></i>
+	      <input id="time-<%= data.code %>" type="text" class="plannedTime" placeholder="чч:мм"> <i class="icon-time time-icon"  style="right:0.3em;"></i>
 	    </div>
 	  </td>
       <td><i class="icon-remove" style="margin-left:15px; cursor:pointer"></i></td>

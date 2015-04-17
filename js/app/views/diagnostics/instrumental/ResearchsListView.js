@@ -117,17 +117,6 @@ define(function(require) {
                 view.renderNoData();
             }
 
-            $('.plannedDate').datepicker({
-                minDate: new Date()
-            }).datepicker('setDate', new Date());
-
-            $('.plannedTime').timepicker({
-                defaultTime: 'now',
-                showPeriodLabels: false,
-                showOn: 'both',
-                button: '.icon-time'
-            }).val(moment(new Date()).format('HH.mm'));
-
             return view;
         },
         close: function() {
