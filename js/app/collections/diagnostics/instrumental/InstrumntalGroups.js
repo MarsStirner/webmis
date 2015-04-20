@@ -14,6 +14,8 @@ define(function(require) {
 		extractResult: function(groups, result, criteriaRE, testTargetProp) {
 			// console.log(groups, result, criteriaRE, testTargetProp)
 
+			console.log(groups);
+
 			_.each(groups, function(model) {
 				if (!model.children) {
 					_.each(testTargetProp, function(targetProp){

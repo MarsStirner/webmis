@@ -14,6 +14,8 @@ define([
 		events: {
 			"click span": "onClick",
 			"click": "toggleNode",
+			"mouseover span": "onMouseOverSpan",
+			"mouseout span": "onMouseOutSpan",
 			"mouseover": "onMouseOver",
 			"mouseout": "onMouseOut"
 		},
@@ -42,7 +44,7 @@ define([
 			}
 		},
 
-		onMouseOver: function (event) {
+		onMouseOverSpan: function (event) {
 			$(event.target).css({
 				"background-color": "#f0f3fc",
 				"cursor": "pointer"
@@ -50,8 +52,23 @@ define([
 
 		},
 
-		onMouseOut: function (event) {
+		onMouseOutSpan: function (event) {
 			$(event.target).css("background-color", "");
+		},
+
+		onMouseOver: function (event) {
+			if (event.target.tagName == 'LI') {
+				$(event.target).css({
+					"cursor": "pointer",
+					"border": "1px solid #e1e1e1"
+				});
+			}
+		},
+
+		onMouseOut: function (event) {
+			$(event.target).css({
+				"border": ""
+			});
 		},
 
 		onChildrenTermsReset: function () {
@@ -71,14 +88,20 @@ define([
 
 		termSelected: function () {
 			var parentNode = this.options.parent;
-			var termsChain = [this.model.get("name")];
+			var termsChain = [this.model.get("template")];
 
-			if ((this.model.get("template").split("%s:").length) > 1) {
+			if ((this.model.get("template").split("%s").length) > 1) {
+				termsChain[0] = termsChain[0].split("%s")[1];
+				console.log(termsChain);
 				while (parentNode) {
-					termsChain.push(parentNode.model.get("name"));
+					termsChain.push(parentNode.model.get("template"));
 					parentNode = parentNode.parent;
 				}
 
+			}
+
+			if ((this.model.get("template").split("%n").length) > 1) {
+				termsChain[0] = '</br>'+termsChain[0].split("%n")[1];
 			}
 
 			termsChain = termsChain.reverse().join(" ");
@@ -89,7 +112,9 @@ define([
 		},
 
 		render: function () {
-			this.$el.html($("<span/>").text(this.model.get("name")));
+			var itemEl = $("<span/>").text(this.model.get("name"));
+			$(itemEl).css('width', '80%');
+			this.$el.html(itemEl);
 
 			return this;
 		}
@@ -148,14 +173,14 @@ define([
 	var Thesaurus = App.Views.Thesaurus = View.extend({
 		className: "popup",
 		template: tmpl,
-		
+
 		events: {
 			"click .ShowHidePopup": "onCancel",
 			"click .Confirm": "onConfirm",
 			"keyup .selectedTerms": "onSelTermsKeyUP",
 			"change .selectedTerms": "onSelTermsKeyUP"
 		},
-		
+
 		initialize: function () {
 			this.model = new (Model.extend({
 				rootCode: "",
