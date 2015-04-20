@@ -4127,6 +4127,7 @@ define(function (require) {
             setTimeout(_.bind(function () {
                 console.log("paste! ", event);
                 var $attrValue = this.$(".attribute-value");
+                $attrValue.msword_html_filter();
                 $attrValue.html($.htmlClean($attrValue.html(), {
                     format: true,
                     removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
