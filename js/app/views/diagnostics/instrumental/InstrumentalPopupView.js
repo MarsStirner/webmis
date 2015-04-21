@@ -151,6 +151,13 @@ define(function (require) {
 
         },
 
+        onDeleteResearch: function (researchCode, last) {
+            if (last) {
+                this.viewModel.set('code', '');
+                this.testTemplate = [];
+            }
+        },
+
         onDeselectResearch: function () {
             var executor = {
                 id: '',
@@ -293,10 +300,11 @@ define(function (require) {
 
 
                 //assessmentDate - дата создания направления на исследование
-                test.setProperty('assessmentDate', 'value', view.viewModel.get('createDatetime'));
+                test.setProperty('assessmentDate', 'value', moment(test.plannedDatetime, 'DD.MM.YYYY HH:mm').format('YYYY-MM-DD HH:mm:ss'));
 
                 //plannedEndDate - планируемая дата выполнения иследования
-                test.setProperty('plannedEndDate', 'value', moment(test.plannedDatetime, 'DD.MM.YYYY HH:mm').format('YYYY-MM-DD HH:mm:ss'));
+                //test.setProperty('plannedEndDate', 'value', );
+
 
                 //finance - идентификатор типа оплаты
                 test.setProperty('finance', 'value', view.viewModel.get('finance'));

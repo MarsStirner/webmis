@@ -3250,9 +3250,6 @@ define(function (require) {
 
         },
         onChangeExecutor: function (executor) {
-            // this.setModelProperty('doctorLastName', executor.name.last);
-            // this.setModelProperty('doctorFirstName', executor.name.first);
-            // this.setModelProperty('doctorMiddleName', executor.name.middle);
             this.setModelProperty('executorId', executor.id);
             $('#executor').val(executor.name.last + ' ' + executor.name.first + ' ' + executor.name.middle);
         },

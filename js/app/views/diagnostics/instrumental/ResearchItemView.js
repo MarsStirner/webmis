@@ -25,8 +25,9 @@ define(function(require) {
         },
 
         onTestRemove: function(){
-            pubsub.trigger('research:deleted', this.model.get('code'));
             this.options.collection.remove(this.model).trigger('reset');
+            console.log(this.options.collection);
+            pubsub.trigger('research:deleted', this.model.get('code'), !this.options.collection.length);
         },
 
         modelData: function() {
