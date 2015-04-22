@@ -3306,8 +3306,8 @@ define(function (require) {
             var self = this;
             ViewBase.prototype.render.call(this);
             self.$el.find('#executor').val(self.getModelProperty('doctorLastName')+' '+self.getModelProperty('doctorFirstName')+' '+self.getModelProperty('doctorMiddleName'));
-            self.$el.find('#createDate').val(moment(self.getModelProperty('assessmentBeginDate')).format('DD.MM.YYYY')).datepicker();
-            self.$el.find('#createTime').val(moment(self.getModelProperty('assessmentBeginDate')).format('HH.mm')).timepicker();
+            self.$el.find('#createDate').val(moment(self.getModelProperty('assessmentBeginDate')) ? moment(self.getModelProperty('assessmentBeginDate')).format('DD.MM.YYYY') : '').datepicker();
+            self.$el.find('#createTime').val(moment(self.getModelProperty('assessmentBeginDate')) ? moment(self.getModelProperty('assessmentBeginDate')).format('HH.mm') : '').timepicker();
         }
     });
 

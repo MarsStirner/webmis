@@ -86,7 +86,7 @@
 				</li>
 				<li>
 					Дата направления
-					<span class="EditLine">${moment(assignment.assignmentDate).format('DD.MM.YYYY')}</span>
+					<span class="EditLine">${moment(assignment.assignmentDate) ? moment(assignment.assignmentDate).format('DD.MM.YYYY') : ''}</span>
 				</li>
 				<li>
 					Номер направления

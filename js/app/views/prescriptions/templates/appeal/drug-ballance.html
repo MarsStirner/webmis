@@ -36,7 +36,7 @@
             <tr <% if(item.balanceOfGoodData.where){%>  class="<%= item.balanceOfGoodData.where%>"<%}%>>
                 <td >
                     <span <% if(item.isExpirationDateComesToEnd){%>style="color:red;"<%}%>>
-                        <%= moment(item.balanceOfGoodData.bestBefore).format('DD.MM.YYYY') %>
+                        <%= moment(item.balanceOfGoodData.bestBefore) ?  moment(item.balanceOfGoodData.bestBefore).format('DD.MM.YYYY') : '' %>
                     </span>
                 </td>
                 <% if(item.balanceOfGoodData.where){%>

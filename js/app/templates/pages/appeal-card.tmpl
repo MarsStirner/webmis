@@ -95,7 +95,7 @@
 						</tr>
 						<tr>
 							<td> Дата направления</td>
-							<td>${moment(assignment.assignmentDate).format('DD.MM.YYYY')}</td>
+							<td>${moment(assignment.assignmentDate) ? moment(assignment.assignmentDate).format('DD.MM.YYYY') : ''}</td>
 						</tr>
 						<tr>
 							<td> Номер направления</td>

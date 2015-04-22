@@ -12,7 +12,7 @@
 	<div class="SingleHeader Clearfix">
 		<h2><%= examName %></h2>
 		<div class="SingleInfo">
-			<span class="Date"><%= moment(examEndDate).format('DD.MM.YYYY') %></span> | <span class="Doctor"><%= examDoctorName +', ' + examDoctorSpecs %></span>
+			<span class="Date"><%= moment(examEndDate) ?  moment(examEndDate).format('DD.MM.YYYY') : '' %></span> | <span class="Doctor"><%= examDoctorName +', ' + examDoctorSpecs %></span>
 		</div>
 	</div>
 	<ul>

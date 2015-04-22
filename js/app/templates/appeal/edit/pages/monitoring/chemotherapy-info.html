@@ -44,7 +44,11 @@
 				<% _.each(therapy.getClosedPhases(), function(phase){ %>
 					<p><%if(phase.link){%><a href="<%= phase.link %>" target="_blank"><%= phase.title %></a><%}else{%><%= phase.title %><%}%>
 						<a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>">
-						<%if(phase.beginDate){%>(<%= moment(phase.beginDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %><%}%> - <%if(phase.endDate){%><%= moment(phase.endDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %>)<%}
+						<%if(phase.beginDate){%>
+							(<%= moment(phase.beginDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %>
+						<%}%> - <%if(phase.endDate){%>
+							<%= moment(phase.endDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %>)
+						<%}%>
 						</a>
 					</p>
 				<%});%>

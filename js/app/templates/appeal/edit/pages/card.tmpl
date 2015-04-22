@@ -102,7 +102,7 @@
 				{{if appealType && appealType.finance && appealType.finance.name}}
 					${appealType.finance.name}
 					{{if contract && contract.number}}
-						(Договор: ${contract.number} ${moment(contract.begDate).format('DD.MM.YYYY')} ${contract.finance.name})
+						(Договор: ${contract.number} ${moment(contract.begDate) ? moment(contract.begDate).format('DD.MM.YYYY') : ''} ${contract.finance.name})
 					{{else}}
 						(Договор: Не определено)
 					{{/if}}
