@@ -800,10 +800,17 @@ function showThrobber () {
 	var $throbber = $('.Throbber');
 	$throbber = $throbber.length ? $throbber : $('<div class="Throbber">Загружается</div>').appendTo('body');
 	$throbber.fadeIn();
+	document.addEventListener("click", disableClickOnLoad,true);
+}
+
+function disableClickOnLoad(e){
+    e.stopPropagation();
+    e.preventDefault();
 }
 
 function hideThrobber () {
 	$(".Throbber").fadeOut();
+	document.removeEventListener("click", disableClickOnLoad,true);
 }
 
 var throbberHideTimeout, showErrorTimeout, requestQueue = [];
