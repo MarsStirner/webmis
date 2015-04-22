@@ -3305,6 +3305,11 @@ define(function (require) {
         render: function () {
             var self = this;
             ViewBase.prototype.render.call(this);
+            this.$(".date-input").datepicker();
+            this.$(".time-input").timepicker({
+                showPeriodLabels: false,
+                defaultTime: 'now'
+            });
             self.$el.find('#executor').val(self.getModelProperty('doctorLastName')+' '+self.getModelProperty('doctorFirstName')+' '+self.getModelProperty('doctorMiddleName'));
             self.$el.find('#createDate').val(moment(self.getModelProperty('assessmentBeginDate')) ? moment(self.getModelProperty('assessmentBeginDate')).format('DD.MM.YYYY') : '').datepicker();
             self.$el.find('#createTime').val(moment(self.getModelProperty('assessmentBeginDate')) ? moment(self.getModelProperty('assessmentBeginDate')).format('HH.mm') : '').timepicker();
