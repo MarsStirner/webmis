@@ -37,7 +37,6 @@
 						<li>
 							<div class="LineBlock">
 								<div class="SemiCol">
-									${console.log(moment())}
 									<p><dfn>Дата рождения:</dfn> <strong>${moment(birthDate).format('DD.MM.YYYY')}  ({{ageString birthDate}})</strong> </p>
 								</div>
 								<div class="HalfCol">
@@ -178,10 +177,10 @@
 															<strong>
 																{{if poms.rangePolicyDate}}
 																	{{if poms.rangePolicyDate.start}}
-																		{{formatDate poms.rangePolicyDate.start}}
+																		${moment(poms.rangePolicyDate.start).format('DD.MM.YYYY')}
 																	{{/if}}
 																	{{if poms.rangePolicyDate.end}}
-																		- {{formatDate poms.rangePolicyDate.end}}
+																		- ${moment(poms.rangePolicyDate.end).format('DD.MM.YYYY')}
 																	{{/if}}
 																{{else}}
 																		-
@@ -231,10 +230,10 @@
 													<strong>
 														{{if pdms.rangePolicyDate}}
 															{{if pdms.rangePolicyDate.start}}
-																{{formatDate pdms.rangePolicyDate.start}}
+																${moment(pdms.rangePolicyDate.start).format('DD.MM.YYYY')}
 															{{/if}}
 															{{if pdms.rangePolicyDate.end}}
-																- {{formatDate pdms.rangePolicyDate.end}}
+																- ${moment(pdms.rangePolicyDate.end).format('DD.MM.YYYY')}
 															{{/if}}
 														{{else}}
 															-
@@ -288,10 +287,10 @@
 										<strong>
 											{{if idCard.rangeDocumentDate}}
 												{{if idCard.rangeDocumentDate.start}}
-													{{formatDate idCard.rangeDocumentDate.start}}
+													${moment(idCard.rangeDocumentDate.start).format('DD.MM.YYYY')}
 												{{/if}}
 												{{if idCard.rangeDocumentDate.end}}
-													- {{formatDate idCard.rangeDocumentDate.end}}
+													- ${moment(idCard.rangeDocumentDate.end).format('DD.MM.YYYY')}
 												{{/if}}
 											{{/if}}
 										</strong>
@@ -380,7 +379,7 @@
 													${allergy.substance}
 													{{if allergy.degree}}${allergy.degree} степень{{/if}}
 													{{if allergy.checkingDate}}
-														(установлено: {{formatDate allergy.checkingDate}})
+														(установлено: ${moment(allergy.checkingDate).format('DD.MM.YYYY')})
 													{{/if}}
 													{{if allergy.comment}}
 														${allergy.comment}
@@ -404,7 +403,7 @@
 												{{if drugIntolerance.degree}}
 													${drugIntolerance.degree} степень{{/if}}
 													{{if drugIntolerance.checkingDate}}
-														(установлено: {{formatDate drugIntolerance.checkingDate}})
+														(установлено: ${moment(drugIntolerance.checkingDate).format('DD.MM.YYYY')})
 												{{/if}}
 												{{if drugIntolerance.comment}}
 													${drugIntolerance.comment}
@@ -423,7 +422,7 @@
 								</div>
 								{{if medicalInfo.blood.checkingDate}}
 								<div class="HalfCol">
-									<p><dfn>Дата установления:</dfn> <strong>{{formatDate medicalInfo.blood.checkingDate}}</strong></p>
+									<p><dfn>Дата установления:</dfn> <strong>${moment(medicalInfo.blood.checkingDate).format('DD.MM.YYYY')}</strong></p>
 								</div>
 								{{/if}}
 							</div>
@@ -457,14 +456,14 @@
 										<span class="Label">Период действия</span>
 										<p>
 											<strong>
-											{{if disability.rangeDisabilityDate.start}}{{formatDate disability.rangeDisabilityDate.start}}{{else}}-{{/if}}
-											{{if disability.rangeDisabilityDate.end}} - {{formatDate disability.rangeDisabilityDate.end}}{{/if}}
+											{{if disability.rangeDisabilityDate.start}}${moment(disability.rangeDisabilityDate.start).format('DD.MM.YYYY')}{{else}}-{{/if}}
+											{{if disability.rangeDisabilityDate.end}} - ${moment(disability.rangeDisabilityDate.end).format('DD.MM.YYYY')}{{/if}}
 											</strong>
 										</p>
 									</div>
 									<!--<div class="QuartCol">
 										<span class="Label">Дата окончания</span>
-										<p>{{if disability.rangeDisabilityDate.end}}{{formatDate disability.rangeDisabilityDate.end}}{{else}}-{{/if}}</p>
+										<p>{{if disability.rangeDisabilityDate.end}}${moment(disability.rangeDisabilityDate.end).format('DD.MM.YYYY')}{{else}}-{{/if}}</p>
 									</div>-->
 								</div>
 								<div class="LineBlock">
@@ -488,7 +487,7 @@
 										{{if disability.document.date}}
 										<div class="SemiCol">
 											<span class="Label">Дата выдачи</span>
-											<p><strong>{{formatDate disability.document.date}}</strong></p>
+											<p><strong>${moment(disability.document.date).format('DD.MM.YYYY')}</strong></p>
 										</div>
 										{{/if}}
 									{{/if}}
@@ -524,5 +523,5 @@
 
 <script id="patient-card-page-history-item" type="text/x-jquery-tmpl">
 	<h4><a href="/appeals/${id}/">№ ${number}</a></h4>
-	{{formatDate rangeAppealDateTime.start}}{{if rangeAppealDateTime.end}} — {{formatDate rangeAppealDateTime.end}}{{/if}}
+	${moment(rangeAppealDateTime.start).format('DD.MM.YYYY')}{{if rangeAppealDateTime.end}} — ${moment(rangeAppealDateTime.end).format('DD.MM.YYYY')}{{/if}}
 </script>

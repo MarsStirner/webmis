@@ -62,7 +62,7 @@
 		${patient.sex}
 	</td>
 	<td class="status-code-${status}  ${highlight}">
-		{{formatDate patient.birthDate}}
+		${moment(patient.birthDate).format('DD.MM.YYYY')}
 
 	</td>
 	<td class="status-code-${status}  ${highlight} HasToolTip open-popup" data-tooltip-content="#tooltip_${id}">

@@ -38,7 +38,7 @@
 					Дата и время поступления
 					<span class="EditLine">
 						{{if rangeAppealDateTime.start}}
-							{{formatDateTime rangeAppealDateTime.start}}
+							${moment(rangeAppealDateTime.start).format('DD.MM.YYYY HH:mm')}
 						{{else}}
 							-
 						{{/if}}
@@ -48,7 +48,7 @@
 					Дата и время выписки
 					<span class="EditLine">
 						{{if rangeAppealDateTime.end}}
-							{{formatDateTime rangeAppealDateTime.end}}
+							${moment(rangeAppealDateTime.end).format('DD.MM.YYYY HH:mm')}
 						{{else}}
 							-
 						{{/if}}
@@ -86,7 +86,7 @@
 				</li>
 				<li>
 					Дата направления
-					<span class="EditLine">{{formatDate assignment.assignmentDate}}</span>
+					<span class="EditLine">${moment(assignment.assignmentDate).format('DD.MM.YYYY')}</span>
 				</li>
 				<li>
 					Номер направления
@@ -133,7 +133,7 @@
 					Побочное действие лекарств (непереносимость)
 					<span class="EditLine">
 						{{each(i, drugIntolerance) patient.medicalInfo.drugIntolerances}}
-							<em class="Warning">${drugIntolerance.substance}	{{if drugIntolerance.degree}}${drugIntolerance.degree} степень{{/if}}	{{if drugIntolerance.checkingDate}}установлено: {{formatDate drugIntolerance.checkingDate}}{{/if}}</em>
+							<em class="Warning">${drugIntolerance.substance}	{{if drugIntolerance.degree}}${drugIntolerance.degree} степень{{/if}}	{{if drugIntolerance.checkingDate}}установлено: ${moment(drugIntolerance.checkingDate).format('DD.MM.YYYY')}{{/if}}</em>
 						{{/each}}
 					</span>
 				</li>

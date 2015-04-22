@@ -22,7 +22,7 @@
 			<td>Дата и время поступления</td>
 			<td>
 				{{if rangeAppealDateTime.start && rangeAppealDateTime.start > 0}}
-					{{formatDateTime rangeAppealDateTime.start}}
+					${moment(rangeAppealDateTime.start).format('DD.MM.YYYY HH:mm')}
 				{{else}}
 					-
 				{{/if}}
@@ -32,7 +32,7 @@
 			<td> Дата и время выписки</td>
 			<td>
 				{{if closeDate && closeDate > 0}}
-					{{formatDateTime closeDate}}
+					${moment(closeDate).format('DD.MM.YYYY HH:mm')}
 				{{else}}
 					-
 				{{/if}}
@@ -102,7 +102,7 @@
 				{{if appealType && appealType.finance && appealType.finance.name}}
 					${appealType.finance.name}
 					{{if contract && contract.number}}
-						(Договор: ${contract.number} {{formatDate contract.begDate}} ${contract.finance.name})
+						(Договор: ${contract.number} ${moment(contract.begDate).format('DD.MM.YYYY')} ${contract.finance.name})
 					{{else}}
 						(Договор: Не определено)
 					{{/if}}
@@ -197,7 +197,7 @@
 
 			<td>
 				{{if assignment.assignmentDate && assignment.assignmentDate > 0}}
-					{{formatDate assignment.assignmentDate}}
+					${moment(assignment.assignmentDate).format('DD.MM.YYYY')}
 				{{else}}
 				-
 				{{/if}}

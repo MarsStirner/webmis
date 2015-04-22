@@ -57,7 +57,7 @@
 							<td> Дата и время поступления</td>
 							<td>
 								{{if rangeAppealDateTime.start}}
-									{{formatDateTime rangeAppealDateTime.start}}
+									${moment(rangeAppealDateTime.start).format('DD.MM.YYYY HH:mm')}
 								{{else}}
 									-
 								{{/if}}
@@ -95,7 +95,7 @@
 						</tr>
 						<tr>
 							<td> Дата направления</td>
-							<td>{{formatDate assignment.assignmentDate}}</td>
+							<td>${moment(assignment.assignmentDate).format('DD.MM.YYYY')}</td>
 						</tr>
 						<tr>
 							<td> Номер направления</td>

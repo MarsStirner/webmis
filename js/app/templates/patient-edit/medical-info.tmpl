@@ -31,7 +31,7 @@
 				<ul class="ChangeHistory">
 					{{each bloodTypesHistory}}
 					 <li>
-						 <span class="Field">${bloodType.name}</span> <span class="Field">{{formatDate bloodDate}}</span>
+						 <span class="Field">${bloodType.name}</span> <span class="Field">${moment(bloodDate).format('DD.MM.YYYY')}</span>
 					 </li>
 					{{/each}}
 				 </ul>

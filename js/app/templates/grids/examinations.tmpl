@@ -45,7 +45,7 @@
 
 <script id="examination-grid-row-department" type="text/x-jquery-tmpl">
 	<td class="ExamIdHolder" data-exam-id="${id}">
-		{{formatDate assessmentDate}}
+		${moment(assessmentDate).format('DD.MM.YYYY')}
 	</td>
 	<td>
 		${assessmentName.name}

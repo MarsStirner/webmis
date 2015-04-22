@@ -17,7 +17,7 @@
 				<a class="Actions SortCol" data-field="cito"><span>Cito</span></a>
 			</th>
             <th>
-                <span>Лаборатория</span> 
+                <span>Лаборатория</span>
             </th>
 			<th>
 				<a class="Actions SortCol" data-field="assignPerson"><span>Направивший врач</span></a>
@@ -37,7 +37,7 @@
 	<td><i class=" icon-bar-chart"></i></td>
 	<td>
 		{{if plannedEndDate}}
-			{{formatDateTime plannedEndDate}}
+			${moment(plannedEndDate).format('DD.MM.YYYY HH:mm')}
 		{{else}}
 			-
 		{{/if}}
@@ -65,7 +65,7 @@
 		{{/if}}
 	</td>
     <td>
-        ${laboratoryTitle} 
+        ${laboratoryTitle}
     </td>
 
 	<td>
