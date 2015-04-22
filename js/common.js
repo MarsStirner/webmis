@@ -22,6 +22,9 @@ POLICLINIC_HOST = "10.128.225.200:5555";
 APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
 ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/";
 
+// Временная зона по умолчанию
+moment.tz.setDefault("Europe/Moscow");
+
 App = {};
 App.Models = {};
 App.Dynamic = {};
