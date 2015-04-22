@@ -94,7 +94,7 @@
 		${moment(admission).format('DD.MM.YYYY HH:mm')}
 	</td>
 	<td>
-		${moment(leave).format('DD.MM.YYYY HH:mm')}
+		${moment(leave) ? moment(leave).format('DD.MM.YYYY HH:mm') : ''}
 	</td>
 	<td>
 		${days}
