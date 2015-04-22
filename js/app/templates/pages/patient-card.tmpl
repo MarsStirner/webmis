@@ -37,7 +37,7 @@
 						<li>
 							<div class="LineBlock">
 								<div class="SemiCol">
-									<p><dfn>Дата рождения:</dfn> <strong>{{formatDate birthDate}}  ({{ageString birthDate}})</strong> </p>
+									<p><dfn>Дата рождения:</dfn> <strong>${moment(birthDate).tz('Europe/Moscow').format('DD.MM.YYYY')}  ({{ageString birthDate}})</strong> </p>
 								</div>
 								<div class="HalfCol">
 									<p>
