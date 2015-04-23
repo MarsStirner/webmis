@@ -20,6 +20,9 @@
 			<th>
 				<a class="Actions SortCol" data-field="tissueType">Биоматериал</a>
 			</th>
+			<th>
+				<a class="Actions">Лабораторное исследованиe</a>
+			</th>
 			<!---->
 			<th>
 				<a class="Actions SortCol" data-field="urgent">Срочность</a>
@@ -91,19 +94,13 @@
 				<li>Примечание: ${note}</li>
 				{{/if}}
 			</ul>
-
-
-				<b>{{if actions.length > 1}}Лабораторные исследования{{else}}Лабораторное исследованиe{{/if}}:</b>
-			<ol>
-				{{each actions}}
-				<li>${actionType.name}</li>
-				{{/each}}
-
-			</ol>
-
-
-
 		</div>
+	</td>
+
+	<td class="status-code-${status}  ${highlight}">
+		{{each actions}}
+			${actionType.name}
+		{{/each}}
 	</td>
 
 	<td class="status-code-${status}  ${highlight}">
@@ -127,7 +124,7 @@
 </script>
 
 <script id="biomaterials-grid-row-error" type="text/x-jquery-tmpl">
-	<td colspan="7">
+	<td colspan="10">
 		Ничего не найдено
 	</td>
 </script>
