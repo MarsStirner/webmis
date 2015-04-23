@@ -30,13 +30,6 @@
 			<!--<th>-->
 				<!--<a class="Actions SortCol" data-field="testTube">Пробирка</a>-->
 			<!--</th>-->
-			<th >
-				Объём
-			</th>
-			<th>
-				<a class="Actions SortCol" data-field="status">Статус</a>
-
-			</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -99,7 +92,7 @@
 
 	<td class="status-code-${status}  ${highlight}">
 		{{each actions}}
-			${actionType.name}
+			${actionType.name}</br>
 		{{/each}}
 	</td>
 
@@ -107,24 +100,10 @@
 		{{if urgent}}<span class="Urgent">срочно</span>{{/if}}
 	</td>
 
-	<td class="status-code-${status}  ${highlight}">
-		{{if volume}}
-			${volume}
-			{{if biomaterial.unit && biomaterial.unit.name}} ${biomaterial.unit.name}{{/if}}
-		{{/if}}
-
-	</td>
-
-
-
-
-	<td class="status-code-${status}  ${highlight}">
-		<span class="status-name">${statusName}</span>
-	</td>
 </script>
 
 <script id="biomaterials-grid-row-error" type="text/x-jquery-tmpl">
-	<td colspan="10">
+	<td colspan="8">
 		Ничего не найдено
 	</td>
 </script>
