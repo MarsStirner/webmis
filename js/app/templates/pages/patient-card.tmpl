@@ -320,7 +320,7 @@
 										</p>
 										{{/if}}
 
-										{{if occupation.socialStatus.id == 313 && occupation.works[0].preschoolNumber}}
+										{{if occupation.socialStatus.id == 313 && occupation.works[0] && occupation.works[0].preschoolNumber}}
 										<p>Номер детсада, ясли: ${occupation.works[0].preschoolNumber}</p>
 										{{/if}}
 
