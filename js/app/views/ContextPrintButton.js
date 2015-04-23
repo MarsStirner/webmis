@@ -128,8 +128,9 @@ define(function (require) {
             var width = Math.min($window.width(), 728),
                 height = Math.min($window.height(), 967);
 
-            this.window = window.open("", "Печать", "charset=utf-8, width=" + width + ",height=967 ,menubar=0,toolbar=0,status=0,location=0,left=" + Math.max(($window.width() - width) / 2, 0) + ",top=" + Math.max(($window.height() - height) / 2, 0));
-            this.window.document.write($(templateContent).html());
+            pubsub.printWindow && pubsub.printWindow.close();
+            pubsub.printWindow = window.open("", "Печать", "charset=utf-8, width=" + width + ",height=967 ,menubar=0,toolbar=0,status=0,location=0,left=" + Math.max(($window.width() - width) / 2, 0) + ",top=" + Math.max(($window.height() - height) / 2, 0));
+            pubsub.printWindow.document.write($(templateContent).html());
         },
 
     });

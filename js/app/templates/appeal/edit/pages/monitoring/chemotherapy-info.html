@@ -11,7 +11,7 @@
 					<span class="therapy-header-title"><%= therapy.get('title') %></span>
 				<%}%>
 				<span class="therapy-header-dates">
-					<%if(therapy.get('endDate')){%>
+					<%if(therapy.get('beginDate') && therapy.get('endDate')){%>
 						(<%= moment(therapy.get('beginDate'), 'YYYY-MM-DD').format('DD.MM.YYYY') %> - <%= moment(therapy.get('endDate'), 'YYYY-MM-DD').format('DD.MM.YYYY') %>)
 					<%}else{%>
 						<%if(therapy.get('beginDate')){%>
