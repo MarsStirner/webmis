@@ -31,6 +31,10 @@ define(function(require){
 			"click .toggle-filters": "toggleFilters"
 		},
 
+        showFiltred: function() {
+
+		},
+
 		increaseDate: function(event) {
 			event.preventDefault();
 
@@ -250,7 +254,8 @@ define(function(require){
 							preselectedValue: Core.Cookies.get("userId")
 						}
 
-					}
+					},
+                    isAutoloadDisabled: true
 				});
 
 				AppealsGrid = new App.Views.Grid({
@@ -322,7 +327,8 @@ define(function(require){
 				Filter = new App.Views.Filter({
 					collection: Collection,
 					templateId: "#appeals-list-filters-nurse-department",
-					path: this.options.path
+					path: this.options.path,
+                    isAutoloadDisabled: true
 				});
 
 				AppealsGrid = new App.Views.Grid({
@@ -456,7 +462,7 @@ define(function(require){
 			}, this);
 
 
-   
+
 			this.collection = Collection;
 
 
@@ -471,6 +477,10 @@ define(function(require){
 			this.depended(AppealsGrid);
 
 			this.$el.find(".Container").html(AppealsGrid.render().el);
+
+            this.$el.find('.show-filtred-appeals').on('click', function(){
+                Filter.refresh();
+            });
 
 			if (this.printButton) {
 				//old print button
