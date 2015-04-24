@@ -10,7 +10,7 @@ define(function (require) {
             this.template       = '<button type="button" class="" data-icon-primary="icon-print">'+(this.title || 'Печать')+'</button>',
             this.separate       = options.separate  || false;
             this.documents      = options.documents || {};
-            this.printTemplates = new PrintTemplates();
+            this.printTemplates = options.printTemplates || new PrintTemplates();
             TreeButton.prototype.initialize.call(this, options);
             options.context && this.getTemplatesForContext(this.options.context);
             this.listenTo(this.printTemplates, 'reset', this.afterRender);

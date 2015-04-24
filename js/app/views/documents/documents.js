@@ -158,6 +158,7 @@ define(function (require) {
     var PersonDialogView = require('views/ui/PersonDialog');
     var InstrumentalPopupView = require('views/diagnostics/instrumental/InstrumentalPopupView');
     var ViewModel = require('views/diagnostics/instrumental/InstrumentalPopupViewModel');
+    var PrintTemplates = require('models/print/Template').Collection;
     /*var FDLoader = {
         fds: {},
         get: function (id, cb, context) {
@@ -6026,23 +6027,30 @@ define(function (require) {
         initialize: function (options) {
             this.listenTo(this.collection, 'change reset',this.onDocCollectionChange);
 
+            this.printDocuments = this.getPrintDocumentCollection();
+
+            this.printTemplates = new PrintTemplates();
+
             this.documentPrintButton = new ContextPrintButton({
                 differentDocs: true,
                 separate: false,
-                documents: this.getPrintDocumentCollection(),
-                title: 'Печать'
+                documents: this.printDocuments,
+                title: 'Печать',
+                printTemplates: this.printTemplates
             });
 
             this.documentPrintButtonSingle = new ContextPrintButton({
-                documents: this.getPrintDocumentCollection(),
-                title: 'Печать'
+                documents: this.printDocuments,
+                title: 'Печать',
+                printTemplates: this.printTemplates
             });
 
             this.documentPrintButtonSeparated = new ContextPrintButton({
                 differentDocs: true,
                 separate: true,
-                documents: this.getPrintDocumentCollection(),
-                title: 'Печать раздельно'
+                documents: this.printDocuments,
+                title: 'Печать раздельно',
+                printTemplates: this.printTemplates
             });
 
             this.subViews = {
@@ -6076,12 +6084,11 @@ define(function (require) {
         onDocCollectionChange: function(){
                 var firstDoc = this.collection.first();
                 if (firstDoc) {
-                    this.documentPrintButtonSingle.documents = this.getPrintDocumentCollection();
+                    this.documentPrintButtonSingle.documents = this.printDocuments;
                     this.documentPrintButton.documents = this.documentPrintButtonSeparated.documents = this.getPrintDocumentCollection();
                     if (firstDoc.get('context')) {
-                        this.documentPrintButton.getTemplatesForContext(firstDoc.get('context'));
-                        this.documentPrintButtonSingle.getTemplatesForContext(firstDoc.get('context'));
-                        this.documentPrintButtonSeparated.getTemplatesForContext(firstDoc.get('context'));
+                        this.printTemplates.setPrintContext(firstDoc.get('context'));
+                        this.printTemplates.fetch();
                     }
                 }
 
