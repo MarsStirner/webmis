@@ -83,7 +83,7 @@ define(function (require) {
         },
 
         onCollectionReset: function () {
-            this.countBedDays();
+            //this.countBedDays();
             this.toggleDirectionText();
             this.toggleHospitalbedMenu();
             this.checkLeavedDocExists();
