@@ -35,13 +35,21 @@ define(function(require) {
 				//история болезни не закрыта и закрыто последнее движение
 				days = moment(this.moves.last().get('leave')).diff(moment(appealJSON.rangeAppealDateTime.start).startOf('day'), "days");
 			} else {
+				if (this.moves.length && this.moves.last().get('leave')) {
+					var endDay = moment(this.moves.last().get('leave'));
+				} else {
+					var endDay = moment().startOf('day');
+				}
+
 				if (appealJSON.appealType.requestType.id === 1) {
 					//дневной стационар
-					days = moment().startOf('day').diff(moment(appealJSON.rangeAppealDateTime.start).startOf('day'), "days") + 1;
+					days = endDay.diff(moment(appealJSON.rangeAppealDateTime.start).startOf('day'), "days") + 1;
+					console.log(moment().startOf('day'));
 				} else if (appealJSON.appealType.requestType.id === 2) {
 					//круглосуточный стационар
-					days = moment().startOf('day').diff(moment(appealJSON.rangeAppealDateTime.start).startOf('day'), "days");
+					days = endDay.diff(moment(appealJSON.rangeAppealDateTime.start).startOf('day'), "days");
 				}
+
 			}
 
 			return days;
