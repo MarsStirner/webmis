@@ -5,7 +5,7 @@
 <div class="field">
 	<input type="text"
 				 class="Combo attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
-				 data-options="<%=model.get('scope').replace(/\'/g,'').split(',').join('|')%>"
+				 data-options="<%= model.get('scope').split("'").length > 1 ? _.filter(model.get('scope').split("'"), function(el){ return el != '' && el != ','; }).join('|') : model.get('scope').replace(/\'/g,'').split(',').join('|') %>"
 				 value="<%=model.getValue()%>"
 				 <%=model.isReadOnly()?'disabled':''%>>
 </div>
