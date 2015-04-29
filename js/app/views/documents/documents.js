@@ -4131,6 +4131,7 @@ define(function (require) {
                 console.log("paste! ", event);
                 var $attrValue = this.$(".attribute-value");
                 $attrValue.msword_html_filter();
+                $attrValue.html($attrValue.html().replace(/\u2028/g, '').replace(/\u2029/g, ''));
                 $attrValue.html($.htmlClean($attrValue.html(), {
                     format: true,
                     removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
