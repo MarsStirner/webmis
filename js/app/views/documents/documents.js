@@ -4142,13 +4142,13 @@ define(function (require) {
                     replace: [
                         [
                             ["h1", "h2", "h3", "h4"], "b"
-                        ],
-                        [
-                            ["table", "tr", "thead", "tbody"], "div"
-                        ],
-                        [
-                            ["td", "th"], "span"
-                        ]
+                        ]//,
+                        // [
+                        //     ["table", "tr", "thead", "tbody"], "div"
+                        // ],
+                        // [
+                        //     ["td", "th"], "span"
+                        // ]
                     ]
                 }));
 
