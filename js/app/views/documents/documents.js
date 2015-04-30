@@ -4029,6 +4029,7 @@ define(function (require) {
         },
 
         onAttributeKeyUp: function (event) {
+            console.log(this.model.setValue(this.getAttributeValue()));
             if (event.keyCode == 32) {
                 this.setAutosavedFields();
             } else {
@@ -4151,6 +4152,10 @@ define(function (require) {
                         // ]
                     ]
                 }));
+                $attrValue.find('td').css({
+                    'border': '1px solid #9f9f9f',
+                    'padding': '2px'
+                });
 
                 this.model.setValue($attrValue.html());
             }, this), 0);
