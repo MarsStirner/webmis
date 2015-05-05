@@ -33,7 +33,8 @@ define(function(require) {
 			'click .document-type-filter-orgstruct': 'onDocumentTypeFilterOrgStructToggle',
 			'change #start-time': 'validateForm',
 			'change #start-date': 'validateForm',
-			'keyup #tree-search': 'onSearchKeyup'
+			'keyup #tree-search': 'onSearchKeyup',
+			'click .checkAll': 'onCheckAll'
 		},
 		detach_event: function(e_name) {
 			delete this.events[e_name];
@@ -164,6 +165,16 @@ define(function(require) {
 			});
 
 		},
+
+		onCheckAll: function(e){
+			if ($(e.currentTarget).attr('checked')) {
+				this.$('.list').find('.picked').attr('checked', 'checked');
+			} else {
+				this.$('.list').find('.picked').removeAttr('checked');
+			}
+			
+		},
+
 		onSearchKeyup: function(event) {
 			var $target = $(event.currentTarget);
 

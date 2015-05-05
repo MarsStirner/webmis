@@ -251,11 +251,11 @@ define([
                 //collection: diagnoses
             });
 
-            if (model.get("diagnosisKind") == "diagReceivedMkb") {
-                diagnosisView.on("diagnosis:change", function (event) {
-                    this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
-                }, this);
-            }
+            // if (model.get("diagnosisKind") == "diagReceivedMkb") {
+            //     diagnosisView.on("diagnosis:change", function (event) {
+            //         this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
+            //     }, this);
+            // }
 
             this.depended(diagnosisView);
 
