@@ -380,7 +380,8 @@ define(function(require) {
 
 						(function() {
 							var appeal = self.appeal;
-							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (appeal.get('appealType').get('finance').get('name') === 'ВМП')) {
+							var financeName = appeal.get('appealType').get('finance').get('name');
+							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (financeName === 'ВМП' || financeName === 'ОМС')) {
 								return {
 									name: "quotes",
 									title: "Квоты ВМП",
