@@ -159,6 +159,8 @@ define(function (require) {
     var InstrumentalPopupView = require('views/diagnostics/instrumental/InstrumentalPopupView');
     var ViewModel = require('views/diagnostics/instrumental/InstrumentalPopupViewModel');
     var PrintTemplates = require('models/print/Template').Collection;
+
+    var DocumentTemplatesCollection = require("collections/doc-templates");
     /*var FDLoader = {
         fds: {},
         get: function (id, cb, context) {
@@ -2161,7 +2163,12 @@ define(function (require) {
                     text: "Создать",
                     "class": "button-color-green",
                     click: _.bind(this.onCreateDocumentClick, this)
-                }, {
+                },
+                // {
+                //     text: "Создать из шаблона",
+                //     click: _.bind(this.onCreateDocumentFtomTemplateClick, this)
+                // },
+                {
                     text: "Отмена",
                     click: _.bind(this.tearDown, this)
                 }]
@@ -2188,6 +2195,12 @@ define(function (require) {
             }
         },
 
+        onCreateDocumentFtomTemplateClick: function () {
+            templateCollection = new DocumentTemplatesCollection();
+            templateCollection.docType = this.selectedType;
+            templateCollection.fetch();
+        },
+
         render: function () {
             PopUpBase.prototype.render.call(this, {
                 ".document-types-tree": new Documents.Views.List.Base.DocumentTypesTree({
@@ -2197,6 +2210,10 @@ define(function (require) {
             this.$el.before(this.docTypeSearch.render().el);
             return this;
         }
+    });
+
+    Documents.Views.List.Base.DocumentTemplateSelector = PopUpBase.extend({
+        
     });
 
     Documents.Views.List.Base.DocumentTypeSearch = ViewBase.extend({
