@@ -12,7 +12,16 @@ define(function(require) {
 		parse: function(raw) {
 			var parsed = []
 			_.each(raw, function(infection){
-				parsed.push(infection);
+				var isDupe = false;
+				_.each(parsed, function(drug){
+					if (drug.therapyName == infection.therapyName && drug.drugName == infection.drugName && drug.begDate == infection.begDate) {
+						if ( (drug.endDate == infection.endDate) || (!drug.endDate && infection.endDate) ) {
+							drug = infection;
+						}
+						isDupe = true;
+					}
+				});
+				!isDupe && parsed.push(infection);
 			});
 			return parsed;
 		}
