@@ -13,15 +13,15 @@ define(function () {
 		model: TemplateForDocument,
 
 		url: function () {
-			console.log(this.docType);
-			return "/api/v1/dir/template?actionTypeId="+this.docType;
+			//return "/api/v1/dir/template?actionTypeId="+this.docType;
+			return "http://10.1.2.73:8080/core-ext-war/template?actionTypeId="+this.docType;
 		},
 
 		parse: function (data) {
         if (_.isObject(data.actionTemplateList)) {
             return data.actionTemplateList;
         } else {
-            return data;
+            return null;
         }
     }
 	});

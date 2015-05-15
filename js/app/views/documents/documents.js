@@ -82,6 +82,7 @@ define(function (require) {
         _documentTypeDateFilters: _.template(require("text!templates/documents/list/type-date-filter.html")),
         _documentDateFilter: _.template(require("text!templates/documents/list/date-filter.html")),
         _documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
+        _documentTemplateSelector: _.template(require("text!templates/documents/list/doc-template-selector.html")),
         _documentTypeSearch: _.template(require("text!templates/documents/list/doc-type-search.html")),
         _documentTypesTree: _.template(require("text!templates/documents/list/doc-types-tree.html")),
         _documentsTableHead: _.template(require("text!templates/documents/list/docs-table-head.html")),
@@ -553,7 +554,12 @@ define(function (require) {
         urlRoot: DATA_PATH + "dir/actionTypes/",
 
         url: function () {
-            return this.urlRoot + this.id + '?eventId=' + this.appealId;
+            if (this.get('templateId')) {
+                var tmpl = '&actionId='+this.get('templateId');
+            } else {
+                var tmpl = '';
+            }
+            return this.urlRoot + this.id + '?eventId=' + this.appealId + tmpl;
         },
 
         getTypeId: function () {
@@ -1757,6 +1763,7 @@ define(function (require) {
             "change .selected-flag": "onSelectedFlagChange",
             "click .duplicate-document": "onDuplicateDocumentClick",
             "click .edit-document": "onEditDocumentClick",
+            "click .create-template": "onCreateTemplateClick",
             "click .single-item-select": "onItemClick",
             "click th.sortable": "onThSortableClick",
             "click .remove-document": "onRemoveDocumentClick",
@@ -1791,6 +1798,19 @@ define(function (require) {
             this.listenTo(this.collection, "reset", this.onCollectionReset);
             this.listenTo(this.collection, "mark-all", this.onCollectionMarkAll);
             this.listenTo(this.options.selectedDocuments, "review:quit", this.onCollectionReset);
+        },
+
+        onCreateTemplateClick: function (e) {
+            templateCollection = new DocumentTemplatesCollection();
+            templateCollection.docType = $(e.currentTarget).data('template-id');
+            templateCollection.fetch().done(function(){
+                var templatesPopUp = new Documents.Views.Edit.DocTemplateSaver({
+                    collection: templateCollection.toJSON(),
+                    docType: $(e.currentTarget).data('template-id'),
+                    docId: $(e.currentTarget).data('id')
+                });
+                templatesPopUp.render();
+            });
         },
 
         showLockInfo: function (e) {
@@ -2164,10 +2184,10 @@ define(function (require) {
                     "class": "button-color-green",
                     click: _.bind(this.onCreateDocumentClick, this)
                 },
-                // {
-                //     text: "Создать из шаблона",
-                //     click: _.bind(this.onCreateDocumentFtomTemplateClick, this)
-                // },
+                {
+                    text: "Создать из шаблона",
+                    click: _.bind(this.onCreateDocumentFtomTemplateClick, this)
+                },
                 {
                     text: "Отмена",
                     click: _.bind(this.tearDown, this)
@@ -2196,9 +2216,18 @@ define(function (require) {
         },
 
         onCreateDocumentFtomTemplateClick: function () {
+            var self = this;
             templateCollection = new DocumentTemplatesCollection();
             templateCollection.docType = this.selectedType;
-            templateCollection.fetch();
+            templateCollection.fetch().done(function(){
+                var templatesPopUp = new Documents.Views.Edit.DocTemplateSelector({
+                    collection: templateCollection.toJSON(),
+                    docType: self.selectedType,
+                    editPageTypeName: self.options.editPageTypeName
+                });
+                templatesPopUp.render();
+                self.tearDown();
+            });
         },
 
         render: function () {
@@ -2212,9 +2241,203 @@ define(function (require) {
         }
     });
 
-    Documents.Views.List.Base.DocumentTemplateSelector = PopUpBase.extend({
-        
+
+    Documents.Views.Edit.DocTemplateSelector = PopUpBase.extend({
+        template: templates._documentTemplateSelector,
+
+        events: {
+            "click .document-template-node": "onDocumentTemplateNodeClick",
+            "mouseenter span": 'onMouseenter',
+            "mouseleave span": 'onMouseleave'
+        },
+
+        data: function () {
+            return {
+                tree: this.options.collection,
+                docType: this.options.docType,
+                template: this.template
+            };
+        },
+
+        initialize: function () {
+            var self = this;
+            this.dialogOptions = {
+                title: "Выберите шаблон",
+                modal: true,
+                width: 800,
+                height: 550,
+                resizable: false,
+                buttons: [{
+                        text: "Создать",
+                        "class": "button-color-green",
+                        click: _.bind(function () {
+                            var docType = self.options.docType;
+                            var docTemplate = self.docTemplateId;
+                            App.Router.updateUrl(["appeals", appealId, "documents", "new", docType].join("/"));
+                            dispatcher.trigger("change:viewState", {
+                                type: "documents",
+                                mode: "SUB_EDIT",
+                                options: {
+                                    templateId: docType,
+                                    actionId: docTemplate
+                                }
+                            });
+                            self.tearDown();
+                        }, this)
+                    }, {
+                        text: "Отмена",
+                        click: function () {
+                            self.tearDown();
+                        }
+                    }]
+            };
+        },
+
+        onDocumentTemplateNodeClick: function (event) {
+            event.stopPropagation();
+            var $node = $(event.currentTarget);
+            if ($node.is(".Opened")) {
+                $node.removeClass("Opened").siblings().removeClass("Opened");
+                $node.children().removeClass("Opened");
+                $node.find(".icon-minus").addClass("icon-plus").removeClass("icon-minus");
+                $node.find('ul').hide();
+            } else {
+                $node.addClass("Opened").siblings().removeClass("Opened");
+                $node.children().removeClass("Opened");
+                $node.find(".icon-plus:first").addClass("icon-minus").removeClass("icon-plus");
+                $node.find('ul:first').show();
+            }
+
+            if ($node.data("document-template-id")) {
+                this.docTemplateId = $node.data("document-template-id");
+                this.$('span').css('font-weight', '100');
+                $node.find('span:first').css('font-weight', 'bold');
+                this.$el.parent().find('.button-color-green').button('enable');
+            }
+        },
+
+        onMouseenter: function (event) {
+            var $span = $(event.currentTarget);
+            $span.css('background-color', '#bde2f5');
+        },
+
+        onMouseleave: function (event) {
+            var $span = $(event.currentTarget);
+            $span.css('background-color', '');
+        },
+
+        render: function () {
+            PopUpBase.prototype.render.call(this);
+            this.$("ul").first().show();
+            this.$el.parent().find('.button-color-green').button('disable');
+        }
     });
+
+    Documents.Views.Edit.DocTemplateSaver = Documents.Views.Edit.DocTemplateSelector.extend({
+        events: {
+            "click .document-template-node": "onDocumentTemplateNodeClick",
+            "mouseenter span": 'onMouseenter',
+            "mouseleave span": 'onMouseleave'
+        },
+        initialize: function () {
+            var self = this;
+            this.groupId = null;
+            this.templateName = '';
+            this.dialogOptions = {
+                title: "Создать шаблон",
+                modal: true,
+                width: 800,
+                height: 550,
+                resizable: false,
+                buttons: [
+                    {
+                        text: "Создать шаблон",
+                        "class": "button-color-green",
+                        click: _.bind(function () {
+                            var tmplData = {
+                                actionId: self.options.docId,
+                                name: self.templateName,
+                                groupId: self.groupId
+                            }
+                            $.ajax({
+                               type: "POST",
+                               url: "http://10.1.2.73:8080/core-ext-war/template?actionTypeId="+self.options.docType,
+                               data: tmplData,
+                               'contentType': 'application/json',
+                               success: function(){
+                                   self.tearDown();
+                                }
+                            });
+
+                        }, this)
+                    },
+                    {
+                        text: "Создать группу",
+                        "class": "button-create-group",
+                        click: function () {
+
+                        }
+                    },
+                    {
+                        text: "Отмена",
+                        click: function () {
+                            self.tearDown();
+                        }
+                    }]
+            };
+        },
+        onDocumentTemplateNodeClick: function (event) {
+            event.stopPropagation();
+            var $node = $(event.currentTarget);
+            if ($node.is(".Opened")) {
+                $node.removeClass("Opened").siblings().removeClass("Opened");
+                $node.children().removeClass("Opened");
+                $node.find(".icon-minus").addClass("icon-plus").removeClass("icon-minus");
+                $node.find('ul').hide();
+            } else {
+                $node.addClass("Opened").siblings().removeClass("Opened");
+                $node.children().removeClass("Opened");
+                $node.find(".icon-plus:first").addClass("icon-minus").removeClass("icon-plus");
+                $node.find('ul:first').show();
+            }
+            if ($node.data("document-template-id")) {
+                this.$('span').css('font-weight', '100');
+                if ($node.is(".Opened")) {
+                    $node.find('span:first').css('font-weight', 'bold');
+                    this.groupId = $node.data("document-template-id");
+                    this.updateButtonsState();
+                } else {
+                    this.groupId = null;
+                    this.updateButtonsState();
+                }
+            }
+        },
+        onNameChange: function (name) {
+            this.templateName = name;
+            this.updateButtonsState();
+        },
+        updateButtonsState: function (name) {
+            if (this.templateName) {
+                this.$el.parent().find('.button-color-green, .button-create-group').button('enable');
+            } else {
+                this.$el.parent().find('.button-color-green, .button-create-group').button('disable');
+            }
+        },
+        render: function () {
+            PopUpBase.prototype.render.call(this);
+            this.$("ul").first().show();
+            this.$el.parent().find('.button-color-green, .button-create-group').button('disable');
+            var self = this;
+            var nameInput = "<input type='text' class='templateName' placeholder='Название' style='margin:.5em;'/>";
+            $('<div>').prependTo(this.$el.parent().find('.ui-dialog-buttonpane')).html(nameInput).css({
+                'float': 'left'
+            });
+            $('.templateName').on('input', function(){
+                self.onNameChange($(this).val());
+            });
+        }
+    });
+
 
     Documents.Views.List.Base.DocumentTypeSearch = ViewBase.extend({
         className: "doc-type-search",
@@ -2878,7 +3101,8 @@ define(function (require) {
             if (!this.model) {
                 if (this.options.templateId || this.options.mode === "SUB_NEW" && this.options.subId) {
                     this.model = new Documents.Models.DocumentTemplate({
-                        id: this.options.templateId || this.options.subId
+                        id: this.options.templateId || this.options.subId,
+                        templateId: this.options.actionId
                     });
                 } else if (this.options.documentId || this.options.mode === "SUB_EDIT" && this.options.subId) {
                     this.model = new Documents.Models.Document({
