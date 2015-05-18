@@ -117,6 +117,7 @@ define(function(require) {
 
 			//код вида вмп
 			this.quotaType = new QuotaType();
+			this.quotaType.appealId = this.options.appeal.get('id');
 			this.quotaTypeView = new RSelectView({
 				label: 'Код вида ВМП',
 				options: this.quotaType,
