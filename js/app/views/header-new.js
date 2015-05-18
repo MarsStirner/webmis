@@ -191,6 +191,25 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 						//,{title: "Амбулаторные талоны"}
 					);
 					break;
+				case ROLES.DOCTOR_ANESTEZIOLOG:
+					sections.push({
+						title: "Госпитализации",
+						name: "appeals",
+						uri: "/appeals/"
+					}, {
+						title: "Пациенты",
+						name: "patients",
+						uri: "/patients/"
+					}, {
+						title: "Запись на консультацию",
+						name: "appointments",
+						uri: "/appointments/"
+					}, {
+						title: "Отчёты",
+						name: "anareports",
+						uri: "/anareports/"
+					});
+					break;
 				case ROLES.CHIEF:
 					sections.push({
 						title: "Госпитализации",

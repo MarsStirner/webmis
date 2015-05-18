@@ -410,6 +410,80 @@ define(function(require) {
 				}
 			}, this);
 
+			this.separateRoles(ROLES.DOCTOR_ANESTEZIOLOG, function() {
+				var appealJSON = this.appeal.toJSON();
+				menuStructure = {
+					structure: [
+						App.Router.compile({
+							name: "monitoring",
+							title: "Основные&nbsp;сведения",
+							uri: "/appeals/:id/monitoring"
+						}, appealJSON),
+						App.Router.compile({
+							name: "patient-monitoring",
+							title: "Мониторинг&nbsp;состояния",
+							uri: "/appeals/:id/patient-monitoring"
+						}, appealJSON),
+						App.Router.compile({
+							name: "documents",
+							title: "Документы",
+							uri: "/appeals/:id/documents/"
+						}, appealJSON),
+						App.Router.compile({
+							name: "diagnostics-laboratory",
+							title: "Лабораторные исследования",
+							uri: "/appeals/:id/diagnostics-laboratory/"
+						}, appealJSON),
+						App.Router.compile({
+							name: "diagnostics-instrumental",
+							title: "Инструментальные исследования",
+							uri: "/appeals/:id/diagnostics-instrumental/"
+						}, appealJSON),
+
+						// App.Router.compile({
+						// 	name: "diagnostics-consultations",
+						// 	title: "Консультации",
+						// 	uri: "/appeals/:id/diagnostics-consultations/"
+						// }, appealJSON),
+
+						App.Router.compile({
+							name: "therapy",
+							title: "Лечение",
+							uri: "/appeals/:id/therapy"
+						}, appealJSON),
+
+						(function() {
+							var appeal = self.appeal;
+							var financeName = appeal.get('appealType').get('finance').get('name');
+							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (financeName === 'ВМП' || financeName === 'ОМС')) {
+								return {
+									name: "quotes",
+									title: "Квоты ВМП",
+									uri: "/appeals/" + appeal.get('id') + "/quotes"
+								};
+							} else {
+								return false;
+							}
+						}()),
+						App.Router.compile({
+							name: "moves",
+							title: "Движение пациента",
+							uri: "/appeals/:id/moves"
+						}, appealJSON),
+						App.Router.compile({
+							name: "card",
+							title: "Титульный лист ИБ",
+							uri: "/appeals/:id/"
+						}, appealJSON),
+                        App.Router.compile({
+                            name: "prescriptions",
+                            title: "Назначения",
+                            uri: "/appeals/:id/prescriptions/"
+                        }, appealJSON),
+					]
+				}
+			}, this);
+
 			this.separateRoles(ROLES.CHIEF, function() {
 				var appealJSON = this.appeal.toJSON();
 				menuStructure = {

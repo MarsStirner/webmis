@@ -295,6 +295,108 @@ define(function(require){
 
 			}, this);
 
+            this.separateRoles(ROLES.DOCTOR_ANESTEZIOLOG, function() {
+
+				Collection = new App.Collections.DepartmentPatients({
+					role: "doctor"
+				});
+
+
+				var doctors = new App.Collections.Doctors();
+				doctors.setParams({
+					limit: 9999,
+					sortingField: 'lastname'
+				});
+
+
+				var departments = new App.Collections.Departments();
+				departments.setParams({
+					filter: {
+						hasBeds: true
+					},
+					limit: 0,
+					sortingField: 'name',
+					sortingMethod: 'asc'
+				});
+
+				doctors.on('reset', function() {
+					setTimeout(function() {
+						view.$("#appeal-start-date").change();
+					}, 500);
+				}); //код распечатать и сжечь
+
+				Filter = new App.Views.FilterDictionaries({
+					collection: Collection,
+					templateId: "#appeals-list-filters-doctor-department",
+					path: this.options.path,
+					dictionaries: {
+						departments: {
+							collection: departments,
+							elementId: "deps-dictionary",
+							getText: function(model) {
+								return model.get("name");
+							},
+							getValue: function(model) {
+								return model.get("id");
+							},
+							preselectedValue: Core.Cookies.get("userDepartmentId")
+						},
+						doctors: {
+							collection: doctors,
+							elementId: "docs-dictionary",
+							getText: function(model) {
+								return model.get("name").raw;
+							},
+							getValue: function(model) {
+								return model.get("id");
+							},
+							matcher: function(term, text, opt) {
+								return text.split(' ')[0].toUpperCase().indexOf(term.toUpperCase()) >= 0
+							},
+							preselectedValue: Core.Cookies.get("userId")
+						}
+
+					},
+                    isAutoloadDisabled: true
+				});
+
+				AppealsGrid = new App.Views.Grid({
+					popUpMode: true,
+					collection: Collection,
+					template: "grids/appeals",
+					gridTemplateId: "#appeals-grid-doctor-department",
+					rowTemplateId: "#appeals-grid-doctor-department-row",
+					defaultTemplateId: "#appeals-grid-row-default"
+				});
+
+				AppealsGrid.on('grid:rowClick', function(model, event) {
+					if (event.target.localName != 'a') {
+						var url = '/appeals/' + model.get('id') + '/';
+						window.open(url);
+					}
+				});
+
+				Collection.on("reset", function() {
+					if (Collection.length && Collection.requestData) {
+						if (!this.$(".recordCounters").length) {
+							this.$(".Container").append(
+								'<div style="margin-top: 2em;" class="recordCounters">' +
+								//'<label style="margin-right: 2em;">Записей на странице: <b class="recordsCountPage"></b></label>' +
+								'<label>Всего пациентов: <b class="recordsCountTotal"></b></label>' +
+								'</div>'
+							);
+						}
+						//this.$(".recordsCountPage").text(Collection.length);
+						this.$(".recordsCountTotal").text(Collection.requestData.recordsCount);
+					} else {
+						this.$(".recordCounters").remove();
+					}
+				}, this);
+
+
+
+			}, this);
+
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function() {
 				Collection = new App.Collections.DepartmentPatients();
 				/*Collection.setParams({'filter[date]':1334300400000})*/

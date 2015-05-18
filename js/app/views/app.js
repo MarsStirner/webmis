@@ -42,6 +42,11 @@ define(["text!templates/app.tmpl", "views/header-new"], function(tmpl, Header) {
 						role: ROLES.CHIEF,
 						title: "Главный врач"
 					}
+					, {
+						id: 41,
+						role: ROLES.DOCTOR_ANESTEZIOLOG,
+						title: "Врач анестезиолог"
+					}
 					]
 				}
 			});
@@ -69,9 +74,9 @@ define(["text!templates/app.tmpl", "views/header-new"], function(tmpl, Header) {
 							success: function(data) {
 						    	logoutDialog.dialog("close");
 								isDialog = false;
-								clearInterval(intervalID);	       
+								clearInterval(intervalID);
 						  	},
-						  	error: function() { 
+						  	error: function() {
 							    timer = 150;
 						  	}
 						});

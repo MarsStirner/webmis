@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "1.3.89";
+var GUI_VERSION = "1.3.90";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
@@ -10,6 +10,7 @@ ROLES = {
 	DOCTOR_RECEPTIONIST: "doctor-receptionist",
 	NURSE_DEPARTMENT: "nurse-department",
 	DOCTOR_DEPARTMENT: "doctor-department",
+	DOCTOR_ANESTEZIOLOG: "doctor-anesteziolog",
 	CHIEF: "chief"
 };
 

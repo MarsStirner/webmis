@@ -155,6 +155,12 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 						Core.Cookies.set("currentRole", ROLES.DOCTOR_RECEPTIONIST);
 						break;
 					}
+				case 41:
+					{
+						// Врач анестезиолог
+						Core.Cookies.set("currentRole", ROLES.DOCTOR_ANESTEZIOLOG);
+						break;
+					}
 				default:
 					{
 						roleUnavailable = true;

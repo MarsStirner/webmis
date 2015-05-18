@@ -44,7 +44,9 @@
                 <span class="Error">Документ редактирует пользователь</br><%=document.get('lockInfo').personInfo%></span>
             </div>
         <%}%>
-        <a class="create-template" data-template-id="<%=document.get('typeId')%>" data-id="<%=document.get('id')%>" style="margin-left: .5em"><i class="icon-file-alt" title="Создать шаблон"></i></a>
+        <%if (Core.Cookies.get('currentRole') === 'doctor-anesteziolog') {%>
+            <a class="create-template" data-template-id="<%=document.get('typeId')%>" data-id="<%=document.get('id')%>" style="margin-left: .5em"><i class="icon-file-alt" title="Создать шаблон"></i></a>
+        <%}%>
     </td>
 </tr>
 <%});%>

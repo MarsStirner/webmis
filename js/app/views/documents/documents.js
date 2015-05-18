@@ -2172,6 +2172,24 @@ define(function (require) {
         },
 
         getDialogOptions: function () {
+            var buttons = [{
+                text: "Создать",
+                "class": "button-color-green",
+                click: _.bind(this.onCreateDocumentClick, this)
+                },
+            ];
+            Core.Cookies.get('currentRole') === 'doctor-anesteziolog' && buttons.push(
+                {
+                    text: "Создать из шаблона",
+                    click: _.bind(this.onCreateDocumentFtomTemplateClick, this)
+                }
+            );
+            buttons.push(
+                {
+                    text: "Отмена",
+                    click: _.bind(this.tearDown, this)
+                }
+            );
             return {
                 title: "Выберите тип документа",
                 modal: true,
@@ -2179,19 +2197,7 @@ define(function (require) {
                 height: 550,
                 resizable: false,
                 close: _.bind(this.tearDown, this),
-                buttons: [{
-                    text: "Создать",
-                    "class": "button-color-green",
-                    click: _.bind(this.onCreateDocumentClick, this)
-                },
-                {
-                    text: "Создать из шаблона",
-                    click: _.bind(this.onCreateDocumentFtomTemplateClick, this)
-                },
-                {
-                    text: "Отмена",
-                    click: _.bind(this.tearDown, this)
-                }]
+                buttons: buttons
             };
         },
 
@@ -2358,13 +2364,14 @@ define(function (require) {
                                 actionId: self.options.docId,
                                 name: self.templateName,
                                 groupId: self.groupId
-                            }
+                            };
                             $.ajax({
                                type: "POST",
-                               url: "http://10.1.2.73:8080/core-ext-war/template?actionTypeId="+self.options.docType,
-                               data: tmplData,
-                               'contentType': 'application/json',
-                               success: function(){
+                               url: "http://10.1.2.73:8080/core-ext-war/template",
+                               data: JSON.stringify(tmplData),
+                               contentType: "application/json; charset=utf-8",
+                               dataType: "json",
+                               complete: function(){
                                    self.tearDown();
                                 }
                             });
@@ -2375,7 +2382,31 @@ define(function (require) {
                         text: "Создать группу",
                         "class": "button-create-group",
                         click: function () {
+                            var tmplData = {
+                                name: self.templateName,
+                                groupId: self.groupId
+                            };
+                            $.ajax({
+                               type: "POST",
+                               url: "http://10.1.2.73:8080/core-ext-war/template",
+                               data: JSON.stringify(tmplData),
+                               crossDomain: true,
+                               contentType: "application/json; charset=utf-8",
+                               dataType: "json",
+                               complete: function(data){
+                                   var res = $.parseJSON(data.responseText.match(/\((.*)\)/)[1]);
+                                   var newEl = $('<li>').addClass('document-template-node')
+                                    .data('document-template-id', res.id)
+                                    .html($(self.$el.find(".document-template-node:first")[0]).html());
+                                   newEl.find('span').text(self.templateName);
+                                   newEl.find('div').html('');
+                                   if (self.groupId) {
 
+                                   } else {
+                                       self.$el.find('ul:first').append(newEl);
+                                   }
+                               }
+                            });
                         }
                     },
                     {

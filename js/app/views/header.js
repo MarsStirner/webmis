@@ -89,6 +89,26 @@ define(function () {
 				NavigationView.render();
 			});
 
+			this.separateRoles(ROLES.DOCTOR_ANESTEZIOLOG, function () {
+				var NavigationView = new Navigation(
+					{
+						structure: [
+							{
+								name: "appeals",
+								uri: "/appeals/",
+								title: "Госпитализации"
+							},
+							{
+								name: "patients",
+								uri: "/patients/",
+								title: "Пациенты"
+							}
+						]
+					}
+				);
+				NavigationView.render();
+			});
+
 			this.separateRoles(ROLES.NURSE_DEPARTMENT, function () {
 				var NavigationView = new Navigation(
 					{
