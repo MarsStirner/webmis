@@ -14,7 +14,7 @@ define(function () {
 
 		url: function () {
 			//return "/api/v1/dir/template?actionTypeId="+this.docType;
-			return "http://10.1.2.73:8080/core-ext-war/template?actionTypeId="+this.docType;
+			return "http://"+CORE_HOST+"/core-ext-war/template?actionTypeId="+this.docType;
 		},
 
 		parse: function (data) {

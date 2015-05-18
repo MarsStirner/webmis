@@ -2367,7 +2367,7 @@ define(function (require) {
                             };
                             $.ajax({
                                type: "POST",
-                               url: "http://10.1.2.73:8080/core-ext-war/template",
+                               url: "http://"+CORE_HOST+"/core-ext-war/template",
                                data: JSON.stringify(tmplData),
                                contentType: "application/json; charset=utf-8",
                                dataType: "json",
@@ -2388,7 +2388,7 @@ define(function (require) {
                             };
                             $.ajax({
                                type: "POST",
-                               url: "http://10.1.2.73:8080/core-ext-war/template",
+                               url: "http://"+CORE_HOST+"/core-ext-war/template",
                                data: JSON.stringify(tmplData),
                                crossDomain: true,
                                contentType: "application/json; charset=utf-8",
@@ -2401,7 +2401,8 @@ define(function (require) {
                                    newEl.find('span').text(self.templateName);
                                    newEl.find('div').html('');
                                    if (self.groupId) {
-
+                                       self.$el.find('.document-template-node[data-document-template-id="'+self.groupId+'"] div').append($('<ul>').html(newEl));
+                                       self.$el.find('.document-template-node[data-document-template-id="'+self.groupId+'"] i').removeClass('transparent');
                                    } else {
                                        self.$el.find('ul:first').append(newEl);
                                    }
