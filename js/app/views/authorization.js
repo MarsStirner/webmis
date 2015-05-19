@@ -10,7 +10,7 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 			event.preventDefault();
 
 			var login = this.$("[name='login']").val(),
-				password = this.$("[name='password']").val().trim().length ? MD5(this.$("[name='password']").val()) : "";
+				password = this.$("[name='password']").val().trim();
 
 			this.collection.login = login;
 			this.collection.password = password;
