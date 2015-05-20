@@ -35,7 +35,7 @@
 <%} else {%>
 
 	<%if (dates.begin) {%>
-	<div class="SetComment">
+	<div class="span6">
 		<label>Дата создания документа</label>
 		<div style="display: block;">
 			<div class="date" style="width: 10em;">
@@ -50,6 +50,15 @@
 				<input type="checkbox" class="document-set-close-date" <%if (dates.end.getValue()) {%>checked<%}%>>
 				Завершить работу с документом
 			</label>
+		</div>
+	</div>
+	<div class="span6" >
+		<span class="Label">Исполнитель</span>
+		<div id="executor-outer">
+			<input  id="executor" type="text" disabled
+			value=""
+			class="Disabled">
+			<button class="change-executor" style=""><i class="icon-user-md"></i></button>
 		</div>
 	</div>
 	<%}%>

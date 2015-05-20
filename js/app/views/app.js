@@ -43,7 +43,7 @@ define(["text!templates/app.tmpl", "views/header-new"], function(tmpl, Header) {
 						title: "Главный врач"
 					}
 					, {
-						id: 41,
+						id: 42,
 						role: ROLES.DOCTOR_ANESTEZIOLOG,
 						title: "Врач анестезиолог"
 					}
