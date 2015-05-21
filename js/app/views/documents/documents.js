@@ -2178,7 +2178,7 @@ define(function (require) {
                 click: _.bind(this.onCreateDocumentClick, this)
                 },
             ];
-            Core.Cookies.get('currentRole') === 'doctor-anesteziolog' && buttons.push(
+            Core.Cookies.get('currentRole') === 'anestezDoctor' && buttons.push(
                 {
                     text: "Создать из шаблона",
                     click: _.bind(this.onCreateDocumentFtomTemplateClick, this)

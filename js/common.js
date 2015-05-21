@@ -6,11 +6,11 @@ DEBUG_MODE = true;
 
 ROLES = {
 	DEFAULT: "default",
-	NURSE_RECEPTIONIST: "nurse-receptionist",
-	DOCTOR_RECEPTIONIST: "doctor-receptionist",
-	NURSE_DEPARTMENT: "nurse-department",
-	DOCTOR_DEPARTMENT: "doctor-department",
-	DOCTOR_ANESTEZIOLOG: "doctor-anesteziolog",
+	NURSE_RECEPTIONIST: "admNurse",
+	DOCTOR_RECEPTIONIST: "admDoctor",
+	NURSE_DEPARTMENT: "strNurse",
+	DOCTOR_DEPARTMENT: "strDoctor",
+	DOCTOR_ANESTEZIOLOG: "anestezDoctor",
 	CHIEF: "chief"
 };
 
@@ -415,7 +415,7 @@ View = Backbone.View.extend({
 			this.ready();
 		}
 	},
-	// Дожидаемся загрузки и шаблона и коллекции
+	// Дожид��емся загрузки и шаблона и коллекции
 	autoLoadHandler: function () {
 		this._loadingQueue = 1;
 		if (this.collection) {

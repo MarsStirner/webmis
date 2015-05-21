@@ -337,7 +337,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		appointments: function(id) {
-			window.location.href = APPOINTMENTS_PATH + '?client_id='+id+'&token='+Core.Cookies.get('authToken');
+			window.location.href = APPOINTMENTS_PATH + '?client_id='+id+'&token='+Core.Cookies.get('authToken')+'&role='+Core.Cookies.get('currentRole');
 		},
 
 		appointmentsPatient: function() {
@@ -721,7 +721,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		appealPolyReview: function(appealId) {
-			window.location.href = "http://" + POLICLINIC_HOST + "/event/event.html?event_id=" + appealId + "&token=" + Core.Cookies.get("authToken");
+			window.location.href = "http://" + POLICLINIC_HOST + "/event/event.html?event_id=" + appealId + "&token=" + Core.Cookies.get("authToken")+'&role='+Core.Cookies.get('currentRole');
 		},
 
 		appealReviewPage: function(appealId, page) {

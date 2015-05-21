@@ -225,7 +225,7 @@ define(function(require){
 
 				Filter = new App.Views.FilterDictionaries({
 					collection: Collection,
-					templateId: "#appeals-list-filters-doctor-department",
+					templateId: "#appeals-list-filters-strDoctor",
 					path: this.options.path,
 					dictionaries: {
 						departments: {
@@ -262,8 +262,8 @@ define(function(require){
 					popUpMode: true,
 					collection: Collection,
 					template: "grids/appeals",
-					gridTemplateId: "#appeals-grid-doctor-department",
-					rowTemplateId: "#appeals-grid-doctor-department-row",
+					gridTemplateId: "#appeals-grid-strDoctor",
+					rowTemplateId: "#appeals-grid-strDoctor-row",
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
 
@@ -327,7 +327,7 @@ define(function(require){
 
 				Filter = new App.Views.FilterDictionaries({
 					collection: Collection,
-					templateId: "#appeals-list-filters-doctor-department",
+					templateId: "#appeals-list-filters-strDoctor",
 					path: this.options.path,
 					dictionaries: {
 						departments: {
@@ -364,8 +364,8 @@ define(function(require){
 					popUpMode: true,
 					collection: Collection,
 					template: "grids/appeals",
-					gridTemplateId: "#appeals-grid-doctor-department",
-					rowTemplateId: "#appeals-grid-doctor-department-row",
+					gridTemplateId: "#appeals-grid-strDoctor",
+					rowTemplateId: "#appeals-grid-strDoctor-row",
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
 
@@ -428,7 +428,7 @@ define(function(require){
 
 				Filter = new App.Views.Filter({
 					collection: Collection,
-					templateId: "#appeals-list-filters-nurse-department",
+					templateId: "#appeals-list-filters-strNurse",
 					path: this.options.path,
                     isAutoloadDisabled: true
 				});
@@ -437,8 +437,8 @@ define(function(require){
 					collection: Collection,
 					popUpMode: true,
 					template: "grids/appeals",
-					gridTemplateId: "#appeals-grid-nurse-department",
-					rowTemplateId: "#appeals-grid-nurse-department-row",
+					gridTemplateId: "#appeals-grid-strNurse",
+					rowTemplateId: "#appeals-grid-strNurse-row",
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
 
@@ -505,7 +505,7 @@ define(function(require){
 
 				Filter = new App.Views.FilterDictionaries({
 					collection: Collection,
-					templateId: "#appeals-list-filters-doctor-department",
+					templateId: "#appeals-list-filters-strDoctor",
 					path: this.options.path,
 					dictionaries: {
 						departments: {
@@ -540,8 +540,8 @@ define(function(require){
 				AppealsGrid = new App.Views.Grid({
 					collection: Collection,
 					template: "grids/appeals",
-					gridTemplateId: "#appeals-grid-doctor-department",
-					rowTemplateId: "#appeals-grid-doctor-department-row",
+					gridTemplateId: "#appeals-grid-strDoctor",
+					rowTemplateId: "#appeals-grid-strDoctor-row",
 					defaultTemplateId: "#appeals-grid-row-default"
 				});
 

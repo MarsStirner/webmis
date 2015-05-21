@@ -38,12 +38,12 @@ define(function (require) {
 
 			/*this.assignMe = true;
 
-			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
+			if ((Core.Cookies.get("currentRole") === 'strNurse') || (Core.Cookies.get("currentRole") === 'admNurse')) {
 			 this.assignMe = false;
 
 			 }*/
 
-			this.assignMe = !(Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist');
+			this.assignMe = !(Core.Cookies.get("currentRole") === 'strNurse') || (Core.Cookies.get("currentRole") === 'admNurse');
 		},
 
 		loadAllPersons: function () {

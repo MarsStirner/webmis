@@ -19,7 +19,7 @@ define(function(require) {
 			//лечаший врач
 			var appealDoctor = options.appeal.get('execPerson');
 
-			if ((Core.Cookies.get('currentRole') === 'nurse-department') || (Core.Cookies.get('currentRole') === 'nurse-receptionist')) {
+			if ((Core.Cookies.get('currentRole') === 'strNurse') || (Core.Cookies.get('currentRole') === 'admNurse')) {
 				//юзер не врач,назначивший доктор = лечащий врач
 
 				this.set({

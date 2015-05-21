@@ -29,7 +29,7 @@ define(function(require) {
 		},
 
 		initialize: function(options) {
-			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
+			if ((Core.Cookies.get("currentRole") === 'strNurse') || (Core.Cookies.get("currentRole") === 'admNurse')) {
 				this.showLabsLink = false;
 			} else {
 				this.showLabsLink = true;

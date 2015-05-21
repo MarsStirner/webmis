@@ -115,7 +115,7 @@ define([
             // App.Router.navigate("/patients/" + this.model.get("id") + "/edit/", {
             //     trigger: true
             // });
-            window.location.href = 'http://' + POLICLINIC_HOST + '/patients/patient?client_id='+this.model.get("id")+'&token='+Core.Cookies.get("authToken");
+            window.location.href = 'http://' + POLICLINIC_HOST + '/patients/patient?client_id='+this.model.get("id")+'&token='+Core.Cookies.get("authToken")+'&role='+Core.Cookies.get("currentRole");
         },
 
         // Загрузился шаблон карточки пациента

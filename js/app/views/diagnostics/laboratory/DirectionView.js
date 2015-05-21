@@ -46,7 +46,7 @@ define(function(require) {
 			var view = this;
 			var appealDoctor = this.options.appeal.get('execPerson');
 			//назначивший исследование
-			if ((Core.Cookies.get('currentRole') === 'nurse-department') || (Core.Cookies.get('currentRole') === 'nurse-receptionist')) {
+			if ((Core.Cookies.get('currentRole') === 'strNurse') || (Core.Cookies.get('currentRole') === 'admNurse')) {
 				//если юзер не врач
 				view.assigner = {
 					id: appealDoctor.id,

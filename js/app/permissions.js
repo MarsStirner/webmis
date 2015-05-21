@@ -1,10 +1,10 @@
 define(function(){
     var permissions = [];
-    var userRole = Core.Data.currentRole(); 
+    var userRole = Core.Data.currentRole();
 
     switch(userRole){
-        case 'nurse-department':
-        case 'nurse-receptionist':
+        case 'strNurse':
+        case 'admNurse':
             permissions = ['see_patient_card', 'see_patient_appeals'];
         break;
         default:
