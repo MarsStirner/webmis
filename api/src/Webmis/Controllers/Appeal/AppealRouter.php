@@ -41,7 +41,7 @@ class AppealRouter implements ControllerProviderInterface
             if($vmp){
 
                 $select_sql = "SELECT Client_Quoting.id FROM Event "
-                ."JOIN Client_Quoting ON Event.externalId = Client_Quoting.Identifier "
+                ."JOIN Client_Quoting ON Event.id = Client_Quoting.event_id "
                 ."WHERE Event.id = ? "
                 ."AND Client_Quoting.deleted = 0 ";
 
