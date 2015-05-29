@@ -13,11 +13,7 @@ define([
 
 		events: {
 			"click span": "onClick",
-			"click": "toggleNode",
-			"mouseover span": "onMouseOverSpan",
-			"mouseout span": "onMouseOutSpan",
-			"mouseover": "onMouseOver",
-			"mouseout": "onMouseOut"
+			"click .treeToggler": "toggleNode"
 		},
 
 		isLeafNode: false,
@@ -28,6 +24,7 @@ define([
 
 		toggleNode: function (event) {
 			if (event) event.stopPropagation();
+			$(event.currentTarget).toggleClass('icon-plus icon-minus');
 			if (!this.$el.hasClass("Opened") && !this.isLeafNode && this.model.get("childrenTerms").isEmpty()) {
 				this.model.get("childrenTerms").on("reset", this.onChildrenTermsReset, this).fetch();
 			} else if (this.isLeafNode) {
@@ -42,33 +39,6 @@ define([
 			if (!this.isLeafNode) {
 				this.termSelected();
 			}
-		},
-
-		onMouseOverSpan: function (event) {
-			$(event.target).css({
-				"background-color": "#f0f3fc",
-				"cursor": "pointer"
-			});
-
-		},
-
-		onMouseOutSpan: function (event) {
-			$(event.target).css("background-color", "");
-		},
-
-		onMouseOver: function (event) {
-			if (event.target.tagName == 'LI') {
-				$(event.target).css({
-					"cursor": "pointer",
-					"border": "1px solid #e1e1e1"
-				});
-			}
-		},
-
-		onMouseOut: function (event) {
-			$(event.target).css({
-				"border": ""
-			});
 		},
 
 		onChildrenTermsReset: function () {
@@ -91,7 +61,10 @@ define([
 			var termsChain = [this.model.get("template")];
 
 			if ((this.model.get("template").split("%s").length) > 1) {
-				termsChain[0] = termsChain[0].split("%s")[1];
+				_.each(termsChain, function(chain, ch){
+					chain = chain.split("%s")[1];
+					termsChain[ch] = chain;
+				});
 				console.log(termsChain);
 				while (parentNode) {
 					termsChain.push(parentNode.model.get("template"));
@@ -113,9 +86,8 @@ define([
 
 		render: function () {
 			var itemEl = $("<span/>").text(this.model.get("name"));
-			$(itemEl).css('width', '80%');
+			this.model.get('container') && $(itemEl).prepend('<i class="icon-plus treeToggler" style="margin-right: 10px;"></i>');
 			this.$el.html(itemEl);
-
 			return this;
 		}
 	});
