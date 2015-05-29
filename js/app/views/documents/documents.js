@@ -4421,31 +4421,33 @@ define(function (require) {
             setTimeout(_.bind(function () {
                 console.log("paste! ", event);
                 var $attrValue = this.$(".attribute-value");
-                $attrValue.msword_html_filter();
                 $attrValue.html($attrValue.html().replace(/\u2028/g, '').replace(/\u2029/g, ''));
                 $attrValue.html($.htmlClean($attrValue.html(), {
                     format: true,
                     removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
-                        "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button", "ul", "li"
-                        //, "table","tbody", "thead", "tr", "th", "td"
+                        "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button", "ul", "li", "xml", "style", "worddocument"
                     ],
                     removeAttrs: ["style", "class"],
                     replace: [
                         [
                             ["h1", "h2", "h3", "h4"], "b"
-                        ]//,
-                        // [
-                        //     ["table", "tr", "thead", "tbody"], "div"
-                        // ],
-                        // [
-                        //     ["td", "th"], "span"
-                        // ]
+                        ]
                     ]
                 }));
-                $attrValue.find('td').css({
-                    'border': '1px solid #9f9f9f',
-                    'padding': '2px'
-                });
+
+
+                // $attrValue.find('td').css({
+                //     'border': '1px solid #9f9f9f',
+                //     'padding': '2px'
+                // });
+
+                var wordTagCount = $attrValue.html().split("<![endif]-->").length;
+                
+                if (wordTagCount > 1) {
+                    $attrValue.html($attrValue.html().split("<![endif]-->")[wordTagCount-1]);
+                }
+
+                console.log($attrValue.html());
 
                 this.model.setValue($attrValue.html());
             }, this), 0);
