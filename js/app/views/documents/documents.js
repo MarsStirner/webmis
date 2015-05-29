@@ -808,7 +808,11 @@ define(function (require) {
         },
 
         hasValue: function () {
-            return !_.isEmpty(this.getValue());
+        	if (this.isIdType()) {
+        		return this.getValue() > 0;
+        	} else {
+        		return !_.isEmpty(this.getValue());
+        	}
         },
 
         cleanValue: function () {
@@ -1260,7 +1264,7 @@ define(function (require) {
                 isHidden && $(renderedEl).hide();
 
                 if (elCode.split('_')[1] == 1) {
-                    $(renderedEl).addClass(elCode.split('_')[0]);
+                    $(renderedEl).addClass(elCode.split('_')[0]).addClass('firstRow');
                 }
 
                 $(renderedEl).on('showRow', function(e, rowId){
@@ -1277,7 +1281,20 @@ define(function (require) {
                 });
 
                 $(renderedEl).on('click', '.icon-plus', function(){
-                    $('.in-vgroup-row').trigger('showRow', $(renderedEl).data('vgrouprow') + 1);
+                    var rowNum = $(renderedEl).data('vgrouprow');
+                    if ($('.in-vgroup-row[data-vgrouprow="'+(rowNum + 1)+'"]').length && !$('.in-vgroup-row[data-vgrouprow="'+(rowNum + 1)+'"].firstRow').length) {
+                        $('.in-vgroup-row').trigger('showRow', rowNum + 1);
+                    } else {
+                        var showed = false;
+                        while (!$('.in-vgroup-row[data-vgrouprow="'+rowNum+'"].firstRow').length && !showed) {
+                            rowNum--;
+                            if (!$('.in-vgroup-row[data-vgrouprow="'+rowNum+'"]:visible').length) {
+                                $('.in-vgroup-row').trigger('showRow', rowNum);
+                                //$('.in-vgroup-row[data-vgrouprow="'+rowNum+'"]').parent().insertAfter($(renderedEl).parent());
+                                showed = true;
+                            }
+                        }
+                    }
                 });
 
                 $(renderedEl).on('click', '.RemoveIcon', function(){
@@ -3200,9 +3217,9 @@ define(function (require) {
                 accept:'application/json',
                 success: function(data) {
                     if (data.text) {
-                        chk = setInterval(function(){
+                        self.chk = setInterval(function(){
                             if ($('.Throbber').css('display') != 'block') {
-                                clearInterval(chk);
+                                clearInterval(self.chk);
                                 if (confirm("Восстановить несохранённые данные документа?")) {
                                     var fields = $.parseJSON(data.text);
                                     self.fillAutosavedFields(fields);
@@ -5097,8 +5114,6 @@ define(function (require) {
                     }, this);
                 }, this);
 
-                console.log(paste);
-
                 this.options.itemsCallback(paste);
 
                 this.tearDown();
@@ -5490,40 +5505,12 @@ define(function (require) {
 
                     this.resultData.reset(tests);
 
-                    var takingTimeId = this.result.getProperty('Время забора');
-
-                    if (takingTimeId) {
-                        var self = this;
-                        $.ajax({
-                           type: 'GET',
-                            url: "/data/job/jobTicket/"+takingTimeId,
-                            dataType: 'json',
-                            accept:'application/json',
-                            async: false,
-                            success: function(data) {
-                                self.set('takingTime', data);
-                                if (callback) {
-                                    callback.call();
-                                }
-                            }
-                        });
-                    } else {
-                        if (callback) {
-                            callback.call();
-                        }
-                    }
-
-
-                    /*this.set({
-                        resultData: tests
-                    });*/
+                    callback.call();
 
                 }, this));
 
                 return promise;
             },
-
-
 
             sync: App.Models.LaboratoryDiag.prototype.sync,
             parse: App.Models.LaboratoryDiag.prototype.parse

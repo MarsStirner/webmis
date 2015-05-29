@@ -13,7 +13,7 @@
 					</span>
 				<%}%>
 				<%if (model.get('takingTime')) {%>
-					<span class="helper-item-takingtime">&nbsp;&nbsp;Время забора: <%=moment(model.get("takingTime").datetime).format('H:mm')%></span>
+					<span class="helper-item-takingtime">&nbsp;&nbsp;Время забора: <%=moment(model.get("takingTime")).format('DD.MM.YYYY H:mm')%></span>
 				<%}%>
 			</div>
 			<%if (model.get("diagnosticName")) {%>
