@@ -4435,19 +4435,16 @@ define(function (require) {
                     ]
                 }));
 
-
-                // $attrValue.find('td').css({
-                //     'border': '1px solid #9f9f9f',
-                //     'padding': '2px'
-                // });
+                $attrValue.find('td').css({
+                    'border': '1px solid #9f9f9f',
+                    'padding': '2px'
+                });
+                $attrValue.find('table').attr('border', '1').attr('cellpadding', '4').attr('cellspacing', '0');
 
                 var wordTagCount = $attrValue.html().split("<![endif]-->").length;
-                
                 if (wordTagCount > 1) {
                     $attrValue.html($attrValue.html().split("<![endif]-->")[wordTagCount-1]);
                 }
-
-                console.log($attrValue.html());
 
                 this.model.setValue($attrValue.html());
             }, this), 0);
