@@ -192,7 +192,23 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				authView.render();
 			});
 		},
-		checkAuthToken: function() {
+		checkAuthToken: function(args) {
+			var tokenArg = _.find(args, function(arg) {
+			    return arg.indexOf('token') > -1;
+			});
+			if (tokenArg) {
+				var authData = {};
+				_.each(tokenArg.split('?')[1].split('&'), function(arg){
+					authData[arg.split('=')[0]] = arg.split('=')[1];
+				});
+				if (authData.role === 'clinicDoctor') {
+					authData.role = 'strDoctor'
+				}
+				if (_.contains(ROLES, authData.role)) {
+					Core.Cookies.set("authToken", authData.token);
+					Core.Cookies.set("currentRole", authData.role);
+				}
+			}
 			if (!Core.Cookies.get("authToken")) {
 				window.location.href = "/auth/";
 				return false
@@ -347,7 +363,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		anareports: function() {
-			window.open(ANAREPORTS_PATH,'_blank');
+			window.open(ANAREPORTS_PATH+ '?token='+Core.Cookies.get('authToken')+'&role='+Core.Cookies.get('currentRole'),'_blank');
 		},
 
 		patients: function() {
@@ -681,7 +697,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		appeal: function(mode, appealId, page, subId) {
-			if (!this.checkAuthToken()) return false;
+			if (!this.checkAuthToken(arguments)) return false;
 			console.log(arguments);
 			this.currentPage = "appeals";
 
@@ -692,7 +708,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 					path: Backbone.history.fragment,
 					mode: mode,
 					appealId: appealId,
-					page: page,
+					page: (page.indexOf('token') > -1) ? 'monitoring' : page,
 					subId: subId
 				});
 

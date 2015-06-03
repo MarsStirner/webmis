@@ -1331,7 +1331,7 @@ define(function (require) {
                 if ($(elHeader).find('.icon-plus').length > 0) {
                     $(elHeader).find('.sb-hdr').click();
                 }
-                $(renderedEl).parent().prevAll().last().find('.field-toggle').attr('checked', 'checked');
+                $(renderedEl).parent().prev().find('.field-toggle').attr('checked', 'checked');
             });
 
             switch (elCode) {
@@ -3233,26 +3233,8 @@ define(function (require) {
 
         fillAutosavedFields: function (fields) {
             $.each(fields, function(typeid, value) {
-                var attributeValueEl = $('div[data-typeid="'+typeid+'"] .attribute-value, div[data-typeid="'+typeid+'"] .mkb-code');
-                if (attributeValueEl.prop('tagName').toUpperCase() === "SELECT") {
-                    _.each(attributeValueEl.find('option'), function(o){
-                        if ($(o).val() == value) {
-                            $(o).attr('selected', 'selected');
-                            attributeValueEl.trigger('change');
-                        }
-                    });
-                } else if ($(attributeValueEl).is(".RichText")) {
-                    $(attributeValueEl).html(value);
-                } else if ($(attributeValueEl).is(".mkb-code")) {
-                    var mkbField = $(attributeValueEl).closest('.field');
-                    $(mkbField).find('.mkb-code').val(value.mkbCode);
-                    $(mkbField).find('.mkb-code').data('mkb-id', value.mkbId);
-                    $(mkbField).find('.mkb-diagnosis').val(value.mkbDiagnosis);
-                } else {
-                    $(attributeValueEl).val(value);
-                }
-                $(attributeValueEl).trigger('restoreField');
-                $('div[data-typeid="'+typeid+'"] .field-toggle:not(:checked)').click();
+                var attributeValueEl = $('div[data-typeid="'+typeid+'"]');
+                $(attributeValueEl).trigger('restoreField', value);
             });
             pubsub.trigger('noty', {
                 text: 'Восстановлены данные несохранённого документа.',
@@ -4280,6 +4262,9 @@ define(function (require) {
                     fields[$(this).data("typeid")] = fieldValue;
                 }
             });
+            if ($('.infectLocal').length && $('.infectLocal').find('.field-toggle').attr('checked')) {
+                fields[$('.infectLocal').data("typeid")] = "checked"
+            }
             var docTypeId = this.getDocTypeId();
             var dataToSend = {
                 "id": "doc_"+docTypeId,
@@ -4292,6 +4277,16 @@ define(function (require) {
                 dataType: 'json',
                 data: JSON.stringify(dataToSend)
             });
+        },
+
+        restoreField: function(val){
+            if (this.$el.is('.infectLocal') && !this.$el.find('.field-toggle').attr('checked')) {
+                this.$el.find('.field-toggle').attr('checked', 'checked');
+                $('.depends-local-display-row').show();
+            } else {
+                this.model.setPropertyValueFor('value', val);
+                this.render();
+            }
         },
 
         onAttributeValueChange: function (event) {
@@ -4364,6 +4359,7 @@ define(function (require) {
         render: function (subViews) {
             ViewBase.prototype.render.call(this, subViews);
             this.updateFieldCollapse();
+            var self = this;
             var therapyFieldCode = this.model.get("therapyFieldCode");
             switch (therapyFieldCode) {
                 /*case "therapyPhaseTitle":
@@ -4383,6 +4379,11 @@ define(function (require) {
             if (this.model.get('mandatory') == 'true') {
                 this.$('.field-toggle').attr('disabled', 'disabled');
             }
+
+            this.$el.on('restoreField', function(el, val) {
+                self.restoreField(val);
+            });
+
             return this;
         }
     });
@@ -4454,16 +4455,6 @@ define(function (require) {
             this.$(".editor-controls").toggle(visible);
             UIElementBase.prototype.toggleField.call(this, visible);
         }
-
-        //,
-        /*initialize: function () {
-            this.model.convertValueToHtml();
-            UIElementBase.prototype.initialize.call(this, this.options);
-        },*/
-        /*onModelCopy: function () {
-            this.model.convertValueToHtml();
-            UIElementBase.prototype.onModelCopy.call(this);
-        }*/
     });
 
     /**
@@ -4608,6 +4599,11 @@ define(function (require) {
             this.ui.$attributeValueEl.val(time);
         },
 
+        restoreField: function(val){
+            this.model.setPropertyValueFor('value', "1970-01-01 " + val + ':00');
+            this.render();
+        },
+
         render: function () {
             UIElementBase.prototype.render.call(this);
 
@@ -4687,9 +4683,14 @@ define(function (require) {
             // return moment(value, this.inputFormat).format(CD_DATE_FORMAT);
         },
 
+        restoreField: function(val){
+            this.model.setPropertyValueFor('value', moment(val).format('YYYY-MM-DD HH:mm:ss'));
+            this.render();
+        },
+
         render: function () {
             UIElementBase.prototype.render.call(this);
-
+            var self = this;
             this.ui = {};
             this.ui.$input = this.$el.find(".attribute-value");
             this.ui.$input.mask(this.inputMaskFormat);
@@ -4789,8 +4790,7 @@ define(function (require) {
         events: _.extend({
             "click .MKBLauncher": "onMKBLauncherClick",
             "keyup .mkb-code": "onMKBCodeKeyUp",
-            "change .mkb-code": "onMKBCodeChange",
-            "restoreField .mkb-code": "onMKBCodeRestored"
+            "change .mkb-code": "onMKBCodeChange"
         }, UIElementBase.prototype.events),
 
         data: function () {
@@ -4846,8 +4846,10 @@ define(function (require) {
             this.setAutosavedFields();
         },
 
-        onMKBCodeRestored: function () {
-            this.onMKBCodeChange();
+        restoreField: function(val){
+            this.model.setPropertyValueFor('value', val.mkbCode +" "+ val.mkbDiagnosis);
+            this.model.setPropertyValueFor('valueId', val.mkbId);
+            this.render();
         },
 
         render: function () {

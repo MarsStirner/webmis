@@ -61,16 +61,16 @@ define([
 			var termsChain = [this.model.get("template")];
 
 			if ((this.model.get("template").split("%s").length) > 1) {
-				_.each(termsChain, function(chain, ch){
-					chain = chain.split("%s")[1];
-					termsChain[ch] = chain;
-				});
-				console.log(termsChain);
 				while (parentNode) {
 					termsChain.push(parentNode.model.get("template"));
 					parentNode = parentNode.parent;
 				}
-
+				_.each(termsChain, function(chain, ch){
+					if (chain.split("%s").length > 1) {
+						chain = chain.split("%s")[1];
+					}
+					termsChain[ch] = chain;
+				});
 			}
 
 			if ((this.model.get("template").split("%n").length) > 1) {
