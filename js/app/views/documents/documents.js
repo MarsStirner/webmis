@@ -6376,7 +6376,22 @@ define(function (require) {
             "click .prev-document": "onPrevDocumentClick",
             // "click .print-documents.context-print-button": "onPrintContextClick",
             "click .print-documents.single-page": "onPrintDocumentsSinglePageClick",
-            "click .print-documents.multiple-pages": "onPrintDocumentsMultiplePagesClick"
+            "click .print-documents.multiple-pages": "onPrintDocumentsMultiplePagesClick",
+            "click .assign-to-me": "assignToMe"
+        },
+
+        assignToMe: function() {
+            this.collection.each(function(model){
+                model.get('group')[0].attribute.push({
+                    name: "executorId",
+                    properties: [{
+                        name: "value",
+                        value: Core.Cookies.get('userId')
+                    }]
+                });
+                model.save();
+            });
+
         },
 
         onBackToDocumentListClick: function () {
