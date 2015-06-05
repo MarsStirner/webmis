@@ -554,8 +554,8 @@ define(function (require) {
         urlRoot: DATA_PATH + "dir/actionTypes/",
 
         url: function () {
-            if (this.get('templateId')) {
-                var tmpl = '&actionId='+this.get('templateId');
+            if (this.get('tmplAction')) {
+                var tmpl = '&actionId='+this.get('tmplAction');
             } else {
                 var tmpl = '';
             }
@@ -2296,13 +2296,15 @@ define(function (require) {
                         click: _.bind(function () {
                             var docType = self.options.docType;
                             var docTemplate = self.docTemplateId;
+                            var action = self.actionId;
                             App.Router.updateUrl(["appeals", appealId, "documents", "new", docType].join("/"));
                             dispatcher.trigger("change:viewState", {
                                 type: "documents",
                                 mode: "SUB_EDIT",
                                 options: {
                                     templateId: docType,
-                                    actionId: docTemplate
+                                    actionId: docTemplate,
+                                    tmplAction: action
                                 }
                             });
                             self.tearDown();
@@ -2333,6 +2335,7 @@ define(function (require) {
 
             if ($node.data("document-template-id")) {
                 this.docTemplateId = $node.data("document-template-id");
+                this.actionId = $node.data("document-action-id");
                 this.$('span').css('font-weight', '100');
                 $node.find('span:first').css('font-weight', 'bold');
                 this.$el.parent().find('.button-color-green').button('enable');
@@ -3151,7 +3154,8 @@ define(function (require) {
                 if (this.options.templateId || this.options.mode === "SUB_NEW" && this.options.subId) {
                     this.model = new Documents.Models.DocumentTemplate({
                         id: this.options.templateId || this.options.subId,
-                        templateId: this.options.actionId
+                        templateId: this.options.actionId,
+                        tmplAction: this.options.tmplAction
                     });
                 } else if (this.options.documentId || this.options.mode === "SUB_EDIT" && this.options.subId) {
                     this.model = new Documents.Models.Document({

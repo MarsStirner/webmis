@@ -1,7 +1,7 @@
 <% if (tree.length) {%>
 <ul style="display:none">
 	<%_(tree).each(function (node) {%>
-	<li class="document-template-node" data-document-template-id="<%=node.id%>">
+	<li class="document-template-node" data-document-template-id="<%=node.id%>" data-document-action-id="<%=node.actionId%>">
 		<span style="cursor: pointer;">
 			<i class="icon-plus <%=!(node.templates && node.templates.length)?'transparent':''%>" style="font-size: .7em; line-height: 1.6em; top: -.1em; position: relative;"></i>
 			<%=node.name%>

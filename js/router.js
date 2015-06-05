@@ -750,7 +750,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 		appealReview: function(appealId) {
 			var page;
-			if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT) {
+			if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT || Core.Data.currentRole() == ROLES.DOCTOR_ANESTEZIOLOG) {
 				page = "monitoring";
 			} else {
 				page = "card";
