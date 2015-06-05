@@ -208,12 +208,34 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 					Core.Cookies.set("authToken", authData.token);
 					Core.Cookies.set("currentRole", authData.role);
 				}
+				$.get(DATA_PATH+"user-info/").complete(function(data) {
+					if (data.responseText) {
+						var userInfo = $.parseJSON(data.responseText.split('callback(')[1].slice(0,-1));
+						Core.Cookies.set("userId", userInfo.userId);
+						Core.Cookies.set("doctorFirstName", userInfo.doctor.name.first);
+						Core.Cookies.set("doctorLastName", userInfo.doctor.name.last);
+						Core.Cookies.set("doctorMiddleName", userInfo.doctor.name.middle);
+						if (userInfo.doctor.department && userInfo.doctor.department.id) {
+							Core.Cookies.set("userDepartmentId", userInfo.doctor.department.id);
+						}
+						var roles = "[";
+						_.each(userInfo.roles, function(role, r){
+							roles = roles + ( r != 0 ? ',' : '') + role.id;
+						});
+						Core.Cookies.set("roles", roles + ']');
+						return true
+					} else {
+						return false
+					}
+				});
+				return true
+			} else {
+				if (!Core.Cookies.get("authToken")) {
+					window.location.href = "/auth/";
+					return false
+				}
+				return true
 			}
-			if (!Core.Cookies.get("authToken")) {
-				window.location.href = "/auth/";
-				return false
-			}
-			return true
 		},
 
 		index: function() {
