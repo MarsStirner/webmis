@@ -4444,7 +4444,7 @@ define(function (require) {
                     'border': '1px solid #9f9f9f',
                     'padding': '2px'
                 });
-                $attrValue.find('table').attr('border', '1').attr('cellpadding', '4').attr('cellspacing', '0');
+                $attrValue.find('table').attr('border', '1').attr('cellpadding', '4').attr('cellspacing', '0').addClass('printable');
 
                 var wordTagCount = $attrValue.html().split("<![endif]-->").length;
                 if (wordTagCount > 1) {
