@@ -4691,7 +4691,7 @@ define(function (require) {
         },
 
         restoreField: function(val){
-            this.model.setPropertyValueFor('value', moment(val).format('YYYY-MM-DD HH:mm:ss'));
+            this.model.setPropertyValueFor('value', moment(val, 'DD.MM.YYYY').format('YYYY-MM-DD HH:mm:ss'));
             this.render();
         },
 
