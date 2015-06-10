@@ -100,7 +100,7 @@ define(function(require) {
 			"change input[name='diagnosis[mkb][diagnosis]']": "onChangeDiagNameInput",
 			"change input[name='diagnosis[mkb][code]']": "onChangeMkbCodeInput",
 			"change [name='diagnosis[mkb][code]']": "onChangeMkbIdInput",
-
+			"click .cancel": "onCancel",
 			"click .save": "onSave",
 			"click .copy": "onCopy"
 		},
@@ -110,7 +110,15 @@ define(function(require) {
 			//вмп талон
 			this.vmpTalon = new VmpTalon();
 			this.vmpTalon.appealId = this.options.appeal.get('id');
-			this.vmpTalon.on('change', this.validate, this);
+			this.vmpTalon.on('change', function(){
+				if (this.validate()) {
+					this.ui.$save.button('enable');
+				} else {
+					this.ui.$save.button('disable');
+					this.ui.$copy.button('enable');
+				}
+			}, this);
+
 
 			//инпут классификатора диагнозов
 			this.mkbInputView = new MkbInputView();
@@ -244,20 +252,19 @@ define(function(require) {
 		////////////////////////////////////////////////
 
 
-		validate: function() {
+		validate: function(prev) {
 			var model = this.vmpTalon;
-			var required = ['MKB','quotaType_id','pacientModel_id','treatment_id']
+			var required = ['MKB','quotaType_id','pacientModel_id','treatment_id'];
+			var allRequiredProp = true;
 			console.log('validate', model.toJSON());
 
-			var allRequiredProp = _.every(required, function(name){
-				return !_.isEmpty(model.get(name));
+			_.each(required, function(name){
+				if (!model.get(name)) {
+					allRequiredProp = false;
+				}
 			});
 
-			if (allRequiredProp) {
-				this.ui.$save.button('enable');
-			} else {
-				this.ui.$save.button('disable');
-			}
+			return allRequiredProp;
 
 		},
 
@@ -284,7 +291,7 @@ define(function(require) {
 			this.ui.$copy = this.$('.copy');
 
 			this.ui.$save.button().button('disable');
-			this.ui.$cancel.button();
+			this.ui.$cancel.button().button('disable');
 			this.ui.$copy.button({
 				icons: {
 					primary: 'icon-copy'
@@ -303,10 +310,14 @@ define(function(require) {
 				view.renderNested(view.treatmentView, view.ui.$treatment);
 
 				view.vmpTalon.onChange();
+				if (view.validate()) {
+					view.ui.$save.button('disable');
+					view.ui.$cancel.button('enable');
+				}
 			});
 
 			this.vmpTalonPrev.fetch().done(function() {
-				if (!_.isEmpty(view.vmpTalonPrev.attributes)) {
+				if (!_.isEmpty(view.vmpTalonPrev.attributes) && !view.validate()) {
 					view.ui.$copy.button('enable');
 				}
 			});
@@ -322,10 +333,11 @@ define(function(require) {
 
 			this.vmpTalon.save({}, {
 				success: function() {
-					console.log('this.vmpTalon',self.vmpTalon)
-					if(self.vmpTalon.isNew()){
-						self.vmpTalon.fetch();
-					}
+					console.log('this.vmpTalon',self.vmpTalon);
+					self.vmpTalon.id = '';
+					self.vmpTalon.fetch().done(function() {
+						self.treatmentView.render();
+					});
 
 
 					self.ui.$save.button("option", "label", 'Сохранить').button("enable");
@@ -335,6 +347,16 @@ define(function(require) {
 					});
 
 				}
+			});
+		},
+
+		onCancel: function() {
+			$.ajax({
+			    url: '/api/v1/appeals/del/client_quoting/' + this.vmpTalon.id,
+			    type: 'GET',
+			    success: function(result) {
+
+			    }
 			});
 		},
 
