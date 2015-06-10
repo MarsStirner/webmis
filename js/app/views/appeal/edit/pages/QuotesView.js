@@ -351,11 +351,15 @@ define(function(require) {
 		},
 
 		onCancel: function() {
+			var self = this;
 			$.ajax({
 			    url: '/api/v1/appeals/del/client_quoting/' + this.vmpTalon.id,
-			    type: 'GET',
+			    type: 'DELETE',
 			    success: function(result) {
-
+					self.vmpTalon.id = '';
+					self.vmpTalon.fetch().done(function() {
+						self.treatmentView.render();
+					});
 			    }
 			});
 		},

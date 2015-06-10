@@ -2198,6 +2198,7 @@ define(function (require) {
             Core.Cookies.get('currentRole') === 'anestezDoctor' && buttons.push(
                 {
                     text: "Создать из шаблона",
+                    "class": "ui-button-disabled",
                     click: _.bind(this.onCreateDocumentFtomTemplateClick, this)
                 }
             );
@@ -2239,18 +2240,20 @@ define(function (require) {
         },
 
         onCreateDocumentFtomTemplateClick: function () {
-            var self = this;
-            templateCollection = new DocumentTemplatesCollection();
-            templateCollection.docType = this.selectedType;
-            templateCollection.fetch().done(function(){
-                var templatesPopUp = new Documents.Views.Edit.DocTemplateSelector({
-                    collection: templateCollection.toJSON(),
-                    docType: self.selectedType,
-                    editPageTypeName: self.options.editPageTypeName
+            if (this.selectedType) {
+                var self = this;
+                templateCollection = new DocumentTemplatesCollection();
+                templateCollection.docType = this.selectedType;
+                templateCollection.fetch().done(function(){
+                    var templatesPopUp = new Documents.Views.Edit.DocTemplateSelector({
+                        collection: templateCollection.toJSON(),
+                        docType: self.selectedType,
+                        editPageTypeName: self.options.editPageTypeName
+                    });
+                    templatesPopUp.render();
+                    self.tearDown();
                 });
-                templatesPopUp.render();
-                self.tearDown();
-            });
+            }
         },
 
         render: function () {
