@@ -3706,7 +3706,11 @@ define(function (require) {
 
         onSaveDocumentError: function (resultId) {
             this.$('button').button('enable');
-            alert("При сохранении документа произошла ошибка. Повторите попытку.");
+            if (resultId.responseText &&  $.parseJSON(resultId.responseText).errorMessage) {
+                alert($.parseJSON(resultId.responseText).errorMessage);
+            } else {
+                alert("При сохранении документа произошла ошибка. Повторите попытку.");
+            }
         },
 
         onSaveOptionsToggleClick: function () {
