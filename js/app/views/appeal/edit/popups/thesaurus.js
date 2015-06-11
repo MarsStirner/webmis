@@ -61,8 +61,14 @@ define([
 			var termsChain = [this.model.get("template")];
 
 			if ((this.model.get("template").split("%s").length) > 1) {
+				var isParentNeed = true;
 				while (parentNode) {
-					termsChain.push(parentNode.model.get("template"));
+					if (isParentNeed) {
+						termsChain.push(parentNode.model.get("template"));
+						if (parentNode.model.get("template").indexOf('%s') == -1){
+							isParentNeed = false;
+						}
+					}
 					parentNode = parentNode.parent;
 				}
 				_.each(termsChain, function(chain, ch){
