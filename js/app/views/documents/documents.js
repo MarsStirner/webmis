@@ -3707,7 +3707,7 @@ define(function (require) {
         onSaveDocumentError: function (resultId) {
             this.$('button').button('enable');
             if (resultId.responseText &&  $.parseJSON(resultId.responseText).errorMessage) {
-                alert($.parseJSON(resultId.responseText).errorMessage);
+                alert('Невозможно создать документ: ' + $.parseJSON(resultId.responseText).errorMessage);
             } else {
                 alert("При сохранении документа произошла ошибка. Повторите попытку.");
             }
@@ -4984,6 +4984,12 @@ define(function (require) {
                 this.$(".therapy-doc-link-container").hide();
             }
         },
+
+        restoreField: function(val){
+            this.model.setPropertyValueFor('valueId', val);
+            this.render();
+        },
+
         onAttributeValueChange: function (event) {
             this.showDocLink();
             Documents.Views.Edit.UIElement.FlatDirectory.prototype.onAttributeValueChange.call(this, event);
@@ -5011,6 +5017,11 @@ define(function (require) {
             });
         },
 
+        restoreField: function(val){
+            this.model.setPropertyValueFor('valueId', val);
+            this.render();
+        },
+
         setTherapyMandatory: function(){
             this.model.set({
                 mandatory: (fds.therapyFdrId ? "true" : "false")
@@ -5029,6 +5040,14 @@ define(function (require) {
             fds.trigger("change-therapyTitle");
             Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.onDirectoryReady.call(this);
         },
+
+        restoreField: function(val){
+            this.model.setPropertyValueFor('valueId', val);
+            this.render();
+            fds.therapyFdrId = this.getAttributeValue();
+            fds.trigger("change-therapyTitle");
+        },
+
         onAttributeValueChange: function (event) {
             fds.therapyFdrId = this.getAttributeValue();
             fds.trigger("change-therapyTitle");
