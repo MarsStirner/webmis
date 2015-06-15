@@ -115,8 +115,8 @@
 			<td> Плательщик </td>
 			<td>
 				{{if payer}}
-					{{if (payer.company)}}
-						${payer.company}
+					{{if (payer.company && payer.companyName)}}
+						${payer.companyName}
 					{{else}}
 						{{if payer.lastName}}
 							${payer.lastName} ${payer.firstName} ${payer.middleName}

@@ -328,24 +328,24 @@ define(function(require) {
 
 		onSave: function() {
 			var self = this;
-			//console.log('onSave', this.vmpTalon);
 			this.ui.$save.button("option", "label", 'Сохраняем...').button("disable");
 
 			this.vmpTalon.save({}, {
 				success: function() {
-					console.log('this.vmpTalon',self.vmpTalon);
-					self.vmpTalon.id = '';
-					self.vmpTalon.fetch().done(function() {
-						self.treatmentView.render();
-					});
+					// self.vmpTalon.id = '';
+					// self.vmpTalon.fetch().done(function() {
+					// 	self.fillForm({
+					// 		model: self.vmpTalon
+					// 	});
+					// });
 
+					
 
 					self.ui.$save.button("option", "label", 'Сохранить').button("enable");
 					pubsub.trigger('noty', {
 						text: 'ВМП талон сохранён',
 						type: 'success'
 					});
-
 				}
 			});
 		},
@@ -356,10 +356,7 @@ define(function(require) {
 			    url: '/api/v1/appeals/del/client_quoting/' + this.vmpTalon.id,
 			    type: 'DELETE',
 			    success: function(result) {
-					self.vmpTalon.id = '';
-					self.vmpTalon.fetch().done(function() {
-						self.treatmentView.render();
-					});
+
 			    }
 			});
 		},

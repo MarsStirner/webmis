@@ -106,9 +106,9 @@ define(function(require){
 			this.steps.other = new OtherView({
 				model: self.model
 			});
-			this.steps.quotes = new QuotesView({
-				patient: self.model
-			});
+			// this.steps.quotes = new QuotesView({
+			// 	patient: self.model
+			// });
 
 			/////////////////////////////////
 			/// var newMenu = new NewMenuView({items: self.getMenuStructure()});
@@ -544,11 +544,12 @@ define(function(require){
 						name: "other",
 						title: "Прочее",
 						uri: "/patients/new/other/"
-					}, {
-						name: "quotes",
-						title: "Квоты",
-						uri: "/patients/new/quotes/"
 					}
+					// , {
+					// 	name: "quotes",
+					// 	title: "Квоты",
+					// 	uri: "/patients/new/quotes/"
+					// }
 				];
 			} else {
 				menuStructure = [
@@ -576,12 +577,13 @@ define(function(require){
 						name: "other",
 						title: "Прочее",
 						uri: "/patients/:id/edit/other/"
-					}, this.model.toJSON()),
-					App.Router.compile({
-						name: "quotes",
-						title: "Квоты",
-						uri: "/patients/:id/edit/quotes/"
 					}, this.model.toJSON())
+					// ,
+					// App.Router.compile({
+					// 	name: "quotes",
+					// 	title: "Квоты",
+					// 	uri: "/patients/:id/edit/quotes/"
+					// }, this.model.toJSON())
 				];
 			}
 
