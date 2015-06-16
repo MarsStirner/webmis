@@ -332,20 +332,17 @@ define(function(require) {
 
 			this.vmpTalon.save({}, {
 				success: function() {
-					// self.vmpTalon.id = '';
-					// self.vmpTalon.fetch().done(function() {
-					// 	self.fillForm({
-					// 		model: self.vmpTalon
-					// 	});
-					// });
-
-					
+					self.vmpTalon.id = '';
+					self.vmpTalon.fetch().done(function() {
+						self.ui.$copy.button('disable');
+					});
 
 					self.ui.$save.button("option", "label", 'Сохранить').button("enable");
 					pubsub.trigger('noty', {
 						text: 'ВМП талон сохранён',
 						type: 'success'
 					});
+					self.render();
 				}
 			});
 		},
@@ -356,7 +353,7 @@ define(function(require) {
 			    url: '/api/v1/appeals/del/client_quoting/' + this.vmpTalon.id,
 			    type: 'DELETE',
 			    success: function(result) {
-
+					window.location.reload();
 			    }
 			});
 		},
