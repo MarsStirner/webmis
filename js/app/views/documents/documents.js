@@ -1181,8 +1181,10 @@ define(function (require) {
                             infectChecked.push(elCode);
                         }
                     });
-
-                    $(renderedEl).addClass(elCode);
+                    $(renderedEl).find('.field-toggle').on('change', function () {
+                        $(renderedEl).trigger('toggle');
+                    })
+                    $(renderedEl).addClass(elCode).addClass('isCheckbox');
                     $(renderedEl).find('.field').hide();
                 }
 
@@ -2300,9 +2302,10 @@ define(function (require) {
                             var docType = self.options.docType;
                             var docTemplate = self.docTemplateId;
                             var action = self.actionId;
-                            App.Router.updateUrl(["appeals", appealId, "documents", "new", docType].join("/"));
+                            var currentPage = Data.Menu.currentPage ? Data.Menu.currentPage : 'documents';
+                            App.Router.updateUrl(["appeals", appealId, currentPage, "new", docType].join("/"));
                             dispatcher.trigger("change:viewState", {
-                                type: "documents",
+                                type: Data.Menu.currentPage,
                                 mode: "SUB_EDIT",
                                 options: {
                                     templateId: docType,
@@ -4172,7 +4175,8 @@ define(function (require) {
             "input [contenteditable].attribute-value": "onAttributeValueChange",
             "change .field-toggle": "onFieldToggleChange",
             "keyup .attribute-value": "onAttributeKeyUp",
-            "restoreField .attribute-value": "onAttributeValueRestored"
+            "restoreField .attribute-value": "onAttributeValueRestored",
+            "toggle": "onAttributeValueChange"
         },
 
         data: function () {
@@ -4250,12 +4254,14 @@ define(function (require) {
 
         setAutosavedFields: function() {
             var fields = {};
-            $.each($(".document-grid .span2, .document-grid .span3, .document-grid .span4, .document-grid .span5, .document-grid .span6:not(.vgroup), .document-grid .span12"), function(){
+            $.each($(".document-grid .span2, .document-grid .span3, .document-grid .span4, .document-grid .span5, .document-grid .span6:not(.vgroup), .document-grid .span12, .isCheckbox"), function(){
                 var field = $(this).find(".attribute-value")[0];
                 var fieldValue = "";
 
                 if (field) {
-                    if ($(field).is(".RichText")) {
+                    if ($(this).is(".isCheckbox")) {
+                        fieldValue = $(this).find('.field-toggle').attr('checked');
+                    } else if ($(field).is(".RichText")) {
                         fieldValue = $(field).html();
                     } else {
                         fieldValue = $(field).val();
@@ -4294,6 +4300,9 @@ define(function (require) {
             if (this.$el.is('.infectLocal') && !this.$el.find('.field-toggle').attr('checked')) {
                 this.$el.find('.field-toggle').attr('checked', 'checked');
                 $('.depends-local-display-row').show();
+            } else if (this.$el.is('.isCheckbox') && !this.$el.find('.field-toggle').attr('checked')) {
+                this.$el.find('.field-toggle').attr('checked', 'checked');
+                this.model.setPropertyValueFor('value', 'Да');
             } else {
                 this.model.setPropertyValueFor('value', val);
                 this.render();
