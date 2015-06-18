@@ -6,31 +6,34 @@ define([
         model: App.Models.Appeal,
 
         initialize: function () {
+            var self = this;
+            var loadedTemplate = _.where(Core.Templates.loadedArray, {name: "pages/finance-edit"});
             this.options.model.set('disableNoty', true);
-            var view = this;
+            this.model = this.options.model;
             Cache.Patient = this.model.get("patient");
-            this.model.fetch({
-                success: function () {
-                    view.loadTemplate("pages/finance-edit");
-                }
-            });
+            if (loadedTemplate.length) {
+                this.onTemplateLoaded();
+            } else {
+                this.loadTemplate("pages/finance-edit");
+            }
 
-            this.on("template:loaded", function () {
-                var appealDicts = [{
-                        name: "financeTypes",
-                        pathPart: "finance"
-                    }, {
-                        name: "requestTypes",
-                        pathPart: "requestTypes"
-                    }
-                ];
-
-                this.initWithDictionaries(appealDicts, this.ready, this, true);
-
-            }, this);
+            this.on("template:loaded", this.onTemplateLoaded);
 
             this.contracts = new Contracts();
             this.contracts.on('reset', this.showContracts, this);
+        },
+
+        onTemplateLoaded: function() {
+            var appealDicts = [{
+                    name: "financeTypes",
+                    pathPart: "finance"
+                }, {
+                    name: "requestTypes",
+                    pathPart: "requestTypes"
+                }
+            ];
+
+            this.initWithDictionaries(appealDicts, this.ready, this, true);
         },
 
         onSave: function (event) {
