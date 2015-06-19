@@ -52,6 +52,13 @@ define(function(require) {
             view.$el.html('<div class="msg">Нет результатов</div>');
         },
 
+        renderSearchResult: function (collection) {
+            this.$groups_list.html(_.template(template, {
+                items: collection.toJSON(),
+                template: template
+            }));
+        },
+
         render: function() {
             var view = this;
             var treeData = view.collection.toJSON();
