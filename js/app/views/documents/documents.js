@@ -4728,7 +4728,8 @@ define(function (require) {
         template: templates.uiElements._integer,
 
         events: _.extend({
-            "keypress .integer": "onIntegerKeypress"
+            "keypress .integer": "onIntegerKeypress",
+            "focusout .integer": "onIntegerFocusout",
         }, UIElementBase.prototype.events),
 
         initialize: function () {
@@ -4739,6 +4740,15 @@ define(function (require) {
         onIntegerKeypress: function (eve) {
             if (eve.which < 48 || eve.which > 57) {
                 eve.preventDefault();
+            }
+        },
+
+        onIntegerFocusout: function () {
+            if (this.model.get('scope') === "'авто'") {
+                if (!this.model.getPropertyValueFor('value')) {
+                    this.model.setPropertyValueFor('value', 'авто');
+                    this.render();
+                }
             }
         }
     });
