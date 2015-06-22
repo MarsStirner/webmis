@@ -85,29 +85,45 @@ define(function (require) {
         },
 
         onSearchKeyup: function(event) {
+            var self = this;
 			var $target = $(event.currentTarget);
             var keyWord = $target.val();
             var searchRes = new Backbone.Collection();
             if (keyWord.length) {
                 this.researchGroupsListView.collection.each(function(model) {
-                    if (model.get('children')) {
-                        _.each(model.get('children'), function(ch){
-                            if (ch.title.toUpperCase().indexOf(keyWord.toUpperCase()) > -1) {
-                                searchRes.add(new Backbone.Model(ch));
-                            }
-                        });
-                    } else {
+                    if (!self.getChildren(model, searchRes, keyWord)) {
                         if (model.get('title').toUpperCase().indexOf(keyWord.toUpperCase()) > -1) {
                             searchRes.add(model);
                         }
                     }
                 });
                 this.researchGroupsListView.renderSearchResult(searchRes);
-                console.log(searchRes);
             } else {
                 this.researchGroupsListView.renderSearchResult(this.viewModel.instrumntalGroups);
             }
 		},
+
+        getChildren: function(group, res, keyWord) {
+            var self = this;
+            if ((group instanceof Backbone.Model) && group.get('children')) {
+                _.each(group.get('children'), function(ch){
+                    if (ch.children) {
+                        _.each(ch.children, function(c){
+                            if (c.title.toUpperCase().indexOf(keyWord.toUpperCase()) > -1) {
+                                res.add(new Backbone.Model(c));
+                            }
+                        })
+                    } else {
+                        if (ch.title.toUpperCase().indexOf(keyWord.toUpperCase()) > -1) {
+                            res.add(new Backbone.Model(ch));
+                        }
+                    }
+                });
+                return true;
+            } else {
+                return false;
+            }
+        },
 
         openAssignerSelectPopup: function () {
             this.personDialogView = new PersonDialogView({
