@@ -167,12 +167,15 @@ define(function(require) {
 		},
 
 		onCheckAll: function(e){
-			if ($(e.currentTarget).attr('checked')) {
-				this.$('.list').find('.picked').attr('checked', 'checked');
-			} else {
-				this.$('.list').find('.picked').removeAttr('checked');
-			}
-			
+			_.each(this.analyzesSelectedView.childViews, function(a){
+				if ($(e.currentTarget).attr('checked')) {
+					a.model.set('picked', true);
+					a.$el.find('.picked').attr('checked', 'checked');
+				} else {
+					a.model.set('picked', false);
+					a.$el.find('.picked').removeAttr('checked');
+				}
+			});
 		},
 
 		onSearchKeyup: function(event) {
