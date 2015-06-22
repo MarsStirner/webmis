@@ -375,7 +375,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		appointments: function(id) {
-			window.location.href = APPOINTMENTS_PATH + '?client_id='+id+'&token='+Core.Cookies.get('authToken')+'&role='+Core.Cookies.get('currentRole');
+			window.open(APPOINTMENTS_PATH + '?client_id='+id+'&token='+Core.Cookies.get('authToken')+'&role='+Core.Cookies.get('currentRole'));
 		},
 
 		appointmentsPatient: function() {
