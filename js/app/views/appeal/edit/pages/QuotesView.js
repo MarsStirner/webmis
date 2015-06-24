@@ -2,15 +2,12 @@ define(function(require) {
 
 	var template = require('text!templates/appeal/edit/pages/quotes.html');
 	var rSelectTemplate = require('text!templates/ui/rselect.html');
-
 	var VmpTalon = require('models/VmpTalon');
 	var VmpTalonPrev = require('models/VmpTalonPrev');
 	var QuotaType = require('models/QuotaType');
 	var Treatment = require('models/Treatment');
 	var PacientModel = require('models/PacientModel');
-
 	var MkbInputView = require('views/ui/MkbInputView');
-
 
 	var RSelectView = Backbone.View.extend({
 		template: _.template(rSelectTemplate),
@@ -20,17 +17,11 @@ define(function(require) {
 
 		initialize: function() {
 			this.options.options.on('reset', this.render, this);
-
 			this.options.options.on('reset', function() {
 				if (this.options.options.length === 0) {
 					this.options.model.set(this.options.selectedProperty, '')
 				}
-				//console.log('on reset', this.options.options, this.options.model, this.options.selectedProperty)
 			}, this);
-
-			// this.options.model.on('change:' + this.options.selectedProperty, function(model) {
-			// 	console.log('change:' + this.options.selectedProperty, model)
-			// }, this);
 		},
 
 		select: function(model) {
@@ -66,12 +57,10 @@ define(function(require) {
 				selected: selected,
 				text: text
 			}
-			// console.log('data ' + this.options.selectedProperty, data)
 			return data;
 		},
 
 		render: function() {
-			// console.log('render', this.options.selectedProperty, this.options.model)
 			var view = this;
 			view.$el.html(view.template(view.data()));
 
@@ -84,9 +73,6 @@ define(function(require) {
 				view.ui.$select.select2('disable');
 			}
 
-			// if (this.options.options.length === 1 && !view.data().selected && this.options.options.first()) {
-			// 	view.ui.$select.select2('val',this.options.options.first().get('id')).trigger('change');
-			// }
 			this.options.model.on('change:' + this.options.selectedProperty, this.select, this)
 
 			return view;
@@ -269,7 +255,6 @@ define(function(require) {
 		},
 
 		renderNested: function(view, selector) {
-			//console.log('renderNested', view, selector)
 			var $element = (selector instanceof $) ? selector : this.$el.find(selector);
 			view.setElement($element).render();
 		},
@@ -342,6 +327,7 @@ define(function(require) {
 						text: 'ВМП талон сохранён',
 						type: 'success'
 					});
+
 					self.render();
 				}
 			});
@@ -353,15 +339,16 @@ define(function(require) {
 			    url: '/api/v1/appeals/del/client_quoting/' + this.vmpTalon.id,
 			    type: 'DELETE',
 			    success: function(result) {
-					window.location.reload();
+					self.vmpTalon.resetQuotaType();
+					self.vmpTalon.resetPacientModel();
+					self.vmpTalon.resetTreatment();
+					self.renderNested(self.quotaTypeView, self.ui.$quotaType);
 			    }
 			});
 		},
 
 		fillForm: function(opt) {
-			console.log('fillForm', opt.model.toJSON());
-
-			this.vmpTalon.set(opt.model.toJSON())
+			this.vmpTalon.set(opt.model.toJSON());
 			this.treatmentView.render();
 
 		},
