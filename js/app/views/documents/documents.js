@@ -5409,12 +5409,13 @@ define(function (require) {
             if (this.collection.length) {
                 this.collection.each(function (item) {
                     var self = this;
-                    item.fetchResultData(function(){
-                        var repeatOptions = self.getRepeatOptions(item);
-                        var repeatView = self.getRepeatView(repeatOptions);
-                        self.subViews.push(repeatView.itemRow, repeatView.itemAttrsContainerRow);
-                        self.$el.append(repeatView.itemRow.render().el, repeatView.itemAttrsContainerRow.render().el);
-                    });
+                    var repeatOptions = self.getRepeatOptions(item);
+                    var repeatView = self.getRepeatView(repeatOptions);
+                    self.subViews.push(repeatView.itemRow, repeatView.itemAttrsContainerRow);
+                    self.$el.append(repeatView.itemRow.render().el, repeatView.itemAttrsContainerRow.render().el);
+                    // item.fetchResultData(function(){
+                    //
+                    // });
                 }, this);
             } else {
                 this.$el.append((new HtmlHelper.ItemRow()).render().el);
@@ -5555,7 +5556,7 @@ define(function (require) {
 
                     this.resultData.reset(tests);
 
-                    callback.call();
+                    callback && callback.call();
 
                 }, this));
 
