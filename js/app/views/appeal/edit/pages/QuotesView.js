@@ -16,6 +16,7 @@ define(function(require) {
 		},
 
 		initialize: function() {
+			this.disabled = false;
 			this.options.options.on('reset', this.render, this);
 			this.options.options.on('reset', function() {
 				if (this.options.options.length === 0) {
@@ -31,6 +32,12 @@ define(function(require) {
 
 		disable: function() {
 			this.ui.$select.select2('disable');
+		},
+
+		enable: function(force) {
+			if (this.options.options.length != 0) {
+				this.ui.$select.select2('enable');
+			}
 		},
 
 		onSelect: function(event) {
@@ -69,7 +76,8 @@ define(function(require) {
 			view.ui.$text = view.$el.find('.text');
 
 			view.ui.$select.select2().select2('enable');
-			if (this.options.options.length == 0) {
+
+			if (this.options.options.length == 0 || this.disabled) {
 				view.ui.$select.select2('disable');
 			}
 
@@ -289,16 +297,22 @@ define(function(require) {
 
 
 			view.vmpTalon.fetch().done(function(model) {
-				console.log('view.vmpTalon',view.vmpTalon)
-				view.renderNested(view.quotaTypeView, view.ui.$quotaType);
-				view.renderNested(view.pacientModelView, view.ui.$pacientModel);
-				view.renderNested(view.treatmentView, view.ui.$treatment);
-
 				view.vmpTalon.onChange();
 				if (view.validate()) {
 					view.ui.$save.button('disable');
 					view.ui.$cancel.button('enable');
+					view.quotaTypeView.disabled = true;
+					view.pacientModelView.disabled = true;
+					view.treatmentView.disabled = true;
+				} else {
+					view.quotaTypeView.disabled = false;
+					view.pacientModelView.disabled = false;
+					view.treatmentView.disabled = false;
 				}
+				view.renderNested(view.quotaTypeView, view.ui.$quotaType);
+				view.renderNested(view.pacientModelView, view.ui.$pacientModel);
+				view.renderNested(view.treatmentView, view.ui.$treatment);
+
 			});
 
 			this.vmpTalonPrev.fetch().done(function() {
@@ -313,22 +327,32 @@ define(function(require) {
 
 		onSave: function() {
 			var self = this;
+			var treatment_id = self.vmpTalon.get('treatment_id');
 			this.ui.$save.button("option", "label", 'Сохраняем...').button("disable");
-
 			this.vmpTalon.save({}, {
 				success: function() {
+					var mkbCode = self.ui.$mkbCode.val();
 					self.vmpTalon.id = '';
 					self.vmpTalon.fetch().done(function() {
 						self.ui.$copy.button('disable');
+						self.ui.$save.button('disable');
+						self.quotaTypeView.disabled = true;
+						self.pacientModelView.disabled = true;
+						self.treatmentView.disabled = true;
+						self.renderNested(self.quotaTypeView, self.ui.$quotaType);
+						self.renderNested(self.pacientModelView, self.ui.$pacientModel);
+						self.treatmentView.model.set('treatment_id', treatment_id);
+						self.renderNested(self.treatmentView, self.ui.$treatment);
+						self.ui.$save.button("option", "label", 'Сохранить').button("disable");
 					});
 
-					self.ui.$save.button("option", "label", 'Сохранить').button("enable");
 					pubsub.trigger('noty', {
 						text: 'ВМП талон сохранён',
 						type: 'success'
 					});
 
-					self.render();
+					//self.render();
+
 				}
 			});
 		},
@@ -343,6 +367,10 @@ define(function(require) {
 					self.vmpTalon.resetPacientModel();
 					self.vmpTalon.resetTreatment();
 					self.renderNested(self.quotaTypeView, self.ui.$quotaType);
+					self.quotaTypeView.disabled = false;
+					self.pacientModelView.disabled = false;
+					self.treatmentView.disabled = false;
+					self.quotaTypeView.enable();
 			    }
 			});
 		},
