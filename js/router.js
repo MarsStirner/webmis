@@ -201,7 +201,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				_.each(tokenArg.split('?')[1].split('&'), function(arg){
 					authData[arg.split('=')[0]] = arg.split('=')[1];
 				});
-				if (authData.role === 'clinicDoctor') {
+				if (authData.role === 'clinicDoctor' || authData.role === 'assistNurse') {
 					authData.role = 'strDoctor'
 				}
 				if (_.contains(ROLES, authData.role)) {
