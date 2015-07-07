@@ -270,7 +270,7 @@ Model = Backbone.RelationalModel.extend({
 
 				if (json.errorCode == 3) {
 					Core.Cookies.clear();
-					//window.location.href = "/auth/";
+					window.location.href = "/auth/";
 					return;
 				} else if (json.errorCode == 261) {
 					json.errorMessage += ", обновите страницу."
