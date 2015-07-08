@@ -18,7 +18,7 @@ define(["text!templates/paginator.tmpl"], function (template) {
 		},
 
 		initialize: function (){
-			App.Router.paginatorPage = '1';
+			//App.Router.paginatorPage = '1';
 
 			this.options = $.extend({
 				path: ""

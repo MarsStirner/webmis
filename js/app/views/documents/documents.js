@@ -863,6 +863,7 @@ define(function (require) {
             if (options.defaultMnems) {
                 this.mnems = options.defaultMnems;
             }
+            App.Router.paginatorPage = 1;
         },
         url: function () {
             var url;
