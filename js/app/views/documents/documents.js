@@ -3223,7 +3223,7 @@ define(function (require) {
             var self = this;
             $.ajax({
                type: 'GET',
-                url: '/data/autosave/doc_'+this.model.id,
+                url: '/data/autosave/doc_'+this.model.appealId+'_'+this.model.id,
                 dataType: 'json',
                 accept:'application/json',
                 success: function(data) {
@@ -3776,7 +3776,7 @@ define(function (require) {
         deleteAutosavedFields: function() {
             $.ajax({
                type: 'DELETE',
-                url: '/data/autosave/doc_'+this.model.id
+                url: '/data/autosave/doc_'+this.model.appealId+'_'+this.model.id
             });
         },
 
@@ -4240,7 +4240,15 @@ define(function (require) {
             } else {
                 return typePath[typePath.length-1];
             }
+        },
 
+        getAppealId: function() {
+            var typePath = window.location.pathname.split('/');
+            if (typePath[typePath.length-1] == 'edit') {
+               return typePath[typePath.length-5];
+            } else {
+                return typePath[typePath.length-4];
+            }
         },
 
         setAttributeValue: function () {
@@ -4284,8 +4292,9 @@ define(function (require) {
                 fields[$('.infectLocal').data("typeid")] = "checked"
             }
             var docTypeId = this.getDocTypeId();
+            var appealId = this.getAppealId();
             var dataToSend = {
-                "id": "doc_"+docTypeId,
+                "id": "doc_"+appealId+'_'+docTypeId,
                 "text": JSON.stringify(fields)
             };
             $.ajax({
