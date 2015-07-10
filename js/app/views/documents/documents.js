@@ -924,7 +924,7 @@ define(function (require) {
     Documents.Collections.DocumentTypes = Collection.extend({
         model: Documents.Models.DocumentType,
         // don't let create "JOUR_OLD", "EXAM_OLD"
-        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS_POLY", "CONS_SPEC", "CONS_PHD"],
+        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS_POLY", "CONS_SPEC", "CONS_PHD", "BAK_LAB"],
 
         lastCriteria: "",
 
@@ -7039,7 +7039,7 @@ define(function (require) {
         },
 
         getDefaultDocumentsMnems: function () {
-            return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "CONS_POLY", "LAB", "DIAG", "THER", "EXAM_OLD", "JOUR_OLD"];
+            return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "CONS_POLY", "LAB", "DIAG", "THER", "EXAM_OLD", "JOUR_OLD", "BAK_LAB"];
         },
         getEditPageTypeName: function () {
             return "summary";
