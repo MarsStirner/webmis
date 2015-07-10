@@ -4813,7 +4813,11 @@ define(function (require) {
 
         onFormatDoubleKeyup: function (event) {
             var $ct = $(event.currentTarget);
-
+            if (!isNaN(parseFloat($ct.val()))) {
+                $ct.val(parseFloat($ct.val()));
+            } else {
+                $ct.val('');
+            }
             if ($ct.val().indexOf('.') == 0) {
                 $ct.val($ct.val().substring(1));
             }
