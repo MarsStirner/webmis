@@ -37,7 +37,8 @@ define(function (require) {
             //Все врачи
             this.allPersons.setParams({
                 limit: 9999,
-                sortingField: 'lastname'
+                sortingField: 'lastname',
+                roleFilter: ['strDoctor', 'clinicDoctor', 'diagDoctor']
             });
             //this.allPersons.on("reset", this.addAllPersons, this).fetch();
 
@@ -50,7 +51,8 @@ define(function (require) {
                 sortingField: 'lastname',
                 filter: {
                     departmentId: this.appeal.get("currentDepartment").id
-                }
+                },
+                roleFilter: ['strDoctor', 'clinicDoctor', 'diagDoctor']
             });
             this.getCollection('departmentPersons');
             // this.departmentPersons.on("reset", this.addDepartmentPersons, this).fetch();
