@@ -4770,21 +4770,63 @@ define(function (require) {
     Documents.Views.Edit.UIElement.Table = UIElementBase.extend({
         template: templates.uiElements._table,
         data: function(){
-            var columns = this.model.get('scope').split(',');
-            var trs = this.model.get('tableValues');
-            // var trs = [
-            //     ["1", "NUUMBBER", "Плазма свежезамороженная, полученная автоматическим аферезом", "0(I)Rh-", "123", "456.0", "789"],
-            //     ["2", "NUUMBBER1", "Плазма свежезамороженная из дозы крови    Карантинизовано 6 месяцев", "B(III)Rh+", "77777", "8888.0", "99999"]
-            // ];
 
+            console.log('table model', this.model);
+
+            var columns = this.model.get('scope').split(',');
             var data = {
                 name: this.model.get('name'),
                 columns: columns,
-                trs: trs
+                trs: this.getTrs()
             };
 
-            console.log('table',data, this);
+            console.log('table data',data, this);
             return data;
+        },
+        getTrs: function() {
+            var self = this;
+            var trs = [];
+            var factory = new UIElementFactory;
+
+            _.each(this.model.get('tableValues'), function(tr){
+                var tds = [];
+                _.each(tr.values, function(td){
+                    tds.push(self.renderTd(td));
+                });
+                trs.push(tds);
+
+                // var rTds = [];
+                // _.each(tr, function(td){
+                //     rTd = factory.make(td);
+                //     rTds.push(rTd);
+                // });
+                // trs.push(rTds);
+            });
+
+            return trs;
+        },
+
+        renderTd: function(td) {
+            if (td.valueType && td.valueType.indexOf('rb') > -1) {
+                return td.rbValue ? td.rbValue.name : '';
+            } else if (td.valueType) {
+                switch (td.valueType.toLowerCase()) {
+                case "date":
+                    return moment(td.date).format('DD.MM.YYYY');
+                    break;
+                case "mkb":
+                    return td.value;
+                    break;
+                case "person":
+                    return td.person.name.last + ' ' + td.person.name.first.substring(0, 1) + '. ' + td.person.name.middle.substring(0, 1) + '.';
+                    break;
+                default:
+                    return td.value;
+                    break;
+                }
+            } else {
+                return td.value;
+            }
         }
     });
 

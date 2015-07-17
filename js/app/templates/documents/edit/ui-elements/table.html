@@ -14,11 +14,7 @@
     <% _.each(trs, function(tr){%>
     <tr>
         <% _.each(tr, function(td){%>
-			<% if(td.indexOf('.png') > -1 || td.indexOf('.pdf') > -1 || td.indexOf('.jpg') > -1 || td.indexOf('.gif') > -1) { %>
-            	<td><a href="<%= td%>"><%= td%></a></td>
-			<% } else { %>
-				<td><%= td%></td>
-			<% } %>
+			<td><%= td%></td>
         <%})%>
     </tr>
     <%})%>
