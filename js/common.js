@@ -15,7 +15,6 @@ ROLES = {
 };
 
 DEFAULT_ANIMATION_TIME = 300;
-//DATA_PATH = "http://10.1.2.106:8080/tmis-ws-medipad/rest/tms-registry/";
 DATA_PATH = "/data/";
 
 CORE_HOST = "10.128.225.202:8080";
