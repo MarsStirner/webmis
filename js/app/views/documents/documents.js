@@ -5915,7 +5915,8 @@ define(function (require) {
                         self.options = options.map(function (option) {
                             return {
                                 val: self.getOptionValue(option),
-                                text: self.getOptionText(option)
+                                text: self.getOptionText(option),
+                                code: self.getOptionCode(option),
                             }
                         }, self);
                         self.render();
@@ -5963,6 +5964,9 @@ define(function (require) {
         },
         getOptionValue: function (model) {
             return model.get('id');
+        },
+        getOptionCode: function(model){
+            return model.get('codeOperation');
         },
         getPropertyName: function () {
             return 'value';
