@@ -711,12 +711,12 @@ td.status-code-2, td.status-code-2 .Warning {
 }
 
 /* line 115, ../sass/modules/_biomaterials.scss */
-.biomaterials-action-type {
+.biomaterials-action-type, .labs-action-type {
   float: left;
   width: 25%;
 }
 /* line 119, ../sass/modules/_biomaterials.scss */
-.biomaterials-action-type .biomaterial {
+.biomaterials-action-type .biomaterial, .labs-action-type .laboratory {
   width: 90%;
 }
 

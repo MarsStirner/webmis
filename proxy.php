@@ -109,7 +109,7 @@ else if (preg_match("/^\\/api\\/v1\\/dir\\/treatment/", $_SERVER["REQUEST_URI"])
 else if ( preg_match("/^\\/api\\/v1\\//", $_SERVER["REQUEST_URI"]) ) { 
 	proxy_url("http://".$core_host."/tmis-ws-medipad/rest/tms-registry/".preg_replace("/^\\/api\\/v1\\//", "", $_SERVER["REQUEST_URI"]));
 }
-else if ( preg_match("/^\\/data\\/(auth|roles|changeRole)\\//", $_SERVER["REQUEST_URI"]) ) {
+else if ( preg_match("/^\\/data\\/(auth|roles|changeRole|user-info)\\//", $_SERVER["REQUEST_URI"]) ) {
 	proxy_url("http://".$core_host."/tmis-ws-medipad/rest/tms-auth/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
 }else {
 	proxy_url("http://".$core_host."/tmis-ws-medipad/rest/tms-registry/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));

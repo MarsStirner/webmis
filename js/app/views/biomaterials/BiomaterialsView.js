@@ -3,6 +3,7 @@ define(function(require) {
 	var biomaterialsTemplate = require('text!templates/biomaterials/biomaterials-page.tmpl');
 
 	require('collections/departments');
+	require('collections/labs');
 	require('collections/dictionary-values');
 	var BarcodesCollection = require('collections/biomaterials/Barcodes');
 	var BiomaterialsCollection = require('collections/biomaterials/Biomaterials');
@@ -288,10 +289,12 @@ define(function(require) {
 		initTissues: function() {
 			var view = this;
 
-			//Получаем список типов биоматериалов
+			//Получаем списки фильтров
 			view.tissues = new App.Collections.DictionaryValues("", {
 				name: "tissueTypes"
 			});
+
+			view.labs = new App.Collections.Departments();
 
 			view.tissues.setParams({
 				sortingField: 'name',
@@ -303,7 +306,14 @@ define(function(require) {
 				el: view.$('#biomaterial')
 			});
 
+			view.labsSelect = new SelectView({
+				collection: view.labs,
+				el: view.$('#laboratory'),
+				selectText: 'name'
+			});
+
 			view.depended(view.tissueSelect);
+			view.depended(view.labsSelect);
 
 		},
 

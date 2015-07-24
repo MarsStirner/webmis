@@ -6,7 +6,15 @@
 	<select class="attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>" <%=model.isReadOnly()?'disabled':''%> style="font-size: 1.2em; padding: 4px; width: 100%;border: 1px solid #737477;">
 		<option value="">...</option>
 		<% _.each(options, function (option) {%>
-			<option value="<%=option.val%>" <%if (selected == option.val) {%>selected<%}%>><%= option.text %></option>
+			<option value="<%=option.val%>" <%if (selected == option.val) {%>selected<%}%>>
+				<table>
+					<tr>
+						<td style="width:100em"><%= option.code %></td>
+						<td><%= option.text %></td>
+					</tr>
+				</table>
+				<%= option.text %>
+			</option>
 		<%});%>
 	</select>
 </div>
