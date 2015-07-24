@@ -42,7 +42,7 @@ function proxy_url ($url, $header_host=null) {
         } else {
             $headers[] = $key . ': ' . $value;
         }
-        
+
     }
 
     curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
@@ -92,27 +92,27 @@ function proxy_url ($url, $header_host=null) {
 //proxy_url("http://127.0.0.1:8080".$_SERVER["REQUEST_URI"]);
 //api/v1/appeals/(.*)/client_quoting(.*)
 if( preg_match("/^\\/data\\/(print-by-context)\\//", $_SERVER["REQUEST_URI"]) ){
-    proxy_url("http://".$print_system_host."/print_subsystem/print_template", $print_system_host);    
+    proxy_url("http://".$print_system_host."/print_subsystem/print_template", $print_system_host);
 }
 else if (preg_match("/^\\/api\\/v1\\/appeals\\/(.*)\\/client_quoting/", $_SERVER["REQUEST_URI"]) ){
     proxy_url("http://".$core_host."/core-ext-war/quota/".preg_replace("/^\\/api\\/v1\\/appeals\\//", "", $_SERVER["REQUEST_URI"]));
-} 
+}
 else if (preg_match("/^\\/api\\/v1\\/dir\\/quotaType/", $_SERVER["REQUEST_URI"]) ){
 	proxy_url("http://".$core_host."/core-ext-war/quota/quotaType/".preg_replace("/^\\/api\\/v1\\/dir\\/quotaType/", "", $_SERVER["REQUEST_URI"]));
-} 
+}
 else if (preg_match("/^\\/api\\/v1\\/dir\\/pacient_model/", $_SERVER["REQUEST_URI"]) ){
     proxy_url("http://".$core_host."/core-ext-war/quota/pacient_model/".preg_replace("/^\\/api\\/v1\\/dir\\/pacient_model/", "", $_SERVER["REQUEST_URI"]));
-} 
+}
 else if (preg_match("/^\\/api\\/v1\\/dir\\/treatment/", $_SERVER["REQUEST_URI"]) ){
     proxy_url("http://".$core_host."/core-ext-war/quota/treatment/".preg_replace("/^\\/api\\/v1\\/dir\\/treatment/", "", $_SERVER["REQUEST_URI"]));
-} 
-else if ( preg_match("/^\\/api\\/v1\\//", $_SERVER["REQUEST_URI"]) ) { 
+}
+else if ( preg_match("/^\\/api\\/v1\\//", $_SERVER["REQUEST_URI"]) ) {
 	proxy_url("http://".$core_host."/tmis-ws-medipad/rest/tms-registry/".preg_replace("/^\\/api\\/v1\\//", "", $_SERVER["REQUEST_URI"]));
 }
-else if ( preg_match("/^\\/data\\/(auth|roles|changeRole)\\//", $_SERVER["REQUEST_URI"]) ) {
+else if ( preg_match("/^\\/data\\/(auth|roles|changeRole|user-info)\\//", $_SERVER["REQUEST_URI"]) ) {
 	proxy_url("http://".$core_host."/tmis-ws-medipad/rest/tms-auth/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
 }else {
 	proxy_url("http://".$core_host."/tmis-ws-medipad/rest/tms-registry/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
-}        
+}
 
 ?>
