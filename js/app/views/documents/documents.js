@@ -5102,7 +5102,17 @@ define(function (require) {
                 mandatory: (fds.therapyFdrId ? "true" : "false")
             });
             this.render();
+        },
+
+        render: function () {
+            UIElementBase.prototype.render.call(this);
+            // if (!this.$('option:selected').length && this.$('option:selected').val() && this.model.getValue()) {
+            //     this.$('.attribute-value').prepend('<option>222</option>');
+            // }
+            this.$('.attribute-value').prepend('<option selected value="'+this.model.getValue()+'">'+this.model.getPropertyValueFor('value')+'</option>');
+            return this;
         }
+
     });
 
     /**
@@ -6459,16 +6469,23 @@ define(function (require) {
         },
 
         onDocCollectionChange: function(){
-                var firstDoc = this.collection.first();
-                if (firstDoc) {
-                    this.documentPrintButtonSingle.documents = this.printDocuments;
-                    this.documentPrintButton.documents = this.documentPrintButtonSeparated.documents = this.getPrintDocumentCollection();
-                    if (firstDoc.get('context')) {
-                        this.printTemplates.setPrintContext(firstDoc.get('context'));
-                        this.printTemplates.fetch();
+            var self = this;
+            var firstDoc = this.collection.first();
+            if (firstDoc) {
+                this.documentPrintButtonSingle.documents = this.printDocuments;
+                this.documentPrintButton.documents = this.documentPrintButtonSeparated.documents = this.getPrintDocumentCollection();
+                if (firstDoc.get('context')) {
+                    this.printTemplates.setPrintContext(firstDoc.get('context'));
+                    this.printTemplates.fetch();
+                }
+            }
+            this.collection.each(function(doc){
+                if (doc.getDates().end) {
+                    if (doc.getDates().end.getValue()) {
+                        self.$('.assign-to-me').button('disable');
                     }
                 }
-
+            });
         },
 
         template: templates._reviewControls,
