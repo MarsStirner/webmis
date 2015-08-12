@@ -616,7 +616,8 @@ define(function(require){
 
 		events: {
 			//"change select[name='sex']": "onSexChange",
-			"change input[name='name-middle']": "onMiddleNameChange"
+			"change input[name='name-middle']": "onMiddleNameChange",
+			"change input[name*='name']": "onNameChange"
 		},
 
 		initialize: function(options) {
@@ -642,6 +643,11 @@ define(function(require){
 					this.$("select[name='sex']").val("male").change();
 				}
 			}
+		},
+
+		onNameChange: function(event) {
+			var val = $(event.target).val();
+			$(event.target).val($.trim(val));
 		},
 
 		render: function() {

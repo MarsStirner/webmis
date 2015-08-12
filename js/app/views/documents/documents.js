@@ -5106,10 +5106,9 @@ define(function (require) {
 
         render: function () {
             UIElementBase.prototype.render.call(this);
-            // if (!this.$('option:selected').length && this.$('option:selected').val() && this.model.getValue()) {
-            //     this.$('.attribute-value').prepend('<option>222</option>');
-            // }
-            this.$('.attribute-value').prepend('<option selected value="'+this.model.getValue()+'">'+this.model.getPropertyValueFor('value')+'</option>');
+            if (!this.$('option:selected').length && this.$('option:selected').val() && this.model.getValue()) {
+                this.$('.attribute-value').prepend('<option selected value="'+this.model.getValue()+'">'+this.model.getPropertyValueFor('value')+'</option>');
+            }
             return this;
         }
 
