@@ -924,7 +924,7 @@ define(function (require) {
     Documents.Collections.DocumentTypes = Collection.extend({
         model: Documents.Models.DocumentType,
         // don't let create "JOUR_OLD", "EXAM_OLD"
-        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS_POLY", "CONS_SPEC", "CONS_PHD", "BAK_LAB"],
+        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS_POLY", "CONS_SPEC", "CONS_PHD"],
 
         lastCriteria: "",
 
