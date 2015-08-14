@@ -7100,7 +7100,7 @@ define(function (require) {
         },
 
         getDefaultDocumentsMnems: function () {
-            return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "CONS_POLY", "LAB", "DIAG", "THER", "EXAM_OLD", "JOUR_OLD", "BAK_LAB"];
+            return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "CONS_POLY", "LAB", "DIAG", "THER", "EXAM_OLD", "JOUR_OLD", "BAK_LAB", "CONS_SPEC", "CONS_PHD"];
         },
         getEditPageTypeName: function () {
             return "summary";
