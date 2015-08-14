@@ -13,10 +13,24 @@
             <% _.each(attr.value.values, function(tr){%>
                 <tr>
                     <% _.each(tr.values, function(td){%>
-                        <%if (td.value.indexOf('.png') > -1 || td.value.indexOf('.jpg') > -1 || td.value.indexOf('.gif') > -1 || td.value.indexOf('.bmp') > -1) {%>
-                            <td><a href="<%= td.value%>"><%= td.value%></a></td>
+                        <%if (td.value) {%>
+                            <%if (td.value.indexOf('.png') > -1 || td.value.indexOf('.jpg') > -1 || td.value.indexOf('.gif') > -1 || td.value.indexOf('.bmp') > -1) {%>
+                                <td><a href="<%= td.value%>"><%= td.value%></a></td>
+                            <%} else {%>
+                                <td><%= td.value%></td>
+                            <%}%>
+                        <%} else if (td.valueType) {%>
+                            <%if (td.valueType == 'Date') {%>
+                                <td><%= moment(td.date).format('DD.MM.YYYY')%></td>
+                            <%} else if (td.valueType == 'person') {%>
+                                <td><%= td.person.name.raw%></td>
+                            <%} else if (td.valueType.indexOf('rb') > -1 && td.rbValue) {%>
+                                <td><%= td.rbValue.name%></td>
+                            <%} else {%>
+                                <td></td>
+                            <%}%>
                         <%} else {%>
-                            <td><%= td.value%></td>
+                            <td></td>
                         <%}%>
                     <%})%>
                 </tr>
