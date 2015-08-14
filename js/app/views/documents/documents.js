@@ -160,7 +160,7 @@ define(function (require) {
     var InstrumentalPopupView = require('views/diagnostics/instrumental/InstrumentalPopupView');
     var ViewModel = require('views/diagnostics/instrumental/InstrumentalPopupViewModel');
     var PrintTemplates = require('models/print/Template').Collection;
-
+    var OperationType = require("collections/OperationType");
     var DocumentTemplatesCollection = require("collections/doc-templates");
     /*var FDLoader = {
         fds: {},
@@ -6838,6 +6838,7 @@ define(function (require) {
 
         initialize: function () {
             ViewBase.prototype.initialize.call(this, this.options);
+            var self = this;
 
             if (this.model.get("type").toUpperCase() == "FLATDIRECTORY") {
                 var fdId = this.model.get("scope");
@@ -6852,7 +6853,23 @@ define(function (require) {
                 }
 
                 this.onDirectoryReady();
+
+            } else if (this.model.get("type").toUpperCase() == "OPERATIONTYPE") {
+                this.operationType = new OperationType();
+                this.operationType.setParams({limit: 0});
+                this.operationType.fetch().done(function(){
+                    self.onOperationTypeReady();
+                });
             }
+
+        },
+
+        getOperationType: function(){
+            var self = this;
+            var found = self.operationType.find(function(item){
+                return item.get('id') == self.model.get("value");
+            });
+            return found.get('codeOperation') + ' ' + found.get('value');
         },
 
         onDirectoryReady: function () {
@@ -6876,6 +6893,13 @@ define(function (require) {
 
             });
 
+        },
+
+        onOperationTypeReady: function () {
+            this.model.set({
+                value: this.getOperationType()
+            });
+            this.render();
         }
     });
 
