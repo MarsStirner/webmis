@@ -1,4 +1,5 @@
 <%if (attr.type === 'TABLE') {%>
+    <% console.log(attr)%>
     <strong><%= attr.name %>:</strong>
     <table class="table-widget">
         <thead>
@@ -11,8 +12,12 @@
         <tbody>
             <% _.each(attr.value.values, function(tr){%>
                 <tr>
-                    <% _.each(tr, function(td){%>
-                        <td><%= td%></td>
+                    <% _.each(tr.values, function(td){%>
+                        <%if (td.value.indexOf('.png') > -1 || td.value.indexOf('.jpg') > -1 || td.value.indexOf('.gif') > -1 || td.value.indexOf('.bmp') > -1) {%>
+                            <td><a href="<%= td.value%>"><%= td.value%></a></td>
+                        <%} else {%>
+                            <td><%= td.value%></td>
+                        <%}%>
                     <%})%>
                 </tr>
             <%})%>
