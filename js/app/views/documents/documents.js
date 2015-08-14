@@ -5106,7 +5106,8 @@ define(function (require) {
 
         render: function () {
             UIElementBase.prototype.render.call(this);
-            if (!this.$('option:selected').length && this.$('option:selected').val() && this.model.getValue()) {
+            console.log(this.$('option:selected').val());
+            if (!(this.$('option:selected').length && this.$('option:selected').val()) && this.model.getValue()) {
                 this.$('.attribute-value').prepend('<option selected value="'+this.model.getValue()+'">'+this.model.getPropertyValueFor('value')+'</option>');
             }
             return this;
