@@ -227,8 +227,8 @@ define(function (require) {
 
                 if (lastTherapy.get("phases").length > 0) {
                     //этот документ есть в последней фазе последней терапии
-                    var docInLastTherapyLastPhase = !! _.find(lastTherapy.get("phases")[0].days, function (day) {
-                    return day.docId === this.get('id');
+                    var docInLastTherapyLastPhase = !! _.find(lastTherapy.get("phases")[lastTherapy.get("phases").length-1].days, function (day) {
+                        return day.docId === this.get('id');
                     }, this);
 
                     //этот документ есть в фазах последней терапии
@@ -239,23 +239,23 @@ define(function (require) {
                     }, this);
                 }
 
-
-
                 //последняя терапия не закрыта, нет даты окончания
                 if (!lastTherapy.get("endDate") || lastTherapy.get("endDate") < 0) {
                     shouldSetTherapyFields = true;
 
                     if (lastTherapy.get("phases").length > 0) {
 
-                        if (this.docIsNew() && (lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("id") === this.get('id'))) {
+                        var lastPhase = lastTherapy.get("phases")[lastTherapy.get("phases").length-1];
+
+                        if (this.docIsNew() && (lastPhase.days.length === 1) && (lastTherapy.get("id") === this.get('id'))) {
                             shouldSetTherapyFields = false;
                         }
 
                         //последняя фаза не закрыта, нет даты окончания
-                        if (!lastTherapy.get("phases")[0].endDate || lastTherapy.get("phases")[0].endDate < 0) {
+                        if (!lastPhase.endDate || lastPhase.endDate < 0) {
                             shouldSetTherapyPhaseFields = true;
                             //если мы редактируем первый документ в последней незакрытой фазе
-                            if ((lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("phases")[0].days[0].docId === this.get('id'))) {
+                            if ((lastPhase.days.length === 1) && (lastPhase.days[0].docId === this.get('id'))) {
                                 shouldSetTherapyPhaseFields = false;
                             }
                         } else {
@@ -264,7 +264,6 @@ define(function (require) {
                                 shouldSetTherapyPhaseFields = true;
                             }
                         }
-
                     }
                 } else {
                     //если у терапии есть дата окончания , и документ входит в документы из которых состоит терапия
@@ -303,13 +302,13 @@ define(function (require) {
                     if (shouldSetTherapyPhaseFields) {
                         if (ta.therapyFieldCode == "therapyPhaseTitle") {
                             if (this.docIsNew()) {
-                                ta.properties[1].value = lastTherapy.get("phases")[0].titleId.toString();
+                                ta.properties[1].value = lastTherapy.get("phases")[lastTherapy.get("phases").length-1].titleId.toString();
                             }
                             //ta.readOnly = "true";
                         }
                         if (ta.therapyFieldCode == "therapyPhaseBegDate") {
                             if (this.docIsNew()) {
-                                ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate || new Date()).format(CD_DATE_FORMAT);
+                                ta.properties[0].value = moment(lastTherapy.get("phases")[lastTherapy.get("phases").length-1].beginDate || new Date()).format(CD_DATE_FORMAT);
                             }
                             //ta.readOnly = "true";
                         }
@@ -5106,7 +5105,6 @@ define(function (require) {
 
         render: function () {
             UIElementBase.prototype.render.call(this);
-            console.log(this.$('option:selected').val());
             if (!(this.$('option:selected').length && this.$('option:selected').val()) && this.model.getValue()) {
                 this.$('.attribute-value').prepend('<option selected value="'+this.model.getValue()+'">'+this.model.getPropertyValueFor('value')+'</option>');
             }
