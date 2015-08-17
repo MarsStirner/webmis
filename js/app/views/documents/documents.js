@@ -4358,7 +4358,6 @@ define(function (require) {
         },
 
         onAttributeKeyUp: function (event) {
-            console.log(this.model.setValue(this.getAttributeValue()));
             if (event.keyCode == 32) {
                 this.setAutosavedFields();
             } else {
@@ -4869,13 +4868,12 @@ define(function (require) {
 
         onFormatDoubleKeyup: function (event) {
             var $ct = $(event.currentTarget);
-            if (!isNaN(parseFloat($ct.val()))) {
-                $ct.val(parseFloat($ct.val()));
-            } else {
-                $ct.val('');
-            }
-            if ($ct.val().indexOf('.') == 0) {
-                $ct.val($ct.val().substring(1));
+            if ($ct.val().indexOf('.') != $ct.val().length-1) {
+                if (!isNaN(parseFloat($ct.val()))) {
+                    $ct.val(parseFloat($ct.val()));
+                } else {
+                    $ct.val('');
+                }
             }
         }
     });
