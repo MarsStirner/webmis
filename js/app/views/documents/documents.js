@@ -214,9 +214,25 @@ define(function (require) {
             return this.get('id') === this.get('typeId');
         },
 
-        therapyBlackMagic: function (attributes) {
+        getLastTherapyPhase: function(){
+            var last = {
+                phase: null,
+                date: 0
+            };
+            _.each(therapiesCollection.first().get("phases"), function(phase){
+                if (moment(phase.beginDate).format('X') > last.date) {
+                    last = {
+                        phase: phase,
+                        date: moment(phase.beginDate).format('X')
+                    }
+                }
+            });
+            return last.phase
+        },
 
+        therapyBlackMagic: function (attributes) {
             var lastTherapy = therapiesCollection.first();
+            var lastPhase = this.getLastTherapyPhase();
             var shouldSetTherapyFields = false;
             var shouldSetTherapyPhaseFields = false;
             //TODO Надо разделить установку значений и статуса readOnly
@@ -227,7 +243,7 @@ define(function (require) {
 
                 if (lastTherapy.get("phases").length > 0) {
                     //этот документ есть в последней фазе последней терапии
-                    var docInLastTherapyLastPhase = !! _.find(lastTherapy.get("phases")[lastTherapy.get("phases").length-1].days, function (day) {
+                    var docInLastTherapyLastPhase = !! _.find(lastPhase.days, function (day) {
                         return day.docId === this.get('id');
                     }, this);
 
@@ -245,7 +261,6 @@ define(function (require) {
 
                     if (lastTherapy.get("phases").length > 0) {
 
-                        var lastPhase = lastTherapy.get("phases")[lastTherapy.get("phases").length-1];
 
                         if (this.docIsNew() && (lastPhase.days.length === 1) && (lastTherapy.get("id") === this.get('id'))) {
                             shouldSetTherapyFields = false;
@@ -302,13 +317,13 @@ define(function (require) {
                     if (shouldSetTherapyPhaseFields) {
                         if (ta.therapyFieldCode == "therapyPhaseTitle") {
                             if (this.docIsNew()) {
-                                ta.properties[1].value = lastTherapy.get("phases")[lastTherapy.get("phases").length-1].titleId.toString();
+                                ta.properties[1].value = this.getLastTherapyPhase().titleId.toString();
                             }
                             //ta.readOnly = "true";
                         }
                         if (ta.therapyFieldCode == "therapyPhaseBegDate") {
                             if (this.docIsNew()) {
-                                ta.properties[0].value = moment(lastTherapy.get("phases")[lastTherapy.get("phases").length-1].beginDate || new Date()).format(CD_DATE_FORMAT);
+                                ta.properties[0].value = moment(this.getLastTherapyPhase().beginDate || new Date()).format(CD_DATE_FORMAT);
                             }
                             //ta.readOnly = "true";
                         }
