@@ -9,7 +9,9 @@
 			<option value="<%=option.val%>" <%if (selected == option.val) {%>selected<%}%>>
 				<table>
 					<tr>
-						<td style="width:100em"><%= option.code %></td>
+						<%if (option.code) {%>
+							<td style="width:100em"><%= option.code %></td>
+						<%}%>	
 						<td><%= option.text %></td>
 					</tr>
 				</table>
