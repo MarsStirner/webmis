@@ -294,8 +294,6 @@ define(function(require) {
 				name: "tissueTypes"
 			});
 
-			view.labs = new App.Collections.Departments();
-
 			view.tissues.setParams({
 				sortingField: 'name',
 				sortingMethod: 'asc'
@@ -306,16 +304,24 @@ define(function(require) {
 				el: view.$('#biomaterial')
 			});
 
-			view.labsSelect = new SelectView({
-				collection: view.labs,
-				el: view.$('#laboratory'),
-				selectText: 'name'
-			});
-
 			view.depended(view.tissueSelect);
-			view.depended(view.labsSelect);
 
 		},
+
+		// initLabs: function() {
+		// 	var view = this;
+		//
+		// 	view.labs = new App.Collections.Labs();
+		//
+		// 	view.labsSelect = new SelectView({
+		// 		collection: view.labs,
+		// 		el: view.$('#lab'),
+		// 		selectText: 'name'
+		// 	});
+		//
+		// 	view.depended(view.labsSelect);
+		//
+		// },
 
 		initDepartments: function() {
 			var view = this;
@@ -561,6 +567,7 @@ define(function(require) {
 			view.initPrintButton();
 			view.initDatepicker();
 
+			//view.initLabs();
 			view.initTissues();
 			view.initDepartments();
 

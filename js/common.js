@@ -330,7 +330,7 @@ Collection = Backbone.Collection.extend({
 			VersionInfo.show();
 		}
 
-		return data.data
+		return data.data ? data.data : data;
 	},
 
 	fetch: function (options) {
