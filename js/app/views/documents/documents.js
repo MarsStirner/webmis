@@ -5938,7 +5938,7 @@ define(function (require) {
                             return {
                                 val: self.getOptionValue(option),
                                 text: self.getOptionText(option),
-                                code: self.getOptionCode(option),
+                                code: self.hascode ? self.getOptionCode(option) : '',
                             }
                         }, self);
                         self.render();
@@ -5973,7 +5973,7 @@ define(function (require) {
         },
         getCollectionPath: function () {
             return 'collections/departments';
-        }
+        },
     });
 
     /**
@@ -5981,6 +5981,7 @@ define(function (require) {
      * @type {*}
      */
     Documents.Views.Edit.UIElement.OperationType = Documents.Views.Edit.UIElement.Select.extend({
+        hascode: true,
         getOptionText: function (model) {
             return model.get('value');
         },
