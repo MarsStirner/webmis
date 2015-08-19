@@ -219,14 +219,16 @@ define(function (require) {
                 phase: null,
                 date: 0
             };
-            _.each(therapiesCollection.first().get("phases"), function(phase){
-                if (moment(phase.beginDate).format('X') > last.date) {
-                    last = {
-                        phase: phase,
-                        date: moment(phase.beginDate).format('X')
+            if (therapiesCollection.first()) {
+                _.each(therapiesCollection.first().get("phases"), function(phase){
+                    if (moment(phase.beginDate).format('X') > last.date) {
+                        last = {
+                            phase: phase,
+                            date: moment(phase.beginDate).format('X')
+                        }
                     }
-                }
-            });
+                });
+            }
             return last.phase
         },
 
