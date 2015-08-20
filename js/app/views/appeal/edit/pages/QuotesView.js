@@ -299,6 +299,8 @@ define(function(require) {
 			view.vmpTalon.fetch().done(function(model) {
 				view.vmpTalon.onChange();
 				if (view.validate()) {
+					view.mkbInputView.$('input').addClass('Disabled NotEditable').attr('disabled', 'disabled');
+					view.mkbInputView.$('button').button('disable');
 					view.ui.$save.button('disable');
 					view.ui.$cancel.button('enable');
 					view.quotaTypeView.disabled = true;
@@ -331,27 +333,27 @@ define(function(require) {
 			this.ui.$save.button("option", "label", 'Сохраняем...').button("disable");
 			this.vmpTalon.save({}, {
 				success: function() {
-					var mkbCode = self.ui.$mkbCode.val();
-					self.vmpTalon.id = '';
-					self.vmpTalon.fetch().done(function() {
-						self.ui.$copy.button('disable');
-						self.ui.$save.button('disable');
-						self.quotaTypeView.disabled = true;
-						self.pacientModelView.disabled = true;
-						self.treatmentView.disabled = true;
-						self.renderNested(self.quotaTypeView, self.ui.$quotaType);
-						self.renderNested(self.pacientModelView, self.ui.$pacientModel);
-						self.treatmentView.model.set('treatment_id', treatment_id);
-						self.renderNested(self.treatmentView, self.ui.$treatment);
-						self.ui.$save.button("option", "label", 'Сохранить').button("disable");
-					});
+					// var mkbCode = self.ui.$mkbCode.val();
+					// self.vmpTalon.id = '';
+					// self.vmpTalon.fetch().done(function() {
+					// 	self.ui.$copy.button('disable');
+					// 	self.ui.$save.button('disable');
+					// 	self.quotaTypeView.disabled = true;
+					// 	self.pacientModelView.disabled = true;
+					// 	self.treatmentView.disabled = true;
+					// 	self.renderNested(self.quotaTypeView, self.ui.$quotaType);
+					// 	self.renderNested(self.pacientModelView, self.ui.$pacientModel);
+					// 	self.treatmentView.model.set('treatment_id', treatment_id);
+					// 	self.renderNested(self.treatmentView, self.ui.$treatment);
+					// 	self.ui.$save.button("option", "label", 'Сохранить').button("disable");
+					// });
 
 					pubsub.trigger('noty', {
 						text: 'ВМП талон сохранён',
 						type: 'success'
 					});
 
-					//self.render();
+					location.reload();
 
 				}
 			});
@@ -363,14 +365,15 @@ define(function(require) {
 			    url: '/api/v1/appeals/del/client_quoting/' + this.vmpTalon.id,
 			    type: 'DELETE',
 			    success: function(result) {
-					self.vmpTalon.resetQuotaType();
-					self.vmpTalon.resetPacientModel();
-					self.vmpTalon.resetTreatment();
-					self.renderNested(self.quotaTypeView, self.ui.$quotaType);
-					self.quotaTypeView.disabled = false;
-					self.pacientModelView.disabled = false;
-					self.treatmentView.disabled = false;
-					self.quotaTypeView.enable();
+					// self.vmpTalon.resetQuotaType();
+					// self.vmpTalon.resetPacientModel();
+					// self.vmpTalon.resetTreatment();
+					// self.renderNested(self.quotaTypeView, self.ui.$quotaType);
+					// self.quotaTypeView.disabled = false;
+					// self.pacientModelView.disabled = false;
+					// self.treatmentView.disabled = false;
+					// self.quotaTypeView.enable();
+					location.reload();
 			    }
 			});
 		},
