@@ -5814,7 +5814,7 @@ define(function (require) {
             var labs = new Labs();
             labs.appealId = appealId;
             labs.setParams({
-                sortingField: "plannedEndDate",
+                sortingField: "takingTime",
                 sortingMethod: "desc"
             });
 
