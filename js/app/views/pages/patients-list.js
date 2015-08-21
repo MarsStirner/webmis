@@ -64,7 +64,7 @@ define(["collections/patients", "views/grid", "views/filter", "views/paginator"]
                     if (event.target.localName != 'a') {
                         var url = '';
                         if (App.Router.currentPage == "appointments") {
-                            window.location.href = '/appointments/' + model.get('id');
+                            window.open(APPOINTMENTS_PATH + '?client_id='+(model.get('id'))+'&token='+Core.Cookies.get('authToken')+'&role='+Core.Cookies.get('currentRole'));
                         } else {
                             url = '/patients/' + model.get('id') + '/';
                             window.open(url);
