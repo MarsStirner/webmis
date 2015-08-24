@@ -759,7 +759,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		appealPolyReview: function(appealId) {
-			window.location.href = "http://" + POLICLINIC_HOST + "/event/event.html?event_id=" + appealId + "&role='+Core.Cookies.get('currentRole');
+			window.location.href = "http://" + POLICLINIC_HOST + "/event/event.html?event_id=" + appealId + "&role="+Core.Cookies.get('currentRole');
 		},
 
 		appealReviewPage: function(appealId, page) {

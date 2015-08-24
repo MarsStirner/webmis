@@ -183,7 +183,7 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 			}
 
 			if (!roleUnavailable) {
-				Core.Cookies.set("authToken", model.get("authToken").id);
+				Core.Cookies.set("authToken", model.get("authToken").id, false, DOMAIN);
 				Core.Cookies.set("userId", model.get("userId"));
 				Core.Cookies.set("doctorFirstName", Doctor.get("name").get("first"));
 				Core.Cookies.set("doctorLastName", Doctor.get("name").get("last"));

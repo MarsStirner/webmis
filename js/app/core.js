@@ -30,11 +30,12 @@ Core = {
 			return cookies[name];
 		},
 
-		set: function (name, value, time) {
+		set: function (name, value, time, domain) {
 			var expire = new Date();
+			var domainName = domain ? ';domain='+domain : '';
 			time = time ? time : 360000024;
 			expire.setTime(( new Date() ).getTime() + time);
-			document.cookie = name + "=" +  escape(value) + ";expires=" + expire.toGMTString() + ";domain=" + DOMAIN + "; path=/";
+			document.cookie = name + "=" +  escape(value) + ";expires=" + expire.toGMTString() + domainName + "; path=/";
 		}
 	},
 
