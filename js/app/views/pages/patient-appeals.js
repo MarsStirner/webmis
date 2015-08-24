@@ -138,7 +138,7 @@ define(function (require) {
                     AppealsGrid.$el.on('click', 'tr', function(e){
                         if ($(e.currentTarget).find('.open-appeal-poly').length) {
                             var eventId = $(e.currentTarget).find('.open-appeal-poly').attr('id').split('-')[1];
-                            window.open('http://'+POLICLINIC_HOST+'/event/event.html?event_id='+eventId,'_blank');
+                            window.open('http://'+POLICLINIC_HOST+'/event/event.html?event_id='+eventId+'&role='+Core.Cookies.get("currentRole"),'_blank');
                         }
                     });
 
