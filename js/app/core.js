@@ -34,7 +34,7 @@ Core = {
 			var expire = new Date();
 			time = time ? time : 360000024;
 			expire.setTime(( new Date() ).getTime() + time);
-			document.cookie = name + "=" +  escape(value) + ";expires=" + expire.toGMTString() + "; path=/";
+			document.cookie = name + "=" +  escape(value) + ";expires=" + expire.toGMTString() + ";domain=" + DOMAIN + "; path=/";
 		}
 	},
 
