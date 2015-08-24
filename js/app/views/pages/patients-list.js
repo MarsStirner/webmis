@@ -64,7 +64,7 @@ define(["collections/patients", "views/grid", "views/filter", "views/paginator"]
                     if (event.target.localName != 'a') {
                         var url = '';
                         if (App.Router.currentPage == "appointments") {
-                            window.open(APPOINTMENTS_PATH + '?client_id='+(model.get('id'))+'&token='+Core.Cookies.get('authToken')+'&role='+Core.Cookies.get('currentRole'));
+                            window.open(APPOINTMENTS_PATH + '?client_id='+(model.get('id')));
                         } else {
                             url = '/patients/' + model.get('id') + '/';
                             window.open(url);
@@ -117,7 +117,7 @@ define(["collections/patients", "views/grid", "views/filter", "views/paginator"]
                 // App.Router.navigate("/patients/new/", {
                 //     trigger: true
                 // });
-                window.open('http://'+POLICLINIC_HOST+'/patients/patient?client_id=new&token='+Core.Cookies.get("authToken")+'&role='+Core.Cookies.get("currentRole"),'_blank');
+                window.open('http://'+POLICLINIC_HOST+'/patients/patient?client_id=new','_blank');
             }
         },
 

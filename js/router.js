@@ -375,7 +375,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		appointments: function(id) {
-			window.open(APPOINTMENTS_PATH + '?client_id='+id+'&token='+Core.Cookies.get('authToken')+'&role='+Core.Cookies.get('currentRole'));
+			window.open(APPOINTMENTS_PATH + '?client_id='+id);
 		},
 
 		appointmentsPatient: function() {
@@ -385,7 +385,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		anareports: function() {
-			window.open(ANAREPORTS_PATH+ '?token='+Core.Cookies.get('authToken')+'&role='+Core.Cookies.get('currentRole'),'_blank');
+			window.open(ANAREPORTS_PATH,'_blank');
 		},
 
 		patients: function() {
@@ -759,7 +759,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		appealPolyReview: function(appealId) {
-			window.location.href = "http://" + POLICLINIC_HOST + "/event/event.html?event_id=" + appealId + "&token=" + Core.Cookies.get("authToken")+'&role='+Core.Cookies.get('currentRole');
+			window.location.href = "http://" + POLICLINIC_HOST + "/event/event.html?event_id=" + appealId;
 		},
 
 		appealReviewPage: function(appealId, page) {
