@@ -590,7 +590,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		newAppeal: function(patientId) {
-			if (!this.checkAuthToken()) {
+			if (!this.checkAuthToken(arguments)) {
 				return false
 			}
 
