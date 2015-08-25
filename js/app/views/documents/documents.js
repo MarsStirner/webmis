@@ -2830,7 +2830,7 @@ define(function (require) {
                 mnems = ["EPI"];
                 break;
             case "CONS":
-                mnems = ["CONS_POLY"];
+                mnems = ["CONS_POLY", "CONS_SPEC", "CONS_PHD"];
                 break;
 
             case "ORD":
