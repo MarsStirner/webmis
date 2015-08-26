@@ -230,7 +230,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				});
 				return true
 			} else {
-				if (!Core.Cookies.get("authToken")) {
+				if (!(Core.Cookies.get("authToken") && Core.Cookies.get("currentRole"))) {
 					window.location.href = "/auth/";
 					return false
 				}
