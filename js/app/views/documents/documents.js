@@ -4476,19 +4476,19 @@ define(function (require) {
                 window.document.execCommand('insertHTML', false, text);
 
                 var $attrValue = this.$(".attribute-value");
-                $attrValue.html($attrValue.html().replace(/\u2028/g, '').replace(/\u2029/g, ''));
-                $attrValue.html($.htmlClean($attrValue.html(), {
-                    format: true,
-                    removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
-                        "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button", "ul", "li", "xml", "style", "worddocument"
-                    ],
-                    removeAttrs: ["style", "class"],
-                    replace: [
-                        [
-                            ["h1", "h2", "h3", "h4"], "b"
-                        ]
-                    ]
-                }));
+                // $attrValue.html($attrValue.html().replace(/\u2028/g, '').replace(/\u2029/g, ''));
+                // $attrValue.html($.htmlClean($attrValue.html(), {
+                //     format: true,
+                //     removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
+                //         "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button", "ul", "li", "xml", "style", "worddocument"
+                //     ],
+                //     removeAttrs: ["style", "class"],
+                //     replace: [
+                //         [
+                //             ["h1", "h2", "h3", "h4"], "b"
+                //         ]
+                //     ]
+                // }));
 
                 $attrValue.find('td').css({
                     'border': '1px solid #9f9f9f',
