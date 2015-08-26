@@ -4465,16 +4465,15 @@ define(function (require) {
 
         onRichTextPaste: function (event) {
             event.preventDefault();
-            var text = (event.originalEvent || event).clipboardData.getData('text/plain') || prompt('Paste something..');
+            var text = (event.originalEvent || event).clipboardData.getData('text/html');
             setTimeout(_.bind(function () {
                 console.log("paste! ", event);
-
                 var wordTagCount = text.split("<![endif]-->").length;
                 if (wordTagCount > 1) {
                     text = text.split("<![endif]-->")[wordTagCount-1];
                 }
 
-                window.document.execCommand('insertText', false, text);
+                window.document.execCommand('insertHTML', false, text);
 
                 var $attrValue = this.$(".attribute-value");
                 $attrValue.html($attrValue.html().replace(/\u2028/g, '').replace(/\u2029/g, ''));
