@@ -221,7 +221,7 @@ define(function (require) {
             };
             if (therapiesCollection.first()) {
                 _.each(therapiesCollection.first().get("phases"), function(phase){
-                    if (moment(phase.beginDate).format('X') > last.date) {
+                    if (phase.beginDate && moment(phase.beginDate).format('X') > last.date) {
                         last = {
                             phase: phase,
                             date: moment(phase.beginDate).format('X')
@@ -4464,8 +4464,18 @@ define(function (require) {
         },
 
         onRichTextPaste: function (event) {
+            event.preventDefault();
+            var text = (event.originalEvent || event).clipboardData.getData('text/plain') || prompt('Paste something..');
             setTimeout(_.bind(function () {
                 console.log("paste! ", event);
+
+                var wordTagCount = text.split("<![endif]-->").length;
+                if (wordTagCount > 1) {
+                    text = text.split("<![endif]-->")[wordTagCount-1];
+                }
+
+                window.document.execCommand('insertText', false, text);
+
                 var $attrValue = this.$(".attribute-value");
                 $attrValue.html($attrValue.html().replace(/\u2028/g, '').replace(/\u2029/g, ''));
                 $attrValue.html($.htmlClean($attrValue.html(), {
@@ -4486,11 +4496,6 @@ define(function (require) {
                     'padding': '2px'
                 });
                 $attrValue.find('table').attr('border', '1').attr('cellpadding', '4').attr('cellspacing', '0').addClass('printable');
-
-                var wordTagCount = $attrValue.html().split("<![endif]-->").length;
-                if (wordTagCount > 1) {
-                    $attrValue.html($attrValue.html().split("<![endif]-->")[wordTagCount-1]);
-                }
 
                 this.model.setValue($attrValue.html());
             }, this), 0);
