@@ -216,7 +216,7 @@ define(function (require) {
 
         getLastTherapyPhase: function(){
             var last = {
-                phase: null,
+                phase: {},
                 date: 0
             };
             if (therapiesCollection.first()) {
@@ -4875,8 +4875,11 @@ define(function (require) {
         onFormatDoubleKeyup: function (event) {
             var $ct = $(event.currentTarget);
             if ($ct.val().indexOf('.') != $ct.val().length-1) {
-                if (!isNaN(parseFloat($ct.val()))) {
-                    $ct.val(parseFloat($ct.val()));
+                var floatedVal = parseFloat($ct.val());
+                if (!isNaN(floatedVal)) {
+                    if ($ct.val()[$ct.val().length-1] != '0') {
+                        $ct.val(floatedVal);
+                    }
                 } else {
                     $ct.val('');
                 }
