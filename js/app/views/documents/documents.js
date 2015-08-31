@@ -3726,6 +3726,7 @@ define(function (require) {
 
         onSaveDocumentError: function (resultId) {
             this.$('button').button('enable');
+            console.log(resultId);
             if (resultId.responseText &&  $.parseJSON(resultId.responseText).errorMessage) {
                 alert('Невозможно создать документ: ' + $.parseJSON(resultId.responseText).errorMessage);
             } else {
@@ -3758,12 +3759,19 @@ define(function (require) {
 
         saveDocument: function () {
             //this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
+            var self = this;
             if (this.model.isValid()) {
                 this.$('button').button('disable');
                 //console.log(JSON.stringify(this.model.toJSON()));
                 this.model.save({}, {
                     success: this.onSaveDocumentSuccess,
-                    error: this.onSaveDocumentError
+                    error: function(d, data) {
+                        if (d.responseText) {
+                            self.onSaveDocumentError(d);
+                        } else {
+                            self.onSaveDocumentError(data);
+                        }
+                    }
                 });
             }
         },
