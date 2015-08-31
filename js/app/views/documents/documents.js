@@ -4475,7 +4475,7 @@ define(function (require) {
             event.preventDefault();
             var text = (event.originalEvent || event).clipboardData.getData('text/html');
             setTimeout(_.bind(function () {
-                console.log("paste! ", event);
+                console.log("paste! ", text);
                 var wordTagCount = text.split("<![endif]-->").length;
                 if (wordTagCount > 1) {
                     text = text.split("<![endif]-->")[wordTagCount-1];
@@ -4488,7 +4488,7 @@ define(function (require) {
                 $attrValue.html($.htmlClean($attrValue.html(), {
                     format: true,
                     removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
-                        "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button", "ul", "li", "xml", "style", "worddocument"
+                        "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button", "ul", "li", "xml", "style", "worddocument", "span"
                     ],
                     removeAttrs: ["style", "class"],
                     replace: [
