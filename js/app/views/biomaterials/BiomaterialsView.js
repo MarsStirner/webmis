@@ -308,20 +308,20 @@ define(function(require) {
 
 		},
 
-		// initLabs: function() {
-		// 	var view = this;
-		//
-		// 	view.labs = new App.Collections.Labs();
-		//
-		// 	view.labsSelect = new SelectView({
-		// 		collection: view.labs,
-		// 		el: view.$('#lab'),
-		// 		selectText: 'name'
-		// 	});
-		//
-		// 	view.depended(view.labsSelect);
-		//
-		// },
+		initLabs: function() {
+			var view = this;
+
+			view.labs = new App.Collections.Labs();
+
+			view.labsSelect = new SelectView({
+				collection: view.labs,
+				el: view.$('#lab'),
+				selectText: 'name'
+			});
+
+			view.depended(view.labsSelect);
+
+		},
 
 		initDepartments: function() {
 			var view = this;
@@ -567,7 +567,7 @@ define(function(require) {
 			view.initPrintButton();
 			view.initDatepicker();
 
-			//view.initLabs();
+			view.initLabs();
 			view.initTissues();
 			view.initDepartments();
 
