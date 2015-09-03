@@ -50,7 +50,7 @@ define([], function (){
 		render: function(){
 
 			//создаём форму
-			var form = this.make("form", {"action": "/pdf/", method: "post", style: "visibility: hidden"});
+			var form = this.make("form", {"action": "/pdf/", method: "post", style: "visibility: hidden", "accept-charset":"utf-8"});
 			//создаём текстовую область для данных
 			var textarea = this.make("textarea", {name: "data"});
 			//создаём поле ввода для имени шаблона
