@@ -216,7 +216,7 @@ define(function (require) {
 
         getLastTherapyPhase: function(){
             var last = {
-                phase: {},
+                phase: {days:[]},
                 date: 0
             };
             if (therapiesCollection.first()) {
@@ -269,7 +269,7 @@ define(function (require) {
                         }
 
                         //последняя фаза не закрыта, нет даты окончания
-                        if (!lastPhase.endDate || lastPhase.endDate < 0) {
+                        if (lastPhase.beginDate && (!lastPhase.endDate || lastPhase.endDate < 0)) {
                             shouldSetTherapyPhaseFields = true;
                             //если мы редактируем первый документ в последней незакрытой фазе
                             if ((lastPhase.days.length === 1) && (lastPhase.days[0].docId === this.get('id'))) {
