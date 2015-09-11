@@ -938,7 +938,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			uri: "/patients/:id/edit/"
 		},
 		APPEAL: {
-			title: "Просмотр обращения",
+			template: "#breadcrumbs-template-appeal",
 			uri: "/appeals/:id/"
 		},
 		MOVES: {

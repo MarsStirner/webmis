@@ -286,11 +286,12 @@ define(function(require) {
 		},
 
 		setBreadcrumbsStructure: function() {
+			console.log(this.appeal);
 			if (this.breadCrumbsMap[this.page]) {
 				this.breadcrumbs.setStructure([
 					App.Router.cachedBreadcrumbs.PATIENTS,
 					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, this.appeal.get("patient").toJSON()),
-					this.breadCrumbsMap[this.page]
+					App.Router.compile(App.Router.cachedBreadcrumbs.APPEAL, this.appeal.toJSON())
 				]);
 
 				this.$("#page-head").html(this.breadcrumbs.render().el);
