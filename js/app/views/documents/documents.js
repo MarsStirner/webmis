@@ -1216,12 +1216,15 @@ define(function (require) {
                 $(renderedEl).find('.field-toggle').on('click', function() {
                     !isOther && $(renderedEl).find('.field').hide();
                     if ($(this).attr('checked')) {
-                        !isOther && el.setPropertyValueFor('value', 'Да');
+                        if (!isOther) {
+                            el.get('properties')[1].value = 'Да';
+                        }
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').trigger('addMandatory');
                         $('.'+elCode+'-EndDate').find('.field').show();
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology, .'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').show();
+                        console.log(el);
                     } else {
                         !isOther && el.setPropertyValueFor('value', '');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
@@ -4400,7 +4403,9 @@ define(function (require) {
         },
 
         toggleField: function (visible) {
-            this.$(".field").toggle(visible);
+            if (!this.$el.hasClass('isCheckbox')) {
+                this.$(".field").toggle(visible);
+            }
         },
 
         updateFieldCollapse: function () {

@@ -96,6 +96,10 @@ define(function(require) {
 			"attendantFinalMkb": {
 				priority: 12,
 				title: "Осложнения к заключительному клиническому"
+			},
+			"mainReasonODMkb": {
+				priority: 13,
+				title: "Причина смерти"
 			}
 		},
 
@@ -212,10 +216,10 @@ define(function(require) {
 									id: item.id
 								}
 							});
-						});	
+						});
 					});
 				};
-				$.ajaxSetup({async: true});	
+				$.ajaxSetup({async: true});
 				return diagnoses;
 			} else {
 				return data;

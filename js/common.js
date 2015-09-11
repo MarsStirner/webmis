@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "1.4.14";
+var GUI_VERSION = "1.4.15";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
@@ -22,7 +22,7 @@ CORE_HOST = "10.128.225.202:8080";
 POLICLINIC_HOST = "10.128.225.200:5555";
 APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
 ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/";
-DOMAIN = '.fccho-moscow.ru';
+DOMAIN = '192.168.1.12';
 
 // Временная зона по умолчанию
 moment.tz.setDefault("Europe/Moscow");
