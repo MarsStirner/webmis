@@ -8,6 +8,7 @@ define(function (require) {
     var BakResult = require('models/diagnostics/laboratory/bak-result');
 
     require('views/print');
+    require('collections/diagnostics/laboratory/laboratory-diags')
 
 
     var LaboratoryResultView = Backbone.View.extend({
@@ -41,6 +42,10 @@ define(function (require) {
                 }
             });
 
+            this.diags = new App.Collections.LaboratoryDiags();
+            this.diags.appealId = this.options.appealId;
+            this.diags.fetch();
+
 
         },
 
@@ -72,7 +77,33 @@ define(function (require) {
             // "click .last": "last",
             "click .extra": "extra",
             // "click .print": "print",
-            "click .all": "openLabs"
+            "click .all": "openLabs",
+            "click .prev-document": "onPrevClick",
+            "click .next-document": "onNextClick"
+        },
+
+        onPrevClick: function(){
+            var self = this;
+            var found = this.diags.find(function(item){
+                return item.get('id') === self.result.get('id');
+            });
+            if (!found) {
+                this.navigate(this.diags.first().get('id'))
+            } else{
+                this.navigate( this.diags.at(this.diags.indexOf(found) -1) ?  (this.diags.at(this.diags.indexOf(found) -1)).get('id') : this.diags.first().get('id'));
+            }
+        },
+
+        onNextClick: function(){
+            var self = this;
+            var found = this.diags.find(function(item){
+                return item.get('id') === self.result.get('id');
+            });
+            if (!found) {
+                this.navigate(this.diags.first().get('id'))
+            } else{
+                this.navigate((this.diags.at(this.diags.indexOf(found) +1)).get('id'));
+            }
         },
 
         printOptions: function () {
