@@ -2712,8 +2712,10 @@ define(function (require) {
 
         render: function (subViews) {
             return ListLayoutBase.prototype.render.call(this, _.extend({
-                ".documents-filters": new Documents.Views.List.Common.Filters({
-                    collection: this.documents
+                ".documents-filters": new Documents.Summary.Filters({
+                    collection: this.documents,
+                    events: this.options.events,
+                    selectedEventId: this.options.selectedEventId
                 })
             }, subViews));
         }
@@ -7138,7 +7140,7 @@ define(function (require) {
         },
         data: function () {
             var data = {};
-            data.events = this.options.events.toJSON();
+            data.events = this.options.events ? this.options.events.toJSON() : {};
             data.selectedEventId = this.options.selectedEventId;
 
             return data;
