@@ -70,25 +70,14 @@ define(function (require) {
         },
 
         onSave: function () {
+            var self = this;
             var first = this.balance.first();
             var drugs = this.prescription.get('drugs');
             var units = [{
                 id: 327,
                 code: 'мг'
             }];
-
-            if(first.get('unitId') !== 327){
-                units.push({
-                    id: first.get('unit_id'),
-                    code: first.get('unitName')
-                });
-            }
-
-            // units = _.map(units, function(unit){
-            //     if(unit.id = )
-            // });
-
-            console.log(first);
+            var drugInfo = '';
 
             var drug = {
                 "nomen": first.get('id'),
@@ -98,14 +87,58 @@ define(function (require) {
                 "units": units,
                 "dosage": first.get('dosageValue') ? first.get('dosageValue') + first.get('dosageUnitCode') : '',
                 "form": first.get('form') + ', ' + first.get('filling')
-
-                // "unitName": first.get('unitName')
             };
 
-            console.log('add drug', drug);
+            if ( typeof PHARM_EXPERT_API !== 'undefined'  ) {
+                var medicaments = new FormData();
+                var url = PHARM_EXPERT_API+"getDescriptions";
+                var method = 'POST';
+                medicaments.append('medicament', first.get('tradeLocalName'));
 
-            drugs.add(drug);
-            this.close();
+                var xhr = new XMLHttpRequest();
+                if ("withCredentials" in xhr) {
+                    xhr.open(method, url, true);
+                } else if (typeof XDomainRequest != "undefined") {
+                    xhr = new XDomainRequest();
+                    xhr.open(method, url);
+                } else {
+                    xhr = null;
+                }
+
+                if (xhr) {
+                    xhr.onload = function() {
+                        var responseText = JSON.parse(xhr.responseText);
+                        var description = '';
+                        _.each(responseText, function(desc){
+                            description = description + '<p><strong style="font-size: 17px;">'+desc.name+':</strong></p>'+desc.text;
+                        });
+                        drug.info = description;
+                        drugs.add(drug);
+                        self.close();
+                    };
+
+                    xhr.onerror = function() {
+                      console.log('There was an error!');
+                      drug.info = 'Ошибка при загрузке описания';
+                      drugs.add(drug);
+                      self.close();
+                    };
+
+                    xhr.send(medicaments);
+
+                }
+            } else {
+                drugs.add(drug);
+                self.close();
+            }
+
+            if(first.get('unitId') !== 327){
+                units.push({
+                    id: first.get('unit_id'),
+                    code: first.get('unitName')
+                });
+            }
+
         },
 
 

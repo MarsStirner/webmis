@@ -132,8 +132,20 @@ define(function (require) {
                 .html(JSON.stringify(this.prescription.toJSON(), null, 4));
         },
         events: {
-            'click .add-drug': 'onClickAddDrug'
+            'click .add-drug': 'onClickAddDrug',
+            'click .HasToolTip': 'showInfo'
         },
+
+        showInfo: function(e){
+            var infoView = $(e.target).parent().find('.info');
+            if (infoView.text()) {
+                infoView.show();
+                $(e.target).parent().on('mouseleave', function () {
+                    $('.info').hide();
+                });
+            }
+        },
+
         onSave: function () {
             var self = this;
             this.saveButton(false, 'Сохраняем...');
@@ -251,7 +263,7 @@ define(function (require) {
 
             if(this.prescription.get('drugs')){
                 this.prescription.get('drugs')
-                .on('add remove', function(){
+                .on('add remove', function(e){
                     setTimeout(function () {
                         _.each(self.$el.find('option'), function(option){
                             var val = $(option).text();
@@ -260,6 +272,42 @@ define(function (require) {
                             }
                         });
                         self.$el.find('select').select2();
+
+                        if ( typeof PHARM_EXPERT_API !== 'undefined'  ) {
+                            var medicaments = new FormData();
+                            var url = PHARM_EXPERT_API+"getInfoPreparation";
+                            var method = 'POST';
+                            var drugs = [];
+
+                            self.prescription.get('drugs').each(function(drug, d){
+                                medicaments.append('medicaments[][name]', drug.get('name'));
+                                self.getDoseInfo(drug, d);
+                            });
+
+                            var xhr = new XMLHttpRequest();
+                            if ("withCredentials" in xhr) {
+                                xhr.open(method, url, true);
+                            } else if (typeof XDomainRequest != "undefined") {
+                                xhr = new XDomainRequest();
+                                xhr.open(method, url);
+                            } else {
+                                xhr = null;
+                            }
+
+                            if (xhr) {
+                                xhr.onload = function() {
+                                    var responseText = JSON.parse(xhr.responseText);
+                                    responseText && self.warningShow(responseText);
+                                };
+
+                                xhr.onerror = function() {
+                                  console.log('There was an error!');
+                                };
+
+                                xhr.send(medicaments);
+                            }
+                        }
+
                     }, 100);
                 });
 
@@ -275,7 +323,235 @@ define(function (require) {
                 .select2();
             this.validateForm();
 
-        }
+        },
+
+        resetConflicts: function(){
+            $('.drug-warning, .drug-duplicate').css({
+                'opacity': '0.5',
+                'border-bottom': 'none',
+                'cursor': 'default'
+            }).unbind('click').parent().css({
+                'background-color': '#ffffff',
+                'border': 'none'
+            });
+        },
+
+        getDoseInfo: function(drug, d){
+            var medicament = new FormData();
+            var url = PHARM_EXPERT_API+"getDosage";
+            var method = 'POST';
+            medicament.append('medicament', drug.get('name'));
+            var xhr = new XMLHttpRequest();
+            if ("withCredentials" in xhr) {
+                xhr.open(method, url, true);
+            } else if (typeof XDomainRequest != "undefined") {
+                xhr = new XDomainRequest();
+                xhr.open(method, url);
+            } else {
+                xhr = null;
+            }
+
+            if (xhr) {
+                xhr.onload = function() {
+                    var responseText = JSON.parse(xhr.responseText);
+                    if (responseText) {
+                        var doseInfo = $($('.drug-item')[d]).find('.dose-info');
+                        doseInfo.html('');
+                        doseInfo.append('<p><strong>Методы введения:</strong></p>');
+                        _.each(responseText.dosing_formulation, function(form){
+                            $(doseInfo).append('<li style="margin-left:5px">'+form.name+'</li>');
+                        });
+                        doseInfo.append('<p style="margin-top: 10px;"><strong>Лекарственные формы:</strong></p>');
+                        _.each(responseText.formulation, function(form){
+                            $(doseInfo).append('<p style="margin-top:5px">'+form.name+'</p>');
+                            _.each(form.dosage, function(dosage){
+                                $(doseInfo).append('<li style="margin-left:5px">'+dosage.name+'</li>');
+                            });
+                        });
+                        doseInfo.append('<p style="margin-top: 10px;"><strong>Частота приёма:</strong></p>');
+                        _.each(responseText.dosing_frequency, function(form){
+                            $(doseInfo).append('<li style="margin-left:5px">'+form.name+'</li>');
+                        });
+                        $($('.drug-item')[d]).on('mouseleave', function(){
+                            doseInfo.hide();
+                        }).find('.icon-info-sign').show().on('click', function(){
+                            doseInfo.show();
+                        });
+                    }
+                };
+
+                xhr.onerror = function() {
+                  console.log('There was an error!');
+                };
+
+                xhr.send(medicament);
+            }
+        },
+
+        getColor: function(colVal){
+            switch (colVal) {
+                case '0':
+                    var warningColor = '#addfff';
+                    var border = '#0093fe';
+                    break;
+                case '1':
+                    var warningColor = '#fff7ad';
+                    var border = '#fee500';
+                    break;
+                case '2':
+                    var warningColor = '#ffefad';
+                    var border = '#d7c200';
+                    break;
+                case '3':
+                    var warningColor = '#ffc1ad';
+                    var border = '#d74700';
+                    break;
+                case '4':
+                    var warningColor = '#ffadad';
+                    var border = '#d70000';
+                    break;
+                case '+1':
+                    var warningColor = '#adffbf';
+                    var border = '#1ed700';
+                    break;
+                default:
+                    var warningColor = '#ffefad';
+                    var border = '#d7bb00';
+            }
+            return {
+                warningColor: warningColor,
+                border: border
+            }
+        },
+
+        showConflicts: function(data){
+            var self = this;
+            var drugRows = this.$('#drugs .drug-item');
+            this.resetConflicts();
+            var elConflicts = [];
+            _.each(data.elements, function(el, e){
+                if (el.conflict) {
+                    _.each(el.conflict, function(conflict){
+                        if (elConflicts[e]) {
+                            elConflicts[e][conflict.id] = conflict;
+                        } else {
+                            elConflicts[e] = [];
+                            elConflicts[e][conflict.id] = conflict;
+                        }
+                        var conflictRow = $(drugRows[conflict.id]);
+                        var thisRow = $(drugRows[e]);
+                        if (conflictRow.length) {
+                            var trust = data.titles.trust[conflict.trust];
+                            if (trust) {
+                                var warningIcon = $(conflictRow).find('.drug-warning');
+                                var thisIcon = $(thisRow).find('.drug-warning');
+
+                                if (conflict.value > $(warningIcon).parent().data('col')) {
+                                    var colVal = conflict.value;
+                                    $(warningIcon).parent().data('col', colVal);
+                                } else {
+                                    var colVal = $(warningIcon).parent().data('col');
+                                }
+                                var warningColor = self.getColor(colVal).warningColor;
+                                var border = self.getColor(colVal).border;
+                            } else {
+                                if (conflict.value.indexOf('duplicate') > -1) {
+                                    var warningColor = '#addfff';
+                                    var border = '#0093fe';
+                                    var warningIcon = $(conflictRow).find('.drug-duplicate');
+                                    var thisIcon = $(thisRow).find('.drug-duplicate');
+                                    var exchange = "Содержит аналогичное действующее вещество"
+                                }
+                            }
+                            thisIcon.show();
+                            warningIcon.show();
+
+                            $(warningIcon).parent().css({
+                                'background-color': warningColor
+                            });
+
+                            $(thisIcon).parent().css({
+                                'background-color': warningColor,
+                                'cursor': 'pointer'
+                            }).on('click', function () {
+                                self.resetConflicts();
+                                warningColor = self.getColor(conflict.value).warningColor;
+                                border = self.getColor(conflict.value).border;
+                                $(this).css({
+                                    'border-left': '3px solid'+border,
+                                    'background-color': warningColor,
+                                });
+                                $(warningIcon).css({
+                                    'opacity': '1',
+                                    'border-bottom': '1px dashed rgb(110, 110, 110)',
+                                    'cursor': 'pointer'
+                                }).on('click', function(event){
+                                    event.stopPropagation();
+                                    var descriptionView = $('<div/>');
+                                    if (exchange) {
+                                        descriptionView.html("<p>"+exchange+"</p>");
+                                    } else {
+                                        var confId = conflict.id;
+                                        _.each(elConflicts[e], function(conflict){
+                                            if (conflict.idTies && conflict.id == confId) {
+                                                descriptionView.append("<p align='center'>"+trust+"</p>");
+                                                descriptionView.append("<p align='center' style='margin-top: 5px; margin-bottom: 10px; font-size: 1.2em'><strong>"+data.titles.elements[conflict.value]+"</strong></p>");
+                                                _.each(data.descriptions[conflict.idTies].listLS, function(ls){
+                                                    descriptionView.append("<li>"+ls+"</li>");
+                                                });
+                                                data.descriptions[conflict.idTies].descriptions.interactions && descriptionView.append("<p style='margin-top: 10px;'>"+data.descriptions[conflict.idTies].descriptions.interactions+"</p>");
+                                            }
+                                        })
+
+                                    }
+                                    $(conflictRow).find('.description').html(descriptionView).show();
+                                    $(conflictRow).on('mouseleave', function(){
+                                        $(this).find('.description').hide();
+                                    });
+                                }).parent().css('background-color', warningColor);
+                            });
+                        }
+                    });
+                }
+            });
+        },
+
+        warningShow: function(data){
+            var self = this;
+            var drugRows = this.$('#drugs .drug-item');
+            this.showConflicts(data)
+            this.$('#warningText').text('');
+            _.each(data.warnings, function(war){
+                var warView = $('<span/>');
+                warView.text(war.name).css({
+                    'cursor': 'pointer',
+                    'margin-right': '20px',
+                    'border-bottom': '1px dashed rgb(134, 134, 134)'
+                }).on('click', function(){
+                    if (war.id == 105) {
+                        self.showConflicts(data);
+                    } else {
+                        self.resetConflicts();
+                        $('.drug-warning, .drug-duplicate').css('opacity', '0');
+                        _.each(war.conflict, function(conf){
+                            console.log(conf);
+                            $(drugRows[conf.id]).find('.drug-warning').parent().css({
+                                'cursor': 'default',
+                                'background-color': 'rgb(255, 100, 100)'
+                            });
+                        })
+                    }
+                });
+                if (war.id == 111) {
+                    warView.css({
+                        'color': 'rgb(255, 0, 0)',
+                        'border-bottom': '1px dashed rgb(255, 0, 0)'
+                    });
+                }
+                this.$('#warningText').append(warView);
+            });
+        },
+
     })
         .mixin([popupMixin]);
 
