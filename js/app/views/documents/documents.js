@@ -108,6 +108,7 @@ define(function (require) {
         uiElements: {
             _base: _.template(require("text!templates/documents/edit/ui-elements/base.html")),
             _constructor: _.template(require("text!templates/documents/edit/ui-elements/constructor.html")),
+            _dropdown: _.template(require("text!templates/documents/edit/ui-elements/dropdown.html")),
             _text: _.template(require("text!templates/documents/edit/ui-elements/text.html")),
             _table: _.template(require("text!templates/documents/edit/ui-elements/table.html")),
             _date: _.template(require("text!templates/documents/edit/ui-elements/date.html")),
@@ -149,6 +150,7 @@ define(function (require) {
     var Consultations = require("collections/diagnostics/consultations/Consultations");
     //var ConsultationsResultView = require("views/diagnostics/consultations/ConsultationsResultView");
     require("collections/diagnostics/laboratory/laboratory-diags");
+    require("collections/patient-appeals");
 
     var TherapiesCollection = require('collections/therapy/Therapies');
 
@@ -3304,6 +3306,21 @@ define(function (require) {
 
                 this.listLayoutHistory.$(".documents-controls").parent().remove();
                 this.listLayoutHistory.$(".documents-filters").removeClass("span6").addClass("span12");
+
+                var filterCollection = this.listLayoutHistory.subViews['.documents-filters'].options.events;
+                var filterView = this.listLayoutHistory.subViews['.documents-filters'].$('#event-filter');
+                var currentAppeal = this.appealId;
+                filterCollection.fetch().done(function(){
+                    filterCollection.each(function(appeal){
+                        var opt = $('<option/>', {
+                            value: appeal.get('id'),
+                            text: appeal.get('number')
+                        })
+                        filterView.append(opt);
+                    });
+                    filterView.val(currentAppeal)
+                    filterView.show();
+                });
             } else {
                 if (this.listLayoutHistory) this.listLayoutHistory.tearDown(); //ViewBase.prototype.tearDown.call(this.listLayoutLight);
                 this.$el.parent().css({
@@ -4554,6 +4571,68 @@ define(function (require) {
             });
 
             this.listenTo(this.thesaurus, "thesaurus:confirmed", this.onThesaurusConfirmed);
+        },
+
+        onThesaurusConfirmed: function (event) {
+            this.model.setValue(event.selectedTerms);
+            this.$(".attribute-value").html(event.selectedTerms);
+            this.setAutosavedFields();
+        }
+    });
+
+    /**
+     * Поле типа Dropdown
+     * @type {*}
+     */
+    Documents.Views.Edit.UIElement.Dropdown = Documents.Views.Edit.UIElement.Text.extend({
+        template: templates.uiElements._dropdown,
+
+        events: _.extend({
+            "click .thesaurus-open": "onThesaurusOpenClick",
+            "mouseleave .dropdownMenu": "closeDropdown"
+        }, Documents.Views.Edit.UIElement.Text.prototype.events),
+
+        initialize: function(){
+            Documents.Views.Edit.UIElement.Text.prototype.initialize.call(this);
+            var self = this;
+            this.thesaurus = new App.Collections.ThesaurusTerms();
+            this.thesaurus.code = this.model.get("scope");
+            this.thesaurus.fetch({
+                success: function(resp){
+                    self.$('.dropdownMenu ul').html('');
+                    resp.each(function(model){
+                        console.log(model);
+                        $('<li/>', {
+                            text: model.get("name")
+                        })
+                        .appendTo(self.$('.dropdownMenu ul'))
+                        .on('mouseenter', function(){
+                            $(this).css('background-color', 'rgb(216, 233, 244)');
+                        }).on('mouseleave', function () {
+                            $(this).css('background-color', 'rgb(255, 255, 255)');
+                        })
+                    });
+                }
+            });
+        },
+
+        closeDropdown: function(event){
+            event.currentTarget.hide();
+        },
+
+        onThesaurusOpenClick: function (event) {
+            event.preventDefault();
+
+            this.$('.dropdownMenu').show();
+
+            // this.thesaurus = new ThesaurusPopUp().render().open({
+            //     code: this.model.get("scope"),
+            //     terms: this.model.getValue(),
+            //     attrId: this.model.get("typeId"),
+            //     propertyType: "value"
+            // });
+            //
+            // this.listenTo(this.thesaurus, "thesaurus:confirmed", this.onThesaurusConfirmed);
         },
 
         onThesaurusConfirmed: function (event) {
@@ -6137,7 +6216,12 @@ define(function (require) {
 
         switch (options.model.get('type').toLowerCase()) {
         case "constructor":
-            this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
+            if (options.model.get('scope') === "3_10_1" || options.model.get('scope') === "3_10_2") {
+                //this.UIElementClass = Documents.Views.Edit.UIElement.Dropdown;
+                this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
+            } else {
+                this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
+            }
             break;
         case "string":
             //if (options.model.get("scope") === "''") {
@@ -7140,9 +7224,10 @@ define(function (require) {
         },
         data: function () {
             var data = {};
+            this.options.events = new App.Collections.PatientAppeals();
+            this.options.events.patient = {id: this.collection.patientId};
             data.events = this.options.events ? this.options.events.toJSON() : {};
             data.selectedEventId = this.options.selectedEventId;
-
             return data;
         }
     });
