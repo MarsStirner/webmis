@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "1.4.15.1";
+var GUI_VERSION = "1.4.17";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
@@ -23,7 +23,7 @@ POLICLINIC_HOST = "10.128.225.200:5555";
 APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
 ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/";
 DOMAIN = '192.168.1.12';
-PHARM_EXPERT_API = "http://umkb.socmedica.com/api/"
+PHARM_EXPERT_API = "http://umkb.socmedica.com/api/";
 
 // Временная зона по умолчанию
 moment.tz.setDefault("Europe/Moscow");
