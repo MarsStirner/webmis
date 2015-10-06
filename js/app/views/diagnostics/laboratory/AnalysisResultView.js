@@ -45,9 +45,10 @@ define(function (require) {
             this.diags = new App.Collections.LaboratoryDiags();
             this.diags.appealId = this.options.appealId;
             this.diags.setParams({
-                limit: 0,
+                limit: 999,
                 sortingField: 'plannedEndDate',
-                sortingMethod: 'desc'
+                sortingMethod: 'desc',
+                page: 1
             });
             this.diags.fetch();
         },
