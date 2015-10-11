@@ -5,7 +5,9 @@
 			<button type="button" class="prev-document review-nav" data-icon-primary="icon-chevron-left" data-notext="true" style="margin-left: 1em;">Предыдущий документ</button>
 			<button type="button" class="next-document review-nav" data-icon-secondary="icon-chevron-right" data-notext="true">Следующий документ</button>
 		<%}%>
-		<button type="button" class="assign-to-me review-nav" style="margin-left: 1em;">Назначить на меня</button>
+		<button type="button" class="assign-to-me review-nav" style="margin-left: 1em;<%if (Cache.devidedState) {%> display: none;<%}%>">
+			Назначить на меня
+		</button>
 	</div>
 	<div class="pull-right">
 		<%if (selectedDocuments.length == 1) {%>

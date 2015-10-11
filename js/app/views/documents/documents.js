@@ -3279,7 +3279,7 @@ define(function (require) {
         toggleDividedState: function (enabled) {
             enabled = _.isUndefined(enabled) ? !this.dividedStateEnabled : enabled;
             this.dividedStateEnabled = enabled;
-
+            Cache.devidedState = enabled;
             if (enabled) {
                 this.$el.parent().css({
                     "margin-left": "0"
@@ -3318,7 +3318,7 @@ define(function (require) {
                         })
                         filterView.append(opt);
                     });
-                    filterView.val(currentAppeal)
+                    filterView.val(currentAppeal);
                     filterView.show();
                 });
             } else {
