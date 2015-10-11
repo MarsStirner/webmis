@@ -370,7 +370,7 @@ define([
                         });
 
                         if (thisYearAppeal) {
-                            view.model.set("appealWithDeseaseThisYear", "повторно");
+                            view.model.set("appealWithDeseaseThisYear", "");
                         }
                     }
                 } else {
