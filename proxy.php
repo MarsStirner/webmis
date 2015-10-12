@@ -1,7 +1,7 @@
 <?php
 
-$core_host = 'localhost:8080';
-$print_system_host = '192.168.1.121:5000';
+$core_host = '10.128.225.202:8080';
+$print_system_host = '10.128.225.200:5222';
 
 function proxy_url ($url, $header_host=null) {
     set_time_limit(240);
@@ -111,6 +111,9 @@ else if ( preg_match("/^\\/api\\/v1\\//", $_SERVER["REQUEST_URI"]) ) {
 }
 else if ( preg_match("/^\\/data\\/(auth|roles|changeRole|user-info)\\//", $_SERVER["REQUEST_URI"]) ) {
 	proxy_url("http://".$core_host."/tmis-ws-medipad/rest/tms-auth/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
+}
+else if ( preg_match("/^\\/data\\/(sendActionsToLaboratory)\\//", $_SERVER["REQUEST_URI"]) ) {
+	proxy_url("http://".$core_host."/tmis-ws-medipad/rest/tms-registry/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
 }else {
 	proxy_url("http://".$core_host."/tmis-ws-medipad/rest/tms-registry/".preg_replace("/^\\/data\\//", "", $_SERVER["REQUEST_URI"]));
 }

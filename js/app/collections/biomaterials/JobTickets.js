@@ -9,7 +9,12 @@ define(function(require) {
 		model: JobTicket,
 
 		url: function() {
-			return DATA_PATH + "jobTickets/status";
+			console.log(this.first().get('status'));
+			if (!this.first().get('status')) {
+				return DATA_PATH + "sendActionsToLaboratory";
+			} else {
+				return DATA_PATH + "jobTickets/status";
+			}
 		},
 
 		updateAll: function() {

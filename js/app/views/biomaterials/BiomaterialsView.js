@@ -136,19 +136,32 @@ define(function(require) {
 		},
 
 		setStatus: function(modelsArray, status) {
+			console.log('set status', status);
 			var view = this;
+			console.log('modelsArray', modelsArray);
 
 			view.jobs.reset();
 
 			_.each(modelsArray, function(model) {
 				//console.log('model',model);
 				if (model.get('status') !== status) {
-					view.jobs.add({
-						'id': model.get('id'),
-						'status': status
-					});
+					if (status == 2) {
+						view.jobs.add({
+							'id': model.get('id'),
+							'data': model.get('actions').map(function(action){
+							  return {id: action.id}
+							})
+						});
+					} else {
+						view.jobs.add({
+							'id': model.get('id'),
+							'status': status
+						});
+					}
 				}
 			});
+
+			console.log(view.jobs);
 
 			if (view.jobs.length) {
 				view.jobs.updateAll();
