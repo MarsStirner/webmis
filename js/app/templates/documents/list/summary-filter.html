@@ -1,9 +1,9 @@
 
-<div style="display: inline-block; position: absolute; margin-left: 45em; margin-top: -6em;">
+<div style="display: inline-block;<%if (App.Router.currentPage != 'patientSummaryList') {%> display: none;<%}%>">
 	<label>
 		ИБ:
 	</label>
-	<select class="Regular" name="event-filter" id="event-filter" style="display: none; float: right;">
+	<select class="Regular" name="event-filter" id="event-filter" style="width: 150px;" >
 		<%_.each(events, function(event){ %>
 		<option value="<%= event.id %>" <%if(event.id === selectedEventId){%><%}%>><%= event.externalId%></option>
 		<%})%>

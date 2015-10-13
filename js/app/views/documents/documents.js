@@ -3319,7 +3319,10 @@ define(function (require) {
                         filterView.append(opt);
                     });
                     filterView.val(currentAppeal);
-                    filterView.show();
+                    filterView.parent().css({
+                        'float': 'right',
+                        'margin-top': '-4.5em'
+                    }).show();
                 });
             } else {
                 if (this.listLayoutHistory) this.listLayoutHistory.tearDown(); //ViewBase.prototype.tearDown.call(this.listLayoutLight);
