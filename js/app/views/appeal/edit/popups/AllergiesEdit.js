@@ -8,8 +8,7 @@ define(function (require) {
 
 		events: {
 			"click .AddIcon": "onAddIconClick",
-			"click .RemoveIcon": "onRemoveIconClick",
-            'click .save': 'onSave'
+			"click .RemoveIcon": "onRemoveIconClick"
 		},
 
 		initialize: function(options) {
@@ -37,12 +36,9 @@ define(function (require) {
 			});
 		},
 
-        onSave: function(){
-            console.log('sfdfsdf');
-        },
-
 		render: function() {
 			var allergyJSON = this.model.toJSON();
+            var self = this;
 			allergyJSON.cid = this.model.cid;
 
 			this.$el.hide();
@@ -52,25 +48,25 @@ define(function (require) {
 			UIInitialize(this.el);
 
 			this.toggleRemoveIcon();
-            this.$('.HalfCol, .QuartCol').css({
-                'display': 'inline-block',
-                'margin-right': '20px',
-                'width': '15em'
-            })
-            $(this.$('.HalfCol')[1]).css({
-
-            });
-            $(this.$('.QuartCol')[1]).css({
-                'width': '4em',
-                'margin-right': '0px'
-            });
+            this.$('.degree').val(allergyJSON.degree);
 			this.$el.fadeIn("fast");
+
+            this.$('input, select').on('change', function(el){
+                var key = $(el.currentTarget).data('key');
+                if (key == "checkingDate" && $(el.currentTarget).val()) {
+                    var val = moment($(el.currentTarget).val(), 'DD.MM.YYYY').format('X') + '000';
+                } else {
+                    var val = $(el.currentTarget).val();
+                }
+                self.model.set(key, val);
+            });
 
 			return this;
 		}
 	});
     return View.extend({
         initialize: function(options) {
+
 			this.collection.on("add", this.addOne, this);
 
 			if (this.collection.isEmpty()) {
@@ -99,9 +95,16 @@ define(function (require) {
 			if (this.triggerView) {
 				this.triggerView.$el.after(itemView.el);
 			} else {
+                itemView.render();
 				this.$el.append(itemView.el);
 			}
 		},
+
+        onSave: function(){
+            Cache.Patient.save();
+            this.trigger('close');
+            this.close();
+        },
 
 		render: function() {
 			this.$el.empty();
