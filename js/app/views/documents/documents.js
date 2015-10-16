@@ -4600,15 +4600,23 @@ define(function (require) {
             var self = this;
             this.thesaurus = new App.Collections.ThesaurusTerms();
             this.thesaurus.code = this.model.get("scope");
-            this.thesaurus.fetch({
+        },
+
+        getMenuLevel: function(scope, id, el){
+            console.log(el);
+            var thes = new App.Collections.ThesaurusTerms();
+            thes.code = scope;
+            thes.parentGroupId = id;
+            thes.fetch({
                 success: function(resp){
-                    self.$('.dropdownMenu ul').html('');
+                    el.html('');
                     resp.each(function(model){
                         console.log(model);
                         $('<li/>', {
                             text: model.get("name")
                         })
-                        .appendTo(self.$('.dropdownMenu ul'))
+                        .appendTo(el)
+                        .css('padding', '8px')
                         .on('mouseenter', function(){
                             $(this).css('background-color', 'rgb(216, 233, 244)');
                         }).on('mouseleave', function () {
@@ -4620,11 +4628,19 @@ define(function (require) {
         },
 
         closeDropdown: function(event){
-            event.currentTarget.hide();
+            $(event.currentTarget).hide();
         },
 
         onThesaurusOpenClick: function (event) {
             event.preventDefault();
+            var self = this;
+            this.thesaurus.fetch({
+                success: function(resp){
+                    self.getMenuLevel(self.model.get("scope"), resp.first().get('id'), self.$('.dropdownMenu ul'));
+                }
+            });
+
+
 
             this.$('.dropdownMenu').show();
 
@@ -6220,8 +6236,8 @@ define(function (require) {
         switch (options.model.get('type').toLowerCase()) {
         case "constructor":
             if (options.model.get('scope') === "3_10_1" || options.model.get('scope') === "3_10_2") {
-                //this.UIElementClass = Documents.Views.Edit.UIElement.Dropdown;
-                this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
+                this.UIElementClass = Documents.Views.Edit.UIElement.Dropdown;
+                //this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
             } else {
                 this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
             }
