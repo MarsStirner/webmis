@@ -149,7 +149,7 @@ define(function(require) {
 						view.jobs.add({
 							'id': model.get('id'),
 							'data': model.get('actions').map(function(action){
-							  return {id: action.id}
+							  return {'id': action.id}
 							})
 						});
 					} else {
