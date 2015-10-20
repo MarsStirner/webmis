@@ -87,7 +87,7 @@ define([
 
 			//term += " " + this.model.get("name");
 
-			termDispatcher.trigger("term:selected", {term: termsChain});
+			termDispatcher.trigger("term:selected", {term: termsChain, container: this.model.get('container')});
 		},
 
 		render: function () {
@@ -192,7 +192,7 @@ define([
 			var term = event.term;
 			var selectedTerms = this.model.get("selectedTerms");
 
-			if (selectedTerms.length) {
+			if (selectedTerms.length && !this.model.get('isDropdown')) {
 				// if (!Core.Strings.endsWithPunctuationChar(selectedTerms)) {
 				// 	selectedTerms += ", ";
 				// } else {
@@ -204,10 +204,19 @@ define([
 				selectedTerms = term;
 			}
 
-			this.model.set({
-				//selectedTerms: (selectedTerms.length ? selectedTerms + ", " + term.get("name") : term.get("name"))
-				selectedTerms: (selectedTerms)
-			});
+			if (this.model.get('isDropdown')) {
+				if(!event.container) {
+					this.model.set({
+						//selectedTerms: (selectedTerms.length ? selectedTerms + ", " + term.get("name") : term.get("name"))
+						selectedTerms: (selectedTerms)
+					});
+				}
+			} else {
+				this.model.set({
+					//selectedTerms: (selectedTerms.length ? selectedTerms + ", " + term.get("name") : term.get("name"))
+					selectedTerms: (selectedTerms)
+				});
+			}
 		},
 
 		onRootCodeChange: function () {
@@ -286,11 +295,18 @@ define([
 				rootCode: opts.code || "",
 				selectedTerms: opts.terms || "",
 				attrId: opts.attrId || "",
-				propertyType: opts.propertyType || "value"
+				propertyType: opts.propertyType || "value",
+				isDropdown: opts.isDropdown || false
 			});
 
 			//$(".ui-dialog-titlebar").hide();
 			this.$el.dialog("open");
+			if (opts.isDropdown) {
+				this.$('.selectedTerms').addClass('Disabled').on('keydown', function(event){
+					event.preventDefault();
+				});
+			}
+
 		},
 
 		close: function () {

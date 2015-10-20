@@ -53,8 +53,6 @@ define(function (require) {
 
 			this.toggleRemoveIcon();
 
-            this.$('.degree').val(drugIntoleranceJSON.degree);
-
 			this.$el.fadeIn("fast");
 
             this.$('input, select').on('change', function(el){

@@ -11,10 +11,19 @@
 				<em class="Warning">
 					<span style="font-weight: bold;"><%= drugIntolerance.substance %></span><br>
 					<% if (drugIntolerance.degree) { %>
-					<span>степень: <%= drugIntolerance.degree %></span><br>
+							<% if(drugIntolerance.degree == 1) { %>
+							    <span>степень: низкая</span><br>
+							<% } else if(drugIntolerance.degree == 2) { %>
+							    <span>степень: средняя</span><br>
+							<% } else if(drugIntolerance.degree == 3) { %>
+							    <span>степень: высокая</span><br>
+						<% } %>
 					<% } %>
 					<% if (drugIntolerance.checkingDate) { %>
 					<span>установлено: <%= Core.Date.format(drugIntolerance.checkingDate) %></span>
+					<% } %>
+					<% if (drugIntolerance.comment) { %>
+					<span>комментарий: <%= drugIntolerance.comment %></span>
 					<% } %>
 				</em>
 			</li>
@@ -38,10 +47,19 @@
 				<em class="Warning">
 					<span style="font-weight: bold;"><%= allergy.substance %></span><br>
 					<% if (allergy.degree) { %>
-					<span>степень: <%= allergy.degree %></span><br>
+						<% if(allergy.degree == 1) { %>
+						    <span>степень: низкая</span><br>
+						<% } else if(allergy.degree == 2) { %>
+						    <span>степень: средняя</span><br>
+						<% } else if(allergy.degree == 3) { %>
+						    <span>степень: высокая</span><br>
+						<% } %>
 					<% } %>
 					<% if (allergy.checkingDate) { %>
 					<span>установлено: <%= Core.Date.format(allergy.checkingDate) %></span>
+					<% } %>
+					<% if (allergy.comment) { %>
+					<span>комментарий: <%= allergy.comment %></span>
 					<% } %>
 				</em>
 			</li>

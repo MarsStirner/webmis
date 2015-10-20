@@ -19,10 +19,16 @@ define(function(require) {
 			"click  .edit-intolerances": "onIntolerancesClick"
 		},
 		initialize: function(options){
+			var self = this;
 			this.appealJSON = options.appealJSON;
 			this.patientBsaRow = options.patientBsaRow;
 			this.patientBloodTypeRow = options.patientBloodTypeRow;
-			this.patientBloodTypeHistoryRow = options.patientBloodTypeHistoryRow
+			this.patientBloodTypeHistoryRow = options.patientBloodTypeHistoryRow;
+
+			Cache.Patient.on('change', function(){
+				self.appealJSON.patient = Cache.Patient.toJSON();
+				self.render();
+			});
 
 			BaseView.prototype.initialize.apply(this);
 		},
@@ -48,6 +54,7 @@ define(function(require) {
 		},
 
 		onAllergiesClick: function(){
+			var view = this;
 			var allergiesView = new AllergiesView({
                 title: 'Аллергия',
                 width: '73em',

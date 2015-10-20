@@ -534,6 +534,7 @@ define(function (require) {
 
     Documents.Models.Document = Documents.Models.DocumentBase.extend({
         urlRoot: function () {
+            console.log(appealId);
             return DATA_PATH + "appeals/" + this.appealId + "/documents/";
         },
 
@@ -3307,7 +3308,9 @@ define(function (require) {
                 this.listLayoutHistory.$(".documents-controls").parent().remove();
                 this.listLayoutHistory.$(".documents-filters").removeClass("span6").addClass("span12");
 
-                var filterCollection = this.listLayoutHistory.subViews['.documents-filters'].options.events;
+                console.log(this.listLayoutHistory.subViews['.documents-filters']);
+
+                var filterCollection = this.listLayoutHistory.subViews['.documents-filters'].options.ibs;
                 var filterView = this.listLayoutHistory.subViews['.documents-filters'].$('#event-filter');
                 var currentAppeal = this.appealId;
                 filterCollection.fetch().done(function(){
@@ -4587,7 +4590,56 @@ define(function (require) {
      * Поле типа Dropdown
      * @type {*}
      */
-    Documents.Views.Edit.UIElement.Dropdown = Documents.Views.Edit.UIElement.Text.extend({
+
+     Documents.Views.Edit.UIElement.Dropdown = Documents.Views.Edit.UIElement.Text.extend({
+         template: templates.uiElements._dropdown,
+
+         events: _.extend({
+             "click .thesaurus-open": "onThesaurusOpenClick",
+             "focus [contenteditable]": "onFocus" ,
+             'keydown .attribute-value': 'onKeyPress',
+             //"blur [contenteditable]": "onBlur"
+         }, Documents.Views.Edit.UIElement.Text.prototype.events),
+
+         onFocus: function () {
+             //wysisyg.showAt(this.$el);
+         },
+
+         onKeyPress: function(){
+             event.preventDefault();
+         },
+
+         /*onBlur: function () {
+             wysisyg.hide();
+         },*/
+
+         onThesaurusOpenClick: function (event) {
+             event.preventDefault();
+             //var thesaurusCode = $(event.currentTarget).parent().find(".ExamAttr").data("thesaurus-code");
+
+             this.thesaurus = new ThesaurusPopUp().render().open({
+                 code: this.model.get("scope"),
+                 terms: this.model.getValue(),
+                 attrId: this.model.get("typeId"),
+                 propertyType: "value",
+                 isDropdown: true
+             });
+
+             this.listenTo(this.thesaurus, "thesaurus:confirmed", this.onThesaurusConfirmed);
+         },
+
+         onThesaurusConfirmed: function (event) {
+             this.model.setValue(event.selectedTerms);
+             this.$(".attribute-value").html(event.selectedTerms);
+             this.setAutosavedFields();
+         }
+
+     });
+
+
+
+
+    Documents.Views.Edit.UIElement.DropdownOld = Documents.Views.Edit.UIElement.Text.extend({
         template: templates.uiElements._dropdown,
 
         events: _.extend({
@@ -4603,15 +4655,18 @@ define(function (require) {
         },
 
         getMenuLevel: function(scope, id, el){
-            console.log(el);
+            var self = this;
             var thes = new App.Collections.ThesaurusTerms();
-            thes.code = scope;
+            if (scope) {
+                thes.code = scope;
+            }
             thes.parentGroupId = id;
+            var tO;
             thes.fetch({
                 success: function(resp){
+                    console.log(resp);
                     el.html('');
                     resp.each(function(model){
-                        console.log(model);
                         $('<li/>', {
                             text: model.get("name")
                         })
@@ -4619,8 +4674,21 @@ define(function (require) {
                         .css('padding', '8px')
                         .on('mouseenter', function(){
                             $(this).css('background-color', 'rgb(216, 233, 244)');
+                            tO = setTimeout(function(){
+                                var child = $('<ul/>');
+                                child.html('');
+                                child.css({
+                                    'float': 'right'
+                                });
+                                el.parent().append(child);
+                                self.getMenuLevel(false, model.get('childrenTerms').parentGroupId, child);
+                            }, 300);
                         }).on('mouseleave', function () {
                             $(this).css('background-color', 'rgb(255, 255, 255)');
+                            clearTimeout(tO);
+                        }).on('click', function(){
+                            console.log(resp);
+                            console.log(self.$('.attribute-value').html($(this).text()));
                         })
                     });
                 }
@@ -7176,13 +7244,13 @@ define(function (require) {
         onChangeEvent: function (e) {
             var $target = $(e.target);
             if ($target.val() === 'all') {
-                appealId = this.options.events.first().id;
+                appealId = this.options.ibs.first().id;
             } else{
                 appealId = $target.val();
             }
             this.collection.appealId = $target.val();
 
-            var event = this.options.events.find(function (event) {
+            var event = this.options.ibs.find(function (event) {
                 return event.get('id') == appealId;
             });
             // console.log('selected event', event);
@@ -7243,9 +7311,13 @@ define(function (require) {
         },
         data: function () {
             var data = {};
-            this.options.events = new App.Collections.PatientAppeals();
-            this.options.events.patient = {id: this.collection.patientId};
-            data.events = this.options.events ? this.options.events.toJSON() : {};
+            if (!this.options.ibs) {
+                this.options.ibs = new App.Collections.PatientAppeals();
+                this.options.ibs.patient = {id: this.collection.patientId};
+                data.ibs = this.options.ibs ? this.options.ibs.toJSON() : {};
+            } else {
+                data.ibs = this.options.ibs.toJSON();
+            }
             data.selectedEventId = this.options.selectedEventId;
             return data;
         }
@@ -7285,7 +7357,6 @@ define(function (require) {
         },
         render: function (subViews) {
             return LayoutBase.prototype.render.call(this, {
-
                 ".table-controls": new Documents.Views.List.Base.TableControls({
                     collection: this.selectedDocuments,
                     listItems: this.documents
@@ -7303,7 +7374,7 @@ define(function (require) {
                 }),
                 ".documents-filters": new Documents.Summary.Filters({
                     collection: this.documents,
-                    events: this.options.events,
+                    ibs: this.options.events,
                     selectedEventId: this.options.selectedEventId
                 }),
                 ".documents-paging": new Documents.Views.List.Base.Paging({

@@ -20,15 +20,12 @@
 	</div>
 	<div style="float: right; margin-left: 2em;">
 		<a href="#" class="Actions thesaurus-open">Тезаурус</a>
-		<div class="dropdownMenu" style="position: absolute; z-index: 10000; display:none; background-color: rgb(255, 255, 255); cursor: default;">
-			<ul style="border:1px solid #84add6; font-size: 14px;"></ul>
-		</div>
 	</div>
 </div>
 <%}%>
 <div class="field">
 	<div class="RichTextWrapper">
-		<div class="RichText attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
+		<div class="RichText attribute-value Disabled <%=model.isMandatory()?'Mandatory':''%>"
 				 <%=!model.isReadOnly()?'contenteditable="true"':''%>
 				 style="min-height: 8em;max-height: 50em;"><%=model.getValue()%></div>
 	</div>

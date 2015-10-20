@@ -48,7 +48,6 @@ define(function (require) {
 			UIInitialize(this.el);
 
 			this.toggleRemoveIcon();
-            this.$('.degree').val(allergyJSON.degree);
 			this.$el.fadeIn("fast");
 
             this.$('input, select').on('change', function(el){
