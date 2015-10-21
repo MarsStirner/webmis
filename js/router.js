@@ -64,8 +64,6 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 	/*	Backbone.emulateHTTP = true;
 	Backbone.emulateJSON = true;*/
 
-
-
 	var ExtendedRouter = Backbone.Router.extend({
 		navigate: function(fragment, options) {
 			this.trigger("navigate", fragment);
@@ -1007,6 +1005,91 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		return link
 	};
 
+	function checkDeadline() {
+		if (Core.Cookies.get('authToken')) {
+			$.ajax({
+			  type: "POST",
+			  url: DATA_PATH+"getTokenInfo/",
+			  headers: {
+			        'Content-Type': 'application/json'
+			    },
+			  dataType: 'json',
+			  data: JSON.stringify({
+				  token: Core.Cookies.get('authToken'),
+				  prolong: false
+			  }),
+			  success: function(data){
+				  console.log('data.ttl', data.ttl);
+				  Core.Cookies.set("ttl", data.ttl);
+				  if (data.ttl < 150) {
+					  showAllert();
+				  } else {
+					  startTimer(data.ttl - 150);
+				  }
+			  }
+			});
+		}
+	}
 
+	function showAllert() {
+
+		var dialogView = $('<div/>');
+		dialogView.html('Срок ожидания для вашего сеанса истечет через <strong>150</strong> сек.');
+
+		var i = 149;
+		var int = setInterval(function(){
+			if (i > 0) {
+				if (Core.Cookies.get('ttl') > 150) {
+					clearInterval(int);
+					dialogView.dialog('close');
+					startTimer(Core.Cookies.get('ttl') - 150);
+				} else {
+					dialogView.find('strong').text(i);
+					i--;
+				}
+			} else {
+				window.location.href = "/auth/";
+			}
+		}, 1000);
+
+		dialogView.dialog({
+			autoOpen: true,
+			width: "35em",
+			modal: true,
+			title: "Окончание времени сессии",
+			open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+			buttons: [{
+				text: "Остаться в системе",
+				click: function(){
+					clearInterval(int);
+					$.ajax({
+					  type: "POST",
+					  url: DATA_PATH+"getTokenInfo/",
+					  headers: {
+					        'Content-Type': 'application/json'
+					    },
+					  dataType: 'json',
+					  data: JSON.stringify({
+						  token: Core.Cookies.get('authToken'),
+						  prolong: true
+					  }),
+					  success: function(data){
+						  Core.Cookies.set("ttl", data.ttl);
+						  startTimer(data.ttl - 150);
+					  }
+					});
+					dialogView.dialog('close');
+				}
+			}]
+		});
+	}
+
+	function startTimer(t) {
+		setTimeout(function(){
+			checkDeadline();
+		}, t*1000);
+	}
+
+	checkDeadline();
 
 }).call();

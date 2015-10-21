@@ -141,10 +141,12 @@ define(function (require) {
 
             var patient = this.model.get('patient');
             var patientId = patient.get('id');
+            var appeal = this.model.toJSON();
 
             this.cardNav = new CardNav({
                 permissions: userPermissions,
                 patient: patient,
+                appeal: appeal,
                 structure: [{
                     link: '/patients/' + patientId + '/',
                     name: 'Карточка пациента',

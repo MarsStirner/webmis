@@ -191,9 +191,8 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 				if (Doctor.get("department")) {
 					Core.Cookies.set("userDepartmentId", Doctor.get("department").get("id"));
 				}
-
-
 				Core.Cookies.set("roles", JSON.stringify(this.model.collection.pluck("id")));
+				Core.Cookies.set("ttl", model.get("ttl"));
 
 				$("#wrapper").empty();
 

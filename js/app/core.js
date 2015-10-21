@@ -484,9 +484,10 @@ Core = {
 			return date.date.getFullYear() - 1970;
 		},
 
-		getAgeString: function (dateString) {
-			var now = moment();
+		getAgeString: function (dateString, notNow) {
+			var now = notNow ? moment(notNow) : moment();
 			var birthDate = moment(parseInt(dateString));
+			var birthString = birthDate.format('DD.MM.YYYY');
 
 			var years = now.diff(birthDate, 'year');
 			var months = now.diff(birthDate, 'month');
@@ -496,15 +497,15 @@ Core = {
 			if (years > 0) {
 				if (years < 3) {
 					return years + " " + Core.Language.plural(years, "год", "года", "лет") + " и " +
-						(months - years * 12) + " " + Core.Language.plural((months - years * 12), "месяц", "месяца", "месяцев");
+						(months - years * 12) + " " + Core.Language.plural((months - years * 12), "месяц", "месяца", "месяцев") + ", " + birthString;
 				} else {
-					return years + " " + Core.Language.plural(years, "год", "года", "лет");
+					return years + " " + Core.Language.plural(years, "год", "года", "лет") + ", " + birthString;
 				}
 			} else {
 				if (months < 1) {
-					return days + " " + Core.Language.plural(days, "день", "дня", "дней");
+					return days + " " + Core.Language.plural(days, "день", "дня", "дней") + ", " + birthString;
 				} else {
-					return months + " " + Core.Language.plural(months, "месяц", "месяца", "месяцев");
+					return months + " " + Core.Language.plural(months, "месяц", "месяца", "месяцев") + ", " + birthString;
 				}
 			}
 		},

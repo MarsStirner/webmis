@@ -182,6 +182,18 @@ define(function (require) {
                 newTest.plannedDatetime = date + ' ' + time;
 
                 self.testTemplate.push(newTest);
+
+                $('.cito').unbind('change');
+
+                $('.cito').on('change', function(e){
+                    var val = $(e.currentTarget).is(':checked');
+                    var name = $($(e.currentTarget).parent().parent().parent().find('td')[0]).text();
+                    var found = self.testTemplate.find(function(item){
+                            return item.get('name') == name;
+                    });
+                    found.setProperty('urgent', 'value', val);
+                });
+
             });
 
         },
@@ -341,7 +353,7 @@ define(function (require) {
                 test.setProperty('finance', 'value', view.viewModel.get('finance'));
 
                 //urgent - срочность
-                test.setProperty('urgent', 'value', view.viewModel.get('urgent'));
+                //test.setProperty('urgent', 'value', view.viewModel.get('urgent'));
 
                 //идентификатор направительного диагноза
                 var mkbId = view.viewModel.get('mkbId');

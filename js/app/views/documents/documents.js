@@ -534,8 +534,8 @@ define(function (require) {
 
     Documents.Models.Document = Documents.Models.DocumentBase.extend({
         urlRoot: function () {
-            console.log(appealId);
-            return DATA_PATH + "appeals/" + this.appealId + "/documents/";
+            var appealId = this.appealId || 1;
+            return DATA_PATH + "appeals/" + appealId + "/documents/";
         },
 
         getCleanHtmlFilledAttrs: function () {
@@ -1201,9 +1201,10 @@ define(function (require) {
                             infectChecked.push(elCode);
                         }
                     });
-                    $(renderedEl).find('.field-toggle').on('change', function () {
-                        $(renderedEl).trigger('toggle');
-                    })
+                    //WEBMIS-399
+                    // $(renderedEl).find('.field-toggle').on('change', function () {
+                    //     $(renderedEl).trigger('toggle');
+                    // })
                     $(renderedEl).addClass(elCode).addClass('isCheckbox');
                     $(renderedEl).find('.field').hide();
                 }
@@ -1219,22 +1220,23 @@ define(function (require) {
                 $(renderedEl).find('.field-toggle').on('click', function() {
                     !isOther && $(renderedEl).find('.field').hide();
                     if ($(this).attr('checked')) {
-                        if (!isOther) {
-                            el.get('properties')[1].value = 'Да';
-                        }
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').trigger('addMandatory');
                         $('.'+elCode+'-EndDate').find('.field').show();
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology, .'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').show();
-                        console.log(el);
+                        if (!isOther) {
+                            el.setPropertyValueFor('value', 'Да');
+                        }
                     } else {
-                        !isOther && el.setPropertyValueFor('value', '');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').trigger('removeMandatory');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology, .'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').hide();
                         $('.'+elCode+'-EndDate').find('.field').hide();
+                        if (!isOther) {
+                            el.setPropertyValueFor('value', '');
+                        }
                     }
                 });
 

@@ -146,12 +146,12 @@ define(function(require) {
 				//console.log('model',model);
 				if (model.get('status') !== status) {
 					if (status == 2) {
-						view.jobs.add({
-							'id': model.get('id'),
-							'data': model.get('actions').map(function(action){
-							  return {'id': action.id}
-							})
-						});
+						var nm = new Backbone.Model();
+						nm.set('id', model.get('id'));
+						nm.set('data', model.get('actions').map(function(action){
+						  return {'id': action.id}
+						}))
+						view.jobs.add(nm);
 					} else {
 						view.jobs.add({
 							'id': model.get('id'),
