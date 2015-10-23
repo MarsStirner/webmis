@@ -486,7 +486,8 @@ Core = {
 
 		getAgeString: function (dateString, notNow) {
 			var now = notNow ? moment(notNow) : moment();
-			var birthDate = moment(parseInt(dateString));
+			var birth = moment.utc(parseInt(dateString)).add(3, 'h').format('X');
+			var birthDate = moment(birth*1000);
 			var birthString = birthDate.format('DD.MM.YYYY');
 
 			var years = now.diff(birthDate, 'year');

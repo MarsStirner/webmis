@@ -1034,9 +1034,10 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 	function showAllert() {
 
 		var dialogView = $('<div/>');
-		dialogView.html('Срок ожидания для вашего сеанса истечет через <strong>150</strong> сек.');
+		var i = Core.Cookies.get('ttl');
+		dialogView.html('Срок ожидания для вашего сеанса истечет через <strong>'+i+'</strong> сек.');
+		i--;
 
-		var i = 149;
 		var int = setInterval(function(){
 			if (i > 0) {
 				if (Core.Cookies.get('ttl') > 150) {
@@ -1057,6 +1058,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			width: "35em",
 			modal: true,
 			title: "Окончание времени сессии",
+			closeOnEscape: false,
 			open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
 			buttons: [{
 				text: "Остаться в системе",
