@@ -595,6 +595,11 @@ define(function(require) {
 			//			this.delegateEvents();
 			this.grid.delegateEvents();
 
+			view.collection.on('resetFilter', function(){
+				view.labsSelect.val('0');
+				console.log(view);
+			});
+
 			return view;
 		}
 

@@ -12,7 +12,15 @@ define(function(require) {
 
 			collection.countSelected();
 			collection.countStatuses();
-			collection.on("change:selected reset", collection.countSelected, collection);
+			collection.on("change:selected reset", function(){
+				if ($('label.ui-state-active').find('#status-2-count').length) {
+					$('.labs-action-type').css('visibility', 'visible');
+				} else {
+					$('.labs-action-type').css('visibility', 'hidden');
+					collection.trigger('resetFilter');
+				}
+				collection.countSelected();
+			});
 			collection.on("reset", collection.countStatuses, collection);
 
 		},
