@@ -275,14 +275,28 @@ define(function (require) {
 
                         if ( typeof PHARM_EXPERT_API !== 'undefined'  ) {
                             var medicaments = new FormData();
-                            var url = PHARM_EXPERT_API+"getInfoPreparation";
+                            var url = PHARM_EXPERT_API+"getInfoPreparationStatus?";
                             var method = 'POST';
                             var drugs = [];
+                            var appeal = self.options.appeal.toJSON();
+
+                            medicaments.append('security_key', '8ab87e9fe50512461b04d16e97b88bc9857387d32c9b2f9a577c2928');
 
                             self.prescription.get('drugs').each(function(drug, d){
+                                console.log(drug);
                                 medicaments.append('medicaments[][name]', drug.get('name'));
+                                medicaments.append('medicaments[][dosage][formulation][name]', drug.get('form'));
+
                                 self.getDoseInfo(drug, d);
                             });
+
+
+
+                            medicaments.append('user_info[age_days]', moment().diff(appeal.patient.birthDate, 'day'));
+                            medicaments.append('user_info[sex]', appeal.patient.sex[0]);
+                            medicaments.append('user_info[growth]', appeal.physicalParameters.height);
+                            medicaments.append('user_info[weight]', appeal.physicalParameters.weight);
+
 
                             var xhr = new XMLHttpRequest();
                             if ("withCredentials" in xhr) {
@@ -297,7 +311,15 @@ define(function (require) {
                             if (xhr) {
                                 xhr.onload = function() {
                                     var responseText = JSON.parse(xhr.responseText);
-                                    responseText && self.warningShow(responseText);
+                                    console.log(responseText.url);
+                                    if (responseText.value_max > 1) {
+                                        self.$('.show-pharm').show();
+                                        self.pharmUrl = responseText.url;
+
+                                    } else {
+                                        self.$('.show-pharm').hide();
+                                    }
+                                    //responseText && self.warningShow(responseText);
                                 };
 
                                 xhr.onerror = function() {
@@ -317,12 +339,31 @@ define(function (require) {
                 prescription: self.prescription
             });
 
+            self.$('.show-pharm').on('click', function(){
+                self.showPharm(self.pharmUrl);
+            });
+
+            self.$('.show-drugs').on('click', function(){
+                self.hidePharm();
+            });
+
             this.$el.find('button')
                 .button();
             this.$el.find('select')
                 .select2();
             this.validateForm();
 
+        },
+
+        showPharm: function(url){
+            self.$('#pharmFrame').attr('src', url);
+            self.$('#drugsBlock').css('visibility', 'hidden');
+            self.$('#pharmBlock').show().css('margin-top', '-'+$('#drugsBlock').css('height'));
+        },
+
+        hidePharm: function(){
+            self.$('#pharmBlock').hide();
+            self.$('#drugsBlock').css('visibility', 'visible');
         },
 
         resetConflicts: function(){

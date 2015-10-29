@@ -2422,6 +2422,9 @@ define(function (require) {
                                data: JSON.stringify(tmplData),
                                contentType: "application/json; charset=utf-8",
                                dataType: "json",
+                               xhrFields: {
+                                   withCredentials: true
+                               },
                                complete: function(){
                                    self.tearDown();
                                 }
@@ -2444,6 +2447,9 @@ define(function (require) {
                                crossDomain: true,
                                contentType: "application/json; charset=utf-8",
                                dataType: "json",
+                               xhrFields: {
+                                   withCredentials: true
+                               },
                                complete: function(data){
                                    var res = $.parseJSON(data.responseText.match(/\((.*)\)/)[1]);
                                    var newEl = $('<li>').addClass('document-template-node')
