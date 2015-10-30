@@ -24,6 +24,7 @@ APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
 ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/";
 DOMAIN = '192.168.1.12';
 PHARM_EXPERT_API = "http://umkb.socmedica.com/api/";
+PHARM_KEY = "8ab87e9fe50512461b04d16e97b88bc9857387d32c9b2f9a577c2928";
 
 // Временная зона по умолчанию
 moment.tz.setDefault("Europe/Moscow");

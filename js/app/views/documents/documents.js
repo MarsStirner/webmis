@@ -2414,7 +2414,9 @@ define(function (require) {
                             var tmplData = {
                                 actionId: self.options.docId,
                                 name: self.templateName,
-                                groupId: self.groupId
+                                groupId: self.groupId,
+                                authToken: Core.Cookies.get('authToken'),
+                                user_id: parseInt(Core.Cookies.get('userId'))
                             };
                             $.ajax({
                                type: "POST",
@@ -2422,9 +2424,7 @@ define(function (require) {
                                data: JSON.stringify(tmplData),
                                contentType: "application/json; charset=utf-8",
                                dataType: "json",
-                               xhrFields: {
-                                   withCredentials: true
-                               },
+                               crossDomain: true,
                                complete: function(){
                                    self.tearDown();
                                 }
@@ -2438,7 +2438,9 @@ define(function (require) {
                         click: function () {
                             var tmplData = {
                                 name: self.templateName,
-                                groupId: self.groupId
+                                groupId: self.groupId,
+                                authToken: Core.Cookies.get('authToken'),
+                                user_id: parseInt(Core.Cookies.get('userId'))
                             };
                             $.ajax({
                                type: "POST",
@@ -2447,9 +2449,7 @@ define(function (require) {
                                crossDomain: true,
                                contentType: "application/json; charset=utf-8",
                                dataType: "json",
-                               xhrFields: {
-                                   withCredentials: true
-                               },
+
                                complete: function(data){
                                    var res = $.parseJSON(data.responseText.match(/\((.*)\)/)[1]);
                                    var newEl = $('<li>').addClass('document-template-node')

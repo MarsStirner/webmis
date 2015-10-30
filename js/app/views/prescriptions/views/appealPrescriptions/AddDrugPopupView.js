@@ -94,6 +94,9 @@ define(function (require) {
                 var url = PHARM_EXPERT_API+"getDescriptions";
                 var method = 'POST';
                 medicaments.append('medicament', first.get('tradeLocalName'));
+                if (typeof PHARM_KEY !== 'undefined') {
+                    medicaments.append('security_key', PHARM_KEY);
+                }
 
                 var xhr = new XMLHttpRequest();
                 if ("withCredentials" in xhr) {
