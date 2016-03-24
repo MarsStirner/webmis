@@ -83,7 +83,6 @@ define(function(require) {
 		 */
 		convertToTree: function(data) {
 			var convertToTree = arguments.callee;
-
 			return _.map(data, function(item) {
 				var node = {};
 
@@ -94,6 +93,13 @@ define(function(require) {
 				if (item.groups && item.groups.length) {
 					node.children = convertToTree(item.groups);
 					node.isFolder = true;
+				}
+
+				if (item.type === "Action" && item.group.length) {
+					node.indications = _.find(item.group[1].attribute, function(property) {
+						return property.code === "indications"
+					})
+
 				}
 
 				return node;

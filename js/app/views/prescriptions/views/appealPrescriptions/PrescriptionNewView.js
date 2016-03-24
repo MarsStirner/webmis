@@ -280,37 +280,23 @@ define(function (require) {
                             var drugs = [];
                             var appeal = self.options.appeal.toJSON();
 
-                            _.each(appeal.diagnoses, function(diag){
-                                if (diag.diagnosisKind == 'mainDiagMkb' || diag.diagnosisKind == 'diagReceivedMkb' || diag.diagnosisKind == 'finalMkb' || diag.diagnosisKind == 'admissionMkb') {
-                                    if (diag.mkb.diagnosis) {
-                                        medicaments.append('user_info[disease][]', diag.mkb.diagnosis + (diag.mkb.code ? ' '+diag.mkb.code : ''));
-                                    } else if (diag.mkb.code) {
-                                        medicaments.append('user_info[disease][]', diag.mkb.code);
-                                    }
-                                } else if (diag.diagnosisKind == 'assocDiagMkb' || diag.diagnosisKind == 'attendantMkb' || diag.diagnosisKind == 'aftereffectFinalMkb') {
-                                    if (diag.mkb.diagnosis) {
-                                        medicaments.append('user_info[disease2][]', diag.mkb.diagnosis + (diag.mkb.code ? ' '+diag.mkb.code : ''));
-                                    } else if (diag.mkb.code) {
-                                        medicaments.append('user_info[disease2][]', diag.mkb.code);
-                                    }
-                                }
-                            });
-
-                            if (typeof PHARM_KEY !== 'undefined') {
-                                medicaments.append('security_key', PHARM_KEY);
-                            }
+                            medicaments.append('security_key', '8ab87e9fe50512461b04d16e97b88bc9857387d32c9b2f9a577c2928');
 
                             self.prescription.get('drugs').each(function(drug, d){
+                                console.log(drug);
                                 medicaments.append('medicaments[][name]', drug.get('name'));
                                 medicaments.append('medicaments[][dosage][formulation][name]', drug.get('form'));
 
                                 self.getDoseInfo(drug, d);
                             });
 
+
+
                             medicaments.append('user_info[age_days]', moment().diff(appeal.patient.birthDate, 'day'));
                             medicaments.append('user_info[sex]', appeal.patient.sex[0]);
                             medicaments.append('user_info[growth]', appeal.physicalParameters.height);
                             medicaments.append('user_info[weight]', appeal.physicalParameters.weight);
+
 
                             var xhr = new XMLHttpRequest();
                             if ("withCredentials" in xhr) {
@@ -326,7 +312,7 @@ define(function (require) {
                                 xhr.onload = function() {
                                     var responseText = JSON.parse(xhr.responseText);
                                     console.log(responseText.url);
-                                    if (responseText.value_max > 1 || (responseText.value_max && responseText.value_max.length > 1)) {
+                                    if (responseText.value_max > 1) {
                                         self.$('.show-pharm').show();
                                         self.pharmUrl = responseText.url;
 
@@ -396,9 +382,7 @@ define(function (require) {
             var url = PHARM_EXPERT_API+"getDosage";
             var method = 'POST';
             medicament.append('medicament', drug.get('name'));
-            if (typeof PHARM_KEY !== 'undefined') {
-                medicament.append('security_key', PHARM_KEY);
-            }
+            medicament.append('security_key', '8ab87e9fe50512461b04d16e97b88bc9857387d32c9b2f9a577c2928');
             var xhr = new XMLHttpRequest();
             if ("withCredentials" in xhr) {
                 xhr.open(method, url, true);

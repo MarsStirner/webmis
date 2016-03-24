@@ -1,5 +1,4 @@
 <%if (collection.length) { %>
-	<% console.log (collection)%>
 	<%_.each(collection,function (item, index) {%>
 		<tr <% if(false){%>style="display:none;"<%}//index > 0%>>
 			<td style="text-align: left;"><%=item.get("name") || '-'%></td>
@@ -8,7 +7,13 @@
 		</tr>
 	<%});%>
 <%} else {%>
-	<tr>
-		<td colspan="8">Нет данных</td>
-	</tr>
+	<%if (!wasLoaded) { %>
+		<tr>
+			<td colspan="8">Данные не загружены</td>
+		</tr>
+	<%} else {%>
+		<tr>
+			<td colspan="8">Нет данных</td>
+		</tr>
+	<%}%>	
 <%}%>

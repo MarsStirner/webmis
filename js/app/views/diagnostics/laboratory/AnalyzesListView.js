@@ -90,6 +90,13 @@ define(function(require) {
 							modelId: model.get('id')
 						}
 					});
+					// this.trigger("change:viewState", {
+					// 	type: "diagnostics-laboratory",
+					// 	mode: "SUB_EDIT",
+					// 	options: {
+					// 		documentId: model.get('id')
+					// 	}
+					// });
 					App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-laboratory/" + model.get('id'));
 				}
 
@@ -104,25 +111,32 @@ define(function(require) {
 		},
 
 		editDirection: function(model) {
-			var view = this;
+			// var view = this;
 
-			view.ldf = new laboratoryDiagsForm();
-			view.ldf.id = model.get('id');
-			view.ldf.eventId = view.collection.appealId;
+			// view.ldf = new laboratoryDiagsForm();
+			// view.ldf.id = model.get('id');
+			// view.ldf.eventId = view.collection.appealId;
 
-			view.ldf.fetch({
-				success: function(model) {
+			// view.ldf.fetch({
+			// 	success: function(model) {
 
-					view.editDirectionPopupView = new EditDirectionPopupView({
-						title: 'Редактирование направления',
-						model: model,
-						appeal: view.options.appeal
-					});
-					view.editDirectionPopupView.render().open();
+			// 		view.editDirectionPopupView = new EditDirectionPopupView({
+			// 			title: 'Редактирование направления',
+			// 			model: model,
+			// 			appeal: view.options.appeal
+			// 		});
+			// 		view.editDirectionPopupView.render().open();
+			// 	}
+			// });
+
+			this.trigger("change:viewState", {
+				type: "diagnostics-laboratory",
+				mode: "SUB_EDIT",
+				options: {
+					documentId: model.get('id')
 				}
 			});
-
-
+			App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-laboratory/" + model.get('id') + "/edit");
 		},
 
 		cancelDirection: function(model) {

@@ -24,7 +24,8 @@ define(function(require) {
 				!isDupe && parsed.push(infection);
 			});
 			return parsed;
-		}
+		},
+		fetch: function(){}
 	});
 
 	return infectionDrugMonitoring;

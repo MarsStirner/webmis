@@ -8,7 +8,6 @@ define(function (require) {
     var BakResult = require('models/diagnostics/laboratory/bak-result');
 
     require('views/print');
-    require('collections/diagnostics/laboratory/laboratory-diags')
 
 
     var LaboratoryResultView = Backbone.View.extend({
@@ -42,15 +41,7 @@ define(function (require) {
                 }
             });
 
-            this.diags = new App.Collections.LaboratoryDiags();
-            this.diags.appealId = this.options.appealId;
-            this.diags.setParams({
-                limit: 999,
-                sortingField: 'plannedEndDate',
-                sortingMethod: 'desc',
-                page: 1
-            });
-            this.diags.fetch();
+
         },
 
         renderContextPrintButton: function(){
@@ -82,32 +73,19 @@ define(function (require) {
             "click .extra": "extra",
             // "click .print": "print",
             "click .all": "openLabs",
-            "click .prev-document": "onPrevClick",
-            "click .next-document": "onNextClick"
+            "click .edit-lab": "editLab"
         },
 
-        onPrevClick: function(){
-            var self = this;
-            var found = this.diags.find(function(item){
-                return item.get('id') === self.result.get('id');
+        editLab: function(){
+            var labId = this.result.id;
+            this.trigger("change:viewState", {
+                type: "diagnostics-laboratory",
+                mode: "SUB_EDIT",
+                options: {
+                    documentId: labId
+                }
             });
-            if (!found) {
-                this.navigate(this.diags.first().get('id'))
-            } else{
-                this.navigate( this.diags.at(this.diags.indexOf(found) -1) ?  (this.diags.at(this.diags.indexOf(found) -1)).get('id') : this.diags.first().get('id'));
-            }
-        },
-
-        onNextClick: function(){
-            var self = this;
-            var found = this.diags.find(function(item){
-                return item.get('id') === self.result.get('id');
-            });
-            if (!found) {
-                this.navigate(this.diags.first().get('id'))
-            } else{
-                this.navigate((this.diags.at(this.diags.indexOf(found) +1)).get('id'));
-            }
+            App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-laboratory/" + labId + "/edit");
         },
 
         printOptions: function () {

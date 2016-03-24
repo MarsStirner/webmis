@@ -20,7 +20,8 @@ define(function(require) {
 				});
 			});
 			return parsed;
-		}
+		},
+		fetch: function(){}
 	});
 
 	return InfectionsMonitoring;

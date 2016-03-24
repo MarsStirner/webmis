@@ -11,10 +11,24 @@ define(function(require) {
 		template: infectionMonitoringTmpl,
 		itemTemplate: infectionMonitoringItemTmpl,
 
+		events: {
+			'click .showInfectionMonitoring': 'showInfectionMonitoring'
+		},
+
+		showInfectionMonitoring: function(e){
+			var view = this;
+			$(e.target).fadeOut();
+			this.wasLoaded = true;
+			Backbone.Collection.prototype.fetch.apply(this.collection).done(function(){
+				view.render();
+			});
+		},
+
 		data: function() {
 			return {
 				collection: this.collection.models,
 				appealId: shared.models.appeal.get('id'),
+				wasLoaded: this.wasLoaded
 			};
 		},
 

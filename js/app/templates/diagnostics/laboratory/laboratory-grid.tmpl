@@ -73,12 +73,14 @@
 			${assignPerson.name.raw}
 		{{/if}}
 	</td>
-
-	{{if !appealClosed && isEditable }}
+	{{if Core.Data.currentRole() === "strDoctor" }}
 		<td><i class="icon-pencil edit-direction"></i></td>
-		<td><span class=" icon-remove cancel-direction"></span></td>
 	{{else}}
 		<td></td>
+	{{/if}}
+	{{if !appealClosed && isEditable }}
+		<td><span class=" icon-remove cancel-direction"></span></td>
+	{{else}}
 		<td></td>
 	{{/if}}
 	<td>

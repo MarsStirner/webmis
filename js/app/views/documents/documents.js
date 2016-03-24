@@ -28,7 +28,8 @@ define(function (require) {
                 Examination: {},
                 Therapy: {},
                 Consultation: {},
-                Instrumental: {}
+                Instrumental: {},
+                Laboratory: {}
             }
         },
         Collections: {},
@@ -108,7 +109,6 @@ define(function (require) {
         uiElements: {
             _base: _.template(require("text!templates/documents/edit/ui-elements/base.html")),
             _constructor: _.template(require("text!templates/documents/edit/ui-elements/constructor.html")),
-            _dropdown: _.template(require("text!templates/documents/edit/ui-elements/dropdown.html")),
             _text: _.template(require("text!templates/documents/edit/ui-elements/text.html")),
             _table: _.template(require("text!templates/documents/edit/ui-elements/table.html")),
             _date: _.template(require("text!templates/documents/edit/ui-elements/date.html")),
@@ -150,7 +150,6 @@ define(function (require) {
     var Consultations = require("collections/diagnostics/consultations/Consultations");
     //var ConsultationsResultView = require("views/diagnostics/consultations/ConsultationsResultView");
     require("collections/diagnostics/laboratory/laboratory-diags");
-    require("collections/patient-appeals");
 
     var TherapiesCollection = require('collections/therapy/Therapies');
 
@@ -235,6 +234,7 @@ define(function (require) {
         },
 
         therapyBlackMagic: function (attributes) {
+            console.log('therapyBlackMagic');
             var lastTherapy = therapiesCollection.first();
             var lastPhase = this.getLastTherapyPhase();
             var shouldSetTherapyFields = false;
@@ -534,8 +534,7 @@ define(function (require) {
 
     Documents.Models.Document = Documents.Models.DocumentBase.extend({
         urlRoot: function () {
-            var appealId = this.appealId || 1;
-            return DATA_PATH + "appeals/" + appealId + "/documents/";
+            return DATA_PATH + "appeals/" + this.appealId + "/documents/";
         },
 
         getCleanHtmlFilledAttrs: function () {
@@ -1201,10 +1200,9 @@ define(function (require) {
                             infectChecked.push(elCode);
                         }
                     });
-                    //WEBMIS-399
-                    // $(renderedEl).find('.field-toggle').on('change', function () {
-                    //     $(renderedEl).trigger('toggle');
-                    // })
+                    $(renderedEl).find('.field-toggle').on('change', function () {
+                        $(renderedEl).trigger('toggle');
+                    })
                     $(renderedEl).addClass(elCode).addClass('isCheckbox');
                     $(renderedEl).find('.field').hide();
                 }
@@ -1220,23 +1218,22 @@ define(function (require) {
                 $(renderedEl).find('.field-toggle').on('click', function() {
                     !isOther && $(renderedEl).find('.field').hide();
                     if ($(this).attr('checked')) {
+                        if (!isOther) {
+                            el.get('properties')[1].value = 'Да';
+                        }
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').trigger('addMandatory');
                         $('.'+elCode+'-EndDate').find('.field').show();
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology, .'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').show();
-                        if (!isOther) {
-                            el.setPropertyValueFor('value', 'Да');
-                        }
+                        console.log(el);
                     } else {
+                        !isOther && el.setPropertyValueFor('value', '');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').trigger('removeMandatory');
                         $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology, .'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').hide();
                         $('.'+elCode+'-EndDate').find('.field').hide();
-                        if (!isOther) {
-                            el.setPropertyValueFor('value', '');
-                        }
                     }
                 });
 
@@ -2414,9 +2411,7 @@ define(function (require) {
                             var tmplData = {
                                 actionId: self.options.docId,
                                 name: self.templateName,
-                                groupId: self.groupId,
-                                authToken: Core.Cookies.get('authToken'),
-                                user_id: parseInt(Core.Cookies.get('userId'))
+                                groupId: self.groupId
                             };
                             $.ajax({
                                type: "POST",
@@ -2424,7 +2419,6 @@ define(function (require) {
                                data: JSON.stringify(tmplData),
                                contentType: "application/json; charset=utf-8",
                                dataType: "json",
-                               crossDomain: true,
                                complete: function(){
                                    self.tearDown();
                                 }
@@ -2438,9 +2432,7 @@ define(function (require) {
                         click: function () {
                             var tmplData = {
                                 name: self.templateName,
-                                groupId: self.groupId,
-                                authToken: Core.Cookies.get('authToken'),
-                                user_id: parseInt(Core.Cookies.get('userId'))
+                                groupId: self.groupId
                             };
                             $.ajax({
                                type: "POST",
@@ -2449,7 +2441,6 @@ define(function (require) {
                                crossDomain: true,
                                contentType: "application/json; charset=utf-8",
                                dataType: "json",
-
                                complete: function(data){
                                    var res = $.parseJSON(data.responseText.match(/\((.*)\)/)[1]);
                                    var newEl = $('<li>').addClass('document-template-node')
@@ -2723,10 +2714,8 @@ define(function (require) {
 
         render: function (subViews) {
             return ListLayoutBase.prototype.render.call(this, _.extend({
-                ".documents-filters": new Documents.Summary.Filters({
-                    collection: this.documents,
-                    events: this.options.events,
-                    selectedEventId: this.options.selectedEventId
+                ".documents-filters": new Documents.Views.List.Common.Filters({
+                    collection: this.documents
                 })
             }, subViews));
         }
@@ -3189,6 +3178,7 @@ define(function (require) {
 
         initialize: function () {
             LayoutBase.prototype.initialize.call(this, this.options);
+            console.log(this);
             if (!this.model) {
                 if (this.options.templateId || this.options.mode === "SUB_NEW" && this.options.subId) {
                     this.model = new Documents.Models.DocumentTemplate({
@@ -3288,7 +3278,7 @@ define(function (require) {
         toggleDividedState: function (enabled) {
             enabled = _.isUndefined(enabled) ? !this.dividedStateEnabled : enabled;
             this.dividedStateEnabled = enabled;
-            Cache.devidedState = enabled;
+
             if (enabled) {
                 this.$el.parent().css({
                     "margin-left": "0"
@@ -3315,26 +3305,6 @@ define(function (require) {
 
                 this.listLayoutHistory.$(".documents-controls").parent().remove();
                 this.listLayoutHistory.$(".documents-filters").removeClass("span6").addClass("span12");
-
-                console.log(this.listLayoutHistory.subViews['.documents-filters']);
-
-                var filterCollection = this.listLayoutHistory.subViews['.documents-filters'].options.ibs;
-                var filterView = this.listLayoutHistory.subViews['.documents-filters'].$('#event-filter');
-                var currentAppeal = this.appealId;
-                filterCollection.fetch().done(function(){
-                    filterCollection.each(function(appeal){
-                        var opt = $('<option/>', {
-                            value: appeal.get('id'),
-                            text: appeal.get('number')
-                        })
-                        filterView.append(opt);
-                    });
-                    filterView.val(currentAppeal);
-                    filterView.parent().css({
-                        'float': 'right',
-                        'margin-top': '-4.5em'
-                    }).show();
-                });
             } else {
                 if (this.listLayoutHistory) this.listLayoutHistory.tearDown(); //ViewBase.prototype.tearDown.call(this.listLayoutLight);
                 this.$el.parent().css({
@@ -4041,6 +4011,54 @@ define(function (require) {
 
 
 
+    //region VIEWS EDIT LAB
+    //---------------------
+    Documents.Views.Edit.Laboratory.Layout = Documents.Views.Edit.Base.Layout.extend({
+        getListLayoutHistory: function () {
+            return new Documents.Views.List.Laboratory.LayoutHistory({
+                included: true
+            });
+        },
+        render: function () {
+            return Documents.Views.Edit.Base.Layout.prototype.render.call(this, {
+                ".dates": new Documents.Views.Edit.Dates({
+                    model: this.model
+                }),
+                ".document-controls-top": new Documents.Views.Edit.Laboratory.DocControls({
+                    model: this.model
+                }),
+                ".document-controls-bottom": new Documents.Views.Edit.Laboratory.DocControls({
+                    model: this.model
+                })
+            });
+        }
+    });
+
+    Documents.Views.Edit.Laboratory.DocControls = Documents.Views.Edit.DocControls.extend({
+        goToDocReview: function (resultId) {
+            this.model.trigger("toggle:dividedState", false);
+            App.Router.updateUrl(["appeals", appealId, "diagnostics-laboratory", resultId].join("/"));
+            dispatcher.trigger("change:viewState", {
+                mode: "SUB_REVIEW",
+                type: "diagnostics-laboratory",
+                options: {
+                    modelId: resultId
+                }
+            });
+        },
+        returnToList: function () {
+            this.model.trigger("toggle:dividedState", false);
+            App.Router.updateUrl(["appeals", appealId, "diagnostics-laboratory"].join("/"));
+            dispatcher.trigger("change:viewState", {
+                mode: "REVIEW",
+                type: "diagnostics-laboratory"
+            });
+        }
+    });
+
+    //------ LAB EDIT VIEWS END
+
+
     //region VIEWS EDIT GRID BASE
     //---------------------
     Documents.Views.Edit.GridSpanList = RepeaterBase.extend({
@@ -4585,149 +4603,6 @@ define(function (require) {
             });
 
             this.listenTo(this.thesaurus, "thesaurus:confirmed", this.onThesaurusConfirmed);
-        },
-
-        onThesaurusConfirmed: function (event) {
-            this.model.setValue(event.selectedTerms);
-            this.$(".attribute-value").html(event.selectedTerms);
-            this.setAutosavedFields();
-        }
-    });
-
-    /**
-     * Поле типа Dropdown
-     * @type {*}
-     */
-
-     Documents.Views.Edit.UIElement.Dropdown = Documents.Views.Edit.UIElement.Text.extend({
-         template: templates.uiElements._dropdown,
-
-         events: _.extend({
-             "click .thesaurus-open": "onThesaurusOpenClick",
-             "focus [contenteditable]": "onFocus" ,
-             'keydown .attribute-value': 'onKeyPress',
-             //"blur [contenteditable]": "onBlur"
-         }, Documents.Views.Edit.UIElement.Text.prototype.events),
-
-         onFocus: function () {
-             //wysisyg.showAt(this.$el);
-         },
-
-         onKeyPress: function(){
-             event.preventDefault();
-         },
-
-         /*onBlur: function () {
-             wysisyg.hide();
-         },*/
-
-         onThesaurusOpenClick: function (event) {
-             event.preventDefault();
-             //var thesaurusCode = $(event.currentTarget).parent().find(".ExamAttr").data("thesaurus-code");
-
-             this.thesaurus = new ThesaurusPopUp().render().open({
-                 code: this.model.get("scope"),
-                 terms: this.model.getValue(),
-                 attrId: this.model.get("typeId"),
-                 propertyType: "value",
-                 isDropdown: true
-             });
-
-             this.listenTo(this.thesaurus, "thesaurus:confirmed", this.onThesaurusConfirmed);
-         },
-
-         onThesaurusConfirmed: function (event) {
-             this.model.setValue(event.selectedTerms);
-             this.$(".attribute-value").html(event.selectedTerms);
-             this.setAutosavedFields();
-         }
-
-     });
-
-
-
-
-    Documents.Views.Edit.UIElement.DropdownOld = Documents.Views.Edit.UIElement.Text.extend({
-        template: templates.uiElements._dropdown,
-
-        events: _.extend({
-            "click .thesaurus-open": "onThesaurusOpenClick",
-            "mouseleave .dropdownMenu": "closeDropdown"
-        }, Documents.Views.Edit.UIElement.Text.prototype.events),
-
-        initialize: function(){
-            Documents.Views.Edit.UIElement.Text.prototype.initialize.call(this);
-            var self = this;
-            this.thesaurus = new App.Collections.ThesaurusTerms();
-            this.thesaurus.code = this.model.get("scope");
-        },
-
-        getMenuLevel: function(scope, id, el){
-            var self = this;
-            var thes = new App.Collections.ThesaurusTerms();
-            if (scope) {
-                thes.code = scope;
-            }
-            thes.parentGroupId = id;
-            var tO;
-            thes.fetch({
-                success: function(resp){
-                    console.log(resp);
-                    el.html('');
-                    resp.each(function(model){
-                        $('<li/>', {
-                            text: model.get("name")
-                        })
-                        .appendTo(el)
-                        .css('padding', '8px')
-                        .on('mouseenter', function(){
-                            $(this).css('background-color', 'rgb(216, 233, 244)');
-                            tO = setTimeout(function(){
-                                var child = $('<ul/>');
-                                child.html('');
-                                child.css({
-                                    'float': 'right'
-                                });
-                                el.parent().append(child);
-                                self.getMenuLevel(false, model.get('childrenTerms').parentGroupId, child);
-                            }, 300);
-                        }).on('mouseleave', function () {
-                            $(this).css('background-color', 'rgb(255, 255, 255)');
-                            clearTimeout(tO);
-                        }).on('click', function(){
-                            console.log(resp);
-                            console.log(self.$('.attribute-value').html($(this).text()));
-                        })
-                    });
-                }
-            });
-        },
-
-        closeDropdown: function(event){
-            $(event.currentTarget).hide();
-        },
-
-        onThesaurusOpenClick: function (event) {
-            event.preventDefault();
-            var self = this;
-            this.thesaurus.fetch({
-                success: function(resp){
-                    self.getMenuLevel(self.model.get("scope"), resp.first().get('id'), self.$('.dropdownMenu ul'));
-                }
-            });
-
-
-
-            this.$('.dropdownMenu').show();
-
-            // this.thesaurus = new ThesaurusPopUp().render().open({
-            //     code: this.model.get("scope"),
-            //     terms: this.model.getValue(),
-            //     attrId: this.model.get("typeId"),
-            //     propertyType: "value"
-            // });
-            //
-            // this.listenTo(this.thesaurus, "thesaurus:confirmed", this.onThesaurusConfirmed);
         },
 
         onThesaurusConfirmed: function (event) {
@@ -6311,12 +6186,7 @@ define(function (require) {
 
         switch (options.model.get('type').toLowerCase()) {
         case "constructor":
-            if (options.model.get('scope') === "3_10_1" || options.model.get('scope') === "3_10_2") {
-                this.UIElementClass = Documents.Views.Edit.UIElement.Dropdown;
-                //this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
-            } else {
-                this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
-            }
+            this.UIElementClass = Documents.Views.Edit.UIElement.Constructor;
             break;
         case "string":
             //if (options.model.get("scope") === "''") {
@@ -6836,14 +6706,12 @@ define(function (require) {
         template: templates._reviewSheet,
 
         data: function () {
-
+            var self = this;
             var tmplData = {};
             var documentJSON = this.model.toJSON()[0];
 
             if (!_.isUndefined(documentJSON.version)) {
                 var summaryAttrs = documentJSON["group"][0]["attribute"];
-
-                console.log(this.model);
 
                 tmplData = {
                     id: documentJSON.id,
@@ -6865,7 +6733,9 @@ define(function (require) {
                     showIcons: this.options.showIcons,
                     isOldType: this.model.isOldType(),
                     lockInfo: documentJSON.lockInfo,
-                    mnem: this.model.get('mnem')
+                    mnem: this.model.get('mnem'),
+                    tgsk: self.model.tgsk,
+                    code: this.model.get('code')
                 };
             } else {
                 tmplData = {
@@ -6881,17 +6751,78 @@ define(function (require) {
         events: {
             "click .edit-document": "onEditDocumentClick",
             "click .duplicate-document": "onDuplicateDocumentClick",
+            "click .tgskSend": "onTgskSend",
+            "click .tgskCancel": "onTgskCancel",
             "mouseenter .edit-locked": "showLockInfo",
             "mouseleave .edit-locked": "hideLockInfo"
         },
 
         initialize: function () {
+            var self = this;
             this.listenTo(this.model, "change:version", this.onModelReset);
-            this.model.fetch();
+            this.tgskCheck().done(function(){
+               self.model.fetch(); 
+            });
+        },
+
+        tgskCheck: function(){
+            var self = this;
+            return $.get( DATA_PATH+'hsct/' + self.model.get('id'), function(data){
+                self.model.tgsk = data;
+            } );
+
+            // if (this.model.get('code') === 'hsct') {
+            //     $.get( DATA_PATH+'hsct/' + this.model.get('id') , function( data ) {
+            //         console.log(data);
+            //         return data;
+            //     });
+            // } else {
+            //     return false;
+            // }
         },
 
         onModelReset: function () {
             this.render();
+        },
+
+        onTgskSend: function () {
+            var view = this;
+            var data = {
+                id: this.model.get('id'),
+                action: 'enqueue'
+            };
+            $.ajax({
+              type: "POST",
+              url: DATA_PATH+'hsct/',
+              data: JSON.stringify(data),
+              contentType:"application/json; charset=utf-8",
+              success: function(data){
+                view.tgskCheck().done(function(){
+                   view.model.fetch().done(function(){
+                        view.render();
+                    }); 
+                });
+              }
+            });
+        },
+
+        onTgskCancel: function (e) {
+            var view = this;
+            var data = {
+                id: this.model.get('id'),
+                action: 'dequeue'
+            };
+            $.ajax({
+              type: "POST",
+              url: DATA_PATH+'hsct/',
+              data: JSON.stringify(data),
+              contentType:"application/json; charset=utf-8",
+              success: function(data){
+                view.model.fetch().done(function(){
+                    view.render();
+                });
+              }
+            });
         },
 
         onEditDocumentClick: function (event) {
@@ -6938,6 +6869,11 @@ define(function (require) {
                     if (item.code.toLowerCase().indexOf('infect') > -1) {
                         sheetRowsInfect.push(item);
                     } else {
+                        // if (item.code.toLowerCase().indexOf('therapy') > -1) {
+                        //     console.log(item);
+                        // } else {
+                        //     sheetRows.push(item);
+                        // }
                         sheetRows.push(item);
                     }
                 } else {
@@ -7022,6 +6958,7 @@ define(function (require) {
         tagName: "li",
         template: templates._reviewSheetRow,
         data: function () {
+            console.log(this.model.get('code'));
             var value = this.model.get("value"),
                 displayValue;
             switch (this.model.get("type").toUpperCase()) {
@@ -7059,28 +6996,29 @@ define(function (require) {
             ViewBase.prototype.initialize.call(this, this.options);
             var self = this;
 
-            if (this.model.get("type").toUpperCase() == "FLATDIRECTORY") {
-                var fdId = this.model.get("scope");
+            if (Backbone.history.getFragment().indexOf('edit') > -1) {
+                if (this.model.get("type").toUpperCase() == "FLATDIRECTORY") {
+                    var fdId = this.model.get("scope");
 
-                if (!fds[fdId]) {
+                    if (!fds[fdId]) {
 
-                    fds[fdId] = new FlatDirectory();
-                    fds[fdId].set({
-                        id: fdId
+                        fds[fdId] = new FlatDirectory();
+                        fds[fdId].set({
+                            id: fdId
+                        });
+                        fds[fdId].deffered = fds[fdId].fetch();
+                    }
+
+                    this.onDirectoryReady();
+
+                } else if (this.model.get("type").toUpperCase() == "OPERATIONTYPE") {
+                    this.operationType = new OperationType();
+                    this.operationType.setParams({limit: 0});
+                    this.operationType.fetch().done(function(){
+                        self.onOperationTypeReady();
                     });
-                    fds[fdId].deffered = fds[fdId].fetch();
                 }
-
-                this.onDirectoryReady();
-
-            } else if (this.model.get("type").toUpperCase() == "OPERATIONTYPE") {
-                this.operationType = new OperationType();
-                this.operationType.setParams({limit: 0});
-                this.operationType.fetch().done(function(){
-                    self.onOperationTypeReady();
-                });
             }
-
         },
 
         getOperationType: function(){
@@ -7252,13 +7190,13 @@ define(function (require) {
         onChangeEvent: function (e) {
             var $target = $(e.target);
             if ($target.val() === 'all') {
-                appealId = this.options.ibs.first().id;
+                appealId = this.options.events.first().id;
             } else{
                 appealId = $target.val();
             }
             this.collection.appealId = $target.val();
 
-            var event = this.options.ibs.find(function (event) {
+            var event = this.options.events.find(function (event) {
                 return event.get('id') == appealId;
             });
             // console.log('selected event', event);
@@ -7319,14 +7257,9 @@ define(function (require) {
         },
         data: function () {
             var data = {};
-            if (!this.options.ibs) {
-                this.options.ibs = new App.Collections.PatientAppeals();
-                this.options.ibs.patient = {id: this.collection.patientId};
-                data.ibs = this.options.ibs ? this.options.ibs.toJSON() : {};
-            } else {
-                data.ibs = this.options.ibs.toJSON();
-            }
+            data.events = this.options.events.toJSON();
             data.selectedEventId = this.options.selectedEventId;
+
             return data;
         }
     });
@@ -7365,6 +7298,7 @@ define(function (require) {
         },
         render: function (subViews) {
             return LayoutBase.prototype.render.call(this, {
+
                 ".table-controls": new Documents.Views.List.Base.TableControls({
                     collection: this.selectedDocuments,
                     listItems: this.documents
@@ -7382,7 +7316,7 @@ define(function (require) {
                 }),
                 ".documents-filters": new Documents.Summary.Filters({
                     collection: this.documents,
-                    ibs: this.options.events,
+                    events: this.options.events,
                     selectedEventId: this.options.selectedEventId
                 }),
                 ".documents-paging": new Documents.Views.List.Base.Paging({

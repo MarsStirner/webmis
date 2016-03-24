@@ -12,15 +12,7 @@ define(function(require) {
 
 			collection.countSelected();
 			collection.countStatuses();
-			collection.on("change:selected reset", function(){
-				if ($('label.ui-state-active').find('#status-2-count').length) {
-					$('.labs-action-type').css('visibility', 'visible');
-				} else {
-					$('.labs-action-type').css('visibility', 'hidden');
-					collection.trigger('resetFilter');
-				}
-				collection.countSelected();
-			});
+			collection.on("change:selected reset", collection.countSelected, collection);
 			collection.on("reset", collection.countStatuses, collection);
 
 		},
@@ -147,7 +139,6 @@ define(function(require) {
 					tubeTypeName = labTest.tubeType.name;
 				}
 
-
 				workList.push({
 					'index': index + 1,
 					'jobTicketDate': moment(labTest.jobTicket.date).format('DD.MM.YYYY H:mm'),
@@ -164,7 +155,8 @@ define(function(require) {
 					'appealNumber': labTest.appealNumber,
 					'clientId': labTest.patient.id,
 					'labName': labTest.labs[0],
-					'assigner': labTest.assigner.name.last + ' ' + labTest.assigner.name.first[0] + '.' + labTest.assigner.name.middle[0] + '.'
+					'assigner': labTest.assigner.name.last + ' ' + labTest.assigner.name.first[0] + '.' + labTest.assigner.name.middle[0] + '.',
+					'urgent': labTest.urgent ? "СРОЧНО" : ""
 				});
 			});
 

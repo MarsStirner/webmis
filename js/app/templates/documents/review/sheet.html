@@ -41,8 +41,8 @@
 						<a style="text-decoration: none;" title="Документ закрыт">
 							<i class="icon-lock" style="position: absolute;top: 0;right: 1.8em;"></i>
 						</a>
-					<%}%>
-					<%}%>
+					<%}%>	
+					<%}%>	
 				<%}%>
 
                 <%if (!document.isOldType) {%>
@@ -51,6 +51,12 @@
 				</a>
 				<%}%>
 
+			<%}%>
+			<%if (document.code == 'hsct' && document.tgsk) {%>
+			<% console.log(document.tgsk) %>
+				<%if (document.tgsk.status === "NOT EXISTS" || document.tgsk.status === "CANCELED") {%>
+					<button class="tgskSend">Отправить в ТГСК</button>
+				<%}%>	
 			<%}%>
 		</div>
 		<ul class="sheet-rows"></ul>

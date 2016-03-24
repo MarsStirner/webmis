@@ -194,6 +194,12 @@ define(function (require) {
                     found.setProperty('urgent', 'value', val);
                 });
 
+                $('.indications').unbind('change');
+
+                 $('.indications').on('change', function(e){
+                    newTest.indications = $(e.currentTarget).val();
+                });
+
             });
 
         },
@@ -316,6 +322,18 @@ define(function (require) {
         onSave: function () {
             var view = this;
 
+            var mandatoryFields = view.$el.find('.Mandatory').filter(function() {
+                return !this.value;
+            });
+
+            if (mandatoryFields.length > 0) {
+                mandatoryFields.addClass("WrongField").on('keypress', function(){
+                    $(this).removeClass("WrongField");
+                });
+                mandatoryFields[0].focus();
+                return;
+            }
+
 
             //создание направления сейчас реализованно только для группы тестов....
             //поэтому создаём коллекцию и добавляем в неё модель...
@@ -351,6 +369,10 @@ define(function (require) {
 
                 //finance - идентификатор типа оплаты
                 test.setProperty('finance', 'value', view.viewModel.get('finance'));
+
+                console.log(test.indications);
+
+                test.attributes.group[1].attribute[0].properties[4].value = test.indications;
 
                 //urgent - срочность
                 //test.setProperty('urgent', 'value', view.viewModel.get('urgent'));

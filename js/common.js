@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "1.4.21";
+var GUI_VERSION = "1.4.22";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
@@ -18,13 +18,16 @@ DEFAULT_ANIMATION_TIME = 300;
 //DATA_PATH = "http://10.1.2.106:8080/tmis-ws-medipad/rest/tms-registry/";
 DATA_PATH = "/data/";
 
-CORE_HOST = "10.128.225.202:8080";
-POLICLINIC_HOST = "10.128.225.200:5555";
+//CORE_HOST = "mis-core.pol.fccho-moscow.ru:8080";
+CORE_HOST = "ftmis-core4-system.gfish.fccho-moscow.ru:8080";
+POLICLINIC_HOST = "mis-core.pol.fccho-moscow.ru:5555";
 APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
 ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/";
-DOMAIN = '192.168.1.12';
-PHARM_EXPERT_API = "http://umkb.socmedica.com/api/";
-PHARM_KEY = "8ab87e9fe50512461b04d16e97b88bc9857387d32c9b2f9a577c2928";
+// DOMAIN = '.fccho-moscow.ru';
+DOMAIN = '.localhost';
+//PHARM_EXPERT_API = "http://socmedica.com/pharmexpertPro/";
+PHARM_EXPERT_API = 'http://umkb.socmedica.com/api/';
+PHARM_KEY        = '8ab87e9fe50512461b04d16e97b88bc9857387d32c9b2f9a577c2928';
 
 // Временная зона по умолчанию
 moment.tz.setDefault("Europe/Moscow");

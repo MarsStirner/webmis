@@ -69,7 +69,7 @@ define(function(require) {
 			"diagnostics-laboratory": {
 				"REVIEW": LaboratoryView,
 				"SUB_REVIEW": LaboratoryResultView,
-				"SUB_EDIT": LaboratoryResultView //TODO: impl edit mode
+				"SUB_EDIT": Documents.Views.Edit.Laboratory.Layout
 			},
 
 			"diagnostics-instrumental": {
@@ -286,12 +286,11 @@ define(function(require) {
 		},
 
 		setBreadcrumbsStructure: function() {
-			console.log(this.appeal);
 			if (this.breadCrumbsMap[this.page]) {
 				this.breadcrumbs.setStructure([
 					App.Router.cachedBreadcrumbs.PATIENTS,
 					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, this.appeal.get("patient").toJSON()),
-					App.Router.compile(App.Router.cachedBreadcrumbs.APPEAL, this.appeal.toJSON())
+					this.breadCrumbsMap[this.page]
 				]);
 
 				this.$("#page-head").html(this.breadcrumbs.render().el);

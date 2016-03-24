@@ -100,6 +100,10 @@ define(function(require) {
 			"mainReasonODMkb": {
 				priority: 13,
 				title: "Причина смерти"
+			},
+			"diagnosis_icd_code": {
+			        priority: 14,
+			        title: "Диагноз для ТГСК"
 			}
 		},
 
