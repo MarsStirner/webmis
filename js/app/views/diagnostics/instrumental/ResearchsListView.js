@@ -77,7 +77,6 @@ define(function(require) {
             //view.$researchsList.append(_.template(listTemplate , {}));
             view.closeChildViews();
             this.collection.each(function(model) {
-                console.log('collection item', model);
                 var itemView = new ItemView({
                     model: model,
                     collection: view.collection,
@@ -86,7 +85,22 @@ define(function(require) {
 
                 view.childViews.push(itemView);
 
-                view.$researchsList.append(itemView.render().el);
+                if (itemView.model.get('indications') && itemView.model.get('indications').properties) {
+                    itemView.model.get('indications').value = _.find(itemView.model.get('indications').properties, function(p) {
+                        return p.name == 'value';
+                    }).value;
+                    }
+
+                var renderedEl = itemView.render().el;
+
+                $(renderedEl).on('change', '.indications', function(){
+                    var modelValueField = _.find(model.get('indications').properties, function(f) {
+                        return f.name == 'value';
+                    })
+                    modelValueField.value = $(this).val();
+                });
+
+                view.$researchsList.append(renderedEl);
             }, this);
 
 

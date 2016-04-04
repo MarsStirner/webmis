@@ -194,12 +194,6 @@ define(function (require) {
                     found.setProperty('urgent', 'value', val);
                 });
 
-                $('.indications').unbind('change');
-
-                 $('.indications').on('change', function(e){
-                    newTest.indications = $(e.currentTarget).val();
-                });
-
             });
 
         },
@@ -341,7 +335,8 @@ define(function (require) {
                 appealId: view.viewModel.get('appealId')
             });
 
-            _.each(view.testTemplate, function(test){
+            _.each(view.testTemplate, function(test, i){
+
                 test.setProperty('assignerId', 'value', view.viewModel.get('assignerId'));
                 //assignerFirstName - имя врача назначившего исследование
                 test.setProperty('assignerFirstName', 'value', view.viewModel.get('assignerFirstName'));
@@ -370,9 +365,17 @@ define(function (require) {
                 //finance - идентификатор типа оплаты
                 test.setProperty('finance', 'value', view.viewModel.get('finance'));
 
-                console.log(test.indications);
+                var testIndications = _.find( test.attributes.group[1].attribute, function(attr) {
+                    return attr.code == 'indications';
+                });
 
-                test.attributes.group[1].attribute[0].properties[4].value = test.indications;
+                if (testIndications) {
+                    var testIndicationsValue = _.find(testIndications.properties, function(p) {
+                        return p.name == 'value';
+                    }).value = _.find(view.instrumntalResearchs.models[i].get('indications').properties, function(p){
+                        return p.name == 'value';
+                    }).value;
+                }
 
                 //urgent - срочность
                 //test.setProperty('urgent', 'value', view.viewModel.get('urgent'));
@@ -388,7 +391,6 @@ define(function (require) {
 
                 view.tests.add(test);
             });
-
 
 
             this.saveButton(false, 'Сохраняем');

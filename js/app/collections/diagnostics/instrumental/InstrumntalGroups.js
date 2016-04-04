@@ -98,8 +98,7 @@ define(function(require) {
 				if (item.type === "Action" && item.group.length) {
 					node.indications = _.find(item.group[1].attribute, function(property) {
 						return property.code === "indications"
-					})
-
+					});
 				}
 
 				return node;
