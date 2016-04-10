@@ -4,7 +4,7 @@
 		ИБ:
 	</label>
 	<select class="Regular" name="event-filter" id="event-filter" style="width: 150px;" >
-		<%_.each(ibs, function(event){ %>
+		<%_.each(events, function(event){ %>
 		<option value="<%= event.id %>" <%if(event.id === selectedEventId){%><%}%>><%= event.externalId%></option>
 		<%})%>
         <option value="all">Все ИБ</option>
