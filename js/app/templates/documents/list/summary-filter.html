@@ -1,5 +1,6 @@
 
-<div style="display: inline-block;<%if (App.Router.currentPage != 'patientSummaryList') {%> display: none;<%}%>">
+<%if (App.Router.currentPage != 'patientSummaryList') {%>
+<div style="display: inline-block;">
 	<label>
 		ИБ:
 	</label>
@@ -10,7 +11,7 @@
         <option value="all">Все ИБ</option>
 	</select>
 </div>
-
+<%}%>
 
 <div  style="display: inline-block;">
 	<label>
