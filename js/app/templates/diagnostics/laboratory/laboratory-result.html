@@ -17,7 +17,9 @@
 
 <div class="">
     <h3 style="margin-bottom:.5em;"><%= data.name %>
-        <a class="edit-lab" style="float: right; cursor: pointer;"><i class="icon-pencil" title="Редактировать"></i></a>
+        <%if(LAB_EDIT){%>
+            <a class="edit-lab" style="float: right; cursor: pointer;"><i class="icon-pencil" title="Редактировать"></i></a>
+        <%}%>
     </h3>
 </div>
 

@@ -29,6 +29,8 @@ DOMAIN = '.fccho-moscow.ru';
 PHARM_EXPERT_API = 'http://umkb.socmedica.com/api/';
 PHARM_KEY        = '8ab87e9fe50512461b04d16e97b88bc9857387d32c9b2f9a577c2928';
 
+LAB_EDIT = false;
+
 // Временная зона по умолчанию
 moment.tz.setDefault("Europe/Moscow");
 
