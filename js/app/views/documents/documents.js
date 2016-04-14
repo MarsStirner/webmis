@@ -3313,7 +3313,11 @@ define(function (require) {
                 var filterCollection = this.listLayoutHistory.subViews['.documents-filters'].options.ibs;
                 var filterView = this.listLayoutHistory.subViews['.documents-filters'].$('#event-filter');
                 var currentAppeal = this.appealId;
-                filterCollection.fetch().done(function(){
+                filterCollection.fetch({
+                    data: {
+                        limit: 999
+                    }
+                }).done(function(){
                     filterCollection.each(function(appeal){
                         var opt = $('<option/>', {
                             value: appeal.get('id'),
