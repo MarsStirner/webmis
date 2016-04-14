@@ -2714,8 +2714,10 @@ define(function (require) {
 
         render: function (subViews) {
             return ListLayoutBase.prototype.render.call(this, _.extend({
-                ".documents-filters": new Documents.Views.List.Common.Filters({
-                    collection: this.documents
+                ".documents-filters": new Documents.Summary.Filters({
+                    collection: this.documents,
+                    events: this.options.events,
+                    selectedEventId: this.options.selectedEventId
                 })
             }, subViews));
         }
@@ -3278,7 +3280,7 @@ define(function (require) {
         toggleDividedState: function (enabled) {
             enabled = _.isUndefined(enabled) ? !this.dividedStateEnabled : enabled;
             this.dividedStateEnabled = enabled;
-
+            Cache.devidedState = enabled;
             if (enabled) {
                 this.$el.parent().css({
                     "margin-left": "0"
@@ -3305,6 +3307,26 @@ define(function (require) {
 
                 this.listLayoutHistory.$(".documents-controls").parent().remove();
                 this.listLayoutHistory.$(".documents-filters").removeClass("span6").addClass("span12");
+
+                console.log(this.listLayoutHistory.subViews['.documents-filters']);
+
+                var filterCollection = this.listLayoutHistory.subViews['.documents-filters'].options.ibs;
+                var filterView = this.listLayoutHistory.subViews['.documents-filters'].$('#event-filter');
+                var currentAppeal = this.appealId;
+                filterCollection.fetch().done(function(){
+                    filterCollection.each(function(appeal){
+                        var opt = $('<option/>', {
+                            value: appeal.get('id'),
+                            text: appeal.get('number')
+                        })
+                        filterView.append(opt);
+                    });
+                    filterView.val(currentAppeal);
+                    filterView.parent().css({
+                        'float': 'right',
+                        'margin-top': '-4.5em'
+                    }).show();
+                });
             } else {
                 if (this.listLayoutHistory) this.listLayoutHistory.tearDown(); //ViewBase.prototype.tearDown.call(this.listLayoutLight);
                 this.$el.parent().css({
@@ -7190,13 +7212,13 @@ define(function (require) {
         onChangeEvent: function (e) {
             var $target = $(e.target);
             if ($target.val() === 'all') {
-                appealId = this.options.events.first().id;
+                appealId = this.options.ibs.first().id;
             } else{
                 appealId = $target.val();
             }
             this.collection.appealId = $target.val();
 
-            var event = this.options.events.find(function (event) {
+            var event = this.options.ibs.find(function (event) {
                 return event.get('id') == appealId;
             });
             // console.log('selected event', event);
@@ -7257,9 +7279,14 @@ define(function (require) {
         },
         data: function () {
             var data = {};
-            data.events = this.options.events.toJSON();
+            if (!this.options.ibs) {
+                this.options.ibs = new App.Collections.PatientAppeals();
+                this.options.ibs.patient = {id: this.collection.patientId};
+                data.ibs = this.options.ibs ? this.options.ibs.toJSON() : {};
+            } else {
+                data.ibs = this.options.ibs.toJSON();
+            }
             data.selectedEventId = this.options.selectedEventId;
-
             return data;
         }
     });
@@ -7298,7 +7325,6 @@ define(function (require) {
         },
         render: function (subViews) {
             return LayoutBase.prototype.render.call(this, {
-
                 ".table-controls": new Documents.Views.List.Base.TableControls({
                     collection: this.selectedDocuments,
                     listItems: this.documents
@@ -7316,7 +7342,7 @@ define(function (require) {
                 }),
                 ".documents-filters": new Documents.Summary.Filters({
                     collection: this.documents,
-                    events: this.options.events,
+                    ibs: this.options.events,
                     selectedEventId: this.options.selectedEventId
                 }),
                 ".documents-paging": new Documents.Views.List.Base.Paging({
