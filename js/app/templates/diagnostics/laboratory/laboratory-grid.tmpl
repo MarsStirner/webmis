@@ -73,10 +73,12 @@
 			${assignPerson.name.raw}
 		{{/if}}
 	</td>
-		<td><i class="icon-pencil edit-direction"></i></td>
+	{{console.log(isEditable)}}
 	{{if !appealClosed && isEditable }}
+		<td><i class="icon-pencil edit-direction"></i></td>
 		<td><span class=" icon-remove cancel-direction"></span></td>
 	{{else}}
+		<td></td>
 		<td></td>
 	{{/if}}
 	<td>
