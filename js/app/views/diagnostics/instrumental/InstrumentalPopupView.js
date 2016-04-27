@@ -29,7 +29,6 @@ define(function (require) {
             'click #assigner-outer': 'openAssignerSelectPopup',
             'click #executor-outer': 'openExecutorSelectPopup',
             'click .document-type-filter-orgstruct': 'onDocumentTypeFilterOrgStructToggle',
-            'change input[name=urgent]': 'onChangeUrgentInput',
             'change #finance': 'onChangeFinanceInput',
             'change #createDate': 'onChangeCreateDatePicker',
             'change #createTime': 'onChangeCreateTimePicker',
@@ -182,18 +181,6 @@ define(function (require) {
                 newTest.plannedDatetime = date + ' ' + time;
 
                 self.testTemplate.push(newTest);
-
-                $('.cito').unbind('change');
-
-                $('.cito').on('change', function(e){
-                    var val = $(e.currentTarget).is(':checked');
-                    var name = $($(e.currentTarget).parent().parent().parent().find('td')[0]).text();
-                    var found = self.testTemplate.find(function(item){
-                            return item.get('name') == name;
-                    });
-                    found.setProperty('urgent', 'value', val);
-                });
-
             });
 
         },
@@ -250,11 +237,6 @@ define(function (require) {
         onChangeCreateTimePicker: function () {
             var createTime = this.ui.$createTime.val();
             this.viewModel.set('createTime', createTime);
-        },
-
-        onChangeUrgentInput: function () {
-            var urgent = this.ui.$urgent.prop('checked');
-            this.viewModel.set('urgent', urgent);
         },
 
         onChangeFinanceInput: function () {
@@ -378,7 +360,7 @@ define(function (require) {
                 }
 
                 //urgent - срочность
-                //test.setProperty('urgent', 'value', view.viewModel.get('urgent'));
+                test.setProperty('urgent', 'value', view.instrumntalResearchs.models[i].get('urgent'));
 
                 //идентификатор направительного диагноза
                 var mkbId = view.viewModel.get('mkbId');
@@ -442,7 +424,6 @@ define(function (require) {
             view.ui.$saveButton = view.$el.closest('.ui-dialog').find('.save');
             view.ui.$assigner = view.$('#assigner');
             view.ui.$executor = view.$('#executor');
-            view.ui.$urgent = view.$('input[name=urgent]');
             view.ui.$finance = view.$('#finance');
             view.ui.$mbkCode = view.$('input[name="diagnosis[mkb][code]"]');
             view.ui.$mbkDiagnosis = view.$('input[name="diagnosis[mkb][diagnosis]"]');

@@ -10,7 +10,7 @@ define(function(require) {
         },
         onChange: function(e) {
             $target = this.$(e.target);
-            this.$el.find('input').not($target).prop('checked', false);
+            // this.$el.find('input').not($target).prop('checked', false);
             this.$el.find('.selected').removeClass('selected');
             //$target.parents('.item').addClass('selected');
         },
@@ -99,6 +99,17 @@ define(function(require) {
                     })
                     modelValueField.value = $(this).val();
                 });
+
+
+                $(renderedEl).on('change', '.cito', function(e){
+                    var val = $(e.currentTarget).is(':checked');
+                    var cid = $(e.currentTarget).closest('.item').data('cid');
+                    var found = view.collection.find(function(model){
+                        return model.cid == cid;
+                    });
+                    found.set('urgent', val);
+                });
+
 
                 view.$researchsList.append(renderedEl);
             }, this);
