@@ -41,6 +41,15 @@ define(function (require) {
                 }
             });
 
+            this.diags = new App.Collections.LaboratoryDiags();
+            this.diags.appealId = this.options.appealId;
+            this.diags.setParams({
+                limit: 999,
+                sortingField: 'plannedEndDate',
+                sortingMethod: 'desc',
+                page: 1
+            });
+            this.diags.fetch();
 
         },
 
@@ -73,7 +82,9 @@ define(function (require) {
             "click .extra": "extra",
             // "click .print": "print",
             "click .all": "openLabs",
-            "click .edit-lab": "editLab"
+            "click .edit-lab": "editLab",
+            "click .prev-document": "onPrevClick",
+            "click .next-document": "onNextClick"
         },
 
         editLab: function(){
@@ -86,6 +97,30 @@ define(function (require) {
                 }
             });
             App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-laboratory/" + labId + "/edit");
+        },
+
+        onPrevClick: function(){
+            var self = this;
+            var found = this.diags.find(function(item){
+                return item.get('id') === self.result.get('id');
+            });
+            if (!found) {
+                this.navigate(this.diags.first().get('id'))
+            } else{
+                this.navigate( this.diags.at(this.diags.indexOf(found) -1) ?  (this.diags.at(this.diags.indexOf(found) -1)).get('id') : this.diags.first().get('id'));
+            }
+        },
+
+        onNextClick: function(){
+            var self = this;
+            var found = this.diags.find(function(item){
+                return item.get('id') === self.result.get('id');
+            });
+            if (!found) {
+                this.navigate(this.diags.first().get('id'))
+            } else{
+                this.navigate((this.diags.at(this.diags.indexOf(found) +1)).get('id'));
+            }
         },
 
         printOptions: function () {
