@@ -21,6 +21,7 @@ App.Views.Menu = View.extend({
 	items: [],
 
 	changePage: function(event) {
+		App.Router.paginatorPage = 1;
 		if (!this.allowLinkExec) {
 			event.preventDefault();
 			// Передадим вместе с событием, текущий name, чтобы другие вью, которые подписаны на событие, знали,

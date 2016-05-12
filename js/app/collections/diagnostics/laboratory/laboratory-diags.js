@@ -6,7 +6,7 @@ define(["models/diagnostics/laboratory/laboratory-diag"], function (LabDiagnosti
 	App.Collections.LaboratoryDiags = Collection.extend({
 		model: App.Models.LaboratoryDiag,
 		pageFilter: function(){
-			if (App.Router.paginatorPage && App.Router.paginatorPage > 1 && !this._params.page) {
+			if (App.Router.paginatorPage && App.Router.paginatorPage > 1) {
 				return '?page='+App.Router.paginatorPage;
 			} else {
 				return '';
