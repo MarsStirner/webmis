@@ -290,6 +290,7 @@ define(function(require) {
 				this.breadcrumbs.setStructure([
 					App.Router.cachedBreadcrumbs.PATIENTS,
 					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, this.appeal.get("patient").toJSON()),
+					App.Router.compile(App.Router.cachedBreadcrumbs.APPEAL, this.appeal.toJSON()),
 					this.breadCrumbsMap[this.page]
 				]);
 
