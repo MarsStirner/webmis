@@ -144,8 +144,9 @@ define(function(require) {
 			"card": App.Router.cachedBreadcrumbs.APPEAL,
 			"moves": App.Router.cachedBreadcrumbs.MOVES,
 			"hospitalbed": App.Router.cachedBreadcrumbs.HOSPITALBED,
-			"monitoring": App.Router.cachedBreadcrumbs.APPEAL,
-			"documents": App.Router.cachedBreadcrumbs.APPEAL
+			"monitoring": App.Router.cachedBreadcrumbs.MONITORING,
+			"documents": App.Router.cachedBreadcrumbs.DOCUMENTS,
+			"therapy": App.Router.cachedBreadcrumbs.THERAPY
 		},
 
 		initialize: function() {
