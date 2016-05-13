@@ -1006,6 +1006,14 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		THERAPY: {
 			title: "Лечение",
 			uri: "/appeals/:id/therapy"
+		},
+		CARD: {
+			title: "Титульный лист ИБ",
+			uri: "/appeals/:id/card"
+		},
+		PRESCRIPTIONS: {
+			title: "Назначения",
+			uri: "/appeals/:id/prescriptions"
 		}
 	};
 	App.Router.compile = function(link, options) {

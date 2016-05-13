@@ -141,12 +141,13 @@ define(function(require) {
 			"examinations": App.Router.cachedBreadcrumbs.EXAMS,
 			"summary": App.Router.cachedBreadcrumbs.SUMMARY,
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
-			"card": App.Router.cachedBreadcrumbs.APPEAL,
+			"card": App.Router.cachedBreadcrumbs.CARD,
 			"moves": App.Router.cachedBreadcrumbs.MOVES,
 			"hospitalbed": App.Router.cachedBreadcrumbs.HOSPITALBED,
 			"monitoring": App.Router.cachedBreadcrumbs.MONITORING,
 			"documents": App.Router.cachedBreadcrumbs.DOCUMENTS,
-			"therapy": App.Router.cachedBreadcrumbs.THERAPY
+			"therapy": App.Router.cachedBreadcrumbs.THERAPY,
+			"prescriptions": App.Router.cachedBreadcrumbs.PRESCRIPTIONS
 		},
 
 		initialize: function() {
@@ -287,6 +288,7 @@ define(function(require) {
 		},
 
 		setBreadcrumbsStructure: function() {
+			console.log(this.page, this.breadCrumbsMap);
 			if (this.breadCrumbsMap[this.page]) {
 				this.breadcrumbs.setStructure([
 					App.Router.cachedBreadcrumbs.PATIENTS,
