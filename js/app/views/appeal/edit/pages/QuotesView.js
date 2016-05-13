@@ -243,7 +243,7 @@ define(function(require) {
 			} else {
 				this.treatment.reset();
 			}
-		}
+		},
 
 		////////////////////////////////////////////////
 
