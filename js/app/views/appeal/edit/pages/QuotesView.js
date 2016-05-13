@@ -230,18 +230,20 @@ define(function(require) {
 		},
 
 		onChangePacientModelId: function(model, pacientModelId) {
-			if (pacientModelId != '') {
+		var quotaTypeId = this.vmpTalon.get('quotaType_id');
+			if (pacientModelId != '') {			
 				//фильтрация справочника "метод лечения" по "модели пациента"
 				this.treatment.fetch({
 					data: {
-						pacientModelId: pacientModelId
+						pacientModelId: pacientModelId,
+						quotaTypeId: quotaTypeId
 					}
 				});
 
 			} else {
 				this.treatment.reset();
 			}
-		},
+		}
 
 		////////////////////////////////////////////////
 
