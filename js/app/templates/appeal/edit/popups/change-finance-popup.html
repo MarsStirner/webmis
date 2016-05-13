@@ -1,0 +1,5 @@
+<select id="appealFinanceSelect" class="Regular" style="width: 200px;">
+    <% for(var type in data.financeTypes) { %>
+        <option <%=  data.financeTypes[type].value ==  data.finance? 'selected' : '' %> value="<%=  data.financeTypes[type].id %>"><%=  data.financeTypes[type].value %></option>
+    <% } %>
+</select>

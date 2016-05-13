@@ -56,8 +56,14 @@ define(function (require) {
         },
 
         initialize: function () {
+            console.log(this.options);
             this.model = this.options.appeal;
-            this.model.on("change", this.render, this);
+            var self = this;
+            if (this.model.get('hospitalizationWith').first()) {
+              var relId =  this.model.get('hospitalizationWith').first().get('relative').get('id');
+              this.relative = new App.Models.Patient({id: relId});
+            }
+            self.model.on("change", this.render, this);
         },
 
         printAppeal: function () {
@@ -189,6 +195,24 @@ define(function (require) {
                 });
         },
 
+        onSickLeaveEdit: function(item) {
+            if ($(item).hasClass( "sick-leave-data-date" )) {
+                if ($(item).val()){
+                    var itemValue = moment($(item).val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+                } else {
+                    itemValue = null;
+                }
+            } else {
+                var itemValue = !!$(item).attr('checked');
+            }
+            this.model.get('tempInvalid')[$(item).attr('id').split('-')[1]] = itemValue;
+        },
+
+        sickLeaveSave: function() {
+            this.model.sync('update', this.model, {});
+            $("#sickLeaveSave").hide();
+        },
+
         /*showPrint: function (options) {
 			var printModel;
 			if (options.data === "appeal") {
@@ -213,6 +237,7 @@ define(function (require) {
 		},*/
 
         render: function () {
+            var self = this;
             this.initWithDictionaries([{
                 name: "hospitalizationPointTypes",
                 id: 19,
@@ -237,12 +262,54 @@ define(function (require) {
                     closeDate = this.model.get('closeDateTime');
                 }
 
-                this.$el.html($.tmpl(cardTemplate, _.extend({
-                    closeDate: closeDate,
-                    isClosed: this.model.get('closed'),
-                    allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
-                    dicts: dicts
-                }, this.model.toJSON())));
+
+
+                if (self.relative) {
+                    self.relative.fetch().done(function(){
+                        self.$el.html($.tmpl(cardTemplate, _.extend({
+                            closeDate: closeDate,
+                            isClosed: self.model.get('closed'),
+                            allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
+                            dicts: dicts,
+                            sickLeave: self.model.get('tempInvalid'),
+                            isExecPerson: self.model.get('execPerson').id == Core.Cookies.get('userId'),
+                            phone: self.relative.get('phones').first(),
+                            documentNumber: self.relative.get('idCards').models[0]
+                        }, self.model.toJSON())));
+                    });
+                } else {
+                    self.$el.html($.tmpl(cardTemplate, _.extend({
+                        closeDate: closeDate,
+                        isClosed: self.model.get('closed'),
+                        allowEditAppeal: Core.Data.currentRole() === ROLES.NURSE_RECEPTIONIST,
+                        dicts: dicts,
+                        sickLeave: self.model.get('tempInvalid'),
+                        isExecPerson: self.model.get('execPerson').id == Core.Cookies.get('userId'),
+                        phone: '',
+                        documentNumber: ''
+                    }, self.model.toJSON())));
+                }
+
+
+
+
+
+                this.$(".sick-leave-data-date").datepicker();
+                this.$(".sick-leave-data").on('change', function(){
+                    self.onSickLeaveEdit(this);
+                    $("#sickLeaveSave").show();
+                });
+                this.$("#sickLeaveSave").on('click', function(){
+                    self.sickLeaveSave();
+                });
+
+                this.$(".clearSickLeaveDate").on('click', function(){
+                    var field = $("#sickLeave-"+$(this).data('clear'));
+                    field.val('');
+                    self.onSickLeaveEdit(field);
+                    $("#sickLeaveSave").show();
+                });
+
                 //}
 
                 /*this.separateRoles(ROLES.DOCTOR_DEPARTMENT, function () {

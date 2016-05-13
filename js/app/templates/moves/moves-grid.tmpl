@@ -91,10 +91,10 @@
 		${unit}
 	</td>
 	<td>
-		{{formatDateTime admission}}
+		${moment(admission) ? moment(admission).format('DD.MM.YYYY HH:mm') : ''}
 	</td>
 	<td>
-		{{formatDateTime leave}}
+		${moment(leave) ? moment(leave).format('DD.MM.YYYY HH:mm') : ''}
 	</td>
 	<td>
 		${days}
@@ -117,10 +117,10 @@
 		${unit}
 	</td>
 	<td>
-		{{formatDateTime admission}}
+		${moment(admission) ? moment(admission).format('DD.MM.YYYY HH:mm') : ''}
 	</td>
 	<td>
-		{{formatDateTime leave}}
+		${moment(leave) ? moment(leave).format('DD.MM.YYYY HH:mm') : ''}
 	</td>
 	<td>
 		${days}
@@ -141,10 +141,10 @@
 		${unit}
 	</td>
 	<td>
-		{{formatDateTime admission}}
+		${moment(admission) ? moment(admission).format('DD.MM.YYYY HH:mm') : ''}
 	</td>
 	<td>
-		{{formatDateTime leave}}
+		${moment(leave) ? moment(leave).format('DD.MM.YYYY HH:mm') : ''}
 	</td>
 	<td>
 		${days}
@@ -166,10 +166,10 @@
 		${unit}
 	</td>
 	<td>
-		{{formatDateTime admission}}
+		${moment(admission) ? moment(admission).format('DD.MM.YYYY HH:mm') : ''}
 	</td>
 	<td class="last-move-leave-col">
-		{{formatDateTime leave}}
+		${moment(leave) ? moment(leave).format('DD.MM.YYYY HH:mm') : ''}
 	</td>
 	<td>
 		${days}

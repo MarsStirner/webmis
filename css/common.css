@@ -2157,7 +2157,8 @@ table.allborders td, table.allborders th {
 
 /* line 345, ../sass/common.scss */
 .table-widget td, .table-widget th {
-  border: 1px solid #bbbbbb;
+  border-bottom: 1px solid #dadada;
   padding: 0.3em;
   color: #444;
+  font-size: .9em;
 }

@@ -1,0 +1,45 @@
+Протокол ALL-MB 2015
+
+Папка А
+Группа А_Индукция_постоянный Дексаметазон (Induction_А_constant_new)
+Группа А_Индукция_интермиттирующий Дексаметазон (Induction_А_interm)
+Группа А_Консолидация I (Consolidation_1_А)
+Группа А_Консолидация II (Consolidation_2_А)
+Группа А_Консолидация III (Consolidation_3_А)
+
+Папка CNS3
+Группа CNS3_Индукция (CNS3_Induction_new)
+Группа CNS3_Консолидация I (CNS3_1_CONSOLIDATION)
+Группа CNS3_Консолидация II (CNS3_2CONSOLIDATION)
+Группа CNS3_Консолидация III (CNS3_3CONSOLIDATION)
+
+Папка В
+Группа В_Индукция_постоянный Дексаметазон (Induction_B_constant_new)
+Группа В_Индукция_интермиттирующий Дексаметазон (Induction_B_intermittent)
+Группа В_Консолидация I (Consolidation_1_В)
+Группа В_Консолидация II_более 10 лет (Consolidation_2В_больше10)
+Группа В_Консолидация II_менее 10 лет (Consolidation_2_Вменьше10)
+Группа В_Консолидация III_более 10 лет (Consolidation_3Вбольше10)
+Группа В_Консолидация III_менее 10 лет (Consolidation_3_Вменьше10)
+
+Папка С
+Группа С_Индукция_Дексаметазон (Induction_C_DEXA_new)
+Группа С_Индукция_Метипред (Induction_C_MePred_new)
+Группа С_Консолидация I_Дексаметазон (Consolidation_1_C_DEXA)
+Группа С_Консолидация I_Метипред (Consolidation_1_C_MePred)
+Группа С_Консолидация II_Дексаметазон (Consolidation_2_C_DEXA)
+Группа С_Консолидация II_Метипред (Consolidation_2_C_MePred)
+Группа С_Консолидация III_Дексаметазон (Consolidation_3_C_DEXA)
+Группа С_Консолидация III_Метипред (Consolidation_3_C_MePred)
+Группа С_Консолидация IV_Дексаметазон (Consolidation_4_C_DEXA)
+Группа С_Консолидация IV_Метипред (Consolidation_4_C_MePred)
+Группа С_Консолидация V_Дексаметазон (Consolidation_5_C_DEXA)
+Группа С_Консолидация V_Метипред (Consolidation_5_C_MePred)
+Группа С_Консолидация VI_Дексаметазон (Consolidation_6_C_DEXA)
+Группа С_Консолидация VI_Метипред (Consolidation_6_C_MePred)
+
+Папка CNS3_Group C
+Группа CNS3_C_Индукция (CNS3_Induction_new)
+Группа CNS3_C_Консолидация I (CNS3_1_CONSOLIDATION)
+Группа CNS3_C_Консолидация II (CNS3_2CONSOLIDATION)
+Группа CNS3_C_Консолидация III (CNS3_3CONSOLIDATION)

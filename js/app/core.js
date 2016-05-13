@@ -7,7 +7,7 @@ Core = {
 
 			for (var i = 0; i < pairs.length; i++) {
 				pair = pairs[i].split("=");
-				cookies[pair[0]] = pair[1];
+				cookies[pair[0]] = unescape(pair[1]);
 			}
 			return cookies;
 		},
@@ -30,11 +30,12 @@ Core = {
 			return cookies[name];
 		},
 
-		set: function (name, value, time) {
+		set: function (name, value, time, domain) {
 			var expire = new Date();
+			var domainName = domain ? ';domain='+domain : '';
 			time = time ? time : 360000024;
 			expire.setTime(( new Date() ).getTime() + time);
-			document.cookie = name + "=" + value + ";expires=" + expire.toGMTString() + "; path=/";
+			document.cookie = name + "=" +  escape(value) + ";expires=" + expire.toGMTString() + domainName + "; path=/";
 		}
 	},
 
@@ -183,7 +184,7 @@ Core = {
 			return result
 		}
 	},
-	
+
 	Numbers: {
 
 		/**
@@ -352,7 +353,7 @@ Core = {
 				}).join("") :
 				(listChars[string] || string);
 		},
-		
+
 		endsWith: function (str, chr) {
 			return str.length ? str[str.length - 1] === chr : false;
 		},
@@ -483,9 +484,11 @@ Core = {
 			return date.date.getFullYear() - 1970;
 		},
 
-		getAgeString: function (dateString) {
-			var now = moment();
-			var birthDate = moment(parseInt(dateString));
+		getAgeString: function (dateString, notNow) {
+			var now = notNow ? moment(notNow) : moment();
+			var birth = moment.utc(parseInt(dateString)).add(3, 'h').format('X');
+			var birthDate = moment(birth*1000);
+			var birthString = birthDate.format('DD.MM.YYYY');
 
 			var years = now.diff(birthDate, 'year');
 			var months = now.diff(birthDate, 'month');
@@ -495,15 +498,15 @@ Core = {
 			if (years > 0) {
 				if (years < 3) {
 					return years + " " + Core.Language.plural(years, "год", "года", "лет") + " и " +
-						(months - years * 12) + " " + Core.Language.plural((months - years * 12), "месяц", "месяца", "месяцев");
+						(months - years * 12) + " " + Core.Language.plural((months - years * 12), "месяц", "месяца", "месяцев") + ", " + birthString;
 				} else {
-					return years + " " + Core.Language.plural(years, "год", "года", "лет");
+					return years + " " + Core.Language.plural(years, "год", "года", "лет") + ", " + birthString;
 				}
 			} else {
 				if (months < 1) {
-					return days + " " + Core.Language.plural(days, "день", "дня", "дней");
+					return days + " " + Core.Language.plural(days, "день", "дня", "дней") + ", " + birthString;
 				} else {
-					return months + " " + Core.Language.plural(months, "месяц", "месяца", "месяцев");
+					return months + " " + Core.Language.plural(months, "месяц", "месяца", "месяцев") + ", " + birthString;
 				}
 			}
 		},

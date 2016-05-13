@@ -39,6 +39,7 @@ define(function(require) {
 				status_0: countByStatus(0),
 				status_1: countByStatus(1),
 				status_2: countByStatus(2),
+				status_3: countByStatus(3),
 				all: collection.length
 			};
 
@@ -59,7 +60,8 @@ define(function(require) {
 			collection.selected = {
 				status_0: filterSelectedByStatus(0),
 				status_1: filterSelectedByStatus(1),
-				status_2: filterSelectedByStatus(2)
+				status_2: filterSelectedByStatus(2),
+				status_3: filterSelectedByStatus(3)
 			};
 
 
@@ -123,9 +125,9 @@ define(function(require) {
 				if (labTest.department && labTest.department.name) {
 					orgStructure = labTest.department.name;
 				}
-				if (labTest.bed && labTest.bed.code) {
-					orgStructure = orgStructure + '/' + labTest.bed.code;
-				}
+				// if (labTest.bed && labTest.bed.code) {
+				// 	orgStructure = orgStructure + '/' + labTest.bed.code;
+				// }
 
 				var tissueTypeName = '';
 				if (labTest.biomaterial && labTest.biomaterial.tissueType && labTest.biomaterial.tissueType.name) {
@@ -137,10 +139,9 @@ define(function(require) {
 					tubeTypeName = labTest.tubeType.name;
 				}
 
-
 				workList.push({
 					'index': index + 1,
-					'jobTicketDate': labTest.jobTicket.date,
+					'jobTicketDate': moment(labTest.jobTicket.date).format('DD.MM.YYYY H:mm'),
 					'orgStructure': orgStructure,
 					'patientName': labTest.patient.name,
 					'patientSex': labTest.patient.sexShortName,
@@ -150,7 +151,12 @@ define(function(require) {
 					'tubeTypeName': tubeTypeName,
 					'jobTicketLabel': labTest.jobTicket.label,
 					'jobTicketNote': labTest.jobTicket.note,
-					'takenTissueJournalId': labTest.takenTissueJournal
+					'takenTissueJournalId': labTest.takenTissueJournal,
+					'appealNumber': labTest.appealNumber,
+					'clientId': labTest.patient.id,
+					'labName': labTest.labs[0],
+					'assigner': labTest.assigner.name.last + ' ' + labTest.assigner.name.first[0] + '.' + labTest.assigner.name.middle[0] + '.',
+					'urgent': labTest.urgent ? "СРОЧНО" : ""
 				});
 			});
 
@@ -169,7 +175,7 @@ define(function(require) {
 			_.each(labTests, function(labTest) {
 
 				barcodes.push({
-					datetime: labTest.jobTicket.date,
+					datetime: moment(labTest.jobTicket.date).valueOf(),
 					barcode: labTest.takenTissueJournal,
 					name: labTest.patient.name,
 					appealNumber: labTest.appealNumber
@@ -217,6 +223,7 @@ define(function(require) {
 					action.appealNumber = model.appealNumber;
 					action.bed = model.bed;
 					action.department = model.department;
+					action.assigner = model.assigner;
 					action.jobTicket = {
 						'id': model.id,
 						'date': model.date,
@@ -245,6 +252,9 @@ define(function(require) {
 				}
 				if (model.status == 2) {
 					model.statusName = 'закончено';
+				}
+				if (model.status == 3) {
+					model.statusName = 'отправка';
 				}
 
 				model.selected = false;

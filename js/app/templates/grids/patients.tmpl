@@ -85,7 +85,7 @@
 	</td>
 	<td>
 		{{if birthDate}}
-			{{formatDate birthDate}}
+			${moment(birthDate).format('DD.MM.YYYY')}
 		{{else}}
 			-
 		{{/if}}

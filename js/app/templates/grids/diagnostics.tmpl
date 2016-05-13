@@ -83,7 +83,7 @@
 <script id="consult-diagnostic-grid-row" type="text/x-jquery-tmpl">
 	<td>
 		{{if diagnosticDate}}
-		{{formatDate diagnosticDate}}
+		${moment(diagnosticDate).format('DD.MM.YYYY')}
 		{{else}}
 		-
 		{{/if}}

@@ -93,14 +93,8 @@ define(function(require) {
 			if(!rawDate) return;
 
 			var rawTime = this.ui.$plannedTimepicker.val();
-			//console.log(rawDate, rawTime)
-
 
 			var date = moment(rawDate, 'DD.MM.YYYY').format('YYYY-MM-DD');
-			// if(!rawTime){
-			// 	console.log(date.)
-
-			// }
 			rawTime = rawTime ? rawTime : '00:00';
 
 

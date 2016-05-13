@@ -13,7 +13,6 @@ define(function (require) {
         initialize: function (opt) {
             var self = this;
             this.options.title = 'Редактирование назначения';
-            //console.log('init new prescription view', this);
             this.prescription = opt.prescription;
             this.administration = new AdministrationMethod();
             self.administration.fetch({
@@ -127,7 +126,8 @@ define(function (require) {
                 .html(JSON.stringify(this.prescription.toJSON(), null, 4));
         },
         events: {
-            'click .add-drug': 'onClickAddDrug'
+            'click .add-drug': 'onClickAddDrug',
+            'click #cancelIntervals': 'onCancelIntervalsClick'
         },
         onSave: function () {
             //console.log('onClickSave');
@@ -162,10 +162,15 @@ define(function (require) {
             popup.open();
         },
 
+        onCancelIntervalsClick: function () {
+            this.close();
+            pubsub.trigger('prescription:saved', self.prescription);
+        },
+
         data: function () {
             return {
-                administration: this.administration.toJSON(),
-                moa: this.prescription.get('moa')
+                prescription: this.prescription.toJSON(),
+                administration: this.administration.toJSON()
             };
         },
 
@@ -173,27 +178,109 @@ define(function (require) {
             var self = this;
             BaseView.prototype.render.call(self);
 
+            _.each(self.$el.find('.prescriptionInterval'), function(interval){
+                var intervalId = $(interval).attr('id');
+                var changedInterval = self.prescription.get('assigmentIntervals').models[intervalId];
+                $(interval).on('change', 'input, select', function(e){
+                    var changedIntervalRow = $('.prescriptionInterval[id="'+intervalId+'"]');
+                    var beginDateTime = moment($(changedIntervalRow).find('.intervalBeginDate').val()+' '+$(changedIntervalRow).find('.intervalBeginTime').val(), 'DD.MM.YYYY HH:mm').valueOf();
+                    var endDateTime = moment($(changedIntervalRow).find('.intervalEndDate').val()+' '+$(changedIntervalRow).find('.intervalEndTime').val(), 'DD.MM.YYYY HH:mm').valueOf();
+                    if (beginDateTime > 0) {
+                        changedInterval.set({
+                            'beginDateTime': beginDateTime,
+                            'note': $(changedIntervalRow).find('.intervalNote').val()
+                        });
+                    }
+                    if (endDateTime > 0) {
+                        changedInterval.set({
+                            'endDateTime': endDateTime ? endDateTime : null
+                        });
+                    }
+                    if ($.isArray(changedInterval.get('drugs'))) {
+                        changedInterval.get('drugs')[0].dose = $(changedIntervalRow).find('.intervalDose').val();
+                        changedInterval.get('drugs')[0].moa = $(changedIntervalRow).find('.intervalMoa').val();
+                        changedInterval.get('drugs')[0].voa = $(changedIntervalRow).find('.intervalVoa').val();
+                    } else {
+                        changedInterval.get('drugs').first().set({
+                            'dose': $(changedIntervalRow).find('.intervalDose').val(),
+                            'moa': $(changedIntervalRow).find('.intervalMoa').val(),
+                            'voa': $(changedIntervalRow).find('.intervalVoa').val()
+                        });
+                    }
+
+
+                })
+                $(interval).on('click', '.icon-remove', function(e){
+                    self.prescription.get('assigmentIntervals').remove(self.prescription.get('assigmentIntervals').models[intervalId]);
+                });
+                $(interval).on('click', '.intervalMoa', function(e){
+                    if ($(e.target).val()) {
+                        if ($.isArray(changedInterval.get('drugs'))) {
+                            changedInterval.get('drugs')[0].moa = parseInt($(e.target).val());
+                        } else {
+                            changedInterval.get('drugs').first().set({
+                                'moa': parseInt($(e.target).val())
+                            });
+                        }
+                    }
+                });
+            });
+
             function datetimeRange(input) {
                 var id = input.id.split('-');
                 var cid = id[0];
                 var type = id[1];
-
-                return {
-                    minDatetime: (type == 'to' ? moment($('#' + cid + '-from').datetimeEntry('getDatetime')).add('m', 1).toDate() : null),
-                    maxDatetime: (type == 'from' ? moment($('#' + cid + '-to').datetimeEntry('getDatetime')).subtract('m', 1).toDate() : null)
+                var res = {
+                    minDatetime: null,
+                    maxDatetime: null
                 };
+
+                if (type == 'to') {
+                    res.minDatetime = moment($('#'+cid+'-from').datetimeEntry('getDatetime')).add('m',1).toDate();
+                }
+
+                if (type == 'from') {
+                    if ($('#'+cid+'-to').datetimeEntry('getDatetime')){
+                        res.maxDatetime = moment($('#'+cid+'-to').datetimeEntry('getDatetime')).subtract('m',1).toDate();
+                    }
+                }
+
+                return res;
             }
 
             if (this.prescription.get('assigmentIntervals')) {
                 this.prescription.get('assigmentIntervals')
                     .on('add remove', function () {
                         setTimeout(function () {
-                            $('.datetime_entry')
-                                .datetimeEntry({
-                                    datetimeFormat: 'D.O.Y H:M',
-                                    beforeShow: datetimeRange
-                                });
+                            $('.date_entry').datepicker();
+                            $('.time_entry').timepicker();
                         }, 100);
+
+                        var drugTab = $('#drugs').html();
+
+                        self.render();
+
+                        if(this.prescription.get('assigmentIntervals').length > 0) {
+                            var doses = [];
+                            var units = [];
+
+                            $('.add-drug').addClass('ui-state-disabled');
+
+                            $.each($('#drugs').find('.dose'), function(d, dose){
+                                doses.push($(dose).val());
+                            });
+                            $('#drugs').html(drugTab).find('.dose').attr('disabled', 'disabled');
+                            $.each($('#drugs').find('.select2-container.units span'), function(u, unit){
+                                units.push(unit.innerHTML);
+                            });
+                            $.each($('#drugs').find('.dose'), function(d, dose){
+                                $(dose).parent().text(doses[d]);
+                            });
+                            $.each($('#drugs').find('.units'), function(u, unit){
+                                $(unit).parent().text(units[u]);
+                            });
+                            $('#drugs').find('.icon-remove').hide();
+                        }
 
                     }, this);
             }
@@ -201,11 +288,8 @@ define(function (require) {
             if (this.prescription.get('drugs')) {
                 this.prescription.get('drugs')
                     .on('add remove', function () {
-                        console.log('add drug', arguments)
                         setTimeout(function () {
                             self.$el.find('select').select2();
-
-
                         }, 100);
                     });
 
@@ -247,16 +331,26 @@ define(function (require) {
                 drug.trigger('change:unit');
             });
 
-            $('.datetime_entry')
-                .datetimeEntry({
-                    datetimeFormat: 'D.O.Y H:M',
-                    beforeShow: datetimeRange
-                });
+            $('.date_entry').datepicker();
+            $('.time_entry').timepicker();
 
 
             this.$el.find('button').button();
             this.$el.find('select').select2();
             this.validateForm();
+
+            _.each(self.$el.find('option'), function(option){
+                var val = $(option).text();
+                if (val.length > 14) {
+                    $(option).text(val.substring(0, 14)+'...');
+                }
+            });
+            _.each(self.$el.find('span'), function(span){
+                var val = $(span).text();
+                if (val.length > 14) {
+                    $(span).text(val.substring(0, 14)+'...');
+                }
+            });
 
         }
 

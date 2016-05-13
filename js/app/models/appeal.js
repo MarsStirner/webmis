@@ -272,6 +272,16 @@ define([
 		]
 	});
 
+	var Payer = Model.extend({
+		defaults: {
+		}
+	});
+
+	var PaymentContract = Model.extend({
+		defaults: {
+		}
+	});
+
 	App.Models.Appeal = Model.extend({
 		idAttribute: "id",
 
@@ -363,7 +373,9 @@ define([
 			},
 			orgStructStay: null,
 			orgStructDirectedFrom: null,
-            reopening: null
+            reopening: null,
+			payer: {},
+			paymentContract: {}
 		},
 		relations: [
 			{
@@ -473,6 +485,16 @@ define([
 				type: Backbone.HasOne,
 				key: "contract",
 				relatedModel: Contract
+			},
+			{
+				type: Backbone.HasOne,
+				key: "payer",
+				relatedModel: Payer
+			},
+			{
+				type: Backbone.HasOne,
+				key: "paymentContract",
+				relatedModel: PaymentContract
 			}
 		],
 

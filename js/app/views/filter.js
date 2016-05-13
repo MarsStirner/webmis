@@ -26,7 +26,7 @@ App.Views.Filter = View.extend({
 	onInputChange: function (event) {
 		this.lastChangedInput = $(event.currentTarget);
 
-		if (!$(event.currentTarget).hasClass("NewLineAllowed"))
+		if (!$(event.currentTarget).hasClass("NewLineAllowed") && !this.options.isAutoloadDisabled)
 			this.refresh($(event.currentTarget));
 	},
 

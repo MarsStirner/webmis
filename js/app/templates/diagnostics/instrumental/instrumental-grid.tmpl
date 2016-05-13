@@ -4,19 +4,16 @@
 		<!--<tr class="EditTh">-->
 		<tr>
 			<th>
-				<a class="Actions SortCol" data-field="plannedEndDate"><span>Планируемая дата </span></a>
+				<a class="Actions SortCol" data-field="plannedEndDate"><span>Дата и время</span></a>
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="status"><span>Статус</span></a>
+				<a class="Actions SortCol" data-field="diagnosticName"><span>Название</span></a>
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="diagnosticName"><span>Название исследования</span></a>
+				<a class="Actions SortCol" data-field="assignPerson"><span>Назначивший врач</span></a>
 			</th>
 			<th>
-				<a class="Actions SortCol" data-field="cito"><span>Cito</span></a>
-			</th>
-			<th>
-				<a class="Actions SortCol" data-field="assignPerson"><span>Направивший врач</span></a>
+				<a class="Actions SortCol" data-field="execPerson"><span>Исполнитель</span></a>
 			</th>
 			<th colspan="2">
 				<!--Действия-->
@@ -33,28 +30,19 @@
 <script id="inst-diagnostic-grid-row" type="text/x-jquery-tmpl">
 	<td>
 		{{if plannedEndDate}}
-		{{formatDateTime plannedEndDate}}
+			${moment(plannedEndDate).format('DD.MM.YYYY HH:mm')}
 		{{else}}
 		-
-		{{/if}}
-	</td>
-		<td {{if status}} class="instrumental-status-${status.id}"{{/if}}>
-		{{if status && status.name}}
-			${status.name}
-		{{else}}
-			-
 		{{/if}}
 	</td>
 	<td>
 		${diagnosticName.name}
 	</td>
 	<td>
-		{{if cito}}
-		<span class="Privilege">Срочно</span>
-		{{/if}}
+		${assignPerson.name.raw}
 	</td>
 	<td>
-		${assignPerson.name.raw}
+		${execPerson.name.raw}
 	</td>
 
 	{{if !appealClosed && isEditable}}

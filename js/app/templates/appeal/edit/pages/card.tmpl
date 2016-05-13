@@ -22,7 +22,7 @@
 			<td>Дата и время поступления</td>
 			<td>
 				{{if rangeAppealDateTime.start && rangeAppealDateTime.start > 0}}
-					{{formatDateTime rangeAppealDateTime.start}}
+					${moment(rangeAppealDateTime.start).format('DD.MM.YYYY HH:mm')}
 				{{else}}
 					-
 				{{/if}}
@@ -32,7 +32,7 @@
 			<td> Дата и время выписки</td>
 			<td>
 				{{if closeDate && closeDate > 0}}
-					{{formatDateTime closeDate}}
+					${moment(closeDate).format('DD.MM.YYYY HH:mm')}
 				{{else}}
 					-
 				{{/if}}
@@ -102,10 +102,71 @@
 				{{if appealType && appealType.finance && appealType.finance.name}}
 					${appealType.finance.name}
 					{{if contract && contract.number}}
-						(Договор: ${contract.number} {{formatDate contract.begDate}} ${contract.finance.name})
+						(Договор: ${contract.number} ${moment(contract.begDate) ? moment(contract.begDate).format('DD.MM.YYYY') : ''} ${contract.finance.name})
 					{{else}}
 						(Договор: Не определено)
 					{{/if}}
+				{{else}}
+					-
+				{{/if}}
+			</td>
+		</tr>
+		<tr>
+			<td> Плательщик </td>
+			<td>
+				{{if payer}}
+					{{if (payer.company && payer.companyName)}}
+						${payer.companyName}
+					{{else}}
+						{{if payer.lastName}}
+							${payer.lastName} ${payer.firstName} ${payer.middleName}
+						{{/if}}
+					{{/if}}
+				{{else}}
+					-
+				{{/if}}
+			</td>
+		</tr>
+		<tr>
+			<td> Номер и дата договора </td>
+			<td>
+				{{if paymentContract && (paymentContract.number || paymentContract.date)}}
+					{{if paymentContract.number && paymentContract.number.length}}
+						${paymentContract.number},
+					{{/if}}
+					{{if paymentContract.date}}
+						${moment(paymentContract.date).format('DD.MM.YYYY')}
+					{{/if}}
+				{{else}}
+					-
+				{{/if}}
+			</td>
+		</tr>
+		<tr>
+			<td> Представитель </td>
+			<td>
+				{{if hospitalizationWith && hospitalizationWith[0]}}
+					${hospitalizationWith[0].relative.name}
+				{{else}}
+					-
+				{{/if}}
+			</td>
+		</tr>
+		<tr>
+			<td> Удостоверение личности представителя </td>
+			<td>
+				{{if documentNumber && documentNumber.get('number')}}
+					${documentNumber.get('docType').get('name')}, серия ${documentNumber.get('series')}  № ${documentNumber.get('number')}
+				{{else}}
+					-
+				{{/if}}
+			</td>
+		</tr>
+		<tr>
+			<td> Контактные данные представителя </td>
+			<td>
+				{{if phone}}
+					${phone.get('typeName')} ${phone.get('number')}
 				{{else}}
 					-
 				{{/if}}
@@ -136,7 +197,7 @@
 
 			<td>
 				{{if assignment.assignmentDate && assignment.assignmentDate > 0}}
-					{{formatDate assignment.assignmentDate}}
+					${moment(assignment.assignmentDate).format('DD.MM.YYYY')}
 				{{else}}
 				-
 				{{/if}}
@@ -222,19 +283,6 @@
 				{{if deliveredAfterType && deliveredAfterType != "-1"}}${deliveredAfterType}{{else}}-{{/if}}
 			</td>
 		</tr>
-		{{if hospitalizationWith && hospitalizationWith.length}}
-			{{each(i, hw) hospitalizationWith}}
-				<tr>
-					<td>Законный представитель</td>
-					<td>
-						<a href="/patients/${hw.relative.id}/">
-							<span>${hw.relative.name}</span>
-						</a>
-						, {{getYear hw.relative.birthDate}} г.р.{{if hw.note}} (${hw.note}){{/if}}
-					</td>
-				</tr>
-			{{/each}}
-		{{/if}}
 		{{if leaved.nextHospDate || leaved.nextHospDepartment || leaved.nextHospFinanceType}}
 			<tr>
 				<td colspan="2" style="padding-top: 2em;"><b style="color: black;">Информация о следующей госпитализации</b></td>
@@ -258,5 +306,31 @@
 				</tr>
 			{{/if}}
 		{{/if}}
+		<tr>
+			<td>Листок нетрудоспособности</td>
+			<td>
+				открыт
+				<input {{if !isExecPerson}} disabled {{/if}}
+				{{if sickLeave && (sickLeave.begDate != null) }} value="${moment(sickLeave.begDate, 'YYYY-MM-DD').format('DD.MM.YYYY')}" {{else}} value="" {{/if}}
+				class="sick-leave-data sick-leave-data-date" id="sickLeave-begDate" type="text" style="height: 35px; width:105px; font-size: 15px; border:1px solid #d0d0d0;">
+				{{if isExecPerson}}
+					<span class="icon-remove clearSickLeaveDate" data-clear="begDate" style="position:absolute; margin-left:-25px; margin-top:6px; opacity: 0.7; z-index: 100;"></span>
+				{{/if}}
+				закрыт
+				<input {{if !isExecPerson}} disabled {{/if}}
+				{{if sickLeave && (sickLeave.endDate != null) }} value="${moment(sickLeave.endDate, 'YYYY-MM-DD').format('DD.MM.YYYY')}" {{else}} value="" {{/if}}
+				class="sick-leave-data sick-leave-data-date" id="sickLeave-endDate" type="text" style="height: 35px; width:105px; font-size: 15px; border:1px solid #d0d0d0;">
+				{{if isExecPerson}}
+					<span class="icon-remove clearSickLeaveDate" data-clear="endDate" style="position:absolute; margin-left:-25px; margin-top:6px; opacity: 0.7; z-index: 100;"></span>
+				{{/if}}
+				<label style="color: #414141; font-size: 16px;">
+					<input {{if !isExecPerson}} disabled {{/if}} {{if sickLeave && sickLeave.isByService}} checked {{/if}} class="sick-leave-data" type="checkbox" id="sickLeave-isByService">
+					по уходу за больным
+				</label>
+				<button id="sickLeaveSave" style="margin-left: 10px; display:none;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+					<span class="ui-button-text">Сохранить</span>
+				</button>
+			</td>
+		</tr>
 	</tbody>
 </table>

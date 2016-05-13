@@ -56,22 +56,24 @@ define(["collections/patients", "views/grid", "views/filter", "views/paginator"]
 
             this.$el.find(".Container").html(PatientsGrid.render().el);
 
-            // PatientsGrid.on("grid:rowClick", function (patient) {
-            //     this.trigger("patient:selected", patient);
-            // }, this);
             PatientsGrid.on('grid:rowClick', function (model, event) {
-                if (event.target.localName != 'a') {
-                    var url = '';
-                    if (App.Router.currentPage == "appointments") {
-                        window.location.href = '/appointments/' + model.get('id');
-                    } else {
-                        url = '/patients/' + model.get('id') + '/';
-                        window.open(url);
-                    }
+
+                if (App.Router.currentPage === 'appeals') {
+                    this.trigger("patient:selected", model);
                 } else {
-                    view.newSendToDepartment(model);
+                    if (event.target.localName != 'a') {
+                        var url = '';
+                        if (App.Router.currentPage == "appointments") {
+                            window.open(APPOINTMENTS_PATH + '?client_id='+(model.get('id'))+'&role='+Core.Cookies.get('currentRole'));
+                        } else {
+                            url = '/patients/' + model.get('id') + '/';
+                            window.open(url);
+                        }
+                    } else {
+                        view.newSendToDepartment(model);
+                    }
                 }
-            });
+            }, this);
 
             // Пэйджинатор
             var Paginator = new App.Views.Paginator({
@@ -112,9 +114,10 @@ define(["collections/patients", "views/grid", "views/filter", "views/paginator"]
                 event.preventDefault();
                 this.trigger("patient:newClick");
             } else {
-                App.Router.navigate("/patients/new/", {
-                    trigger: true
-                });
+                // App.Router.navigate("/patients/new/", {
+                //     trigger: true
+                // });
+                window.open('http://'+POLICLINIC_HOST+'/patients/patient?client_id=new&role='+Core.Cookies.get("currentRole"),'_blank');
             }
         },
 

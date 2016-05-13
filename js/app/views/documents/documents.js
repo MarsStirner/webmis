@@ -11,13 +11,15 @@ define(function (require) {
                 Base: {},
                 Common: {},
                 Examination: {},
-                Therapy: {}
+                Therapy: {},
+                Instrumental: {}
             },
             Review: {
                 Base: {},
                 Common: {},
                 Examination: {},
-                Therapy: {}
+                Therapy: {},
+                Instrumental: {}
             },
             Edit: {
                 UIElement: {},
@@ -25,7 +27,9 @@ define(function (require) {
                 Common: {},
                 Examination: {},
                 Therapy: {},
-                Consultation: {}
+                Consultation: {},
+                Instrumental: {},
+                Laboratory: {}
             }
         },
         Collections: {},
@@ -69,7 +73,9 @@ define(function (require) {
     //region DEPENDENCIES
     var templates = {
         _panicBtn: _.template(require("text!templates/documents/panic-btn.html")),
+        _instrumentalTableHead: _.template(require("text!templates/documents/list/instrumental-table-head.html")),
         _listLayout: _.template(require("text!templates/documents/list/layout.html")),
+        _instrumentalListLayout: _.template(require("text!templates/documents/list/instrumental-layout.html")),
         _listControlsBase: _.template(require("text!templates/documents/list/controls.html")),
         _listControlsCommon: _.template(require("text!templates/documents/list/controls-common.html")),
         _listExaminationControls: _.template(require("text!templates/documents/list/examination-controls.html")),
@@ -77,10 +83,12 @@ define(function (require) {
         _documentTypeDateFilters: _.template(require("text!templates/documents/list/type-date-filter.html")),
         _documentDateFilter: _.template(require("text!templates/documents/list/date-filter.html")),
         _documentTypeSelector: _.template(require("text!templates/documents/list/doc-type-selector.html")),
+        _documentTemplateSelector: _.template(require("text!templates/documents/list/doc-template-selector.html")),
         _documentTypeSearch: _.template(require("text!templates/documents/list/doc-type-search.html")),
         _documentTypesTree: _.template(require("text!templates/documents/list/doc-types-tree.html")),
         _documentsTableHead: _.template(require("text!templates/documents/list/docs-table-head.html")),
         _documentsTable: _.template(require("text!templates/documents/list/docs-table.html")),
+        _instrumentalDocumentsTable: _.template(require("text!templates/documents/list/instrumental-table.html")),
         _summaryTypeDateFilters: _.template(require("text!templates/documents/list/summary-filter.html")),
         _summaryTable: _.template(require("text!template/documents/list/summary-table.html")),
         _documentsTablePaging: _.template(require("text!templates/documents/list/paging.html")),
@@ -88,6 +96,7 @@ define(function (require) {
         _editNavControls: _.template(require("text!templates/documents/edit/nav-controls.html")),
         _editHeading: _.template(require("text!templates/documents/edit/heading.html")),
         _editDates: _.template(require("text!templates/documents/edit/dates.html")),
+        _editInstrumentalDates: _.template(require("text!templates/documents/edit/instrumental-dates.html")),
         _editDocumentControls: _.template(require("text!templates/documents/edit/document-controls.html")),
         _editCopySourceSelector: _.template(require("text!templates/documents/edit/copy-source-selector.html")),
         //_editGrid: _.template(require("text!templates/documents/edit/grid.html")),
@@ -145,6 +154,15 @@ define(function (require) {
     var TherapiesCollection = require('collections/therapy/Therapies');
 
     var ContextPrintButton = require('views/ContextPrintButton');
+
+    var BakResult = require('models/diagnostics/laboratory/bak-result');
+
+    var PersonDialogView = require('views/ui/PersonDialog');
+    var InstrumentalPopupView = require('views/diagnostics/instrumental/InstrumentalPopupView');
+    var ViewModel = require('views/diagnostics/instrumental/InstrumentalPopupViewModel');
+    var PrintTemplates = require('models/print/Template').Collection;
+    var OperationType = require("collections/OperationType");
+    var DocumentTemplatesCollection = require("collections/doc-templates");
     /*var FDLoader = {
         fds: {},
         get: function (id, cb, context) {
@@ -197,9 +215,28 @@ define(function (require) {
             return this.get('id') === this.get('typeId');
         },
 
-        therapyBlackMagic: function (attributes) {
+        getLastTherapyPhase: function(){
+            var last = {
+                phase: {days:[]},
+                date: 0
+            };
+            if (therapiesCollection.first()) {
+                _.each(therapiesCollection.first().get("phases"), function(phase){
+                    if (phase.beginDate && moment(phase.beginDate).format('X') > last.date) {
+                        last = {
+                            phase: phase,
+                            date: moment(phase.beginDate).format('X')
+                        }
+                    }
+                });
+            }
+            return last.phase
+        },
 
+        therapyBlackMagic: function (attributes) {
+            console.log('therapyBlackMagic');
             var lastTherapy = therapiesCollection.first();
+            var lastPhase = this.getLastTherapyPhase();
             var shouldSetTherapyFields = false;
             var shouldSetTherapyPhaseFields = false;
             //TODO Надо разделить установку значений и статуса readOnly
@@ -210,8 +247,8 @@ define(function (require) {
 
                 if (lastTherapy.get("phases").length > 0) {
                     //этот документ есть в последней фазе последней терапии
-                    var docInLastTherapyLastPhase = !! _.find(lastTherapy.get("phases")[0].days, function (day) {
-                    return day.docId === this.get('id');
+                    var docInLastTherapyLastPhase = !! _.find(lastPhase.days, function (day) {
+                        return day.docId === this.get('id');
                     }, this);
 
                     //этот документ есть в фазах последней терапии
@@ -222,23 +259,22 @@ define(function (require) {
                     }, this);
                 }
 
-
-
                 //последняя терапия не закрыта, нет даты окончания
                 if (!lastTherapy.get("endDate") || lastTherapy.get("endDate") < 0) {
                     shouldSetTherapyFields = true;
 
                     if (lastTherapy.get("phases").length > 0) {
 
-                        if (this.docIsNew() && (lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("id") === this.get('id'))) {
+
+                        if (this.docIsNew() && (lastPhase.days.length === 1) && (lastTherapy.get("id") === this.get('id'))) {
                             shouldSetTherapyFields = false;
                         }
 
                         //последняя фаза не закрыта, нет даты окончания
-                        if (!lastTherapy.get("phases")[0].endDate || lastTherapy.get("phases")[0].endDate < 0) {
+                        if (lastPhase.beginDate && (!lastPhase.endDate || lastPhase.endDate < 0)) {
                             shouldSetTherapyPhaseFields = true;
                             //если мы редактируем первый документ в последней незакрытой фазе
-                            if ((lastTherapy.get("phases")[0].days.length === 1) && (lastTherapy.get("phases")[0].days[0].docId === this.get('id'))) {
+                            if ((lastPhase.days.length === 1) && (lastPhase.days[0].docId === this.get('id'))) {
                                 shouldSetTherapyPhaseFields = false;
                             }
                         } else {
@@ -247,7 +283,6 @@ define(function (require) {
                                 shouldSetTherapyPhaseFields = true;
                             }
                         }
-
                     }
                 } else {
                     //если у терапии есть дата окончания , и документ входит в документы из которых состоит терапия
@@ -286,13 +321,13 @@ define(function (require) {
                     if (shouldSetTherapyPhaseFields) {
                         if (ta.therapyFieldCode == "therapyPhaseTitle") {
                             if (this.docIsNew()) {
-                                ta.properties[1].value = lastTherapy.get("phases")[0].titleId.toString();
+                                ta.properties[1].value = this.getLastTherapyPhase().titleId.toString();
                             }
                             //ta.readOnly = "true";
                         }
                         if (ta.therapyFieldCode == "therapyPhaseBegDate") {
                             if (this.docIsNew()) {
-                                ta.properties[0].value = moment(lastTherapy.get("phases")[0].beginDate || new Date()).format(CD_DATE_FORMAT);
+                                ta.properties[0].value = moment(this.getLastTherapyPhase().beginDate || new Date()).format(CD_DATE_FORMAT);
                             }
                             //ta.readOnly = "true";
                         }
@@ -483,7 +518,8 @@ define(function (require) {
                                 type: a.type,
                                 scope: a.scope,
                                 unit: unitProp ? unitProp.value : "",
-                                code: a.code
+                                code: a.code,
+                                tableValues: a.tableValues ? a.tableValues : null
                             });
                         }
                     });
@@ -536,7 +572,12 @@ define(function (require) {
         urlRoot: DATA_PATH + "dir/actionTypes/",
 
         url: function () {
-            return this.urlRoot + this.id + '?eventId=' + this.appealId;
+            if (this.get('tmplAction')) {
+                var tmpl = '&actionId='+this.get('tmplAction');
+            } else {
+                var tmpl = '';
+            }
+            return this.urlRoot + this.id + '?eventId=' + this.appealId + tmpl;
         },
 
         getTypeId: function () {
@@ -785,7 +826,11 @@ define(function (require) {
         },
 
         hasValue: function () {
-            return !_.isEmpty(this.getValue());
+        	if (this.isIdType()) {
+        		return this.getValue() > 0;
+        	} else {
+        		return !_.isEmpty(this.getValue());
+        	}
         },
 
         cleanValue: function () {
@@ -820,7 +865,7 @@ define(function (require) {
     //region COLLECTIONS
     Documents.Collections.DocumentList = Collection.extend({
         model: Documents.Models.DocumentListItem,
-        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "EXAM_OLD", "JOUR_OLD", "CONS_POLY"],
+        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "EXAM_OLD", "JOUR_OLD", "CONS_POLY", "CONS_SPEC", "CONS_PHD"],
         codes: [],
         dateRange: null,
         typeId: null,
@@ -836,6 +881,7 @@ define(function (require) {
             if (options.defaultMnems) {
                 this.mnems = options.defaultMnems;
             }
+            App.Router.paginatorPage = 1;
         },
         url: function () {
             var url;
@@ -868,9 +914,15 @@ define(function (require) {
                 params.push("filter[actionTypeId]=" + this.typeId);
             }
 
-            if (this.pageNumber) {
-                params.push("page=" + this.pageNumber);
+            if (App.Router.paginatorPage && App.Router.paginatorPage > 1) {
+                params.push("page=" + App.Router.paginatorPage);
+            } else {
+                if (this.pageNumber) {
+                    params.push("page=" + this.pageNumber);
+                }
             }
+
+
 
             if (this.doctorId) {
                 params.push("filter[doctorId]=" + this.doctorId);
@@ -890,7 +942,7 @@ define(function (require) {
     Documents.Collections.DocumentTypes = Collection.extend({
         model: Documents.Models.DocumentType,
         // don't let create "JOUR_OLD", "EXAM_OLD"
-        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS_POLY"],
+        mnems: ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS_POLY", "CONS_SPEC", "CONS_PHD"],
 
         lastCriteria: "",
 
@@ -1119,7 +1171,7 @@ define(function (require) {
 
                 if (elCode.toLowerCase().indexOf('infect') > -1) {
 
-                    this.setInfectHardcodeAttributes(renderedEl, elCode, this, item);
+                    this.setInfectHardcodeAttributes(renderedEl, elCode, this, item, repeatView);
                 }
 
                 return renderedEl;
@@ -1128,94 +1180,83 @@ define(function (require) {
             return this;
         },
 
-        setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow, el) {
+        setInfectHardcodeAttributes: function(renderedEl, elCode, gridRow, el, repeatView) {
             var mode = (document.location.href.split('/')[document.location.href.split('/').length-1]);
+            var isCheckbox = (el.get('scope') === 'Да');
+            var isOther = (elCode.toLowerCase().indexOf('comment') > -1 && elCode.toLowerCase().indexOf('-') == -1);
 
-            if (el.get('scope') === 'Да') {
-                $(renderedEl).addClass(elCode);
-                $(renderedEl).find('.field').hide();
-                if ($(renderedEl).find('.field-toggle').attr('checked')) {
-                    infectChecked.push(elCode);
-                }
-                $(renderedEl).find('.field-toggle').on('click', function() {
+
+
+            if (isCheckbox || isOther) {
+
+                if (isOther) {
+                    if (elCode.split('-').length > 1) {
+                        $(renderedEl).addClass(elCode);
+                    }
+                } else {
+                    pubsub.on('showVgroupRow', function(code){
+                        if (code.indexOf(elCode) > -1 && !$(renderedEl).find('.field-toggle').attr('checked')) {
+                            $(renderedEl).find('.field-toggle').attr('checked', 'checked');
+                            infectChecked.push(elCode);
+                        }
+                    });
+                    $(renderedEl).find('.field-toggle').on('change', function () {
+                        $(renderedEl).trigger('toggle');
+                    })
+                    $(renderedEl).addClass(elCode).addClass('isCheckbox');
                     $(renderedEl).find('.field').hide();
+                }
+
+                $(renderedEl).find('label').css({
+                    'font-size': '15px',
+                    'text-transform': 'uppercase',
+                    'color': '#000000',
+                    'margin-bottom': '10px',
+                    'font-weight': 'bold'
+                });
+
+                $(renderedEl).find('.field-toggle').on('click', function() {
+                    !isOther && $(renderedEl).find('.field').hide();
                     if ($(this).attr('checked')) {
-                        el.setPropertyValueFor('value', 'Да');
-                        $('.'+elCode+'-BeginDate').find('.field').addClass('Mandatory').show();
-                        $('.'+elCode+'-BeginDate').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-BeginDate').trigger('addMandatory');
-                        $('.'+elCode+'-BeginDate').show();
-                        $('.'+elCode+'-EndDate').show();
+                        if (!isOther) {
+                            el.get('properties')[1].value = 'Да';
+                        }
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').trigger('addMandatory');
                         $('.'+elCode+'-EndDate').find('.field').show();
-                        $('.'+elCode+'-EndDate').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
-                        $('.'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-Etiology').trigger('addMandatory');
-                        $('.'+elCode+'-Etiology').show();
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology, .'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').show();
+                        console.log(el);
                     } else {
-                        el.setPropertyValueFor('value', '');
-                        $('.'+elCode+'-BeginDate').find('.field').removeClass('Mandatory').hide();
-                        $('.'+elCode+'-BeginDate').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-BeginDate').trigger('removeMandatory');
-                        $('.'+elCode+'-BeginDate').hide();
-                        $('.'+elCode+'-EndDate').hide();
+                        !isOther && el.setPropertyValueFor('value', '');
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-Etiology').trigger('removeMandatory');
+                        $('.'+elCode+'-BeginDate, .'+elCode+'-EndDate, .'+elCode+'-Etiology, .'+elCode+'Name, .'+elCode+'BeginDate, .'+elCode+'EndDate').hide();
                         $('.'+elCode+'-EndDate').find('.field').hide();
-                        $('.'+elCode+'-EndDate').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
-                        $('.'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-Etiology').trigger('removeMandatory');
-                        $('.'+elCode+'-Etiology').hide();
                     }
                 });
-            }
-
-            if (elCode.toLowerCase().indexOf('comment') > -1) {
 
                 if ($(renderedEl).find('.field-toggle').attr('checked')) {
                     infectChecked.push(elCode);
                 }
 
-                if (elCode.split('-').length > 1) {
-                    $(renderedEl).addClass(elCode);
-                }
-                $(renderedEl).find('.field-toggle').on('click', function() {
-                    if ($(this).attr('checked')) {
-                        $('.'+elCode+'-BeginDate').find('.field').addClass('Mandatory').show();
-                        $('.'+elCode+'-BeginDate').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-BeginDate').trigger('addMandatory');
-                        $('.'+elCode+'-BeginDate').show();
-                        $('.'+elCode+'-EndDate').show();
-                        $('.'+elCode+'-EndDate').find('.field').show();
-                        $('.'+elCode+'-EndDate').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-Etiology').find('.field').addClass('Mandatory').show();
-                        $('.'+elCode+'-Etiology').find('.field-toggle').attr('checked', 'checked');
-                        $('.'+elCode+'-Etiology').trigger('addMandatory');
-                        $('.'+elCode+'-Etiology').show();
-                    } else {
+            }
+
+            if (elCode.toLowerCase().indexOf('name') > -1 || elCode.toLowerCase().indexOf('etiology') > -1) {
+                $(renderedEl).find('.attribute-value').attr('disabled', 'disabled');
+                $(renderedEl).find('.field-toggle').on('click', function(){
+                    if (!$(this).attr('checked')) {
+                        el.setPropertyValueFor('value', '');
                         $(renderedEl).find('.attribute-value').val('');
-                        $('.'+elCode+'-BeginDate').find('.field').removeClass('Mandatory').hide();
-                        $('.'+elCode+'-BeginDate').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-BeginDate').trigger('removeMandatory');
-                        $('.'+elCode+'-BeginDate').hide();
-                        $('.'+elCode+'-EndDate').hide();
-                        $('.'+elCode+'-EndDate').find('.field').hide();
-                        $('.'+elCode+'-EndDate').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-Etiology').find('.field').removeClass('Mandatory').hide();
-                        $('.'+elCode+'-Etiology').find('.field-toggle').removeAttr('checked');
-                        $('.'+elCode+'-Etiology').trigger('removeMandatory');
-                        $('.'+elCode+'-Etiology').hide();
+                        $(renderedEl).find('.field').trigger('change');
                     }
                 });
             }
 
             if (elCode.split('-').length > 1) {
                 $(renderedEl).hide();
-                $(renderedEl).addClass(elCode).on('addMandatory', function(){
-                    el.set('mandatory', 'true');
-                }).on('removeMandatory', function(){
-                    el.set('mandatory', 'false');
-                });
-
+                $(renderedEl).addClass(elCode);
                 if ($.inArray(elCode.split('-')[0], infectChecked) > -1) {
                     $(renderedEl).find('.field-toggle').attr('checked', 'checked');
                     $(renderedEl).find('.field').show();
@@ -1223,78 +1264,118 @@ define(function (require) {
                 }
             }
 
+            $(renderedEl).not('.doc-sub-header').on('addMandatory', function(){
+                el.set('mandatory', 'true');
+            }).on('removeMandatory', function(){
+                el.set('mandatory', 'false');
+            });
+
             if (elCode.split('_').length > 1) {
-                var drugId = elCode.split('_')[1];
-                gridRow.$el.attr('data-drugid', drugId);
-                if (drugId > 1) {
-                    if (elCode.split('_')[0] == 'infectDrugEndDate') {
-                    infectDrugRows.push(gridRow);
-                    gridRow.$el.hide();
-                         $(renderedEl).on('click', '.RemoveIcon', function(){
-                            $.each(gridRow.collection.models, function(i, item){
-                                item.setPropertyValueFor('value', '');
-                                gridRow.subViews[i].render();
-                                if (gridRow.subViews[i].model.get('code').split('_')[0] == 'infectDrugEndDate') {
-                                    gridRow.subViews[i].$el.find('.RemoveIcon').on('click', function(){
-                                        $.each(gridRow.collection.models, function(i, item){
-                                            item.setPropertyValueFor('value', '');
-                                            gridRow.subViews[i].render();
-                                        });
-                                        gridRow.$el.hide();
-                                    });
-                                }
-                            });
-                            gridRow.$el.hide();
-                        });
-                        if (gridRow.subViews[0].model.getPropertyValueFor('value')) {
-                            var exchange = false;
-                            // for (var i = 0; i < drugId ; i++) {
-                            //     if (!infectDrugRows[i].subViews[0].model.getPropertyValueFor('value')) {
-                            //         $.each(gridRow.subViews, function(j, item){
-                            //             infectDrugRows[i].subViews[j].model.setPropertyValueFor('value', item.model.getPropertyValueFor('value'));
-                            //             infectDrugRows[i].subViews[j].render();
-                            //             infectDrugRows[i].$el.show();
-                            //             item.model.setPropertyValueFor('value', '');
-                            //             item.render();
-                            //         });
-                            //         exchange = true;
-                            //         break;
-                            //     }
-                            // }
-                            if (!exchange) {
-                                gridRow.$el.show();
+
+                if (el.getPropertyValueFor('value')) {
+                    pubsub.trigger('showVgroupRow', elCode);
+                    infectTherapies.push(elCode);
+                }
+
+                var isHidden = true;
+                _.each(infectTherapies, function(therapy){
+                    _.each(infectChecked, function(checked){
+                        if (elCode.split('_')[1] == therapy.split('_')[1]  &&  elCode.indexOf(checked) > -1) {
+                            isHidden = false;
+                        }
+                    })
+                });
+                isHidden && $(renderedEl).hide();
+
+                if (elCode.split('_')[1] == 1) {
+                    $(renderedEl).addClass(elCode.split('_')[0]).addClass('firstRow');
+                }
+
+                $(renderedEl).on('showRow', function(e, rowId){
+                    $(renderedEl).data('vgrouprow') == rowId && $(this).show();
+                });
+
+                $(renderedEl).on('hideRow', function(e, rowId){
+                    if ($(renderedEl).data('vgrouprow') == rowId) {
+                        $(renderedEl).trigger('removeMandatory').find('.field').removeClass('Mandatory').hide();
+                        el.setPropertyValueFor('value', '');
+                        repeatView.render();
+                        $(this).hide();
+                    }
+                });
+
+                $(renderedEl).on('click', '.icon-plus', function(){
+                    var rowNum = $(renderedEl).data('vgrouprow');
+                    if ($('.in-vgroup-row[data-vgrouprow="'+(rowNum + 1)+'"]').length && !$('.in-vgroup-row[data-vgrouprow="'+(rowNum + 1)+'"].firstRow').length) {
+                        $('.in-vgroup-row').trigger('showRow', rowNum + 1);
+                    } else {
+                        var showed = false;
+                        while (!$('.in-vgroup-row[data-vgrouprow="'+rowNum+'"].firstRow').length && !showed) {
+                            rowNum--;
+                            if (!$('.in-vgroup-row[data-vgrouprow="'+rowNum+'"]:visible').length) {
+                                $('.in-vgroup-row').trigger('showRow', rowNum);
+                                //$('.in-vgroup-row[data-vgrouprow="'+rowNum+'"]').parent().insertAfter($(renderedEl).parent());
+                                showed = true;
                             }
                         }
                     }
-                } else {
-                    if (elCode.split('_')[0] == 'infectDrugEndDate') {
-                        infectDrugRows.push(gridRow);
-                    }
-                }
-                $(renderedEl).on('click', '.icon-plus', function(){
-                    for (var i = 2; i < 9; i++) {
-                        var drugRow = $('.document-grid div[data-drugid="'+i+'"]');
-                        if (drugRow.css('display') == 'none') {
-                            drugRow.show();
-                            break;
-                        }
+                });
+
+                $(renderedEl).on('click', '.RemoveIcon', function(){
+                    $('.in-vgroup-row').trigger('hideRow', $(renderedEl).data('vgrouprow'));
+                });
+            }
+
+            if (elCode.toLowerCase().indexOf('name') > -1 ) {
+                $(renderedEl).find('.field').on('change', function() {
+                    var begDateEl = $($(renderedEl).parent().find('.in-vgroup-row')[1])
+                    if ($(renderedEl).find('.attribute-value').val()) {
+                        begDateEl.find('.field-toggle').attr('checked', 'checked');
+                        begDateEl.find('.field').addClass('Mandatory').show();
+                        begDateEl.trigger('addMandatory');
+                    } else {
+                        begDateEl.find('.field-toggle').removeAttr('checked');
+                        begDateEl.find('.field').removeClass('Mandatory').hide();
+                        begDateEl.trigger('removeMandatory');
                     }
                 });
-                if (elCode.split('_')[0] == 'infectDrugBeginDate') {
-                    $(renderedEl).addClass(elCode).on('addMandatory', function(){
-                        el.set('mandatory', 'true');
-                    }).on('removeMandatory', function(){
-                        el.set('mandatory', 'false');
-                    });
-                }
-                if (elCode.split('_')[0] == 'infectDrugName') {
-                    $(renderedEl).find('.attribute-value').on('change', function(){
-                        $('.infectDrugBeginDate_'+elCode.split('_')[1]).trigger('addMandatory').find('.field').addClass('Mandatory').show();
-                        $('.infectDrugBeginDate_'+elCode.split('_')[1]).find('.field-toggle').attr('checked', 'checked');
-                    });
-                }
+            } else {
+                $(renderedEl).find('.field-toggle').on('click', function() {
+                    if (!$(this).attr('checked')) {
+                        el.setPropertyValueFor('value', '');
+                        $(renderedEl).find('.attribute-value').val('');
+                    }
+                });
             }
+
+            $(renderedEl).not('.doc-sub-header').on('restoreField', function(){
+                var elRow = $(renderedEl).parent();
+                var elHeader = $(renderedEl).closest('.doc-sub-header');
+                $(elRow).find('.in-vgroup-row').show();
+                if ($(elHeader).find('.icon-plus').length > 0) {
+                    $(elHeader).find('.sb-hdr').click();
+                }
+                $(renderedEl).parent().prev().find('.field-toggle').attr('checked', 'checked');
+            });
+
             switch (elCode) {
+            case 'infectLocalisation':
+            case 'infectCNS':
+            case 'infectEye':
+            case 'infectSkin':
+            case 'infectMucous':
+            case 'infectLOR':
+            case 'infectLungs':
+            case 'infectHeart':
+            case 'infectAbdomen':
+            case 'infectUrogenital':
+            case 'infectMusculoskeletal':
+                gridRow.$el.hide();
+                gridRow.$el.addClass('depends-local-display-row');
+                if (LocalInfect) {
+                    gridRow.$el.show();
+                }
+                break;
             case 'infectLocal':
                 $(renderedEl).find('.field-toggle').on('click', function(e){
                     if ($(this).attr('checked')) {
@@ -1307,88 +1388,10 @@ define(function (require) {
                     LocalInfect = true;
                 }
                 break;
-            case 'infectLocalisation':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectCNS':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectEye':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectSkin':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectMucous':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectLOR':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectLungs':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectHeart':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectAbdomen':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectUrogenital':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
-            case 'infectMusculoskeletal':
-                gridRow.$el.hide();
-                gridRow.$el.addClass('depends-local-display-row');
-                if (LocalInfect) {
-                    gridRow.$el.show();
-                }
-                break;
             default:
                 break;
             }
         }
-
     });
 
     var PanicBtn = Documents.Views.PanicBtn = ViewBase.extend({
@@ -1688,6 +1691,105 @@ define(function (require) {
         }
     });
 
+    Documents.Views.List.Base.InstrumentalTableHead = ViewBase.extend({
+        toString: function () {
+            return 'List.Base.DocumentsTableHead';
+        },
+        template: templates._instrumentalTableHead,
+
+        events: {
+            "click th.sortable": "onThSortableClick",
+            "change .select-all-flag": "onSelectAllFlagChange"
+        },
+
+        data: function () {
+            return {
+                documents: this.collection,
+                showIcons: !this.options.included && !appeal.isClosed(),
+                isSortedBy: this.isSortedBy
+            };
+        },
+
+        initialize: function () {
+            _.bindAll(this, 'data');
+            this.listenTo(this.options.selectedDocuments, "reset", this.onSelectedDocumentsReset);
+        },
+
+        onSelectedDocumentsReset: function () {
+            this.$(".select-all-flag").prop("checked", false);
+        },
+
+        onThSortableClick: function (event) {
+            var sortParams = this.getUpdatedSortParams($(event.currentTarget));
+
+            this.collection.fetch({
+                data: {
+                    sortingField: sortParams.sortingField,
+                    sortingMethod: sortParams.sortingMethod
+                }
+            });
+        },
+
+        getUpdatedSortParams: function ($targetTh, sortDirection) {
+            if (!this.$caret) {
+                this.$caret = $('<i style="color: black;margin-left: .3em;"/>');
+            }
+
+            this.$caret.detach().removeClass();
+
+            if ($targetTh.hasClass("sorted")) {
+                if ($targetTh.hasClass("asc")) {
+                    $targetTh.removeClass("asc").addClass("desc");
+                    this.$caret.addClass("icon-caret-down");
+                } else if ($targetTh.hasClass("desc")) {
+                    $targetTh.removeClass("desc").addClass("asc");
+                    this.$caret.addClass("icon-caret-up");
+                }
+            } else {
+                this.$("th").removeClass("sorted asc desc");
+                $targetTh.addClass("sorted asc");
+                this.$caret.addClass("icon-caret-up");
+            }
+
+            this.$caret.appendTo($targetTh);
+
+            return {
+                sortingField: $targetTh.data('sort-field'),
+                sortingMethod: $targetTh.hasClass("desc") ? "desc" : "asc"
+            };
+        },
+
+        onSelectAllFlagChange: function (event) {
+            this.markAllItems($(event.currentTarget).is(":checked"));
+        },
+
+        markAllItems: function (selected) {
+            if (selected) {
+                this.collection.each(function (document) {
+                    this.options.selectedDocuments.add(new Documents.Models.Document({
+                        id: document.get("id")
+                    }));
+                }, this);
+            } else {
+                this.options.selectedDocuments.reset();
+            }
+            this.collection.trigger("mark-all", {
+                selected: selected
+            });
+        },
+
+        render: function () {
+            ViewBase.prototype.render.call(this);
+            if (this.collection.requestData && this.collection.requestData.sortingField) {
+                this.getUpdatedSortParams(
+                    this.$("[data-sort-field=" + this.collection.requestData.sortingField + "]")
+                    .addClass("sorted " + (this.collection.requestData.sortingMethod == "asc" ? "desc" : "asc"))
+                );
+            }
+            return this;
+        }
+    });
+
     /**
      * Таблица со списком созданных документов
      * @type {*}
@@ -1702,9 +1804,14 @@ define(function (require) {
             "change .selected-flag": "onSelectedFlagChange",
             "click .duplicate-document": "onDuplicateDocumentClick",
             "click .edit-document": "onEditDocumentClick",
+            "click .create-template": "onCreateTemplateClick",
             "click .single-item-select": "onItemClick",
             "click th.sortable": "onThSortableClick",
-            "click .remove-document": "onRemoveDocumentClick"
+            "click .remove-document": "onRemoveDocumentClick",
+            "mouseenter .docLock": "showLockInfo",
+            "mouseleave .docLock": "hideLockInfo",
+            "mouseenter .document-item-row": "rowMouseenter",
+            "mouseleave .document-item-row": "rowMouseleave"
         },
 
         data: function () {
@@ -1716,6 +1823,8 @@ define(function (require) {
                 editable = false;
 
             }
+
+            console.log('documents', this.collection);
 
             return {
                 documents: this.collection,
@@ -1730,6 +1839,35 @@ define(function (require) {
             this.listenTo(this.collection, "reset", this.onCollectionReset);
             this.listenTo(this.collection, "mark-all", this.onCollectionMarkAll);
             this.listenTo(this.options.selectedDocuments, "review:quit", this.onCollectionReset);
+        },
+
+        onCreateTemplateClick: function (e) {
+            templateCollection = new DocumentTemplatesCollection();
+            templateCollection.docType = $(e.currentTarget).data('template-id');
+            templateCollection.fetch().done(function(){
+                var templatesPopUp = new Documents.Views.Edit.DocTemplateSaver({
+                    collection: templateCollection.toJSON(),
+                    docType: $(e.currentTarget).data('template-id'),
+                    docId: $(e.currentTarget).data('id')
+                });
+                templatesPopUp.render();
+            });
+        },
+
+        showLockInfo: function (e) {
+            $(e.target.parentNode).parent().find(".lockToolTip").show();
+        },
+
+        hideLockInfo: function (e) {
+            $(e.target.parentNode).parent().find(".lockToolTip").hide();
+        },
+
+        rowMouseenter: function (e) {
+            $(e.currentTarget).find('.docLock').css('background', 'rgba(245, 245, 245, 0.7)');
+        },
+
+        rowMouseleave: function (e) {
+            $(e.currentTarget).find('.docLock').css('background', 'rgba(255, 255, 255, 0.7)');
         },
 
         onCollectionReset: function () {
@@ -1925,6 +2063,7 @@ define(function (require) {
         onPageNumberClick: function (event) {
             event.preventDefault();
             this.collection.pageNumber = $(event.currentTarget).data("page-number");
+            App.Router.paginatorPage = this.collection.pageNumber;
             this.collection.fetch();
         }
     });
@@ -2074,6 +2213,25 @@ define(function (require) {
         },
 
         getDialogOptions: function () {
+            var buttons = [{
+                text: "Создать",
+                "class": "button-color-green",
+                click: _.bind(this.onCreateDocumentClick, this)
+                },
+            ];
+            Core.Cookies.get('currentRole') === 'anestezDoctor' && buttons.push(
+                {
+                    text: "Создать из шаблона",
+                    "class": "ui-button-disabled",
+                    click: _.bind(this.onCreateDocumentFtomTemplateClick, this)
+                }
+            );
+            buttons.push(
+                {
+                    text: "Отмена",
+                    click: _.bind(this.tearDown, this)
+                }
+            );
             return {
                 title: "Выберите тип документа",
                 modal: true,
@@ -2081,14 +2239,7 @@ define(function (require) {
                 height: 550,
                 resizable: false,
                 close: _.bind(this.tearDown, this),
-                buttons: [{
-                    text: "Создать",
-                    "class": "button-color-green",
-                    click: _.bind(this.onCreateDocumentClick, this)
-                }, {
-                    text: "Отмена",
-                    click: _.bind(this.tearDown, this)
-                }]
+                buttons: buttons
             };
         },
 
@@ -2112,6 +2263,23 @@ define(function (require) {
             }
         },
 
+        onCreateDocumentFtomTemplateClick: function () {
+            if (this.selectedType) {
+                var self = this;
+                templateCollection = new DocumentTemplatesCollection();
+                templateCollection.docType = this.selectedType;
+                templateCollection.fetch().done(function(){
+                    var templatesPopUp = new Documents.Views.Edit.DocTemplateSelector({
+                        collection: templateCollection.toJSON(),
+                        docType: self.selectedType,
+                        editPageTypeName: self.options.editPageTypeName
+                    });
+                    templatesPopUp.render();
+                    self.tearDown();
+                });
+            }
+        },
+
         render: function () {
             PopUpBase.prototype.render.call(this, {
                 ".document-types-tree": new Documents.Views.List.Base.DocumentTypesTree({
@@ -2122,6 +2290,234 @@ define(function (require) {
             return this;
         }
     });
+
+
+    Documents.Views.Edit.DocTemplateSelector = PopUpBase.extend({
+        template: templates._documentTemplateSelector,
+
+        events: {
+            "click .document-template-node": "onDocumentTemplateNodeClick",
+            "mouseenter span": 'onMouseenter',
+            "mouseleave span": 'onMouseleave'
+        },
+
+        data: function () {
+            return {
+                tree: this.options.collection,
+                docType: this.options.docType,
+                template: this.template
+            };
+        },
+
+        initialize: function () {
+            var self = this;
+            this.dialogOptions = {
+                title: "Выберите шаблон",
+                modal: true,
+                width: 800,
+                height: 550,
+                resizable: false,
+                buttons: [{
+                        text: "Создать",
+                        "class": "button-color-green",
+                        click: _.bind(function () {
+                            var docType = self.options.docType;
+                            var docTemplate = self.docTemplateId;
+                            var action = self.actionId;
+                            var currentPage = Data.Menu.currentPage ? Data.Menu.currentPage : 'documents';
+                            App.Router.updateUrl(["appeals", appealId, currentPage, "new", docType].join("/"));
+                            dispatcher.trigger("change:viewState", {
+                                type: Data.Menu.currentPage,
+                                mode: "SUB_EDIT",
+                                options: {
+                                    templateId: docType,
+                                    actionId: docTemplate,
+                                    tmplAction: action
+                                }
+                            });
+                            self.tearDown();
+                        }, this)
+                    }, {
+                        text: "Отмена",
+                        click: function () {
+                            self.tearDown();
+                        }
+                    }]
+            };
+        },
+
+        onDocumentTemplateNodeClick: function (event) {
+            event.stopPropagation();
+            var $node = $(event.currentTarget);
+            if ($node.is(".Opened")) {
+                $node.removeClass("Opened").siblings().removeClass("Opened");
+                $node.children().removeClass("Opened");
+                $node.find(".icon-minus").addClass("icon-plus").removeClass("icon-minus");
+                $node.find('ul').hide();
+            } else {
+                $node.addClass("Opened").siblings().removeClass("Opened");
+                $node.children().removeClass("Opened");
+                $node.find(".icon-plus:first").addClass("icon-minus").removeClass("icon-plus");
+                $node.find('ul:first').show();
+            }
+
+            if ($node.data("document-template-id")) {
+                this.docTemplateId = $node.data("document-template-id");
+                this.actionId = $node.data("document-action-id");
+                this.$('span').css('font-weight', '100');
+                $node.find('span:first').css('font-weight', 'bold');
+                this.$el.parent().find('.button-color-green').button('enable');
+            }
+        },
+
+        onMouseenter: function (event) {
+            var $span = $(event.currentTarget);
+            $span.css('background-color', '#bde2f5');
+        },
+
+        onMouseleave: function (event) {
+            var $span = $(event.currentTarget);
+            $span.css('background-color', '');
+        },
+
+        render: function () {
+            PopUpBase.prototype.render.call(this);
+            this.$("ul").first().show();
+            this.$el.parent().find('.button-color-green').button('disable');
+        }
+    });
+
+    Documents.Views.Edit.DocTemplateSaver = Documents.Views.Edit.DocTemplateSelector.extend({
+        events: {
+            "click .document-template-node": "onDocumentTemplateNodeClick",
+            "mouseenter span": 'onMouseenter',
+            "mouseleave span": 'onMouseleave'
+        },
+        initialize: function () {
+            var self = this;
+            this.groupId = null;
+            this.templateName = '';
+            this.dialogOptions = {
+                title: "Создать шаблон",
+                modal: true,
+                width: 800,
+                height: 550,
+                resizable: false,
+                buttons: [
+                    {
+                        text: "Создать шаблон",
+                        "class": "button-color-green",
+                        click: _.bind(function () {
+                            var tmplData = {
+                                actionId: self.options.docId,
+                                name: self.templateName,
+                                groupId: self.groupId
+                            };
+                            $.ajax({
+                               type: "POST",
+                               url: "http://"+CORE_HOST+"/core-ext-war/template",
+                               data: JSON.stringify(tmplData),
+                               contentType: "application/json; charset=utf-8",
+                               dataType: "json",
+                               complete: function(){
+                                   self.tearDown();
+                                }
+                            });
+
+                        }, this)
+                    },
+                    {
+                        text: "Создать группу",
+                        "class": "button-create-group",
+                        click: function () {
+                            var tmplData = {
+                                name: self.templateName,
+                                groupId: self.groupId
+                            };
+                            $.ajax({
+                               type: "POST",
+                               url: "http://"+CORE_HOST+"/core-ext-war/template",
+                               data: JSON.stringify(tmplData),
+                               crossDomain: true,
+                               contentType: "application/json; charset=utf-8",
+                               dataType: "json",
+                               complete: function(data){
+                                   var res = $.parseJSON(data.responseText.match(/\((.*)\)/)[1]);
+                                   var newEl = $('<li>').addClass('document-template-node')
+                                    .data('document-template-id', res.id)
+                                    .html($(self.$el.find(".document-template-node:first")[0]).html());
+                                   newEl.find('span').text(self.templateName);
+                                   newEl.find('div').html('');
+                                   if (self.groupId) {
+                                       self.$el.find('.document-template-node[data-document-template-id="'+self.groupId+'"] div').append($('<ul>').html(newEl));
+                                       self.$el.find('.document-template-node[data-document-template-id="'+self.groupId+'"] i').removeClass('transparent');
+                                   } else {
+                                       self.$el.find('ul:first').append(newEl);
+                                   }
+                               }
+                            });
+                        }
+                    },
+                    {
+                        text: "Отмена",
+                        click: function () {
+                            self.tearDown();
+                        }
+                    }]
+            };
+        },
+        onDocumentTemplateNodeClick: function (event) {
+            event.stopPropagation();
+            var $node = $(event.currentTarget);
+            if ($node.is(".Opened")) {
+                $node.removeClass("Opened").siblings().removeClass("Opened");
+                $node.children().removeClass("Opened");
+                $node.find(".icon-minus").addClass("icon-plus").removeClass("icon-minus");
+                $node.find('ul').hide();
+            } else {
+                $node.addClass("Opened").siblings().removeClass("Opened");
+                $node.children().removeClass("Opened");
+                $node.find(".icon-plus:first").addClass("icon-minus").removeClass("icon-plus");
+                $node.find('ul:first').show();
+            }
+            if ($node.data("document-template-id")) {
+                this.$('span').css('font-weight', '100');
+                if ($node.is(".Opened")) {
+                    $node.find('span:first').css('font-weight', 'bold');
+                    this.groupId = $node.data("document-template-id");
+                    this.updateButtonsState();
+                } else {
+                    this.groupId = null;
+                    this.updateButtonsState();
+                }
+            }
+        },
+        onNameChange: function (name) {
+            this.templateName = name;
+            this.updateButtonsState();
+        },
+        updateButtonsState: function (name) {
+            if (this.templateName) {
+                this.$el.parent().find('.button-color-green, .button-create-group').button('enable');
+            } else {
+                this.$el.parent().find('.button-color-green, .button-create-group').button('disable');
+            }
+        },
+        render: function () {
+            PopUpBase.prototype.render.call(this);
+            this.$("ul").first().show();
+            this.$el.parent().find('.button-color-green, .button-create-group').button('disable');
+            var self = this;
+            var nameInput = "<input type='text' class='templateName' placeholder='Название' style='margin:.5em;'/>";
+            $('<div>').prependTo(this.$el.parent().find('.ui-dialog-buttonpane')).html(nameInput).css({
+                'float': 'left'
+            });
+            $('.templateName').on('input', function(){
+                self.onNameChange($(this).val());
+            });
+        }
+    });
+
 
     Documents.Views.List.Base.DocumentTypeSearch = ViewBase.extend({
         className: "doc-type-search",
@@ -2318,8 +2714,10 @@ define(function (require) {
 
         render: function (subViews) {
             return ListLayoutBase.prototype.render.call(this, _.extend({
-                ".documents-filters": new Documents.Views.List.Common.Filters({
-                    collection: this.documents
+                ".documents-filters": new Documents.Summary.Filters({
+                    collection: this.documents,
+                    events: this.options.events,
+                    selectedEventId: this.options.selectedEventId
                 })
             }, subViews));
         }
@@ -2426,7 +2824,7 @@ define(function (require) {
 
             switch (type) {
             case "ALL":
-                mnems = ["EXAM", "EPI", "CONS_POLY", "ORD", "JOUR", "NOT", "OTH"];
+                mnems = ["EXAM", "EPI", "CONS_POLY", "ORD", "JOUR", "NOT", "OTH", "CONS_SPEC", "CONS_PHD"];
                 break;
             case "EVERYDAY":
                 codes = ['1_1_22'];
@@ -2439,7 +2837,7 @@ define(function (require) {
                 mnems = ["EPI"];
                 break;
             case "CONS":
-                mnems = ["CONS_POLY"];
+                mnems = ["CONS_POLY", "CONS_SPEC", "CONS_PHD"];
                 break;
 
             case "ORD":
@@ -2661,6 +3059,115 @@ define(function (require) {
             });
         }
     });
+
+
+    //region VIEWS LIST INSTRUMENTAL
+    //---------------------
+    Documents.Views.List.Instrumental.LayoutHistory = ListLayoutBase.extend({
+        template: templates._instrumentalListLayout,
+
+        events: {
+			"click #assign-inst-diag": "onNewDiagnosticClick"
+		},
+
+        onNewDiagnosticClick: function() {
+			this.newAssignPopup = new InstrumentalPopupView({
+				appeal: this.options.appeal,
+                documents: this.documents
+			});
+			this.newAssignPopup.render().open();
+		},
+
+        getDefaultDocumentsMnems: function () {
+            return ["DIAG"];
+        },
+
+        getReviewLayout: function () {
+            return new Documents.Views.Review.Instrumental.NoControlsLayout({
+                collection: this.selectedDocuments,
+                documents: this.documents,
+                included: true,
+                showIcons: !this.options.included
+            });
+        },
+
+        getEditPageTypeName: function () {
+            return "diagnostics-instrumental";
+        },
+
+        render: function (subViews) {
+            var self = this;
+            return ListLayoutBase.prototype.render.call(this, _.extend({
+                ".documents-table-body": new Documents.Views.List.Instrumental.DocumentsTable({
+                    collection: this.documents,
+                    selectedDocuments: this.selectedDocuments,
+                    included: !! this.options.included,
+                    editPageTypeName: this.getEditPageTypeName()
+                }),
+                ".documents-filters": new Documents.Views.List.Base.Filters({
+                    collection: this.documents
+                }),
+                ".documents-table-head": new Documents.Views.List.Base.InstrumentalTableHead({
+                    collection: this.documents,
+                    selectedDocuments: this.selectedDocuments,
+                    included: !! this.options.included,
+                }),
+            }, subViews));
+        }
+    });
+
+    Documents.Views.List.Instrumental.Layout = Documents.Views.List.Instrumental.LayoutHistory.extend({
+        attributes: {
+            style: "display: table; width: 100%;"
+        },
+
+        initialize: function () {
+            Documents.Views.List.Instrumental.LayoutHistory.prototype.initialize.call(this, this.options);
+
+            if (this.options.documentTypes) {
+                this.documentTypes = this.options.documentTypes;
+            } else {
+                this.documentTypes = new Documents.Collections.DocumentTypes();
+                this.documentTypes.mnems = ["DIAG"];
+                this.documentTypes.fetch();
+            }
+
+        },
+
+        toggleReviewState: Documents.Views.List.Common.Layout.prototype.toggleReviewState,
+
+        render: function () {
+            return Documents.Views.List.Instrumental.LayoutHistory.prototype.render.call(this, {
+                ".documents-controls": new Documents.Views.List.Instrumental.Controls({
+                    collection: this.documents,
+                    documentTypes: this.documentTypes,
+                    editPageTypeName: this.getEditPageTypeName()
+                })
+            });
+        }
+    });
+
+    Documents.Views.List.Instrumental.Controls = Documents.Views.List.Base.Controls.extend({
+        showDocumentTypeSelector: function () {
+            new Documents.Views.List.Instrumental.DocumentTypeSelector({
+                collection: this.documentTypes
+            }).render();
+        }
+    });
+
+    Documents.Views.List.Instrumental.DocumentsTable = Documents.Views.List.Base.DocumentsTable.extend({});
+
+    Documents.Views.List.Instrumental.DocumentTypeSelector = Documents.Views.List.Base.DocumentTypeSelector.extend({
+        getSearchView: function () {
+            return new Documents.Views.List.Base.DocumentTypeSearch({
+                collection: this.collection,
+                showTypeMnem: false
+            });
+        }
+    });
+
+
+
     //endregion
 
 
@@ -2673,10 +3180,13 @@ define(function (require) {
 
         initialize: function () {
             LayoutBase.prototype.initialize.call(this, this.options);
+            console.log(this);
             if (!this.model) {
                 if (this.options.templateId || this.options.mode === "SUB_NEW" && this.options.subId) {
                     this.model = new Documents.Models.DocumentTemplate({
-                        id: this.options.templateId || this.options.subId
+                        id: this.options.templateId || this.options.subId,
+                        templateId: this.options.actionId,
+                        tmplAction: this.options.tmplAction
                     });
                 } else if (this.options.documentId || this.options.mode === "SUB_EDIT" && this.options.subId) {
                     this.model = new Documents.Models.Document({
@@ -2704,22 +3214,53 @@ define(function (require) {
                 });
             }, this));
 
+            this.lockDocument();
+
             this.listenTo(this.model, "toggle:dividedState", this.toggleDividedState);
+        },
+
+        lockDocument: function() {
+            var self = this;
+            $.getJSON(DATA_PATH + "appeals/" + this.model.appealId + "/documents/" + this.model.id + "/lock?callback=?", function() {
+                var lockInterval = setInterval(function(){
+                    $.ajax({
+                        url: DATA_PATH + "appeals/" + self.model.appealId + "/documents/" + self.model.id + "/lock",
+                        type: 'PUT',
+                        statusCode: {
+                            500: function() {
+                                clearInterval(lockInterval);
+                            }
+                        }
+                    });
+                }, 60000);
+            });
+        },
+
+        unlockDocument: function() {
+            $.ajax({
+               type: "DELETE",
+                url: DATA_PATH + "appeals/" + this.model.appealId + "/documents/" + this.model.id + "/lock"
+            });
         },
 
         getAutosavedFields: function() {
             var self = this;
             $.ajax({
                type: 'GET',
-                url: '/data/autosave/doc_'+this.model.id,
+                url: '/data/autosave/doc_'+this.model.appealId+'_'+this.model.id,
                 dataType: 'json',
                 accept:'application/json',
                 success: function(data) {
                     if (data.text) {
-                        if (confirm("Восстановить несохранённые данные документа?")) {
-                            var fields = $.parseJSON(data.text);
-                            self.fillAutosavedFields(fields);
-                        }
+                        self.chk = setInterval(function(){
+                            if ($('.Throbber').css('display') != 'block') {
+                                clearInterval(self.chk);
+                                if (confirm("Восстановить несохранённые данные документа?")) {
+                                    var fields = $.parseJSON(data.text);
+                                    self.fillAutosavedFields(fields);
+                                }
+                            }
+                        }, 1000);
                     }
                 }
             });
@@ -2727,13 +3268,8 @@ define(function (require) {
 
         fillAutosavedFields: function (fields) {
             $.each(fields, function(typeid, value) {
-                var attributeValueEl = $('div[data-typeid="'+typeid+'"] .attribute-value');
-                if ($(attributeValueEl).is(".RichText")) {
-                    $(attributeValueEl).html(value);
-                } else {
-                    $(attributeValueEl).val(value);
-                }
-                $('div[data-typeid="'+typeid+'"] .field-toggle:not(:checked)').click();
+                var attributeValueEl = $('div[data-typeid="'+typeid+'"]');
+                $(attributeValueEl).trigger('restoreField', value);
             });
             pubsub.trigger('noty', {
                 text: 'Восстановлены данные несохранённого документа.',
@@ -2744,7 +3280,7 @@ define(function (require) {
         toggleDividedState: function (enabled) {
             enabled = _.isUndefined(enabled) ? !this.dividedStateEnabled : enabled;
             this.dividedStateEnabled = enabled;
-
+            Cache.devidedState = enabled;
             if (enabled) {
                 this.$el.parent().css({
                     "margin-left": "0"
@@ -2771,6 +3307,30 @@ define(function (require) {
 
                 this.listLayoutHistory.$(".documents-controls").parent().remove();
                 this.listLayoutHistory.$(".documents-filters").removeClass("span6").addClass("span12");
+
+                console.log(this.listLayoutHistory.subViews['.documents-filters']);
+
+                var filterCollection = this.listLayoutHistory.subViews['.documents-filters'].options.ibs;
+                var filterView = this.listLayoutHistory.subViews['.documents-filters'].$('#event-filter');
+                var currentAppeal = this.appealId;
+                filterCollection.fetch({
+                    data: {
+                        limit: 999
+                    }
+                }).done(function(){
+                    filterCollection.each(function(appeal){
+                        var opt = $('<option/>', {
+                            value: appeal.get('id'),
+                            text: appeal.get('number')
+                        })
+                        filterView.append(opt);
+                    });
+                    filterView.val(currentAppeal);
+                    filterView.parent().css({
+                        'float': 'right',
+                        'margin-top': '-4.5em'
+                    }).show();
+                });
             } else {
                 if (this.listLayoutHistory) this.listLayoutHistory.tearDown(); //ViewBase.prototype.tearDown.call(this.listLayoutLight);
                 this.$el.parent().css({
@@ -2795,6 +3355,7 @@ define(function (require) {
         //getEditPageTypeName: Documents.Views.List.Common.Layout.prototype.getEditPageTypeName,
 
         persistenceCheck: function (callback) {
+            var self = this;
             var checkPopUp = new PopUpBase();
             checkPopUp.template = _.template("При переходе на другую страницу введённые данные будут утеряны.<br>Сохранить редактируемый документ?");
             checkPopUp.dialogOptions = {
@@ -2808,6 +3369,7 @@ define(function (require) {
                     text: "Сохранить",
                     "class": "button-color-green",
                     click: _.bind(function () {
+                        self.unlockDocument();
                         var persisted = this.persistDoc();
                         checkPopUp.tearDown();
                         callback(persisted);
@@ -2815,6 +3377,7 @@ define(function (require) {
                 }, {
                     text: "Не сохранять",
                     click: function () {
+                        self.unlockDocument()
                         checkPopUp.tearDown();
                         callback(true);
                     }
@@ -2991,16 +3554,66 @@ define(function (require) {
     Documents.Views.Edit.Dates = ViewBase.extend({
         template: templates._editDates,
         events: {
+            'click #executor-outer': 'openExecutorSelectPopup',
             "change .document-create-date,.document-create-time": "onDocumentCreateDateChange",
-            "change .document-set-close-date": "onDocumentSetCloseDateChange"
+            "change .document-set-close-date": "onDocumentSetCloseDateChange",
+            'change #createDate, #createTime' : 'onChangeDateTime'
         },
         data: function () {
             return {
-                dates: this.model.getDates()
+                dates: this.model.getDates(),
+                mnem: this.model.get('mnem')
             };
         },
         initialize: function () {
+            pubsub.on('executor:changed', this.onChangeExecutor, this);
             this.listenTo(this.model, "change", this.onModelReset);
+        },
+        openExecutorSelectPopup: function () {
+            this.personDialogView = new PersonDialogView({
+                appeal: appeal,
+                title: 'Исполнитель',
+                callback: function (person) {
+                    pubsub.trigger('executor:changed', person);
+                }
+            });
+
+            this.personDialogView.render().open();
+
+        },
+        onChangeExecutor: function (executor) {
+            this.setModelProperty('executorId', executor.id);
+            $('#executor').val(executor.name.last + ' ' + executor.name.first + ' ' + executor.name.middle);
+        },
+
+        onChangeDateTime: function(){
+            var newDate = moment($('#createDate').val()+' '+$('#createTime').val(), 'DD.MM.YYYY HH.mm').format('YYYY-MM-DD HH:mm:ss');
+            this.setModelProperty('assessmentBeginDate', newDate);
+        },
+        getModelProperty: function(name) {
+            if (this.model.get("group")) {
+                var property = _(this.model.get("group")[0].attribute).find(function (attr) {
+                        return attr.name == name;
+                    });
+                return property.properties[0].value;
+            }
+
+        },
+        setModelProperty: function(name, value) {
+            var property = _(this.model.get("group")[0].attribute).find(function (attr) {
+                    return attr.name == name;
+                });
+            if (property) {
+                property.properties[0].value = value+'';
+            } else {
+                this.model.get("group")[0].attribute.push({
+                    name: name,
+                    properties: [{
+                        name: 'value',
+                        value: value + ''
+                    }]
+                });
+            }
         },
         onModelReset: function () {
             this.stopListening(this.model, "change", this.onModelReset);
@@ -3022,12 +3635,16 @@ define(function (require) {
             this.model.shouldBeClosed = this.$(".document-set-close-date").is(":checked");
         },
         render: function () {
+            var self = this;
             ViewBase.prototype.render.call(this);
             this.$(".date-input").datepicker();
             this.$(".time-input").timepicker({
                 showPeriodLabels: false,
                 defaultTime: 'now'
             });
+            self.$el.find('#executor').val(self.getModelProperty('doctorLastName')+' '+self.getModelProperty('doctorFirstName')+' '+self.getModelProperty('doctorMiddleName'));
+            self.$el.find('#createDate').val(moment(self.getModelProperty('assessmentBeginDate')) ? moment(self.getModelProperty('assessmentBeginDate')).format('DD.MM.YYYY') : '').datepicker();
+            self.$el.find('#createTime').val(moment(self.getModelProperty('assessmentBeginDate')) ? moment(self.getModelProperty('assessmentBeginDate')).format('HH.mm') : '').timepicker();
         }
     });
 
@@ -3128,18 +3745,25 @@ define(function (require) {
 
         onCancelClick: function (event) {
             this.deleteAutosavedFields();
+            this.unlockDocument();
             this.returnToList();
         },
 
         onSaveDocumentSuccess: function (result) {
             var resultId = result.id || result.data[0].id;
             this.deleteAutosavedFields();
+            this.unlockDocument();
             this.goToDocReview(resultId);
         },
 
         onSaveDocumentError: function (resultId) {
             this.$('button').button('enable');
-            alert("При сохранении документа произошла ошибка. Повторите попытку.");
+            console.log(resultId);
+            if (resultId.responseText &&  $.parseJSON(resultId.responseText).errorMessage) {
+                alert('Невозможно создать документ: ' + $.parseJSON(resultId.responseText).errorMessage);
+            } else {
+                alert("При сохранении документа произошла ошибка. Повторите попытку.");
+            }
         },
 
         onSaveOptionsToggleClick: function () {
@@ -3167,12 +3791,19 @@ define(function (require) {
 
         saveDocument: function () {
             //this.model.save({}, {success: this.onSaveDocumentSuccess, error: this.onSaveDocumentError});
+            var self = this;
             if (this.model.isValid()) {
                 this.$('button').button('disable');
                 //console.log(JSON.stringify(this.model.toJSON()));
                 this.model.save({}, {
                     success: this.onSaveDocumentSuccess,
-                    error: this.onSaveDocumentError
+                    error: function(d, data) {
+                        if (d.responseText) {
+                            self.onSaveDocumentError(d);
+                        } else {
+                            self.onSaveDocumentError(data);
+                        }
+                    }
                 });
             }
         },
@@ -3201,7 +3832,14 @@ define(function (require) {
         deleteAutosavedFields: function() {
             $.ajax({
                type: 'DELETE',
-                url: '/data/autosave/doc_'+this.model.id
+                url: '/data/autosave/doc_'+this.model.appealId+'_'+this.model.id
+            });
+        },
+
+        unlockDocument: function() {
+            $.ajax({
+               type: "DELETE",
+                url: DATA_PATH + "appeals/" + this.model.appealId + "/documents/" + this.model.id + "/lock"
             });
         },
 
@@ -3345,6 +3983,108 @@ define(function (require) {
     //endregion
 
 
+    //region VIEWS EDIT INSTRUMENTAL
+    //---------------------
+    Documents.Views.Edit.Instrumental.Layout = Documents.Views.Edit.Base.Layout.extend({
+        /*initialize: function () {
+            Documents.Views.Edit.Common.Layout.prototype.initialize.call(this, this.options);
+            this.documentTypes = new Documents.Collections.DocumentTypes();
+            this.documentTypes.mnems = ["THER"];
+            this.documentTypes.fetch();
+        },*/
+        getListLayoutHistory: function () {
+            return new Documents.Views.List.Instrumental.LayoutHistory({
+                included: true
+            });
+        },
+        render: function () {
+            return Documents.Views.Edit.Base.Layout.prototype.render.call(this, {
+                ".dates": new Documents.Views.Edit.Dates({
+                    model: this.model
+                }),
+                ".document-controls-top": new Documents.Views.Edit.Instrumental.DocControls({
+                    model: this.model
+                }),
+                ".document-controls-bottom": new Documents.Views.Edit.Instrumental.DocControls({
+                    model: this.model
+                })
+            });
+        }
+    });
+
+    Documents.Views.Edit.Instrumental.DocControls = Documents.Views.Edit.DocControls.extend({
+        goToDocReview: function (resultId) {
+            this.model.trigger("toggle:dividedState", false);
+            App.Router.updateUrl(["appeals", appealId, "diagnostics-instrumental"].join("/"));
+            dispatcher.trigger("change:viewState", {
+                mode: "SUB_REVIEW",
+                type: "diagnostics-instrumental",
+                options: {
+                    subId: resultId
+                }
+            });
+        },
+        returnToList: function () {
+            this.model.trigger("toggle:dividedState", false);
+            App.Router.updateUrl(["appeals", appealId, "diagnostics-instrumental"].join("/"));
+            dispatcher.trigger("change:viewState", {
+                mode: "REVIEW",
+                type: "diagnostics-instrumental"
+            });
+        }
+    });
+
+
+
+
+    //region VIEWS EDIT LAB
+    //---------------------
+    Documents.Views.Edit.Laboratory.Layout = Documents.Views.Edit.Base.Layout.extend({
+        getListLayoutHistory: function () {
+            return new Documents.Views.List.Laboratory.LayoutHistory({
+                included: true
+            });
+        },
+        render: function () {
+            return Documents.Views.Edit.Base.Layout.prototype.render.call(this, {
+                ".dates": new Documents.Views.Edit.Dates({
+                    model: this.model
+                }),
+                ".document-controls-top": new Documents.Views.Edit.Laboratory.DocControls({
+                    model: this.model
+                }),
+                ".document-controls-bottom": new Documents.Views.Edit.Laboratory.DocControls({
+                    model: this.model
+                })
+            });
+        }
+    });
+
+    Documents.Views.Edit.Laboratory.DocControls = Documents.Views.Edit.DocControls.extend({
+        goToDocReview: function (resultId) {
+            this.model.trigger("toggle:dividedState", false);
+            App.Router.updateUrl(["appeals", appealId, "diagnostics-laboratory", resultId].join("/"));
+            dispatcher.trigger("change:viewState", {
+                mode: "SUB_REVIEW",
+                type: "diagnostics-laboratory",
+                options: {
+                    modelId: resultId
+                }
+            });
+        },
+        returnToList: function () {
+            this.model.trigger("toggle:dividedState", false);
+            App.Router.updateUrl(["appeals", appealId, "diagnostics-laboratory"].join("/"));
+            dispatcher.trigger("change:viewState", {
+                mode: "REVIEW",
+                type: "diagnostics-laboratory"
+            });
+        }
+    });
+
+    //------ LAB EDIT VIEWS END
+
+
     //region VIEWS EDIT GRID BASE
     //---------------------
     Documents.Views.Edit.GridSpanList = RepeaterBase.extend({
@@ -3383,6 +4123,7 @@ define(function (require) {
     Documents.Views.Edit.Grid = RepeaterBase.extend({
         initialize: function () {
             infectChecked = [];
+            infectTherapies = [];
             this.collection = new Backbone.Collection();
             this.listenTo(this.collection, "reset", this.onCollectionReset);
 
@@ -3470,7 +4211,7 @@ define(function (require) {
                 self.$(".vgroup-" + i + "-span")
                     .removeClass("span" + $(this).data("span-width"))
                     .addClass("span12")
-                    .wrap("<div class='row-fluid vgroup-row' style='padding-top: 1em;'></div>")
+                    .wrap("<div class='row-fluid vgroup-row'></div>")
                     .parent()
                     .detach()
                     .appendTo($vgroupContent);
@@ -3490,6 +4231,10 @@ define(function (require) {
                 if($(this).find('.in-vgroup-row').length > 0) {
                     $.each($(this).find('.in-vgroup-row'), function(i){
                         $(this).removeClass("span12").addClass("span4");
+                        $(this).css({
+                            'padding-top': '.2em',
+                            'padding-bottom': '1em'
+                        });
                         if ($(this).data('vgrouprow') > row) {
                             row = $(this).data('vgrouprow');
                             firstRowElement = this;
@@ -3498,11 +4243,19 @@ define(function (require) {
                         }
 
                     })
+                } else {
+                    $(this).find('.vgroup-row').css('padding-top', '1em');
                 }
             });
 
 
             this.$(".row-fluid:empty").hide();
+
+            console.log(this.model);
+
+            if (this.model.get('mnem') == 'DIAG') {
+                console.log(this.$el);
+            }
 
             return this;
         }
@@ -3519,11 +4272,16 @@ define(function (require) {
     var UIElementBase = Documents.Views.Edit.UIElement.Base = ViewBase.extend({
         template: templates.uiElements._base,
 
+        fieldModiffed: false,
+
         events: {
             "change .attribute-value": "onAttributeValueChange",
+            "focusout .RichText": "onAttributeValueBlur",
             "input [contenteditable].attribute-value": "onAttributeValueChange",
             "change .field-toggle": "onFieldToggleChange",
-            "keyup .attribute-value": "onAttributeKeyUp"
+            "keyup .attribute-value": "onAttributeKeyUp",
+            "restoreField .attribute-value": "onAttributeValueRestored",
+            "toggle": "onAttributeValueChange"
         },
 
         data: function () {
@@ -3552,6 +4310,10 @@ define(function (require) {
             };
         },
 
+        onAttributeValueRestored: function(){
+            this.model.setValue(this.getAttributeValue());
+        },
+
         mapLayoutAttributes: function () {
             //TODO: MAP ALL ATTRIBUTES
             _(this.model.get('layoutAttributeValues')).each(function (value) {
@@ -3576,14 +4338,21 @@ define(function (require) {
         },
 
         getDocTypeId: function() {
-            console.log(this.model);
             var typePath = window.location.pathname.split('/');
             if (typePath[typePath.length-1] == 'edit') {
                return typePath[typePath.length-2];
             } else {
                 return typePath[typePath.length-1];
             }
+        },
 
+        getAppealId: function() {
+            var typePath = window.location.pathname.split('/');
+            if (typePath[typePath.length-1] == 'edit') {
+               return typePath[typePath.length-5];
+            } else {
+                return typePath[typePath.length-4];
+            }
         },
 
         setAttributeValue: function () {
@@ -3598,21 +4367,38 @@ define(function (require) {
 
         setAutosavedFields: function() {
             var fields = {};
-            $.each($(".document-grid .span6"), function(){
+            $.each($(".document-grid .span2, .document-grid .span3, .document-grid .span4, .document-grid .span5, .document-grid .span6:not(.vgroup), .document-grid .span12, .isCheckbox"), function(){
                 var field = $(this).find(".attribute-value")[0];
                 var fieldValue = "";
-                if ($(field).is(".RichText")) {
-                    fieldValue = $(field).html();
-                } else {
-                    fieldValue = $(field).val();
+
+                if (field) {
+                    if ($(this).is(".isCheckbox")) {
+                        fieldValue = $(this).find('.field-toggle').attr('checked');
+                    } else if ($(field).is(".RichText")) {
+                        fieldValue = $(field).html();
+                    } else {
+                        fieldValue = $(field).val();
+                    }
+                } else if ($(this).find(".mkb-code").length && $(this).data("typeid")) {
+                    fieldValue = {
+                        code: 'mkb',
+                        mkbCode: $(this).find(".mkb-code").val(),
+                        mkbDiagnosis: $(this).find(".mkb-diagnosis").val(),
+                        mkbId: $(this).find(".mkb-code").data('mkb-id')
+                    }
                 }
-                if (fieldValue) {
+
+                if (fieldValue && $(this).data("typeid")) {
                     fields[$(this).data("typeid")] = fieldValue;
                 }
             });
+            if ($('.infectLocal').length && $('.infectLocal').find('.field-toggle').attr('checked')) {
+                fields[$('.infectLocal').data("typeid")] = "checked"
+            }
             var docTypeId = this.getDocTypeId();
+            var appealId = this.getAppealId();
             var dataToSend = {
-                "id": "doc_"+docTypeId,
+                "id": "doc_"+appealId+'_'+docTypeId,
                 "text": JSON.stringify(fields)
             };
             $.ajax({
@@ -3622,6 +4408,19 @@ define(function (require) {
                 dataType: 'json',
                 data: JSON.stringify(dataToSend)
             });
+        },
+
+        restoreField: function(val){
+            if (this.$el.is('.infectLocal') && !this.$el.find('.field-toggle').attr('checked')) {
+                this.$el.find('.field-toggle').attr('checked', 'checked');
+                $('.depends-local-display-row').show();
+            } else if (this.$el.is('.isCheckbox') && !this.$el.find('.field-toggle').attr('checked')) {
+                this.$el.find('.field-toggle').attr('checked', 'checked');
+                this.model.setPropertyValueFor('value', 'Да');
+            } else {
+                this.model.setPropertyValueFor('value', val);
+                this.render();
+            }
         },
 
         onAttributeValueChange: function (event) {
@@ -3641,9 +4440,18 @@ define(function (require) {
             }
         },
 
+        onAttributeValueBlur: function (event) {
+            if (this.fieldModiffed) {
+                this.setAutosavedFields();
+            }
+            this.fieldModiffed = false;
+        },
+
         onAttributeKeyUp: function (event) {
             if (event.keyCode == 32) {
                 this.setAutosavedFields();
+            } else {
+                this.fieldModiffed = true;
             }
         },
 
@@ -3672,7 +4480,9 @@ define(function (require) {
         },
 
         toggleField: function (visible) {
-            this.$(".field").toggle(visible);
+            if (!this.$el.hasClass('isCheckbox')) {
+                this.$(".field").toggle(visible);
+            }
         },
 
         updateFieldCollapse: function () {
@@ -3684,6 +4494,7 @@ define(function (require) {
         render: function (subViews) {
             ViewBase.prototype.render.call(this, subViews);
             this.updateFieldCollapse();
+            var self = this;
             var therapyFieldCode = this.model.get("therapyFieldCode");
             switch (therapyFieldCode) {
                 /*case "therapyPhaseTitle":
@@ -3699,6 +4510,15 @@ define(function (require) {
                 });
                 break;
             }
+
+            if (this.model.get('mandatory') == 'true') {
+                this.$('.field-toggle').attr('disabled', 'disabled');
+            }
+
+            this.$el.on('restoreField', function(el, val) {
+                self.restoreField(val);
+            });
+
             return this;
         }
     });
@@ -3734,28 +4554,37 @@ define(function (require) {
         },
 
         onRichTextPaste: function (event) {
+            event.preventDefault();
+            var text = (event.originalEvent || event).clipboardData.getData('text/html');
             setTimeout(_.bind(function () {
-                console.log("paste! ", event);
+                console.log("paste! ", text);
+                var wordTagCount = text.split("<![endif]-->").length;
+                if (wordTagCount > 1) {
+                    text = text.split("<![endif]-->")[wordTagCount-1];
+                }
+
+                window.document.execCommand('insertHTML', false, text);
+
                 var $attrValue = this.$(".attribute-value");
+                $attrValue.html($attrValue.html().replace(/\u2028/g, '').replace(/\u2029/g, ''));
                 $attrValue.html($.htmlClean($attrValue.html(), {
                     format: true,
                     removeTags: ["a", "hr", "basefont", "center", "dir", "font", "frame", "frameset", "iframe",
-                        "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button", "ul", "li"
-                        //, "table","tbody", "thead", "tr", "th", "td"
+                        "isindex", "menu", "noframes", "script", "input", "select", "option", "textarea", "button", "ul", "li", "xml", "style", "worddocument", "span"
                     ],
                     removeAttrs: ["style", "class"],
                     replace: [
                         [
                             ["h1", "h2", "h3", "h4"], "b"
-                        ],
-                        [
-                            ["table", "tr", "thead", "tbody"], "div"
-                        ],
-                        [
-                            ["td", "th"], "span"
                         ]
                     ]
                 }));
+
+                $attrValue.find('td').css({
+                    'border': '1px solid #9f9f9f',
+                    'padding': '2px'
+                });
+                $attrValue.find('table').attr('border', '1').attr('cellpadding', '4').attr('cellspacing', '0').addClass('printable');
 
                 this.model.setValue($attrValue.html());
             }, this), 0);
@@ -3765,16 +4594,6 @@ define(function (require) {
             this.$(".editor-controls").toggle(visible);
             UIElementBase.prototype.toggleField.call(this, visible);
         }
-
-        //,
-        /*initialize: function () {
-            this.model.convertValueToHtml();
-            UIElementBase.prototype.initialize.call(this, this.options);
-        },*/
-        /*onModelCopy: function () {
-            this.model.convertValueToHtml();
-            UIElementBase.prototype.onModelCopy.call(this);
-        }*/
     });
 
     /**
@@ -3815,6 +4634,7 @@ define(function (require) {
         onThesaurusConfirmed: function (event) {
             this.model.setValue(event.selectedTerms);
             this.$(".attribute-value").html(event.selectedTerms);
+            this.setAutosavedFields();
         }
     });
 
@@ -3843,7 +4663,7 @@ define(function (require) {
                     if ($comboInput.hasClass("Mandatory")) $wrapper.addClass("Mandatory");
 
                     $wrapper.find("ul").append($comboInput.data("options").split("|").map(function (opt) {
-                        return $('<li>' + opt + '</li>');
+                        return $('<li>' + opt.trim() + '</li>');
                     }));
 
                     $wrapper.on("click", function (event) {
@@ -3918,6 +4738,11 @@ define(function (require) {
             this.ui.$attributeValueEl.val(time);
         },
 
+        restoreField: function(val){
+            this.model.setPropertyValueFor('value', "1970-01-01 " + val + ':00');
+            this.render();
+        },
+
         render: function () {
             UIElementBase.prototype.render.call(this);
 
@@ -3939,15 +4764,20 @@ define(function (require) {
         initialize: function () {
 
             if (this.model.get('code') == 'therapyBegDate' || this.model.get('code') == 'therapyPhaseBegDate') {
+                this.setTherapyMandatory();
                 this.listenTo(fds, "change-therapyTitle", function () {
-                    this.model.set({
-                        mandatory: (fds.therapyFdrId ? "true" : "false")
-                    });
-                    this.render();
+                    this.setTherapyMandatory();
                 });
             }
 
             UIElementBase.prototype.initialize.call(this);
+        },
+
+        setTherapyMandatory: function(){
+            this.model.set({
+                mandatory: (fds.therapyFdrId ? "true" : "false")
+            });
+            this.render();
         },
 
         data: function () {
@@ -3992,13 +4822,18 @@ define(function (require) {
             // return moment(value, this.inputFormat).format(CD_DATE_FORMAT);
         },
 
+        restoreField: function(val){
+            this.model.setPropertyValueFor('value', moment(val, 'DD.MM.YYYY').format('YYYY-MM-DD HH:mm:ss'));
+            this.render();
+        },
+
         render: function () {
             UIElementBase.prototype.render.call(this);
-
+            var self = this;
             this.ui = {};
             this.ui.$input = this.$el.find(".attribute-value");
             this.ui.$input.mask(this.inputMaskFormat);
-            this.ui.$input.datepicker();
+            !this.ui.$input.is('.Disabled') && this.ui.$input.datepicker();
 
             return this;
         }
@@ -4012,7 +4847,8 @@ define(function (require) {
         template: templates.uiElements._integer,
 
         events: _.extend({
-            "keypress .integer": "onIntegerKeypress"
+            "keypress .integer": "onIntegerKeypress",
+            "focusout .integer": "onIntegerFocusout",
         }, UIElementBase.prototype.events),
 
         initialize: function () {
@@ -4024,6 +4860,15 @@ define(function (require) {
             if (eve.which < 48 || eve.which > 57) {
                 eve.preventDefault();
             }
+        },
+
+        onIntegerFocusout: function () {
+            if (this.model.get('scope') === "'авто'") {
+                if (!this.model.getPropertyValueFor('value')) {
+                    this.model.setPropertyValueFor('value', 'авто');
+                    this.render();
+                }
+            }
         }
     });
 
@@ -4034,21 +4879,63 @@ define(function (require) {
     Documents.Views.Edit.UIElement.Table = UIElementBase.extend({
         template: templates.uiElements._table,
         data: function(){
-            var columns = this.model.get('scope').split(',');
-            var trs = this.model.get('tableValues');
-            // var trs = [
-            //     ["1", "NUUMBBER", "Плазма свежезамороженная, полученная автоматическим аферезом", "0(I)Rh-", "123", "456.0", "789"],
-            //     ["2", "NUUMBBER1", "Плазма свежезамороженная из дозы крови    Карантинизовано 6 месяцев", "B(III)Rh+", "77777", "8888.0", "99999"]
-            // ];
 
+            console.log('table model', this.model);
+
+            var columns = this.model.get('scope').split(',');
             var data = {
                 name: this.model.get('name'),
                 columns: columns,
-                trs: trs
+                trs: this.getTrs()
             };
 
-            console.log('table',data, this);
+            console.log('table data',data, this);
             return data;
+        },
+        getTrs: function() {
+            var self = this;
+            var trs = [];
+            var factory = new UIElementFactory;
+
+            _.each(this.model.get('tableValues'), function(tr){
+                var tds = [];
+                _.each(tr.values, function(td){
+                    tds.push(self.renderTd(td));
+                });
+                trs.push(tds);
+
+                // var rTds = [];
+                // _.each(tr, function(td){
+                //     rTd = factory.make(td);
+                //     rTds.push(rTd);
+                // });
+                // trs.push(rTds);
+            });
+
+            return trs;
+        },
+
+        renderTd: function(td) {
+            if (td.valueType && td.valueType.indexOf('rb') > -1) {
+                return td.rbValue ? td.rbValue.name : '';
+            } else if (td.valueType) {
+                switch (td.valueType.toLowerCase()) {
+                case "date":
+                    return moment(td.date).format('DD.MM.YYYY');
+                    break;
+                case "mkb":
+                    return td.value;
+                    break;
+                case "person":
+                    return td.person.name.last + ' ' + td.person.name.first.substring(0, 1) + '. ' + td.person.name.middle.substring(0, 1) + '.';
+                    break;
+                default:
+                    return td.value;
+                    break;
+                }
+            } else {
+                return td.value;
+            }
         }
     });
 
@@ -4077,9 +4964,15 @@ define(function (require) {
 
         onFormatDoubleKeyup: function (event) {
             var $ct = $(event.currentTarget);
-
-            if ($ct.val().indexOf('.') == 0) {
-                $ct.val($ct.val().substring(1));
+            if ($ct.val().indexOf('.') != $ct.val().length-1) {
+                var floatedVal = parseFloat($ct.val());
+                if (!isNaN(floatedVal)) {
+                    if ($ct.val()[$ct.val().length-1] != '0') {
+                        $ct.val(floatedVal);
+                    }
+                } else {
+                    $ct.val('');
+                }
             }
         }
     });
@@ -4147,6 +5040,14 @@ define(function (require) {
         onMKBCodeChange: function () {
             var mkbId = this.ui.$code.data('mkb-id');
             this.model.setPropertyValueFor('valueId', mkbId);
+            this.setAutosavedFields();
+        },
+
+        restoreField: function(val){
+            this.model.setPropertyValueFor('value', val.mkbCode +" "+ val.mkbDiagnosis);
+            this.model.setPropertyValueFor('valueId', val.mkbId);
+            this.render();
+            this.model.setPropertyValueFor('value', '');
         },
 
         render: function () {
@@ -4270,6 +5171,12 @@ define(function (require) {
                 this.$(".therapy-doc-link-container").hide();
             }
         },
+
+        restoreField: function(val){
+            this.model.setPropertyValueFor('valueId', val);
+            this.render();
+        },
+
         onAttributeValueChange: function (event) {
             this.showDocLink();
             Documents.Views.Edit.UIElement.FlatDirectory.prototype.onAttributeValueChange.call(this, event);
@@ -4291,15 +5198,33 @@ define(function (require) {
         },
         initialize: function () {
             Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.initialize.call(this, this.options);
-
+            this.setTherapyMandatory();
             this.listenTo(fds, "change-therapyTitle", function () {
-                //this.$(".attribute-value").val("").change();
-                this.model.set({
-                    mandatory: (fds.therapyFdrId ? "true" : "false")
-                });
-                this.render();
+                this.setTherapyMandatory();
             });
+        },
+
+        restoreField: function(val){
+            this.model.setPropertyValueFor('valueId', val);
+            this.render();
+        },
+
+        setTherapyMandatory: function(){
+            this.model.set({
+                mandatory: (fds.therapyFdrId ? "true" : "false")
+            });
+            this.render();
+        },
+
+        render: function () {
+            UIElementBase.prototype.render.call(this);
+            if (!(this.$('option:selected').length && this.$('option:selected').val()) && this.model.getValue()) {
+                this.$('.attribute-value').prepend('<option value="'+this.model.getValue()+'">'+this.model.getPropertyValueFor('value')+'</option>');
+                this.$('.attribute-value').val(this.model.getValue());
+            }
+            return this;
         }
+
     });
 
     /**
@@ -4312,6 +5237,14 @@ define(function (require) {
             fds.trigger("change-therapyTitle");
             Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.onDirectoryReady.call(this);
         },
+
+        restoreField: function(val){
+            this.model.setPropertyValueFor('valueId', val);
+            this.render();
+            fds.therapyFdrId = this.getAttributeValue();
+            fds.trigger("change-therapyTitle");
+        },
+
         onAttributeValueChange: function (event) {
             fds.therapyFdrId = this.getAttributeValue();
             fds.trigger("change-therapyTitle");
@@ -4382,26 +5315,32 @@ define(function (require) {
                 _(this.options.sections).each(function (section) {
                     section.items.each(function (item) {
                         if (item.checked) {
-                            var tests = item.resultData.filter(function (rdi) {
-                                return rdi.checked;
-                            });
-                            if (tests.length) {
+                            if (item.result.get('context') === 'action_bak_lab') {
+                                var tests = new BakResult();
+                                tests.diagnosticId = item.id;
                                 paste.push({
-                                    inline: item.inline,
+                                    context: item.result.get('context'),
                                     name: item.get("diagnosticName") ? item.get("diagnosticName").name : item.get("assessmentName").name,
                                     plannedEndDate: item.get("plannedEndDate"),
-                                    context: item.result.get('context'),
                                     tests: tests
-                                    /*.map(function (rdi) {
-                                        return rdi.toJSON();
-                                    })*/
                                 });
+                            } else {
+                                var tests = item.resultData.filter(function (rdi) {
+                                    return rdi.checked;
+                                });
+                                if (tests.length) {
+                                    paste.push({
+                                        inline: item.inline,
+                                        name: item.get("diagnosticName") ? item.get("diagnosticName").name : item.get("assessmentName").name,
+                                        plannedEndDate: item.result.get("mnem").toUpperCase() === 'LAB' ? item.get("plannedEndDate") : moment(_.find(item.result.get('group')[0].attribute, function(attr){return attr.name === 'assessmentBeginDate'}).properties[0].value),
+                                        context: item.result.get('context'),
+                                        tests: tests
+                                    });
+                                }
                             }
                         }
                     }, this);
                 }, this);
-
-                console.log(paste);
 
                 this.options.itemsCallback(paste);
 
@@ -4648,12 +5587,13 @@ define(function (require) {
             if (this.collection.length) {
                 this.collection.each(function (item) {
                     var self = this;
-                    item.fetchResultData(function(){
-                        var repeatOptions = self.getRepeatOptions(item);
-                        var repeatView = self.getRepeatView(repeatOptions);
-                        self.subViews.push(repeatView.itemRow, repeatView.itemAttrsContainerRow);
-                        self.$el.append(repeatView.itemRow.render().el, repeatView.itemAttrsContainerRow.render().el);
-                    });
+                    var repeatOptions = self.getRepeatOptions(item);
+                    var repeatView = self.getRepeatView(repeatOptions);
+                    self.subViews.push(repeatView.itemRow, repeatView.itemAttrsContainerRow);
+                    self.$el.append(repeatView.itemRow.render().el, repeatView.itemAttrsContainerRow.render().el);
+                    // item.fetchResultData(function(){
+                    //
+                    // });
                 }, this);
             } else {
                 this.$el.append((new HtmlHelper.ItemRow()).render().el);
@@ -4727,11 +5667,30 @@ define(function (require) {
         },
 
         itemsCallback: function (selectedItems) {
-            console.log("itemsCallback");
+            $.each(selectedItems, function(i, item){
+                if (item) {
+                    if (item.context === 'action_bak_lab') {
+                        $.ajaxSetup({async: false});
+                            item.tests.fetch({
+                                success: function(){
+                                    var bakTable = item.tests.getTable();
+                                    var comments = item.tests.toJSON().textResults;
+                                    item.tests.rows = bakTable.rows;
+                                    item.tests.isActivity = bakTable.isActivity;
+                                    item.tests.comments = comments;
+                                }
+                            });
+                        $.ajaxSetup({async: true});
+                    }
+                }
+            });
+
             var sisRendered = templates.uiElements.htmlHelperPopUp.paste({
                 selectedItems: _(selectedItems)
             });
-            this.model.setValue(sisRendered);
+
+            var existVal = this.model.getPropertyByName('value').value;
+            this.model.setValue(existVal + sisRendered);
             this.$(".attribute-value").append(sisRendered);
         }
     });
@@ -4775,40 +5734,12 @@ define(function (require) {
 
                     this.resultData.reset(tests);
 
-                    var takingTimeId = this.result.getProperty('Время забора');
-
-                    if (takingTimeId) {
-                        var self = this;
-                        $.ajax({
-                           type: 'GET',
-                            url: "/data/job/jobTicket/"+takingTimeId,
-                            dataType: 'json',
-                            accept:'application/json',
-                            async: false,
-                            success: function(data) {
-                                self.set('takingTime', data);
-                                if (callback) {
-                                    callback.call();
-                                }
-                            }
-                        });
-                    } else {
-                        if (callback) {
-                            callback.call();
-                        }
-                    }
-
-
-                    /*this.set({
-                        resultData: tests
-                    });*/
+                    callback && callback.call();
 
                 }, this));
 
                 return promise;
             },
-
-
 
             sync: App.Models.LaboratoryDiag.prototype.sync,
             parse: App.Models.LaboratoryDiag.prototype.parse
@@ -4981,7 +5912,7 @@ define(function (require) {
             var labs = new Labs();
             labs.appealId = appealId;
             labs.setParams({
-                sortingField: "plannedEndDate",
+                sortingField: "takingTime",
                 sortingMethod: "desc"
             });
 
@@ -5006,7 +5937,7 @@ define(function (require) {
             //-----------------------
             var cons = new Cons();
             cons.appealId = appealId;
-
+            cons.mnemFilter = ["CONS", "CONS_POLY", "CONS_SPEC", "CONS_PHD"]
 
             cons.setParams({
                 sortingField: "plannedEndDate",
@@ -5106,7 +6037,8 @@ define(function (require) {
                         self.options = options.map(function (option) {
                             return {
                                 val: self.getOptionValue(option),
-                                text: self.getOptionText(option)
+                                text: self.getOptionText(option),
+                                code: self.hascode ? self.getOptionCode(option) : '',
                             }
                         }, self);
                         self.render();
@@ -5141,7 +6073,7 @@ define(function (require) {
         },
         getCollectionPath: function () {
             return 'collections/departments';
-        }
+        },
     });
 
     /**
@@ -5149,11 +6081,15 @@ define(function (require) {
      * @type {*}
      */
     Documents.Views.Edit.UIElement.OperationType = Documents.Views.Edit.UIElement.Select.extend({
+        hascode: true,
         getOptionText: function (model) {
             return model.get('value');
         },
         getOptionValue: function (model) {
             return model.get('id');
+        },
+        getOptionCode: function(model){
+            return model.get('codeOperation');
         },
         getPropertyName: function () {
             return 'value';
@@ -5589,39 +6525,80 @@ define(function (require) {
      */
     Documents.Views.Review.Base.Controls = ViewBase.extend({
         initialize: function (options) {
-            console.log('init controls')
             this.listenTo(this.collection, 'change reset',this.onDocCollectionChange);
 
-            this.contextPrintButton = new ContextPrintButton({
-                docCollection: this.collection,
-                data: {
-                    event_id: appeal.get('id'),
-                    context_type: 'action',
-                    client_id: appeal.get('patient').get('id'),
-                    additional_context: {
-                        currentOrgStructure: '',
-                        currentOrganisation: 3479,
-                        currentPerson: Core.Cookies.get('userId')
-                    }
-                }
+            this.printDocuments = this.getPrintDocumentCollection();
+
+            this.printTemplates = new PrintTemplates();
+
+            this.documentPrintButton = new ContextPrintButton({
+                differentDocs: true,
+                separate: false,
+                documents: this.printDocuments,
+                title: 'Печать',
+                printTemplates: this.printTemplates
+            });
+
+            this.documentPrintButtonSingle = new ContextPrintButton({
+                documents: this.printDocuments,
+                title: 'Печать',
+                printTemplates: this.printTemplates
+            });
+
+            this.documentPrintButtonSeparated = new ContextPrintButton({
+                differentDocs: true,
+                separate: true,
+                documents: this.printDocuments,
+                title: 'Печать раздельно',
+                printTemplates: this.printTemplates
             });
 
             this.subViews = {
-                '.context-print-button': this.contextPrintButton
+                '.document-print-button-single': this.documentPrintButtonSingle,
+                '.document-print-button': this.documentPrintButton,
+                '.document-print-button-separated': this.documentPrintButtonSeparated
             };
 
         },
 
+        getPrintDocumentCollection: function(){
+            var self = this;
+            var documents = [];
+            _.each(this.collection.models, function(doc){
+                documents.push({
+                    doc_context: doc.get('context'),
+                    context_type: 'action',
+                    context: {
+                        event_id: doc.get('appealId'), //appeal.get('id')
+                        action_id: doc.get('id'),
+                        client_id: appeal.get('patient').get('id'),
+                        currentOrgStructure: '',
+                        currentOrganisation: 3479,
+                        currentPerson: Core.Cookies.get('userId'),
+                    }
+                });
+            });
+            return documents;
+        },
+
         onDocCollectionChange: function(){
-                console.log('cr', arguments,(new Date()).getTime())
-                var firstDoc = this.collection.first();
-                if (firstDoc) {
-                    this.contextPrintButton.options.data.action_id = firstDoc.get('id');
-                    if (firstDoc.get('context')) {
-                        this.contextPrintButton.getTemplatesForContext(firstDoc.get('context'));
+            var self = this;
+            var firstDoc = this.collection.first();
+            if (firstDoc) {
+                this.documentPrintButtonSingle.documents = this.printDocuments;
+                this.documentPrintButton.documents = this.documentPrintButtonSeparated.documents = this.getPrintDocumentCollection();
+                if (firstDoc.get('context')) {
+                    this.printTemplates.setPrintContext(firstDoc.get('context'));
+                    this.printTemplates.fetch();
+                }
+            }
+            this.collection.each(function(doc){
+                if (doc.getDates().end) {
+                    if (doc.getDates().end.getValue()) {
+                        self.$('.assign-to-me').button('disable');
                     }
                 }
-
+            });
         },
 
         template: templates._reviewControls,
@@ -5639,7 +6616,22 @@ define(function (require) {
             "click .prev-document": "onPrevDocumentClick",
             // "click .print-documents.context-print-button": "onPrintContextClick",
             "click .print-documents.single-page": "onPrintDocumentsSinglePageClick",
-            "click .print-documents.multiple-pages": "onPrintDocumentsMultiplePagesClick"
+            "click .print-documents.multiple-pages": "onPrintDocumentsMultiplePagesClick",
+            "click .assign-to-me": "assignToMe"
+        },
+
+        assignToMe: function() {
+            this.collection.each(function(model){
+                model.get('group')[0].attribute.push({
+                    name: "executorId",
+                    properties: [{
+                        name: "value",
+                        value: Core.Cookies.get('userId')
+                    }]
+                });
+                model.save();
+            });
+
         },
 
         onBackToDocumentListClick: function () {
@@ -5723,9 +6715,11 @@ define(function (require) {
 
         render: function () {
             ViewBase.prototype.render.call(this);
-            $.contextMenu('destroy')
-            this.contextPrintButton.setElement(this.$('.context-print-button')).render();
-
+            $.contextMenu('destroy', $('.document-print-button'));
+            $.contextMenu('destroy', $('.document-print-button-separated'));
+            this.documentPrintButton.setElement(this.$('.document-print-button')).render();
+            this.documentPrintButtonSingle.setElement(this.$('.document-print-button-single')).render();
+            this.documentPrintButtonSeparated.setElement(this.$('.document-print-button-separated')).render();
             return this;
         },
     });
@@ -5738,7 +6732,7 @@ define(function (require) {
         template: templates._reviewSheet,
 
         data: function () {
-
+            var self = this;
             var tmplData = {};
             var documentJSON = this.model.toJSON()[0];
 
@@ -5763,7 +6757,11 @@ define(function (require) {
                     doctorSpecs: summaryAttrs[7]["properties"][0]["value"],
                     loaded: true,
                     showIcons: this.options.showIcons,
-                    isOldType: this.model.isOldType()
+                    isOldType: this.model.isOldType(),
+                    lockInfo: documentJSON.lockInfo,
+                    mnem: this.model.get('mnem'),
+                    tgsk: self.model.tgsk,
+                    code: this.model.get('code')
                 };
             } else {
                 tmplData = {
@@ -5778,16 +6776,79 @@ define(function (require) {
 
         events: {
             "click .edit-document": "onEditDocumentClick",
-            "click .duplicate-document": "onDuplicateDocumentClick"
+            "click .duplicate-document": "onDuplicateDocumentClick",
+            "click .tgskSend": "onTgskSend",
+            "click .tgskCancel": "onTgskCancel",
+            "mouseenter .edit-locked": "showLockInfo",
+            "mouseleave .edit-locked": "hideLockInfo"
         },
 
         initialize: function () {
+            var self = this;
             this.listenTo(this.model, "change:version", this.onModelReset);
-            this.model.fetch();
+            this.tgskCheck().done(function(){
+               self.model.fetch(); 
+            });
+        },
+
+        tgskCheck: function(){
+            var self = this;
+            return $.get( DATA_PATH+'hsct/' + self.model.get('id'), function(data){
+                self.model.tgsk = data;
+            } );
+
+            // if (this.model.get('code') === 'hsct') {
+            //     $.get( DATA_PATH+'hsct/' + this.model.get('id') , function( data ) {
+            //         console.log(data);
+            //         return data;
+            //     });
+            // } else {
+            //     return false;
+            // }
         },
 
         onModelReset: function () {
             this.render();
+        },
+
+        onTgskSend: function () {
+            var view = this;
+            var data = {
+                id: this.model.get('id'),
+                action: 'enqueue'
+            };
+            $.ajax({
+              type: "POST",
+              url: DATA_PATH+'hsct/',
+              data: JSON.stringify(data),
+              contentType:"application/json; charset=utf-8",
+              success: function(data){
+                view.tgskCheck().done(function(){
+                   view.model.fetch().done(function(){
+                        view.render();
+                    }); 
+                });
+              }
+            });
+        },
+
+        onTgskCancel: function (e) {
+            var view = this;
+            var data = {
+                id: this.model.get('id'),
+                action: 'dequeue'
+            };
+            $.ajax({
+              type: "POST",
+              url: DATA_PATH+'hsct/',
+              data: JSON.stringify(data),
+              contentType:"application/json; charset=utf-8",
+              success: function(data){
+                view.model.fetch().done(function(){
+                    view.render();
+                });
+              }
+            });
         },
 
         onEditDocumentClick: function (event) {
@@ -5818,6 +6879,14 @@ define(function (require) {
             }
         },
 
+        showLockInfo: function (e) {
+            $(e.target.parentNode).find(".lockToolTip").show();
+        },
+
+        hideLockInfo: function (e) {
+            $(e.target.parentNode).find(".lockToolTip").hide();
+        },
+
         render: function () {
             var sheetRows = [];
             var sheetRowsInfect = [];
@@ -5826,6 +6895,11 @@ define(function (require) {
                     if (item.code.toLowerCase().indexOf('infect') > -1) {
                         sheetRowsInfect.push(item);
                     } else {
+                        // if (item.code.toLowerCase().indexOf('therapy') > -1) {
+                        //     console.log(item);
+                        // } else {
+                        //     sheetRows.push(item);
+                        // }
                         sheetRows.push(item);
                     }
                 } else {
@@ -5853,27 +6927,35 @@ define(function (require) {
         template: templates._reviewSheetRowInfect,
         data: function () {
             var infections = {};
-            var therapies = [];
+            var therapies = {
+                infectProphylaxis: [],
+                infectEmpiric: [],
+                infectTelic: []
+            };
             var documental = null;
             $.each(this.collection.models, function(i, item){
                 if (item.get('code') == 'infectDocumental') {
                     documental = item;
-                }
-                if (item.get('code') != 'infectLocal' && item.get('code') != 'infectDocumental' ) {
+                } else if (!_.contains(['infectlocal', 'infectempiric', 'infectprophylaxis', 'infecttelic'], item.get('code').toLowerCase())) {
                     if (item.get('code').toLowerCase().indexOf('_') > -1) {
-                        if (!therapies[item.get('code').split('_')[1] - 1]) {
-                            therapies[item.get('code').split('_')[1] - 1] = {};
+                        var terType = '';
+                        var ter = _.find(therapies, function(t, type) { return item.get('code').indexOf(type) > -1 });
+                        if (ter) {
+                            var splitedCode = item.get('code').split('_');
+                            var terIndex = splitedCode[1] - 1;
+                            var terAttr = splitedCode[0];
+                            if (!ter[terIndex]) ter[terIndex] = {};
+                            ter[terIndex][terAttr] = item.get('value');
                         }
-                        therapies[item.get('code').split('_')[1] - 1][item.get('code').split('_')[0]] = item.get('value');
                     } else {
                         if (item.get('code').indexOf('-') > -1) {
                             if (!infections[item.get('code').split('-')[0]]) {
-                               infections[item.get('code').split('-')[0]] = {};
+                                infections[item.get('code').split('-')[0]] = {};
                             }
                             infections[item.get('code').split('-')[0]][item.get('code').split('-')[1]] = item.get('value');
                         } else {
                             if (!infections[item.get('code').split('-')[0]]) {
-                               infections[item.get('code').split('-')[0]] = {};
+                                infections[item.get('code').split('-')[0]] = {};
                             }
                             if (item.get('code').toLowerCase().indexOf('comment') > -1) {
                                 infections[item.get('code').split('-')[0]]['Name'] = item.get('value');
@@ -5902,6 +6984,7 @@ define(function (require) {
         tagName: "li",
         template: templates._reviewSheetRow,
         data: function () {
+            console.log(this.model.get('code'));
             var value = this.model.get("value"),
                 displayValue;
             switch (this.model.get("type").toUpperCase()) {
@@ -5914,6 +6997,12 @@ define(function (require) {
             case 'FLATDIRECTORY':
                 displayValue = this.model.get("fdValue") ? this.model.get("fdValue") : value;
                 break;
+            case 'TABLE':
+                displayValue = {
+                    scope: this.model.get('scope').split(','),
+                    values: this.model.get('tableValues')
+                };
+                break;
             default:
                 displayValue = value;
                 break;
@@ -5921,6 +7010,7 @@ define(function (require) {
 
             return {
                 attr: {
+                    type: this.model.get("type").toUpperCase(),
                     name: this.model.get("name"),
                     value: displayValue,
                     unit: this.model.get("unit")
@@ -5930,21 +7020,39 @@ define(function (require) {
 
         initialize: function () {
             ViewBase.prototype.initialize.call(this, this.options);
+            var self = this;
 
-            if (this.model.get("type").toUpperCase() == "FLATDIRECTORY") {
-                var fdId = this.model.get("scope");
+            if (Backbone.history.getFragment().indexOf('edit') > -1) {
+                if (this.model.get("type").toUpperCase() == "FLATDIRECTORY") {
+                    var fdId = this.model.get("scope");
 
-                if (!fds[fdId]) {
+                    if (!fds[fdId]) {
 
-                    fds[fdId] = new FlatDirectory();
-                    fds[fdId].set({
-                        id: fdId
+                        fds[fdId] = new FlatDirectory();
+                        fds[fdId].set({
+                            id: fdId
+                        });
+                        fds[fdId].deffered = fds[fdId].fetch();
+                    }
+
+                    this.onDirectoryReady();
+
+                } else if (this.model.get("type").toUpperCase() == "OPERATIONTYPE") {
+                    this.operationType = new OperationType();
+                    this.operationType.setParams({limit: 0});
+                    this.operationType.fetch().done(function(){
+                        self.onOperationTypeReady();
                     });
-                    fds[fdId].deffered = fds[fdId].fetch();
                 }
-
-                this.onDirectoryReady();
             }
+        },
+
+        getOperationType: function(){
+            var self = this;
+            var found = self.operationType.find(function(item){
+                return item.get('id') == self.model.get("value");
+            });
+            return found.get('codeOperation') + ' ' + found.get('value');
         },
 
         onDirectoryReady: function () {
@@ -5968,6 +7076,13 @@ define(function (require) {
 
             });
 
+        },
+
+        onOperationTypeReady: function () {
+            this.model.set({
+                value: this.getOperationType()
+            });
+            this.render();
         }
     });
 
@@ -6067,6 +7182,21 @@ define(function (require) {
             return ["THER"];
         }
     });
+
+
+    //region REVIEW INSTRUMENTAL
+    Documents.Views.Review.Instrumental.NoControlsLayout = Documents.Views.Review.Base.NoControlsLayout.extend({
+        getEditPageTypeName: function () {
+            return "diagnostics-instrumental";
+        }
+    });
+
+    Documents.Views.Review.Instrumental.Layout = Documents.Views.Review.Base.Layout.extend({
+        getEditPageTypeName: Documents.Views.Review.Instrumental.NoControlsLayout.prototype.getEditPageTypeName,
+        getDefaultDocumentsMnems: function () {
+            return ["DIAG"];
+        }
+    });
     //endregion
     //endregion
 
@@ -6085,9 +7215,14 @@ define(function (require) {
         }, Documents.Views.List.Common.Filters.prototype.events),
         onChangeEvent: function (e) {
             var $target = $(e.target);
+            if ($target.val() === 'all') {
+                appealId = this.options.ibs.first().id;
+            } else{
+                appealId = $target.val();
+            }
             this.collection.appealId = $target.val();
-            appealId = $target.val();
-            var event = this.options.events.find(function (event) {
+
+            var event = this.options.ibs.find(function (event) {
                 return event.get('id') == appealId;
             });
             // console.log('selected event', event);
@@ -6148,9 +7283,14 @@ define(function (require) {
         },
         data: function () {
             var data = {};
-            data.events = this.options.events.toJSON();
+            if (!this.options.ibs) {
+                this.options.ibs = new App.Collections.PatientAppeals();
+                this.options.ibs.patient = {id: this.collection.patientId};
+                data.ibs = this.options.ibs ? this.options.ibs.toJSON() : {};
+            } else {
+                data.ibs = this.options.ibs.toJSON();
+            }
             data.selectedEventId = this.options.selectedEventId;
-
             return data;
         }
     });
@@ -6172,7 +7312,7 @@ define(function (require) {
         },
 
         getDefaultDocumentsMnems: function () {
-            return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "CONS_POLY", "LAB", "DIAG", "THER", "EXAM_OLD", "JOUR_OLD"];
+            return ["EXAM", "EPI", "JOUR", "ORD", "NOT", "OTH", "CONS", "CONS_POLY", "LAB", "DIAG", "THER", "EXAM_OLD", "JOUR_OLD", "BAK_LAB", "CONS_SPEC", "CONS_PHD"];
         },
         getEditPageTypeName: function () {
             return "summary";
@@ -6189,7 +7329,6 @@ define(function (require) {
         },
         render: function (subViews) {
             return LayoutBase.prototype.render.call(this, {
-
                 ".table-controls": new Documents.Views.List.Base.TableControls({
                     collection: this.selectedDocuments,
                     listItems: this.documents
@@ -6207,7 +7346,7 @@ define(function (require) {
                 }),
                 ".documents-filters": new Documents.Summary.Filters({
                     collection: this.documents,
-                    events: this.options.events,
+                    ibs: this.options.events,
                     selectedEventId: this.options.selectedEventId
                 }),
                 ".documents-paging": new Documents.Views.List.Base.Paging({

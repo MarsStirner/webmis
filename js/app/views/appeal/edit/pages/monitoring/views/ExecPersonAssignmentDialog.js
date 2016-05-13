@@ -36,8 +36,9 @@ define(function (require) {
 
             //Все врачи
             this.allPersons.setParams({
-                limit: 999,
-                sortingField: 'lastname'
+                limit: 9999,
+                sortingField: 'lastname',
+                roleFilter: ['strDoctor', 'clinicDoctor', 'diagDoctor']
             });
             //this.allPersons.on("reset", this.addAllPersons, this).fetch();
 
@@ -46,18 +47,19 @@ define(function (require) {
 
             //Врачи отделения
             this.departmentPersons.setParams({
-                limit: 999,
+                limit: 9999,
                 sortingField: 'lastname',
                 filter: {
                     departmentId: this.appeal.get("currentDepartment").id
-                }
+                },
+                roleFilter: ['strDoctor', 'clinicDoctor', 'diagDoctor']
             });
             this.getCollection('departmentPersons');
             // this.departmentPersons.on("reset", this.addDepartmentPersons, this).fetch();
 
             this.assignMe = true;
 
-            if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
+            if ((Core.Cookies.get("currentRole") === 'strNurse') || (Core.Cookies.get("currentRole") === 'admNurse')) {
                 this.assignMe = false;
             }
 

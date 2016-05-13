@@ -3,7 +3,7 @@
 <tr>
 	<td>Дата, время</td>
 	<%_.each(result.datetime, function(item, index){ %>
-	<td><%=Core.Date.formatDateTime(item)%></td>
+	<td><%=moment(item).format('DD.MM.YYYY HH:mm')%></td>
 	<%});%>
 </tr>
 <tr>

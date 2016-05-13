@@ -1,1 +1,37 @@
-<label "><input type="checkbox" value="<%= data.code%>"><%= data.title %></label>
+<table>
+  <thead>
+    <tr>
+      <td style="width:50em;">&nbsp;</td>
+      <td style="width:5em;">&nbsp;</td>
+      <td style="width:8em;">&nbsp;</td>
+      <td style="width:5.5em;">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+  </thead>
+  <tbody>
+  	<td>
+      <%= data.title %>
+      <% if (data.indications) {%>
+        <div>
+          <input value="<%=data.indications.value %>" data-code="<%= data.code %>" id="indications-<%= data.code %>" type="text" class="indications <%= data.indications.mandatory == 'true' ? 'Mandatory' : '' %>" placeholder="Показания">
+        </div>
+      <%}%>
+    </td>
+  	<td style="width:5em;">
+    <label><input type="checkbox" <% if(data.urgent){%>checked="checked"<%}%> class="cito">Cito</label>
+  </td>
+  <td style="width:8.5em;">
+	    <div class="date">
+            <% console.log(data) %>
+	      <input id="date-<%= data.code %>" type="text" class="plannedDate" placeholder="дд.мм.гггг">
+	      <i class="icon-calendar date-icon" style="right:0.3em;"></i>
+	    </div>
+	  </td>
+	  <td style="width:5.5em;">
+	    <div class="time">
+	      <input id="time-<%= data.code %>" type="text" class="plannedTime" placeholder="чч:мм"> <i class="icon-time time-icon"  style="right:0.3em;"></i>
+	    </div>
+	  </td>
+      <td><i class="icon-remove" style="margin-left:15px; cursor:pointer"></i></td>
+  </tbody>
+</table>

@@ -10,9 +10,9 @@ define(function(require) {
         },
         onChange: function(e) {
             $target = this.$(e.target);
-            this.$el.find('input').not($target).prop('checked', false);
+            // this.$el.find('input').not($target).prop('checked', false);
             this.$el.find('.selected').removeClass('selected');
-            $target.parents('.item').addClass('selected');
+            //$target.parents('.item').addClass('selected');
         },
         initialize: function() {
             var view = this;
@@ -32,6 +32,10 @@ define(function(require) {
 
             });
 
+            view.collection.on('add', function() {
+                view.render();
+            });
+
             pubsub.on('group:parent:click', function() {
                 view.$el.html('');
             });
@@ -41,7 +45,8 @@ define(function(require) {
                     data: {
                         'patientId': view.options.patientId,
                         'filter[code]': code
-                    }
+                    },
+                    add: true
                 });
             });
 
@@ -72,7 +77,6 @@ define(function(require) {
             //view.$researchsList.append(_.template(listTemplate , {}));
             view.closeChildViews();
             this.collection.each(function(model) {
-                //console.log('collection item', model);
                 var itemView = new ItemView({
                     model: model,
                     collection: view.collection,
@@ -81,7 +85,33 @@ define(function(require) {
 
                 view.childViews.push(itemView);
 
-                view.$researchsList.append(itemView.render().el);
+                if (itemView.model.get('indications') && itemView.model.get('indications').properties) {
+                    itemView.model.get('indications').value = _.find(itemView.model.get('indications').properties, function(p) {
+                        return p.name == 'value';
+                    }).value;
+                    }
+
+                var renderedEl = itemView.render().el;
+
+                $(renderedEl).on('change', '.indications', function(){
+                    var modelValueField = _.find(model.get('indications').properties, function(f) {
+                        return f.name == 'value';
+                    })
+                    modelValueField.value = $(this).val();
+                });
+
+
+                $(renderedEl).on('change', '.cito', function(e){
+                    var val = $(e.currentTarget).is(':checked');
+                    var cid = $(e.currentTarget).closest('.item').data('cid');
+                    var found = view.collection.find(function(model){
+                        return model.cid == cid;
+                    });
+                    found.set('urgent', val);
+                });
+
+
+                view.$researchsList.append(renderedEl);
             }, this);
 
 

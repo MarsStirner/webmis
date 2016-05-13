@@ -9,7 +9,7 @@
 						<b>${previousDepartmentName}</b>
 					</div>
 					<div class="HalfCol WithoutName" style="word-spacing:0;">
-						{{formatDateTime previousDepartmentDate}}
+						${moment(previousDepartmentDate).format('DD.MM.YYYY HH:mm')}
 					</div>
 				</div>
 			</li>

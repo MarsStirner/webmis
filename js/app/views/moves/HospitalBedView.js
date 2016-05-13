@@ -53,8 +53,19 @@ define(function(require) {
             }, this);
 
             this.model.on("change:bedProfileId", function(model, bedProfileId){
-                console.log('change:bedProfileId', model, bedProfileId)
-                this.ui.$bedProfiles.select2('val',bedProfileId); 
+                // console.log('change:bedProfileId', model, bedProfileId)
+                // this.ui.$bedProfiles.select2('val',bedProfileId); 
+
+                if ( !bedProfileId ) {
+                	self.ui.$bedProfile.text( "" );
+                } else {
+                	self.bedProfiles.each( function( profile ) {
+	                	if ( profile.id == bedProfileId ) {
+	                		self.ui.$bedProfile.text( profile.get( "name" ) );
+	                	}
+	                });
+                }
+
             }, this);
 
 			this.bedsCollection = new Beds();
@@ -284,7 +295,7 @@ define(function(require) {
 			view.ui = {};
 			view.ui.$saveButton = view.$el.find('.save');
 			view.ui.$department = view.$el.find('.Departments');
-            view.ui.$bedProfiles = view.$el.find('.bed-profiles')
+            view.ui.$bedProfile = view.$el.find('.bed-profile')
 			view.ui.$beds = view.$el.find('.beds');
 
 
@@ -299,7 +310,7 @@ define(function(require) {
 
 			view.$(".HourPicker").mask("99:99");
 			view.$(".Departments").width("100%").select2();
-            view.ui.$bedProfiles.select2();
+            // view.ui.$bedProfiles.select2();
 
 			view.delegateEvents();
 

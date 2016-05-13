@@ -83,7 +83,7 @@ define(function (require) {
         },
 
         onCollectionReset: function () {
-            this.countBedDays();
+            //this.countBedDays();
             this.toggleDirectionText();
             this.toggleHospitalbedMenu();
             this.checkLeavedDocExists();
@@ -130,7 +130,7 @@ define(function (require) {
                     this.$(".last-move-leave-col")
                         .append(
                             $("<button style='font-size: .8em;'>Закрыть движение</button>")
-                            .prop("disabled", !leavedDocs.length)
+                            //.prop("disabled", !leavedDocs.length)
                             .prop("title", "Для закрытия движения необходимо наличие выписки.")
                             .button()
                             .one("click", function () {

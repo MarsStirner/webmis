@@ -22,9 +22,10 @@ define(function (require) {
             var data = {};
             var patient = this.options.patient;
             var patientName = patient.get('name');
+            var appealStart = this.options.appeal ? this.options.appeal.rangeAppealDateTime.start : null;
 
             data.patientName = patientName.get('raw');
-            data.patientAge = Core.Date.getAgeString(patient.get('birthDate'));
+            data.patientAge = Core.Date.getAgeString(patient.get('birthDate'), appealStart);
             data.patient = this.options.patient.toJSON();
             data.structure = _.filter(this.options.structure, function (item) {
                 return this.filterByPermissions(item.permissions, this.options.permissions);

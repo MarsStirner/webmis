@@ -786,6 +786,12 @@
   padding-left: 2em;
 }
 
+
+.document-edit-side.span6, .review-area.span12 .sheets {
+  overflow-y: scroll;
+  height:100vh;
+}
+
 /* line 648, ../../sass/modules/editform.scss */
 .sheets .sheet {
   padding: 1em;

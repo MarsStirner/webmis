@@ -101,9 +101,10 @@
 								<div class="HalfCol">
 									<label>Первичность</label>
 									<select class="Styled Mandatory" name="appealWithDeseaseThisYear">
-										<option value="">...</option>
-										<option value="первично">Первично</option>
+										<option value=""></option>
 										<option value="повторно">Повторно</option>
+										<option value="первично в этом году">Первично в этом году</option>
+										<option value="первично госпитализирован в ФНКЦ">Первично госпитализирован в ФНКЦ</option>
 									</select>
 								</div>
 								<div class="HalfCol">
@@ -166,11 +167,90 @@
                                     <select class="Styled Mandatory" id="event_type" name="event_type[id]"></select>
                                     <span></span>
 								</div>
+
+
 								<div class="HalfCol">
 									<span class="Label">Договор</span>
                                     <select class="Styled Mandatory" name="contract"></select>
 								</div>
 
+
+							</div>
+						</li>
+						<li>
+							<div class="LineBlock">
+								<span class="Label">Плательщик</span>
+								<div class="HalfCol WithoutName">
+									<input type="text" name="payer[lastName]" placeholder="Фамилия"/>
+								</div>
+								<div class="HalfCol WithoutName">
+									<input type="text" name="payer[firstName]" placeholder="Имя"/>
+								</div>
+								<div class="HalfCol WithoutName">
+									<input type="text" name="payer[middleName]" placeholder="Отчество"/>
+								</div>
+							</div>
+							<div class="LineBlock">
+								<div class="QuartCol">
+									<span class="Label">Дата рождения</span>
+									<div class="date">
+										<input type="text" name="payer[birthDate]" placeholder="дд.мм.гггг" class="date-input SelectDate" />
+										<i class="icon-calendar date-icon"></i>
+									</div>
+								</div>
+								<div class="HalfCol" >
+									<span class="Label">Документ</span>
+									<select class="Styled" id="event_type" name="payer[documentType]">
+										<option value="" selected="selected">...</option>
+										{{each(i, type) dicts.docTypes}}
+											<option value="${type['id']}">${type['value']}</option>
+										{{/each}}
+									</select>
+								</div>
+								<div class="QuartCol">
+									<label> Серия </label>
+									<input type="text" name="payer[documentSeriesLeft]"/>
+								</div>
+								<div class="QuartCol WithoutName">
+									<div class="date">
+										<input type="text" name="payer[documentSeriesRigth]"/>
+									</div>
+								</div>
+								<div class="QuartCol">
+									<label> Номер </label>
+									<input type="text" name="payer[documentNumber]"/>
+								</div>
+							</div>
+							<div class="LineBlock">
+								<div class="WideCol">
+									<label> Адрес </label>
+									<input name="payer[address]" class="RichText" type="text" placeholder=""/>
+								</div>
+							</div>
+							<div class="LineBlock">
+								<div class="WideCol">
+									<label> Юр. лицо </label>
+									<select class="Styled" id="event_type" name="payer[company]">
+									<option value="" selected="selected">...</option>
+										{{each(i, type) dicts.insuranceCompanies}}
+											<option value="${type['id']}">${type['value']}</option>
+										{{/each}}
+									</select>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="LineBlock">
+								<span class="Label">Договор</span>
+								<div class="QuartCol WithoutName">
+									<div class="date">
+										<input type="text" name="payment_contract[date]" placeholder="Дата" class="date-input SelectDate" />
+										<i class="icon-calendar date-icon"></i>
+									</div>
+								</div>
+								<div class="HalfCol WithoutName">
+									<input type="text" name="payment_contract[number]" placeholder="Номер договора"/>
+								</div>
 							</div>
 						</li>
 						<li>
@@ -253,7 +333,7 @@
 								</div>
 								<div class="HalfCol">
 									<span class="Label">Цель госпитализации</span>
-									<select class="Styled Mandatory" name="hospitalization_point_type[id]">
+									<select class="Styled" name="hospitalization_point_type[id]">
 										<option value="" selected="selected">...</option>
 										{{each(i, type) dicts.hospitalizationPointTypes}}
 											<option value="${type['id']}">${type['49']}</option>

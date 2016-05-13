@@ -39,6 +39,10 @@ define(function(require) {
 
         template: monitoringTmpl,
 
+        events: {
+            'click .get-more': 'loadAllTherapies'
+        },
+
         initialize: function(options) {
             shared.models.appeal = this.model = this.options.appeal;
             shared.appealJSON = shared.models.appeal.toJSON();
@@ -142,6 +146,15 @@ define(function(require) {
                 appeal: options.appeal
             });
 
+        },
+
+        loadAllTherapies: function(e){
+            var view = this;
+            this.therapiesCollection.loadAll = true;
+            $(e.target).fadeOut();
+            this.therapiesCollection.fetch().done(function(){
+                view.chemotherapyInfo.render();
+            });
         },
 
         render: function() {

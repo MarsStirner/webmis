@@ -45,12 +45,28 @@ define(function (require) {
             return dfd.promise();
         },
         initCollections: function (callback) {
-            if (this.get('drugs')) {
-                var drugs = new Drugs(this.get('drugs'));
+            var self = this;
 
-                drugs.on('add remove change', this.triggerChange, this);
-                this.set('drugs', drugs);
+            if (this.get('drugs')) {
+                _.each(this.get('assigmentIntervals'), function(interval){
+                    _.each(interval.drugs, function(drug){
+                        var dr = _.find(self.get('drugs'), function(d){ return d.nomen == drug.nomen; });
+                        drug.id = dr.id;
+                    });
+                });
+                var drugs = new Drugs(this.get('drugs'));
+            } else {
+                var drugs = new Drugs();
             }
+
+
+
+            if (drugs.first() && !drugs.first().id) {
+                drugs.reset();
+            }
+
+            drugs.on('add remove change', this.triggerChange, this);
+            this.set('drugs', drugs);
 
             if (this.get('assigmentIntervals')) {
                 var assigmentIntervals = new Intervals(this.get('assigmentIntervals'));
@@ -86,7 +102,7 @@ define(function (require) {
             return birthDate;
         },
         getDepartment: function(){
-        
+
         },
         triggerChange: function () {
             this.trigger('change');
@@ -124,7 +140,13 @@ define(function (require) {
 
         addInterval: function () {
             this.get('assigmentIntervals')
-                .addInterval();
+                .addInterval(this.get('drugs'));
+        },
+
+        cancelIntervals: function () {
+            //$('#cancelIntervals').addClass('ui-state-active');
+            this.get('assigmentIntervals')
+            .cancelIntervals();
         },
 
         set: function (key, value, options) {

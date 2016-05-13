@@ -27,17 +27,17 @@ define(function (require) {
 
         renderContextPrintButton: function () {
             this.contextPrintButton = new ContextPrintButton({
-                context: 'f066',//this.model.get('context')
-                data: {
-                    event_id: this.model.get('id'),
-                    context_type: 'event',
-                    client_id: this.model.get('patient').get('id'),
-                    additional_context: {
+                context: 'f066', //this.model.get('context')
+                documents: [{
+                     context_type: 'event',
+                     context: {
+                        event_id: this.model.get('id'),
+                        client_id: this.model.get('patient').get('id'),
                         currentOrgStructure: '',
                         currentOrganisation: 3479,
-                        currentPerson: Core.Cookies.get('userId')
+                        currentPerson: Core.Cookies.get('userId'),
                     }
-                }
+                }]
             });
 
             this.contextPrintButton.setElement(this.$el.find('.context-print-button'));
@@ -141,10 +141,12 @@ define(function (require) {
 
             var patient = this.model.get('patient');
             var patientId = patient.get('id');
+            var appeal = this.model.toJSON();
 
             this.cardNav = new CardNav({
                 permissions: userPermissions,
                 patient: patient,
+                appeal: appeal,
                 structure: [{
                     link: '/patients/' + patientId + '/',
                     name: 'Карточка пациента',

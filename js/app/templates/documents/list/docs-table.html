@@ -5,13 +5,27 @@
     <td class="single-item-select"><%=document.get('beginDate') ? Core.Date.formatDateTime(document.get('beginDate')) : Core.Date.formatDateTime(document.get('assessmentDate'))%></td>
     <td class="single-item-select"><%=document.get('assessmentName').name%></td>
     <td class="single-item-select"><%=document.get('doctor').name.raw%></td>
-    <td class="single-item-select"><%=document.get('doctor').specs ? document.get('doctor').specs.name : ''%></td>
+    <%if ( document.get('mnemonic') == 'DIAG' ) {%>
+        <td class="single-item-select"><%=document.get('executor').name ? document.get('executor').name.raw : ''%></td>
+    <%} else {%>
+        <td class="single-item-select"><%=document.get('doctor').specs ? document.get('doctor').specs.name : ''%></td>
+    <%}%>
     <td class="IconsCell">
         <%if(editable){%>
             <%if (document.get('closeDate')) {%>
                 <a><i class="icon-lock" title="Документ закрыт"></i></a>
-            <%} else if (!(App.Router.currentPage == 'patientSummaryList')) {%>
-                <a class="edit-document" data-document-id="<%=document.id%>"><i class="icon-pencil" title="Редактировать"></i></a>
+            <%} else if (App.Router.currentPage != 'patientSummaryList') {%>
+                <div style="display:inline;">
+                    <% console.log (document) %>
+                    <%if ( document.get('doctor').id == Core.Cookies.get('userId') || (document.get('executor').id == Core.Cookies.get('userId')) ) {%>
+                        <%if (document.get('readOnly') && document.get('lockInfo').personId != Core.Cookies.get('userId')) {%>
+                            <div class="docLock" style="width:17px; height: 25px; background:rgba(255, 255, 255, 0.8); z-index:100; position:absolute; border-radius:15px 0px 14px 0px;"></div>
+                        <%}%>
+                        <a class="edit-document" data-document-id="<%=document.id%>"><i class="icon-pencil" title="Редактировать"></i></a>
+                    <%} else {%>
+                        <div style="width:20px; height: 25px; float: left"></div>
+                    <%}%>
+                </div>
             <%}%>
         <%}%>
 
@@ -21,12 +35,19 @@
             <%}%>
         <%}%>
 
-        <%if (document.get('doctor').id == Core.Cookies.get('userId')) {%>
+        <%if (document.get('doctor').id == Core.Cookies.get('userId') || (document.get('executor').id == Core.Cookies.get('userId'))) {%>
             <%if (!document.get('closeDate')) {%>
                 <a class="remove-document" data-document-id="<%=document.id%>" style="margin-left: .5em"><i class="icon-remove" title="Удалить"></i></a>
-            <%}%>    
+            <%}%>
         <%}%>
-
+        <%if (document.get('readOnly')) {%>
+            <div style="position:absolute; z-index:200; right: 120px; margin-top: 20px; display :none;" class="ToolTip lockToolTip">
+                <span class="Error">Документ редактирует пользователь</br><%=document.get('lockInfo').personInfo%></span>
+            </div>
+        <%}%>
+        <%if (Core.Cookies.get('currentRole') === 'anestezDoctor') {%>
+            <a class="create-template" data-template-id="<%=document.get('typeId')%>" data-id="<%=document.get('id')%>" style="margin-left: .5em"><i class="icon-file-alt" title="Создать шаблон"></i></a>
+        <%}%>
     </td>
 </tr>
 <%});%>

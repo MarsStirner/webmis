@@ -33,7 +33,8 @@ define(function(require) {
 			'click .document-type-filter-orgstruct': 'onDocumentTypeFilterOrgStructToggle',
 			'change #start-time': 'validateForm',
 			'change #start-date': 'validateForm',
-			'keyup #tree-search': 'onSearchKeyup'
+			'keyup #tree-search': 'onSearchKeyup',
+			'click .checkAll': 'onCheckAll'
 		},
 		detach_event: function(e_name) {
 			delete this.events[e_name];
@@ -45,7 +46,7 @@ define(function(require) {
 			var view = this;
 			var appealDoctor = this.options.appeal.get('execPerson');
 			//назначивший исследование
-			if ((Core.Cookies.get('currentRole') === 'nurse-department') || (Core.Cookies.get('currentRole') === 'nurse-receptionist')) {
+			if ((Core.Cookies.get('currentRole') === 'strNurse') || (Core.Cookies.get('currentRole') === 'admNurse')) {
 				//если юзер не врач
 				view.assigner = {
 					id: appealDoctor.id,
@@ -164,6 +165,19 @@ define(function(require) {
 			});
 
 		},
+
+		onCheckAll: function(e){
+			_.each(this.analyzesSelectedView.childViews, function(a){
+				if ($(e.currentTarget).attr('checked')) {
+					a.model.set('picked', true);
+					a.$el.find('.picked').attr('checked', 'checked');
+				} else {
+					a.model.set('picked', false);
+					a.$el.find('.picked').removeAttr('checked');
+				}
+			});
+		},
+
 		onSearchKeyup: function(event) {
 			var $target = $(event.currentTarget);
 
@@ -171,6 +185,7 @@ define(function(require) {
 		},
 
 		onDocumentTypeFilterOrgStructToggle: function(event) {
+			$('#tree-search').prop('disabled', true).addClass('Disabled');
 			if ($(event.target).attr('checked')){
                 this.analyzes.setOrgStructFilter('1');
             } else {

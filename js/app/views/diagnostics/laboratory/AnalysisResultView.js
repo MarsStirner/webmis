@@ -41,23 +41,32 @@ define(function (require) {
                 }
             });
 
+            this.diags = new App.Collections.LaboratoryDiags();
+            this.diags.appealId = this.options.appealId;
+            this.diags.setParams({
+                limit: 999,
+                sortingField: 'plannedEndDate',
+                sortingMethod: 'desc',
+                page: 1
+            });
+            this.diags.fetch();
 
         },
 
         renderContextPrintButton: function(){
             this.contextPrintButton = new ContextPrintButton({
                 context: this.result.get('context'),
-                data: {
-                    action_id:this.result.get('id'),
-                    event_id: this.options.appeal.get('id'),
-                    context_type: 'action',
-                    client_id: this.options.appeal.get('patient').get('id'),
-                    additional_context: {
+                documents: [{
+                     context_type: 'action',
+                     context: {
+                        event_id: this.options.appeal.get('id'),
+                        action_id: this.result.get('id'),
+                        client_id: this.options.appeal.get('patient').get('id'),
                         currentOrgStructure: '',
                         currentOrganisation: 3479,
-                        currentPerson: Core.Cookies.get('userId')
+                        currentPerson: Core.Cookies.get('userId'),
                     }
-                }
+                }]
             });
 
             this.contextPrintButton.setElement(this.$el.find('.context-print-button'));
@@ -72,7 +81,46 @@ define(function (require) {
             // "click .last": "last",
             "click .extra": "extra",
             // "click .print": "print",
-            "click .all": "openLabs"
+            "click .all": "openLabs",
+            "click .edit-lab": "editLab",
+            "click .prev-document": "onPrevClick",
+            "click .next-document": "onNextClick"
+        },
+
+        editLab: function(){
+            var labId = this.result.id;
+            this.trigger("change:viewState", {
+                type: "diagnostics-laboratory",
+                mode: "SUB_EDIT",
+                options: {
+                    documentId: labId
+                }
+            });
+            App.Router.updateUrl("/appeals/" + this.options.appealId + "/diagnostics-laboratory/" + labId + "/edit");
+        },
+
+        onPrevClick: function(){
+            var self = this;
+            var found = this.diags.find(function(item){
+                return item.get('id') === self.result.get('id');
+            });
+            if (!found) {
+                this.navigate(this.diags.first().get('id'))
+            } else{
+                this.navigate( this.diags.at(this.diags.indexOf(found) -1) ?  (this.diags.at(this.diags.indexOf(found) -1)).get('id') : this.diags.first().get('id'));
+            }
+        },
+
+        onNextClick: function(){
+            var self = this;
+            var found = this.diags.find(function(item){
+                return item.get('id') === self.result.get('id');
+            });
+            if (!found) {
+                this.navigate(this.diags.first().get('id'))
+            } else{
+                this.navigate((this.diags.at(this.diags.indexOf(found) +1)).get('id'));
+            }
         },
 
         printOptions: function () {

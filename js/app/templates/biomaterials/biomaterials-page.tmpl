@@ -67,6 +67,14 @@
 						</select>
 					</div>
 
+					<div class="labs-action-type" style="visibility: hidden">
+						<label for="lab">Лаборатория</label>
+
+						<select class="Styled2 laboratory select2" name="lab" id="lab">
+							<option value="0" selected="selected">Все Лаборатории</option>
+						</select>
+					</div>
+
 					<div class="biomaterials-status">
 
 						<label>Статус</label>
@@ -76,6 +84,7 @@
 							for="status-all">Все <span id="status-all-count" class="status-count"></span></label>
 							<input type="radio" id="status-0" name="status" value="0" checked="checked"/><label for="status-0">Ожидается <span id="status-0-count" class="status-count"></span></label>
 							<input type="radio" id="status-1" name="status" value="1"/><label for="status-1">Выполняется <span id="status-1-count" class="status-count"></span></label>
+							<input type="radio" id="status-3" name="status" value="3"/><label for="status-3">Отправка в лабораторию <span id="status-3-count" class="status-count"></span></label>
 							<input type="radio" id="status-2" name="status" value="2"/><label for="status-2">Закончено <span id="status-2-count" class="status-count"></span></label>
 						</div>
 					</div>
@@ -99,4 +108,3 @@
 		</div>
 	</div>
 </section>
-

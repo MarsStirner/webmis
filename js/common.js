@@ -1,15 +1,16 @@
 // Глобальные константы
-var GUI_VERSION = "1.3.45.3";
+var GUI_VERSION = "1.4.23";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
 
 ROLES = {
 	DEFAULT: "default",
-	NURSE_RECEPTIONIST: "nurse-receptionist",
-	DOCTOR_RECEPTIONIST: "doctor-receptionist",
-	NURSE_DEPARTMENT: "nurse-department",
-	DOCTOR_DEPARTMENT: "doctor-department",
+	NURSE_RECEPTIONIST: "admNurse",
+	DOCTOR_RECEPTIONIST: "admDoctor",
+	NURSE_DEPARTMENT: "strNurse",
+	DOCTOR_DEPARTMENT: "strDoctor",
+	DOCTOR_ANESTEZIOLOG: "anestezDoctor",
 	CHIEF: "chief"
 };
 
@@ -17,9 +18,21 @@ DEFAULT_ANIMATION_TIME = 300;
 //DATA_PATH = "http://10.1.2.106:8080/tmis-ws-medipad/rest/tms-registry/";
 DATA_PATH = "/data/";
 
+//CORE_HOST = "mis-core.pol.fccho-moscow.ru:8080";
+CORE_HOST = "ftmis-core4-system.gfish.fccho-moscow.ru:8080";
+POLICLINIC_HOST = "mis-core.pol.fccho-moscow.ru:5555";
+APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
+ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/";
+DOMAIN = '.fccho-moscow.ru';
+// DOMAIN = '.localhost';
+//PHARM_EXPERT_API = "http://socmedica.com/pharmexpertPro/";
+PHARM_EXPERT_API = 'http://umkb.socmedica.com/api/';
+PHARM_KEY        = '8ab87e9fe50512461b04d16e97b88bc9857387d32c9b2f9a577c2928';
 
-APPOINTMENTS_HOST = "10.128.225.200:5000";
-APPOINTMENTS_PATH = "http://" + APPOINTMENTS_HOST + "/schedule/appointment/";
+LAB_EDIT = false;
+
+// Временная зона по умолчанию
+moment.tz.setDefault("Europe/Moscow");
 
 App = {};
 App.Models = {};
@@ -265,7 +278,7 @@ Model = Backbone.RelationalModel.extend({
 
 				if (json.errorCode == 3) {
 					Core.Cookies.clear();
-					//window.location.href = "/auth/";
+					window.location.href = "/auth/";
 					return;
 				} else if (json.errorCode == 261) {
 					json.errorMessage += ", обновите страницу."
@@ -325,7 +338,7 @@ Collection = Backbone.Collection.extend({
 			VersionInfo.show();
 		}
 
-		return data.data
+		return data.data ? data.data : data;
 	},
 
 	fetch: function (options) {
@@ -410,7 +423,7 @@ View = Backbone.View.extend({
 			this.ready();
 		}
 	},
-	// Дожидаемся загрузки и шаблона и коллекции
+	// Дожид��емся загрузки и шаблона и коллекции
 	autoLoadHandler: function () {
 		this._loadingQueue = 1;
 		if (this.collection) {
@@ -796,10 +809,17 @@ function showThrobber () {
 	var $throbber = $('.Throbber');
 	$throbber = $throbber.length ? $throbber : $('<div class="Throbber">Загружается</div>').appendTo('body');
 	$throbber.fadeIn();
+	document.addEventListener("click", disableClickOnLoad,true);
+}
+
+function disableClickOnLoad(e){
+    e.stopPropagation();
+    e.preventDefault();
 }
 
 function hideThrobber () {
 	$(".Throbber").fadeOut();
+	document.removeEventListener("click", disableClickOnLoad,true);
 }
 
 var throbberHideTimeout, showErrorTimeout, requestQueue = [];

@@ -13,9 +13,7 @@ define([
 
 		events: {
 			"click span": "onClick",
-			"click": "toggleNode",
-			"mouseover": "onMouseOver",
-			"mouseout": "onMouseOut"
+			"click .treeToggler": "toggleNode"
 		},
 
 		isLeafNode: false,
@@ -26,6 +24,7 @@ define([
 
 		toggleNode: function (event) {
 			if (event) event.stopPropagation();
+			$(event.currentTarget).toggleClass('icon-plus icon-minus');
 			if (!this.$el.hasClass("Opened") && !this.isLeafNode && this.model.get("childrenTerms").isEmpty()) {
 				this.model.get("childrenTerms").on("reset", this.onChildrenTermsReset, this).fetch();
 			} else if (this.isLeafNode) {
@@ -40,18 +39,6 @@ define([
 			if (!this.isLeafNode) {
 				this.termSelected();
 			}
-		},
-
-		onMouseOver: function (event) {
-			$(event.target).css({
-				"background-color": "#f0f3fc",
-				"cursor": "pointer"
-			});
-
-		},
-
-		onMouseOut: function (event) {
-			$(event.target).css("background-color", "");
 		},
 
 		onChildrenTermsReset: function () {
@@ -71,26 +58,42 @@ define([
 
 		termSelected: function () {
 			var parentNode = this.options.parent;
-			var termsChain = [this.model.get("name")];
+			var termsChain = [this.model.get("template")];
 
-			if ((this.model.get("template").split("%s:").length) > 1) {
+			if ((this.model.get("template").split("%s").length) > 1) {
+				var isParentNeed = true;
 				while (parentNode) {
-					termsChain.push(parentNode.model.get("name"));
+					if (isParentNeed) {
+						termsChain.push(parentNode.model.get("template"));
+						if (parentNode.model.get("template").indexOf('%s') == -1){
+							isParentNeed = false;
+						}
+					}
 					parentNode = parentNode.parent;
 				}
+				_.each(termsChain, function(chain, ch){
+					if (chain.split("%s").length > 1) {
+						chain = chain.split("%s")[1];
+					}
+					termsChain[ch] = chain;
+				});
+			}
 
+			if ((this.model.get("template").split("%n").length) > 1) {
+				termsChain[0] = '</br>'+termsChain[0].split("%n")[1];
 			}
 
 			termsChain = termsChain.reverse().join(" ");
 
 			//term += " " + this.model.get("name");
 
-			termDispatcher.trigger("term:selected", {term: termsChain});
+			termDispatcher.trigger("term:selected", {term: termsChain, container: this.model.get('container')});
 		},
 
 		render: function () {
-			this.$el.html($("<span/>").text(this.model.get("name")));
-
+			var itemEl = $("<span/>").text(this.model.get("name"));
+			this.model.get('container') && $(itemEl).prepend('<i class="icon-plus treeToggler" style="margin-right: 10px;"></i>');
+			this.$el.html(itemEl);
 			return this;
 		}
 	});
@@ -148,14 +151,14 @@ define([
 	var Thesaurus = App.Views.Thesaurus = View.extend({
 		className: "popup",
 		template: tmpl,
-		
+
 		events: {
 			"click .ShowHidePopup": "onCancel",
 			"click .Confirm": "onConfirm",
 			"keyup .selectedTerms": "onSelTermsKeyUP",
 			"change .selectedTerms": "onSelTermsKeyUP"
 		},
-		
+
 		initialize: function () {
 			this.model = new (Model.extend({
 				rootCode: "",
@@ -189,7 +192,7 @@ define([
 			var term = event.term;
 			var selectedTerms = this.model.get("selectedTerms");
 
-			if (selectedTerms.length) {
+			if (selectedTerms.length && !this.model.get('isDropdown')) {
 				// if (!Core.Strings.endsWithPunctuationChar(selectedTerms)) {
 				// 	selectedTerms += ", ";
 				// } else {
@@ -201,10 +204,19 @@ define([
 				selectedTerms = term;
 			}
 
-			this.model.set({
-				//selectedTerms: (selectedTerms.length ? selectedTerms + ", " + term.get("name") : term.get("name"))
-				selectedTerms: (selectedTerms)
-			});
+			if (this.model.get('isDropdown')) {
+				if(!event.container) {
+					this.model.set({
+						//selectedTerms: (selectedTerms.length ? selectedTerms + ", " + term.get("name") : term.get("name"))
+						selectedTerms: (selectedTerms)
+					});
+				}
+			} else {
+				this.model.set({
+					//selectedTerms: (selectedTerms.length ? selectedTerms + ", " + term.get("name") : term.get("name"))
+					selectedTerms: (selectedTerms)
+				});
+			}
 		},
 
 		onRootCodeChange: function () {
@@ -283,11 +295,18 @@ define([
 				rootCode: opts.code || "",
 				selectedTerms: opts.terms || "",
 				attrId: opts.attrId || "",
-				propertyType: opts.propertyType || "value"
+				propertyType: opts.propertyType || "value",
+				isDropdown: opts.isDropdown || false
 			});
 
 			//$(".ui-dialog-titlebar").hide();
 			this.$el.dialog("open");
+			if (opts.isDropdown) {
+				this.$('.selectedTerms').addClass('Disabled').on('keydown', function(event){
+					event.preventDefault();
+				});
+			}
+
 		},
 
 		close: function () {

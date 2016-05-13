@@ -24,7 +24,7 @@
 			<li>
 				<label>Пароль</label>
 				{{if (useTextForPassword)}}
-				<input type="text" name="password" placeholder="Пароль" style="-webkit-text-security: disc;"/>
+				<input type="text" name="password" placeholder="Пароль" autocomplete="off" style="-webkit-text-security: disc;"/>
 				{{else}}
 				<input type="password" name="password" placeholder="Пароль"/>
 				{{/if}}

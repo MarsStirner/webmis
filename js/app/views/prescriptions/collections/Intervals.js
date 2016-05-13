@@ -5,40 +5,59 @@ define(function (require) {
     var Intervals = Collection.extend({
         model: Interval,
         initialize: function () {
-            // console.log('init intervals collection', this);
+
         },
-        addInterval: function () {
+        addInterval: function (drugs) {
             var interval = new Interval();
 
-            if (this.length) {
-                console.log('add interval', this.last());
-                var last = this.last();
-                var endDateTime = last.get('endDateTime');
-                if (endDateTime) {
-                    interval.set('beginDateTime', moment(endDateTime).add(1, 'minute').valueOf());
-                }else{
-                    if(last.get('beginDateTime')){
-                        interval.set('beginDateTime', moment(last.get('beginDateTime')).add(1, 'hour').valueOf());
-                    } 
-                }
-            }
-
+            interval.set('drugs', new Backbone.Collection(drugs.toJSON()));
+            interval.get('drugs').first().set('dose', this.getDoseBalance(drugs));
             this.add(interval);
         },
+
+        cancelIntervals: function() {
+            this.each(function(interval){
+                interval.cancel();
+            });
+        },
+
+        getDoseBalance: function(drugs) {
+            var intervalDoseSumm = 0;
+            this.each(function(interval){
+                if (Array.isArray(interval.get('drugs'))) {
+                    intervalDoseSumm += interval.get('drugs')[0].dose ? parseInt(interval.get('drugs')[0].dose) : 0;
+                } else {
+                    intervalDoseSumm += interval.get('drugs').first().get('dose') ? parseInt(interval.get('drugs').first().get('dose')) : 0;
+                }
+            });
+            return (this.getDoseSumm(drugs) - intervalDoseSumm) > 0 ? this.getDoseSumm(drugs) - intervalDoseSumm : 0;
+        },
+
+        calculateVoa: function() {
+            return 0;
+        },
+
+        getDoseSumm: function(drugs) {
+            var summ = 0;
+            drugs.each(function(drug){
+                summ += parseInt(drug.get('dose'));
+            });
+            return summ;
+        },
+
         validateCollection: function () {
             var collectionErrors = [];
 
             var modelsJSON = this.toJSON();
 
             var ranges = _.filter(modelsJSON, function(mj){
-                return !!mj.beginDateTime && !!mj.endDateTime; 
-            }); 
+                return !!mj.beginDateTime && !!mj.endDateTime;
+            });
             if((ranges.length > 0) && (ranges.length != modelsJSON.length)){
                 collectionErrors.push('В назначении не могут быть интервалы разных типов. ');
             }
 
             _.each(modelsJSON, function (mj) {
-                console.log('interval',mj);
 
                 var modelsJSON2 = _.without(modelsJSON, mj);
                 _.each(modelsJSON2, function (mj2) {
@@ -60,7 +79,6 @@ define(function (require) {
                             if (diff === 0) {
                                 collectionErrors.push('Совпадают начала интервалов. ');
                             }
-                            // console.log('begin diff', diff)
                         }
                     }
 
@@ -69,11 +87,8 @@ define(function (require) {
                             var range1 = moment(mj.beginDateTime).startOf('minutes').twix(moment(mj.endDateTime).startOf('minutes'));
                             var range2 = moment(mj2.beginDateTime).startOf('minutes').twix(moment(mj2.endDateTime).startOf('minutes'));
                             if (range1.overlaps(range2)) {
-                                // console.log('пересекаются') 
                                 collectionErrors.push('Пересечение интервалов. ')
                             }
-
-
                         }
                     }
 

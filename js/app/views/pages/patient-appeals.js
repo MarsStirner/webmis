@@ -127,7 +127,7 @@ define(function (require) {
                             permissions: ['see_patient_summary']
                         }]
                     });
-                    view.$el.find('.CardNav').html(view.cardNav.render().el)
+                    view.$el.find('.CardNav').html(view.cardNav.render().el);
 
                     view.depended(AppealsGrid);
 
@@ -135,6 +135,12 @@ define(function (require) {
                         .append(AppealsGrid.render()
                             .el);
 
+                    AppealsGrid.$el.on('click', 'tr', function(e){
+                        if ($(e.currentTarget).find('.open-appeal-poly').length) {
+                            var eventId = $(e.currentTarget).find('.open-appeal-poly').attr('id').split('-')[1];
+                            window.open('http://'+POLICLINIC_HOST+'/event/event.html?event_id='+eventId+'&role='+Core.Cookies.get("currentRole"),'_blank');
+                        }
+                    });
 
                     // Пэйджинатор
                     var Paginator = new App.Views.Paginator({

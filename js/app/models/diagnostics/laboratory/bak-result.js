@@ -6,6 +6,7 @@ define(["models/model-base"], function (ModelBase) {
             //return "/bak-results.json";
         },
         getTable: function () {
+            var isActivity = false;
             var organisms = this.get('organismResults');
             var antibiotics = [];
 
@@ -18,6 +19,8 @@ define(["models/model-base"], function (ModelBase) {
 
                 if(!_.isEmpty(sensValues)){
 
+                    isActivity = true;
+
                     _.each(sensValues, function (sensValue) {
                         var antibiotic = {
                             name: sensValue.antibiotic.name,
@@ -26,13 +29,19 @@ define(["models/model-base"], function (ModelBase) {
                         };
                         antibiotics.push(antibiotic);
                     });
-                
+
+                } else {
+                    antibiotics.push({
+                        name: '',
+                        code: '',
+                        organisms: []
+                    });
                 }
 
             });
 
             antibiotics = _.uniq(antibiotics, false, function(item){
-                return item.name; 
+                return item.name;
             });
 
             _.each(antibiotics, function(antibiotic){
@@ -52,7 +61,10 @@ define(["models/model-base"], function (ModelBase) {
 
             // console.log('antibiotics', antibiotics);
 
-            return {rows: antibiotics};
+            return {
+                rows: antibiotics,
+                isActivity: isActivity
+                };
         }
     });
 });

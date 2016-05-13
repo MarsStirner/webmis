@@ -17,8 +17,8 @@ define(function(require) {
 			'click #executor-outer': 'openExecutorSelectPopup',
 			'change input[name=urgent]': 'onChangeUrgentInput',
 			'change #finance': 'onChangeFinanceInput',
-			'change #plannedTime': 'onChangePlannedTimePicker',
-			'change #plannedDate': 'onChangePlannedDatePicker',
+			'change .plannedTime': 'onChangePlannedTimePicker',
+			'change .plannedDate': 'onChangePlannedDatePicker',
 			'change input[name="diagnosis[mkb][code]"]': 'onChangeMkbInput'
 		},
 
@@ -166,8 +166,8 @@ define(function(require) {
 			view.ui = {};
 			view.ui.$createDate = view.$('#createDate');
 			view.ui.$createTime = view.$('#createTime');
-			view.ui.$plannedDate = view.$('#plannedDate');
-			view.ui.$plannedTime = view.$('#plannedTime');
+			view.ui.$plannedDate = view.$('.plannedDate');
+			view.ui.$plannedTime = view.$('.plannedTime');
 			view.ui.$finance = view.$('#finance');
 			view.ui.$urgent = view.$('input[name=urgent]');
 			view.ui.$mkbDiagnosis = view.$('input[name="diagnosis[mkb][diagnosis]"]');

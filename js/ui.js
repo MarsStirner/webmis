@@ -352,7 +352,8 @@ function UIInitialize (context) {
 			changeYear: true,
 			changeMonth: true,
 			maxDate: $this.data("maxdate"),
-			minDate: $this.data("mindate")
+			minDate: $this.data("mindate"),
+			yearRange:  $this.data("yearrange")
 		} );
 
 		$this.mask("99.99.9999");

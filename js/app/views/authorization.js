@@ -10,7 +10,7 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 			event.preventDefault();
 
 			var login = this.$("[name='login']").val(),
-				password = this.$("[name='password']").val().trim().length ? MD5(this.$("[name='password']").val()) : "";
+				password = this.$("[name='password']").val().trim();
 
 			this.collection.login = login;
 			this.collection.password = password;
@@ -155,6 +155,12 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 						Core.Cookies.set("currentRole", ROLES.DOCTOR_RECEPTIONIST);
 						break;
 					}
+				case 42:
+					{
+						// Врач анестезиолог
+						Core.Cookies.set("currentRole", ROLES.DOCTOR_ANESTEZIOLOG);
+						break;
+					}
 				default:
 					{
 						roleUnavailable = true;
@@ -177,7 +183,7 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 			}
 
 			if (!roleUnavailable) {
-				Core.Cookies.set("authToken", model.get("authToken").id);
+				Core.Cookies.set("authToken", model.get("authToken").id, false, DOMAIN);
 				Core.Cookies.set("userId", model.get("userId"));
 				Core.Cookies.set("doctorFirstName", Doctor.get("name").get("first"));
 				Core.Cookies.set("doctorLastName", Doctor.get("name").get("last"));
@@ -185,9 +191,8 @@ define(["collections/authorization/roles", "models/authorization/authorization"]
 				if (Doctor.get("department")) {
 					Core.Cookies.set("userDepartmentId", Doctor.get("department").get("id"));
 				}
-
-
 				Core.Cookies.set("roles", JSON.stringify(this.model.collection.pluck("id")));
+				Core.Cookies.set("ttl", model.get("ttl"));
 
 				$("#wrapper").empty();
 

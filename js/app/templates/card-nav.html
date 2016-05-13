@@ -1,4 +1,4 @@
-<h2><%= patientName%> (<%= patientAge %>) </h2>
+<h2><span style="margin-right: 20px;">Код: <%= patient.patientCode%></span> <%= patientName%> (<%= patientAge %>) </h2>
 
 <ul class="SectionNav">
     <%_.each(structure, function(item){%>
@@ -7,4 +7,3 @@
     </li>
     <%})%>
 </ul>
-

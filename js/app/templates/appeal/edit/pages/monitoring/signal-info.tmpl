@@ -6,11 +6,11 @@
 	</td>
 </tr>
 <tr>
-	<td>Продолжительность лечения (дней) или дата выписки</td>
+	<td>Дата выписки и/или продолжительность лечения (дней)</td>
 	<td>
 		<% if (appeal.closed) { %>
 			<% if (appeal.closeDateTime){ %>
-				<%= Core.Date.format(appeal.closeDateTime) %>
+				<%= Core.Date.format(appeal.closeDateTime) %> (<%= days %>)
 			<%}%>
 		<% } else { %>
 			<%= days %>

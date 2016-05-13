@@ -1,4 +1,10 @@
-<h4>Терапия</h4>
+<h4>Терапия
+	<% if(!collection.loadAll){%>
+		<a class="get-more" style="margin-left: 5px; text-decoration: underline; cursor: pointer; font-size: .9em;">
+			показать все
+		</a>
+	<%}%>
+</h4>
 <% if(collection.length > 0){%>
 <div class="therapy-info">
 	<% collection.each(function(therapy){ %>
@@ -11,10 +17,12 @@
 					<span class="therapy-header-title"><%= therapy.get('title') %></span>
 				<%}%>
 				<span class="therapy-header-dates">
-					<%if(therapy.get('endDate')){%>
-						(<%= Core.Date.format(therapy.get('beginDate')) %> - <%= Core.Date.format(therapy.get('endDate')) %>)
+					<%if(therapy.get('beginDate') && therapy.get('endDate')){%>
+						(<%= moment(therapy.get('beginDate'), 'YYYY-MM-DD').format('DD.MM.YYYY') %> - <%= moment(therapy.get('endDate'), 'YYYY-MM-DD').format('DD.MM.YYYY') %>)
 					<%}else{%>
-						(Дата начала: <%= Core.Date.format(therapy.get('beginDate')) %>)
+						<%if(therapy.get('beginDate')){%>
+							(Дата начала: <%= moment(therapy.get('beginDate'), 'YYYY-MM-DD').format('DD.MM.YYYY') %>)
+						<%}%>
 					<%}%>
 				</span>
 				<i class="therapy-body-toggle <%if(therapy.get('endDate')){%>icon-plus<%}else{%>icon-minus<%}%> pull-right" title="Показать этапы"></i>
@@ -25,12 +33,13 @@
 				<h3>Текущий этап</h3>
 
 				<% _.each(therapy.getCurrentPhases(), function(phase){ %>
-					<p><%if(phase.link){%><a href="<%= phase.link %>" target="_blank"><%= phase.title %></a><%}else{%><%= phase.title %><%}%> (Дата начала: <%= Core.Date.format(phase.beginDate) %>)</p>
+					<p><%if(phase.link){%><a href="<%= phase.link %>" target="_blank"><%= phase.title %></a><%}else{%><%= phase.title %><%}%>
+						<%if(phase.beginDate){%>
+							(Дата начала: <%= moment(phase.beginDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %>)
+						<%}%>
+					</p>
 					<ul>
-						<% _.each([phase.days[0]], function(day){ %>
-							<li><p>День терапии: <a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>" target="_blank"><%= day.day %></a></p></li>
-
-						<%});%>
+						<li><p>День терапии: <a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>" target="_blank"><%= phase.days[phase.days.length-1].day %></a></p></li>
 					</ul>
 				<%});%>
 
@@ -41,13 +50,17 @@
 				<% _.each(therapy.getClosedPhases(), function(phase){ %>
 					<p><%if(phase.link){%><a href="<%= phase.link %>" target="_blank"><%= phase.title %></a><%}else{%><%= phase.title %><%}%>
 						<a href="/appeals/<%= phase.eventId %>/documents/<%= joinDocIds(phase.days) %>">
-						(<%= Core.Date.format(phase.beginDate) %> - <%= Core.Date.format(phase.endDate) %>)
+						<%if(phase.beginDate){%>
+							(<%= moment(phase.beginDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %>
+						<%}%> - <%if(phase.endDate){%>
+							<%= moment(phase.endDate, 'YYYY-MM.DD').format('DD.MM.YYYY') %>)
+						<%}%>
 						</a>
 					</p>
 				<%});%>
 			<%}%>
 		</div>
-	</div>
+	</div>	
 	<%})%>
 </div>
 <%}else{%>
@@ -55,8 +68,3 @@
 	<h3 style="padding: 1em 0 0 0; margin-bottom: .3em;">Нет данных</h3>
 </div>
 <%}%>
-
-
-
-
-

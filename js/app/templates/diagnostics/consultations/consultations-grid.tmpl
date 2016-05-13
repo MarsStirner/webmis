@@ -32,7 +32,7 @@
 <script id="consult-diagnostic-grid-row" type="text/x-jquery-tmpl">
 	<td>
 		{{if plannedEndDate}}
-		{{formatDateTime plannedEndDate}}
+			${moment(plannedEndDate).format('DD.MM.YYYY HH:mm')}
 		{{else}}
 		-
 		{{/if}}

@@ -1,7 +1,7 @@
 <%if (collection.length) { %>
 	<%_.each(collection,function (item, index) {%>
 		<tr <% if(false){%>style="display:none;"<%}//index > 0%>>
-			<td><%=Core.Date.formatDateTime(item.get("datetime"))%></td>
+			<td><%=moment(item.get("datetime")).format('DD.MM.YYYY HH:mm') %></td>
 			<td><%=item.get("temperature") || '-'%></td>
 			<td><%if (item.get("bpras") && item.get("bprad")) {%><%=parseInt(item.get("bpras"))%>/<%=parseInt(item.get("bprad"))%><%} else {%>-<%}%></td>
 			<td><%=parseInt(item.get("heartRate")) || '-'%></td>

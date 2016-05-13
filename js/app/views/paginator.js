@@ -8,7 +8,7 @@ define(["text!templates/paginator.tmpl"], function (template) {
 
 		navigate: function ( event ){
 			var $target = $(event.target);
-
+			App.Router.paginatorPage = $target.text();
 			this.collection.setParams({
 				page: Core.Url.extractPage( $target.attr("href") )
 			});
@@ -18,6 +18,8 @@ define(["text!templates/paginator.tmpl"], function (template) {
 		},
 
 		initialize: function (){
+			//App.Router.paginatorPage = '1';
+
 			this.options = $.extend({
 				path: ""
 			}, this.options);

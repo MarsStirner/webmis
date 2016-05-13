@@ -7,22 +7,85 @@
 			<%}%>
 		</b>
 	</div>
-	<%if (si.tests.length) {%>
-		<%if (si.inline) {%>
-			<div>
-				<%_(si.tests).chain().filter(function (model) { return !!model.get("value"); }).each(function (model, i, fts) {%>
-					<i><%=model.get("name")%>:</i> <%=model.get("value")||"-"%> <%=model.get("unit") || ""%> <%if (i < fts.length - 1) {%>,<%}%>
-				<%});%>
-			</div>
-		<%}else{%>
-			<%_(si.tests).each(function (model) {%>
-				<%if (model.get("value")) {%>
+		<%if (si.context == "action_bak_lab") {%>
+			<%if(si.tests.rows){%>
+				<%if(si.tests.isActivity){%>
+					<table border="1" cellspacing="0" class="Grid allborders anti" style="font-size: 12px; display:inline; margin-bottom: 10px;">
+						<colgroup><colgroup>
+						<% _.each(si.tests.rows[0].organisms,function(organism){%>
+						<colgroup><colgroup>
+						<%})%>
+						<thead>
+							<tr>
+							<th>Антибиотик</th>
+							<% _.each(si.tests.rows[0].organisms,function(organism){%>
+								<% if (organism.name.split('|').length > 1) {%>
+									<th><%=organism.name.split('|')[0] %></br><%=organism.name.split('|')[1] %></th>
+								<%} else {%>
+									<th><%=organism.name %></th>
+								<%}%>
+							<%})%>
+							</tr>
+						</thead>
+						<tbody>
+							<% _.each(si.tests.rows, function(antibiotic){ %>
+								<% if (antibiotic.name.length) {%>
+									<tr>
+										<td><%=antibiotic.name %> </td>
+										<%_.each(antibiotic.organisms, function(organism){%>
+											<td><%=organism.activity %></td>
+										<%})%>
+									</tr>
+								<%}%>
+							<% }) %>
+						</tbody>
+					</table>
+						<% if (si.tests.rows[1].name.length) {%>
+							<div style="margin: 10px 0px;">
+								<p>S - чувствителен, I - умеренно устойчив, R - устойчив</p>
+							</div>
+						<%}%>
+				<%} else {%>
+					<% _.each(si.tests.rows[0].organisms,function(organism){%>
+						<strong>
+							<% if (organism.name.split('|').length > 1) {%>
+								<p><%=organism.name.split('|')[0] %></p>
+								<p><%=organism.name.split('|')[1] %></p>
+							<%} else {%>
+								<p><%=organism.name %></p>
+							<%}%>
+						</strong>
+					<%})%>
+				<%}%>
+				<%if(si.tests.comments.length){%>
 					<div>
-						<i><%=model.get("name")%>:</i>&nbsp;<%=model.get("value")||"-"%> <%=model.get("unit") || ""%>
+					Комментарии:
+					<ul>
+						<% _.each(si.tests.comments, function(comment){%>
+							<li><%=comment.textValue%></li>
+						<%})%>
+					</ul>
 					</div>
 				<%}%>
-			<%});%>
+			<%}%>
+		<%} else {%>
+			<%if (si.tests.length) {%>
+				<%if (si.inline) {%>
+					<div>
+						<%_(si.tests).chain().filter(function (model) { return !!model.get("value"); }).each(function (model, i, fts) {%>
+							<i><%=model.get("name")%>:</i> <%=model.get("value")||"-"%> <%=model.get("unit") || ""%> <%if (i < fts.length - 1) {%>,<%}%>
+						<%});%>
+					</div>
+				<%}else{%>
+					<%_(si.tests).each(function (model) {%>
+						<%if (model.get("value")) {%>
+							<div>
+								<i><%=model.get("name")%>:</i>&nbsp;<%=model.get("value")||"-"%> <%=model.get("unit") || ""%>
+							</div>
+						<%}%>
+					<%});%>
+				<%}%>
+			<%}%>
 		<%}%>
-	<%}%>
 	<div><br></div>
 <%});%>

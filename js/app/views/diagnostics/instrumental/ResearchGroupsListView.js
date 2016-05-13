@@ -7,6 +7,7 @@ define(function(require) {
 
             view.collection.on('reset', function() {
                 view.render();
+                $('#tree-search').prop('disabled', false).removeClass('Disabled');
             });
 
             view.collection.on('fetch', function() {
@@ -44,10 +45,18 @@ define(function(require) {
                 var code = $(this).data('code');
                 console.log('code', code, treeData);
             });
+            view.$el.prepend('<input type="text" id="tree-search" disabled="disabled" class="Disabled" placeholder="Поиск"/>');
         },
         renderNoResult: function() {
             var view = this;
             view.$el.html('<div class="msg">Нет результатов</div>');
+        },
+
+        renderSearchResult: function (collection) {
+            this.$groups_list.html(_.template(template, {
+                items: collection.toJSON(),
+                template: template
+            }));
         },
 
         render: function() {

@@ -35,6 +35,7 @@ define([
             pubsub.trigger('noty_clear');
 
             var view = this;
+            console.log(view.options);
             Cache.Patient = this.model.get("patient");
             Cache.Patient.fetch({
                 success: function () {
@@ -100,6 +101,14 @@ define([
                     }, {
                         name: "departments",
                         collection: App.Collections.Departments
+                    },
+                    {
+                        name: "insuranceCompanies",
+                        pathPart: "insurance"
+                    },
+                    {
+                        name: "docTypes",
+                        pathPart: "clientDocument&filter[groupId]=1"
                     }
                 ];
 
@@ -130,7 +139,7 @@ define([
             var self = this;
             // this.logModel();
             self.$(".Save").attr("disabled", true);
-                
+
             var readyToSave = this.save(event, {
                 error: function () {
                     console.log('error', arguments);
@@ -223,7 +232,8 @@ define([
                         relative: {
                             id: patient.get("id"),
                             name: patient.get("name").get("raw"),
-                            birthDate: patient.get("birthDate")
+                            birthDate: patient.get("birthDate"),
+                            sex: patient.get("sex")
                         }
                     });
 
@@ -241,11 +251,11 @@ define([
                 //collection: diagnoses
             });
 
-            if (model.get("diagnosisKind") == "diagReceivedMkb") {
-                diagnosisView.on("diagnosis:change", function (event) {
-                    this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
-                }, this);
-            }
+            // if (model.get("diagnosisKind") == "diagReceivedMkb") {
+            //     diagnosisView.on("diagnosis:change", function (event) {
+            //         this.$(".Injury .ComboWrapper, .Injury .Combo").toggleClass("Mandatory", event.isInjury);
+            //     }, this);
+            // }
 
             this.depended(diagnosisView);
 
@@ -283,7 +293,7 @@ define([
             this.$("[name='contract']").html('').append(this.contracts.map(function (contract) {
                 return $("<option value='" + contract.get("id") + "'>" + contract.get("number") + "</option>");
             })).trigger('change').prop("disabled", this.contracts.length === 1);
-            
+
             UIInitialize(this.$("[name='contract']").parent());
             if(!this.contracts.length){
                 this.resetContract();
@@ -292,7 +302,7 @@ define([
         },
 
         resetContract: function(){
-            this.model.set('contract', {}); 
+            this.model.set('contract', {});
         },
 
         onChangeContract: function(e){
@@ -302,7 +312,7 @@ define([
             if(contractId){
                 contract = this.contracts.find(function(model){
                     return model.get('id') == contractId;
-                }); 
+                });
                 this.model.set('contract', contract);
             }
 
@@ -360,7 +370,7 @@ define([
                         });
 
                         if (thisYearAppeal) {
-                            view.model.set("appealWithDeseaseThisYear", "повторно");
+                            view.model.set("appealWithDeseaseThisYear", "");
                         }
                     }
                 } else {
@@ -502,6 +512,20 @@ define([
                     // console.log('change eventType', this.model.get('appealType').get('eventType').toJSON());
                     this.getContracts();
                 }, this);
+
+            this.model.get("payer").connect("firstName", "payer[firstName]", this.$el);
+            this.model.get("payer").connect("lastName", "payer[lastName]", this.$el);
+            this.model.get("payer").connect("middleName", "payer[middleName]", this.$el);
+            this.model.get("payer").connect("birthDate", "payer[birthDate]", this.$el);
+            this.model.get("payer").connect("documentType", "payer[documentType]", this.$el);
+            this.model.get("payer").connect("documentSeriesLeft", "payer[documentSeriesLeft]", this.$el);
+            this.model.get("payer").connect("documentSeriesRight", "payer[documentSeriesRigth]", this.$el);
+            this.model.get("payer").connect("documentNumber", "payer[documentNumber]", this.$el);
+            this.model.get("payer").connect("address", "payer[address]", this.$el);
+            this.model.get("payer").connect("company", "payer[company]", this.$el);
+
+            this.model.get("paymentContract").connect("date", "payment_contract[date]", this.$el);
+            this.model.get("paymentContract").connect("number", "payment_contract[number]", this.$el);
 
             this.model.get("rangeAppealDateTime").connect("start", "appeal[date][start]", this.$el);
             this.model.get("rangeAppealDateTime").connect("start", "appeal[time][start]", this.$el);
@@ -698,17 +722,19 @@ define([
         template: representativeTmpl,
 
         initialize: function () {
-            //this.model.on("change", this.onRepresentativeChange, this);
+            this.model.on("change", this.onRepresentativeChange, this);
             //this.model.on("sync", this.onRepresentativeSync, this);
         },
 
-        onRepresentativeChange: function (event) {
-            if (Core.Date.getAge(this.model.get("birthDate")) < 18) {
-                //alert("Нельзя добавить несовершеннолетнего представителя.");
-                this.$nonAdultAlert.dialog("open");
-                this.removeModel();
-            } else {
-                this.render();
+        onRepresentativeChange: function (event, e) {
+            if (e.changes.relative) {
+                if (Core.Date.getAge(this.model.get("birthDate")) < 18) {
+                    //alert("Нельзя добавить несовершеннолетнего представителя.");
+                    this.$nonAdultAlert.dialog("open");
+                    this.removeModel();
+                } else {
+                    this.render();
+                }
             }
         },
 
@@ -722,9 +748,32 @@ define([
 
         render: function () {
             if (this.model.get("relative")) {
+                var patientSexCode = 0;
+                if (Cache.Patient.get('sex') == 'male' || Cache.Patient.get('sex') == 1) {
+                    patientSexCode = 1;
+                } else if (Cache.Patient.get('sex') == 'female' || Cache.Patient.get('sex') == 2) {
+                    patientSexCode = 2;
+                }
+                var relativeSexCode = 0;
+                if (this.model.toJSON().relative.sex == 'male' || this.model.toJSON().relative.sex == 1) {
+                    relativeSexCode = 1;
+                } else if (this.model.toJSON().relative.sex == 'female' || this.model.toJSON().relative.sex == 2) {
+                    relativeSexCode = 2;
+                }
+                if (relativeSexCode != 0) {
+                    var relationTypes = [];
+                    _.each(this.options.relationTypes, function(type){
+                        if ( (type.leftSex == 0 || type.leftSex == relativeSexCode) && (type.rightSex == 0 || type.rightSex == patientSexCode) ) {
+                            var exist = _.find($('.representative-list').find('span'), function(span){ return $(span).text() == type.value; });
+                            !exist && relationTypes.push(type);
+                        }
+                    });
+                } else {
+                    var relationTypes = this.options.relationTypes;
+                }
                 this.$el.html($.tmpl(this.template, {
                     model: this.model.toJSON(),
-                    relationTypes: this.options.relationTypes
+                    relationTypes: relationTypes
                 }));
                 this.delegateEvents();
 

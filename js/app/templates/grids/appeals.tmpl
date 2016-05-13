@@ -74,7 +74,7 @@
 		</td>
 		<td {{if !havePrimary}} class="HavePrimary"{{/if}}>
 			{{if createDatetime}}
-				{{formatDateTime createDatetime}}
+				${moment(createDatetime).format('DD.MM.YYYY HH:mm')}
 			{{else}}
 				-
 			{{/if}}
@@ -109,7 +109,7 @@
 		</td>
 		<td {{if !havePrimary}} class="HavePrimary"{{/if}}>
 			{{if patient.birthDate}}
-				{{formatDate patient.birthDate}}
+				${moment(patient.birthDate).format('DD.MM.YYYY')}
 			{{else}}
 				-
 			{{/if}}
@@ -220,7 +220,7 @@
 		</td>
 		<td>
 			{{if createDatetime}}
-				{{formatDateTime createDatetime}}
+				${moment(createDatetime).format('DD.MM.YYYY HH:mm')}
 			{{else}}
 				-
 			{{/if}}
@@ -255,7 +255,7 @@
 		</td>
 		<td>
 			{{if patient.birthDate}}
-				{{formatDate patient.birthDate}}
+				${moment(patient.birthDate).format('DD.MM.YYYY')}
 			{{else}}
 				-
 			{{/if}}
@@ -323,7 +323,11 @@
 
 <script id="patient-appeals-grid-row" type="text/x-jquery-tmpl">
 		<td>
-			<a href="/appeals/${id}/"  class="open-appeal"></a>
+			{{if requestType === 'policlinic' || requestType === 'diagnostic'}}
+				<a href="/appealpoly/${id}/" class="open-appeal-poly" id="appeal-${id}"></a>
+			{{else}}
+				<a href="/appeals/${id}/"  class="open-appeal"></a>
+			{{/if}}
 			{{if number}}
 				${number}
 			{{else}}
@@ -339,14 +343,14 @@
 		</td>
 		<td>
 			{{if rangeAppealDateTime.start}}
-				{{formatDate rangeAppealDateTime.start}}
+				${moment(rangeAppealDateTime.start).format('DD.MM.YYYY')}
 			{{else}}
 				-
 			{{/if}}
 		</td>
 		<td>
 			{{if rangeAppealDateTime.end}}
-				{{formatDate rangeAppealDateTime.end}}
+				${moment(rangeAppealDateTime.end).format('DD.MM.YYYY')}
 			{{else}}
 				-
 			{{/if}}
@@ -380,7 +384,7 @@
 </script>
 
 
-<script id="appeals-grid-doctor-department" type="text/x-jquery-tmpl">
+<script id="appeals-grid-strDoctor" type="text/x-jquery-tmpl">
 	<table class="Grid">
 		<thead>
 			<!--<tr class="EditTh">-->
@@ -416,7 +420,7 @@
 	</table>
 </script>
 
-<script id="appeals-grid-doctor-department-row" type="text/x-jquery-tmpl">
+<script id="appeals-grid-strDoctor-row" type="text/x-jquery-tmpl">
 		<td>
 			<a href="/appeals/${id}/monitoring" class="open-appeal"></a>${number}
 		</td>
@@ -441,7 +445,7 @@
 		</td>
 		<td>
 			{{if birthDate}}
-				{{formatDate birthDate}}
+				${moment(birthDate).format('DD.MM.YYYY')}
 			{{else}}
 				-
 			{{/if}}
@@ -486,7 +490,7 @@
 		</td>
 		<td>
             {{if createDateTime}}
-                {{formatDateTime createDateTime}}
+				${moment(createDateTime).format('DD.MM.YYYY HH:mm')}
             {{else}}
                 -
             {{/if}}
@@ -497,7 +501,7 @@
 </script>
 
 
-<script id="appeals-grid-nurse-department" type="text/x-jquery-tmpl">
+<script id="appeals-grid-strNurse" type="text/x-jquery-tmpl">
 
 	<table class="Grid">
 		<thead>
@@ -529,7 +533,7 @@
 	</table>
 </script>
 
-<script id="appeals-grid-nurse-department-row" type="text/x-jquery-tmpl">
+<script id="appeals-grid-strNurse-row" type="text/x-jquery-tmpl">
 		<td>
 			{{if (movingTo && movingTo.name)}}
 				Направлен в ${movingTo.name}
@@ -581,7 +585,7 @@
         </td>
 		<td>
 			{{if createDateTime !== 0}}
-					{{formatDateTime createDateTime}}
+					${moment(createDateTime).format('DD.MM.YYYY HH:mm')}
 			{{else}}
 					-
 			{{/if}}

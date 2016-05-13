@@ -11,10 +11,19 @@
 				<em class="Warning">
 					<span style="font-weight: bold;"><%= drugIntolerance.substance %></span><br>
 					<% if (drugIntolerance.degree) { %>
-					<span>степень: <%= drugIntolerance.degree %></span><br>
+							<% if(drugIntolerance.degree == 1) { %>
+							    <span>степень: низкая</span><br>
+							<% } else if(drugIntolerance.degree == 2) { %>
+							    <span>степень: средняя</span><br>
+							<% } else if(drugIntolerance.degree == 3) { %>
+							    <span>степень: высокая</span><br>
+						<% } %>
 					<% } %>
 					<% if (drugIntolerance.checkingDate) { %>
 					<span>установлено: <%= Core.Date.format(drugIntolerance.checkingDate) %></span>
+					<% } %>
+					<% if (drugIntolerance.comment) { %>
+					<span>комментарий: <%= drugIntolerance.comment %></span>
 					<% } %>
 				</em>
 			</li>
@@ -23,6 +32,11 @@
 		<% } else { %>
 		-
 		<% } %>
+	<td>
+		<a class="edit-intolerances pull-right ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+			<span class="ui-button-text"><i class="icon-pencil"></i></span>
+		</a>
+	</td>
 	</td>
 </tr>
 <tr>
@@ -35,10 +49,19 @@
 				<em class="Warning">
 					<span style="font-weight: bold;"><%= allergy.substance %></span><br>
 					<% if (allergy.degree) { %>
-					<span>степень: <%= allergy.degree %></span><br>
+						<% if(allergy.degree == 1) { %>
+						    <span>степень: низкая</span><br>
+						<% } else if(allergy.degree == 2) { %>
+						    <span>степень: средняя</span><br>
+						<% } else if(allergy.degree == 3) { %>
+						    <span>степень: высокая</span><br>
+						<% } %>
 					<% } %>
 					<% if (allergy.checkingDate) { %>
 					<span>установлено: <%= Core.Date.format(allergy.checkingDate) %></span>
+					<% } %>
+					<% if (allergy.comment) { %>
+					<span>комментарий: <%= allergy.comment %></span>
 					<% } %>
 				</em>
 			</li>
@@ -47,6 +70,11 @@
 		<% } else { %>
 		-
 		<% } %>
+	</td>
+	<td>
+		<a class="edit-allergies pull-right ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+			<span class="ui-button-text"><i class="icon-pencil"></i></span>
+		</a>
 	</td>
 </tr>
 </tbody>

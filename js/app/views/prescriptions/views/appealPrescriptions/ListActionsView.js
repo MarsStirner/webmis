@@ -3,6 +3,7 @@ define(function (require) {
     var BaseView = require('views/prescriptions/views/BaseView');
     var PrescriptionNewView = require('views/prescriptions/views/appealPrescriptions/PrescriptionNewView');
     var CreatePrescriptionButton = require('views/prescriptions/views/appealPrescriptions/CreatePrescriptionButton');
+    var PrintButton = require('views/prescriptions/views/PrintPrescriptionButton');
 
     return BaseView.extend({
         template: template,
@@ -10,8 +11,14 @@ define(function (require) {
             var createPrescriptionButtonView = new CreatePrescriptionButton({
                 appeal: this.options.appeal
             });
+
+            var printButton = new PrintButton({
+                collection: this.options.collection
+            });
+
             this.addSubViews({
-                '.create-prescription-button': createPrescriptionButtonView
+                '.create-prescription-button': createPrescriptionButtonView,
+                '.print-button': printButton
             });
 
 

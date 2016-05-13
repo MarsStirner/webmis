@@ -89,7 +89,7 @@
 	</form>
 </script>
 
-<script id="appeals-list-filters-doctor-department" type="text/x-jquery-tmpl">
+<script id="appeals-list-filters-strDoctor" type="text/x-jquery-tmpl">
 	<form>
 		<div class="SearchBlock">
 			<div class="EditForm Clearfix">
@@ -122,6 +122,12 @@
 									<option value="">...</option>
 								</select>
 							</div>
+							<div class="QuartCol">
+								<button type="button" class="show-filtred-appeals SearchButton ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button">
+									<span class="ui-button-icon-primary ui-icon icon-search"></span>
+									<span class="ui-button-text">Поиск</span>
+								</button>
+							</div>
 						</div>
 					</li>
 				</ul>
@@ -130,25 +136,31 @@
 	</form>
 </script>
 
-<script id="appeals-list-filters-nurse-department" type="text/x-jquery-tmpl">
+<script id="appeals-list-filters-strNurse" type="text/x-jquery-tmpl">
 	<form>
 		<div id="page-head">
 			<div class="EditForm Clearfix">
 				<div class="FilterLabel" style="float: left;">Лежащие в отделениии по состоянию на</div>
 
-
-					<div class="QuartCol">
-						<div class="date">
-							<input type="text" name="date" id="appeal-start-date" placeholder="ДД.ММ.ГГГГ" data-relation="#appeal-start-time" class="date-input date-range-start Mandatory"/>
-							<i class="icon-calendar date-icon"></i>
-						</div>
+				<div class="QuartCol">
+					<div class="date">
+						<input type="text" name="date" id="appeal-start-date" placeholder="ДД.ММ.ГГГГ" data-relation="#appeal-start-time" class="date-input date-range-start Mandatory"/>
+						<i class="icon-calendar date-icon"></i>
 					</div>
-					<div class="DecCol">
-						<div class="time">
-							<input type="text" class="time-input" id="appeal-start-time" placeholder="ЧЧ:ММ" data-relation="#appeal-start-date" value=""/>
-							<i class="icon-time time-icon"></i>
-						</div>
+				</div>
+				<div class="DecCol">
+					<div class="time">
+						<input type="text" class="time-input" id="appeal-start-time" placeholder="ЧЧ:ММ" data-relation="#appeal-start-date" value=""/>
+						<i class="icon-time time-icon"></i>
 					</div>
+				</div>
+				<div class="QuartCol">
+					<button type="button" class="show-filtred-appeals SearchButton ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button">
+						<span class="ui-button-icon-primary ui-icon icon-search"></span>
+						<span class="ui-button-text">Поиск</span>
+					</button>
+				</div>
+				<span style="float: right" class="print-button"></span>
 		</div>
 	</form>
 </script>

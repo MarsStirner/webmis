@@ -38,12 +38,12 @@ define(function (require) {
 
 			/*this.assignMe = true;
 
-			if ((Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist')) {
+			if ((Core.Cookies.get("currentRole") === 'strNurse') || (Core.Cookies.get("currentRole") === 'admNurse')) {
 			 this.assignMe = false;
 
 			 }*/
 
-			this.assignMe = !(Core.Cookies.get("currentRole") === 'nurse-department') || (Core.Cookies.get("currentRole") === 'nurse-receptionist');
+			this.assignMe = !(Core.Cookies.get("currentRole") === 'strNurse') || (Core.Cookies.get("currentRole") === 'admNurse');
 		},
 
 		loadAllPersons: function () {
@@ -61,6 +61,7 @@ define(function (require) {
 			this.$(".all-persons").append(this.allPersons.map(function (person) {
 				return "<option value='" + person.get('id') + "'>" + person.get("name").raw + "</option>";
 			})).select2("enable");
+			this.$(".all-persons").find('option').hide();
 		},
 
 		loadDepartmentPersons: function () {
@@ -80,6 +81,7 @@ define(function (require) {
 			this.$(".department-persons").append(this.departmentPersons.map(function (person) {
 				return "<option value='" + person.get('id') + "'>" + person.get("name").raw + "</option>";
 			})).select2("enable");
+			this.$(".department-persons").find('option').hide();
 		},
 
 		onFilterPersonsChange: function (event) {

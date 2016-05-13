@@ -3,6 +3,9 @@
 		<div class="SingleHeader" style="position: relative;">
 			<h2 style="float: none;padding-right: 2em;"><%= document.name %></h2>
 			<div class="SingleInfo" style="float: none">
+				<%if (document.beginDate) {%>
+					<span class="Date">Дата создания: <%= document.beginDate %></span> |
+				<%}%>
 				<%if (document.endDate) {%>
 					<span class="Date">Дата закрытия: <%= document.endDate %></span> |
 				<%}%>
@@ -11,14 +14,35 @@
 				</span>
 			</div>
 			<%if (document.showIcons) {%>
-				<%if (!document.endDate) {%>
-					<a href="#" class="edit-document" data-document-id="<%=document.id%>" style="text-decoration: none;" title="Редактировать">
-						<i class="icon-pencil" style="position: absolute;top: 0;right: 1.8em;"></i>
-					</a>
+				<% if(document.doctorName == Core.Cookies.get('doctorLastName')+' '+Core.Cookies.get('doctorFirstName')+' '+Core.Cookies.get('doctorMiddleName') ) {%>
+					<%if (!document.endDate) {%>
+						<%if (document.lockInfo && document.lockInfo.personId != Core.Cookies.get('userId')) {%>
+							<i class="icon-pencil edit-locked" style="position: absolute;top: 0;right: 1.8em; opacity: 0.3"></i>
+							<div style="position:absolute; z-index:200; right: 0px; top: 25px; display:none;" class="ToolTip lockToolTip">
+								<span class="Error">Документ редактирует пользователь</br><%=document.lockInfo.personInfo%></span>
+							</div>
+						<%} else {%>
+							<a href="#" class="edit-document" data-document-id="<%=document.id%>" style="text-decoration: none;" title="Редактировать">
+								<i class="icon-pencil" style="position: absolute;top: 0;right: 1.8em;"></i>
+							</a>
+						<%}%>
+					<%} else {%>
+						<a style="text-decoration: none;" title="Документ закрыт">
+							<i class="icon-lock" style="position: absolute;top: 0;right: 1.8em;"></i>
+						</a>
+					<%}%>
 				<%} else {%>
-					<a style="text-decoration: none;" title="Документ закрыт">
-						<i class="icon-lock" style="position: absolute;top: 0;right: 1.8em;"></i>
-					</a>
+					<% if (document.mnem == 'DIAG') {%>
+						<%if (!document.endDate) {%>
+							<a href="#" class="edit-document" data-document-id="<%=document.id%>" style="text-decoration: none;" title="Редактировать">
+								<i class="icon-pencil" style="position: absolute;top: 0;right: 1.8em;"></i>
+							</a>
+						<%} else {%>
+						<a style="text-decoration: none;" title="Документ закрыт">
+							<i class="icon-lock" style="position: absolute;top: 0;right: 1.8em;"></i>
+						</a>
+					<%}%>	
+					<%}%>	
 				<%}%>
 
                 <%if (!document.isOldType) {%>
@@ -27,6 +51,12 @@
 				</a>
 				<%}%>
 
+			<%}%>
+			<%if (document.code == 'hsct' && document.tgsk) {%>
+			<% console.log(document.tgsk) %>
+				<%if (document.tgsk.status === "NOT EXISTS" || document.tgsk.status === "CANCELED") {%>
+					<button class="tgskSend">Отправить в ТГСК</button>
+				<%}%>	
 			<%}%>
 		</div>
 		<ul class="sheet-rows"></ul>

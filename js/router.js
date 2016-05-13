@@ -64,8 +64,6 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 	/*	Backbone.emulateHTTP = true;
 	Backbone.emulateJSON = true;*/
 
-
-
 	var ExtendedRouter = Backbone.Router.extend({
 		navigate: function(fragment, options) {
 			this.trigger("navigate", fragment);
@@ -112,6 +110,8 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			"appointments/": "appointmentsPatient",
 			"appointments/:id": "appointments",
 
+			"anareports/": "anareports",
+
 			/*"appeals/:id/": "appeal",
 			"appeals/:query": "appeals",
 			"appeals/:id/examinations/": "examinations",
@@ -124,6 +124,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			//"appeals/:id/examinations/new/initial/": "newInitialExamination",
 
 			//appeal
+			"appealpoly/:id": "appealPolyReview",
 			"appeals/:id": "appealReview",
 			"appeals/:id/": "appealReview",
 			"appeals/:id/edit": "appealEdit",
@@ -189,12 +190,50 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 				authView.render();
 			});
 		},
-		checkAuthToken: function() {
-			if (!Core.Cookies.get("authToken")) {
-				window.location.href = "/auth/";
-				return false
+		checkAuthToken: function(args) {
+			var tokenArg = _.find(args, function(arg) {
+			    return arg.indexOf('token') > -1;
+			});
+			if (tokenArg) {
+				var authData = {};
+				_.each(tokenArg.split('?')[1].split('&'), function(arg){
+					authData[arg.split('=')[0]] = arg.split('=')[1];
+				});
+				if (authData.role === 'clinicDoctor' || authData.role === 'assistNurse') {
+					authData.role = 'strDoctor'
+				}
+				if (_.contains(ROLES, authData.role)) {
+					Core.Cookies.set("authToken", authData.token);
+					Core.Cookies.set("currentRole", authData.role);
+				}
+				$.get(DATA_PATH+"user-info/").complete(function(data) {
+					if (data.responseText) {
+						var userInfo = $.parseJSON(data.responseText.split('callback(')[1].slice(0,-1));
+						Core.Cookies.set("userId", userInfo.userId);
+						Core.Cookies.set("doctorFirstName", userInfo.doctor.name.first);
+						Core.Cookies.set("doctorLastName", userInfo.doctor.name.last);
+						Core.Cookies.set("doctorMiddleName", userInfo.doctor.name.middle);
+						if (userInfo.doctor.department && userInfo.doctor.department.id) {
+							Core.Cookies.set("userDepartmentId", userInfo.doctor.department.id);
+						}
+						var roles = "[";
+						_.each(userInfo.roles, function(role, r){
+							roles = roles + ( r != 0 ? ',' : '') + role.id;
+						});
+						Core.Cookies.set("roles", roles + ']');
+						return true
+					} else {
+						return false
+					}
+				});
+				return true
+			} else {
+				if (!(Core.Cookies.get("authToken") && Core.Cookies.get("currentRole"))) {
+					window.location.href = "/auth/";
+					return false
+				}
+				return true
 			}
-			return true
 		},
 
 		index: function() {
@@ -334,13 +373,17 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		appointments: function(id) {
-			window.location.href = APPOINTMENTS_PATH + '?client_id='+id;
+			window.open(APPOINTMENTS_PATH + '?client_id='+id+'&role='+Core.Cookies.get('currentRole'));
 		},
 
 		appointmentsPatient: function() {
 			this.patients();
 			window.document.title = "Запись на консультацию";
 			this.currentPage = "appointments";
+		},
+
+		anareports: function() {
+			window.open(ANAREPORTS_PATH+ '?role='+Core.Cookies.get('currentRole'),'_blank');
 		},
 
 		patients: function() {
@@ -545,7 +588,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		newAppeal: function(patientId) {
-			if (!this.checkAuthToken()) {
+			if (!this.checkAuthToken(arguments)) {
 				return false
 			}
 
@@ -674,7 +717,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 
 		appeal: function(mode, appealId, page, subId) {
-			if (!this.checkAuthToken()) return false;
+			if (!this.checkAuthToken(arguments)) return false;
 			console.log(arguments);
 			this.currentPage = "appeals";
 
@@ -685,7 +728,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 					path: Backbone.history.fragment,
 					mode: mode,
 					appealId: appealId,
-					page: page,
+					page: (page.indexOf('token') > -1) ? 'monitoring' : page,
 					subId: subId
 				});
 
@@ -705,12 +748,16 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 
 		appealReview: function(appealId) {
 			var page;
-			if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT) {
+			if (Core.Data.currentRole() == ROLES.DOCTOR_DEPARTMENT || Core.Data.currentRole() == ROLES.DOCTOR_ANESTEZIOLOG) {
 				page = "monitoring";
 			} else {
 				page = "card";
 			}
 			this.appeal("REVIEW", appealId, page);
+		},
+
+		appealPolyReview: function(appealId) {
+			window.location.href = "http://" + POLICLINIC_HOST + "/event/event.html?event_id=" + appealId + "&role="+Core.Cookies.get('currentRole');
 		},
 
 		appealReviewPage: function(appealId, page) {
@@ -889,7 +936,7 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 			uri: "/patients/:id/edit/"
 		},
 		APPEAL: {
-			title: "Просмотр обращения",
+			template: "#breadcrumbs-template-appeal",
 			uri: "/appeals/:id/"
 		},
 		MOVES: {
@@ -922,11 +969,11 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		},
 		INSTRUMENTAL: {
 			title: "Инструментальные исследования",
-			uri: "/appeals/:id/instrumental/"
+			uri: "/appeals/:id/diagnostics-instrumental/"
 		},
 		INSTRUMENTAL_RESULT: {
 			title: "Результаты инструментального исследования",
-			uri: "/appeals/:id/diagnostics/instrumental/result/:test"
+			uri: "/appeals/:id/diagnostics-instrumental/:test"
 		},
 		CONSULTATION: {
 			title: "Консультации",
@@ -947,6 +994,26 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		SUMMARY: {
 			title: "Сводная информация",
 			uri: "/appeals/:id/summary"
+		},
+		MONITORING: {
+			title: "Основные сведения",
+			uri: "/appeals/:id/monitoring"
+		},
+		DOCUMENTS: {
+			title: "Документы",
+			uri: "/appeals/:id/documents"
+		},
+		THERAPY: {
+			title: "Лечение",
+			uri: "/appeals/:id/therapy"
+		},
+		CARD: {
+			title: "Титульный лист ИБ",
+			uri: "/appeals/:id/card"
+		},
+		PRESCRIPTIONS: {
+			title: "Назначения",
+			uri: "/appeals/:id/prescriptions"
 		}
 	};
 	App.Router.compile = function(link, options) {
@@ -958,6 +1025,93 @@ require(["views/FlashMessageView"], function(FlashMessage) {
 		return link
 	};
 
+	function checkDeadline() {
+		if (Core.Cookies.get('authToken')) {
+			$.ajax({
+			  type: "POST",
+			  url: DATA_PATH+"getTokenInfo/",
+			  headers: {
+			        'Content-Type': 'application/json'
+			    },
+			  dataType: 'json',
+			  data: JSON.stringify({
+				  token: Core.Cookies.get('authToken'),
+				  prolong: false
+			  }),
+			  success: function(data){
+				  console.log('data.ttl', data.ttl);
+				  Core.Cookies.set("ttl", data.ttl);
+				  if (data.ttl < 150) {
+					  showAllert();
+				  } else {
+					  startTimer(data.ttl - 150);
+				  }
+			  }
+			});
+		}
+	}
 
+	function showAllert() {
+
+		var dialogView = $('<div/>');
+		var i = Core.Cookies.get('ttl');
+		dialogView.html('Срок ожидания для вашего сеанса истечет через <strong>'+i+'</strong> сек.');
+		i--;
+
+		var int = setInterval(function(){
+			if (i > 0) {
+				if (Core.Cookies.get('ttl') > 150) {
+					clearInterval(int);
+					dialogView.dialog('close');
+					startTimer(Core.Cookies.get('ttl') - 150);
+				} else {
+					dialogView.find('strong').text(i);
+					i--;
+				}
+			} else {
+				window.location.href = "/auth/";
+			}
+		}, 1000);
+
+		dialogView.dialog({
+			autoOpen: true,
+			width: "35em",
+			modal: true,
+			title: "Окончание времени сессии",
+			closeOnEscape: false,
+			open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+			buttons: [{
+				text: "Остаться в системе",
+				click: function(){
+					clearInterval(int);
+					$.ajax({
+					  type: "POST",
+					  url: DATA_PATH+"getTokenInfo/",
+					  headers: {
+					        'Content-Type': 'application/json'
+					    },
+					  dataType: 'json',
+					  data: JSON.stringify({
+						  token: Core.Cookies.get('authToken'),
+						  prolong: true
+					  }),
+					  success: function(data){
+						  Core.Cookies.set("ttl", data.ttl);
+						  startTimer(data.ttl - 150);
+					  }
+					});
+					dialogView.dialog('close');
+				}
+			}]
+		});
+	}
+
+	function startTimer(t) {
+		setTimeout(function(){
+			checkDeadline();
+		}, t*1000);
+	}
+
+	checkDeadline();
 
 }).call();

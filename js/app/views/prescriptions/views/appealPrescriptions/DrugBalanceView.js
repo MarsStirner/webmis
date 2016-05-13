@@ -1,17 +1,30 @@
 define(function (require) {
+    require('collections/departments');
     var template = require('text!views/prescriptions/templates/appeal/drug-ballance.html');
     var BaseView = require('views/prescriptions/views/BaseView');
 
     return BaseView.extend({
         template: template,
         initialize: function () {
+            var self = this;
             this.collection.on('reset', function () {
+                console.log(this.collection);
                 if (this.collection.length) {
-                    this.render();
+                    this.collection.each(function(model){
+                        if (model.get('balanceOfGoodDataList').length) {
+                            self.render();
+                        } else {
+                            self.renderNotExists();
+                        }
+                    });
                 } else {
                     this.renderNoResults();
                 }
             }, this);
+
+            this.departments = new App.Collections.Departments();
+            this.departments.setParams({limit: 0});
+            this.departments.fetch();
             this.collection.on('fetch', this.renderOnFetch, this);
         },
         renderNoResults: function () {
@@ -22,85 +35,44 @@ define(function (require) {
 
             this.$el.html('Ищем...');
         },
-
-
-        inHospital: function () {
-            var filtered = [];
-
-            filtered = this.collection.filter(function (model) {
-                return 1 === model.get('storageOrgstructureId');
-            });
-
-            return filtered;
-        },
-
-
-        inCurrentDepartment: function () {
-            var filtered = [];
-            var currentDepartment = this.options.appeal.get('currentDepartment');
-            if (currentDepartment) {
-                var currentDepartmentId = currentDepartment.id;
-
-                filtered = this.collection.filter(function (model) {
-                    return currentDepartmentId === model.get('storageOrgstructureId');
-                });
-            }
-
-            return filtered;
-        },
-
-        inOtherDepartments: function () {
-            var filtered = [];
-
-            var currentDepartment = this.options.appeal.get('currentDepartment');
-            if (currentDepartment) {
-                var currentDepartmentId = currentDepartment.id;
-
-                filtered = this.collection.filter(function (model) {
-                    var storageOrgstructureId = model.get('storageOrgstructureId');
-
-                    return (currentDepartmentId != storageOrgstructureId) && (1 != storageOrgstructureId);
-                });
-            }
-
-
-            return filtered;
+        renderNotExists: function () {
+            this.$el.html('Отсутствует на складах.');
         },
 
         data: function () {
             var data = {};
-            var inCurrentDepartment = this.inCurrentDepartment();
-            var inOtherDepartments = this.inOtherDepartments();
-            var inHospital = this.inHospital();
+            var currentDepartment = this.options.appeal.get('currentDepartment').id;
             var items = [];
+            var self = this;
+            this.collection.each(function(item){
+                _.each(item.get('balanceOfGoodDataList'), function(data){
+                    var itemJSON = item.toJSON();
+                    itemJSON.balanceOfGoodData = data;
+                    if (itemJSON.balanceOfGoodData.orgStructureId) {
+                        if (!data.disabled && data.value) {
+                            if (data.orgStructureId == currentDepartment) {
+                                itemJSON.balanceOfGoodData.where = 'inCurrentDepartment';
+                                items.unshift(itemJSON);
+                            } else if (data.orgStructureId == 1) {
+                                itemJSON.balanceOfGoodData.where = 'inHospital';
+                                items.push(itemJSON);
+                            } else {
+                                itemJSON.balanceOfGoodData.where = 'inOtherDepartments';
+                                var whereDepartment = _.find(self.departments.models, function(department){
+                                    return itemJSON.balanceOfGoodData.orgStructureId == department.get('id');
+                                });
+                                if (whereDepartment) {
+                                    itemJSON.balanceOfGoodData.whereDepartmentName = whereDepartment.get('name');
+                                }
+                                items.push(itemJSON);
+                            }
+                        }  
+                    }
+                })
+            });
 
-            // data.items = this.collection.toJSON();
-            data.where = false;
+            data.items = items;
 
-            if (inHospital.length) {
-                data.where = 'inHospital';
-                items = _.map(inOtherDepartments, function (model) {
-                    return model.toJSON();
-                });
-                data.item = items[0];
-            }
-
-
-            if (inOtherDepartments.length) {
-                data.where = 'inOtherDepartments';
-                items = _.map(inOtherDepartments, function (model) {
-                    return model.toJSON();
-                });
-                data.item = items[0];
-            }
-
-            if (inCurrentDepartment.length) {
-                data.where = 'inCurrentDepartment';
-                items = _.map(inCurrentDepartment, function (model) {
-                    return model.toJSON();
-                });
-                data.item = items[0];
-            }
             return data;
         }
     });

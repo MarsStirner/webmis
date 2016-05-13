@@ -7,3 +7,6 @@
 <script id="breadcrumbs-template-patient" type="text/x-jquery-tmpl">
 	${name.last} ${name.first} ${name.middle} {{if birthDate}}({{getYear birthDate}} г.р.){{/if}}
 </script>
+<script id="breadcrumbs-template-appeal" type="text/x-jquery-tmpl">
+	История болезни ${number} (${moment(rangeAppealDateTime.start).format('DD.MM.YYYY')})
+</script>

@@ -141,6 +141,12 @@ Thumbs.db
 Desktop.ini
 
 
+############
+## Windows
+############
+._.DS_Store
+
+
 #############
 ## Python
 #############

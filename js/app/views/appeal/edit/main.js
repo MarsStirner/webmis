@@ -69,13 +69,13 @@ define(function(require) {
 			"diagnostics-laboratory": {
 				"REVIEW": LaboratoryView,
 				"SUB_REVIEW": LaboratoryResultView,
-				"SUB_EDIT": LaboratoryResultView //TODO: impl edit mode
+				"SUB_EDIT": Documents.Views.Edit.Laboratory.Layout
 			},
 
 			"diagnostics-instrumental": {
-				"REVIEW": InstrumentalView,
-				"SUB_REVIEW": InstrumentalResultView,
-				"SUB_EDIT": InstrumentalResultView //TODO: impl edit mode
+				"REVIEW": Documents.Views.List.Instrumental.Layout,
+				"SUB_REVIEW": Documents.Views.Review.Instrumental.Layout,
+				"SUB_EDIT": Documents.Views.Edit.Instrumental.Layout,
 			},
 
 			"diagnostics-consultations": {
@@ -141,11 +141,13 @@ define(function(require) {
 			"examinations": App.Router.cachedBreadcrumbs.EXAMS,
 			"summary": App.Router.cachedBreadcrumbs.SUMMARY,
 			"examinations-primary": App.Router.cachedBreadcrumbs.EXAMS,
-			"card": App.Router.cachedBreadcrumbs.APPEAL,
+			"card": App.Router.cachedBreadcrumbs.CARD,
 			"moves": App.Router.cachedBreadcrumbs.MOVES,
 			"hospitalbed": App.Router.cachedBreadcrumbs.HOSPITALBED,
-			"monitoring": App.Router.cachedBreadcrumbs.APPEAL,
-			"documents": App.Router.cachedBreadcrumbs.APPEAL
+			"monitoring": App.Router.cachedBreadcrumbs.MONITORING,
+			"documents": App.Router.cachedBreadcrumbs.DOCUMENTS,
+			"therapy": App.Router.cachedBreadcrumbs.THERAPY,
+			"prescriptions": App.Router.cachedBreadcrumbs.PRESCRIPTIONS
 		},
 
 		initialize: function() {
@@ -286,10 +288,12 @@ define(function(require) {
 		},
 
 		setBreadcrumbsStructure: function() {
+			console.log(this.page, this.breadCrumbsMap);
 			if (this.breadCrumbsMap[this.page]) {
 				this.breadcrumbs.setStructure([
 					App.Router.cachedBreadcrumbs.PATIENTS,
 					App.Router.compile(App.Router.cachedBreadcrumbs.PATIENT, this.appeal.get("patient").toJSON()),
+					App.Router.compile(App.Router.cachedBreadcrumbs.APPEAL, this.appeal.toJSON()),
 					this.breadCrumbsMap[this.page]
 				]);
 
@@ -380,7 +384,82 @@ define(function(require) {
 
 						(function() {
 							var appeal = self.appeal;
-							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (appeal.get('appealType').get('finance').get('name') === 'ВМП')) {
+							var financeName = appeal.get('appealType').get('finance').get('name');
+							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (financeName === 'ВМП' || financeName === 'ОМС')) {
+								return {
+									name: "quotes",
+									title: "Квоты ВМП",
+									uri: "/appeals/" + appeal.get('id') + "/quotes"
+								};
+							} else {
+								return false;
+							}
+						}()),
+						App.Router.compile({
+							name: "moves",
+							title: "Движение пациента",
+							uri: "/appeals/:id/moves"
+						}, appealJSON),
+						App.Router.compile({
+							name: "card",
+							title: "Титульный лист ИБ",
+							uri: "/appeals/:id/"
+						}, appealJSON),
+                        App.Router.compile({
+                            name: "prescriptions",
+                            title: "Назначения",
+                            uri: "/appeals/:id/prescriptions/"
+                        }, appealJSON),
+					]
+				}
+			}, this);
+
+			this.separateRoles(ROLES.DOCTOR_ANESTEZIOLOG, function() {
+				var appealJSON = this.appeal.toJSON();
+				menuStructure = {
+					structure: [
+						App.Router.compile({
+							name: "monitoring",
+							title: "Основные&nbsp;сведения",
+							uri: "/appeals/:id/monitoring"
+						}, appealJSON),
+						App.Router.compile({
+							name: "patient-monitoring",
+							title: "Мониторинг&nbsp;состояния",
+							uri: "/appeals/:id/patient-monitoring"
+						}, appealJSON),
+						App.Router.compile({
+							name: "documents",
+							title: "Документы",
+							uri: "/appeals/:id/documents/"
+						}, appealJSON),
+						App.Router.compile({
+							name: "diagnostics-laboratory",
+							title: "Лабораторные исследования",
+							uri: "/appeals/:id/diagnostics-laboratory/"
+						}, appealJSON),
+						App.Router.compile({
+							name: "diagnostics-instrumental",
+							title: "Инструментальные исследования",
+							uri: "/appeals/:id/diagnostics-instrumental/"
+						}, appealJSON),
+
+						// App.Router.compile({
+						// 	name: "diagnostics-consultations",
+						// 	title: "Консультации",
+						// 	uri: "/appeals/:id/diagnostics-consultations/"
+						// }, appealJSON),
+
+						App.Router.compile({
+							name: "therapy",
+							title: "Лечение",
+							uri: "/appeals/:id/therapy"
+						}, appealJSON),
+
+						(function() {
+							var appeal = self.appeal;
+							var financeName = appeal.get('appealType').get('finance').get('name');
+							if (appeal.get('appealType') && appeal.get('appealType').get('finance') && (financeName === 'ВМП' || financeName === 'ОМС')) {
 								return {
 									name: "quotes",
 									title: "Квоты ВМП",

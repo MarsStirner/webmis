@@ -106,9 +106,9 @@ define(function(require){
 			this.steps.other = new OtherView({
 				model: self.model
 			});
-			this.steps.quotes = new QuotesView({
-				patient: self.model
-			});
+			// this.steps.quotes = new QuotesView({
+			// 	patient: self.model
+			// });
 
 			/////////////////////////////////
 			/// var newMenu = new NewMenuView({items: self.getMenuStructure()});
@@ -544,11 +544,12 @@ define(function(require){
 						name: "other",
 						title: "Прочее",
 						uri: "/patients/new/other/"
-					}, {
-						name: "quotes",
-						title: "Квоты",
-						uri: "/patients/new/quotes/"
 					}
+					// , {
+					// 	name: "quotes",
+					// 	title: "Квоты",
+					// 	uri: "/patients/new/quotes/"
+					// }
 				];
 			} else {
 				menuStructure = [
@@ -576,12 +577,13 @@ define(function(require){
 						name: "other",
 						title: "Прочее",
 						uri: "/patients/:id/edit/other/"
-					}, this.model.toJSON()),
-					App.Router.compile({
-						name: "quotes",
-						title: "Квоты",
-						uri: "/patients/:id/edit/quotes/"
 					}, this.model.toJSON())
+					// ,
+					// App.Router.compile({
+					// 	name: "quotes",
+					// 	title: "Квоты",
+					// 	uri: "/patients/:id/edit/quotes/"
+					// }, this.model.toJSON())
 				];
 			}
 
@@ -614,7 +616,8 @@ define(function(require){
 
 		events: {
 			//"change select[name='sex']": "onSexChange",
-			"change input[name='name-middle']": "onMiddleNameChange"
+			"change input[name='name-middle']": "onMiddleNameChange",
+			"change input[name*='name']": "onNameChange"
 		},
 
 		initialize: function(options) {
@@ -640,6 +643,11 @@ define(function(require){
 					this.$("select[name='sex']").val("male").change();
 				}
 			}
+		},
+
+		onNameChange: function(event) {
+			var val = $(event.target).val();
+			$(event.target).val($.trim(val));
 		},
 
 		render: function() {
@@ -1176,7 +1184,7 @@ define(function(require){
 			} else {
 				if (!this.collection.getDms().length) {
 					var payment = new App.Models.Payment();
-					payment.get("policyType").set("id", 3);
+					payment.get("policyType").set("code", 'vmi');
 					this.collection.add(payment);
 				}
 			}
@@ -1186,7 +1194,7 @@ define(function(require){
 			this.triggerView = view;
 			var NewModel = new App.Models.Payment();
 			if (this.options.type === "dms") {
-				NewModel.get("policyType").set("id", 3);
+				NewModel.get("policyType").set("code", 'vmi');
 			}
 			this.collection.add(NewModel, {
 				at: this.collection.indexOf(this.triggerView.model) + 1
@@ -1194,8 +1202,8 @@ define(function(require){
 		},
 
 		addOne: function(model) {
-			if (this.options.type == "dms" && model.get("policyType").get("id") == 3 ||
-				this.options.type == "oms" && model.get("policyType").get("id") != 3) {
+			if (this.options.type == "dms" && model.get("policyType").get("code") == 'vmi' ||
+				this.options.type == "oms" && model.get("policyType").get("code") != 'vmi') {
 				var view = new PolicyView({
 					model: model,
 					type: this.options.type,
@@ -1295,6 +1303,8 @@ define(function(require){
 			} else {
 				$smo.select2("val", this.model.get("smo").get("id")).change();
 			}
+
+			$smo.find('option').hide();
 		},
 
 		toggleRemoveIcon: function(event) {

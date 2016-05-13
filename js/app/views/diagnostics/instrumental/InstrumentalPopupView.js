@@ -29,13 +29,11 @@ define(function (require) {
             'click #assigner-outer': 'openAssignerSelectPopup',
             'click #executor-outer': 'openExecutorSelectPopup',
             'click .document-type-filter-orgstruct': 'onDocumentTypeFilterOrgStructToggle',
-            'change input[name=urgent]': 'onChangeUrgentInput',
             'change #finance': 'onChangeFinanceInput',
-            'change #plannedTime': 'onChangePlannedTimePicker',
-            'change #plannedDate': 'onChangePlannedDatePicker',
             'change #createDate': 'onChangeCreateDatePicker',
             'change #createTime': 'onChangeCreateTimePicker',
-            'change input[name="diagnosis[mkb][code]"]': 'onChangeMkbInput'
+            'change input[name="diagnosis[mkb][code]"]': 'onChangeMkbInput',
+            'keyup #tree-search': 'onSearchKeyup'
         },
 
         initialize: function () {
@@ -76,12 +74,54 @@ define(function (require) {
 
 
             pubsub.on('research:selected', this.onSelectResearch, this);
+            pubsub.on('research:deleted', this.onDeleteResearch, this);
             pubsub.on('research:deselected', this.onDeselectResearch, this);
             pubsub.on('assigner:changed', this.onChangeAssigner, this);
             pubsub.on('executor:changed', this.onChangeExecutor, this);
 
 
 
+        },
+
+        onSearchKeyup: function(event) {
+            var self = this;
+			var $target = $(event.currentTarget);
+            var keyWord = $target.val();
+            var searchRes = new Backbone.Collection();
+            if (keyWord.length) {
+                this.researchGroupsListView.collection.each(function(model) {
+                    if (!self.getChildren(model, searchRes, keyWord)) {
+                        if (model.get('title').toUpperCase().indexOf(keyWord.toUpperCase()) > -1) {
+                            searchRes.add(model);
+                        }
+                    }
+                });
+                this.researchGroupsListView.renderSearchResult(searchRes);
+            } else {
+                this.researchGroupsListView.renderSearchResult(this.viewModel.instrumntalGroups);
+            }
+		},
+
+        getChildren: function(group, res, keyWord) {
+            var self = this;
+            if ((group instanceof Backbone.Model) && group.get('children')) {
+                _.each(group.get('children'), function(ch){
+                    if (ch.children) {
+                        _.each(ch.children, function(c){
+                            if (c.title.toUpperCase().indexOf(keyWord.toUpperCase()) > -1) {
+                                res.add(new Backbone.Model(c));
+                            }
+                        })
+                    } else {
+                        if (ch.title.toUpperCase().indexOf(keyWord.toUpperCase()) > -1) {
+                            res.add(new Backbone.Model(ch));
+                        }
+                    }
+                });
+                return true;
+            } else {
+                return false;
+            }
         },
 
         openAssignerSelectPopup: function () {
@@ -110,33 +150,46 @@ define(function (require) {
 
         },
 
-        onSelectResearch: function (researchCode) {
+        onSelectResearch: function (researchCode, date, time) {
             var executor,
                 self = this;
 
             self.viewModel.set('code', researchCode);
             //шаблон данных в формате commonData
-            self.testTemplate = new InstrumentalResearchTemplate({}, {
+
+            self.testTemplate = [];
+
+            var newTest = new InstrumentalResearchTemplate({}, {
                 code: researchCode,
                 patientId: self.viewModel.get('patientId')
             });
 
-            self.testTemplate.fetch().done(function () {
-
-                if (self.testTemplate.getProperty('executorId', 'value') > 0) {
+            newTest.fetch().done(function () {
+                if (newTest.getProperty('executorId', 'value') > 0 ) {
                     executor = {
-                        id: self.testTemplate.getProperty('executorId', 'value'),
+                        id: newTest.getProperty('executorId', 'value'),
                         name: {
-                            first: self.testTemplate.getProperty('doctorFirstName', 'value'),
-                            middle: self.testTemplate.getProperty('doctorMiddleName', 'value'),
-                            last: self.testTemplate.getProperty('doctorLastName', 'value')
+                            first: newTest.getProperty('doctorFirstName', 'value'),
+                            middle: newTest.getProperty('doctorMiddleName', 'value'),
+                            last: newTest.getProperty('doctorLastName', 'value')
                         }
                     };
 
                     pubsub.trigger('executor:changed', executor);
                 }
+
+                newTest.plannedDatetime = date + ' ' + time;
+
+                self.testTemplate.push(newTest);
             });
 
+        },
+
+        onDeleteResearch: function (researchCode, last) {
+            if (last) {
+                this.viewModel.set('code', '');
+                this.testTemplate = [];
+            }
         },
 
         onDeselectResearch: function () {
@@ -150,10 +203,6 @@ define(function (require) {
             };
 
             this.viewModel.set('code', '');
-
-            if (this.testTemplate) {
-                this.testTemplate.clear();
-            }
 
             pubsub.trigger('executor:changed', executor);
         },
@@ -190,11 +239,6 @@ define(function (require) {
             this.viewModel.set('createTime', createTime);
         },
 
-        onChangeUrgentInput: function () {
-            var urgent = this.ui.$urgent.prop('checked');
-            this.viewModel.set('urgent', urgent);
-        },
-
         onChangeFinanceInput: function () {
             var financeId = this.$(this.ui.$finance.find('option:selected')[0]).val();
             this.viewModel.set('finance', financeId);
@@ -204,15 +248,6 @@ define(function (require) {
         onChangeMkbInput: function () {
             var mkbId = this.ui.$mbkCode.data('mkb-id');
             this.viewModel.set('mkbId', mkbId);
-        },
-        onChangePlannedTimePicker: function () {
-            var plannedTime = this.ui.$plannedTime.val();
-            this.viewModel.set('plannedTime', plannedTime);
-        },
-
-        onChangePlannedDatePicker: function () {
-            var plannedDate = this.ui.$plannedDate.datepicker('getDate');
-            this.viewModel.set('plannedDay', plannedDate);
         },
 
         onDocumentTypeFilterOrgStructToggle: function(event) {
@@ -263,43 +298,16 @@ define(function (require) {
         onSave: function () {
             var view = this;
 
-            view.testTemplate.setProperty('assignerId', 'value', view.viewModel.get('assignerId'));
-            //assignerFirstName - имя врача назначившего исследование
-            view.testTemplate.setProperty('assignerFirstName', 'value', view.viewModel.get('assignerFirstName'));
-            //assignerMiddleName - отчество врача назначившего исследование
-            view.testTemplate.setProperty('assignerMiddleName', 'value', view.viewModel.get('assignerMiddleName'));
-            //assignerLastName - фамилия врача назначившего исследование
-            view.testTemplate.setProperty('assignerLastName', 'value', view.viewModel.get('assignerLastName'));
+            var mandatoryFields = view.$el.find('.Mandatory').filter(function() {
+                return !this.value;
+            });
 
-
-            view.testTemplate.setProperty('executorId', 'value', view.viewModel.get('executorId'));
-            //doctorFirstName - имя врача исполнителя исследование
-            view.testTemplate.setProperty('doctorFirstName', 'value', view.viewModel.get('executorFirstName'));
-            //doctorMiddleName - отчество врача исполнителя исследование
-            view.testTemplate.setProperty('doctorMiddleName', 'value', view.viewModel.get('executorMiddleName'));
-            // doctorLastName - фамилия врача исполнителя исследование
-            view.testTemplate.setProperty('doctorLastName', 'value', view.viewModel.get('executorLastName'));
-
-
-            //assessmentDate - дата создания направления на исследование
-            view.testTemplate.setProperty('assessmentDate', 'value', view.viewModel.get('createDatetime'));
-
-            //plannedEndDate - планируемая дата выполнения иследования
-            view.testTemplate.setProperty('plannedEndDate', 'value', view.viewModel.get('plannedDatetime'));
-
-            //finance - идентификатор типа оплаты
-            view.testTemplate.setProperty('finance', 'value', view.viewModel.get('finance'));
-
-            //urgent - срочность
-            view.testTemplate.setProperty('urgent', 'value', view.viewModel.get('urgent'));
-
-            //идентификатор направительного диагноза
-            var mkbId = view.viewModel.get('mkbId');
-
-            view.testTemplate.setProperty('Направительный диагноз', 'valueId', mkbId);
-
-            if (!mkbId) {
-                view.testTemplate.setProperty('Направительный диагноз', 'value', '');
+            if (mandatoryFields.length > 0) {
+                mandatoryFields.addClass("WrongField").on('keypress', function(){
+                    $(this).removeClass("WrongField");
+                });
+                mandatoryFields[0].focus();
+                return;
             }
 
 
@@ -309,7 +317,63 @@ define(function (require) {
                 appealId: view.viewModel.get('appealId')
             });
 
-            view.tests.add(view.testTemplate);
+            _.each(view.testTemplate, function(test, i){
+
+                test.setProperty('assignerId', 'value', view.viewModel.get('assignerId'));
+                //assignerFirstName - имя врача назначившего исследование
+                test.setProperty('assignerFirstName', 'value', view.viewModel.get('assignerFirstName'));
+                //assignerMiddleName - отчество врача назначившего исследование
+                test.setProperty('assignerMiddleName', 'value', view.viewModel.get('assignerMiddleName'));
+                //assignerLastName - фамилия врача назначившего исследование
+                test.setProperty('assignerLastName', 'value', view.viewModel.get('assignerLastName'));
+
+
+                test.setProperty('executorId', 'value', view.viewModel.get('executorId'));
+                //doctorFirstName - имя врача исполнителя исследование
+                test.setProperty('doctorFirstName', 'value', view.viewModel.get('executorFirstName'));
+                //doctorMiddleName - отчество врача исполнителя исследование
+                test.setProperty('doctorMiddleName', 'value', view.viewModel.get('executorMiddleName'));
+                // doctorLastName - фамилия врача исполнителя исследование
+                test.setProperty('doctorLastName', 'value', view.viewModel.get('executorLastName'));
+
+
+                //assessmentDate - дата создания направления на исследование
+                test.setProperty('assessmentDate', 'value', moment(test.plannedDatetime, 'DD.MM.YYYY HH:mm').format('YYYY-MM-DD HH:mm:ss'));
+
+                //plannedEndDate - планируемая дата выполнения иследования
+                //test.setProperty('plannedEndDate', 'value', );
+
+
+                //finance - идентификатор типа оплаты
+                test.setProperty('finance', 'value', view.viewModel.get('finance'));
+
+                var testIndications = _.find( test.attributes.group[1].attribute, function(attr) {
+                    return attr.code == 'indications';
+                });
+
+                if (testIndications) {
+                    var testIndicationsValue = _.find(testIndications.properties, function(p) {
+                        return p.name == 'value';
+                    }).value = _.find(view.instrumntalResearchs.models[i].get('indications').properties, function(p){
+                        return p.name == 'value';
+                    }).value;
+                }
+
+                //urgent - срочность
+                test.setProperty('urgent', 'value', view.instrumntalResearchs.models[i].get('urgent'));
+
+                //идентификатор направительного диагноза
+                var mkbId = view.viewModel.get('mkbId');
+
+                test.setProperty('Направительный диагноз', 'valueId', mkbId);
+
+                if (!mkbId) {
+                    test.setProperty('Направительный диагноз', 'value', '');
+                }
+
+                view.tests.add(test);
+            });
+
 
             this.saveButton(false, 'Сохраняем');
 
@@ -317,6 +381,7 @@ define(function (require) {
                 success: function () {
                     view.close();
                     pubsub.trigger('instrumental-diagnostic:added');
+                    view.options.documents.fetch();
                 },
                 error: function (response, error) {
 
@@ -356,12 +421,9 @@ define(function (require) {
             view.ui.$createDate = view.$('#createDate');
             view.ui.$createDateIcon = view.bfView.$el.find('.icon-calendar');
             view.ui.$createTime = view.$('#createTime');
-            view.ui.$plannedDate = view.$('#plannedDate');
-            view.ui.$plannedTime = view.$('#plannedTime');
             view.ui.$saveButton = view.$el.closest('.ui-dialog').find('.save');
             view.ui.$assigner = view.$('#assigner');
             view.ui.$executor = view.$('#executor');
-            view.ui.$urgent = view.$('input[name=urgent]');
             view.ui.$finance = view.$('#finance');
             view.ui.$mbkCode = view.$('input[name="diagnosis[mkb][code]"]');
             view.ui.$mbkDiagnosis = view.$('input[name="diagnosis[mkb][diagnosis]"]');
@@ -374,17 +436,6 @@ define(function (require) {
                 minDate: now,
                 onSelect: function () {
                     view.ui.$createDate.trigger('change');
-                    // var date = view.$(this).datepicker('getDate');
-                    // var day = moment(date).startOf('day');
-                    // var currentDay = moment().startOf('day');
-                    // var currentHour = moment().hour();
-                    // var hour = view.ui.$createTime.timepicker('getHour');
-                    // //если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
-                    // if (day.diff(currentDay, 'days') === 0) {
-                    //     if (hour <= currentHour) {
-                    //         view.ui.$createTime.val('').trigger('change');
-                    //     }
-                    // }
                 }
             }).datepicker('setDate', view.viewModel.get('createDay'));
 
@@ -396,90 +447,9 @@ define(function (require) {
                 showPeriodLabels: false,
                 defaultTime: 'now',
                 showOn: 'both',
-                button: '.bottom-form .icon-time' //,
-                // onHourShow: function(hour) {
-                //     var date = view.ui.$createDate.datepicker('getDate');
-                //     var day = moment(date).startOf('day');
-                //     var currentDay = moment().startOf('day');
-                //     var currentHour = moment().hour();
-                //     //если выбран текущий день, то часы меньше текущего нельзя выбрать
-                //     if (day.diff(currentDay, 'days') === 0) {
-                //         if (hour < currentHour) {
-                //             return false;
-                //         }
-                //     }
-
-                //     return true;
-                // },
-                // onMinuteShow: function(hour, minute) {
-                //     var date = view.ui.$createDate.datepicker('getDate');
-                //     var day = moment(date).startOf('day');
-                //     var currentDay = moment().startOf('day');
-                //     var currentHour = moment().hour();
-                //     var currentMinute = moment().minute();
-                //     //если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
-                //     if (day.diff(currentDay, 'days') === 0) {
-                //         if (hour === currentHour && minute <= currentMinute) {
-                //             return false;
-                //         }
-                //     }
-                //     return true;
-                // }
+                button: '.bottom-form .icon-time'
             }).mask('99:99').val(view.viewModel.get('createTime'));
 
-
-            view.ui.$plannedDate.datepicker({
-                minDate: new Date(),
-                onSelect: function () {
-                    view.ui.$plannedDate.trigger('change');
-                    var date = view.$(this).datepicker('getDate');
-                    var day = moment(date).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    var hour = view.ui.$plannedTime.timepicker('getHour');
-                    //если выбрана текущая дата и время в таймпикере меньше текущего, то сбрасываем таймпикер
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour <= currentHour) {
-                            view.ui.$plannedTime.val('').trigger('change');
-                        }
-                    }
-                }
-            }).datepicker('setDate', this.viewModel.get('plannedDay'));
-
-            view.ui.$plannedTime.timepicker({
-                defaultTime: 'now',
-                showPeriodLabels: false,
-                showOn: 'both',
-                button: '.icon-time',
-                onHourShow: function (hour) {
-                    var date = view.ui.$plannedDate.datepicker('getDate');
-                    var day = moment(date).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    //если выбран текущий день, то часы меньше текущего нельзя выбрать
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour < currentHour) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                },
-                onMinuteShow: function (hour, minute) {
-                    var date = view.ui.$plannedDate.datepicker('getDate');
-                    var day = moment(date).startOf('day');
-                    var currentDay = moment().startOf('day');
-                    var currentHour = moment().hour();
-                    var currentMinute = moment().minute();
-                    //если выбран текущий день и час, то минуты меньше текущего времени нельзя выбрать
-                    if (day.diff(currentDay, 'days') === 0) {
-                        if (hour === currentHour && minute <= currentMinute) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            }).val(this.viewModel.get('plannedTime'));
 
             view.appealDiagnosis.fetch().done(function () {
                 //установка диагноза
@@ -493,13 +463,9 @@ define(function (require) {
             });
 
             this.viewModel.on('change', this.validateForm, this);
-            //            this.validateForm();
 
         },
         close: function () {
-
-            this.ui.$plannedDate.datepicker('destroy');
-            this.ui.$createDate.datepicker('destroy');
             this.$el.dialog('close');
             this.bfView.close();
             this.researchGroupsListView.close();

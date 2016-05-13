@@ -23,7 +23,11 @@ define(function(require) {
 		},
 
 		url: function() {
-			return '/api/v1/patients/' + this.patientId + '/therapies';
+			var query = 'therapies';
+			if (this.loadAll) {
+				query = 'alltherapies'
+			}
+			return DATA_PATH + 'patients/' + this.patientId + '/documents/' + query;
 		},
 
 		parse: function (raw) {

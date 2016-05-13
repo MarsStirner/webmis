@@ -9,6 +9,7 @@ define(function (require) {
     var PrescriptionEdit = require('views/prescriptions/views/appealPrescriptions/PrescriptionEditView');
     var ListView = require('views/prescriptions/views/appealPrescriptions/ListView');
     var ActionsView = require('views/prescriptions/views/appealPrescriptions/ListActionsView');
+    var IntervalEdit = require('views/prescriptions/views/prescriptionsExecution/IntervalEdit');
     require('qtip');
     require('fullCalendar');
 
@@ -21,6 +22,8 @@ define(function (require) {
 
             // console.log('init appeal prescriptions', this);
             var self = this;
+
+            this.getMoaList();
 
             this.collection = new Prescriptions();
 
@@ -35,6 +38,17 @@ define(function (require) {
 
             this.fetchCollection();
             pubsub.on('prescription:saved', this.fetchCollection, this);
+        },
+
+        getMoaList: function() {
+            var self = this;
+            $.getJSON('/api/v1/dir/administration?callback=?', function (res) {
+                self.moaList = res.data;
+            });
+        },
+
+        getMoaById: function(id) {
+            return _.where(this.moaList, {id: id})[0];
         },
 
         fetchCollection: function () {
@@ -62,7 +76,6 @@ define(function (require) {
             prescriptions.each(function (prescription) {
                 var assigmentIntervals = prescription.get('assigmentIntervals');
                 assigmentIntervals.each(function (assigmentInterval) {
-
                     var executionIntervals = assigmentInterval.get('executionIntervals');
                     executionIntervals.each(function (interval) {
 
@@ -72,8 +85,8 @@ define(function (require) {
                             name: prescription.get('name'),
                             title: self.getDrugsNames(prescription.get('drugs')),
                             allDay: false,
-                            backgroundColor: interval.backgroundColor,
-                            borderColor: interval.backgroundColor,
+                            backgroundColor: assigmentInterval.get('backgroundColor'),
+                            borderColor: assigmentInterval.get('backgroundColor'),
                             start: moment(interval.beginDateTime)
                                 .format('YYYY-MM-DD HH:mm'),
                         };
@@ -106,6 +119,10 @@ define(function (require) {
         getTooltipText: function (id) {
             var prescription = this.collection.get(id);
             // console.log('tt data', prescription.toJSON())
+            if (prescription.get('moa')) {
+                var moaName = this.getMoaById(prescription.get('moa')) ? this.getMoaById(prescription.get('moa')).name : '';
+                prescription.set('moaName', moaName);
+            }
             var html = tooltipTemplate(prescription.toJSON());
             return html;
         },
@@ -187,15 +204,43 @@ define(function (require) {
                                 },
                                 //                        hide: false,
                                 prerender: true
-                            })
-                        }
-                        // eventDurationEditable: true,
-                        // editable: true,
-                        // selectable: true,
-                        // selectHelper: true
+                            });
+
+                            $.contextMenu({
+                                autoHide: true,
+                                selector: '[data-hasqtip="' + $(element).attr('data-hasqtip') + '"]',
+                                callback: function () {
+                                    self.collection.each(function(prescription){
+                                        if (prescription.get('id') == event.id) {
+                                            var eStart  = event.start ? moment(event.start).valueOf() : event.start;
+                                            var eEnd    = event.end ? moment(event.end).valueOf() : event.end;
+                                            var intervalToEdit = prescription.get('assigmentIntervals').find(function(model) {
+                                                return ( model.get('beginDateTime') == eStart && model.get('endDateTime') == eEnd);
+                                            });
+                                            if (!intervalToEdit) {
+                                                var intervalToEdit = prescription.get('assigmentIntervals').find(function(model) {
+                                                    return ( model.get('beginDateTime') == eStart);
+                                                });
+                                            }
+                                            var intervalEdit = new IntervalEdit({
+                                                model: intervalToEdit
+                                            });
+                                            intervalEdit.render().open();
+                                        }
+                                    });
+                                },
+                                items: {
+                                    edit: {
+                                        name : "Редактировать"
+                                    }
+                                }
+                            });
+                        },
                     });
             }, this);
-        }
+        },
+
+
 
     });
 

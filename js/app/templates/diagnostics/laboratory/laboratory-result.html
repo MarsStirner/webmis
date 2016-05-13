@@ -1,12 +1,14 @@
 
 <div class="actions" style="margin-bottom:2em;height:3.5em;">
     <button class="all"  style="float:left;"><i class="icon-list"></i> Вернуться к списку</button>
+    <button type="button" class="prev-document review-nav" style="margin-left: 1em;"><i class="icon-chevron-left"></i></button>
+    <button type="button" class="next-document review-nav"><i class="icon-chevron-right"></i></button>
         <!-- Old Print button
         <div style="float:right;">
             <div id="print-button" ><i class="icon-print"></i> Печать</div>
         </div>
         -->
-        <span class="context-print-button" style="float:right;">	
+        <span class="context-print-button" style="float:right;">
             <!-- <button type="button" class="" data-icon-primary="icon-print">Печать new</button> -->
         </span>
 
@@ -15,7 +17,13 @@
 <div style="clear:both;"></div>
 </div>
 
-<div class=""><h3 style="margin-bottom:.5em;"><%= data.name %></h3></div>
+<div class="">
+    <h3 style="margin-bottom:.5em;"><%= data.name %>
+        <%if(LAB_EDIT){%>
+            <a class="edit-lab" style="float: right; cursor: pointer;"><i class="icon-pencil" title="Редактировать"></i></a>
+        <%}%>
+    </h3>
+</div>
 
 <div class="extra-info" style="display: none;">
     <div class="s11pan">Назначено: <%= data.assessmentBeginDate %></div>
@@ -48,39 +56,54 @@
 </table>
 <%}%>
 
-<%if(data.bak){%>
+<%if(data.bak && data.bak.table){%>
 <div >
-    <h3>Антибиотикограмма</h3>
-    <%if(data.bak.table){%>
-    <table class="Grid allborders anti">
-        <colgroup><colgroup>
-        <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
-        <colgroup><colgroup>
-        <%})%> 
-        <thead>
-            <tr>
-            <th width="100%">Антибиотик</th> 
+    <%if(data.bak.table.isActivity){%>
+        <h3>Антибиотикограмма</h3>
+        <%if(data.bak.table.rows.length){%>
+        <table class="Grid allborders anti">
+            <colgroup><colgroup>
             <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
-                <% if (organism.name.split('|').length > 1) {%>
-                    <th><%=organism.name.split('|')[0] %></br><%=organism.name.split('|')[1] %></th>
-                <%} else {%>
-                    <th><%=organism.name %></th> 
-                <%}%>    
-            <%})%> 
-            </tr>
-        </thead>
-        <tbody>
-            <% _.each(data.bak.table.rows, function(antibiotic){ %>
+            <colgroup><colgroup>
+            <%})%>
+            <thead>
                 <tr>
-                    <td><%=antibiotic.name %> </td>
-                    <%_.each(antibiotic.organisms, function(organism){%>
-                        <td><%=organism.activity %></td> 
-                    <%})%>
+                <th width="100%">Антибиотик</th>
+                <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
+                    <% if (organism.name.split('|').length > 1) {%>
+                        <th><%=organism.name.split('|')[0] %></br><%=organism.name.split('|')[1] %></th>
+                    <%} else {%>
+                        <th><%=organism.name %></th>
+                    <%}%>
+                <%})%>
                 </tr>
-            <% }) %> 
-        </tbody>
-    </table> 
-    <p>S - чувствителен, I - умеренно устойчив, R - устойчив</p>
+            </thead>
+            <tbody>
+                <% _.each(data.bak.table.rows, function(antibiotic){ %>
+                    <% if (antibiotic.name) {%>
+                    <tr>
+                        <td><%=antibiotic.name %> </td>
+                        <%_.each(antibiotic.organisms, function(organism){%>
+                            <td><%=organism.activity %></td>
+                        <%})%>
+                    </tr>
+                    <%}%>
+                <% }) %>
+            </tbody>
+        </table>
+        <p>S - чувствителен, I - умеренно устойчив, R - устойчив</p>
+        <%}%>
+    <%} else {%>
+        <% _.each(data.bak.table.rows[0].organisms,function(organism){%>
+            <strong>
+                <% if (organism.name.split('|').length > 1) {%>
+                    <h4><%=organism.name.split('|')[0] %></h4>
+                    <p><%=organism.name.split('|')[1] %></p>
+                <%} else {%>
+                    <h4><%=organism.name %></h4>
+                <%}%>
+            </strong>
+        <%})%>
     <%}%>
 
     <%if(data.bak.textResults && data.bak.textResults.length){%>
@@ -95,5 +118,3 @@
     <%}%>
 </div>
 <%}%>
-
-

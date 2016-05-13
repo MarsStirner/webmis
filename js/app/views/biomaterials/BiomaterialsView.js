@@ -3,6 +3,7 @@ define(function(require) {
 	var biomaterialsTemplate = require('text!templates/biomaterials/biomaterials-page.tmpl');
 
 	require('collections/departments');
+	require('collections/labs');
 	require('collections/dictionary-values');
 	var BarcodesCollection = require('collections/biomaterials/Barcodes');
 	var BiomaterialsCollection = require('collections/biomaterials/Biomaterials');
@@ -135,19 +136,32 @@ define(function(require) {
 		},
 
 		setStatus: function(modelsArray, status) {
+			console.log('set status', status);
 			var view = this;
+			console.log('modelsArray', modelsArray);
 
 			view.jobs.reset();
 
 			_.each(modelsArray, function(model) {
 				//console.log('model',model);
 				if (model.get('status') !== status) {
-					view.jobs.add({
-						'id': model.get('id'),
-						'status': status
-					});
+					if (status == 2) {
+						var nm = new Backbone.Model();
+						nm.set('id', model.get('id'));
+						nm.set('data', model.get('actions').map(function(action){
+						  return {'id': action.id}
+						}))
+						view.jobs.add(nm);
+					} else {
+						view.jobs.add({
+							'id': model.get('id'),
+							'status': status
+						});
+					}
 				}
 			});
+
+			console.log(view.jobs);
 
 			if (view.jobs.length) {
 				view.jobs.updateAll();
@@ -167,7 +181,7 @@ define(function(require) {
 			var disabled = true;
 			var jtc = view.collection.selected;
 
-			if (jtc.status_0.length > 0 && jtc.status_1.length === 0 && jtc.status_2.length === 0) {
+			if (jtc.status_0.length > 0 && jtc.status_1.length === 0 && jtc.status_2.length === 0 && jtc.status_3.length === 0) {
 				disabled = false;
 			}
 
@@ -181,7 +195,7 @@ define(function(require) {
 			var disabled = true;
 			var jtc = view.collection.selected;
 
-			if (jtc.status_0.length === 0 && jtc.status_1.length > 0 && jtc.status_2.length === 0) {
+			if (jtc.status_0.length === 0 && (jtc.status_1.length > 0 || jtc.status_3.length > 0) && jtc.status_2.length === 0) {
 				disabled = false;
 			}
 
@@ -288,7 +302,7 @@ define(function(require) {
 		initTissues: function() {
 			var view = this;
 
-			//Получаем список типов биоматериалов
+			//Получаем списки фильтров
 			view.tissues = new App.Collections.DictionaryValues("", {
 				name: "tissueTypes"
 			});
@@ -307,6 +321,21 @@ define(function(require) {
 
 		},
 
+		initLabs: function() {
+			var view = this;
+
+			view.labs = new App.Collections.Labs();
+
+			view.labsSelect = new SelectView({
+				collection: view.labs,
+				el: view.$('#lab'),
+				selectText: 'name'
+			});
+
+			view.depended(view.labsSelect);
+
+		},
+
 		initDepartments: function() {
 			var view = this;
 
@@ -314,12 +343,10 @@ define(function(require) {
 			view.departments = new App.Collections.Departments();
 
 			view.departments.setParams({
-				filter: {
-					hasBeds: true
-				},
 				limit: 0,
 				sortingField: 'name',
-				sortingMethod: 'asc'
+				sortingMethod: 'asc',
+				withoutChildren: true
 			});
 
 
@@ -366,15 +393,17 @@ define(function(require) {
 				var status_0 = view.collection.count.status_0;
 				var status_1 = view.collection.count.status_1;
 				var status_2 = view.collection.count.status_2;
+				var status_3 = view.collection.count.status_3;
 
 				// view.$('#status-all-count').html(all ? '(' + all + ')' : '');
 				view.$('#status-0-count').html(status_0 ? '(' + status_0 + ')' : '');
 				view.$('#status-1-count').html(status_1 ? '(' + status_1 + ')' : '');
 				view.$('#status-2-count').html(status_2 ? '(' + status_2 + ')' : '');
+				view.$('#status-3-count').html(status_3 ? '(' + status_3 + ')' : '');
 			});
 
 			view.collection.on('fetch', function(e) {
-				view.$('#status-all-count, #status-0-count,#status-1-count,#status-2-count').html('');
+				view.$('#status-all-count, #status-0-count,#status-1-count,#status-2-count,#status-3-count').html('');
 			});
 		},
 		initExecuteButton: function() {
@@ -489,7 +518,13 @@ define(function(require) {
 			var filter2 = Core.Forms.serializeToObject($('#biomaterials-head-filter'));
 
 			var filter = _.extend(filter1, filter2);
-			//console.log(filter)
+
+			//convert dates to ISO8601
+			var d = new Date(moment.unix(filter.beginDate/1000));
+			d.setHours(0, -d.getTimezoneOffset(), 0, 0);
+			filter.beginDate = d.toISOString().slice(0, -1);
+			filter.endDate = new Date(moment(d).add(1, 'days')).toISOString().slice(0, -1);
+
 
 			view.collection.setParams({
 				filter: filter
@@ -545,6 +580,7 @@ define(function(require) {
 			view.initPrintButton();
 			view.initDatepicker();
 
+			view.initLabs();
 			view.initTissues();
 			view.initDepartments();
 
@@ -558,6 +594,11 @@ define(function(require) {
 			//UIInitialize(view.el);
 			//			this.delegateEvents();
 			this.grid.delegateEvents();
+
+			view.collection.on('resetFilter', function(){
+				view.labsSelect.val('0');
+				console.log(view);
+			});
 
 			return view;
 		}

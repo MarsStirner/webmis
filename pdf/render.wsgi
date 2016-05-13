@@ -108,7 +108,7 @@ def application(environ, start_response):
 
         result_name = ''
         if (name.has_key('first') and name.has_key('last') and name.has_key('middle')):
-            result_name += (name['last'][:10] + '.') if len(name['last']) > 11 else name['last']
+            result_name += (name['last'][:9] + '.') if len(name['last']) > 10 else name['last']
             result_name += ' ' + name['first'][0] + '.'
             result_name += (' ' + name['middle'][0] + '.') if len(name['middle']) > 0 else ''
         else:

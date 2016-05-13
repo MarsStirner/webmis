@@ -96,10 +96,10 @@ define([], function() {
 
 				switch (attribute.type) {
 					case 'Time':
-						value = moment(property.value, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+						value = moment(property.value, 'YYYY-MM-DD HH:mm:ss') ? moment(property.value, 'YYYY-MM-DD HH:mm:ss').format('HH:mm') : '';
 						break;
 					case 'Date':
-						value = moment(property.value, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
+						value = moment(property.value, 'YYYY-MM-DD HH:mm:ss') ? moment(property.value, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD') : '';
 						break;
 					default:
 						value = property.value;

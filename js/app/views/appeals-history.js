@@ -41,7 +41,7 @@ define(["collections/appeals"], function ()
 		tagName: "li",
 
 		template:
-			'<a href="/appeals/${id}/">№ ${number}</a><span class="Label" style="float:right">${finance.name}</span>' +
+			'<a {{if requestType == "policlinic" || requestType == "diagnostic"}} href="http://'+POLICLINIC_HOST+'/event/event.html?event_id=${id}&role='+Core.Cookies.get("currentRole")+'" target="_blank" {{else}} href="/appeals/${id}/" {{/if}}>№ ${number}</a><span class="Label" style="float:right">${finance.name}</span>' +
 			'<span class="Label">{{formatDate rangeAppealDateTime.start}}{{if rangeAppealDateTime.end}} — {{formatDate rangeAppealDateTime.end}}{{/if}}</span>' +
 			'{{if department && department.name}}<span>${department.name}</span>{{/if}}' +
 			'{{if execPerson.doctor && execPerson.doctor.name}}' +

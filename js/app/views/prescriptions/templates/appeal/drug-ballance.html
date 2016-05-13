@@ -1,56 +1,59 @@
-<% if(data.item){ %>
-<table class="my-grid sklad">
-    <tr>
-        <td style="width:18%;">Торговое название</td>
-        <td style="width:18%;">Латинское название</td>
-        <td style="width:12%;">Активные вещества</td>
-        <td style="width:8%;">Дозировка/Ед.изм</td>
-        <td style="width:8%;">Форма выпуска</td>
-        <td style="width:8%;">Годен до</td>
-        <td style="width: 16%;">Наличие</td>
-    </tr>
-
-    <tr <% if(data.where){%>  class="<%= data.where%>"<%}%>>
-        <td>
-            <!-- <%= data.item.rlsNomenId %> -->	
-
-            <%= data.item.tradeLocalName%>
-            <% if(data.item.isExpirationDateComesToEnd){%>*<%}%>
-        </td>
-        <td>
-            <%= data.item.tradeName %>
-        </td>
-        <td>
-            <%= data.item.actMattersName %>
-        </td>
-        <td>
-            <%= data.item.dosageValue %> <%= data.item.dosageUnitCode %>
-        </td>
-        <td>
-            <%= data.item.formName %>
-        </td>
-        <td >
-            <span <% if(data.item.isExpirationDateComesToEnd){%>style="color:red;"<%}%>>
-                <%= data.item.bestBefore%>
-            </span>
-        </td>
-        <% if(data.where){%>
-        <td>
-            <% if(data.where === 'inCurrentDepartment'){%>
-            На складе отделения
-            <%}%>
-            <% if(data.where === 'inOtherDepartments'){%>
-            На складах других отделений
-            <%}%>
-            <% if(data.where === 'inHospital'){%>
-            На складе ЛПУ
-            <%}%>
-
-        </td>
-
-        <%}%>
-    </tr>
-
-
-</table>
+<% if(data.items.length){ %>
+    <table class="my-grid sklad">
+        <tr>
+            <td style="font-weight: bold;">Торговое название</td>
+            <td style="font-weight: bold;">Латинское название</td>
+            <td style="font-weight: bold;">Активные вещества</td>
+            <td style="font-weight: bold;">Дозировка/Ед.изм</td>
+            <td style="font-weight: bold;">Форма выпуска</td>
+        </tr>
+        <tr>
+            <td>
+                <%= data.items[0].tradeLocalName%>
+                <% if(data.items[0].isExpirationDateComesToEnd){%>*<%}%>
+            </td>
+            <td>
+                <%= data.items[0].tradeName %>
+            </td>
+            <td>
+                <%= data.items[0].actMattersName %>
+            </td>
+            <td>
+                <%= data.items[0].dosageValue %> <%= data.items[0].dosageUnitCode %>
+            </td>
+            <td>
+                <%= data.items[0].form + ', ' + data.items[0].filling %>
+            </td>
+        </tr>
+    </table>
+<div style="height: 10em; overflow: auto; margin-top: -1em;">
+    <table>
+        <tr>
+            <td width="6%">Годен до</td>
+            <td>Наличие</td>
+        </tr>
+        <% _.each(data.items, function(item) { %>
+            <tr <% if(item.balanceOfGoodData.where){%>  class="<%= item.balanceOfGoodData.where%>"<%}%>>
+                <td >
+                    <span <% if(item.isExpirationDateComesToEnd){%>style="color:red;"<%}%>>
+                        <%= moment(item.balanceOfGoodData.bestBefore) ?  moment(item.balanceOfGoodData.bestBefore).format('DD.MM.YYYY') : '' %>
+                    </span>
+                </td>
+                <% if(item.balanceOfGoodData.where){%>
+                <td>
+                    <% if(item.balanceOfGoodData.where === 'inCurrentDepartment'){%>
+                    На складе отделения
+                    <%}%>
+                    <% if(item.balanceOfGoodData.where === 'inOtherDepartments'){%>
+                    На складе (<%= item.balanceOfGoodData.whereDepartmentName %>)
+                    <%}%>
+                    <% if(item.balanceOfGoodData.where === 'inHospital'){%>
+                    На складе ЛПУ
+                    <%}%>
+                </td>
+                <%}%>
+            </tr>
+        <% }); %>
+    </table>
+</div>
 <% } %>

@@ -15,6 +15,10 @@ define(["models/thesaurus-term"], function () {
 			if (this.parentGroupId) {
 				path += "?filter[groupId]=" + this.parentGroupId;
 			}
+			if (this.code) {
+				var splitter = path.slice(-1) == '/' ? '?' : '&';
+				path += (splitter + "filter[code]=" + this.code);
+			}
 			return path;
 		}
 	});

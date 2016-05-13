@@ -122,11 +122,13 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 
 			switch (Core.Data.currentRole()) {
 				case ROLES.NURSE_RECEPTIONIST:
-					sections.push({
+					sections.push(
+					{
 						title: "Пациенты",
 						name: "patients",
 						uri: "/patients/"
-					}, {
+					},
+					{
 						title: "Госпитализации",
 						name: "appeals",
 						uri: "/appeals/"
@@ -158,6 +160,10 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 						title: "Запись на консультацию",
 						name: "appointments",
 						uri: "/appointments/"
+					}, {
+						title: "Отчёты",
+						name: "anareports",
+						uri: "/anareports/"
 					});
 					break;
 				case ROLES.NURSE_DEPARTMENT:
@@ -184,6 +190,25 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 						}
 						//,{title: "Амбулаторные талоны"}
 					);
+					break;
+				case ROLES.DOCTOR_ANESTEZIOLOG:
+					sections.push({
+						title: "Госпитализации",
+						name: "appeals",
+						uri: "/appeals/"
+					}, {
+						title: "Пациенты",
+						name: "patients",
+						uri: "/patients/"
+					}, {
+						title: "Запись на консультацию",
+						name: "appointments",
+						uri: "/appointments/"
+					}, {
+						title: "Отчёты",
+						name: "anareports",
+						uri: "/anareports/"
+					});
 					break;
 				case ROLES.CHIEF:
 					sections.push({

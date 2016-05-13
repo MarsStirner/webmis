@@ -9,7 +9,7 @@ define(function (require) {
 
         initialize: function () {
             this.childs = [];
-
+            this.getMoaList();
             this.collection.on('reset', function () {
                 if (this.collection.length) {
                     this.render();
@@ -18,6 +18,17 @@ define(function (require) {
                 }
             }, this);
             this.collection.on('fetch', this.renderOnFetch, this);
+        },
+
+        getMoaList: function() {
+            var self = this;
+            $.getJSON('/api/v1/dir/administration?callback=?', function (res) {
+                self.moaList = res.data;
+            });
+        },
+
+        getMoaById: function(id) {
+            return _.where(this.moaList, {id: id})[0];
         },
 
         renderNoResults: function () {
@@ -39,7 +50,7 @@ define(function (require) {
 
         renderChilds: function () {
             this.closeChilds();
-
+            var self = this;
             var data = this.data();
             var groups = data.groups;
             var $groupsEl = this.$el.find('.groups');
@@ -50,6 +61,10 @@ define(function (require) {
                     groupName: groupName,
                     mainCollection: this.collection
                 });
+                var moaName = self.getMoaById(groupName)
+                if (moaName) {
+                    groupView.setMoaName(moaName.name);
+                }
                 this.childs.push(groupView);
                 $groupsEl.append(groupView.render().el);
 
