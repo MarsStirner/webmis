@@ -13,7 +13,7 @@ define(["models/diagnostics/laboratory/laboratory-diag"], function (LabDiagnosti
 			}
 		},
 		url: function () {
-			return DATA_PATH + "appeals/" + this.appealId + "/diagnostics/laboratory/" + this.pageFilter();
+			return DATA_PATH + "appeals/" + this.appealId + "/diagnostics/laboratory/";
 		}
 
 	});
