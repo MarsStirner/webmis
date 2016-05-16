@@ -288,7 +288,6 @@ define(function(require) {
 		},
 
 		setBreadcrumbsStructure: function() {
-			console.log(this.page, this.breadCrumbsMap);
 			if (this.breadCrumbsMap[this.page]) {
 				this.breadcrumbs.setStructure([
 					App.Router.cachedBreadcrumbs.PATIENTS,
