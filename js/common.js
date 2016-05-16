@@ -24,7 +24,7 @@ POLICLINIC_HOST = "mis-core.pol.fccho-moscow.ru:5555";
 APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
 ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/";
 DOMAIN = '.fccho-moscow.ru';
-// DOMAIN = '.localhost';
+// DOMAIN = '127.0.0.1';
 //PHARM_EXPERT_API = "http://socmedica.com/pharmexpertPro/";
 PHARM_EXPERT_API = 'http://umkb.socmedica.com/api/';
 PHARM_KEY        = '8ab87e9fe50512461b04d16e97b88bc9857387d32c9b2f9a577c2928';
@@ -307,7 +307,7 @@ Collection = Backbone.Collection.extend({
 			sortingField: "id",
 			sortingMethod: "asc",
 			limit: 10,
-			page: 1,
+			page: App.Router.paginatorPage ? App.Router.paginatorPage : 1,
 			recordsCount: 0
 		};
 	},
