@@ -6761,7 +6761,8 @@ define(function (require) {
                     lockInfo: documentJSON.lockInfo,
                     mnem: this.model.get('mnem'),
                     tgsk: self.model.tgsk,
-                    code: this.model.get('code')
+                    code: this.model.get('code'),
+                    status: this.model.get('status');
                 };
             } else {
                 tmplData = {
