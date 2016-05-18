@@ -6738,6 +6738,9 @@ define(function (require) {
 
             if (!_.isUndefined(documentJSON.version)) {
                 var summaryAttrs = documentJSON["group"][0]["attribute"];
+                if (!this.model.endDate) {
+                    this.model.endDate = this.model.getDates().end.getValue() ? moment(this.model.getDates().end.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm") : false;
+                }
 
                 tmplData = {
                     id: documentJSON.id,
@@ -6747,8 +6750,7 @@ define(function (require) {
                     //endDate: summaryAttrs[3]["properties"][0]["value"],
                     beginDate: this.model.getDates().begin.getValue() ?
                         moment(this.model.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm") : false,
-                    endDate: this.model.getDates().end.getValue() ?
-                        moment(this.model.getDates().end.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm") : false,
+                    endDate: this.model.endDate,
                     doctorName: [
                         summaryAttrs[4]["properties"][0]["value"],
                         summaryAttrs[5]["properties"][0]["value"],
@@ -6825,7 +6827,10 @@ define(function (require) {
               contentType:"application/json; charset=utf-8",
               success: function(data){
                 view.tgskCheck().done(function(){
-                   view.model.fetch().done(function(){
+                    view.model.fetch().done(function(){
+                        console.log(view.model);
+                        var endDate = view.model.get('group')[0].attribute[3].properties[0].value;
+                        view.model.endDate = moment(endDate, CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm")
                         view.render();
                     }); 
                 });
