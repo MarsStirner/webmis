@@ -5112,27 +5112,18 @@ define(function (require) {
         data: function () {
             return {
                 model: this.model,
-                directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())
+                directoryEntries: fds[this.model.get("scope")] ? _(fds[this.model.get("scope")].toBeautyJSON()) : null
             };
         },
         initialize: function () {
-            var scope = this.model.get("scope");
-            var self = this;
+            
+            // if (!fds[scope].deffered) {
+            //     fds[scope].deffered = fds[scope].fetch();
+            // }
 
-            if (!fds[scope]) {
-                fds[scope] = new FlatDirectory();
-                fds[scope].set({
-                    id: scope
-                });
-            }
-
-            if (!fds[scope].deffered) {
-                fds[scope].deffered = fds[scope].fetch();
-            }
-
-            $.when(fds[scope].deffered).then(function () {
-                self.onDirectoryReady();
-            });
+            // $.when(fds[scope].deffered).then(function () {
+            //     self.onDirectoryReady();
+            // });
 
             UIElementBase.prototype.initialize.apply(this);
         },
@@ -5144,6 +5135,23 @@ define(function (require) {
                 this.model.setPropertyValueFor("value", "");
             }
             UIElementBase.prototype.onAttributeValueChange.call(this, event);
+        },
+        render: function() {
+            var self = this;
+            var scope = this.model.get("scope");
+            UIElementBase.prototype.render.call(this);
+
+            if (!fds[scope]) {
+                fds[scope] = new FlatDirectory();
+                fds[scope].set({
+                    id: scope
+                });
+
+                fds[scope].fetch().done(function(){
+                    self.onDirectoryReady();
+                });
+            }
+            return this;
         }
     });
 
@@ -5189,18 +5197,48 @@ define(function (require) {
      */
     Documents.Views.Edit.UIElement.TherapyPhaseTitleFlatDirectory = Documents.Views.Edit.UIElement.TherapyFlatDirectory.extend({
         data: function () {
+            var directoryEntries = null;
+
+            if (fds[this.model.get("scope")]) {
+                directoryEntries = _(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
+                    return frd["parentFdr_id"] == fds.therapyFdrId;
+                }, this);
+            }
+            
             return {
                 model: this.model,
-                directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
-                    return frd["parentFdr_id"] == fds.therapyFdrId;
-                }, this)
+                directoryEntries: directoryEntries
             };
         },
         initialize: function () {
             Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.initialize.call(this, this.options);
             this.setTherapyMandatory();
             this.listenTo(fds, "change-therapyTitle", function () {
-                this.setTherapyMandatory();
+                var self = this;
+                var scope = this.model.get("scope");
+
+                if (fds.therapyFdrId) {
+                    if (!fds[scope]) {
+                        fds[scope] = new FlatDirectory();
+                        fds[scope].set({
+                            id: scope
+                        }); 
+                    }
+
+                    if (_(fds[this.model.get("scope")].toBeautyJSON())._wrapped.length) {
+                        this.setTherapyMandatory();
+                    } else {
+                        fds[scope].set({
+                            parentFdr_id: fds.therapyFdrId
+                        });
+                        fds[scope].fetch().done(function(){
+                            self.setTherapyMandatory();
+                        });
+                    }
+                    
+                } else {
+                    this.setTherapyMandatory();
+                }
             });
         },
 
@@ -5213,15 +5251,18 @@ define(function (require) {
             this.model.set({
                 mandatory: (fds.therapyFdrId ? "true" : "false")
             });
+
             this.render();
         },
 
         render: function () {
             UIElementBase.prototype.render.call(this);
+
             if (!(this.$('option:selected').length && this.$('option:selected').val()) && this.model.getValue()) {
                 this.$('.attribute-value').prepend('<option value="'+this.model.getValue()+'">'+this.model.getPropertyValueFor('value')+'</option>');
                 this.$('.attribute-value').val(this.model.getValue());
             }
+
             return this;
         }
 

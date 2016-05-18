@@ -3,14 +3,19 @@
 	<input type="checkbox" class="field-toggle">
 	<%=model.get('name')%>
 </label>
+<div class="loading" style="display: none">
+Загрузка справочника...
+</div>
 <div class="field">
 	<select class="attribute-value <%=model.isReadOnly()?'Disabled':''%> <%=model.isMandatory()?'Mandatory':''%>"
 					style="font-size: 1.2em; padding: 4px; width: 100%;border: 1px solid #737477;"
 					<%=model.isReadOnly()?'disabled':''%>>
 		<option value="">...</option>
-		<%directoryEntries.each(function (directoryEntry) {%>
-			<option value="<%=directoryEntry.id%>" <%if (model.getValue() == directoryEntry.id) {%>selected<%selectedFdr=directoryEntry;%><%}%>><%=directoryEntry['Наименование']%></option>
-		<%});%>
+		<%if (directoryEntries) {%>
+			<%directoryEntries.each(function (directoryEntry) {%>
+				<option value="<%=directoryEntry.id%>" <%if (model.getValue() == directoryEntry.id) {%>selected<%selectedFdr=directoryEntry;%><%}%>><%=directoryEntry['Наименование']%></option>
+			<%});%>
+		<%}%>	
 	</select>
 	<%if (model.getValue() && selectedFdr && selectedFdr["Ссылка"]) {%>
 		<div class="therapy-doc-link-container">
