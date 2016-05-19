@@ -4722,8 +4722,8 @@ define(function (require) {
         },
 
         getAttributeValue: function () {
-            console.log('getAttributeValue', this, this.ui, this.ui.$attributeValueEl.val())
-            return "1970-01-01 " + this.ui.$attributeValueEl.val() + ':00';
+            console.log('getAttributeValue', this, this.ui, this.ui.$attributeValueEl.val());
+            return this.ui.$attributeValueEl.val() ? "1970-01-01 " + this.ui.$attributeValueEl.val() + ':00' : null;
         },
 
         getTime: function () {
