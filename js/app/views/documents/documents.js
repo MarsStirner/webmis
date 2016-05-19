@@ -6791,6 +6791,9 @@ define(function (require) {
             this.listenTo(this.model, "change:version", this.onModelReset);
             this.tgskCheck().done(function(){
                self.model.fetch(); 
+            }).fail(function(e) {
+                console.error("Can not load data");
+                self.model.fetch();
             });
         },
 
@@ -6990,7 +6993,6 @@ define(function (require) {
         tagName: "li",
         template: templates._reviewSheetRow,
         data: function () {
-            console.log(this.model.get('code'));
             var value = this.model.get("value"),
                 displayValue;
             switch (this.model.get("type").toUpperCase()) {
