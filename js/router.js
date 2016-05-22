@@ -1,5 +1,5 @@
 require.config({
-	urlArgs: "bust=v1.4.24",
+	urlArgs: "bust=v"+GUI_VERSION,
 
 	baseUrl: "/js/app",
 
