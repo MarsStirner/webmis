@@ -1,4 +1,6 @@
 require.config({
+	urlArgs: "bust=v1.4.24",
+
 	baseUrl: "/js/app",
 
 	paths: {
