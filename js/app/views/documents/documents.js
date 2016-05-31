@@ -7296,10 +7296,11 @@ define(function (require) {
         applyDocumentTypeFilter: function (type) {
             var mnems = [];
             var codes = [];
-
+            
+            App.Router.paginatorPage = 1;
             switch (type) {
             case "ALL":
-                mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "CONS_POLY", "THER", "EXAM_OLD", "JOUR_OLD"];
+                mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "CONS_POLY", "THER", "EXAM_OLD", "JOUR_OLD", "CONS_SPEC", "CONS_PHD"];
                 break;
             case "EVERYDAY":
                 codes = ['3_02', '01_1'];
@@ -7318,7 +7319,7 @@ define(function (require) {
                 mnems = ["LAB"];
                 break;
             case "CONS":
-                mnems = ["CONS", "CONS_POLY"];
+                mnems = ["CONS", "CONS_POLY", "CONS_SPEC", "CONS_PHD"];
                 break;
             case "DIAG":
                 mnems = ["DIAG"];
