@@ -5174,6 +5174,18 @@ define(function (require) {
                         .attr("href", selectedItem["Ссылка"])
                         .find(".therapy-doc-link-text")
                         .text(selectedItem["Наименование"]);
+                } else {
+                    var selectedItem = _.find(fds[this.model.get("scope")].get("records"), function (item) {
+                        return item["id"] == selValue;
+                    });
+                    if (selectedItem && selectedItem.values) {
+                        this.$(".therapy-doc-link-container")
+                        .show()
+                        .find(".therapy-doc-link")
+                        .attr("href", selectedItem.values[3].value)
+                        .find(".therapy-doc-link-text")
+                        .text(selectedItem.values[0].value);
+                    }
                 }
             } else {
                 this.$(".therapy-doc-link-container").hide();
@@ -5200,10 +5212,10 @@ define(function (require) {
             var directoryEntries = null;
 
             if (fds[this.model.get("scope")]) {
-                directoryEntries = _(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
-                    return frd["parentFdr_id"] == fds.therapyFdrId;
-                }, this);
+                directoryEntries = new Backbone.Collection(fds[this.model.get("scope")].get("records"));
             }
+
+            
             
             return {
                 model: this.model,

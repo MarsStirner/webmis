@@ -101,7 +101,12 @@ define(function () {
 		},
 
 		url: function () {
-			return DATA_PATH + "dir/flatDirectory/?limit=999&flatDirectoryId=" + this.get("id") + "&parentFdr_id=" + this.get("parentFdr_id") + this.getAdditionalParams();
+			var parentFdr_id = this.get("parentFdr_id");
+			if (parentFdr_id) {
+				return DATA_PATH + "dir/fd/?code=therapyStages&filter[parentFdr_id]=" + parentFdr_id;
+			} else {
+				return DATA_PATH + "dir/flatDirectory/?limit=999&flatDirectoryId=" + this.get("id") + this.getAdditionalParams();
+			}
 		},
 
 		toBeautyJSON: function () {

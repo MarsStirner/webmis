@@ -13,17 +13,30 @@
 		<option value="">...</option>
 		<%if (directoryEntries) {%>
 			<%directoryEntries.each(function (directoryEntry) {%>
-				<option value="<%=directoryEntry.id%>" <%if (model.getValue() == directoryEntry.id) {%>selected<%selectedFdr=directoryEntry;%><%}%>><%=directoryEntry['Наименование']%></option>
+				<%if (directoryEntry['Наименование']) {%>
+					<option value="<%=directoryEntry.id%>" <%if (model.getValue() == directoryEntry.id) {%>selected<%selectedFdr=directoryEntry;%><%}%>><%=directoryEntry['Наименование']%></option>
+				<%}else{%>
+					<option value="<%=directoryEntry.get('id')%>" <%if (model.getValue() == directoryEntry.get('id')) {%>selected<%selectedFdr=directoryEntry;%><%}%>><%=directoryEntry.get('values')[0].value%></option>
+				<%}%>
 			<%});%>
 		<%}%>	
 	</select>
-	<%if (model.getValue() && selectedFdr && selectedFdr["Ссылка"]) {%>
-		<div class="therapy-doc-link-container">
-			<a href="<%=selectedFdr["Ссылка"]%>" class="therapy-doc-link" target="_blank">
-				<i class="icon-book"></i>
-				<span class="therapy-doc-link-text"><%=selectedFdr["Наименование"]%></span>
-			</a>
-		</div>
+	<%if (model.getValue() && selectedFdr) {%>
+		<%if (selectedFdr["Ссылка"]) {%>
+			<div class="therapy-doc-link-container">
+				<a href="<%=selectedFdr["Ссылка"]%>" class="therapy-doc-link" target="_blank">
+					<i class="icon-book"></i>
+					<span class="therapy-doc-link-text"><%=selectedFdr["Наименование"]%></span>
+				</a>
+			</div>
+		<%}else if (selectedFdr.get('values')){%>	
+			<div class="therapy-doc-link-container">
+				<a href="<%=selectedFdr.get('values')[3].value%>" class="therapy-doc-link" target="_blank">
+					<i class="icon-book"></i>
+					<span class="therapy-doc-link-text"><%=selectedFdr.get('values')[0].value%></span>
+				</a>
+			</div>
+		<%}%>
 	<%}else{%>
 		<div class="therapy-doc-link-container" style="display: none;">
 			<a href="#" class="therapy-doc-link" target="_blank">
