@@ -6648,6 +6648,7 @@ define(function (require) {
             this.collection.each(function(doc){
                 if (doc.getDates().end) {
                     if (doc.getDates().end.getValue()) {
+                        self.$('.assign-to-me').button();
                         self.$('.assign-to-me').button('disable');
                     }
                 }
