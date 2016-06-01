@@ -7278,7 +7278,7 @@ define(function (require) {
         onChangeEvent: function (e) {
             var $target = $(e.target);
             if ($target.val() === 'all') {
-                appealId = this.options.ibs.first().id;
+                appealId = this.options.ibs.first().get('id');
             } else{
                 appealId = $target.val();
             }
