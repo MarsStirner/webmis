@@ -4722,8 +4722,8 @@ define(function (require) {
         },
 
         getAttributeValue: function () {
-            console.log('getAttributeValue', this, this.ui, this.ui.$attributeValueEl.val())
-            return "1970-01-01 " + this.ui.$attributeValueEl.val() + ':00';
+            console.log('getAttributeValue', this, this.ui, this.ui.$attributeValueEl.val());
+            return this.ui.$attributeValueEl.val() ? "1970-01-01 " + this.ui.$attributeValueEl.val() + ':00' : null;
         },
 
         getTime: function () {
@@ -5112,27 +5112,18 @@ define(function (require) {
         data: function () {
             return {
                 model: this.model,
-                directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON())
+                directoryEntries: fds[this.model.get("scope")] ? _(fds[this.model.get("scope")].toBeautyJSON()) : null
             };
         },
         initialize: function () {
-            var scope = this.model.get("scope");
-            var self = this;
+            
+            // if (!fds[scope].deffered) {
+            //     fds[scope].deffered = fds[scope].fetch();
+            // }
 
-            if (!fds[scope]) {
-                fds[scope] = new FlatDirectory();
-                fds[scope].set({
-                    id: scope
-                });
-            }
-
-            if (!fds[scope].deffered) {
-                fds[scope].deffered = fds[scope].fetch();
-            }
-
-            $.when(fds[scope].deffered).then(function () {
-                self.onDirectoryReady();
-            });
+            // $.when(fds[scope].deffered).then(function () {
+            //     self.onDirectoryReady();
+            // });
 
             UIElementBase.prototype.initialize.apply(this);
         },
@@ -5144,6 +5135,23 @@ define(function (require) {
                 this.model.setPropertyValueFor("value", "");
             }
             UIElementBase.prototype.onAttributeValueChange.call(this, event);
+        },
+        render: function() {
+            var self = this;
+            var scope = this.model.get("scope");
+            UIElementBase.prototype.render.call(this);
+
+            if (!fds[scope]) {
+                fds[scope] = new FlatDirectory();
+                fds[scope].set({
+                    id: scope
+                });
+
+                fds[scope].fetch().done(function(){
+                    self.onDirectoryReady();
+                });
+            }
+            return this;
         }
     });
 
@@ -5166,6 +5174,18 @@ define(function (require) {
                         .attr("href", selectedItem["Ссылка"])
                         .find(".therapy-doc-link-text")
                         .text(selectedItem["Наименование"]);
+                } else {
+                    var selectedItem = _.find(fds[this.model.get("scope")].get("records"), function (item) {
+                        return item["id"] == selValue;
+                    });
+                    if (selectedItem && selectedItem.values) {
+                        this.$(".therapy-doc-link-container")
+                        .show()
+                        .find(".therapy-doc-link")
+                        .attr("href", selectedItem.values[3].value)
+                        .find(".therapy-doc-link-text")
+                        .text(selectedItem.values[0].value);
+                    }
                 }
             } else {
                 this.$(".therapy-doc-link-container").hide();
@@ -5189,18 +5209,48 @@ define(function (require) {
      */
     Documents.Views.Edit.UIElement.TherapyPhaseTitleFlatDirectory = Documents.Views.Edit.UIElement.TherapyFlatDirectory.extend({
         data: function () {
+            var directoryEntries = null;
+
+            if (fds[this.model.get("scope")]) {
+                directoryEntries = new Backbone.Collection(fds[this.model.get("scope")].get("records"));
+            }
+
+            
+            
             return {
                 model: this.model,
-                directoryEntries: _(fds[this.model.get("scope")].toBeautyJSON()).chain().filter(function (frd) {
-                    return frd["parentFdr_id"] == fds.therapyFdrId;
-                }, this)
+                directoryEntries: directoryEntries
             };
         },
         initialize: function () {
             Documents.Views.Edit.UIElement.TherapyFlatDirectory.prototype.initialize.call(this, this.options);
             this.setTherapyMandatory();
             this.listenTo(fds, "change-therapyTitle", function () {
-                this.setTherapyMandatory();
+                var self = this;
+                var scope = this.model.get("scope");
+
+                if (fds.therapyFdrId) {
+                    if (!fds[scope]) {
+                        fds[scope] = new FlatDirectory();
+                        fds[scope].set({
+                            id: scope
+                        }); 
+                    }
+
+                    if (_(fds[this.model.get("scope")].toBeautyJSON())._wrapped.length) {
+                        this.setTherapyMandatory();
+                    } else {
+                        fds[scope].set({
+                            parentFdr_id: fds.therapyFdrId
+                        });
+                        fds[scope].fetch().done(function(){
+                            self.setTherapyMandatory();
+                        });
+                    }
+                    
+                } else {
+                    this.setTherapyMandatory();
+                }
             });
         },
 
@@ -5213,15 +5263,18 @@ define(function (require) {
             this.model.set({
                 mandatory: (fds.therapyFdrId ? "true" : "false")
             });
+
             this.render();
         },
 
         render: function () {
             UIElementBase.prototype.render.call(this);
+
             if (!(this.$('option:selected').length && this.$('option:selected').val()) && this.model.getValue()) {
                 this.$('.attribute-value').prepend('<option value="'+this.model.getValue()+'">'+this.model.getPropertyValueFor('value')+'</option>');
                 this.$('.attribute-value').val(this.model.getValue());
             }
+
             return this;
         }
 
@@ -6595,6 +6648,7 @@ define(function (require) {
             this.collection.each(function(doc){
                 if (doc.getDates().end) {
                     if (doc.getDates().end.getValue()) {
+                        self.$('.assign-to-me').button();
                         self.$('.assign-to-me').button('disable');
                     }
                 }
@@ -6738,6 +6792,9 @@ define(function (require) {
 
             if (!_.isUndefined(documentJSON.version)) {
                 var summaryAttrs = documentJSON["group"][0]["attribute"];
+                if (!this.model.endDate) {
+                    this.model.endDate = this.model.getDates().end.getValue() ? moment(this.model.getDates().end.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm") : false;
+                }
 
                 tmplData = {
                     id: documentJSON.id,
@@ -6747,8 +6804,7 @@ define(function (require) {
                     //endDate: summaryAttrs[3]["properties"][0]["value"],
                     beginDate: this.model.getDates().begin.getValue() ?
                         moment(this.model.getDates().begin.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm") : false,
-                    endDate: this.model.getDates().end.getValue() ?
-                        moment(this.model.getDates().end.getValue(), CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm") : false,
+                    endDate: this.model.endDate,
                     doctorName: [
                         summaryAttrs[4]["properties"][0]["value"],
                         summaryAttrs[5]["properties"][0]["value"],
@@ -6761,7 +6817,8 @@ define(function (require) {
                     lockInfo: documentJSON.lockInfo,
                     mnem: this.model.get('mnem'),
                     tgsk: self.model.tgsk,
-                    code: this.model.get('code')
+                    code: this.model.get('code'),
+                    status: this.model.get('status')
                 };
             } else {
                 tmplData = {
@@ -6788,6 +6845,9 @@ define(function (require) {
             this.listenTo(this.model, "change:version", this.onModelReset);
             this.tgskCheck().done(function(){
                self.model.fetch(); 
+            }).fail(function(e) {
+                console.error("Can not load data");
+                self.model.fetch();
             });
         },
 
@@ -6824,7 +6884,10 @@ define(function (require) {
               contentType:"application/json; charset=utf-8",
               success: function(data){
                 view.tgskCheck().done(function(){
-                   view.model.fetch().done(function(){
+                    view.model.fetch().done(function(){
+                        console.log(view.model);
+                        var endDate = view.model.get('group')[0].attribute[3].properties[0].value;
+                        view.model.endDate = moment(endDate, CD_DATE_FORMAT).format("DD.MM.YYYY HH:mm")
                         view.render();
                     }); 
                 });
@@ -6984,7 +7047,6 @@ define(function (require) {
         tagName: "li",
         template: templates._reviewSheetRow,
         data: function () {
-            console.log(this.model.get('code'));
             var value = this.model.get("value"),
                 displayValue;
             switch (this.model.get("type").toUpperCase()) {
@@ -7216,7 +7278,7 @@ define(function (require) {
         onChangeEvent: function (e) {
             var $target = $(e.target);
             if ($target.val() === 'all') {
-                appealId = this.options.ibs.first().id;
+                appealId = this.options.ibs.first().get('id');
             } else{
                 appealId = $target.val();
             }
@@ -7235,10 +7297,11 @@ define(function (require) {
         applyDocumentTypeFilter: function (type) {
             var mnems = [];
             var codes = [];
-
+            
+            App.Router.paginatorPage = 1;
             switch (type) {
             case "ALL":
-                mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "CONS_POLY", "THER", "EXAM_OLD", "JOUR_OLD"];
+                mnems = ["EXAM", "EPI", "ORD", "JOUR", "NOT", "OTH", "LAB", "DIAG", "CONS", "CONS_POLY", "THER", "EXAM_OLD", "JOUR_OLD", "CONS_SPEC", "CONS_PHD"];
                 break;
             case "EVERYDAY":
                 codes = ['3_02', '01_1'];
@@ -7257,7 +7320,7 @@ define(function (require) {
                 mnems = ["LAB"];
                 break;
             case "CONS":
-                mnems = ["CONS", "CONS_POLY"];
+                mnems = ["CONS", "CONS_POLY", "CONS_SPEC", "CONS_PHD"];
                 break;
             case "DIAG":
                 mnems = ["DIAG"];
