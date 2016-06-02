@@ -134,7 +134,11 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
 						uri: "/appeals/"
 					}, {
 						title: "Амбулаторные талоны"
-					});
+					}, {
+							title: "Отчёты",
+							name: "anareports",
+							uri: "/anareports/"
+						});
 					break;
 				case ROLES.DOCTOR_RECEPTIONIST:
 					sections.push({
