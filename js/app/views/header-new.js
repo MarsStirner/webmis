@@ -185,8 +185,8 @@ define(["text!templates/header-new.tmpl"], function(headerTmpl) {
                             uri: "/prescriptions/"
                         }, {
 							title: "Отчёты",
-							name: "reports",
-							uri: "/reports/"
+							name: "anareports",
+							uri: "/anareports/"
 						}
 						//,{title: "Амбулаторные талоны"}
 					);
