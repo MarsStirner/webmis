@@ -103,6 +103,7 @@ define(function (require) {
 		},
 
         onSave: function(){
+            Cache.Patient.unset("relations");
             Cache.Patient.save();
             this.trigger('close');
             this.close();
