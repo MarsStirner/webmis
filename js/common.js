@@ -1,5 +1,5 @@
 // Глобальные константы
-var GUI_VERSION = "1.5";
+var GUI_VERSION = "1.5.1";
 var CORE_VERSION;
 
 DEBUG_MODE = true;
@@ -19,11 +19,11 @@ DEFAULT_ANIMATION_TIME = 300;
 DATA_PATH = "/data/";
 
 //CORE_HOST = "mis-core.pol.fccho-moscow.ru:8080";
-CORE_HOST = "ftmis-core4-system.gfish.fccho-moscow.ru:8080";
+CORE_HOST = "93.187.185.133:8181";
 POLICLINIC_HOST = "mis-core.pol.fccho-moscow.ru:5555";
 APPOINTMENTS_PATH = "http://" + POLICLINIC_HOST + "/schedule/appointment/";
 ANAREPORTS_PATH = "http://" + POLICLINIC_HOST + "/anareports/";
-DOMAIN = '.fccho-moscow.ru';
+DOMAIN = 'localhost';
 // DOMAIN = '127.0.0.1';
 //PHARM_EXPERT_API = "http://socmedica.com/pharmexpertPro/";
 PHARM_EXPERT_API = 'http://umkb.socmedica.com/api/';
