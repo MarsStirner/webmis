@@ -13,6 +13,7 @@ define(["models/diagnostics/laboratory/laboratory-diag"], function (LabDiagnosti
 			}
 		},
 		url: function () {
+			console.log(this);
 			return DATA_PATH + "appeals/" + this.appealId + "/diagnostics/laboratory/";
 		}
 

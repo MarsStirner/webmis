@@ -5966,7 +5966,8 @@ define(function (require) {
             labs.appealId = appealId;
             labs.setParams({
                 sortingField: "takingTime",
-                sortingMethod: "desc"
+                sortingMethod: "desc",
+                page: 0
             });
 
             labs.extra = {
