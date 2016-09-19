@@ -881,6 +881,12 @@ define(function (require) {
             if (options.defaultMnems) {
                 this.mnems = options.defaultMnems;
             }
+
+            if (Cache.filterCache && Cache.filterCache.mnemFilter) {
+                this.mnems = Cache.filterCache.mnemFilter.mnems;
+                this.codes = Cache.filterCache.mnemFilter.codes;
+            }
+
             App.Router.paginatorPage = 1;
         },
         url: function () {
@@ -903,6 +909,10 @@ define(function (require) {
                 this.codes.map(function (code) {
                     return params.push("filter[actionTypeCode]=" + code);
                 });
+            }
+
+            if (!this.dateRange && Cache.filterCache && Cache.filterCache.date) {
+                this.dateRange = Cache.filterCache.date.dateRange;
             }
 
             if (this.dateRange) {
@@ -2004,6 +2014,9 @@ define(function (require) {
         },
 
         initialize: function () {
+            if (Cache.filterCache && Cache.filterCache.doctorId) {
+                this.options.listItems.doctorId = Cache.filterCache.doctorId;
+            }
             ViewBase.prototype.initialize.call(this);
             this.listenTo(this.collection, "add remove reset", this.onCollectionChange);
         },
@@ -2023,6 +2036,13 @@ define(function (require) {
         },
 
         applyExecPersonFilter: function (enabled) {
+            if (Cache.filterCache) {
+                Cache.filterCache.doctorId = this.options.listItems.doctorId
+            } else {
+                Cache.filterCache = {
+                    doctorId: this.options.listItems.doctorId
+                }
+            }
             this.options.listItems.doctorId = enabled ? appeal.get("execPerson").id : null;
             this.options.listItems.fetch();
         }
@@ -2112,6 +2132,20 @@ define(function (require) {
                 break;
             }
 
+             if (Cache.filterCache) {
+                Cache.filterCache.date = {
+                    dateFilter: this.collection.dateFilter,
+                    dateRange: this.collection.dateRange
+                }
+            } else {
+                Cache.filterCache = {
+                    date: {
+                        dateFilter: this.collection.dateFilter,
+                        dateRange: this.collection.dateRange
+                    }
+                }
+            }
+
             this.collection.dateFilter = rangeMnem;
             this.collection.dateRange = dateRange;
             this.collection.pageNumber = 1;
@@ -2120,6 +2154,7 @@ define(function (require) {
 
         render: function () {
             ViewBase.prototype.render.apply(this);
+            this.collection.dateFilter = (Cache.filterCache && Cache.filterCache.date) ? Cache.filterCache.date.dateFilter : this.collection.dateFilter;
             this.$("[name=document-create-date-filter][value=" + (this.collection.dateFilter || "ALL") + "]").prop("checked", true).parent().buttonset();
         }
     });
@@ -7293,6 +7328,15 @@ define(function (require) {
                 appeal.get("execPerson").id = event.get('execPerson_id');
             }
             this.collection.pageNumber = 1;
+
+            if (Cache.filterCache) {
+                Cache.filterCache.eventId = this.collection.appealId
+            } else {
+                Cache.filterCache = {
+                    eventId: this.collection.appealId
+                }
+            }
+
             this.collection.fetch();
         },
         applyDocumentTypeFilter: function (type) {
@@ -7344,6 +7388,23 @@ define(function (require) {
             this.collection.codes = codes;
             this.collection.pageNumber = 1;
             this.collection.fetch();
+            if (Cache.filterCache) {
+                Cache.filterCache.mnemFilter = {
+                    mnemFilter: {
+                        type: this.collection.mnemFilter,
+                        mnems: this.collection.mnems,
+                        codes: this.collection.codes
+                    }
+                }
+            } else {
+                Cache.filterCache = {
+                    mnemFilter: {
+                        type: this.collection.mnemFilter,
+                        mnems: this.collection.mnems,
+                        codes: this.collection.codes
+                    }
+                }
+            }
         },
         data: function () {
             var data = {};
@@ -7355,6 +7416,7 @@ define(function (require) {
                 data.ibs = this.options.ibs.toJSON();
             }
             data.selectedEventId = this.options.selectedEventId;
+            data.mnemFilterType = (Cache.filterCache && Cache.filterCache.mnemFilter) ? Cache.filterCache.mnemFilter.type : '';
             return data;
         }
     });
@@ -7411,7 +7473,7 @@ define(function (require) {
                 ".documents-filters": new Documents.Summary.Filters({
                     collection: this.documents,
                     ibs: this.options.events,
-                    selectedEventId: this.options.selectedEventId
+                    selectedEventId: (Cache.filterCache && Cache.filterCache.eventId) ? Cache.filterCache.eventId : this.options.selectedEventId
                 }),
                 ".documents-paging": new Documents.Views.List.Base.Paging({
                     collection: this.documents
