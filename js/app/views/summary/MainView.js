@@ -3,23 +3,8 @@ define(function (require) {
     require("models/appeal");
     var userPermissions = require('permissions');
     var CardNav = require('views/CardNav');
-
     var Documents = require("views/documents/documents");
-
-    var AppealsList = Collection.extend({
-        initialize: function (models, options) {
-            this.patientId = options.patientId;
-        },
-        url: function () {
-            if (!this.patientId) {
-                throw new Error('Нет айди пациента');
-            }
-            return '/api/v1/events/?patientId=' + this.patientId;
-        },
-        setPatientId: function (patientId) {
-            this.patientId = patientId;
-        }
-    });
+    var AppealsList = require("collections/patient-appeals");
 
     return View.extend({
         initialize: function () {
@@ -32,20 +17,15 @@ define(function (require) {
                 });
             }
 
-
-            this.appealsList = new AppealsList({}, {
-                patientId: this.options.patientId
-            });
-
-            //this.patient = new App.Models.Patient();
-
+            self.appealsList = new AppealsList();
+            self.appealsList.setParams({
+                    limit: 9999,
+                    page: 0
+                });
             self.appeal = new App.Models.Appeal();
 
             this.getPatientAppeals(this.options.patientId).done(function () {
-                //console.log('appeals', self.appealsList);
-
                 self.firstAppeal = self.appealsList.first();
-
                 if (self.firstAppeal) {
                     var appealId = self.firstAppeal.get('id');
                     self.getAppealById(appealId).done(function () {
@@ -57,12 +37,12 @@ define(function (require) {
                         });
                     });
                 }
-
             });
-
         },
         getPatientAppeals: function (patientId) {
-            this.appealsList.setPatientId(patientId);
+            this.appealsList.patient = {
+                id: this.options.patientId
+            };
             return this.appealsList.fetch();
         },
         getAppealById: function (id) {
@@ -101,7 +81,7 @@ define(function (require) {
             });
 
             this.listView = new Documents.Summary.List.Layout({
-                appealId: appeal.get('id'),
+                appealId: (Cache.filterCache && Cache.filterCache.eventId) ? Cache.filterCache.eventId : appeal.get('id'),
                 appeal: appeal,
                 patientId: this.options.patientId,
                 events: events,
@@ -111,14 +91,10 @@ define(function (require) {
 
             this.listView.render();
             this.$el.append(html);
-
             this.$el.find('#summary-list').append(this.listView.el);
             this.$el.find('.CardNav').append(this.cardNav.render().el);
 
             console.log('render page', appeal, this.listView.el);
-
-
-
         }
     });
 
