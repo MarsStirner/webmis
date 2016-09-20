@@ -1,6 +1,6 @@
 <?php
 
-$core_host = '93.187.185.133:8181';
+$core_host = '10.128.225.202:8080';
 $print_system_host = '10.128.225.200:5222';
 
 function proxy_url ($url, $header_host=null) {
