@@ -19,26 +19,26 @@
 
 	<select class="document-type-filter Regular" id="document-type-filter" style="width: 200px;">
 		<% console.log(mnemFilterType) %>
-		<option value="ALL" <%if(mnemFilterType == 'ALL' || !mnemFilterType){%> selected <%}%> > Все</option>
+		<option value="ALL"> Все</option>
 		<% if (App.Router.currentPage == "patientSummaryList") { %>
-		    <option value="EVERYDAY" <%if(mnemFilterType == 'EVERYDAY'){%> selected <%}%> > Ежедневные</option>
+		    <option value="EVERYDAY"> Ежедневные</option>
 		<% } %>
-		<option value="ORD" <%if(mnemFilterType == 'ORD'){%> selected <%}%> > Выписки</option>
-		<option value="JOUR" <%if(mnemFilterType == 'JOUR'){%> selected <%}%> > Дневники</option>
-		<option value="NOT" <%if(mnemFilterType == 'NOT'){%> selected <%}%> > Извещения</option>
+		<option value="ORD"> Выписки</option>
+		<option value="JOUR"> Дневники</option>
+		<option value="NOT"> Извещения</option>
 		<% if (App.Router.currentPage == "patientSummaryList") { %>
-		    <option value="DIAG" <%if(mnemFilterType == 'DIAG'){%> selected <%}%> > Инструментальные исследования</option>
+		    <option value="DIAG"> Инструментальные исследования</option>
 		<% } %>
-		<option value="CONS" <%if(mnemFilterType == 'CONS'){%> selected <%}%> > Консультации</option>
+		<option value="CONS"> Консультации</option>
 		<% if (App.Router.currentPage == "patientSummaryList") { %>
-		    <option value="LAB" <%if(mnemFilterType == 'LAB'){%> selected <%}%> > Лабораторные исследования</option>
+		    <option value="LAB"> Лабораторные исследования</option>
 		<% } %>
 		<% if (App.Router.currentPage == "patientSummaryList") { %>
-		    <option value="THER" <%if(mnemFilterType == 'THER'){%> selected <%}%> > Лечение</option>
+		    <option value="THER"> Лечение</option>
 		<% } %>
-		<option value="EXAM" <%if(mnemFilterType == 'EXAM'){%> selected <%}%> > Осмотры</option>
-		<option value="OTH" <%if(mnemFilterType == 'OTH'){%> selected <%}%> > Разное</option>
-		<option value="EPI" <%if(mnemFilterType == 'EPI'){%> selected <%}%> > Эпикризы</option>
+		<option value="EXAM"> Осмотры</option>
+		<option value="OTH"> Разное</option>
+		<option value="EPI"> Эпикризы</option>
 	</select>
 </div>
 <div  style="display: inline-block;">
