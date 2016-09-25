@@ -887,6 +887,10 @@ define(function (require) {
                 this.codes = Cache.filterCache.mnemFilter.codes;
             }
 
+            if (!this.dateRange && Cache.filterCache && Cache.filterCache.date) {
+                this.dateRange = Cache.filterCache.date.dateRange;
+            }
+
             App.Router.paginatorPage = 1;
         },
         url: function () {
@@ -909,10 +913,6 @@ define(function (require) {
                 this.codes.map(function (code) {
                     return params.push("filter[actionTypeCode]=" + code);
                 });
-            }
-
-            if (!this.dateRange && Cache.filterCache && Cache.filterCache.date) {
-                this.dateRange = Cache.filterCache.date.dateRange;
             }
 
             if (this.dateRange) {
@@ -2014,9 +2014,9 @@ define(function (require) {
         },
 
         initialize: function () {
-            if (Cache.filterCache && Cache.filterCache.doctorId) {
-                this.options.listItems.doctorId = Cache.filterCache.doctorId;
-            }
+            // if (Cache.filterCache && Cache.filterCache.doctorId) {
+            //     this.options.listItems.doctorId = Cache.filterCache.doctorId;
+            // }
             ViewBase.prototype.initialize.call(this);
             this.listenTo(this.collection, "add remove reset", this.onCollectionChange);
         },
@@ -2036,14 +2036,14 @@ define(function (require) {
         },
 
         applyExecPersonFilter: function (enabled) {
-            if (Cache.filterCache) {
-                Cache.filterCache.doctorId = this.options.listItems.doctorId
-            } else {
-                Cache.filterCache = {
-                    doctorId: this.options.listItems.doctorId
-                }
-            }
             this.options.listItems.doctorId = enabled ? appeal.get("execPerson").id : null;
+            // if (Cache.filterCache) {
+            //     Cache.filterCache.doctorId = appeal.get("execPerson").id
+            // } else {
+            //     Cache.filterCache = {
+            //         doctorId: appeal.get("execPerson").id
+            //     }
+            // }
             this.options.listItems.fetch();
         }
     });
@@ -2132,7 +2132,11 @@ define(function (require) {
                 break;
             }
 
-             if (Cache.filterCache) {
+            this.collection.dateFilter = rangeMnem;
+            this.collection.dateRange = dateRange;
+            this.collection.pageNumber = 1;
+
+            if (Cache.filterCache) {
                 Cache.filterCache.date = {
                     dateFilter: this.collection.dateFilter,
                     dateRange: this.collection.dateRange
@@ -2145,10 +2149,7 @@ define(function (require) {
                     }
                 }
             }
-
-            this.collection.dateFilter = rangeMnem;
-            this.collection.dateRange = dateRange;
-            this.collection.pageNumber = 1;
+            
             this.collection.fetch();
         },
 
@@ -2897,7 +2898,10 @@ define(function (require) {
 
         render: function () {
             Documents.Views.List.Base.Filters.prototype.render.apply(this);
-            this.$(".document-type-filter").val(this.collection.mnemFilter || "ALL");
+            if (Cache.filterCache && Cache.filterCache.mnemFilter) {
+                var mnemFilter = Cache.filterCache.mnemFilter.type;
+            }
+            this.$(".document-type-filter").val(mnemFilter || this.collection.mnemFilter || "ALL");
             return this;
         }
     });
@@ -7390,18 +7394,16 @@ define(function (require) {
             this.collection.fetch();
             if (Cache.filterCache) {
                 Cache.filterCache.mnemFilter = {
-                    mnemFilter: {
-                        type: this.collection.mnemFilter,
-                        mnems: this.collection.mnems,
-                        codes: this.collection.codes
-                    }
+                    type: type,
+                    mnems: mnems,
+                    codes: codes
                 }
             } else {
                 Cache.filterCache = {
                     mnemFilter: {
-                        type: this.collection.mnemFilter,
-                        mnems: this.collection.mnems,
-                        codes: this.collection.codes
+                        type: type,
+                        mnems: mnems,
+                        codes: codes
                     }
                 }
             }
