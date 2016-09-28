@@ -7,7 +7,7 @@
 		<%_.each(ibs, function(event){ %>
 		<option value="<%= event.id %>" <%if(event.id == selectedEventId){%> selected <%}%> > <%= event.number%></option>
 		<%})%>
-        <option value="all">Все ИБ</option>
+        <option value="all" <%if(selectedEventId == 'all'){%> selected <%}%> >Все ИБ</option>
 	</select>
 </div>
 
