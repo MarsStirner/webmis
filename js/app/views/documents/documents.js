@@ -890,8 +890,6 @@ define(function (require) {
             if (!this.dateRange && Cache.filterCache && Cache.filterCache.date) {
                 this.dateRange = Cache.filterCache.date.dateRange;
             }
-
-            App.Router.paginatorPage = 1;
         },
         url: function () {
             var url;
@@ -7433,6 +7431,9 @@ define(function (require) {
         },
         toggleReviewState: function () {
             // console.log('summary toggle', this, appealId)
+            if (appealId == 'all') {
+                appealId = this.options.selectedEventId;
+            }
             App.Router.navigate(["patients", this.options.patientId, this.getEditPageTypeName(), '?appealId=' + appealId + '&docIds=' + this.selectedDocuments.pluck("id").join(",")].join("/"), {
                 trigger: true
             });
