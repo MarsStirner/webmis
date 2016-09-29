@@ -7330,6 +7330,7 @@ define(function (require) {
                 appeal.get("execPerson").id = event.get('execPerson_id');
             }
             this.collection.pageNumber = 1;
+            App.Router.paginatorPage = 1;
 
             if (Cache.filterCache) {
                 Cache.filterCache.eventId = this.collection.appealId
