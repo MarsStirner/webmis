@@ -5,9 +5,9 @@
 	</label>
 	<select class="Regular" name="event-filter" id="event-filter" style="width: 150px;" >
 		<%_.each(ibs, function(event){ %>
-		<option value="<%= event.id %>" <%if(event.id === selectedEventId){%><%}%>><%= event.externalId%></option>
+		<option value="<%= event.id %>" <%if(event.id == selectedEventId){%> selected <%}%> > <%= event.number%></option>
 		<%})%>
-        <option value="all">Все ИБ</option>
+        <option value="all" <%if(selectedEventId == 'all'){%> selected <%}%> >Все ИБ</option>
 	</select>
 </div>
 
@@ -18,26 +18,27 @@
 
 
 	<select class="document-type-filter Regular" id="document-type-filter" style="width: 200px;">
-		<option value="ALL" selected>Все</option>
+		<% console.log(mnemFilterType) %>
+		<option value="ALL"> Все</option>
 		<% if (App.Router.currentPage == "patientSummaryList") { %>
-		    <option value="EVERYDAY">Ежедневные</option>
+		    <option value="EVERYDAY"> Ежедневные</option>
 		<% } %>
-		<option value="ORD">Выписки</option>
-		<option value="JOUR">Дневники</option>
-		<option value="NOT">Извещения</option>
+		<option value="ORD"> Выписки</option>
+		<option value="JOUR"> Дневники</option>
+		<option value="NOT"> Извещения</option>
 		<% if (App.Router.currentPage == "patientSummaryList") { %>
-		    <option value="DIAG">Инструментальные исследования</option>
+		    <option value="DIAG"> Инструментальные исследования</option>
 		<% } %>
-		<option value="CONS">Консультации</option>
+		<option value="CONS"> Консультации</option>
 		<% if (App.Router.currentPage == "patientSummaryList") { %>
-		    <option value="LAB">Лабораторные исследования</option>
+		    <option value="LAB"> Лабораторные исследования</option>
 		<% } %>
 		<% if (App.Router.currentPage == "patientSummaryList") { %>
-		    <option value="THER">Лечение</option>
+		    <option value="THER"> Лечение</option>
 		<% } %>
-		<option value="EXAM">Осмотры</option>
-		<option value="OTH">Разное</option>
-		<option value="EPI">Эпикризы</option>
+		<option value="EXAM"> Осмотры</option>
+		<option value="OTH"> Разное</option>
+		<option value="EPI"> Эпикризы</option>
 	</select>
 </div>
 <div  style="display: inline-block;">

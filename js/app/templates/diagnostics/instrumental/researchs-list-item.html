@@ -13,7 +13,12 @@
       <%= data.title %>
       <% if (data.indications) {%>
         <div>
-          <input value="<%=data.indications.value %>" data-code="<%= data.code %>" id="indications-<%= data.code %>" type="text" class="indications <%= data.indications.mandatory == 'true' ? 'Mandatory' : '' %>" placeholder="Показания">
+          <textarea class="indications <%= data.indications.mandatory == 'true' ? 'Mandatory' : '' %>"
+                    placeholder="Показания" id="indications-<%= data.code %>"
+                    data-code="<%= data.code %>"
+                    style="resize: vertical">
+                    <%=data.indications.value %>
+          </textarea>
         </div>
       <%}%>
     </td>

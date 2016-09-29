@@ -351,10 +351,14 @@ define(function (require) {
                     return attr.code == 'indications';
                 });
 
-                if (testIndications) {
+                var indicationsModel = _.find(view.instrumntalResearchs.models, function(m) {
+                        return m.get("code") == test.code;
+                    }).get('indications');
+
+                if (testIndications && indicationsModel) {
                     var testIndicationsValue = _.find(testIndications.properties, function(p) {
                         return p.name == 'value';
-                    }).value = _.find(view.instrumntalResearchs.models[i].get('indications').properties, function(p){
+                    }).value = _.find(indicationsModel.properties, function(p){
                         return p.name == 'value';
                     }).value;
                 }
