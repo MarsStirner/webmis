@@ -22,7 +22,7 @@
 		<%}%>	
 	</select>
 	<%if (model.getValue() && selectedFdr) {%>
-		<%if (selectedFdr["Ссылка"]) {%>
+		<%if ( typeof selectedFdr["Ссылка"] != 'undefined' ) {%>
 			<div class="therapy-doc-link-container">
 				<a href="<%=selectedFdr["Ссылка"]%>" class="therapy-doc-link" target="_blank">
 					<i class="icon-book"></i>
